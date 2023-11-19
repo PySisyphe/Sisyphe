@@ -1,0 +1,107 @@
+<?xml version="1.0" ?>
+<settings version="1.0">
+	<GUI>
+		<ToolbarSize varmax="64" varmin="16" vartype="int">16</ToolbarSize>
+		<ToolbarVisibility vartype="bool">True</ToolbarVisibility>
+		<ThumbnailSize varmax="256" varmin="64" vartype="int">96</ThumbnailSize>
+		<IconSize varmax="64" varmin="24" vartype="int">32</IconSize>
+	</GUI>
+	<ToolbarIcons>
+		<open label="Open" icon="open.png" vartype="visibility">True</open>
+		<save label="Save" icon="save.png" vartype="visibility">True</save>
+		<saveall label="Save all" icon="saveall.png" vartype="visibility">True</saveall>
+		<close label="Close" icon="close.png" vartype="visibility">True</close>
+		<closeall label="Close all" icon="closeall.png" vartype="visibility">True</closeall>
+		<editattr label="Edit attributes" icon="list.png" vartype="visibility">True</editattr>
+		<dcmimport label="Dicom import" icon="import.png" vartype="visibility">True</dcmimport>
+		<join label="Join" icon="join.png" vartype="visibility">True</join>
+		<split label="Split" icon="split.png" vartype="visibility">True</split>
+		<flip label="Flip" icon="flip.png" vartype="visibility">True</flip>
+		<axis label="Axis order" icon="axis.png" vartype="visibility">True</axis>
+		<lutedit label="Lut edit" icon="rgb.png" vartype="visibility">True</lutedit>
+		<pref label="Preferences" icon="settings.png" vartype="visibility">True</pref>
+		<exit label="Exit" icon="exit.png" vartype="visibility">True</exit>
+	</ToolbarIcons>
+	<Viewport>
+		<FontSize varmax="24" varmin="6" vartype="int">12</FontSize>
+		<FontFamily vartype="lstr">Arial|Courier|Times</FontFamily>
+		<LineWidth varmax="5.0" varmin="0.5" vartype="float">2.0</LineWidth>
+		<LineOpacity label="Font/Line opacity" vartype="percent">1.0</LineOpacity>
+		<LineColor label="Font/Line color" vartype="color">1.0 1.0 1.0</LineColor>
+		<LineSelectedColor vartype="color">1.0 0.0 0.0</LineSelectedColor>
+		<CursorVisibility vartype="bool">False</CursorVisibility>
+		<AttributesVisibility vartype="bool">False</AttributesVisibility>
+		<IdentityAttributesVisibility vartype="bool">True</IdentityAttributesVisibility>
+		<VolumeAttributesVisibility vartype="bool">True</VolumeAttributesVisibility>
+		<AcquisitionAttributesVisibility vartype="bool">True</AcquisitionAttributesVisibility>
+		<VoxelValueVisibility vartype="bool">False</VoxelValueVisibility>
+		<CoorWorldVisibility label="World coordinates visibility" vartype="bool">True</CoorWorldVisibility>
+		<CoorACVisibility label="AC relative coordinates visibility" vartype="bool">False</CoorACVisibility>
+		<CoorPCVisibility label="PC relative coordinates visibility" vartype="bool">False</CoorPCVisibility>
+		<CoorACPCVisibility label="Mid AC-PC relative coordinates visibility" vartype="bool">False</CoorACPCVisibility>
+		<CoorFrameVisibility label="Stereotactic frame coordinates visibility" vartype="bool">False</CoorFrameVisibility>
+		<CoorICBMVisibility label="ICBM coordinates visibility" vartype="bool">False</CoorICBMVisibility>
+		<ColorbarPosition vartype="lstr">Left|Right|Top|Bottom</ColorbarPosition>
+		<ColorbarVisibility vartype="bool">False</ColorbarVisibility>
+		<RulerPosition vartype="lstr">Left|Right|Top|Bottom</RulerPosition>
+		<RulerVisibility vartype="bool">False</RulerVisibility>
+		<OrientationLabelsVisibility vartype="bool">False</OrientationLabelsVisibility>
+		<OrientationMarkerShape vartype="lstr">Head|Cube|Axes|Bust|Body|Brain</OrientationMarkerShape>
+		<OrientationMarkerVisibility vartype="bool">False</OrientationMarkerVisibility>
+		<TooltipVisibility vartype="bool">True</TooltipVisibility>
+	</Viewport>
+	<Mesh>
+		<SegmentationAlgorithm vartype="lstr">Otsu|Huang|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Entropy|Kittler|Isodata|Moments|Mean</SegmentationAlgorithm>
+		<IsosurfaceAlgorithm vartype="lstr">Contour|MarchingCube|FlyingEdge</IsosurfaceAlgorithm>
+		<Decimate vartype="bool">True</Decimate>
+		<FillHoles vartype="bool">True</FillHoles>
+		<Clean vartype="bool">True</Clean>
+		<Smooth vartype="bool">True</Smooth>
+		<DecimatePercent vartype="percent">1.0</DecimatePercent>
+		<FillHolesSize varmax="1000.0" varmin="0.0" vartype="float">1000.0</FillHolesSize>
+		<SmoothAlgorithm vartype="lstr">Sinc|Laplacian</SmoothAlgorithm>
+		<SmoothIterations varmax="100" varmin="1" vartype="int">10</SmoothIterations>
+		<SmoothRelaxationFactor varmax="1.0" varmin="0.0" vartype="float">0.1</SmoothRelaxationFactor>
+		<SmoothPassBand varmax="1.0" varmin="0.0" vartype="float">0.1</SmoothPassBand>
+	</Mesh>
+	<Tools>
+		<TextEntry vartype="str">Entry</TextEntry>
+		<TextTarget vartype="str">Target</TextTarget>
+		<FontSize vartype="int" varmax="24" varmin="6">12</FontSize>
+		<FontFamily vartype="lstr">Arial|Courier|Times</FontFamily>
+		<FontBold vartype="bool">False</FontBold>
+		<FontItalic vartype="bool">False</FontItalic>
+		<TextOffset vartype="lint" varmax="50" varmin="0">40 0</TextOffset>
+		<TextVisibility vartype="bool">True</TextVisibility>
+		<Color vartype="color">1.0 1.0 1.0</Color>
+		<SelectedColor vartype="color">1.0 1.0 1.0</SelectedColor>
+		<Opacity vartype="float" varmax="1.0" varmin="0.0">1.0</Opacity>
+		<PointSize vartype="float" step="1.0" varmax="50.0" varmin="1.0">5.0</PointSize>
+		<LineWidth vartype="float" step="1.0" varmax="50.0" varmin="1.0">5.0</LineWidth>
+		<HandleSize vartype="float" step="1.0" varmax="50.0" varmin="1.0">10.0</HandleSize>
+		<HandleLineWidth vartype="float" step="1.0" varmax="50.0" varmin="1.0">2.0</HandleLineWidth>
+		<SafetyRadius vartype="float" step="1.0" varmax="20.0" varmin="1.0">5.0</SafetyRadius>
+		<SafetyVisibility vartype="bool">True</SafetyVisibility>
+		<Tolerance vartype="int" varmax="100" varmin="2">20</Tolerance>
+	</Tools>
+	<Templates>
+		<T1 vartype="vol">/ICBM152/icbm152_template_T1.xvol</T1>
+		<T2 vartype="vol">/ICBM152/icbm152_template_T2.xvol</T2>
+		<PD vartype="vol"/>
+		<EPI vartype="vol"/>
+		<TEP vartype="vol"/>
+		<SPECT vartype="vol"/>
+		<GM label="Gray matter" vartype="vol">/ICBM152/icbm152_template_gm.xvol</GM>
+		<CGM label="Cortical gray matter" vartype="vol">/ICBM152/icbm152_template_cortical_gm.xvol</CGM>
+		<SCGM label="Sub-cortical gray matter" vartype="vol">/ICBM152/icbm152_template_subcortical_gm.xvol</SCGM>
+		<WM label="White matter" vartype="vol">/ICBM152/icbm152_template_wm.xvol</WM>
+		<CSF label="Cerebro-spinal fluid" vartype="vol">/ICBM152/icbm152_template_csf.xvol</CSF>
+		<BSTEM label="Brainstem" vartype="vol">/ICBM152/icbm152_template_brainstem.xvol</BSTEM>
+		<CEREB label="Cerebellum" vartype="vol">/ICBM152/icbm152_template_cerebellum.xvol</CEREB>
+		<BRAINMASK label="Brain mask" vartype="vol">/ICBM152/icbm152_template_mask_brain.xvol</BRAINMASK>
+	</Templates>
+	<Database>
+		<CurrentPath vartype="dir">/Users/Jean-Albert/.PySisyphe/database</CurrentPath>
+		<DefaultPath vartype="dir">/Users/Jean-Albert/.PySisyphe/database</DefaultPath>
+	</Database>
+</settings>

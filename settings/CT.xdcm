@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+<xdcm version="1.0">
+	<SpecificCharacterSet VM="1" VR="CS">ISO_IR 100</SpecificCharacterSet>
+	<ImageType VM="3" VR="CS">DERIVED SECONDARY AXIAL</ImageType>
+	<InstanceCreationDate VM="1" VR="DA">20000101</InstanceCreationDate>
+	<InstanceCreationTime VM="1" VR="TM">000000.000000</InstanceCreationTime>
+	<SOPClassUID VM="1" VR="UI">1.2.840.10008.5.1.4.1.1.2</SOPClassUID>
+	<SOPInstanceUID VM="1" VR="UI">1.2.840</SOPInstanceUID>
+	<StudyDate VM="1" VR="DA">20000101</StudyDate>
+	<SeriesDate VM="1" VR="DA">20000101</SeriesDate>
+	<AcquisitionDate VM="1" VR="DA">20000101</AcquisitionDate>
+	<ContentDate VM="1" VR="DA">20000101</ContentDate>
+	<StudyTime VM="1" VR="TM">000000.000000</StudyTime>
+	<SeriesTime VM="1" VR="TM">000000.000000</SeriesTime>
+	<AcquisitionTime VM="1" VR="TM">000000.000000</AcquisitionTime>
+	<ContentTime VM="1" VR="TM">000000.000000</ContentTime>
+	<AccessionNumber VM="1" VR="SH">A</AccessionNumber>
+	<Modality VM="1" VR="CS">CT</Modality>
+	<Manufacturer VM="1" VR="LO">Unknown</Manufacturer>
+	<InstitutionName VM="1" VR="LO">Unknown</InstitutionName>
+	<StationName VM="1" VR="SH">Unknown</StationName>
+	<StudyDescription VM="1" VR="LO">Unknown</StudyDescription>
+	<SeriesDescription VM="1" VR="LO">Unknown</SeriesDescription>
+	<InstitutionalDepartmentName VM="1" VR="LO">Unknown</InstitutionalDepartmentName>
+	<ManufacturerModelName VM="1" VR="LO">Unknown</ManufacturerModelName>
+	<SoftwareVersions VM="3" VR="LO">Unknown</SoftwareVersions>
+	<DerivationDescription VM="1" VR="ST">3:1 JPEGLOSSLESSPROCFIRSTORDERREDICT</DerivationDescription>
+	<PatientName VM="1" VR="PN">Unknown^Unknown</PatientName>
+	<PatientBirthDate VM="1" VR="DA">20000101</PatientBirthDate>
+	<PatientSex VM="1" VR="CS">O</PatientSex>
+	<PatientAge VM="1" VR="AS">040Y</PatientAge>
+	<PatientPosition VM="1" VR="CS">HFS</PatientPosition>
+	<ScanOptions VM="1" VR="CS">Unknown</ScanOptions>
+	<SliceThickness VM="1" VR="DS">1.0</SliceThickness>
+	<KVP VM="1" VR="DS">120</KVP>
+	<SpacingBetweenSlices VM="1" VR="DS">1.0</SpacingBetweenSlices>
+	<DataCollectionDiameter VM="1" VR="DS">320.0</DataCollectionDiameter>
+	<ProtocolName VM="1" VR="LO">Unknown</ProtocolName>
+	<ReconstructionDiameter VM="1" VR="DS">320.0</ReconstructionDiameter>
+	<DistanceSourceToDetector VM="1" VR="DS">0.0</DistanceSourceToDetector>
+	<DistanceSourceToPatient VM="1" VR="DS">0.0</DistanceSourceToPatient>
+	<GantryDetectorTilt VM="1" VR="DS">0.0</GantryDetectorTilt>
+	<TableHeight VM="1" VR="DS">0.0</TableHeight>
+	<RotationDirection VM="1" VR="CS">Unknown</RotationDirection>
+	<ExposureTime VM="1" VR="IS">0</ExposureTime>
+	<XRayTubeCurrent VM="1" VR="IS">0</XRayTubeCurrent>
+	<Exposure VM="1" VR="IS">0</Exposure>
+	<FilterType VM="1" VR="SH">Unknown</FilterType>
+	<GeneratorPower VM="1" VR="IS">0</GeneratorPower>
+	<FocalSpots VM="1" VR="DS">0.0</FocalSpots>
+	<ConvolutionKernel VM="1" VR="SH">Unknown</ConvolutionKernel>
+	<PatientPosition VM="1" VR="CS">HFS</PatientPosition>
+	<RevolutionTime VM="1" VR="FD">0.0</RevolutionTime>
+	<SingleCollimationWidth VM="1" VR="FD">0.0</SingleCollimationWidth>
+	<TotalCollimationWidth VM="1" VR="FD">0.0</TotalCollimationWidth>
+	<TableSpeed VM="1" VR="FD">0.0</TableSpeed>
+	<TableFeedPerRotation VM="1" VR="FD">0.0</TableFeedPerRotation>
+	<SpiralPitchFactor VM="1" VR="FD">0.0</SpiralPitchFactor>
+	<StudyInstanceUID VM="1" VR="UI">1.2.840</StudyInstanceUID>
+	<SeriesInstanceUID VM="1" VR="UI">1.2.840</SeriesInstanceUID>
+	<StudyID VM="1" VR="SH">A</StudyID>
+	<SeriesNumber VM="1" VR="IS">1</SeriesNumber>
+	<AcquisitionNumber VM="1" VR="IS">1</AcquisitionNumber>
+	<InstanceNumber VM="1" VR="IS">1</InstanceNumber>
+	<ImagePositionPatient VM="3" VR="DS">1.0 1.0 1.0</ImagePositionPatient>
+	<ImageOrientationPatient VM="6" VR="DS">1.0 0.0 0.0 0.0 1.0 0.0</ImageOrientationPatient>
+	<FrameOfReferenceUID VM="1" VR="UI">1.2.840</FrameOfReferenceUID>
+	<ImagesInAcquisition VM="1" VR="IS">1</ImagesInAcquisition>
+	<PositionReferenceIndicator VM="1" VR="LO">OM</PositionReferenceIndicator>
+	<SliceLocation VM="1" VR="DS">1.0</SliceLocation>
+	<SamplesPerPixel VM="1" VR="US">1</SamplesPerPixel>
+	<PhotometricInterpretation VM="1" VR="CS">MONOCHROME2</PhotometricInterpretation>
+	<Rows VM="1" VR="US">512</Rows>
+	<Columns VM="1" VR="US">512</Columns>
+	<PixelSpacing VM="2" VR="DS">1.0 1.0</PixelSpacing>
+	<BitsAllocated VM="1" VR="US">16</BitsAllocated>
+	<BitsStored VM="1" VR="US">16</BitsStored>
+	<HighBit VM="1" VR="US">15</HighBit>
+	<PixelRepresentation VM="1" VR="US">1</PixelRepresentation>
+	<PixelPaddingValue VM="1" VR="SS">-2000</PixelPaddingValue>
+	<SmallestImagePixelValue VM="1" VR="US">0</SmallestImagePixelValue>
+	<LargestImagePixelValue VM="1" VR="US">0</LargestImagePixelValue>
+	<WindowCenter VM="1" VR="DS">0</WindowCenter>
+	<WindowWidth VM="1" VR="DS">0</WindowWidth>
+	<RescaleIntercept VM="1" VR="DS">0.0</RescaleIntercept>
+	<RescaleSlope VM="1" VR="DS">1.0</RescaleSlope>
+	<RescaleType VM="1" VR="LO">HU</RescaleType>
+	<LossyImageCompression VM="1" VR="CS">00</LossyImageCompression>
+</xdcm>

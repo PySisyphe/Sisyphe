@@ -1,0 +1,233 @@
+<?xml version="1.0" ?>
+<functions version="1.0">
+	<MeanImageFilter>
+		<Fast vartype="bool">False</Fast>
+		<KernelRadius varmax="10" varmin="2" vartype="int">3</KernelRadius>
+		<Prefix vartype="str">f_mean_</Prefix>
+		<Suffix vartype="str"/>
+	</MeanImageFilter>
+	<MedianImageFilter>
+		<KernelRadius varmax="10" varmin="2" vartype="int">3</KernelRadius>
+		<Prefix vartype="str">f_median_</Prefix>
+		<Suffix vartype="str"/>
+	</MedianImageFilter>
+	<GaussianImageFilter>
+		<Algorithm vartype="lstr">Convolve|Recursive</Algorithm>
+		<Fwhm varmax="20" varmin="0.1" vartype="float">4.0</Fwhm>
+		<Prefix vartype="str">f_gaussian_</Prefix>
+		<Suffix vartype="str"/>
+	</GaussianImageFilter>
+	<GradientMagnitudeImageFilter>
+		<Algorithm vartype="lstr">Discrete|Recursive</Algorithm>
+		<Sigma varmax="20" varmin="0.1" vartype="float">1.0</Sigma>
+		<Prefix vartype="str">f_gradient_</Prefix>
+		<Suffix vartype="str"/>
+	</GradientMagnitudeImageFilter>
+	<LaplacianImageFilter>
+		<Algorithm vartype="lstr">Discrete|Recursive</Algorithm>
+		<Sigma varmax="20" varmin="0.1" vartype="float">1.0</Sigma>
+		<Prefix vartype="str">f_laplacian_</Prefix>
+		<Suffix vartype="str"/>
+	</LaplacianImageFilter>
+	<AnisotropicDiffusionImageFilter>
+		<Algorithm vartype="lstr">Gradient|Curvature|Flow</Algorithm>
+		<GradientTimeStep varmax="1.0" varmin="0.01" vartype="float">0.125</GradientTimeStep>
+		<CurvatureTimeStep varmax="1.0" varmin="0.01" vartype="float">0.0625</CurvatureTimeStep>
+		<FlowTimeStep varmax="1.0" varmin="0.01" vartype="float">0.05</FlowTimeStep>
+		<Conductance varmax="10" varmin="0.1" vartype="float">2</Conductance>
+		<NumberOfIterations varmax="20" varmin="1" vartype="int">5</NumberOfIterations>
+		<Prefix vartype="str">f_aniso_</Prefix>
+		<Suffix vartype="str"/>
+	</AnisotropicDiffusionImageFilter>
+	<NonLocalMeansImageFilter>
+		<Shrink varmax="3" varmin="1" vartype="int">1</Shrink>
+		<PatchRadius varmax="3" varmin="1" vartype="int">1</PatchRadius>
+		<SearchRadius varmax="3" varmin="1" vartype="int">3</SearchRadius>
+		<NoiseModel vartype="lstr">Rician|Gaussian</NoiseModel>
+		<Prefix vartype="str">f_nlmeans_</Prefix>
+		<Suffix vartype="str"/>
+	</NonLocalMeansImageFilter>
+	<HistogramMatchingImageFilter>
+		<ExcludeBackground vartype="bool">True</ExcludeBackground>
+		<NumberOfMatchPoints varmax="50" varmin="2" vartype="int">5</NumberOfMatchPoints>
+		<NumberOfHistogramBins varmax="512" varmin="32" vartype="int">200</NumberOfHistogramBins>
+		<Prefix vartype="str">histmatch_</Prefix>
+		<Suffix vartype="str"/>
+	</HistogramMatchingImageFilter>
+	<BiasFieldCorrectionImageFilter>
+		<UseMask vartype="bool">True</UseMask>
+		<ShrinkFactor varmax="4" varmin="1" vartype="int">3</ShrinkFactor>
+		<SplineOrder varmax="10" varmin="1" vartype="int">3</SplineOrder>
+		<NumberOfHistogramBins varmax="512" varmin="32" vartype="int">200</NumberOfHistogramBins>
+		<NumberOfFittingLevels varmax="10" varmin="1" vartype="int">4</NumberOfFittingLevels>
+		<NumberOfControlPoints varmax="20" varmin="1" vartype="int">4</NumberOfControlPoints>
+		<NumberOfIteration varmax="100" varmin="1" vartype="int">50</NumberOfIteration>
+		<ConvergenceThreshold varmax="0.01" varmin="1e-6" vartype="float">0.001</ConvergenceThreshold>
+		<WienerFilterNoise varmax="0.1" varmin="1e-6" vartype="float">0.01</WienerFilterNoise>
+		<BiasFieldFullWidthAtHalfMaximum varmax="1.0" varmin="1e-6" vartype="float">0.15</BiasFieldFullWidthAtHalfMaximum>
+		<Prefix label="Bias field corrected prefix" vartype="str">f_biascorr_</Prefix>
+		<Suffix label="Bias field corrected suffix" vartype="str"/>
+		<BiasFieldPrefix label="Bias field map prefix" vartype="str">biasfield_</BiasFieldPrefix>
+		<BiasFieldSuffix label="Bias field map suffix" vartype="str"/>
+	</BiasFieldCorrectionImageFilter>
+	<SkullStripping>
+		<Model label="Deep learning model" vartype="lstr">DeepBrain U-net|ANTs U-net</Model>
+		<Mask label="Save brain mask" vartype="bool">True</Mask>
+		<ROIMask label="Save brain mask as ROI" vartype="bool">True</ROIMask>
+		<MaskPrefix label="Brain mask prefix" vartype="str">brainmask_</MaskPrefix>
+		<Probability label="Save brain probability" vartype="bool">True</Probability>
+		<ProbabilityPrefix label="Brain probability prefix" vartype="str">mask_</ProbabilityPrefix>
+		<Prefix vartype="str">brain_</Prefix>
+		<Suffix vartype="str"/>
+	</SkullStripping>
+	<UnsupervisedKMeans>
+		<NonLocalMeansFilter vartype="bool">True</NonLocalMeansFilter>
+		<BiasFieldCorrection vartype="bool">True</BiasFieldCorrection>
+		<AutoMask label="Automatic mask" vartype="bool">True</AutoMask>
+		<Prefix vartype="str">kmeans_</Prefix>
+		<Suffix vartype="str"/>
+	</UnsupervisedKMeans>
+	<SupervisedKMeans>
+		<NonLocalMeansFilter vartype="bool">True</NonLocalMeansFilter>
+		<BiasFieldCorrection vartype="bool">True</BiasFieldCorrection>
+		<NumberOfClasses varmax="10" varmin="1" vartype="int">3</NumberOfClasses>
+		<NumberOfIterations varmax="30" varmin="2" vartype="int">3</NumberOfIterations>
+		<Smoothing label="MRF smoothing factor" varmax="0.1" varmin="1.0" vartype="float">0.3</Smoothing>
+		<Radius label="MRF neighborhood (radius)" varmax="3" varmin="1" vartype="int">1</Radius>
+		<SegPrefix label="Labeled volume prefix" vartype="str">seg_</SegPrefix>
+		<SegSuffix label="Labeled volume suffix" vartype="str"/>
+		<Prefix label="Class volume prefix" vartype="str">class*_</Prefix>
+		<Suffix label="Class volume suffix" vartype="str"/>
+	</SupervisedKMeans>
+	<PriorBasedSegmentation>
+		<NonLocalMeansFilter vartype="bool">True</NonLocalMeansFilter>
+		<BiasFieldCorrection vartype="bool">True</BiasFieldCorrection>
+		<Algorithm vartype="lstr">Finite mixture modeling|Deep Atropos</Algorithm>
+		<NumberOfIterations varmax="25" varmin="5" vartype="int">10</NumberOfIterations>
+		<NumberOfPriors vartype="lstr">3|6</NumberOfPriors>
+		<PriorWeight varmax="1.0" varmin="0.0" vartype="float">0.5</PriorWeight>
+		<Smoothing label="MRF smoothing factor" varmax="0.1" varmin="1.0" vartype="float">0.3</Smoothing>
+		<Radius label="MRF neighborhood (radius)" varmax="3" varmin="1" vartype="int">1</Radius>
+		<Convergence label="Convergence threshold" vartype="lstr">No (All iterations)|1e-4|1e-5|1e-6|1e-7</Convergence>
+		<T1 label="T1 template" vartype="vol">icbm152_template_T1.xvol</T1>
+		<Mask label="Mask template" vartype="vol">icbm152_template_mask_brain.xvol</Mask>
+		<CGMPrior label="Cortical gray matter prior" vartype="vol">icbm152_template_cortical_gm.xvol</CGMPrior>
+		<SCGMPrior label="Sub-cortical gray matter prior" vartype="vol">icbm152_template_subcortical_gm.xvol</SCGMPrior>
+		<WMPrior label="White matter prior" vartype="vol">icbm152_template_wm.xvol</WMPrior>
+		<CSFPrior label="Cerebro-spinal fluid prior" vartype="vol">icbm152_template_csf.xvol</CSFPrior>
+		<BrainstemPrior label="Cerebro-spinal fluid prior" vartype="vol">icbm152_template_brainstem.xvol</BrainstemPrior>
+		<CerebellumPrior label="Cerebro-spinal fluid prior" vartype="vol">icbm152_template_cerebellum.xvol</CerebellumPrior>
+		<SegPrefix label="Labeled volume prefix" vartype="str">seg_</SegPrefix>
+		<SegSuffix label="Labeled volume suffix" vartype="str"/>
+	</PriorBasedSegmentation>
+	<CorticalThickness>
+		<NumberOfIterations varmax="100" varmin="10" vartype="int">50</NumberOfIterations>
+		<Convergence label="Convergence threshold" vartype="lstr">No (All iterations)|1e-4|1e-5|1e-6|1e-7</Convergence>
+		<GradientStep varmax="0.1" varmin="0.01" vartype="float">0.025</GradientStep>
+		<SmoothingVariance varmax="2.0" varmin="0.5" vartype="float">1.0</SmoothingVariance>
+		<Prefix label="Prefix" vartype="str">thickness_</Prefix>
+		<Suffix label="Suffix" vartype="str"/>
+	</CorticalThickness>
+	<Registration>
+		<FixedMask label="Fixed volume mask" vartype="bool">True</FixedMask>
+		<Estimation vartype="lstr">Translations|Rotations and translations|Nothing</Estimation>
+		<ManualRegistration label="Manual registration/Registration area" vartype="bool">False</ManualRegistration>
+		<Rigid vartype="lstr">Rigid|Translation|FastRigid|DenseRigid|AntsRigid|AntsFastRigid|BoldRigid</Rigid>
+		<Affine vartype="lstr">Affine|Similarity|FastAffine|DenseAffine|AntsAffine|AntsFastAffine|RigidBoldAffine</Affine>
+		<DisplacementField vartype="lstr">Elastic|Diffeomorphic|DenseDiffeomorphic|AntsSplineDiffeomorphic|AntsDiffeomorphic|AntsFastSplineDiffeomorphic|AntsFastDiffeomorphic|AntsRigidSplineDiffeomorphic|AntsRigidDiffeomorphic|AntsFastRigidSplineDiffeomorphic|AntsFastRigidDiffeomorphic|AntsSplineDiffeomorphicOnly|AntsDiffeomorphicOnly|AntsFastSplineDiffeomorphicOnly|AntsFastDiffeomorphicOnly|BoldDiffeomorphic</DisplacementField>
+		<CustomParameters vartype="bool">False</CustomParameters>
+		<Metric vartype="lstr">IM|CC|MS|DEMONS</Metric>
+		<GradientStep varmax="2.0" varmin="0.1" vartype="float">0.25</GradientStep>
+		<FlowSigma varmax="5" varmin="1" vartype="int">3</FlowSigma>
+		<LowResolutionIterations varmax="500" varmin="10" vartype="int">40</LowResolutionIterations>
+		<MediumResolutionIterations varmax="200" varmin="10" vartype="int">20</MediumResolutionIterations>
+		<HighResolutionIterations varmax="100" varmin="0" vartype="int">0</HighResolutionIterations>
+		<CheckRegistration vartype="bool">True</CheckRegistration>
+		<Prefix label="Displacement field prefix" vartype="str">field_</Prefix>
+		<Suffix label="Displacement field suffix" vartype="str"/>
+		<Resample vartype="bool">True</Resample>
+	</Registration>
+	<Realignment>
+		<Reference vartype="lstr">First|Middle|Mean|Median</Reference>
+	</Realignment>
+	<Resample>
+		<Dialog vartype="bool">False</Dialog>
+		<Interpolator vartype="lstr">Linear|NearestNeighbor|Bspline|Gaussian|HammingSinc|CosineSinc|WelchSinc|LanczosSinc|BlackmanSinc</Interpolator>
+		<Prefix vartype="str">r_</Prefix>
+		<Suffix vartype="str"/>
+	</Resample>
+	<DisplacementFieldJacobianDeterminant>
+		<Prefix vartype="str">jac_</Prefix>
+		<Suffix vartype="str"/>
+	</DisplacementFieldJacobianDeterminant>
+	<DiffusionPreprocessing>
+		<Mask vartype="bool">True</Mask>
+		<Algo label="Background thresholding algorithm (mask)" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximum Entropy|Kittler|Isodata|Moments</Algo>
+		<Size label="Morphological operator size (mask)" varmax="10" varmin="1" vartype="int">1</Size>
+		<Iter label="Number of morphological operator iterations (mask)"  varmax="10" varmin="1" vartype="int">2</Iter>
+		<GibbsSuppression vartype="bool">True</GibbsSuppression>
+		<GibbsNeighbour varmax="10" varmin="1" vartype="int">3</GibbsNeighbour>
+		<Denoise label="Denoising algorithm" vartype="lstr">No|Local PCA|General function PCA|Marcenko-Pastur PCA|Non-local means|Self-Supervised Denoising|Adaptive soft coefficient matching</Denoise>
+		<NoiseEstimation label="Noise estimation algorithm" vartype="lstr">Local patches|Piesno</NoiseEstimation>
+		<MRReconstruction label="MR reconstruction" vartype="lstr">SENSE (Philips)|GRAPPA (General Electric, Siemens)</MRReconstruction>
+		<ReceiverArray label="Number of receiver array head coils" varmax="64" varmin="0" vartype="int">1</ReceiverArray>
+		<PhaseArray label="Number of phase array head coils" varmax="64" varmin="0" vartype="int">1</PhaseArray>
+		<Prefix vartype="str">f</Prefix>
+		<Suffix vartype="str"/>
+	</DiffusionPreprocessing>
+	<PCADenoise>
+		<Smooth label="Smooth kernel radius (PCA noise estimation)" varmax="10" varmin="1" vartype="int">2</Smooth>
+		<PatchRadius varmax="10" varmin="0" vartype="int">2</PatchRadius>
+		<PCAMethod label="PCA method" vartype="lstr">EIG|SVD</PCAMethod>
+	</PCADenoise>
+	<NLMeansDenoise>
+		<PatchRadius varmax="10" varmin="0" vartype="int">1</PatchRadius>
+		<BlockRadius varmax="10" varmin="0" vartype="int">5</BlockRadius>
+	</NLMeansDenoise>
+	<SelfSupervisedDenoise>
+		<PatchRadius varmax="10" varmin="0" vartype="int">0</PatchRadius>
+		<Solver label="Solver algorithm" vartype="lstr">OLS|RIDGE|LASSO</Solver>
+	</SelfSupervisedDenoise>
+	<DiffusionModel>
+		<Model label="Diffusion model" vartype="lstr">DTI|DKI|SHCSA|SHCSD|DSI|DSID</Model>
+		<Algo label="Background thresholding algorithm (mask)" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximumentropy|Kittler|Isodata|Moments</Algo>
+		<Size label="Morphological operator size (mask)" varmax="10" varmin="1" vartype="int">0</Size>
+		<Iter label="Number of morphological operator iterations (mask)" varmax="10" varmin="0" vartype="int">2</Iter>
+		<Save label="Save model" vartype="bool">False</Save>
+	</DiffusionModel>
+	<DTIModel>
+		<Method label="Fitting algorithm" vartype="lstr">WLS|OLS|NLLS|RT</Method>
+		<FA vartype="bool">False</FA>
+		<GA vartype="bool">False</GA>
+		<MD vartype="bool">False</MD>
+		<Linearity vartype="bool">False</Linearity>
+		<Planarity vartype="bool">False</Planarity>
+		<Sphericity vartype="bool">False</Sphericity>
+		<Trace vartype="bool">False</Trace>
+		<AD vartype="bool">False</AD>
+		<RD vartype="bool">False</RD>
+		<Isotropic vartype="bool">False</Isotropic>
+		<Deviatropic vartype="bool">False</Deviatropic>
+	</DTIModel>
+	<DKIModel>
+		<Method label="Fitting algorithm" vartype="lstr">WLS|OLS|CLS|CWLS</Method>
+		<FA vartype="bool">False</FA>
+		<KFA vartype="bool">False</KFA>
+		<GA vartype="bool">False</GA>
+		<MD vartype="bool">False</MD>
+		<Linearity vartype="bool">False</Linearity>
+		<Planarity vartype="bool">False</Planarity>
+		<Sphericity vartype="bool">False</Sphericity>
+		<Trace vartype="bool">False</Trace>
+		<AD vartype="bool">False</AD>
+		<RD vartype="bool">False</RD>
+	</DKIModel>
+	<SHCSAModel>
+		<Order varmax="10" varmin="2" vartype="int">6</Order>
+		<GFA vartype="bool">False</GFA>
+	</SHCSAModel>
+	<SHCSDModel>
+		<Order varmax="10" varmin="2" vartype="int">6</Order>
+		<GFA vartype="bool">False</GFA>
+	</SHCSDModel>
+</functions>

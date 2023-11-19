@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<host version="1.0">
+	<folder name="Fonts">
+		<file url="https://www.mediafire.com/file/9dn0gmasjsb8tbb/Algoria.ttf/file" path="/gui/font/algoria.ttf">Algoria</file>
+		<file url="https://www.mediafire.com/file/j86ssyjqjfjgdtg/Calibri.ttf/file" path="/gui/font/calibri.ttf">Calibri</file>
+		<file url="https://www.mediafire.com/file/tky1vtma0xfw5ss/Cool.ttf/file" path="/gui/font/cool.ttf">Cool</file>
+		<file url="https://www.mediafire.com/file/ro5lzf67ci2f2be/Georgia.ttf/file" path="/gui/font/georgia.ttf">Georgia</file>
+		<file url="https://www.mediafire.com/file/abbt52eooeinkbo/Helvetica.ttf/file" path="/gui/font/helvetica.ttf">Helvetica</file>
+		<file url="https://www.mediafire.com/file/foh9zwjokka51wn/Menlo.ttf/file" path="/gui/font/menlo.ttf">Menlo</file>
+		<file url="https://www.mediafire.com/file/5h4fpc52m3c0yuk/Segoe.ttf/file" path="/gui/font/segoe.ttf">Segoe</file>
+		<file url="https://www.mediafire.com/file/bjid5t6hpw0iuc3/Sulphur.ttf/file" path="/gui/font/sulphur.ttf">Sulphur</file>
+		<file url="https://www.mediafire.com/file/twvt3osq2faviul/Tahoma.ttf/file" path="/gui/font/tahoma.ttf">Tahoma</file>
+		<file url="https://www.mediafire.com/file/6wa6siinvywqf05/Trebuchet.ttf/file" path="/gui/font/trebuchet.ttf">Trebuchet</file>
+		<file url="https://www.mediafire.com/file/iw4t0cd606q36ig/Ventura.ttf/file" path="/gui/font/ventura.ttf">Ventura</file>
+		<file url="https://www.mediafire.com/file/wifogvibwqpo25b/Verdana.ttf/file" path="/gui/font/verdana.ttf">Verdana</file>
+	</folder>
+	<folder name="Plugins">
+	</folder>
+	<folder name="Templates">
+	</folder>
+	<folder name="Controls">
+	</folder>
+</host>

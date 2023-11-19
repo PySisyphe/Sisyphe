@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<settings version="1.0">
+	<Region>
+		<Origin varmax="1024" varmin="0" vartype="lint">0|0|0</Origin>
+		<Size varmax="1024" varmin="0" vartype="lint">0|0|0</Size>
+	</Region>
+	<TrajectoryLength>
+		<ExtendEntry step="1.0" varmax="256.0" varmin="-256.0" vartype="float">0.0</ExtendEntry>
+		<ExtendTarget step="1.0" varmax="256.0" varmin="-256.0" vartype="float">0.0</ExtendTarget>
+		<ExtendEntryToMesh label="Project entry onto mesh surface" vartype="lstr">No</ExtendEntryToMesh>
+		<ExtendTargetToMesh label="Project target onto mesh surface" vartype="lstr">No</ExtendTargetToMesh>
+	</TrajectoryLength>
+	<DuplicateTool>
+		<Laterality step="1.0" varmax="256.0" varmin="-256.0" vartype="float">0.0</Laterality>
+		<Antero-posterior step="1.0" varmax="256.0" varmin="-256.0" vartype="float">0.0</Antero-posterior>
+		<Height step="1.0" varmax="256.0" varmin="-256.0" vartype="float">0.0</Height>
+		<Orientation vartype="lstr">Native|ACPC|Camera</Orientation>
+		<Projection label="Point projection" vartype="lstr">No</Projection>
+	</DuplicateTool>
+	<FlipAxes>
+		<Volumes vartype="vols"/>
+		<FlipX label="Flip left/right axis" vartype="bool">False</FlipX>
+		<FlipY label="Flip antero-posterior axis" vartype="bool">False</FlipY>
+		<FlipZ label="Flip cranio-caudal axis" vartype="bool">False</FlipZ>
+		<Prefix vartype="str">flip_</Prefix>
+	</FlipAxes>
+	<SwapAxes>
+		<Volumes vartype="vols"/>
+		<SwapOrder vartype="lstr">y,z,x|z,x,y|x,z,y|y,z,x|z,y,x</SwapOrder>
+		<Prefix vartype="str">swap_</Prefix>
+	</SwapAxes>
+	<ChartProperties>
+		<TitleVisibility vartype="bool">False</TitleVisibility>
+		<FrameVisibility vartype="bool">False</FrameVisibility>
+		<FrameColor label="Frame background color" vartype="color">1.0 1.0 1.0</FrameColor>
+		<AxisVisibility vartype="bool">False</AxisVisibility>
+		<Grid vartype="lstr">No|X|Y|Both</Grid>
+		<GridDash vartype="lstr">Solid|Dashed|Dash-dotted|Dotted</GridDash>
+		<GridOpacity vartype="percent">1.0</GridOpacity>
+		<Legend vartype="lstr">No|Best|Upper right|Upper left|Lower right|Lower left|Lower center|Upper center|Center</Legend>
+		<FigColor label="Figure background color" vartype="color">1.0 1.0 1.0</FigColor>
+	</ChartProperties>
+</settings>
