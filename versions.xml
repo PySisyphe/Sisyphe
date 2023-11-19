@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<host version="1.0">
+	<version current="0.1.1"/>
+	<folder version="0.1.0" url=""/>
+	<folder version="0.1.1" url=""/>
+</host>
