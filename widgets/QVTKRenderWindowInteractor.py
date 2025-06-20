@@ -105,8 +105,8 @@ elif PyQtImpl == "PySide":
     from PySide.QtCore import QObject
     from PySide.QtCore import QSize
     from PySide.QtCore import QEvent
-else:
-    raise ImportError("Unknown PyQt implementation " + repr(PyQtImpl))
+# else:
+#    raise ImportError("Unknown PyQt implementation " + repr(PyQtImpl))
 
 # Define types for base class, based on string
 if QVTKRWIBase == "QWidget":
@@ -296,6 +296,7 @@ class QVTKRenderWindowInteractor(QVTKRWIBaseClass):
         #its parent thus allowing cleanup of VTK elements.
         self._hidden = QWidget(self)
         self._hidden.hide()
+        # self._hidden.destroyed.connect(self.Finalize)
         self._hidden.destroyed.connect(self.Finalize)
 
     def __getattr__(self, attr):

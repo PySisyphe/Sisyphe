@@ -1,22 +1,26 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Homepage link                                               Usage
-
-        darkdetect      https://github.com/albertosottile/darkdetect                OS Dark Mode detection
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - darkdetect, OS Dark Mode detection, https://github.com/albertosottile/darkdetect
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
 from os import getcwd
+from os import chdir
+
 from os.path import join
 from os.path import exists
 from os.path import dirname
 from os.path import abspath
 
+from datetime import date
 from datetime import datetime
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QLocale
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import pyqtSignal
@@ -41,77 +45,56 @@ import darkdetect
 from Sisyphe.core.sisypheSettings import SisypheSettings
 from Sisyphe.core.sisypheSettings import SisypheFunctionsSettings
 from Sisyphe.core.sisypheSettings import SisypheDialogsSettings
+from Sisyphe.core.sisypheSettings import SisypheTooltips
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
 from Sisyphe.widgets.basicWidgets import ColorSelectPushButton
 from Sisyphe.widgets.basicWidgets import IconPushButton
 from Sisyphe.widgets.basicWidgets import VisibilityLabel
+from Sisyphe.widgets.basicWidgets import FontSelect
+from Sisyphe.widgets.LUTWidgets import ComboBoxLut
 
 __all__ = ['SettingsWidget',
            'FunctionSettingsWidget',
            'DialogSettingsWidget']
 
 """
-    Class hierarchy
+Class hierarchy
+~~~~~~~~~~~~~~~
     
-        QWidget -> SettingsWidget -> FunctionSettingsWidget
+    - QWidget -> SettingsWidget -> FunctionSettingsWidget
 """
 
+# < Revision 12/06/2025
+# class used to remove unnecessary decimals from QDoubleSpinBox
+class QDoubleSpinBox2(QDoubleSpinBox):
+
+    def textFromValue(self, v: float) -> str:
+        # noinspection PyTypeChecker
+        f = QLocale(QLocale.English, QLocale.UnitedStates)
+        f.setNumberOptions(QLocale.OmitGroupSeparator)
+        return f.toString(v, 'g', QLocale.FloatingPointShortest)
+# Revision 12/06/2025 >
 
 class SettingsWidget(QWidget):
     """
-        SettingsWidget class
+    SettingsWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Widget to manage application settings from XML file (settings.xml).
+    Widget to manage application settings from XML file (settings.xml).
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> SettingsWidget -> FunctionSettingsWidget
+    QWidget -> SettingsWidget -> FunctionSettingsWidget
 
-        Private attributes
-
-            _parameters     dict of QWidget, keyword = name of function parameters
-            _funcname       str, function name
-
-        Qt Signals
-
-            ParameterChanged.emit(QWidget)
-            VisibilityToggled.emit(QWidget)
-
-        Public methods
-
-            toggleSettingsVisibility()
-            settingsVisibilityOn()
-            settingsVisibilityOff()
-            str = getFunctionName()
-            QWidget = getParameterWidget(str)
-            str or int or float or date or list = getParameterValue(str)
-            list = getParametersList()
-            dict = getParameterDict()
-            setParameterVisibility(str, bool)
-            bool = getParameterVisibility(str)
-            resetSettings()
-            saveSettings()
-            setSettingsButtonText(str)
-            setSettingsButtonDefaultText()
-            setSettingsButtonFunctionText()
-            setButtonsVisibility(bool)
-            bool = getButtonsVisibility()
-            showButtons()
-            hideButtons()
-            setIOButtonsVisibility(bool)
-            bool = getIOButtonsVisibility()
-            showIOButtons()
-            hideIOButtons()
-
-            inherited QWidget methods
-
-        Revision:
-
-            11/08/2022  _initSettingsLayout() method, add QLabel after QSlider for percent vartype
+    Creation: 11/08/2022
+    Last revision: 02/06/2025
     """
+
+    _VSIZE = 24
 
     classSisypheSettings = SisypheSettings
 
@@ -143,6 +126,12 @@ class SettingsWidget(QWidget):
         else: return join(dirname(abspath(Sisyphe.gui.__file__)), 'lighticons')
 
     @classmethod
+    def getDefaultIconSize(cls) -> int:
+        dpi = QApplication.primaryScreen().logicalDotsPerInch()
+        if dpi > 100: return int(cls._VSIZE * dpi / 800) * 8
+        else: return cls._VSIZE
+
+    @classmethod
     def formatLabel(cls, label):
         if isinstance(label, str):
             if label.isupper(): r = label
@@ -166,12 +155,17 @@ class SettingsWidget(QWidget):
 
     # Special method
 
+    """
+    Private attributes
+
+    _parameters     dict[str, QWidget], keyword = name of function parameters
+    _funcname       str, function name
+    """
+
     def __init__(self, function, parent=None):
         QWidget.__init__(self, parent)
 
         self._function = function
-        self._font = QFont()
-        self.setFont(self._font)
         self._iovisibility = True
 
         # Init QLayout
@@ -187,16 +181,16 @@ class SettingsWidget(QWidget):
         self._icondown = QIcon(join(self.getDefaultIconDirectory(), 'up2.png'))
         self._button = QPushButton(self._icondown, 'Settings...')
         self._button.setToolTip('Show {} settings'.format(self._function))
-        self._reset = QPushButton('Reset')
+        self._reset = QPushButton('Reset', parent=self)
         self._reset.setToolTip('Restore default {} settings'.format(self._function))
         self._reset.setVisible(False)
-        self._save = QPushButton('Save')
+        self._save = QPushButton('Save', parent=self)
         self._save.setToolTip('Save to default {} settings'.format(self._function))
         self._save.setVisible(False)
-        self._load = QPushButton('Load...')
+        self._load = QPushButton('Load...', parent=self)
         self._load.setToolTip('Load custom {} settings'.format(self._function))
         self._load.setVisible(False)
-        self._saveas = QPushButton('Save as...')
+        self._saveas = QPushButton('Save as...', parent=self)
         self._saveas.setToolTip('Save to custom {} settings'.format(self._function))
         self._saveas.setVisible(False)
 
@@ -212,47 +206,85 @@ class SettingsWidget(QWidget):
         self._layout.addLayout(layout)
 
         self._parameters = dict()
-        self._settingsbox = QWidget()
+        self._settingsbox = QWidget(parent=self)
         self._settingsbox.setVisible(False)
         self._initSettingsLayout(function)
         self._layout.addWidget(self._settingsbox)
         # self._layout.addStretch()
 
+        # noinspection PyUnresolvedReferences
         self._button.clicked.connect(self.toggleSettingsVisibility)
+        # noinspection PyUnresolvedReferences
         self._reset.clicked.connect(self.resetSettings)
+        # noinspection PyUnresolvedReferences
         self._save.clicked.connect(self.saveSettings)
+        # noinspection PyUnresolvedReferences
         self._load.clicked.connect(self.loadSettings)
+        # noinspection PyUnresolvedReferences
         self._saveas.clicked.connect(self.saveAsSettings)
 
     # Private methods
 
+    # noinspection PyUnusedLocal
     def _parameterChanged(self, value):
+        # noinspection PyUnresolvedReferences
         self.ParameterChanged.emit(self)
 
     def _initSettingsLayout(self, function):
+        # < Revision 19/03/2025
+        size = self.getDefaultIconSize()
+        # Revision 19/03/2025 >
         xml = self.classSisypheSettings()
         parameters = xml.getSectionFieldsList(function)
+        try:
+            tooltips = SisypheTooltips()
+            title = tooltips.getFieldValue(self._function, 'Title')
+            if title is not None:
+                title = title.replace('\t', '')
+                # < Revision 24/03/2025
+                if title[0] == '\n': title = title[1:]
+                if title[-1] == '\n': title = title[:-1]
+                # Revision 24/03/2025 >
+                self.setToolTip(title)
+        except: tooltips = None
         layout = QGridLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         if len(parameters) > 0:
             i = 0
             for parameter in parameters:
+                if tooltips is not None:
+                    tooltip = tooltips.getFieldValue(self._function, parameter)
+                    if tooltip is not None:
+                        tooltip = tooltip.replace('\t', '')
+                        # < Revision 24/03/2025
+                        if tooltip[0] == '\n': tooltip = tooltip[1:]
+                        if tooltip[-1] == '\n': tooltip = tooltip[:-1]
+                        # Revision 24/03/2025 >
+                else: tooltip = ''
                 node = xml.getFieldNode(function, parameter)
                 vartype = node.getAttribute('vartype')
                 # label attribute
-                if node.hasAttribute('label'): lb = QLabel(node.getAttribute('label'))
-                else: lb = QLabel(self.formatLabel(parameter))
-                if vartype not in ('dirs', 'vols', 'rois'):
+                if vartype not in ('dirs', 'vols', 'rois', 'dcms'):
+                    if node.hasAttribute('label'): lb = QLabel(node.getAttribute('label'))
+                    else: lb = QLabel(self.formatLabel(parameter), parent=self)
+                    # noinspection PyTypeChecker
                     layout.addWidget(lb, i, 0, alignment=Qt.AlignRight)
+                else:
+                    if node.hasAttribute('label'): lb = node.getAttribute('label')
+                    else: lb = self.formatLabel(parameter)
                 if node.hasChildNodes():
                     child = node.firstChild
+                    # noinspection PyUnresolvedReferences
                     data = child.data
                 else: data = ''
                 if vartype == 'str':
-                    edit = QLineEdit()
+                    edit = QLineEdit(parent=self)
                     edit.setFixedWidth(300)
                     edit.setText(data)
+                    # noinspection PyUnresolvedReferences
                     edit.textChanged.connect(self._parameterChanged)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    # noinspection PyTypeChecker
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'int':
@@ -260,19 +292,23 @@ class SettingsWidget(QWidget):
                     else: varmin = None
                     if node.hasAttribute('varmax'): varmax = int(node.getAttribute('varmax'))
                     else: varmax = None
-                    edit = QSpinBox()
-                    edit.setFixedWidth(75)
+                    edit = QSpinBox(parent=self)
+                    edit.setFixedWidth(100)
                     if node.hasAttribute('step'):
                         step = int(node.getAttribute('step'))
                         edit.setSingleStep(step)
                     if varmin is not None and varmax is not None:
                         edit.setMinimum(varmin)
                         edit.setMaximum(varmax)
-                        edit.setToolTip('value range from {} to {}'.format(varmin, varmax))
                     if data == '': data = varmin  # Default
                     edit.setValue(int(data))
                     edit.setAlignment(Qt.AlignCenter)
+                    # noinspection PyUnresolvedReferences
                     edit.valueChanged.connect(self._parameterChanged)
+                    if tooltip is not None:
+                        edit.setToolTip('{}\n\nValue range from {} to {}'.format(tooltip, varmin, varmax))
+                    else: edit.setToolTip('Value range from {} to {}'.format(varmin, varmax))
+                    # noinspection PyTypeChecker
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'float':
@@ -280,37 +316,53 @@ class SettingsWidget(QWidget):
                     else: varmin = None
                     if node.hasAttribute('varmax'): varmax = float(node.getAttribute('varmax'))
                     else: varmax = None
-                    edit = QDoubleSpinBox()
+                    # edit = QDoubleSpinBox(parent=self)
+                    edit = QDoubleSpinBox2(parent=self)
                     if node.hasAttribute('decimals'): n = int(node.getAttribute('decimals'))
-                    else: n = self.getNumberOfDecimals(varmin)
-                    edit.setDecimals(n)
+                    # else: n = self.getNumberOfDecimals(varmin)
+                    else: n = 1
+                    # edit.setDecimals(n)
+                    if n > 0: edit.setDecimals(n)
                     if node.hasAttribute('step'): step = float(node.getAttribute('step'))
-                    else: step = 1 / (10**n)
+                    else:
+                        # step = 1 / (10**n)
+                        if n > 0: step = 1 / (10**n)
+                        else: step = 0.1
                     edit.setSingleStep(step)
-                    if n > 5: edit.setFixedWidth(15*n)
-                    else: edit.setFixedWidth(75)
+                    if n > 5: edit.setFixedWidth(20*n)
+                    else: edit.setFixedWidth(100)
                     if varmin is not None and varmax is not None:
                         edit.setMinimum(varmin)
                         edit.setMaximum(varmax)
-                        edit.setToolTip('value range from {} to {}'.format(varmin, varmax))
                     if data == '': data = varmin  # Default
                     edit.setValue(float(data))
+                    # noinspection PyTypeChecker
                     edit.setAlignment(Qt.AlignCenter)
+                    # noinspection PyUnresolvedReferences
                     edit.valueChanged.connect(self._parameterChanged)
+                    if tooltip is not None:
+                        edit.setToolTip('{}\n\nValue range from {} to {}'.format(tooltip, varmin, varmax))
+                    else: edit.setToolTip('Value range from {} to {}'.format(varmin, varmax))
+                    # noinspection PyTypeChecker
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'percent':
-                    lbl2 = QLabel('100 %')
-                    edit = QSlider(Qt.Horizontal)
+                    lbl2 = QLabel('100 %', parent=self)
+                    # noinspection PyTypeChecker
+                    edit = QSlider(Qt.Horizontal, parent=self)
                     edit.setToolTip('100 %')
                     edit.setMinimum(0)
                     edit.setMaximum(100)
-                    edit.setFixedWidth(75)
+                    edit.setFixedWidth(100)
                     if data == '': data = 0.0  # Default
                     edit.setValue(int(float(data)*100))
+                    # noinspection PyUnresolvedReferences
                     edit.valueChanged.connect(self._parameterChanged)
+                    # noinspection PyUnresolvedReferences
                     edit.valueChanged.connect(lambda v, w=edit: w.setToolTip('{} %'.format(v)))
+                    # noinspection PyUnresolvedReferences
                     edit.valueChanged.connect(lambda v, w=lbl2: w.setText('{} %'.format(v)))
+                    if tooltip is not None: edit.setToolTip(tooltip)
                     lyout = QHBoxLayout()
                     lyout.setSpacing(5)
                     lyout.setContentsMargins(0, 0, 0, 0)
@@ -319,39 +371,50 @@ class SettingsWidget(QWidget):
                     layout.addLayout(lyout, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'bool':
-                    edit = QCheckBox()
+                    edit = QCheckBox(parent=self)
                     edit.setTristate(False)
                     if data == '': data = 'False'  # Default
-                    if data == 'True': edit.setCheckState(Qt.Checked)
-                    else: edit.setCheckState(Qt.Unchecked)
+                    # < Revision 02/06/2025
+                    # if data == 'True': edit.setCheckState(Qt.Checked)
+                    # else: edit.setCheckState(Qt.Unchecked)
+                    if data == 'True': edit.setChecked(True)
+                    else: edit.setChecked(False)
+                    # Revision 02/06/2025 >
+                    # noinspection PyUnresolvedReferences
                     edit.stateChanged.connect(self._parameterChanged)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    # noinspection PyTypeChecker
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'visibility':
                     if node.hasAttribute('icon'): icn = join(self.getDefaultToolbarIconDirectory(), node.getAttribute('icon'))
                     else: icn = ''
-                    edit = VisibilityLabel()
-                    edit.setFixedSize(QSize(24, 24))
+                    edit = VisibilityLabel(parent=self)
+                    edit.setFixedSize(QSize(size, size))
                     if data == '': data = 'False'  # Default
                     if data == 'True': edit.setVisibilityStateIconToView()
                     else: edit.setVisibilityStateIconToHide()
                     edit.visibilityChanged.connect(self._parameterChanged)
+                    if tooltip is not None: edit.setToolTip(tooltip)
                     lyout = QHBoxLayout()
                     lyout.setSpacing(5)
                     lyout.setContentsMargins(0, 0, 0, 0)
-                    if exists(icn): lyout.addWidget(IconPushButton(icon=icn))
+                    if exists(icn): lyout.addWidget(IconPushButton(icon=icn, size=size))
                     lyout.addWidget(edit)
                     layout.addLayout(lyout, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'lstr':
                     if data != '':
-                        edit = QComboBox()
+                        edit = QComboBox(parent=self)
                         edit.setSizeAdjustPolicy(edit.AdjustToContents)
                         for d in data.split('|'):
                             edit.addItem(d)
                         edit.setEditable(False)
                         edit.setCurrentIndex(0)
+                        # noinspection PyUnresolvedReferences
                         edit.currentIndexChanged.connect(self._parameterChanged)
+                        if tooltip is not None: edit.setToolTip(tooltip)
+                        # noinspection PyTypeChecker
                         layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                         self._parameters[parameter] = edit
                 elif vartype == 'lint':
@@ -367,16 +430,19 @@ class SettingsWidget(QWidget):
                         if node.hasAttribute('step'): step = int(node.getAttribute('step'))
                         else: step = None
                         for d in data.split():
-                            edit = QSpinBox()
-                            edit.setFixedWidth(75)
+                            edit = QSpinBox(parent=self)
+                            edit.setFixedWidth(100)
                             if step is not None: edit.setSingleStep(step)
                             if varmin is not None and varmax is not None:
                                 edit.setMinimum(varmin)
                                 edit.setMaximum(varmax)
-                                edit.setToolTip('value range from {} to {}'.format(varmin, varmax))
+                                edit.setToolTip('Value range from {} to {}'.format(varmin, varmax))
                             edit.setValue(int(d))
                             edit.setAlignment(Qt.AlignCenter)
+                            # noinspection PyUnresolvedReferences
                             edit.valueChanged.connect(self._parameterChanged)
+                            if tooltip is not None: edit.setToolTip('{}\n\nValue range from {} to {}'.format(tooltip, varmin, varmax))
+                            else: edit.setToolTip('Value range from {} to {}'.format(varmin, varmax))
                             lyout.addWidget(edit, alignment=Qt.AlignLeft)
                             self._parameters[parameter].append(edit)
                         layout.addLayout(lyout, i, 1, alignment=Qt.AlignLeft)
@@ -391,22 +457,32 @@ class SettingsWidget(QWidget):
                         lyout.setContentsMargins(0, 0, 0, 0)
                         lyout.setSpacing(5)
                         if node.hasAttribute('decimals'): n = int(node.getAttribute('decimals'))
-                        else: n = self.getNumberOfDecimals(varmin)
+                        # else: n = self.getNumberOfDecimals(varmin)
+                        else: n = 1
                         if node.hasAttribute('step'): step = float(node.getAttribute('step'))
-                        else: step = 1 / (10 ** n)
+                        else:
+                            # step = 1 / (10 ** n)
+                            if n > 0: step = 1 / (10 ** n)
+                            else: step = 0.1
                         for d in data.split():
-                            edit = QDoubleSpinBox()
-                            edit.setDecimals(n)
+                            # edit = QDoubleSpinBox(parent=self)
+                            edit = QDoubleSpinBox2(parent=self)
+                            # edit.setDecimals(n)
+                            if n > 0: edit.setDecimals(n)
                             edit.setSingleStep(step)
-                            if n > 5: edit.setFixedWidth(15*n)
-                            else: edit.setFixedWidth(75)
+                            if n > 5: edit.setFixedWidth(20*n)
+                            else: edit.setFixedWidth(100)
                             if varmin is not None and varmax is not None:
                                 edit.setMinimum(varmin)
                                 edit.setMaximum(varmax)
-                                edit.setToolTip('value range from {} to {}'.format(varmin, varmax))
+                                edit.setToolTip('Value range from {} to {}'.format(varmin, varmax))
                             edit.setValue(float(d))
+                            # noinspection PyTypeChecker
                             edit.setAlignment(Qt.AlignCenter)
+                            # noinspection PyUnresolvedReferences
                             edit.valueChanged.connect(self._parameterChanged)
+                            if tooltip is not None: edit.setToolTip('{}\n\nValue range from {} to {}'.format(tooltip, varmin, varmax))
+                            else: edit.setToolTip('Value range from {} to {}'.format(varmin, varmax))
                             lyout.addWidget(edit, alignment=Qt.AlignLeft)
                             self._parameters[parameter].append(edit)
                         layout.addLayout(lyout, i, 1, alignment=Qt.AlignLeft)
@@ -418,89 +494,173 @@ class SettingsWidget(QWidget):
                         lyout.setSpacing(5)
                         for d in data.split():
                             d = (d == 'True')
-                            edit = QComboBox()
-                            edit.setFixedWidth(75)
+                            edit = QComboBox(parent=self)
+                            edit.setFixedWidth(100)
                             edit.addItem('True')
                             edit.addItem('False')
                             if d == 'True': edit.setCurrentIndex(0)
                             else: edit.setCurrentIndex(1)
                             edit.setEditable(False)
+                            # noinspection PyUnresolvedReferences
                             edit.currentIndexChanged.connect(self._parameterChanged)
+                            if tooltip is not None: edit.setToolTip(tooltip)
                             lyout.addWidget(edit, alignment=Qt.AlignLeft)
                             self._parameters[parameter].append(edit)
                         layout.addLayout(lyout, i, 1, alignment=Qt.AlignLeft)
                 elif vartype == 'color':
-                    edit = ColorSelectPushButton()
+                    edit = ColorSelectPushButton(parent=self)
+                    edit.setFixedSize(QSize(size, size))
                     if data == '': data = '1.0 1.0 1.0'  # Default
                     data = data.split()
                     edit.setFloatColor(float(data[0]), float(data[1]), float(data[2]), False)
                     edit.colorChanged.connect(self._parameterChanged)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    # noinspection PyTypeChecker
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
+                elif vartype == 'lut':
+                    edit = ComboBoxLut(parent=self)
+                    if data == '': data = 'gray'  # Default
+                    edit.setCurrentText(data)
+                    # noinspection PyUnresolvedReferences
+                    edit.currentTextChanged.connect(self._parameterChanged)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    # noinspection PyTypeChecker
+                    layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
+                    self._parameters[parameter] = edit
+                # < Revision 15/03/2025
+                elif vartype == 'font':
+                    edit = FontSelect(parent=self)
+                    if data == '': edit.setDefaultFont()
+                    else: edit.setFont(data)
+                    # noinspection PyUnresolvedReferences
+                    edit.fontChanged.connect(self._parameterChanged)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    # noinspection PyTypeChecker
+                    layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
+                    self._parameters[parameter] = edit
+                # Revision 15/03/2025 >
                 elif vartype == 'date':
-                    edit = QDateEdit()
+                    edit = QDateEdit(parent=self)
                     edit.setFixedWidth(100)
                     edit.setAlignment(Qt.AlignCenter)
                     edit.setCalendarPopup(True)
                     try: data = datetime.strptime(data, '%Y-%m-%d').date()
                     except: data = datetime.today().date()
                     edit.setDate(data)
+                    # noinspection PyUnresolvedReferences
                     edit.dateChanged.connect(self._parameterChanged)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    # noinspection PyTypeChecker
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'vol':
-                    edit = FileSelectionWidget()
+                    edit = FileSelectionWidget(parent=self)
                     edit.filterSisypheVolume()
                     edit.setFixedWidth(400)
                     if exists(data): edit.open(data)
                     edit.FieldChanged.connect(self._parameterChanged)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    # noinspection PyTypeChecker
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'roi':
-                    edit = FileSelectionWidget()
+                    edit = FileSelectionWidget(parent=self)
                     edit.filterSisypheROI()
                     edit.setFixedWidth(400)
                     if exists(data): edit.open(data)
                     edit.FieldChanged.connect(self._parameterChanged)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    # noinspection PyTypeChecker
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
+                # < Revision 23/12/2024
+                # add 'dcm' vartype
+                elif vartype == 'dcm':
+                    edit = FileSelectionWidget(parent=self)
+                    edit.filterDICOM()
+                    edit.setFixedWidth(400)
+                    if exists(data): edit.open(data)
+                    edit.FieldChanged.connect(self._parameterChanged)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    # noinspection PyTypeChecker
+                    layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
+                    self._parameters[parameter] = edit
+                # Revision 23/12/2024 >
                 elif vartype == 'dir':
-                    edit = FileSelectionWidget()
+                    edit = FileSelectionWidget(parent=self)
                     edit.filterDirectory()
                     edit.setFixedWidth(400)
                     if exists(data): edit.open(data)
                     edit.FieldChanged.connect(self._parameterChanged)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    # noinspection PyTypeChecker
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'vols':
-                    edit = FilesSelectionWidget()
-                    edit.setTextLabel(lb.text())
+                    edit = FilesSelectionWidget(parent=self)
+                    # edit.setTextLabel(lb.text())
+                    edit.setTextLabel(lb)
                     edit.filterSisypheVolume()
-                    edit.setFixedWidth(400)
+                    edit.setMinimumWidth(400)
+                    # edit.setFixedWidth(400)
                     for d in data.split('|'):
                         if exists(d): edit.add(data)
                     edit.FieldChanged.connect(self._parameterChanged)
-                    layout.addWidget(edit, i, 0, 1, 2, alignment=Qt.AlignLeft)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    layout.addWidget(edit, i, 0, 1, 2)
                     self._parameters[parameter] = edit
                 elif vartype == 'rois':
-                    edit = FilesSelectionWidget()
-                    edit.setTextLabel(lb.text())
+                    edit = FilesSelectionWidget(parent=self)
+                    # edit.setTextLabel(lb.text())
+                    edit.setTextLabel(lb)
                     edit.filterSisypheROI()
-                    edit.setFixedWidth(400)
+                    edit.setMinimumWidth(400)
+                    # edit.setFixedWidth(400)
                     for d in data.split('|'):
                         if exists(d): edit.add(data)
                     edit.FieldChanged.connect(self._parameterChanged)
-                    layout.addWidget(edit, i, 0, 1, 2, alignment=Qt.AlignLeft)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    layout.addWidget(edit, i, 0, 1, 2)
                     self._parameters[parameter] = edit
-                elif vartype == 'dirs':
-                    edit = FilesSelectionWidget()
-                    edit.setTextLabel(lb.text())
-                    edit.filterDirectory()
-                    edit.setFixedWidth(400)
+                # < Revision 23/12/2024
+                # add 'dcms' vartype
+                elif vartype == 'dcms':
+                    edit = FilesSelectionWidget(parent=self)
+                    # edit.setTextLabel(lb.text())
+                    edit.setTextLabel(lb)
+                    edit.filterDICOM()
+                    edit.setMinimumWidth(400)
+                    # edit.setFixedWidth(400)
                     for d in data.split('|'):
                         if exists(d): edit.add(data)
                     edit.FieldChanged.connect(self._parameterChanged)
-                    layout.addWidget(edit, i, 0, 1, 2, alignment=Qt.AlignLeft)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    layout.addWidget(edit, i, 0, 1, 2)
+                    self._parameters[parameter] = edit
+                # Revision 23/12/2024 >
+                elif vartype == 'dirs':
+                    edit = FilesSelectionWidget(parent=self)
+                    # edit.setTextLabel(lb.text())
+                    edit.setTextLabel(lb)
+                    edit.filterDirectory()
+                    edit.setMinimumWidth(400)
+                    # edit.setFixedWidth(400)
+                    for d in data.split('|'):
+                        if exists(d): edit.add(data)
+                    edit.FieldChanged.connect(self._parameterChanged)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    layout.addWidget(edit, i, 0, 1, 2)
+                    self._parameters[parameter] = edit
+                elif vartype == 'txt':
+                    edit = FileSelectionWidget(parent=self)
+                    edit.filterExtension('.txt')
+                    edit.setFixedWidth(400)
+                    if exists(data): edit.open(data)
+                    edit.FieldChanged.connect(self._parameterChanged)
+                    if tooltip is not None: edit.setToolTip(tooltip)
+                    # noinspection PyTypeChecker
+                    layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 else: raise TypeError('Unknown vartype {}'.format(vartype))
                 i += 1
@@ -509,11 +669,17 @@ class SettingsWidget(QWidget):
     # Public methods
 
     def getFontSize(self):
-        return self._font.pointSize()
+        return self.font().pointSize()
 
     def setFontSize(self, v):
-        self._font.setPointSize(v)
-        self.setFont(self._font)
+        self.font().setPointSize(v)
+        self._button.font().setPointSize(v)
+        self._reset.font().setPointSize(v)
+        self._save.font().setPointSize(v)
+        self._load.font().setPointSize(v)
+        self._saveas.font().setPointSize(v)
+        for k in self._parameters:
+            self._parameters[k].font().setPointSize(v)
 
     def toggleSettingsVisibility(self):
         if self._settingsbox.isVisible():
@@ -539,6 +705,7 @@ class SettingsWidget(QWidget):
                 self._load.setVisible(True)
                 self._saveas.setVisible(True)
         QApplication.processEvents()
+        # noinspection PyUnresolvedReferences
         self.VisibilityToggled.emit(self)
 
     def settingsVisibilityOn(self):
@@ -556,6 +723,7 @@ class SettingsWidget(QWidget):
         return self._parameters[parameter]
 
     def getParameterValue(self, parameter):
+        # noinspection PyInconsistentReturns
         if isinstance(self._parameters[parameter], QLineEdit):
             # vartype str
             return self._parameters[parameter].text()
@@ -586,17 +754,25 @@ class SettingsWidget(QWidget):
                 for i in range(self._parameters[parameter].count()):
                     if i != current: d.append(self._parameters[parameter].itemText(i))
                 return d
+        elif isinstance(self._parameters[parameter], ComboBoxLut):
+            # vartype lut
+            return self._parameters[parameter].currentText()
         elif isinstance(self._parameters[parameter], ColorSelectPushButton):
             # vartype color
             return self._parameters[parameter].getFloatColor()
+        # < Revision 15/03/2025
+        elif isinstance(self._parameters[parameter], FontSelect):
+            # vartype font
+            return self._parameters[parameter].getFont()
+        # Revision 15/03/2025 >
         elif isinstance(self._parameters[parameter], QDateEdit):
             # vartype date
             return self._parameters[parameter].date().toString(Qt.ISODate)
         elif isinstance(self._parameters[parameter], FileSelectionWidget):
-            # vartype dir, vol, roi
+            # vartype dir, vol, roi, dcm
             return self._parameters[parameter].getFilename()
         elif isinstance(self._parameters[parameter], FilesSelectionWidget):
-            # vartype dirs, vols, rois
+            # vartype dirs, vols, rois, dcms
             return self._parameters[parameter].getFilenames()
         elif isinstance(self._parameters[parameter], list):
             # vartype lbool
@@ -609,6 +785,62 @@ class SettingsWidget(QWidget):
                 d = list()
                 for p in self._parameters[parameter]: d.append(p.value())
                 return d
+
+    # < Revision 13/02/2025
+    # add setParameterValue method
+    def setParameterValue(self, parameter, v):
+        widget = self.getParameterWidget(parameter)
+        if isinstance(widget, QLineEdit): widget.setText(v)
+        elif isinstance(widget, QSpinBox): widget.setValue(int(v))
+        elif isinstance(widget, QDoubleSpinBox): widget.setValue(float(v))
+        elif isinstance(widget, QSlider): widget.setValue(int(float(v) * 100))
+        elif isinstance(widget, QCheckBox):
+            if isinstance(v, str):
+                if v == 'True': v = True
+                else: v = False
+            widget.setChecked(v)
+        elif isinstance(widget, VisibilityLabel):
+            if isinstance(v, str):
+                if v == 'True': v = True
+                else: v = False
+            widget.setVisibilitySateIcon(v)
+        elif isinstance(widget, QComboBox):
+            if isinstance(v, str): v = v.split('|')
+            if isinstance(v, list): v = v[0]
+            widget.setCurrentText(v)
+        elif isinstance(widget, ComboBoxLut):
+            if isinstance(v, list): v = v[0]
+            widget.setCurrentText(v)
+        elif isinstance(widget, ColorSelectPushButton):
+            if isinstance(v, str): v = [float(i) for i in v.split(' ')]
+            widget.setFloatColor(v[0], v[1], v[2])
+        # < Revision 15/03/2025
+        elif isinstance(widget, FontSelect):
+            # < Revision 16/03/2025
+            # str or QFont type
+            if isinstance(v, QFont): v = v.family()
+            # Revision 16/03/2025 >
+            widget.setFont(v)
+        # Revision 15/03/2025 >
+        elif isinstance(widget, QDateEdit):
+            d = date.fromisoformat(v)
+            widget.setDate(QDate(d.year, d.month, d.day))
+        elif isinstance(widget, FileSelectionWidget): widget.open(v)
+        elif isinstance(widget, FilesSelectionWidget): widget.add(v)
+        elif isinstance(widget, list):
+            # vartype lbool
+            if isinstance(widget[0], QComboBox):
+                if isinstance(v, str): v = v.split(' ')
+                for i in range(len(widget)):
+                    widget[i].setCurrentText(v[i])
+            # vartype lint, lfloat
+            else:
+                if isinstance(v, str):
+                    if isinstance(widget[0], QSpinBox): v = [int(i) for i in v.split(' ')]
+                    elif isinstance(widget[0], QDoubleSpinBox): v = [float(i) for i in v.split(' ')]
+                for i in range(len(widget)):
+                    widget[i].setValue(v[i])
+    # Revision 13/02/2025 >
 
     def setParameterVisibility(self, parameter, v):
         ws = self._parameters[parameter]
@@ -628,6 +860,7 @@ class SettingsWidget(QWidget):
         ws = self._parameters[parameter]
         if isinstance(ws, list):
             if len(ws) > 0: return ws[0].isVisible()
+            else: raise AttributeError('No parameter.')
         else: return self._parameters[parameter].isVisible()
 
     def getParametersList(self):
@@ -638,6 +871,15 @@ class SettingsWidget(QWidget):
         for parameter in self._parameters:
             r[parameter] = self.getParameterValue(parameter)
         return r
+
+    # < Revision 13/02/2025
+    # add setParametersFromDict method
+    def setParametersFromDict(self, d):
+        params = self.getParametersList()
+        for k in list(d.keys()):
+            if k in params:
+                self.setParameterValue(k, d[k])
+    # Revision 13/02/2025 >
 
     def resetSettings(self, filename='', default=False):
         """
@@ -655,6 +897,7 @@ class SettingsWidget(QWidget):
                 vartype = node.getAttribute('vartype')
                 if node.hasChildNodes():
                     child = node.firstChild
+                    # noinspection PyUnresolvedReferences
                     data = child.data
                     if vartype == 'str':
                         self._parameters[parameter].setText(data)
@@ -708,19 +951,19 @@ class SettingsWidget(QWidget):
                     elif vartype == 'vols':
                         self._parameters[parameter].clear()
                         for d in data.split('|'):
-                            if exists(d): self._parameters[parameter].add(d)
+                            if exists(d): self._parameters[parameter].addBundle(d)
                     elif vartype == 'rois':
                         self._parameters[parameter].clear()
                         for d in data.split('|'):
-                            if exists(d): self._parameters[parameter].add(d)
+                            if exists(d): self._parameters[parameter].addBundle(d)
                     elif vartype == 'dirs':
                         self._parameters[parameter].clear()
                         for d in data.split('|'):
-                            if exists(d): self._parameters[parameter].add(d)
+                            if exists(d): self._parameters[parameter].addBundle(d)
                 elif vartype in ('str', 'dir', 'vol', 'roi', 'date'):
                     self._parameters[parameter].setText('')
                 QApplication.processEvents()
-                #self._parameters[parameter].repaint()
+                # self._parameters[parameter].repaint()
 
     def saveSettings(self):
         xml = self.classSisypheSettings()
@@ -732,6 +975,7 @@ class SettingsWidget(QWidget):
         filename = QFileDialog().getSaveFileName(self, 'Save custom settings file', getcwd(), 'XML (*.xml)')
         filename = filename[0]
         if filename:
+            chdir(dirname(filename))
             xml = self.classSisypheSettings()
             for parameter in self._parameters.keys():
                 xml.setFieldValue(self._function, parameter, self.getParameterValue(parameter))
@@ -740,7 +984,9 @@ class SettingsWidget(QWidget):
     def loadSettings(self):
         filename = QFileDialog.getOpenFileName(self, 'Load custom settings file', getcwd(), 'XML (*.xml)')
         filename = filename[0]
-        if filename: self.resetSettings(filename)
+        if filename:
+            chdir(dirname(filename))
+            self.resetSettings(filename)
 
     def setSettingsButtonText(self, txt):
         if isinstance(txt, str):
@@ -801,27 +1047,19 @@ class SettingsWidget(QWidget):
 
 class FunctionSettingsWidget(SettingsWidget):
     """
-        FunctionSettingsWidget class
+    FunctionSettingsWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Widget to manage application function settings from XML file (functions.xml).
+    Widget to manage application function settings from XML file (functions.xml).
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> SettingsWidget -> FunctionSettingsWidget
+    QWidget -> SettingsWidget -> FunctionSettingsWidget
 
-        Private attributes
-
-        Qt Signals
-
-            ParameterChanged.emit(QWidget)
-            VisibilityToggled.emit(QWidget)
-
-        Public methods
-
-            inherited SettingsWidget
-            inherited QWidget methods
+    Creation: 11/08/2022
     """
 
     classSisypheSettings = SisypheFunctionsSettings
@@ -829,40 +1067,19 @@ class FunctionSettingsWidget(SettingsWidget):
 
 class DialogSettingsWidget(SettingsWidget):
     """
-        DialogSettingsWidget class
+    DialogSettingsWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Widget to manage dialog window from XML file (functions.xml).
+    Widget to manage dialog window from XML file (functions.xml).
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> SettingsWidget -> DialogSettingsWidget
+    QWidget -> SettingsWidget -> DialogSettingsWidget
 
-        Private attributes
-
-        Qt Signals
-
-            ParameterChanged.emit(QWidget)
-            VisibilityToggled.emit(QWidget)
-
-        Public methods
-
-            inherited SettingsWidget
-            inherited QWidget methods
+    Creation: 11/08/2022
     """
 
     classSisypheSettings = SisypheDialogsSettings
-
-
-if __name__ == '__main__':
-
-    from sys import argv, exit
-
-    app = QApplication(argv)
-    main = FunctionSettingsWidget('N4BiasFieldCorrectionImageFilter')
-    main.setSettingsButtonFunctionText()
-    main.activateWindow()
-    main.show()
-    app.exec_()
-    exit()

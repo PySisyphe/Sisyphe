@@ -1,18 +1,20 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        Matplotlib      https://matplotlib.org/                                     Plotting library
-        Numpy           https://numpy.org/                                          Scientific computing
-        pandas          https://pandas.pydata.org/                                  Data analysis and manipulation tool
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - Matplotlib, Graph tool, https://matplotlib.org/
+    - Numpy, Scientific computing, https://numpy.org/
+    - pandas, data analysis and manipulation tool, https://pandas.pydata.org/
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
 from os import getcwd
+from os import chdir
 from os import remove
+
 from os.path import join
 from os.path import exists
+from os.path import dirname
 from os.path import splitext
 
 from matplotlib.figure import Figure
@@ -39,21 +41,22 @@ from PyQt5.QtWidgets import QTreeWidget
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QItemDelegate
 from PyQt5.QtWidgets import QTreeWidgetItem
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheSheet import SisypheSheet
 from Sisyphe.gui.dialogFromXml import DialogFromXml
+from Sisyphe.widgets.basicWidgets import messageBox
 
 __all__ = ['SheetWidget',
            'SheetStatisticsWidget',
            'SheetChartWidget']
 
 """
-    Class hierarchy
+Class hierarchy
+~~~~~~~~~~~~~~~
 
-        QWidget -> SheetWidget
-                -> SheetStatisticsWidget -> SheetChartWidget              
+    - QWidget -> SheetWidget
+              -> SheetStatisticsWidget -> SheetChartWidget              
 """
 
 class SheetWidgetEditingDelegate(QItemDelegate):
@@ -68,9 +71,9 @@ class SheetWidgetEditingDelegate(QItemDelegate):
     def setModelData(self, editor, model, index):
         fmt = '{' + ':.{}f'.format(self._decimals) + '}'
 
-        def floatToStr(v):
-            try: return fmt.format(v)
-            except: return v
+        def floatToStr(vf):
+            try: return fmt.format(vf)
+            except: return vf
 
         if self._sheet is not None:
             r = list(self._sheet.index)[index.row()]
@@ -101,47 +104,17 @@ class SheetWidgetEditingDelegate(QItemDelegate):
 
 class SheetWidget(QWidget):
     """
-        SheetWidget class
+    SheetWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Widget to display SisypheSheet
+    Widget to display SisypheSheet
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> SheetWidget
-
-        Private attributes
-
-            _sheet      SisypheSheet
-            _decimals   int
-
-        Custom Qt Signals
-
-            SheetChanged
-
-        Public methods
-
-            bool = isEmpty()
-            setDecimals(int)
-            setDict(dict, orient=str)
-            setSheet(SisypheSheet)
-            SisypheSheet = getSheet()
-            clearSheet()
-            QTabWidget = getTab()
-            setTitle(str)
-            load(str)
-            save(str)
-            copyToClipboard()
-            getStatistics()
-            matplotlib.axes.Axes = getChart()
-            setButtonsVisibility(bool)
-            bool = getButtonsVisibility()
-            showButtons()
-            hideButtons()
-            QLayout = getButtonsLayout()
-
-            inherited QWidget methods
+    QWidget -> SheetWidget
     """
 
     # Custom Qt Signal
@@ -149,6 +122,13 @@ class SheetWidget(QWidget):
     SheetChanged = pyqtSignal()
 
     # Special method
+
+    """
+    Private attributes
+
+    _sheet      SisypheSheet
+    _decimals   int
+    """
 
     def __init__(self, sheet=None, title='', parent=None):
         super().__init__(parent)
@@ -183,8 +163,11 @@ class SheetWidget(QWidget):
         self._save.setToolTip('save datasheet to XSHEET, CSV, JSON, LATEX, MATFILE, TXT or XLSX format')
         self._copy = QPushButton('Copy')
         self._copy.setToolTip('Copy sheet to clipboard')
+        # noinspection PyUnresolvedReferences
         self._load.clicked.connect(lambda dummy: self.load())
+        # noinspection PyUnresolvedReferences
         self._save.clicked.connect(lambda dummy: self.save())
+        # noinspection PyUnresolvedReferences
         self._copy.clicked.connect(self.copyToClipboard)
 
         self._btlyout = QHBoxLayout()
@@ -228,6 +211,7 @@ class SheetWidget(QWidget):
                 self._tree.addTopLevelItem(item)
             self._delegate.setSheet(self._sheet)
             self._delegate.setDecimals(self._decimals)
+            # noinspection PyUnresolvedReferences
             self.SheetChanged.emit()
 
     # Public methods
@@ -319,6 +303,7 @@ class SheetWidget(QWidget):
                                                        initialFilter='XSHEET (*.xsheet)')[0]
                 QApplication.processEvents()
             if filename != '':
+                chdir(dirname(filename))
                 ext = splitext(filename)[1].lower()
                 if ext == '.xsheet': self._sheet = self._sheet.load(filename)
                 elif ext == '.csv': self._sheet = self._sheet.loadCSV(filename)
@@ -338,6 +323,7 @@ class SheetWidget(QWidget):
                                                            initialFilter='XSHEET (*.xsheet)')[0]
                     QApplication.processEvents()
             if filename != '':
+                chdir(dirname(filename))
                 ext = splitext(filename)[1]
                 if ext == '.xsheet': self._sheet.save(filename)
                 elif ext == '.csv': self._sheet.saveCSV(filename)
@@ -403,36 +389,33 @@ class SheetWidget(QWidget):
 
 class SheetStatisticsWidget(QWidget):
     """
-        SheetStatisticsWidget class
+    SheetStatisticsWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Widget to display SisypheSheet, gives descriptive statistics of the sheet
+    Widget to display SisypheSheet, gives descriptive statistics of the sheet
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> SheetStatisticsWidget
-
-        Private attributes
-
-            _sheet      SheetWidget
-            _stats      SheetWidget
-
-        Public methods
-
-            setSheet(SisypheSheet, title=str)
-            clearSheet()
-
-            inherited SheetWidget methods
-            inherited QWidget methods
+    QWidget -> SheetStatisticsWidget
     """
 
     # Special method
+
+    """
+    Private attributes
+
+    _sheet      SheetWidget
+    _stats      SheetWidget
+    """
 
     def __init__(self, sheet=None, title='Datasheet', parent=None):
         super().__init__(parent)
 
         self._sheet = SheetWidget(title=title)
+        # noinspection PyUnresolvedReferences
         self._sheet.SheetChanged.connect(self._updateStatistics)
         self._stats = SheetWidget(title='Statistics')
 
@@ -479,24 +462,17 @@ class SheetStatisticsWidget(QWidget):
 
 class SheetChartWidget(SheetStatisticsWidget):
     """
-        SheetStatisticsWidget class
+    SheetStatisticsWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-           SheetStatisticsWidget with chart display
+    SheetStatisticsWidget with chart display
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> SheetStatisticsWidget -> SheetChartWidget
-
-        Private attributes
-
-        Public methods
-
-
-            inherited SheetStatisticsWidget methods
-            inherited SheetWidget methods
-            inherited QWidget methods
+    QWidget -> SheetStatisticsWidget -> SheetChartWidget
     """
 
     # Special method
@@ -513,6 +489,10 @@ class SheetChartWidget(SheetStatisticsWidget):
         btlayout = self._sheet.getButtonsLayout()
         self._chart = QPushButton('Draw chart')
         self._chartmenu = QMenu()
+        self._chartmenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        self._chartmenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._chartmenu.setAttribute(Qt.WA_TranslucentBackground, True)
+        # noinspection PyUnresolvedReferences
         self._chartmenu.triggered.connect(self._drawChart)
         self._chartmenu.addAction('Lines')
         self._chartmenu.addAction('Vertical bars')
@@ -524,14 +504,17 @@ class SheetChartWidget(SheetStatisticsWidget):
 
         self._properties = QPushButton('Properties')
         self._properties.setToolTip('Edit chart properties')
+        # noinspection PyUnresolvedReferences
         self._properties.clicked.connect(self.properties)
 
         self._savechart = QPushButton('Save chart')
         self._savechart.setToolTip('Save chart to BMP, JPG, PNG, TIFF or SVG format')
+        # noinspection PyUnresolvedReferences
         self._savechart.clicked.connect(lambda dummy: self.saveChart())
 
         self._clipboardchart = QPushButton('Copy chart')
         self._clipboardchart.setToolTip('Copy chart to clipboard')
+        # noinspection PyUnresolvedReferences
         self._clipboardchart.clicked.connect(self.copyChartToClipboard)
 
         btlayout.addWidget(self._chart)
@@ -598,8 +581,9 @@ class SheetChartWidget(SheetStatisticsWidget):
                                                            initialFilter='JPG (*.jpg)')[0]
                     QApplication.processEvents()
             if filename != '':
+                chdir(dirname(filename))
                 try: self._fig.savefig(filename)
-                except Exception as err: QMessageBox.warning(self, 'Save chart', '{}'.format(err))
+                except Exception as err: messageBox(self, 'Save chart', text='{}'.format(err))
 
     def copyChartToClipboard(self):
         tmp = join(getcwd(), 'tmp.png')
@@ -608,33 +592,6 @@ class SheetChartWidget(SheetStatisticsWidget):
             img = QPixmap(tmp)
             QApplication.clipboard().setPixmap(img)
         except Exception as err:
-            QMessageBox.warning(self, 'Copy chart to clipboard', 'error: {}'.format(err))
+            messageBox(self, 'Copy chart to clipboard', text='error: {}'.format(err))
         finally:
             if exists(tmp): remove(tmp)
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv, exit
-
-    app = QApplication(argv)
-    main = SheetChartWidget()
-    main.setDecimals(1)
-    main.setEditable(True)
-    main.newSheet(cols=5, rows=5, cnames=['one', 'two', 'three', 'four', 'five'], rnames=['a', 'b', 'c', 'd', 'e'])
-    main.show()
-    app.exec_()
-    exit()
-
-
-
-
-
-
-
-
-

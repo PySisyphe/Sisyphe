@@ -1,11 +1,10 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        Numpy           https://numpy.org/                                          Scientific computing
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
-        vtk             https://vtk.org/                                            Visualization
+    - Numpy, scientific computing, https://numpy.org/
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - vtk, visualization engine/3D rendering, https://vtk.org/
 """
 
 from math import pow
@@ -13,12 +12,12 @@ from math import sqrt
 
 from numpy import ndarray
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QActionGroup
-from PyQt5.QtWidgets import QApplication
 
 from vtk import vtkPlane
 from vtk import vtkCamera
@@ -26,97 +25,39 @@ from vtk import vtkImageSlice
 from vtk import vtkImageResliceMapper
 
 from Sisyphe.core.sisypheTransform import SisypheTransform
-from Sisyphe.widgets.toolWidgets import HandleWidget
-from Sisyphe.widgets.toolWidgets import LineWidget
+from Sisyphe.core.sisypheTools import HandleWidget
+from Sisyphe.core.sisypheTools import LineWidget
 from Sisyphe.widgets.sliceViewWidgets import SliceOverlayViewWidget
 
-"""
-    Class hierarchy
 
-        QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> SliceTrajectoryViewWidget
-        
-    Description
+"""
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    - QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> SliceTrajectoryViewWidget
     
-        Derived from SliceOverlayViewWidget. Adds interactive management of target and trajectory widgets. 
+Description
+~~~~~~~~~~~
+
+Derived from SliceOverlayViewWidget. Adds interactive management of target and trajectory widgets. 
 """
 
 
 class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
     """
-        SliceTrajectoryViewWidget class
+    SliceTrajectoryViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Add target management and camera trajectory alignment
+    Add target management and camera trajectory alignment to SliceOverlayViewWidget.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceTrajectoryViewWidget
+    QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> SliceTrajectoryViewWidget
 
-        Private attributes
-
-            _target     [float, float, float], current target
-
-        Custom Qt signals
-
-            TrajectoryCameraAligned.emit(QWidget)
-            TrajectoryToolAligned.emit(QWidget, str)
-            TrajectoryVectorAligned.emit(QWidget, float, float, float)
-            TrajectoryDefaultAligned.emit(QWidget)
-            SlabChanged.emit(QWidget, float, str)
-            StepChanged.emit(QWidget, float)
-
-        Public Qt event synchronisation methods
-
-            synchroniseTrajectoryToolAligned(QWidget, str)
-            synchroniseTrajectoryVectorAligned(QWidget, float, float, float)
-            synchroniseTrajectoryDefaultAligned(QWidget)
-            synchroniseToolMoved(QWidget, NamedWidget)
-            synchroniseSlabChanged(QWidget, float, str)
-            synchroniseStepChanged(QWidget, float)
-
-        Public methods
-
-            QMenu = getPopupAlignment()
-            popupAlignmentEnabled()
-            popupAlignmentDisabled()
-            setSliceStep(float)
-            float = getSliceStep()
-            bool = hasTarget()
-            HandleWidget | LineWidget = getTarget()
-            [float, float, float] = getTargetPosition()
-            setTarget(int | str | HandleWidget | LineWidget)
-            float = getDistanceFromCurrentSliceToTarget()
-            setTrajectoryFromCamera(vtkCamera)
-            setTrajectoryFromLineWidget(LineWidget)
-            setTrajectoryFromNormalVector(list or numpy array)
-            setTrajectoryToDefault()
-            [float, float, float] = getTrajectory()
-            setCursorFromDisplayPosition(int, int)
-            bool = isCameraAligned()
-            bool = isToolAligned()
-            bool = isDefaultAligned()
-            setSlabThickness(float)
-            float = getSlabThickness()
-            setSlabType(str)
-            setSlabTypeToMin()
-            setSlabTypeToMax()
-            setSlabTypeToMean()
-            setSlabTypeToSum()
-            str = getSlabType()
-
-            inherited SliceViewWidget methods
-            inherited AbstractViewWidget methods
-            inherited QWidget methods
-
-        Revisions:
-
-            20/09/2023  _setCameraFocalDepth() method, tool and cursor display bugfix
-            23/09/2023  _updateCameraOrientation() method, camera orientation bugfix
-            02/10/2023  add slab management methods
-            10/10/2023  _updateCameraOrientation() method bugfix, set opposite azimuth and elevation angles
-            11/10/2023  add setTrajectoryFromACPC() method
-                        add synchroniseTrajectoryACPCAligned() method
+    Last revision: 11/10/2023
     """
     # Custom Qt signals
 
@@ -130,8 +71,14 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
 
     # Special method
 
-    def __init__(self, overlays=None, parent=None):
-        super().__init__(overlays, parent)
+    """
+    Private attributes
+
+    _target     List[float, float, float], current target
+    """
+
+    def __init__(self, overlays=None, meshes=None, parent=None):
+        super().__init__(overlays, meshes, parent)
 
         self._camera0 = None
         self._step = 1.0
@@ -143,6 +90,11 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         self._action['sagittal'].setText('Third orientation')
 
         self._menuAlign = QMenu('Alignment', self._popup)
+        # noinspection PyTypeChecker
+        self._menuAlign.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._menuAlign.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._menuAlign.setAttribute(Qt.WA_TranslucentBackground, True)
         self._menuAlignGroup = None
         self._popup.insertMenu(self._popup.actions()[6], self._menuAlign)
         self._updateToolMenu()
@@ -156,6 +108,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         mapper.SliceFacesCameraOn()
         mapper.SetInputData(volume.getVTKImage())
         slc = vtkImageSlice()
+        # noinspection PyTypeChecker
         slc.SetMapper(mapper)
         prop = slc.GetProperty()
         prop.SetInterpolationTypeToLinear()
@@ -171,6 +124,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             self._cursorpos = p
             plane = vtkPlane()
             plane.SetOrigin(p[0], p[1], p[2])  # Plane center on cursor coordinates
+            # noinspection PyArgumentList
             plane.SetNormal(self.getVtkPlane().GetNormal())  # Plane normal from camera
             plane.Push(-0.1)
             r = [0, 0, 0]
@@ -195,6 +149,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                 p = self.getCursorWorldPosition()
                 plane = vtkPlane()
                 plane.SetOrigin(f[0], f[1], f[2])
+                # noinspection PyArgumentList
                 plane.SetNormal(camera.GetViewPlaneNormal())
                 r = [0, 0, 0]
                 plane.ProjectPoint(p, r)
@@ -210,6 +165,13 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             for tool in self._tools:
                 if isinstance(tool, (HandleWidget, LineWidget)):
                     tool.updateContourActor(self.getVtkPlane())
+        # Isolines display
+        if self._isoindex > -1:
+            self._updateIsoLines()
+        # Mesh display
+        if self._meshes is not None:
+            self._updateMeshes()
+        # Update info
         self._updateBottomRightInfo()
 
     def _updateCameraClipping(self):
@@ -269,6 +231,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         t.setCheckable(True)
         if checked is None: t.setChecked(True)
         else: t.setChecked(t.text() == checked)
+        # noinspection PyUnresolvedReferences
         t.triggered.connect(lambda: self.setTrajectoryToDefault(signal=True))
         self._menuAlign.addAction(t)
         # 3D view Camera axis alignment
@@ -276,6 +239,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         self._menuAlignGroup.addAction(t)
         t.setCheckable(True)
         t.setChecked(t.text() == checked)
+        # noinspection PyUnresolvedReferences
         t.triggered.connect(lambda state, x=self: self.TrajectoryCameraAligned.emit(x))
         self._menuAlign.addAction(t)
         # AC PC alignment
@@ -284,6 +248,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             self._menuAlignGroup.addAction(t)
             t.setCheckable(True)
             t.setChecked(t.text() == checked)
+            # noinspection PyUnresolvedReferences
             t.triggered.connect(lambda state: self.setTrajectoryFromACPC(signal=True))
             self._menuAlign.addAction(t)
         # Tool alignment
@@ -294,6 +259,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                     self._menuAlignGroup.addAction(t)
                     t.setCheckable(True)
                     t.setChecked(t.text() == checked)
+                    # noinspection PyUnresolvedReferences
                     t.triggered.connect(lambda state, x=tool.getName():
                                         self.setTrajectoryFromLineWidget(x, signal=True))
                     self._menuAlign.addAction(t)
@@ -336,8 +302,9 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
     def synchroniseToolMoved(self, obj, tool):
         super().synchroniseToolMoved(obj, tool)
         name = self._menuAlignGroup.checkedAction().text()
-        if name not in ('Default axis alignment', 'Camera axis alignment'):
-            self.setTrajectoryFromLineWidget(name, signal=False)
+        if name[:4] == 'Tool':
+            toolname = name.split(' ')[1]
+            self.setTrajectoryFromLineWidget(toolname, signal=False)
 
     def synchroniseSlabChanged(self, obj, thickness, slabtype):
         if obj != self:
@@ -354,6 +321,18 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         super().setVolume(volume)
         self._updateToolMenu()
 
+    # < Revision 18/10/2024
+    # add replaceVolume method
+    def replaceVolume(self, volume):
+        # Copy previous display properties
+        slabttype = self.getSlabType()
+        slabThickness = self.getSlabThickness()
+        super().replaceVolume(volume)
+        # Restore display properties
+        self.setSlabType(slabttype, signal=False)
+        self.setSlabThickness(slabThickness, signal=False)
+    # Revision 18/10/2024
+
     def getPopupAlignment(self):
         return self._menuAlign
 
@@ -367,7 +346,9 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         if isinstance(v, float):
             if 0.5 <= v <= 10.0:
                 self._step = v
-                if signal: self.StepChanged.emit(self, v)
+                if signal:
+                    # noinspection PyUnresolvedReferences
+                    self.StepChanged.emit(self, v)
             else: raise ValueError('parameter value {} is not between 0.5 and 10.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
@@ -385,6 +366,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             if isinstance(self._target, HandleWidget): return self._target.getPosition()
             elif isinstance(self._target, LineWidget): return self._target.getPosition2()
             else: return None
+        else: raise AttributeError('_target attribute is None.')
 
     def setTarget(self, key, signal=True):
         if isinstance(key, HandleWidget | LineWidget): key = key.getName()
@@ -421,6 +403,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             elif isinstance(self._target, LineWidget):
                 d = self._target.getDistancesToPlane(self)
                 return [d[1], d[0]]
+            else: raise TypeError('Invalid _target attribute type {}'.format(type(self._target)))
         else: return None
 
     def setTrajectoryFromCamera(self, t, signal=True):
@@ -432,7 +415,11 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             self._updateCameraClipping()
             self._updateCheckedAction('3D view camera alignment')
             self._target = None
-            if signal: self.TrajectoryCameraAligned.emit()
+            if self._isoindex > -1: self._updateIsoLines()
+            if self._meshes is not None: self._updateMeshes()
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.TrajectoryCameraAligned.emit()
         else: raise TypeError('parameter type {} is not vtkCamera.'.format(type(t)))
 
     def setTrajectoryFromLineWidget(self, name, signal=True):
@@ -464,15 +451,21 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             self.setCursorWorldPosition(p2[0], p2[1], p2[2], signal=False)
             self._target = tool
             self._updateCheckedAction('Tool {} alignment'.format(name))
-            if signal: self.TrajectoryToolAligned.emit(self, name)
+            if self._isoindex > -1: self._updateIsoLines()
+            if self._meshes is not None: self._updateMeshes()
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.TrajectoryToolAligned.emit(self, name)
         else: raise TypeError('parameter type {} is not LineWidget.'.format(type(tool)))
 
     def setTrajectoryFromNormalVector(self, t, signal=True):
         if isinstance(t, ndarray): t = t.tolist()
         if isinstance(t, list):
             plane = vtkPlane()
+            # noinspection PyArgumentList
             plane.SetNormal(t)
             c = self._volume.getCenter()
+            # noinspection PyArgumentList
             plane.SetOrigin(c)
             camera = self._renderer.GetActiveCamera()
             camera.SetFocalPoint(c)
@@ -482,7 +475,11 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             camera.SetPosition(p)
             self._camera0 = p
             self._updateCameraOrientation()
-            if signal: self.TrajectoryVectorAligned.emit(self, t[0], t[1], t[2])
+            if self._isoindex > -1: self._updateIsoLines()
+            if self._meshes is not None: self._updateMeshes()
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.TrajectoryVectorAligned.emit(self, t[0], t[1], t[2])
         else: raise TypeError('parameter type {} is not list or numpy array.'.format(type(t)))
 
     def setTrajectoryFromACPC(self, signal=True):
@@ -542,14 +539,22 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                 self._scale = camera.GetParallelScale()
                 p = list(camera.GetFocalPoint())
                 self._cursor.SetPosition(p)
+            if self._isoindex > -1: self._updateIsoLines()
+            if self._meshes is not None: self._updateMeshes()
             self._renderwindow.Render()
-            if signal: self.TrajectoryACPCAligned.emit(self)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.TrajectoryACPCAligned.emit(self)
 
     def setTrajectoryToDefault(self, signal=True):
         super()._updateCameraOrientation()
         self._target = None
         self._updateCheckedAction('Default alignment')
-        if signal: self.TrajectoryDefaultAligned.emit(self)
+        if self._isoindex > -1: self._updateIsoLines()
+        if self._meshes is not None: self._updateMeshes()
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.TrajectoryDefaultAligned.emit(self)
 
     def getTrajectory(self):
         camera = self._renderer.GetActiveCamera()
@@ -573,7 +578,9 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             mapper.SetSlabThickness(v)
             mapper.SetAutoAdjustImageQuality(v > 0.0)
             self.updateRender()
-            if signal: self.SlabChanged.emit(self, v, self.getSlabType())
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.SlabChanged.emit(self, v, self.getSlabType())
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
     def getSlabThickness(self):
@@ -585,23 +592,33 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             elif v == 'Max': self._volumeslice.GetMapper().SetSlabTypeToMax()
             elif v == 'Mean': self._volumeslice.GetMapper().SetSlabTypeToMean()
             else: self._volumeslice.GetMapper().SetSlabTypeToSum()
-            if signal: self.SlabChanged.emit(self, self.getSlabThickness(), v)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.SlabChanged.emit(self, self.getSlabThickness(), v)
 
     def setSlabTypeToMin(self, signal=True):
         self._volumeslice.GetMapper().SetSlabTypeToMin()
-        if signal: self.SlabChanged.emit(self, self.getSlabThickness(), 'Min')
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.SlabChanged.emit(self, self.getSlabThickness(), 'Min')
 
     def setSlabTypeToMax(self, signal=True):
         self._volumeslice.GetMapper().SetSlabTypeToMax()
-        if signal: self.SlabChanged.emit(self, self.getSlabThickness(), 'Max')
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.SlabChanged.emit(self, self.getSlabThickness(), 'Max')
 
     def setSlabTypeToMean(self, signal=True):
         self._volumeslice.GetMapper().SetSlabTypeToMean()
-        if signal: self.SlabChanged.emit(self, self.getSlabThickness(), 'Mean')
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.SlabChanged.emit(self, self.getSlabThickness(), 'Mean')
 
     def setSlabTypeToSum(self, signal=True):
         self._volumeslice.GetMapper().SetSlabTypeToSum()
-        if signal: self.SlabChanged.emit(self, self.getSlabThickness(), 'Sum')
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.SlabChanged.emit(self, self.getSlabThickness(), 'Sum')
 
     def getSlabType(self):
         return self._volumeslice.GetMapper().GetSlabTypeAsString()
@@ -613,7 +630,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             interactorstyle = self._window.GetInteractorStyle()
             last = interactorstyle.GetLastPos()
             k = self._interactor.GetKeySym()
-            # Zoom, Control Key (Cmd key on mac)
+            # Zoom, Control Key (Cmd key on Mac)
             if k == 'Control_L' or self.getZoomFlag() is True:
                 if interactorstyle.GetButton() == 1:
                     # Zoom
@@ -683,42 +700,3 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                     name = widget.getName()
                     if name == a.text():
                         self.setTrajectoryFromLineWidget(name)
-
-if __name__ == '__main__':
-
-    from sys import argv, exit
-    from PyQt5.QtWidgets import QWidget, QHBoxLayout
-    from Sisyphe.core.sisypheVolume import SisypheVolume
-
-    app = QApplication(argv)
-    main = QWidget()
-    layout = QHBoxLayout(main)
-    # SliceTrajectoryViewWidget
-    print('Test SliceTrajectoryViewWidget')
-    file1 = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/anat.xvol'
-    file2 = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/overlay.xvol'
-    img1 = SisypheVolume()
-    img2 = SisypheVolume()
-    img1.load(file1)
-    img2.load(file2)
-    img2.display.getLUT().setLutToRainbow()
-    img2.display.getLUT().setDisplayBelowRangeColorOn()
-    view = SliceTrajectoryViewWidget()
-    view.setVolume(img1)
-    view.synchronisationOn()
-    view.addOverlay(img2)
-    view.setOverlayOpacity(0, 0.25)
-    view.setTrajectoryFromNormalVector([0, 0.4472135954999579, 0.8944271909999159])
-    view.setCentralCrossOpacity(0.5)
-    view.setOrientationMarker('cube')
-    view.setOrientationMarkerVisibilityOn()
-    view.setCursorVisibilityOff()
-    view.setColorbarPosition('left')
-    view.setColorbarVisibilityOff()
-    view.setInfoVisibilityOn()
-    layout.addWidget(view)
-    layout.setSpacing(0)
-    layout.setContentsMargins(0, 0, 0, 0)
-    main.show()
-    main.activateWindow()
-    exit(app.exec_())

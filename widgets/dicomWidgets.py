@@ -1,11 +1,10 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        Numpy           https://numpy.org/                                          Scientific computing
-        pydicom         https://pydicom.github.io/pydicom/stable/                   DICOM library
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - Numpy, scientific computing, https://numpy.org/
+    - pydicom, DICOM library, https://pydicom.github.io/pydicom/stable/
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
 from os import getcwd
@@ -14,11 +13,7 @@ from os import chdir
 from os.path import dirname
 from os.path import join
 from os.path import exists
-from os.path import split
-from os.path import splitext
-from os.path import abspath
 from os.path import isfile
-from os.path import sep
 from os.path import basename
 
 from glob import glob
@@ -33,7 +28,10 @@ from numpy import iinfo
 
 from pydicom.tag import Tag
 from pydicom.tag import BaseTag
-from pydicom.dicomio import read_file
+# < Revision 07/03/2025
+# from pydicom.dicomio import read_file
+# Revision 07/03/2025 >
+from pydicom import dcmread as read_file
 from pydicom.dataset import DataElement
 from pydicom.dataset import Dataset
 from pydicom.dataset import FileDataset
@@ -60,7 +58,6 @@ from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheImageIO import isDicom
@@ -69,32 +66,31 @@ from Sisyphe.core.sisypheDicom import XmlDicom
 from Sisyphe.core.sisypheDicom import getDicomModalities
 from Sisyphe.core.sisypheDicom import getDicomRTModalities
 from Sisyphe.core.sisypheDicom import getDicomImageModalities
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import MenuPushButton
 from Sisyphe.gui.dialogWait import DialogWait
 
-
 """
-    Function
+Function
+~~~~~~~~
     
-        dicomDateToStr    
+    - dicomDateToStr 
+
+Classes hierarchy
+~~~~~~~~~~~~~~~~~
+    
+    - QLineEdit -> DicomVRLineEdit
+    - QTreeView -> DicomHeaderTreeViewWidget
+                -> XmlDicomTreeViewWidget
+    - QComboBox -> DicomComboBoxWidget
+    - QTreeWidget -> DicomFilesTreeWidget
+    - QWidgets -> DicomFilesEnhancedTreeWidget
 """
 
 
 def dicomDateToStr(date, separator='/'):
     if date == '': return date
     else: return separator.join([date[:4], date[4:6], date[6:]])
-
-
-"""
-    Classes hierarchy
-    
-        QLineEdit -> DicomVRLineEdit
-        QTreeView -> DicomHeaderTreeViewWidget
-                  -> XmlDicomTreeViewWidget
-        QComboBox -> DicomComboBoxWidget
-        QTreeWidget -> DicomFilesTreeWidget
-        QWidgets -> DicomFilesEnhancedTreeWidget
-"""
 
 
 class DateValidator(QValidator):
@@ -219,15 +215,18 @@ class LineEditDelegate(QStyledItemDelegate):
 
     def createEditor(self, parent, option, index):
         index0 = index.model().index(index.row(), 0)
+        # noinspection PyUnresolvedReferences
         item0 = index.model().itemFromIndex(index0)
         de = self._dataset[item0.data()]
         return DicomVRLineEdit(de, parent)
 
     def setEditorData(self, editor, index):
+        # noinspection PyUnresolvedReferences
         editor.setText(index.model().itemFromIndex(index).text())
 
     def setModelData(self, editor, model, index):
         index0 = model.index(index.row(), 0)
+        # noinspection PyUnresolvedReferences
         item0 = model.itemFromIndex(index0)
         de = self._dataset[item0.data()]
         if de.VR in ['FL', 'FD']:
@@ -247,35 +246,41 @@ class LineEditDelegate(QStyledItemDelegate):
                 de.value = editor.text()
             else:
                 de.value = editor.text().split(' ')
+        # noinspection PyUnresolvedReferences
         model.itemFromIndex(index).setText(editor.text())
+        # noinspection PyUnresolvedReferences
         model.itemFromIndex(index).setData(1, 3)  # 0 not edited, 1 edited set in key.data()
 
 
 class DicomVRLineEdit(QLineEdit):
     """
-        DicomVRLineEdit
-        QLineEdit to edit DICOM DataElement value
+    DicomVRLineEdit
 
-        Inheritance
+    Description
+    ~~~~~~~~~~~
 
-            QLineEdit -> DicomVRLineEdit
+    QLineEdit to edit DICOM DataElement value.
 
-        Private attributes
+    Inheritance
+    ~~~~~~~~~~~
 
-            _de     pydicom.DataElement
-
-        Public methods
-
-            inherited QLineEdit methods
+    QLineEdit -> DicomVRLineEdit
     """
 
     # Special method
+
+    """
+    Private attributes
+
+    _de     pydicom.DataElement
+    """
 
     def __init__(self, de=None, parent=None):
         super(DicomVRLineEdit, self).__init__(parent)
         if isinstance(de, DataElement):
             if de.VR in self._INITVR:
                 self._de = de
+                # noinspection PyArgumentList
                 self._INITVR[self._de.VR](self)
             self.setText(str(de.value))
         else:
@@ -410,46 +415,17 @@ class DicomVRLineEdit(QLineEdit):
 
 class DicomHeaderTreeViewWidget(QTreeView):
     """
-        DicomHeaderTreeViewWidget class
-        QTreeView to display tags and values of a DICOM file.
+    DicomHeaderTreeViewWidget class
 
-        Inheritance
+    Description
+    ~~~~~~~~~~~
 
-            QTreeView -> DicomHeaderTreeViewWidget
+    QTreeView to display tags and values of a DICOM file.
 
-        Private attributes
+    Inheritance
+    ~~~~~~~~~~~
 
-            _tag        bool, display tag column
-            _name       bool, display tag name column
-            _vr         bool, display VR column
-            _vm         bool, display VM column
-            _value      bool, display value column
-            _private    bool, display private dicom fields
-            _dataset    pydicom.dataset, dataset of the dicom file
-
-        Public methods
-
-            setDicomDataset(pydicom.dataset)
-            setPrivateTagVisibility(bool)
-            setTagCodeVisibility(bool)
-            setTagNameVisibility(bool)
-            setVRVisibility(bool)
-            setVMVisibility(bool)
-            setValueVisibility(bool)
-            pydicom.dataset = getDataDicomDataset()
-            list = getSelectedDicomDataElements()
-            list = getSelectedDicomTags()
-            list = getSelectedDicomNames()
-            list = getSelectedDicomValues()
-            list = getCheckedDicomNames()
-            list = getEditedDataElements()
-            scrollToDicomDataElement(pydicom.DataElement)
-            scrollToDicomTag(pydicom.tag)
-            scrollToDicomName(str)
-            checkSelectedRows()
-            uncheckSelectedRows()
-
-            inherited QTreeView methods
+    QTreeView -> DicomHeaderTreeViewWidget
     """
 
     _EDITFLAG = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
@@ -457,6 +433,18 @@ class DicomHeaderTreeViewWidget(QTreeView):
     _SELECTROWS = QItemSelectionModel.Select | QItemSelectionModel.Rows
 
     # Special method
+
+    """
+    Private attributes
+
+    _tag        bool, display tag column
+    _name       bool, display tag name column
+    _vr         bool, display VR column
+    _vm         bool, display VM column
+    _value      bool, display value column
+    _private    bool, display private dicom fields
+    _dataset    pydicom.dataset, dataset of the dicom file
+    """
 
     def __init__(self, dataset=None, private=True, tag=True, name=True, vr=True, vm=True, value=True, parent=None):
         super(DicomHeaderTreeViewWidget, self).__init__(parent)
@@ -469,7 +457,9 @@ class DicomHeaderTreeViewWidget(QTreeView):
         self._dataset = dataset
 
         # Init TreeView
+        # noinspection PyTypeChecker
         self.setSelectionMode(3)      # ExtendedSelection mode
+        # noinspection PyTypeChecker
         self.setSelectionBehavior(1)  # Select only rows
         self.header().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.setItemDelegate(LineEditDelegate(self._dataset, self))
@@ -545,10 +535,13 @@ class DicomHeaderTreeViewWidget(QTreeView):
             if self._vr: hdr.append('VR')
             if self._vm: hdr.append('VM')
             if self._value: hdr.append('Value')
+            # noinspection PyUnresolvedReferences
             self.model().clear()
+            # noinspection PyUnresolvedReferences
             self.model().setHorizontalHeaderLabels(hdr)
 
             # Init Model
+            # noinspection PyUnresolvedReferences
             self._datasetToModel(self._dataset, self.model().invisibleRootItem())
             self.expandAll()
 
@@ -562,6 +555,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
 
     def setDicomDataset(self, dataset):
         if isinstance(dataset, FileDataset) or isinstance(dataset, Dataset):
+            # noinspection PyUnresolvedReferences
             self.model().clear()
             self._dataset = dataset
             self.setItemDelegate(LineEditDelegate(self._dataset, self))
@@ -604,6 +598,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
         de = []
         if len(indexes) > 0:
             for index in indexes:
+                # noinspection PyUnresolvedReferences
                 item = self.model().itemFromIndex(index)
                 if isinstance(item, QStandardItem):
                     de.append(self._dataset[item.data()])  # get DICOM Tag in key.data()
@@ -641,8 +636,10 @@ class DicomHeaderTreeViewWidget(QTreeView):
         if n > 0:
             r = list()
             for i in range(n):
+                # noinspection PyUnresolvedReferences
                 items = self.model().item(i)
                 if items.checkState() == 2:
+                    # noinspection PyUnresolvedReferences
                     r.append(self.model().item(i, 1).data(3))
             return r
         else:
@@ -653,12 +650,14 @@ class DicomHeaderTreeViewWidget(QTreeView):
         if n > 0:
             r = list()
             for i in range(n):
+                # noinspection PyUnresolvedReferences
                 if self.model().item(i, 4):
+                    # noinspection PyUnresolvedReferences
                     if self.model().item(i, 4).data(3) == 1:
+                        # noinspection PyUnresolvedReferences
                         r.append(self.model().item(i, 1).data(3))
             return r
-        else:
-            return None
+        else: return None
 
     def scrollToDicomDataElement(self, de):
         if isinstance(de, DataElement):
@@ -666,6 +665,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
 
     def scrollToDicomTag(self, tag):
         if isinstance(tag, BaseTag):
+            # noinspection PyUnresolvedReferences
             items = self.model().findItems(str(tag), Qt.MatchExactly, 0)
             if len(items) > 0:
                 self.scrollTo(items[0].index())
@@ -673,6 +673,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
 
     def scrollToDicomName(self, name):
         if isinstance(name, str):
+            # noinspection PyUnresolvedReferences
             items = self.model().findItems(name, Qt.MatchExactly, 1)
             if len(items) > 0:
                 self.scrollTo(items[0].index())
@@ -682,6 +683,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
         indexlist = self.selectedIndexes()
         if len(indexlist) > 0:
             for index in indexlist:
+                # noinspection PyUnresolvedReferences
                 item = self.model().itemFromIndex(index)
                 if item.isCheckable():
                     item.setCheckState(Qt.Checked)
@@ -690,6 +692,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
         indexlist = self.selectedIndexes()
         if len(indexlist) > 0:
             for index in indexlist:
+                # noinspection PyUnresolvedReferences
                 item = self.model().itemFromIndex(index)
                 if item.isCheckable():
                     item.setCheckState(Qt.Unchecked)
@@ -697,33 +700,27 @@ class DicomHeaderTreeViewWidget(QTreeView):
 
 class DicomComboBoxWidget(QComboBox):
     """
-        DicomComboBoxWidget class
-        QComboBox tool to select DICOM tag of a DICOM file.
+    DicomComboBoxWidget class
 
-        Inheritance
+    Description
+    ~~~~~~~~~~~
 
-            QComboBox -> DicomComboBoxWidget
+    QComboBox tool to select DICOM tag of a DICOM file.
 
-        Private attributes
+    Inheritance
+    ~~~~~~~~~~~
 
-            _private    bool, display private dicom fields
-            _dataset    pydicom.dataset, DICOM dataset
-
-        Public methods
-
-            setDicomDataset(pydicom.dataset, bool)
-            pydicom.dataset = getDicomDataset()
-            pydicom.DataElement = getCurrentDicomDataElement()
-            pydicom.tag = getCurrentDicomTag()
-            getCurrentDicomName()
-            str or int or float or list = getCurrentDicomValue()
-            str = getCurrentDicomVR()
-            int = getCurrentDicomVM()
-
-            inherited QComboBox methods
+    QComboBox -> DicomComboBoxWidget
     """
 
     # Special method
+
+    """
+    Private attributes
+
+    _private    bool, display private dicom fields
+    _dataset    pydicom.dataset, DICOM dataset
+    """
 
     def __init__(self, dataset=None, private=True, parent=None):
         super(DicomComboBoxWidget, self).__init__(parent)
@@ -805,55 +802,34 @@ class DicomComboBoxWidget(QComboBox):
 
 class DicomFilesTreeWidget(QTreeWidget):
     """
-        DicomFilesTreeWidget class
+    DicomFilesTreeWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            QTreeWidget to display DICOM files sorted by series.
+    QTreeWidget to display DICOM files sorted by series.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QTreeWidget -> DicomFilesTreeWidget
+    QTreeWidget -> DicomFilesTreeWidget
 
-        Private attributes
-
-            _dict           dict, dict of dicom fields
-                            (modality, series description, acquisition date, identity, birthdate)
-            _path           str, directory to display in the TreeView
-            _filter         str, filter for dicom file extension
-            _modalityfilter str, dicom modality filter ('CT', 'MR', 'PT', 'NM' ...)
-
-        Public methods
-
-            dict = getDict()
-            str = getModalityFilter()
-            clearModalityFiler()
-            setModalityFilterToImages()
-            setModalityFilterToRT()
-            setModalityFilterToAll()
-            addCTtoModalityFilter()
-            addMRtoModalityFilter()
-            addPTtoModalityFilter()
-            addNMtoModalityFilter()
-            addOTtoModalityFilter()
-            addRTStructToModalityFilter()
-            addRTDoseToModalityFilter()
-            setDefaultFilter(
-            setFilter(str)
-            str = getFilter()
-            setPath(str)
-            str = getPath()
-            extractDataElements(BaseTag, str)
-            checkAll()
-            uncheckAll()
-            checkSelected()
-            uncheckSelected()
-
-            inherited QTreeWidget methods
+    Last revision: 20/09/2024
     """
 
     # Special method
 
+    """
+    Private attributes
+
+    _dict           dict, dict of dicom fields
+                            (modality, series description, acquisition date, identity, birthdate)
+    _path           str, directory to display in the TreeView
+    _filter         str, filter for dicom file extension
+    _modalityfilter str, dicom modality filter ('CT', 'MR', 'PT', 'NM' ...)
+    """
+
+    # noinspection PyShadowingBuiltins
     def __init__(self, path=None, filter='.*', parent=None):
         super().__init__(parent)
         self._dict = dict()
@@ -869,6 +845,7 @@ class DicomFilesTreeWidget(QTreeWidget):
                               'Acq. Date', 'Lastname', 'Firstname', 'Birth Date'])
         self.header().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.setAlternatingRowColors(True)
+        # noinspection PyUnresolvedReferences
         self.itemChanged.connect(self._onToggleCheckbox)
 
         if path is not None:
@@ -902,22 +879,23 @@ class DicomFilesTreeWidget(QTreeWidget):
                 0x0020, 0x000e Series instance UID
                 0x0020, 0x0012 Acquisition number
                 0x0020, 0x0013 Instance number
+                0x0020, 0x0100 Temporal position identifier
                 0x0028, 0x0010 Rows
                 0x0028, 0x0011 Columns
             """
             tags = [Tag(0x0008, 0x0060), Tag(0x0008, 0x0020), Tag(0x0008, 0x0021), Tag(0x0008, 0x0022),
                     Tag(0x0008, 0x103e), Tag(0x0010, 0x0010), Tag(0x0010, 0x0030), Tag(0x0018, 0x0120),
                     Tag(0x0018, 0x1310), Tag(0x0019, 0x100a), Tag(0x0020, 0x000e), Tag(0x0020, 0x000e),
-                    Tag(0x0020, 0x0012), Tag(0x0020, 0x0013), Tag(0x0028, 0x0010), Tag(0x0028, 0x0011)]
+                    Tag(0x0020, 0x0012), Tag(0x0020, 0x0013), Tag(0x0020, 0x0100), Tag(0x0028, 0x0010),
+                    Tag(0x0028, 0x0011)]
             wait = DialogWait(info='',
                               progress=True,
                               progressmin=0,
                               progressmax=len(filenames),
                               progresstxt=True,
-                              cancel=False,
-                              parent=self)
-            wait.setCurrentProgressValue(0)
+                              cancel=False)
             wait.open()
+            wait.setCurrentProgressValue(0)
             wait.setInformationText('DICOM file analysis...')
             for filename in filenames:
                 if not isfile(filename): continue
@@ -933,6 +911,12 @@ class DicomFilesTreeWidget(QTreeWidget):
                     # Instance number
                     if Tag(0x0020, 0x0013) in ds: instn = int(ds[0x0020, 0x0013].value)
                     else: instn = 1
+                    # < Revision 20/09/2024
+                    # Temporal position identifier
+                    if Tag(0x0020, 0x0100) in ds:
+                        tempn = int(ds[0x0020, 0x0100].value)
+                        acqn = (acqn, tempn)
+                    # Revision 20/09/2024 >
                     # Siemens mosaic detection
                     mosaic = 1
                     if Tag(0x0019, 0x100a) in ds:
@@ -990,7 +974,19 @@ class DicomFilesTreeWidget(QTreeWidget):
                 item.setText(1, self._dict[series]['modality'])
                 item.setText(2, self._dict[series]['protocol'])
                 item.setText(3, self._dict[series]['acqdate'])
-                last, first = self._dict[series]['name'].split('^')
+                # < Revision 20/09/2024
+                # last, first = self._dict[series]['name'].split('^')
+                last = ''
+                first = ''
+                try: v = self._dict[series]['name'].split('^')
+                except: v = None
+                if isinstance(v, list):
+                    n = len(v)
+                    if n == 1: last = v[0]
+                    elif n > 1:
+                        last = v[0]
+                        first = v[1]
+                # Revision 20/09/2024 >
                 item.setText(4, last)
                 item.setText(5, first)
                 item.setText(6, self._dict[series]['birthdate'])
@@ -1107,9 +1103,9 @@ class DicomFilesTreeWidget(QTreeWidget):
                 for i in range(len(path)):
                     if i == 0: self.setPath(path[i])
                     else: self.addPath(path[i])
-            else: QMessageBox.warning(self,
-                                      'Set DICOM file extension',
-                                      '{} is not a DICOM file extension.'.format(v))
+            else: messageBox(self,
+                             'Set DICOM file extension',
+                             text='{} is not a DICOM file extension.'.format(v))
         else: raise TypeError('parameter type {} is not str.'.format(type(v)))
 
     def getFilter(self):
@@ -1124,8 +1120,8 @@ class DicomFilesTreeWidget(QTreeWidget):
 
     def addPath(self, path):
 
-        def isSubdir(path, subpath):
-            d = glob(join(path, '**'), recursive=True)
+        def isSubdir(rpath, subpath):
+            d = glob(join(rpath, '**'), recursive=True)
             return subpath in d
 
         if path not in self._path:
@@ -1156,8 +1152,6 @@ class DicomFilesTreeWidget(QTreeWidget):
                             if previous != v: r[i].append(v)
                             previous = v
                     if len(r[i]) == 1: r[i] = r[i][0]
-            # Sort
-
         return r
 
     def checkAll(self):
@@ -1189,50 +1183,34 @@ class DicomFilesTreeWidget(QTreeWidget):
 
 class DicomFilesEnhancedTreeWidget(QWidget):
     """
-        DicomFilesEnhancedTreeWidget class
+    DicomFilesEnhancedTreeWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            DicomFilesTreeWidget with buttons to check and uncheck items.
+    DicomFilesTreeWidget with buttons to check and uncheck items.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> DicomFilesEnhancedTreeWidget
-
-        Private attributes
-
-            _tree       DicomFilesTreeWidget
-            _ext        QComboBox
-            _dir        MenuPushButton
-            _checkall   QPushButton
-            _uncheckall QPushButton
-            _checksel   QPushButton
-            _unchecksel QPushButton
-
-        Public method
-
-            newDirectory()
-            addDirectory()
-            QTreeWidget = getTreeWidget()
-            setFilter(str)
-            setSelectionButtonVisibility(bool)
-            bool = getSelectionButtonVisibility()
-            selectionButtonVisibilityOn()
-            selectionButtonVisibilityOff()
-            setDirectoryButtonVisibility(bool)
-            bool = getDirectoryButtonVisibility()
-            directoryButtonVisibilityOn()
-            directoryButtonVisibilityOff()
-            setFilterButtonVisibility(bool)
-            bool = getFilterButtonVisibility()
-            filterButtonVisibilityOn()
-            filterButtonVisibilityOff()
-
-            DicomFilesTreeWidget methods
+    QWidget -> DicomFilesEnhancedTreeWidget
     """
 
     # Special method
 
+    """
+    Private attributes
+
+    _tree       DicomFilesTreeWidget
+    _ext        QComboBox
+    _dir        MenuPushButton
+    _checkall   QPushButton
+    _uncheckall QPushButton
+    _checksel   QPushButton
+    _unchecksel QPushButton
+    """
+
+    # noinspection PyShadowingBuiltins
     def __init__(self, path=None, filter='.*', parent=None):
         super().__init__(parent)
 
@@ -1242,6 +1220,7 @@ class DicomFilesEnhancedTreeWidget(QWidget):
         self._ext.setCurrentIndex(0)
         self._ext.adjustSize()
         self._ext.setToolTip('Select DICOM file extension.')
+        # noinspection PyUnresolvedReferences
         self._ext.currentTextChanged.connect(lambda: self._extensionChanged())
 
         self._dir = MenuPushButton('Directory')
@@ -1249,9 +1228,11 @@ class DicomFilesEnhancedTreeWidget(QWidget):
         self._dir.setToolTip('Select DICOM directory.')
         self._action = dict()
         self._action['new'] = self._dir.addAction('New...')
-        self._action['add'] = self._dir.addAction('Add...')
+        self._action['addBundle'] = self._dir.addAction('Add...')
+        # noinspection PyUnresolvedReferences
         self._action['new'].triggered.connect(lambda: self.newDirectory())
-        self._action['add'].triggered.connect(lambda: self.addDirectory())
+        # noinspection PyUnresolvedReferences
+        self._action['addBundle'].triggered.connect(lambda: self.addDirectory())
 
         self._tree = DicomFilesTreeWidget(path, filter, parent=self)
 
@@ -1259,14 +1240,21 @@ class DicomFilesEnhancedTreeWidget(QWidget):
         self._uncheckall = QPushButton('Uncheck all')
         self._checksel = QPushButton('Check selected')
         self._unchecksel = QPushButton('Uncheck selected')
+        self._removeall = QPushButton('Clear')
         self._checkall.adjustSize()
         self._uncheckall.adjustSize()
         self._checksel.adjustSize()
         self._unchecksel.adjustSize()
+        # noinspection PyUnresolvedReferences
         self._checkall.clicked.connect(lambda: self._tree.checkAll())
+        # noinspection PyUnresolvedReferences
         self._uncheckall.clicked.connect(lambda: self._tree.uncheckAll())
+        # noinspection PyUnresolvedReferences
         self._checksel.clicked.connect(lambda: self._tree.checkSelected())
+        # noinspection PyUnresolvedReferences
         self._unchecksel.clicked.connect(lambda: self._tree.uncheckSelected())
+        # noinspection PyUnresolvedReferences
+        self._removeall.clicked.connect(lambda: self._tree.clear())
 
         self._pathlayout = QHBoxLayout()
         self._pathlayout.addWidget(self._ext)
@@ -1278,20 +1266,20 @@ class DicomFilesEnhancedTreeWidget(QWidget):
         self._checklyout.addWidget(self._uncheckall)
         self._checklyout.addWidget(self._checksel)
         self._checklyout.addWidget(self._unchecksel)
+        self._checklyout.addWidget(self._removeall)
         self._checklyout.addStretch()
 
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(10)
-        layout.addLayout(self._pathlayout)
-        layout.addWidget(self._tree)
-        layout.addLayout(self._checklyout)
-        self.setLayout(layout)
+        lyout = QVBoxLayout(self)
+        lyout.setContentsMargins(0, 0, 0, 0)
+        lyout.setSpacing(10)
+        lyout.addLayout(self._pathlayout)
+        lyout.addWidget(self._tree)
+        lyout.addLayout(self._checklyout)
+        self.setLayout(lyout)
 
     def __getattr__(self, name: str):
         """
-            When attribute does not exist in the class,
-            try calling self._tree DicomFilesTreeWidget method
+            When attribute does not exist in the class, try calling self._tree DicomFilesTreeWidget method
         """
         methods = ['treeUpdate',
                    'getDict',
@@ -1339,6 +1327,7 @@ class DicomFilesEnhancedTreeWidget(QWidget):
                                                 'Select DICOM directory', path,
                                                 options=QFileDialog.ShowDirsOnly)
         if path:
+            chdir(path)
             self._tree.setPath(path)
 
     def addDirectory(self):
@@ -1353,6 +1342,7 @@ class DicomFilesEnhancedTreeWidget(QWidget):
     def getTreeWidget(self):
         return self._tree
 
+    # noinspection PyShadowingBuiltins
     def setFilter(self, filter):
         flt = ['.*'] + getDicomExt()
         if filter in flt: self._ext.setCurrentText(filter)
@@ -1399,39 +1389,26 @@ class DicomFilesEnhancedTreeWidget(QWidget):
 
 class XmlDicomTreeViewWidget(QTreeWidget):
     """
-        XmlDicomTreeViewWidget class
+    XmlDicomTreeViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            QTreeView to display XmlDicom data elements.
+    QTreeView to display XmlDicom data elements.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QTreeView -> XmlDicomTreeViewWidget
-
-        Private attributes
-
-            _dcm    XmlDicom
-
-        Public methods
-
-            bool = isEmpty()
-            XmlDicom = getXmlDicom()
-            loadXmlDicom(filename=str)
-            checkAll()
-            uncheckAll()
-            saveCheckedDataElementsToXml(filename=str)
-            saveCheckedDataElementsToTxt
-            saveCheckedDataElementsToCSV
-            saveCheckedDataElementsToMatfile
-            saveCheckedDataElementsToExcel
-            saveCheckedDataElementsToLATEX
-            copyCheckedDataElementsToClipboard
-
-            inherited QTreeView methods
+    QTreeView -> XmlDicomTreeViewWidget
     """
 
     # Special method
+
+    """
+    Private attributes
+
+    _dcm    XmlDicom
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -1504,6 +1481,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         skeys = list()
         for i in range(n):
             item = self.topLevelItem(i)
+            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
                 skeys.append(keys[i])
         if len(skeys) > 0:
@@ -1520,6 +1498,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         skeys = list()
         for i in range(n):
             item = self.topLevelItem(i)
+            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
                 skeys.append(item.text(1))
         if len(skeys) > 0:
@@ -1552,6 +1531,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         skeys = list()
         for i in range(n):
             item = self.topLevelItem(i)
+            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
                 skeys.append(item.text(1))
         if len(skeys) > 0:
@@ -1568,6 +1548,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         skeys = list()
         for i in range(n):
             item = self.topLevelItem(i)
+            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
                 skeys.append(item.text(1))
         if len(skeys) > 0:
@@ -1604,21 +1585,3 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 skeys.append(item.text(1))
         if len(skeys) > 0:
             self._dcm.copyDataElementValuesToClipboard(skeys)
-
-
-if __name__ == '__main__':
-    """
-        Tests
-    """
-
-    from sys import argv
-    from PyQt5.QtWidgets import QVBoxLayout
-
-    app = QApplication(argv)
-    w = DicomFilesEnhancedTreeWidget()
-    # w.setPath('/Users/jean-albert/PycharmProjects/python310Project/TESTS/DTI/DTI/DICOM')
-    main = QWidget()
-    layout = QVBoxLayout(main)
-    layout.addWidget(w)
-    main.show()
-    app.exec_()

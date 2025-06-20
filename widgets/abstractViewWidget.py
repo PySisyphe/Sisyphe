@@ -1,11 +1,13 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
-        vtk             https://vtk.org/                                            Visualization
+    - Matplotlib, plotting library, https://matplotlib.org/
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - vtk, Visualization, https://vtk.org/
 """
+
+from sys import platform
 
 from os import getcwd
 from os import remove
@@ -17,6 +19,8 @@ from os.path import splitext
 from tempfile import gettempdir
 
 from math import sqrt
+
+from matplotlib import font_manager
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
@@ -32,8 +36,6 @@ from PyQt5.QtWidgets import QActionGroup
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QColorDialog
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from vtk import vtkRenderer
@@ -68,278 +70,50 @@ from vtk import VTK_CURSOR_CROSSHAIR
 from vtk import VTK_CURSOR_SIZEALL
 from vtk import VTK_FONT_FILE
 from vtkmodules.util.vtkImageExportToArray import vtkImageExportToArray
-# from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheSettings import SisypheSettings
-from Sisyphe.widgets.toolWidgets import NamedWidget
-from Sisyphe.widgets.toolWidgets import DistanceWidget
-from Sisyphe.widgets.toolWidgets import OrthogonalDistanceWidget
-from Sisyphe.widgets.toolWidgets import AngleWidget
-from Sisyphe.widgets.toolWidgets import HandleWidget
-from Sisyphe.widgets.toolWidgets import LineWidget
-from Sisyphe.widgets.toolWidgets import ToolWidgetCollection
+from Sisyphe.core.sisypheTools import NamedWidget
+from Sisyphe.core.sisypheTools import DistanceWidget
+from Sisyphe.core.sisypheTools import OrthogonalDistanceWidget
+from Sisyphe.core.sisypheTools import AngleWidget
+from Sisyphe.core.sisypheTools import HandleWidget
+from Sisyphe.core.sisypheTools import LineWidget
+from Sisyphe.core.sisypheTools import ToolWidgetCollection
+from Sisyphe.widgets.basicWidgets import messageBox
+from Sisyphe.widgets.basicWidgets import colorDialog
 from Sisyphe.widgets.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+
 
 __all__ = ['AbstractViewWidget']
 
 """
-    Class hierarchy
-    
-        QFrame -> AbstractViewWidget
-        
-    Description
-    
-        Abstract class that defines common methods for display widgets.
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+QFrame -> AbstractViewWidget
 """
 
 
 class AbstractViewWidget(QFrame):
     """
-        AbstractViewWidget class
+    AbstractViewWidget class
 
-        Inheritance
+    Description
+    ~~~~~~~~~~~
 
-            QWidget -> AbstractViewWidget
+    Abstract class designed to provide common methods and functionalities that are shared among different types of
+    display widgets. The class is responsible for handling common tasks such as displaying data, managing user
+    interactions, and providing a consistent user interface. It encapsulates functionality related to displaying
+    data, such as zooming, panning, and navigating through the data.
 
-        Private attributes
+    Inheritance
+    ~~~~~~~~~~~
 
-            _window                 QVTKRenderWindowInteractor
-            _renderwindow           vtkRenderWindow
-            _interactor             vtkRenderWindowInteractor
-            _renderer               vtkRenderer, world renderer
-            _renderer2D             vtkRenderer, 2D text info, cross
-            _colorbar               vtkScalarBarActor
-            _ruler                  vtkDistanceWidget
-            _volume                 SisypheVolume, reference volume
-            _name                   Widget name
-            _scale                  float, default zoom scale
-            _fontsize               int
-            _fontcolor              list(float, float, float)
-            _info                   dict of vtkTextActor, volume attributes displayed on renderer2D
-            _cross                  vtkActor2D, cross marker in the center of the view
-            _cursor                 vtkCursor2D, two orthogonal lines
-            _cursoractor            vtkActor, cursor actor
-            _orientmarker           vtkOrientationMarkerWidget
-            _tools                  ToolWidgetCollection
-            _accepttools            bool, accept or not to display ToolWidget
-            _dialog                 QDialog, text editor for TextWidget tool
-            _axisconstraint         int, cursor axis constraint 0 = unconstrained, 1 = x axis, 2 = y axis, 3 = z axis
-            _cursorenabled          bool, cursor enabled flag
-            _roundedenabled         bool, rounded cursor coordinates enabled flag
-            _selected               bool, view selection
-            _frame                  bool, frame visibility if selected
-            _action                 dict() of QActions
-            _menuflag               bool, popup menu enabled or disabled
-            _popup                  QMenu, popup menu
-            _menuActions            QMenu, popup submenu for actions
-            _menuVisibility         QMenu, popup submenu for visibility
-            _menuColorbarPos        QMenu, popup submenu for colorbar position
-            _tooltip                vtkBalloonWidget, tooltip for vtkWidgets
-            _tooltipstr             str, viewport tooltip text
-            _lwidth                 int, default line width, default 2.0
-            _lcolor                 (int, int, int), font color, default white (1.0, 1.0, 1.0)
-            _lalpha                 float, default line opacity, default 1.0
-            _fsize                  int, font size, default 12
-            _ffamily                str in ['Arial', 'Courier', 'Times'], font family, default 'Arial'
-            _fcolor                 (int, int, int), font color, default white (1.0, 1.0, 1.0)
-            _fopacity               float, default font opacity, default 1.0
+    QWidget -> AbstractViewWidget
 
-        Custom Qt Signals
-
-            Selected.emit(QWidget)
-            CursorPositionChanged.emit(QWidget, float, float, float)
-            ZoomChanged.emit(QWidget, float)
-            ToolMoved.emit(QWidget, NamedWidget)
-            ToolRemoved.emit(QWidget, NamedWidget, bool)
-            ToolColorChanged.emit(QWidget, NamedWidget)
-            ToolAttributesChanged.emit(QWidget, NamedWidget)
-            ToolAdded.emit(QWidget, NamedWidget)
-            ToolRenamed.emit(QWidget, str, str)
-            ViewMethodCalled.emit(QWidget, str, object)
-
-        Public Qt event synchronisation methods
-
-            synchroniseCursorPositionChanged(QWidget, float, float, float)
-            synchroniseZoomChanged(QWidget, float)
-            synchroniseToolRemoved(QWidget, NamedWidget, bool)
-            synchroniseToolMoved(QWidget, NamedWidget)
-            synchroniseToolColorChanged(QWidget, NamedWidget)
-            synchroniseToolAttributesChanged(QWidget, NamedWidget)
-            synchroniseToolAdded(QWidget, NamedWidget)
-            synchroniseToolRenamed(QWidget, str, str)
-            synchroniseViewMethodCalled(QWidget, str, object)
-
-        Public methods
-
-            float = getDisplayScaleFactor()
-            displayOn()
-            displayOff()
-            setSelectable(bool)
-            isSelectable()
-            bool = isSelected()
-            select()
-            unselect()
-            bool = isEmpty()
-            setVolume(SisypheVolume)
-            volumeCloseRequested()
-            SisypheVolume = getVolume()
-            bool = hasVolume()
-            setName(str)
-            str = getName()
-            vtkRenderWindow = getRenderWindow()
-            vtkRenderer = getRenderer()
-            vtkRenderWindowInteractor = getWindowInteractor()
-            dict of QAction = getAction()
-            QMenu = getPopup()
-            QMenu = getPopupActions()
-            QMenu = getPopupVisibility()
-            QMenu = getPopupColorbarPosition()
-            QMenu = getPopupTools()
-            popupMenuEnabled()
-            popupMenuDisabled()
-            popupActionsEnabled()
-            popupActionsDisabled()
-            popupVisibilityEnabled()
-            popupVisibilityDisabled()
-            popupColorbarPositionEnabled()
-            popupColorbarPositionDisabled()
-            popupToolsEnabled()
-            popupToolsDisabled()
-            vtkCamera = getCamera()
-            ToolWidgetCollection = getTools()
-            setNoActionFlag()
-            setZoomFlag()
-            bool = getZoomFlag()
-            setMoveFlag()
-            bool = getMoveFlag()
-            setLevelFlag()
-            bool = getLevelFlag()
-            setFollowFlag()
-            bool = getFollowFlag()
-            setSynchronisation(bool)
-            synchronisationOn()
-            synchronisationOff()
-            bool = getSynchronisation()
-            bool = isSynchronised()
-            str = getFontFamily()
-            setFontFamily(str)
-            int = getFontSize()
-            setFontSize(int)
-            float = getFontOpacity()
-            setFontOpacity(float)
-            setInfoVisibility(bool)
-            setInfoVisibilityOn()
-            setInfoVisibilityOff()
-            bool = getInfoVisibility()
-            setColorbarVisibility(bool)
-            setColorbarVisibilityOn()
-            setColorbarVisibilityOff()
-            bool = getColorbarVisibility()
-            vtkScalarBarActor = getColorBar()
-            setColorbarPosition(str)
-            setColorbarPositionToLeft()
-            setColorbarPositionToRight()
-            setColorbarPositionToTop()
-            setColorbarPositionToBottom()
-            setRulerVisibility(bool)
-            setRulerVisibilityOn()
-            setRulerVisibilityOff()
-            bool = getRulerVisibility()
-            vtkAxisActor2D = getRuler()
-            setRulerPosition(str)
-            setRulerPositionToLeft()
-            setRulerPositionToRight()
-            setRulerPositionToTop()
-            setColorbarPositionToBottom()
-            setCentralCrossVisibility(bool)
-            setCentralCrossVisibilityOn()
-            setCentralCrossVisibilityOff()
-            bool = getCentralCrossVisibility()
-            setCentralCrossOpacity(float)
-            float = getCentralCrossOpacity()
-            setCursorVisibility(bool)
-            setCursorVisibilityOn()
-            setCursorVisibilityOff()
-            bool = getCursorVisibility()
-            setLineOpacity(float)
-            float = getLineOpacity()
-            setLineWidth(float)
-            float = getLineWidth()
-            setLineColor(float, float, float)
-            float, float, float = getLineColor()
-            setCursorPosition(float, float, float)
-            setCursorEnabled()
-            setCursorDisabled()
-            bool = isCursorEnabled()
-            setRoundedCursorCoordinatesEnabled()
-            setRoundedCursorCoordinatesDisabled()
-            bool = isRoundedCursorCoordinatesEnabled()
-            setAxisConstraintToCursor(int)
-            setNoAxisConstraintToCursor()
-            setXAxisConstraintToCursor()
-            setYAxisConstraintToCursor()
-            setZAxisConstraintToCursor()
-            str = getOrientationMarker()
-            setOrientationMarker(str)
-            setOrientationMarkerToBody()
-            setOrientationMarkerToBust()
-            setOrientationMarkerToHead()
-            setOrientationMarkerToCube()
-            setOrientationMarkerToAxes()
-            setOrientationMarkerVisibility(bool)
-            setOrientationMarkerVisibilityOn()
-            setOrientationMarkerVisibilityOff()
-            bool = getOrientationMarkerVisibility()
-            setOrientationLabelsVisibility(bool)
-            setOrientationLabelsVisibilityOn()
-            setOrientationLabelsVisibilityOff()
-            bool = getOrientationLabelsVisibility()
-            setMouseCursor(int)
-            setDefaultMouseCursor()
-            setArrowMouseCursor()
-            setHandMouseCursor()
-            setCrossHairMouseCursor()
-            setSizeAllMouseCursor()
-            int = getMouseCursor()
-            hideAll()
-            showAll()
-            zoomIn()
-            zoomOut()
-            zoomDefault()
-            setZoom(float, bool)
-            float = getZoom()
-            vtkTextActor = getTopLeftInfo()
-            vtkTextActor = getBottomLeftInfo()
-            vtkTextActor = getBottomLeftInfo()
-            vtkTextActor =  getBottomRightInfo()
-            saveCapture()
-            saveAllCaptures()                            Abstract method
-            copyToClipboard()
-            ToolWidgetCollection = getToolCollection()
-            setAcceptTools(bool)
-            setAcceptToolsOn()
-            setAcceptToolsOff()
-            bool = getAcceptTools()
-            addDistanceTool()
-            addOrthogonalDistanceTool()
-            addAngleTool()
-            removeAll2DTools()
-            HandleWidget = addTarget()
-            LineWidget = addTrajectory()
-            int = getToolCount()
-            bool = hasTools()
-            vtkWidget = getTool(int)
-            removeTool(int)
-            removeAllTools()
-
-            inherited QWidget class
-
-        Revisions:
-
-            06/09/2023  removeAllTools() method bugfix
-            13/09/2023  _getRoundedCoordinate(), replace round() with int()
-            02/10/2023  removeAllTools() method bugfix
+    Creation: 20/03/2022
+    Last Revision: 02/05/2025
     """
 
     _DEFAULTZOOM = 128.0  # Default zoom (vtk parallel scale) = conventional FOV of head imaging / 2
@@ -359,12 +133,60 @@ class AbstractViewWidget(QFrame):
 
     # Special method
 
+    """
+    Private attributes
+
+    _window                 QVTKRenderWindowInteractor
+    _renderwindow           vtkRenderWindow
+    _interactor             vtkRenderWindowInteractor
+    _renderer               vtkRenderer, world display
+    _renderer2D             vtkRenderer, text info, cross, colorbar, ruler display
+    _colorbar               vtkScalarBarActor
+    _ruler                  vtkDistanceWidget
+    _volume                 SisypheVolume, reference volume
+    _title                  str, view title
+    _name                   str, widget name
+    _scale                  float, default zoom scale
+    _fontsize               int
+    _fontcolor              list[float, float, float]
+    _info                   dict[str, vtkTextActor], volume attributes displayed on renderer2D
+    _cross                  vtkActor2D, cross marker in the center of the view
+    _cursor                 vtkCursor2D, two orthogonal lines
+    _cursoractor            vtkActor, cursor actor
+    _orientmarker           vtkOrientationMarkerWidget
+    _tools                  ToolWidgetCollection
+    _accepttools            bool, accept or not to display ToolWidget
+    _dialog                 QDialog, text editor for TextWidget tool
+    _axisconstraint         int, cursor axis constraint 0 = unconstrained, 1 = x axis, 2 = y axis, 3 = z axis
+    _cursorenabled          bool, cursor enabled flag
+    _roundedenabled         bool, rounded cursor coordinates enabled flag
+    _selected               bool, view selection
+    _frame                  bool, frame visibility if selected
+    _action                 dict[str, QActions] 
+    _menuflag               bool, popup menu enabled or disabled
+    _popup                  QMenu, popup menu
+    _menuActions            QMenu, popup submenu for actions
+    _menuVisibility         QMenu, popup submenu for visibility
+    _menuColorbarPos        QMenu, popup submenu for colorbar position
+    _tooltip                vtkBalloonWidget, tooltip for vtkWidgets
+    _tooltipstr             str, viewport tooltip text
+    _lwidth                 int, default line width, default 2.0
+    _lcolor                 tuple[int, int, int], font color, default white (1.0, 1.0, 1.0)
+    _slcolor                tuple[int, int, int], selected color, default red (1.0, 0.0, 0.0)
+    _lalpha                 float, default line opacity, default 1.0
+    _fsize                  int, font size, default 12
+    _ffamily                str, font family, default 'Arial'
+    _fscale                 float, scale factor applied to font size (default 1.0, no scale factor)
+    _fopacity               float, default font opacity, default 1.0
+    """
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self._volume = None
         self._synchro = False
         self._name = None
+        self._title: str = ''
         self._scale = None
         self._axisconstraint = 0
         self._cursorenabled = True
@@ -373,61 +195,152 @@ class AbstractViewWidget(QFrame):
         self._frame = True
         self._menuflag = True
         self._tooltipstr = ''
+        # < Revision 10/03/2025
+        if platform == 'win32':
+            self.setStyleSheet('border-color: #000000')
+        # Revision 10/03/2025 >
 
         # Init VTK window and interactor
 
         self._window = QVTKRenderWindowInteractor(self)
-        self._renderwindow = self._window.GetRenderWindow()     # vtkRenderWindow instance
-        self._interactor = self._renderwindow.GetInteractor()   # vtkRenderWindowInteractor instance
+        # vtkRenderWindow instance
+        self._renderwindow = self._window.GetRenderWindow()
+        """
+            Layer 0 = Volume/image display
+            Layer 1 = Text information, cross, colorbar, ruler, orientation marker
+        """
+        self._renderwindow.SetNumberOfLayers(3)
+        # vtkRenderWindowInteractor instance
+        self._interactor = self._renderwindow.GetInteractor()
 
-        # Init renderer
+        # Init renderers
 
         self._renderer = vtkRenderer()
         self._renderer.SetLayer(0)
         self._renderer.SetBackground(0, 0, 0)
         self._renderer.GetActiveCamera().ParallelProjectionOn()
-        self._renderwindow.SetNumberOfLayers(2)  # Layer 0 = Volume/image display, Layer 1 = Text information
         self._renderwindow.AddRenderer(self._renderer)
+
+        self._renderer2D = vtkRenderer()
+        self._renderer2D.SetLayer(1)
+        self._renderer2D.SetViewport(0, 0, 1, 1)
+        self._renderer2D.InteractiveOff()
+        self._renderwindow.AddRenderer(self._renderer2D)
 
         # Init VTK events, mouse and keyboard events
 
         style = vtkInteractorStyleUser()
+        # noinspection PyTypeChecker
         style.AddObserver('MouseMoveEvent', self._onMouseMoveEvent)
+        # noinspection PyTypeChecker
         style.AddObserver('MouseWheelForwardEvent', self._onWheelForwardEvent)
+        # noinspection PyTypeChecker
         style.AddObserver('MouseWheelBackwardEvent', self._onWheelBackwardEvent)
+        # noinspection PyTypeChecker
         style.AddObserver('LeftButtonPressEvent', self._onLeftPressEvent)
+        # noinspection PyTypeChecker
         style.AddObserver('LeftButtonReleaseEvent', self._onLeftReleaseEvent)
+        # noinspection PyTypeChecker
         style.AddObserver('RightButtonPressEvent', self._onRightPressEvent)
+        # noinspection PyTypeChecker
         style.AddObserver('MiddleButtonPressEvent', self._onMiddlePressEvent)
+        # noinspection PyTypeChecker
         style.AddObserver('KeyPressEvent', self._onKeyPressEvent)
+        # noinspection PyTypeChecker
         style.AddObserver('KeyReleaseEvent', self._onKeyReleaseEvent)
         style.KeyPressActivationOff()
         self._window.SetInteractorStyle(style)
 
-        # Init window popup menu
+        """
+        Init window popup menu
+        
+        Synchronisation (self._action['synchronisation'])
+        Zoom (self._menuZoom)
+            Zoom in (self._action['zoomin'])
+            Zoom out (self._action['zoomout'])
+            Default zoom (self._action['defaultzoom'])
+            Move to target (self._menuMoveTarget)
+        Actions (self._menuActions)
+            No action (self._action['noflag'])
+            Move (self._action['moveflag'])
+            Zoom (self._action['zoomflag'])
+            Level/Window (self._action['levelflag'])
+            < Removed 10/03/2025 Cursor follows mouse (self._action['followflag']) >
+            Centered cursor (self._action['centeredflag'])
+        Visibility (self._menuVisibility)
+            Show cursor (self._action['showcursor'])
+            Show informations (self._action['showinfo'])
+            Show orientation marker (self._action['showmarker'])
+            Show colorbar (self._action['showcolorbar'])
+            Show ruler (self._action['showruler')
+            Show tooltip (self._action['showtooltip'])
+            Show all (self._action['showall'])
+            Hide all (self._action['hideall'])
+        Information (self._menuInformation)
+            Identity (self._action['showident'])
+            Image attributes (self._action['showimg'])
+            Acquisition attributes (self._action['showacq'])
+            Orientation marker shape (self._menuShape)
+                Cube (self._action['shapecube'])
+                Head (self._action['shapehead'])
+                Bust (self._action['shapebust'])
+                Body (self._action['shapebody'])
+                Axes (self._action['shapeaxes'])
+                Brain (self._action['shapebrain'])
+        Colorbar position (self._menuColorbarPos)
+            Left colorbar (self._action['leftcolorbar'])
+            Right colorbar (self._action['rightcolorbar'])
+            Top colorbar (self._action['topcolorbar'])
+            Bottom colorbar (self._action['bottomcolorbar'])
+        Ruler position (self._menuRulerPos)
+            Left ruler (self._action['leftruler'])
+            Right ruler (self._action['rightruler'])
+            Top ruler (self._action['topcolorbar'])
+            Bottom ruler (self._action['bottomruler'])
+        Tools (self._menuTools)
+            Distance (self._action['distance'])
+            Orthogonal distances (self._action['orthodistance'])
+            Angle (self._action['angle'])
+            Box (self._action['box'])
+            Text (self._action['text'])
+            Remove all (self._action['removeall'])
+            Target (self._action['target'])
+            Trajectory (self._action['trajectory'])
+        Save capture... (self._action['capture'])
+        Copy capture to clipboard (self._action['clipboard'])
+        """
 
         self._popup = QMenu('Main menu')
+        # noinspection PyTypeChecker
+        self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action = dict()
         self._action['noflag'] = QAction('No action', self)
         self._action['moveflag'] = QAction('Move', self)
         self._action['zoomflag'] = QAction('Zoom', self)
         self._action['levelflag'] = QAction('Level/Window', self)
         self._action['followflag'] = QAction('Cursor follows mouse', self)
+        # < Revision 09/01/2025
+        # add centered cursor action
+        self._action['centeredflag'] = QAction('Centered cursor', self)
+        # Revision 09/01/2025 >
         self._action['zoomin'] = QAction('Zoom In', self)
         self._action['zoomout'] = QAction('Zoom Out', self)
         self._action['defaultzoom'] = QAction('Default Zoom', self)
         self._action['synchronisation'] = QAction('Synchronisation', self)
         self._action['showcursor'] = QAction('Show cursor', self)
-        self._action['showinfo'] = QAction('Show image attributes', self)
+        self._action['showinfo'] = QAction('Show information', self)
         self._action['showmarker'] = QAction('Show orientation marker', self)
         self._action['showcolorbar'] = QAction('Show colorbar', self)
         self._action['showruler'] = QAction('Show ruler', self)
         self._action['showtooltip'] = QAction('Show tooltip', self)
         self._action['showall'] = QAction('Show all', self)
         self._action['hideall'] = QAction('Hide all', self)
-        self._action['showident'] = QAction('Show identity', self)
-        self._action['showimg'] = QAction('Show volume attributes', self)
-        self._action['showacq'] = QAction('Show acquisition attributes', self)
+        self._action['showident'] = QAction('Identity', self)
+        self._action['showimg'] = QAction('Image attributes', self)
+        self._action['showacq'] = QAction('Acquisition attributes', self)
         self._action['leftcolorbar'] = QAction('Left colorbar', self)
         self._action['rightcolorbar'] = QAction('Right colorbar', self)
         self._action['topcolorbar'] = QAction('Top colorbar', self)
@@ -457,6 +370,10 @@ class AbstractViewWidget(QFrame):
         self._action['zoomflag'].setCheckable(True)
         self._action['levelflag'].setCheckable(True)
         self._action['followflag'].setCheckable(True)
+        # < Revision 09/01/2025
+        # add centered cursor action
+        self._action['centeredflag'].setCheckable(True)
+        # Revision 09/01/2025 >
         self._action['synchronisation'].setCheckable(True)
         self._action['showcursor'].setCheckable(True)
         self._action['showinfo'].setCheckable(True)
@@ -482,58 +399,106 @@ class AbstractViewWidget(QFrame):
         self._action['showimg'].setCheckable(True)
         self._action['showacq'].setCheckable(True)
 
+        # noinspection PyUnresolvedReferences
         self._action['showcursor'].triggered.connect(
             lambda: self.setCursorVisibility(self._action['showcursor'].isChecked()))
+        # noinspection PyUnresolvedReferences
         self._action['showinfo'].triggered.connect(
             lambda: self.setInfoVisibility(self._action['showinfo'].isChecked()))
+        # noinspection PyUnresolvedReferences
         self._action['showmarker'].triggered.connect(
             lambda: self.setOrientationMakerVisibility(self._action['showmarker'].isChecked()))
+        # noinspection PyUnresolvedReferences
         self._action['showcolorbar'].triggered.connect(
             lambda: self.setColorbarVisibility(self._action['showcolorbar'].isChecked()))
+        # noinspection PyUnresolvedReferences
         self._action['showruler'].triggered.connect(
             lambda: self.setRulerVisibility(self._action['showruler'].isChecked()))
+        # noinspection PyUnresolvedReferences
         self._action['showtooltip'].triggered.connect(
             lambda: self.setTooltipVisibility(self._action['showtooltip'].isChecked()))
+        # noinspection PyUnresolvedReferences
         self._action['showident'].triggered.connect(
             lambda: self.setInfoIdentityVisibility(self._action['showident'].isChecked()))
+        # noinspection PyUnresolvedReferences
         self._action['showimg'].triggered.connect(
             lambda: self.setInfoVolumeVisibility(self._action['showimg'].isChecked()))
+        # noinspection PyUnresolvedReferences
         self._action['showacq'].triggered.connect(
             lambda: self.setInfoAcquisitionVisibility(self._action['showacq'].isChecked()))
 
+        # noinspection PyUnresolvedReferences
         self._action['noflag'].triggered.connect(lambda: self.setNoActionFlag(True))
+        # noinspection PyUnresolvedReferences
         self._action['moveflag'].triggered.connect(lambda: self.setMoveFlag(True))
+        # noinspection PyUnresolvedReferences
         self._action['zoomflag'].triggered.connect(lambda: self.setZoomFlag(True))
+        # noinspection PyUnresolvedReferences
         self._action['levelflag'].triggered.connect(lambda: self.setLevelFlag(True))
+        # noinspection PyUnresolvedReferences
         self._action['followflag'].triggered.connect(lambda: self.setFollowFlag(True))
+        # < Revision 09/01/2025
+        # add centered cursor action
+        # noinspection PyUnresolvedReferences
+        self._action['centeredflag'].triggered.connect(lambda: self.setCenteredCursorFlag(True))
+        # Revision 09/01/2025 >
+        # noinspection PyUnresolvedReferences
         self._action['hideall'].triggered.connect(lambda: self.hideAll(True))
+        # noinspection PyUnresolvedReferences
         self._action['showall'].triggered.connect(lambda: self.showAll(True))
+        # noinspection PyUnresolvedReferences
         self._action['zoomin'].triggered.connect(self.zoomIn)
+        # noinspection PyUnresolvedReferences
         self._action['zoomout'].triggered.connect(self.zoomOut)
+        # noinspection PyUnresolvedReferences
         self._action['defaultzoom'].triggered.connect(self.zoomDefault)
+        # noinspection PyUnresolvedReferences
         self._action['leftcolorbar'].triggered.connect(self.setColorbarPositionToLeft)
+        # noinspection PyUnresolvedReferences
         self._action['rightcolorbar'].triggered.connect(self.setColorbarPositionToRight)
+        # noinspection PyUnresolvedReferences
         self._action['topcolorbar'].triggered.connect(self.setColorbarPositionToTop)
+        # noinspection PyUnresolvedReferences
         self._action['bottomcolorbar'].triggered.connect(self.setColorbarPositionToBottom)
+        # noinspection PyUnresolvedReferences
         self._action['leftruler'].triggered.connect(self.setRulerPositionToLeft)
+        # noinspection PyUnresolvedReferences
         self._action['rightruler'].triggered.connect(self.setRulerPositionToRight)
+        # noinspection PyUnresolvedReferences
         self._action['topruler'].triggered.connect(self.setRulerPositionToTop)
+        # noinspection PyUnresolvedReferences
         self._action['bottomruler'].triggered.connect(self.setRulerPositionToBottom)
+        # noinspection PyUnresolvedReferences
         self._action['shapecube'].triggered.connect(self.setOrientationMarkerToCube)
+        # noinspection PyUnresolvedReferences
         self._action['shapehead'].triggered.connect(self.setOrientationMarkerToHead)
+        # noinspection PyUnresolvedReferences
         self._action['shapebust'].triggered.connect(self.setOrientationMarkerToBust)
+        # noinspection PyUnresolvedReferences
         self._action['shapebody'].triggered.connect(self.setOrientationMarkerToBody)
+        # noinspection PyUnresolvedReferences
         self._action['shapeaxes'].triggered.connect(self.setOrientationMarkerToAxes)
+        # noinspection PyUnresolvedReferences
         self._action['shapebrain'].triggered.connect(self.setOrientationMarkerToBrain)
+        # noinspection PyUnresolvedReferences
         self._action['capture'].triggered.connect(self.saveCapture)
+        # noinspection PyUnresolvedReferences
         self._action['clipboard'].triggered.connect(self.copyToClipboard)
+        # noinspection PyUnresolvedReferences
         self._action['distance'].triggered.connect(lambda: self.addDistanceTool())
+        # noinspection PyUnresolvedReferences
         self._action['orthodistance'].triggered.connect(lambda: self.addOrthogonalDistanceTool())
+        # noinspection PyUnresolvedReferences
         self._action['angle'].triggered.connect(lambda: self.addAngleTool())
+        # noinspection PyUnresolvedReferences
         self._action['removeall'].triggered.connect(lambda: self.removeAll2DTools())
+        # noinspection PyUnresolvedReferences
         self._action['box'].triggered.connect(lambda: self.addBoxTool())
+        # noinspection PyUnresolvedReferences
         self._action['text'].triggered.connect(lambda: self.addTextTool())
+        # noinspection PyUnresolvedReferences
         self._action['target'].triggered.connect(lambda: self.addTarget(p=None, name='', signal=True))
+        # noinspection PyUnresolvedReferences
         self._action['trajectory'].triggered.connect(lambda: self.addTrajectory(p1=None, p2=None, name='', signal=True))
         self._popup.addAction(self._action['synchronisation'])
         self._group_colorbar = QActionGroup(self)
@@ -563,25 +528,36 @@ class AbstractViewWidget(QFrame):
         self._group_flag.addAction(self._action['zoomflag'])
         self._group_flag.addAction(self._action['levelflag'])
         self._group_flag.addAction(self._action['followflag'])
+        # < Revision 09/01/2025
+        # add centered cursor action
+        self._group_flag.addAction(self._action['centeredflag'])
+        # Revision 09/01/2025 >
         self._action['leftcolorbar'].setChecked(True)
         self._action['leftruler'].setChecked(True)
         self._action['noflag'].setChecked(True)
-        submenu = self._popup.addMenu('Zoom')
-        submenu.addAction(self._action['zoomin'])
-        submenu.addAction(self._action['zoomout'])
-        submenu.addAction(self._action['defaultzoom'])
+        self._menuZoom = self._popup.addMenu('Zoom')
+        self._menuZoom.addAction(self._action['zoomin'])
+        self._menuZoom.addAction(self._action['zoomout'])
+        self._menuZoom.addAction(self._action['defaultzoom'])
         self._menuActions = self._popup.addMenu('Actions')
         self._menuActions.addAction(self._action['noflag'])
         self._menuActions.addAction(self._action['moveflag'])
         self._menuActions.addAction(self._action['zoomflag'])
         self._menuActions.addAction(self._action['levelflag'])
+        # < Revision 10/03/2025
+        # remove cursor follow mouse action
         self._menuActions.addAction(self._action['followflag'])
+        # Revision 10/03/2025 >
+        # < Revision 09/01/2025
+        # add centered cursor action
+        self._menuActions.addAction(self._action['centeredflag'])
+        # Revision 09/01/2025 >
         self._menuVisibility = self._popup.addMenu('Visibility')
         self._menuVisibility.addAction(self._action['showcursor'])
-        self._menuVisibility.addAction(self._action['showcolorbar'])
-        self._menuVisibility.addAction(self._action['showruler'])
         self._menuVisibility.addAction(self._action['showinfo'])
         self._menuVisibility.addAction(self._action['showmarker'])
+        self._menuVisibility.addAction(self._action['showcolorbar'])
+        self._menuVisibility.addAction(self._action['showruler'])
         self._menuVisibility.addAction(self._action['showtooltip'])
         self._menuVisibility.addAction(self._action['showall'])
         self._menuVisibility.addAction(self._action['hideall'])
@@ -589,6 +565,7 @@ class AbstractViewWidget(QFrame):
         self._menuInformation.addAction(self._action['showident'])
         self._menuInformation.addAction(self._action['showimg'])
         self._menuInformation.addAction(self._action['showacq'])
+        # self._menuShape = self._popup.addMenu('Orientation marker shape')
         self._menuShape = self._menuInformation.addMenu('Orientation marker shape')
         self._menuShape.addAction(self._action['shapecube'])
         self._menuShape.addAction(self._action['shapebrain'])
@@ -618,7 +595,7 @@ class AbstractViewWidget(QFrame):
         self._menuTools.addAction(self._action['target'])
         self._menuTools.addAction(self._action['trajectory'])
         self._menuTools.addSeparator()
-        self._menuMoveTarget = submenu.addMenu('Move to target')
+        self._menuMoveTarget = self._menuZoom.addMenu('Move to target')
         self._menuMoveTarget.menuAction().setVisible(False)
         self._popup.addAction(self._action['capture'])
         self._popup.addAction(self._action['clipboard'])
@@ -626,13 +603,22 @@ class AbstractViewWidget(QFrame):
         # Init tool popup menu
 
         self._toolpopup = QMenu()
+        # noinspection PyTypeChecker
+        self._toolpopup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._toolpopup.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._toolpopup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['toolcolor'] = QAction('Color...', self)
         self._action['textprop'] = QAction('Text properties...', self)
         self._action['edittext'] = QAction('Edit text...', self)
         self._action['tooldelete'] = QAction('Delete', self)
+        # noinspection PyUnresolvedReferences
         self._action['toolcolor'].triggered.connect(self._toolColor)
+        # noinspection PyUnresolvedReferences
         self._action['textprop'].triggered.connect(self._textProperties)
+        # noinspection PyUnresolvedReferences
         self._action['edittext'].triggered.connect(self._editPickedText)
+        # noinspection PyUnresolvedReferences
         self._action['tooldelete'].triggered.connect(self._removePickedTool)
         self._toolpopup.addAction(self._action['toolcolor'])
         self._toolpopup.addAction(self._action['textprop'])
@@ -648,6 +634,7 @@ class AbstractViewWidget(QFrame):
         self._dialog.setWindowOpacity(1.0)
         self._dialog.setVisible(False)
         self._edit = QLineEdit(self._dialog)
+        # noinspection PyUnresolvedReferences
         self._edit.editingFinished.connect(self._textEditFinished)
 
         # User settings
@@ -657,17 +644,13 @@ class AbstractViewWidget(QFrame):
         self._lalpha = None
         self._lcolor = None
         self._slcolor = None
-        self._fsize = None
         self._ffamily = None
+        self._fsize = None
+        self._fscale = None
         self._initSettings()
-        super().setLineWidth(int(self._lwidth))
 
-        # Init text attributes renderer/actors
+        # Init text attributes actors
 
-        self._renderer2D = vtkRenderer()
-        self._renderer2D.SetLayer(1)
-        self._renderer2D.SetViewport(0, 0, 1, 1)
-        self._renderer2D.InteractiveOff()
         self._info = dict()
         self._info['topright'] = vtkTextActor()
         self._info['topleft'] = vtkTextActor()
@@ -693,7 +676,6 @@ class AbstractViewWidget(QFrame):
         self._renderer2D.AddActor2D(self._info['leftcenter'])
         self._renderer2D.AddActor2D(self._info['rightcenter'])
         self._renderer2D.AddActor2D(self._info['bottomcenter'])
-        self._renderwindow.AddRenderer(self._renderer2D)
 
         # Init colorbar actor
 
@@ -701,18 +683,32 @@ class AbstractViewWidget(QFrame):
         self._colorbar.AnnotationTextScalingOff()
         self._colorbar.SetOrientationToVertical()
         self._colorbar.SetTextPositionToSucceedScalarBar()
-        self._colorbar.GetLabelTextProperty().SetFontSize(self._fsize)
-        self._colorbar.GetLabelTextProperty().SetFontFamilyAsString(self._ffamily)
+        # noinspection PyUnresolvedReferences
+        self._colorbar.GetLabelTextProperty().SetFontSize(int(self._fsize * self._fscale))
+        # noinspection PyUnresolvedReferences
+        self._colorbar.GetTitleTextProperty().SetFontSize(int(self._fsize * self._fscale))
+        if self._ffamily in ('Arial', 'Courier', 'Times'):
+            self._colorbar.GetLabelTextProperty().SetFontFamilyAsString(self._ffamily)
+            self._colorbar.GetTitleTextProperty().SetFontFamilyAsString(self._ffamily)
+        else:
+            self._colorbar.GetLabelTextProperty().SetFontFamily(VTK_FONT_FILE)
+            self._colorbar.GetTitleTextProperty().SetFontFamily(VTK_FONT_FILE)
+            self._colorbar.GetLabelTextProperty().SetFontFile(self._ffamily)
+            self._colorbar.GetTitleTextProperty().SetFontFile(self._ffamily)
         self._colorbar.GetLabelTextProperty().BoldOff()
+        self._colorbar.GetTitleTextProperty().BoldOff()
+        self._colorbar.GetTitleTextProperty().SetLineOffset(5.0)
+        self._colorbar.SetVerticalTitleSeparation(5)
         self._colorbar.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
         self._colorbar.GetPositionCoordinate().SetValue(0.81, 0.25)
         self._colorbar.SetWidth(0.14)
         self._colorbar.SetHeight(0.5)
         self.setColorbarPosition(self.getColorbarPosition(), False)
         self._colorbar.SetVisibility(False)
+        # noinspection PyTypeChecker
         self._renderer2D.AddActor2D(self._colorbar)
 
-        # Init ruler
+        # Init ruler actor
 
         self._ruler = vtkAxisActor2D()
         self._ruler.RulerModeOn()
@@ -720,6 +716,7 @@ class AbstractViewWidget(QFrame):
         self._ruler.SetTickLength(10)
         self._ruler.SetNumberOfMinorTicks(0)
         self._ruler.GetProperty().SetLineWidth(self._lwidth)
+        # noinspection PyUnresolvedReferences
         self._ruler.GetProperty().SetColor(self._lcolor[0], self._lcolor[1], self._lcolor[2])
         self._ruler.GetProperty().SetOpacity(self._lalpha)
         self._ruler.LabelVisibilityOff()
@@ -730,26 +727,34 @@ class AbstractViewWidget(QFrame):
         self._ruler.GetPoint2Coordinate().SetValue(0.01, 0.7)
         self.setRulerPosition(self.getRulerPosition(), False)
         self._ruler.SetVisibility(False)
+        # noinspection PyTypeChecker
         self._renderer2D.AddActor2D(self._ruler)
 
-        # Init orientation marker
+        # Init orientation marker actor
 
         self._orientmarker = None
         self.setOrientationMarker(self.getOrientationMarker(), False)
+        # noinspection PyUnresolvedReferences
         self._orientmarker.EnabledOff()
 
         # list of tools
 
         self._tools = ToolWidgetCollection()
+        # noinspection PyTypeChecker
         self._tools.setFontFamily(self._ffamily)
+        # noinspection PyTypeChecker
         self._tools.setLineWidth(self._lwidth)
+        # noinspection PyTypeChecker
         self._tools.setOpacity(self._lalpha)
+        # noinspection PyTypeChecker
         self._tools.setColor(self._lcolor)
+        # noinspection PyTypeChecker
         self._tools.setSelectedColor(self._slcolor)
         self._tools.setInteractor(self._interactor)
         self._tooltip = vtkBalloonWidget()
         self._tooltip.CreateDefaultRepresentation()
-        self._tooltip.GetBalloonRepresentation().GetTextProperty().SetFontSize(12)
+        # noinspection PyUnresolvedReferences
+        self._tooltip.GetBalloonRepresentation().GetTextProperty().SetFontSize(int(self._fsize * self._fscale))
         self._tooltip.GetBalloonRepresentation().GetTextProperty().BoldOff()
         self._tooltip.SetInteractor(self._interactor)
         self._accepttools = True
@@ -766,7 +771,9 @@ class AbstractViewWidget(QFrame):
 
         # Init frame
 
+        # noinspection PyTypeChecker
         self.setFrameShadow(QFrame.Plain)
+        # noinspection PyTypeChecker
         self.setFrameShape(QFrame.NoFrame)
 
         # Init QLayout
@@ -788,29 +795,37 @@ class AbstractViewWidget(QFrame):
     def _initSettings(self):
         """
             Settings -> private attributes
-            Revision 17/04/2023, add devicePixelRation to manage font size
+            Revision 17/04/2023, addBundle devicePixelRation to manage font size
                                  self._fsize *= self.getDisplayScaleFactor()
         """
         self._lwidth = self._settings.getFieldValue('Viewport', 'LineWidth')
         self._lcolor = self._settings.getFieldValue('Viewport', 'LineColor')
         self._slcolor = self._settings.getFieldValue('Viewport', 'LineSelectedColor')
         self._lalpha = self._settings.getFieldValue('Viewport', 'LineOpacity')
-        self._fsize = self._settings.getFieldValue('Viewport', 'FontSize')
-        self._ffamily = self._settings.getFieldValue('Viewport', 'FontFamily')
+        # < Revision 17/03/2025
+        # font settings management
+        self._fsize = self._settings.getFieldValue('GUI', 'FontSize')
+        self._ffamily = self._settings.getFieldValue('GUI', 'FontFamily')
+        self._fscale = self._settings.getFieldValue('Viewport', 'FontSizeScale')
+        # Revision 17/03/2025 >
         if self._lwidth is None: self._lwidth = 2
         if self._lcolor is None: self._lcolor = (1.0, 1.0, 1.0)
         if self._slcolor is None: self._slcolor = (1.0, 0.0, 0.0)
         if self._lalpha is None: self._lalpha = 1.0
+        # < Revision 17/03/2025
+        # font settings management
         if self._fsize is None: self._fsize = 12
-        if self._ffamily is not None: self._ffamily = self._ffamily[0]
-        else: self._ffamily = 'Arial'
-        if self._ffamily not in ['Arial', 'Courier', 'Times']:
-            import Sisyphe.gui
-            path = split(Sisyphe.gui.__file__)[0]
-            file = '{}.ttf'.format(self._ffamily)
-            path = join(path, 'font', file)
-            if exists(path): self._ffamily = path
-            else: self._ffamily = 'Arial'
+        if self._ffamily is None: self._ffamily = 'Arial'
+        elif self._ffamily not in ('Arial', 'Courier', 'Times'):
+            try:
+                path = font_manager.findfont(self._ffamily, fallback_to_default=False)
+                if (not exists(path) or
+                        splitext(path)[1] not in ('.ttf', '.otf')): self._ffamily = 'Arial'
+                else: self._ffamily = path
+            except: self._ffamily = 'Arial'
+        if self._fscale is None: self._fscale = 1.0
+        # Revision 17/03/2025 >
+
         """
             Settings -> actions        
         """
@@ -879,7 +894,6 @@ class AbstractViewWidget(QFrame):
 
     def _initInfoLabels(self):
         if self.hasVolume():
-
             # Top Left identity attributes
 
             identity = self._volume.identity
@@ -902,7 +916,7 @@ class AbstractViewWidget(QFrame):
             else:
                 prop.SetFontFamily(VTK_FONT_FILE)
                 prop.SetFontFile(self._ffamily)
-            prop.SetFontSize(self._fsize)
+            prop.SetFontSize(int(self._fsize * self._fscale))
             prop.SetColor(self._lcolor)
             prop.SetOpacity(self._lalpha)
             prop.SetJustificationToLeft()
@@ -949,7 +963,7 @@ class AbstractViewWidget(QFrame):
             else:
                 prop.SetFontFamily(VTK_FONT_FILE)
                 prop.SetFontFile(self._ffamily)
-            prop.SetFontSize(self._fsize)
+            prop.SetFontSize(int(self._fsize * self._fscale))
             prop.SetColor(self._lcolor)
             prop.SetOpacity(self._lalpha)
             prop.SetJustificationToRight()
@@ -975,7 +989,7 @@ class AbstractViewWidget(QFrame):
             else:
                 prop.SetFontFamily(VTK_FONT_FILE)
                 prop.SetFontFile(self._ffamily)
-            prop.SetFontSize(self._fsize)
+            prop.SetFontSize(int(self._fsize * self._fscale))
             prop.SetColor(self._lcolor)
             prop.SetOpacity(self._lalpha)
             prop.SetJustificationToLeft()
@@ -988,7 +1002,6 @@ class AbstractViewWidget(QFrame):
             # Bottom Right
 
             txt = ''
-
             info = self._info['bottomright']
             prop = info.GetTextProperty()
             if self._ffamily in ('Arial', 'Courier', 'Times'):
@@ -996,7 +1009,7 @@ class AbstractViewWidget(QFrame):
             else:
                 prop.SetFontFamily(VTK_FONT_FILE)
                 prop.SetFontFile(self._ffamily)
-            prop.SetFontSize(self._fsize)
+            prop.SetFontSize(int(self._fsize * self._fscale))
             prop.SetColor(self._lcolor)
             prop.SetOpacity(self._lalpha)
             prop.SetJustificationToRight()
@@ -1017,7 +1030,7 @@ class AbstractViewWidget(QFrame):
             else:
                 prop.SetFontFamily(VTK_FONT_FILE)
                 prop.SetFontFile(self._ffamily)
-            prop.SetFontSize(self._fsize)
+            prop.SetFontSize(int(self._fsize * self._fscale))
             prop.SetColor(self._lcolor)
             prop.SetOpacity(self._lalpha)
             self._colorbar.SetNumberOfLabels(5)
@@ -1037,11 +1050,14 @@ class AbstractViewWidget(QFrame):
         linev.SetPoint1(0.5 - t1, 0.5, 0)
         linev.SetPoint2(0.5 + t1, 0.5, 0)
         lines = vtkAppendPolyData()
+        # noinspection PyArgumentList
         lines.AddInputConnection(lineh.GetOutputPort())
+        # noinspection PyArgumentList
         lines.AddInputConnection(linev.GetOutputPort())
         c = vtkCoordinate()
         c.SetCoordinateSystemToNormalizedViewport()
         mapper = vtkPolyDataMapper2D()
+        # noinspection PyArgumentList
         mapper.SetInputConnection(lines.GetOutputPort())
         mapper.SetTransformCoordinate(c)
         self._cross = vtkActor2D()
@@ -1057,16 +1073,12 @@ class AbstractViewWidget(QFrame):
             if self._roundedenabled:
                 s = self._volume.getSpacing()
                 r = list()
-                """"
-                r.append(round(p[0] / s[0]) * s[0])
-                r.append(round(p[1] / s[1]) * s[1])
-                r.append(round(p[2] / s[2]) * s[2])
-                """
                 r.append(int(p[0] / s[0]) * s[0])
                 r.append(int(p[1] / s[1]) * s[1])
                 r.append(int(p[2] / s[2]) * s[2])
                 return r
             else: return p
+        else: raise AttributeError('Volume attribute is None.')
 
     def _getWorldToMatrixCoordinate(self, p):
         if self._volume is not None:
@@ -1076,9 +1088,11 @@ class AbstractViewWidget(QFrame):
             r.append(int(round(p[1] / s[1])))
             r.append(int(round(p[2] / s[2])))
             return r
+        else: raise AttributeError('Volume attribute is None.')
 
     def _getWorldFromDisplay(self, x, y):
         self._renderer.SetDisplayPoint(x, y, 0.0)
+        # noinspection PyArgumentList
         self._renderer.DisplayToWorld()
         p = self._renderer.GetWorldPoint()
         return p[:3]
@@ -1092,34 +1106,43 @@ class AbstractViewWidget(QFrame):
     def _getDisplayFromNormalizedViewport(self, x, y):
         xr = vtkReference(x)
         yr = vtkReference(y)
+        # noinspection PyTypeChecker
         self._renderer.NormalizedViewportToViewport(xr, yr)
+        # noinspection PyTypeChecker
         self._renderer.ViewportToNormalizedDisplay(xr, yr)
+        # noinspection PyTypeChecker
         self._renderer.NormalizedDisplayToDisplay(xr, yr)
+        # noinspection PyTypeChecker
         return float(xr), float(yr)
 
     def _getNormalizedViewportFromDisplay(self, x, y):
         xr = vtkReference(x)
         yr = vtkReference(y)
+        # noinspection PyTypeChecker
         self._renderer.DisplayToNormalizedDisplay(xr, yr)
+        # noinspection PyTypeChecker
         self._renderer.NormalizedDisplayToViewport(xr, yr)
+        # noinspection PyTypeChecker
         self._renderer.ViewportToNormalizedViewport(xr, yr)
+        # noinspection PyTypeChecker
         return float(xr), float(yr)
 
     def _getScreenFromDisplay(self, x, y):
-        """
-        from vtk QVTKRenderWindowInteractor class, _getPixelRatio() method; 02/2023
-        scale = QApplication.screens()[0].devicePixelRatio()
-        fx = int(x / scale)
-        fy = self._renderwindow.GetSize()[1] - int(y / scale) - 1
-        return self.mapToGlobal(QPoint(fx, fy))
-        """
-        sx1, sy1 = self._renderwindow.GetSize()
-        s = self._window.size()
-        sx2, sy2 = s.width(), s.height()
-        fx = sx1 / sx2
-        fy = sy1 / sy2
-        y2 = self._renderwindow.GetSize()[1] - y
-        return self.mapToGlobal(QPoint(int(x / fx), int(y2 / fy)))
+        # < Revision 14/03/2025
+        if platform == 'darwin':
+            scale = 1.0
+            xs = int(x / scale)
+            ys = int((self._renderwindow.GetSize()[1] - y - 1) / scale)
+            r = self.mapToGlobal(QPoint(xs, ys))
+        else:
+            # bug mapToGlobal in win32 platform
+            px, py = self._renderwindow.GetPosition()
+            scale = QApplication.primaryScreen().devicePixelRatio()
+            x2 = px + int(x / scale)
+            y2 = py + int((self._renderwindow.GetSize()[1] - y - 1) / scale)
+            r = QPoint(x2, y2)
+        return r
+        # Revision 14/03/2025 >
 
     def _moveToTool(self, name):
         tool = self._tools[name]
@@ -1143,6 +1166,7 @@ class AbstractViewWidget(QFrame):
                 name = ''.join(rep.GetInput().split(sep='\n')[1])
                 for widget in self._tools:
                     if widget.getName() == name:
+                        # noinspection PyUnresolvedReferences
                         self.ToolRemoved.emit(self, widget, False)
                         widget.SetEnabled(0)
                         del self._tools[widget.getName()]
@@ -1153,6 +1177,7 @@ class AbstractViewWidget(QFrame):
                 if widget.GetRepresentation() == rep:
                     if rep.GetClassName() in ('vtkPointHandleRepresentation3D',
                                               'vtkLineRepresentation'):
+                        # noinspection PyUnresolvedReferences
                         self.ToolRemoved.emit(self, widget, False)
                     widget.SetEnabled(0)
                     del self._tools[widget.getName()]
@@ -1192,15 +1217,20 @@ class AbstractViewWidget(QFrame):
                     elif isinstance(widget, vtkLineRepresentation): rep = widget.GetLineRepresentation()
         for widget in self._tools:
             if widget.GetRepresentation() == rep:
-                c = QColorDialog().getColor(title='Tool color', options=QColorDialog.DontUseNativeDialog)
-                if c.isValid():
-                    widget.setColor((c.red() / 255, c.green() / 255, c.blue() / 255))
-                    widget.setOpacity(c.alpha() / 255)
-                    self._renderwindow.Render()
-                    if rep.GetClassName() in ('vtkPointHandleRepresentation3D',
-                                              'vtkLineRepresentation'):
-                        # self.ToolAttributesChanged.emit(self, widget)
-                        self.ToolColorChanged.emit(self, widget)
+                # < Revision 18/03/2025
+                # c = QColorDialog().getColor(title='Tool color', options=QColorDialog.DontUseNativeDialog)
+                c = colorDialog(title='Tool color')
+                # Revision 18/03/2025 >
+                if c is not None:
+                    if c.isValid():
+                        widget.setColor((c.red() / 255, c.green() / 255, c.blue() / 255))
+                        widget.setOpacity(c.alpha() / 255)
+                        self._renderwindow.Render()
+                        if rep.GetClassName() in ('vtkPointHandleRepresentation3D',
+                                                  'vtkLineRepresentation'):
+                            # self.ToolAttributesChanged.emit(self, widget)
+                            # noinspection PyUnresolvedReferences
+                            self.ToolColorChanged.emit(self, widget)
 
     def _textEditFinished(self):
         if self._edit.text() == '': self._dialog.reject()
@@ -1218,7 +1248,9 @@ class AbstractViewWidget(QFrame):
             f = 10 / d * 0.4
             self._ruler.SetRulerDistance(f)
             self._renderwindow.Render()
-            if signal: self.ViewMethodCalled.emit(self, '_updateRuler', None)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, '_updateRuler', None)
 
     def _updateToolMenu(self):
         v = False
@@ -1227,11 +1259,13 @@ class AbstractViewWidget(QFrame):
             for tool in self._tools:
                 if isinstance(tool, HandleWidget):
                     t = QAction(tool.getName(), self)
+                    # noinspection PyUnresolvedReferences
                     t.triggered.connect(lambda state, x=tool.getName(): self._moveToTool(x))
                     self._menuMoveTarget.addAction(t)
                     v = True
                 elif isinstance(tool, LineWidget):
                     t = QAction(tool.getName(), self)
+                    # noinspection PyUnresolvedReferences
                     t.triggered.connect(lambda state, x=tool.getName(): self._moveToTool(x))
                     self._menuMoveTarget.addAction(t)
                     v = True
@@ -1249,14 +1283,18 @@ class AbstractViewWidget(QFrame):
 
     def synchroniseToolRemoved(self, obj, tool, alltools=False):
         if self != obj and self.hasVolume():
-            if isinstance(tool, HandleWidget | LineWidget | None):
-                if alltools: self.removeAllTools(signal=False)
-                else:
+            # < Revision 02/05/2025
+            if alltools: self.removeAllTools(signal=False)
+            else:
+                if isinstance(tool, HandleWidget | LineWidget | None):
+                    # if alltools: self.removeAllTools(signal=False)
+                    # else:
                     if len(self._tools) > 0:
                         if tool is not None and tool.getName() in self._tools:
                             self.removeTool(tool.getName(), signal=False)
                     # else: raise ValueError('tool name {} is not in SisypheToolCollection.'.format(tool.getName()))
-            else: raise TypeError('parameter type {} is not HandleWidget or LineWidget.'.format(type(tool)))
+                # else: raise TypeError('parameter type {} is not HandleWidget or LineWidget.'.format(type(tool)))
+            # Revision 02/05/2025 >
 
     def synchroniseToolMoved(self, obj, tool):
         if self != obj and self.hasVolume():
@@ -1302,6 +1340,7 @@ class AbstractViewWidget(QFrame):
             elif isinstance(tool, LineWidget):
                 self.addTrajectory(p1=tool.getPosition1(), p2=tool.getPosition2(), name=tool.getName(), signal=False)
             else: raise TypeError('parameter type {} is not HandleWidget or LineWidget.'.format(type(tool)))
+            # noinspection PyUnresolvedReferences
             self._tools[tool.getName()].copyAttributesFrom(tool)
 
     def synchroniseToolRenamed(self, obj, tool, name):
@@ -1321,6 +1360,13 @@ class AbstractViewWidget(QFrame):
 
     # Public methods
 
+    # < Revision 08/03/2025
+    # fix vtkWin32OpenGLRenderWindow error: wglMakeCurrent failed in MakeCurrent()
+    # finalize method must be called before destruction
+    def finalize(self):
+        self._window.Finalize()
+    # Revision 08/03/2025 >
+
     def getDisplayScaleFactor(self):
         return self.screen().devicePixelRatio()
 
@@ -1332,6 +1378,7 @@ class AbstractViewWidget(QFrame):
             self._info['topleft'].SetVisibility(v and self._action['showident'].isChecked())
             self._info['topright'].SetVisibility(v and self._action['showimg'].isChecked())
             self._info['bottomleft'].SetVisibility(v and self._action['showacq'].isChecked())
+            self._info['bottomright'].SetVisibility(v)
             # Colorbar
             self._initColorbar()
             self._colorbar.SetVisibility(self._action['showcolorbar'].isChecked())
@@ -1341,7 +1388,7 @@ class AbstractViewWidget(QFrame):
             self._ruler.SetVisibility(self._action['showruler'].isChecked())
             # Cursor
             if self._cursor is None: self._initCursor()
-            self._cursor.SetVisibility(self._action['showcursor'].isChecked())
+            if self._cursor is not None: self._cursor.SetVisibility(self._action['showcursor'].isChecked())
             self._renderwindow.Render()
 
     def displayOff(self):
@@ -1369,11 +1416,21 @@ class AbstractViewWidget(QFrame):
         return self.frameShape() > 0
 
     def select(self, signal=True):
+        # < Revision 16/03/2025
+        # noinspection PyTypeChecker
         self.setFrameShape(QFrame.Box)
-        if signal: self.Selected.emit(self)
+        if platform == 'win32': self.setStyleSheet('border-color: #FFFFFF')
+        # Revision 16/03/2025 >
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.Selected.emit(self)
 
     def unselect(self):
+        # < Revision 16/03/2025
+        # noinspection PyTypeChecker
         self.setFrameShape(QFrame.NoFrame)
+        if platform == 'win32': self.setStyleSheet('border-color: #000000')
+        # Revision 16/03/2025 >
 
     def setName(self, name):
         if isinstance(name, str): self._name = name
@@ -1381,6 +1438,16 @@ class AbstractViewWidget(QFrame):
 
     def getName(self):
         return self._name
+
+    # < Revision 12/12/2024
+    def setTitle(self, title):
+        self._title = title
+    # Revision 12/12/2024 >
+
+    # < Revision 12/12/2024
+    def getTitle(self):
+        return self._title
+    # Revision 12/12/2024 >
 
     def isEmpty(self):
         return self._volume is None
@@ -1408,6 +1475,12 @@ class AbstractViewWidget(QFrame):
 
     def getRenderer(self):
         return self._renderer
+
+    def get2DRenderer(self):
+        return self._renderer2D
+
+    def getObjectRenderer(self):
+        return self._objetrenderer
 
     def getWindowInteractor(self):
         return self._interactor
@@ -1474,35 +1547,62 @@ class AbstractViewWidget(QFrame):
 
     def setNoActionFlag(self, signal=True):
         self._action['noflag'].setChecked(True)
-        if signal: self.ViewMethodCalled.emit(self, 'setNoActionFlag', None)
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.ViewMethodCalled.emit(self, 'setNoActionFlag', None)
 
     def setZoomFlag(self, signal=True):
         self._action['zoomflag'].setChecked(True)
-        if signal: self.ViewMethodCalled.emit(self, 'setZoomFlag', None)
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.ViewMethodCalled.emit(self, 'setZoomFlag', None)
 
     def getZoomFlag(self):
         return self._action['zoomflag'].isChecked()
 
     def setMoveFlag(self, signal=True):
         self._action['moveflag'].setChecked(True)
-        if signal: self.ViewMethodCalled.emit(self, 'setMoveFlag', None)
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.ViewMethodCalled.emit(self, 'setMoveFlag', None)
 
     def getMoveFlag(self):
         return self._action['moveflag'].isChecked()
 
     def setLevelFlag(self, signal=True):
         self._action['levelflag'].setChecked(True)
-        if signal: self.ViewMethodCalled.emit(self, 'setLevelFlag', None)
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.ViewMethodCalled.emit(self, 'setLevelFlag', None)
 
     def getLevelFlag(self):
         return self._action['levelflag'].isChecked()
 
     def setFollowFlag(self, signal=True):
         self._action['followflag'].setChecked(True)
-        if signal: self.ViewMethodCalled.emit(self, 'setFollowFlag', None)
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.ViewMethodCalled.emit(self, 'setFollowFlag', None)
 
     def getFollowFlag(self):
         return self._action['followflag'].isChecked()
+
+    # < Revision 09/01/2025
+    # add getCenteredCursorFlag method
+    def setCenteredCursorFlag(self, signal=True):
+        self._action['centeredflag'].setChecked(True)
+        p = self.getCursorWorldPosition()
+        self.setCursorWorldPosition(p[0], p[1], p[2])
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.ViewMethodCalled.emit(self, 'setCenteredCursorFlag', None)
+    # Revision 09/01/2025 >
+
+    # < Revision 09/01/2025
+    # add getCenteredCursorFlag method
+    def getCenteredCursorFlag(self):
+        return self._action['centeredflag'].isChecked()
+    # Revision 09/01/2025 >
 
     def setSynchronisation(self, v):
         if isinstance(v, bool):
@@ -1521,84 +1621,6 @@ class AbstractViewWidget(QFrame):
     def isSynchronised(self):
         return self._action['synchronisation'].isChecked()
 
-    def getFontFamily(self):
-        return self._ffamily
-
-    def setFontFamily(self, s, signal=True):
-        if isinstance(s, str):
-            if s in ('Arial', 'Courier', 'Times'):
-                self._ffamily = s
-                self._info['topright'].GetTextProperty().SetFontFamilyAsString(s)
-                self._info['topleft'].GetTextProperty().SetFontFamilyAsString(s)
-                self._info['bottomright'].GetTextProperty().SetFontFamilyAsString(s)
-                self._info['bottomleft'].GetTextProperty().SetFontFamilyAsString(s)
-                self._info['topcenter'].GetTextProperty().SetFontFamilyAsString(s)
-                self._info['leftcenter'].GetTextProperty().SetFontFamilyAsString(s)
-                self._info['rightcenter'].GetTextProperty().SetFontFamilyAsString(s)
-                self._info['bottomcenter'].GetTextProperty().SetFontFamilyAsString(s)
-                self._colorbar.GetLabelTextProperty().SetFontFamilyAsString(s)
-                self._tools.setFontFamily(s)
-            else:
-                import Sisyphe.gui
-                path = split(Sisyphe.gui.__file__)[0]
-                file = '{}.ttf'.format(s)
-                path = join(path, 'font', file)
-                if exists(path):
-                    self._ffamily = file
-                    self._info['topright'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
-                    self._info['topleft'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
-                    self._info['bottomright'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
-                    self._info['bottomleft'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
-                    self._info['topcenter'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
-                    self._info['leftcenter'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
-                    self._info['rightcenter'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
-                    self._info['bottomcenter'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
-                    self._colorbar.GetLabelTextProperty().SetFontFamily(VTK_FONT_FILE)
-                    self._info['topright'].GetTextProperty().SetFontFile(file)
-                    self._info['topleft'].GetTextProperty().SetFontFile(file)
-                    self._info['bottomright'].GetTextProperty().SetFontFile(file)
-                    self._info['bottomleft'].GetTextProperty().SetFontFile(file)
-                    self._info['topcenter'].GetTextProperty().SetFontFile(file)
-                    self._info['leftcenter'].GetTextProperty().SetFontFile(file)
-                    self._info['rightcenter'].GetTextProperty().SetFontFile(file)
-                    self._info['bottomcenter'].GetTextProperty().SetFontFile(file)
-                    self._colorbar.GetLabelTextProperty().SetFontFile(file)
-                    self._tools.setFontFamily(s)
-                else:  # Default
-                    self._ffamily = 'Arial'
-                    self._info['topright'].GetTextProperty().SetFontFamilyAsString('Arial')
-                    self._info['topleft'].GetTextProperty().SetFontFamilyAsString('Arial')
-                    self._info['bottomright'].GetTextProperty().SetFontFamilyAsString('Arial')
-                    self._info['bottomleft'].GetTextProperty().SetFontFamilyAsString('Arial')
-                    self._info['topcenter'].GetTextProperty().SetFontFamilyAsString('Arial')
-                    self._info['leftcenter'].GetTextProperty().SetFontFamilyAsString('Arial')
-                    self._info['rightcenter'].GetTextProperty().SetFontFamilyAsString('Arial')
-                    self._info['bottomcenter'].GetTextProperty().SetFontFamilyAsString('Arial')
-                    self._colorbar.GetLabelTextProperty().SetFontFamilyAsString('Arial')
-                    self._tools.setFontFamily('Arial')
-            self._renderwindow.Render()
-            if signal: self.ViewMethodCalled.emit(self, 'setFontFamily', s)
-        else: raise TypeError('parameter type {} is not str.'.format(type(s)))
-
-    def getFontSize(self):
-        return self._fsize
-
-    def setFontSize(self, s, signal=True):
-        if isinstance(s, int):
-            self._fsize = s
-            self._info['topright'].GetTextProperty().SetFontSize(s)
-            self._info['topleft'].GetTextProperty().SetFontSize(s)
-            self._info['bottomright'].GetTextProperty().SetFontSize(s)
-            self._info['bottomleft'].GetTextProperty().SetFontSize(s)
-            self._info['topcenter'].GetTextProperty().SetFontSize(s)
-            self._info['leftcenter'].GetTextProperty().SetFontSize(s)
-            self._info['rightcenter'].GetTextProperty().SetFontSize(s)
-            self._info['bottomcenter'].GetTextProperty().SetFontSize(s)
-            self._colorbar.GetLabelTextProperty().SetFontSize(s)
-            self._renderwindow.Render()
-            if signal: self.ViewMethodCalled.emit(self, 'setFontSize', s)
-        else: raise TypeError('parameter type {} is not int.'.format(type(s)))
-
     def setInfoVisibility(self, v, signal=True):
         if isinstance(v, bool):
             self._info['topleft'].SetVisibility(v and self._action['showident'].isChecked())
@@ -1607,7 +1629,9 @@ class AbstractViewWidget(QFrame):
             self._info['bottomright'].SetVisibility(v)
             self._action['showinfo'].setChecked(v)
             self._renderwindow.Render()
-            if signal: self.ViewMethodCalled.emit(self, 'setInfoVisibility', v)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setInfoVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setInfoVisibilityOn(self, signal=True):
@@ -1624,7 +1648,9 @@ class AbstractViewWidget(QFrame):
             self._action['showident'].setChecked(v)
             self._info['topleft'].SetVisibility(v and self._action['showinfo'].isChecked())
             self._renderwindow.Render()
-            if signal: self.ViewMethodCalled.emit(self, 'setInfoIdentityVisibility', v)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setInfoIdentityVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setInfoIdentityVisibilityOn(self, signal=True):
@@ -1641,7 +1667,9 @@ class AbstractViewWidget(QFrame):
             self._action['showimg'].setChecked(v)
             self._info['topright'].SetVisibility(v and self._action['showinfo'].isChecked())
             self._renderwindow.Render()
-            if signal: self.ViewMethodCalled.emit(self, 'setInfoVolumeVisibility', v)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setInfoVolumeVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setInfoVolumeVisibilityOn(self, signal=True):
@@ -1658,7 +1686,9 @@ class AbstractViewWidget(QFrame):
             self._action['showacq'].setChecked(v)
             self._info['bottomleft'].SetVisibility(v and self._action['showinfo'].isChecked())
             self._renderwindow.Render()
-            if signal: self.ViewMethodCalled.emit(self, 'setInfoAcquisitionVisibility', v)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setInfoAcquisitionVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setInfoAcquisitionVisibilityOn(self, signal=True):
@@ -1675,7 +1705,9 @@ class AbstractViewWidget(QFrame):
             self._colorbar.SetVisibility(v)
             self._action['showcolorbar'].setChecked(v)
             self._renderwindow.Render()
-            if signal: self.ViewMethodCalled.emit(self, 'setColorbarVisibility', v)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setColorbarVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
         
     def setColorbarVisibilityOn(self, signal=True):
@@ -1729,7 +1761,9 @@ class AbstractViewWidget(QFrame):
             self._colorbar.GetPositionCoordinate().SetValue(0.25, 0.83)
             self._action['topcolorbar'].setChecked(True)
         self._renderwindow.Render()
-        if signal: self.ViewMethodCalled.emit(self, 'setColorbarPosition', pos)
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.ViewMethodCalled.emit(self, 'setColorbarPosition', pos)
 
     def setColorbarPositionToLeft(self, signal=True):
         self.setColorbarPosition('left', signal)
@@ -1749,13 +1783,29 @@ class AbstractViewWidget(QFrame):
         elif self._action['topcolorbar'].isChecked(): return 'Top'
         else: return 'Bottom'
 
+    # < Revision 03/12/2024
+    # add hasHorizontalColorbar method
+    def hasHorizontalColorbar(self):
+        return self._action['leftcolorbar'].isChecked() or \
+            self._action['rightcolorbar'].isChecked()
+    # Revision 03/12/2024 >
+
+    # < Revision 03/12/2024
+    # add hasVerticalColorbar method
+    def hasVerticalColorbar(self):
+        return self._action['topcolorbar'].isChecked() or \
+            self._action['bottomcolorbar'].isChecked()
+    # Revision 03/12/2024 >
+
     def setTooltipVisibility(self, v, signal=True):
         if isinstance(v, bool):
             if v is True: self.setToolTip(self._tooltipstr)
             else: self.setToolTip('')
             self._action['showtooltip'].setChecked(v)
             self._renderwindow.Render()
-            if signal: self.ViewMethodCalled.emit(self, 'setTooltipVisibility', v)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setTooltipVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setTooltipVisibilityOn(self, signal=True):
@@ -1773,7 +1823,9 @@ class AbstractViewWidget(QFrame):
             self._action['showruler'].setChecked(v)
             self._renderwindow.Render()
             self.setRulerPosition(self.getRulerPosition(), False)
-            if signal: self.ViewMethodCalled.emit(self, 'setRulerVisibility', v)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setRulerVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setRulerVisibilityOn(self, signal=True):
@@ -1807,7 +1859,9 @@ class AbstractViewWidget(QFrame):
             self._ruler.GetPoint1Coordinate().SetValue(0.3, 0.99)
             self._action['topruler'].setChecked(True)
         self._updateRuler(signal=False)
-        if signal: self.ViewMethodCalled.emit(self, 'setRulerPosition', pos)
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.ViewMethodCalled.emit(self, 'setRulerPosition', pos)
 
     def setRulerPositionToLeft(self, signal=True):
         self.setRulerPosition('left', signal)
@@ -1840,37 +1894,41 @@ class AbstractViewWidget(QFrame):
             del self._orientmarker
         self._orientmarker = vtkOrientationMarkerWidget()
         markertype = markertype.lower()
-        if markertype in ['head', 'bust', 'body', 'brain']:
-            import Sisyphe.gui
-            path = split(Sisyphe.gui.__file__)[0]
-            file = '{}.obj'.format(markertype)
-            objname = join(path, 'mesh', file)
-            if exists(objname):
-                r = vtkOBJReader()
-                r.SetFileName(objname)
-                r.Update()
-                mapper = vtkPolyDataMapper()
-                mapper.SetInputConnection(r.GetOutputPort())
-                actor = vtkActor()
-                actor.SetMapper(mapper)
-                actor.GetProperty().SetColor(0.9, 0.9, 0.9)
-                if markertype == 'bust':
-                    actor.SetOrientation(90.0, 0.0, 0.0)
-                    self._action['shapebust'].setChecked(True)
-                    s = 0.2
-                elif markertype == 'head':
-                    actor.SetOrientation(90.0, 0.0, 180.0)
-                    self._action['shapehead'].setChecked(True)
-                    s = 0.2
-                elif markertype == 'body':
-                    actor.SetOrientation(90.0, 0.0, 180.0)
-                    self._action['shapebody'].setChecked(True)
-                    s = 0.3
-                elif markertype == 'brain':
-                    actor.SetOrientation(0.0, 0.0, 0.0)
-                    self._action['shapebrain'].setChecked(True)
-                    s = 0.3
-            else: markertype = 'cube'
+        s = 0.0
+        actor = None
+        if markertype in ['head', 'bust', 'body', 'brain', 'cube']:
+            if markertype != 'cube':
+                import Sisyphe.gui
+                path = split(Sisyphe.gui.__file__)[0]
+                file = '{}.obj'.format(markertype)
+                objname = join(path, 'mesh', file)
+                if exists(objname):
+                    r = vtkOBJReader()
+                    r.SetFileName(objname)
+                    r.Update()
+                    mapper = vtkPolyDataMapper()
+                    # noinspection PyArgumentList
+                    mapper.SetInputConnection(r.GetOutputPort())
+                    actor = vtkActor()
+                    actor.SetMapper(mapper)
+                    actor.GetProperty().SetColor(0.9, 0.9, 0.9)
+                    if markertype == 'bust':
+                        actor.SetOrientation(90.0, 0.0, 0.0)
+                        self._action['shapebust'].setChecked(True)
+                        s = 0.2
+                    elif markertype == 'head':
+                        actor.SetOrientation(90.0, 0.0, 180.0)
+                        self._action['shapehead'].setChecked(True)
+                        s = 0.2
+                    elif markertype == 'body':
+                        actor.SetOrientation(90.0, 0.0, 180.0)
+                        self._action['shapebody'].setChecked(True)
+                        s = 0.3
+                    else:
+                        actor.SetOrientation(0.0, 0.0, 0.0)
+                        self._action['shapebrain'].setChecked(True)
+                        s = 0.3
+                else: markertype = 'cube'
         if markertype == 'cube':  # Annotated cube actor
             actor = vtkAnnotatedCubeActor()
             actor.SetXPlusFaceText('R')
@@ -1885,7 +1943,7 @@ class AbstractViewWidget(QFrame):
             actor.GetCubeProperty().SetColor(0.9, 0.9, 0.9)
             self._action['shapecube'].setChecked(True)
             s = 0.15
-        elif markertype not in ['head', 'bust', 'body', 'brain']:  # axes actor
+        elif s == 0.0:  # axes actor
             markertype = 'axes'
             actor = vtkAxesActor()
             self._action['shapeaxes'].setChecked(True)
@@ -1897,7 +1955,9 @@ class AbstractViewWidget(QFrame):
         self._orientmarker.InteractiveOff()
         self._orientmarker.SetEnabled(self._action['showmarker'].isChecked())
         self._renderwindow.Render()
-        if signal: self.ViewMethodCalled.emit(self, 'setOrientationMarker', markertype)
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.ViewMethodCalled.emit(self, 'setOrientationMarker', markertype)
 
     def setOrientationMarkerToBody(self, signal=True):
         self.setOrientationMarker('body', signal)
@@ -1922,7 +1982,9 @@ class AbstractViewWidget(QFrame):
             self._orientmarker.SetEnabled(v)
             self._action['showmarker'].setChecked(v)
             self._renderwindow.Render()
-            if signal: self.ViewMethodCalled.emit(self, 'setOrientationMakerVisibility', v)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setOrientationMakerVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setOrientationMarkerVisibilityOn(self, signal=True):
@@ -1959,11 +2021,13 @@ class AbstractViewWidget(QFrame):
         return self._cross.GetProperty().GetOpacity()
 
     def setCursorVisibility(self, v, signal=True):
-        if isinstance(v, bool) and self._cursor is not None:
-            self._cursor.SetVisibility(v)
+        if isinstance(v, bool):
+            if self._cursor is not None: self._cursor.SetVisibility(v)
             self._action['showcursor'].setChecked(v)
             self._renderwindow.Render()
-            if signal: self.ViewMethodCalled.emit(self, 'setCursorVisibility', v)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setCursorVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setCursorVisibilityOn(self, signal=True):
@@ -1974,6 +2038,197 @@ class AbstractViewWidget(QFrame):
 
     def getCursorVisibility(self):
         return self._action['showcursor'].isChecked()
+
+    # < Revision 19/12/2024
+    # add setCursorOpacity method
+    def setCursorOpacity(self, v: float, signal=True):
+        if isinstance(v, float):
+            if 0.0 <= v <= 1.0:
+                # < Revision 07/01/2025
+                # self._cross.GetProperty().SetOpacity(v)
+                self._cursor.GetProperty().SetOpacity(v)
+                # Revision 07/01/2025 >
+                if signal:
+                    # noinspection PyUnresolvedReferences
+                    self.ViewMethodCalled.emit(self, 'setLineOpacity', v)
+            else: raise ValueError('parameter value is not between 0.0 and 1.0.')
+        else: raise TypeError('parameter type {} is not float.'.format(type(v)))
+    # Revision 19/12/2024 >
+
+    # < Revision 19/12/2024
+    # add getCursorOpacity method
+    def getCursorOpacity(self):
+        # < Revision 07/01/2025
+        # return self._cross.GetProperty().GetOpacity()
+        return self._cursor.GetProperty().GetOpacity()
+        # Revision 07/01/2025 >
+    # Revision 19/12/2024 >
+
+    # < Revision 17/03/2025
+    # add getFontFamily method
+    def getFontFamily(self):
+        return self._ffamily
+    # Revision 17/03/2025 >
+
+    # < Revision 17/03/2025
+    # add setFontFamily method
+    def setFontFamily(self, s, signal=True):
+        if isinstance(s, str):
+            if s in ('Arial', 'Courier', 'Times'):
+                self._ffamily = s
+                self._info['topright'].GetTextProperty().SetFontFamilyAsString(s)
+                self._info['topleft'].GetTextProperty().SetFontFamilyAsString(s)
+                self._info['bottomright'].GetTextProperty().SetFontFamilyAsString(s)
+                self._info['bottomleft'].GetTextProperty().SetFontFamilyAsString(s)
+                self._info['topcenter'].GetTextProperty().SetFontFamilyAsString(s)
+                self._info['leftcenter'].GetTextProperty().SetFontFamilyAsString(s)
+                self._info['rightcenter'].GetTextProperty().SetFontFamilyAsString(s)
+                self._info['bottomcenter'].GetTextProperty().SetFontFamilyAsString(s)
+                self._colorbar.GetLabelTextProperty().SetFontFamilyAsString(s)
+                self._tools.setFontFamily(s)
+            else:
+                if exists(s) and splitext(s)[1] in ('.ttf', '.otf'):
+                    self._ffamily = s
+                    self._info['topright'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
+                    self._info['topleft'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
+                    self._info['bottomright'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
+                    self._info['bottomleft'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
+                    self._info['topcenter'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
+                    self._info['leftcenter'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
+                    self._info['rightcenter'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
+                    self._info['bottomcenter'].GetTextProperty().SetFontFamily(VTK_FONT_FILE)
+                    self._colorbar.GetLabelTextProperty().SetFontFamily(VTK_FONT_FILE)
+                    self._info['topright'].GetTextProperty().SetFontFile(s)
+                    self._info['topleft'].GetTextProperty().SetFontFile(s)
+                    self._info['bottomright'].GetTextProperty().SetFontFile(s)
+                    self._info['bottomleft'].GetTextProperty().SetFontFile(s)
+                    self._info['topcenter'].GetTextProperty().SetFontFile(s)
+                    self._info['leftcenter'].GetTextProperty().SetFontFile(s)
+                    self._info['rightcenter'].GetTextProperty().SetFontFile(s)
+                    self._info['bottomcenter'].GetTextProperty().SetFontFile(s)
+                    self._colorbar.GetLabelTextProperty().SetFontFile(s)
+                    self._tools.setFontFamily(s)
+                else:  # Default
+                    self._ffamily = 'Arial'
+                    self._info['topright'].GetTextProperty().SetFontFamilyAsString('Arial')
+                    self._info['topleft'].GetTextProperty().SetFontFamilyAsString('Arial')
+                    self._info['bottomright'].GetTextProperty().SetFontFamilyAsString('Arial')
+                    self._info['bottomleft'].GetTextProperty().SetFontFamilyAsString('Arial')
+                    self._info['topcenter'].GetTextProperty().SetFontFamilyAsString('Arial')
+                    self._info['leftcenter'].GetTextProperty().SetFontFamilyAsString('Arial')
+                    self._info['rightcenter'].GetTextProperty().SetFontFamilyAsString('Arial')
+                    self._info['bottomcenter'].GetTextProperty().SetFontFamilyAsString('Arial')
+                    self._colorbar.GetLabelTextProperty().SetFontFamilyAsString('Arial')
+                    self._tools.setFontFamily('Arial')
+            self._renderwindow.Render()
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setFontFamily', s)
+        else: raise TypeError('parameter type {} is not str.'.format(type(s)))
+    # Revision 17/03/2025 >
+
+    # < Revision 17/03/2025
+    # add getFontSize method
+    def getFontSize(self):
+        return self._fsize
+    # Revision 17/03/2025 >
+
+    # < Revision 17/03/2025
+    # add setFontSize method
+    def setFontSize(self, s, signal=True):
+        if isinstance(s, int):
+            self._fsize = s
+            s = int(self._fsize * self._fscale)
+            # Revision 17/03/2025 >
+            self._info['topright'].GetTextProperty().SetFontSize(s)
+            self._info['topleft'].GetTextProperty().SetFontSize(s)
+            self._info['bottomright'].GetTextProperty().SetFontSize(s)
+            self._info['bottomleft'].GetTextProperty().SetFontSize(s)
+            self._info['topcenter'].GetTextProperty().SetFontSize(s)
+            self._info['leftcenter'].GetTextProperty().SetFontSize(s)
+            self._info['rightcenter'].GetTextProperty().SetFontSize(s)
+            self._info['bottomcenter'].GetTextProperty().SetFontSize(s)
+            self._colorbar.GetLabelTextProperty().SetFontSize(s)
+            self._tooltip.GetBalloonRepresentation().GetTextProperty().SetFontSize(s)
+            self._renderwindow.Render()
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setFontSize', self._fsize)
+        else: raise TypeError('parameter type {} is not int.'.format(type(s)))
+    # Revision 17/03/2025 >
+
+    # < Revision 17/03/2025
+    # add setFontScale method
+    def setFontScale(self, s, signal=True):
+        if isinstance(s, float):
+            if s < 0.5: s = 0.5
+            elif s > 2.0: s = 2.0
+            self._fscale = s
+            s = int(self._fsize * self._fscale)
+            # Revision 17/03/2025 >
+            self._info['topright'].GetTextProperty().SetFontSize(s)
+            self._info['topleft'].GetTextProperty().SetFontSize(s)
+            self._info['bottomright'].GetTextProperty().SetFontSize(s)
+            self._info['bottomleft'].GetTextProperty().SetFontSize(s)
+            self._info['topcenter'].GetTextProperty().SetFontSize(s)
+            self._info['leftcenter'].GetTextProperty().SetFontSize(s)
+            self._info['rightcenter'].GetTextProperty().SetFontSize(s)
+            self._info['bottomcenter'].GetTextProperty().SetFontSize(s)
+            self._colorbar.GetLabelTextProperty().SetFontSize(s)
+            self._tooltip.GetBalloonRepresentation().GetTextProperty().SetFontSize(s)
+            self._renderwindow.Render()
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setFontScale', self._fscale)
+        else: raise TypeError('parameter type {} is not float.'.format(type(s)))
+    # Revision 17/03/2025 >
+
+    # < Revision 17/03/2025
+    # add getFontScale method
+    def getFontScale(self):
+        return self._fscale
+    # Revision 17/03/2025 >
+
+    # < Revision 17/03/2025
+    # add setFontSizeScale method
+    def setFontSizeScale(self, s: tuple[int, float], signal=True):
+        if isinstance(s, tuple):
+            if isinstance(s[0], int): self._fsize = s[0]
+            if isinstance(s[1], float): self._fscale = s[1]
+            s = int(self._fsize * self._fscale)
+            # Revision 17/03/2025 >
+            self._info['topright'].GetTextProperty().SetFontSize(s)
+            self._info['topleft'].GetTextProperty().SetFontSize(s)
+            self._info['bottomright'].GetTextProperty().SetFontSize(s)
+            self._info['bottomleft'].GetTextProperty().SetFontSize(s)
+            self._info['topcenter'].GetTextProperty().SetFontSize(s)
+            self._info['leftcenter'].GetTextProperty().SetFontSize(s)
+            self._info['rightcenter'].GetTextProperty().SetFontSize(s)
+            self._info['bottomcenter'].GetTextProperty().SetFontSize(s)
+            self._colorbar.GetLabelTextProperty().SetFontSize(s)
+            self._tooltip.GetBalloonRepresentation().GetTextProperty().SetFontSize(s)
+            self._renderwindow.Render()
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setFontSizeScale', (self._fsize, self._fscale))
+        else: raise TypeError('parameter type {} is not tuple.'.format(type(s)))
+    # Revision 17/03/2025 >
+
+    # < Revision 17/03/2025
+    # add setFontProperties method
+    def setFontProperties(self, s: tuple[str, int, float], signal=True):
+        if isinstance(s, tuple):
+            if isinstance(s[0], str): self._ffamily = s[0]
+            if isinstance(s[1], int): self._fsize = s[1]
+            if isinstance(s[2], float): self._fscale = s[2]
+            # Revision 17/03/2025 >
+            self.setFontSizeScale((self._fsize, self._fscale), signal=False)
+            self.setFontFamily(self._ffamily, signal=False)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setFontProperties', (self._ffamily, self._fsize, self._fscale))
+        else: raise TypeError('parameter type {} is not tuple.'.format(type(s)))
+    # Revision 17/03/2025 >
 
     def setLineOpacity(self, v, signal=True):
         if isinstance(v, float):
@@ -1987,13 +2242,15 @@ class AbstractViewWidget(QFrame):
                 self._info['leftcenter'].GetTextProperty().SetOpacity(v)
                 self._info['rightcenter'].GetTextProperty().SetOpacity(v)
                 self._info['bottomcenter'].GetTextProperty().SetOpacity(v)
-                self._cursor.GetProperty().SetOpacity(v)
+                if self._cursor is not None: self._cursor.GetProperty().SetOpacity(v)
                 self._cross.GetProperty().SetOpacity(v)
                 self._ruler.GetProperty().SetOpacity(v)
                 self._colorbar.GetLabelTextProperty().SetOpacity(v)
                 self._tools.setOpacity(v)
                 self._renderwindow.Render()
-                if signal: self.ViewMethodCalled.emit(self, 'setLineOpacity', v)
+                if signal:
+                    # noinspection PyUnresolvedReferences
+                    self.ViewMethodCalled.emit(self, 'setLineOpacity', v)
             else: raise ValueError('parameter value is not between 0.0 and 1.0.')
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
@@ -2003,12 +2260,14 @@ class AbstractViewWidget(QFrame):
     def setLineWidth(self, v, signal=True):
         if isinstance(v, float):
             self._lwidth = v
-            self._cursor.GetProperty().SetLineWidth(v)
+            if self._cursor is not None: self._cursor.GetProperty().SetLineWidth(v)
             self._ruler.GetProperty().SetLineWidth(v)
             self._cross.GetProperty().SetLineWidth(v)
             self._tools.setLineWidth(v)
             self._renderwindow.Render()
-            if signal: self.ViewMethodCalled.emit(self, 'setLineWidth', v)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setLineWidth', v)
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
     def getLineWidth(self):
@@ -2029,13 +2288,15 @@ class AbstractViewWidget(QFrame):
                 self._info['leftcenter'].GetTextProperty().SetColor(r, g, b)
                 self._info['rightcenter'].GetTextProperty().SetColor(r, g, b)
                 self._info['bottomcenter'].GetTextProperty().SetColor(r, g, b)
-                self._cursor.GetProperty().SetColor(r, g, b)
+                if self._cursor is not None: self._cursor.GetProperty().SetColor(r, g, b)
                 self._cross.GetProperty().SetColor(r, g, b)
                 self._ruler.GetProperty().SetColor(r, g, b)
                 self._colorbar.GetLabelTextProperty().SetColor(r, g, b)
                 self._tools.setColor((r, g, b))
                 self._renderwindow.Render()
-                if signal: self.ViewMethodCalled.emit(self, 'setLineColor', c)
+                if signal:
+                    # noinspection PyUnresolvedReferences
+                    self.ViewMethodCalled.emit(self, 'setLineColor', c)
             else: self._lcolor = (1.0, 1.0, 1.0)
         else: TypeError('parameter type {} is not tuple or list.'.format(type(c)))
 
@@ -2047,7 +2308,9 @@ class AbstractViewWidget(QFrame):
             if 0.0 <= r <= 1.0 and 0.0 <= g <= 1.0 and 0.0 <= b <= 1.0:
                 self._slcolor = (r, g, b)
                 self._tools.setSelectedColor((r, g, b))
-                if signal: self.ViewMethodCalled.emit(self, 'setLineSelectedColor', c)
+                if signal:
+                    # noinspection PyUnresolvedReferences
+                    self.ViewMethodCalled.emit(self, 'setLineSelectedColor', c)
             else: self._lcolor = (1.0, 1.0, 1.0)
         else: TypeError('parameter type {} is not tuple or list.'.format(type(c)))
 
@@ -2066,10 +2329,29 @@ class AbstractViewWidget(QFrame):
             self._cursor.SetPosition(p)
             # synchronisation
             if self.isSynchronised() and signal:
+                # noinspection PyUnresolvedReferences
                 self.CursorPositionChanged.emit(self, p[0], p[1], p[2])
 
     def getCursorWorldPosition(self):
         return self._cursor.GetPosition()
+
+    # < Revision 12/12/2024
+    # add getCursorArrayPosition method
+    def getCursorArrayPosition(self):
+        p = self._cursor.GetPosition()
+        size = self._volume.getSize()
+        spacing = self._volume.getSpacing()
+        x = int(p[0] / spacing[0])
+        y = int(p[1] / spacing[1])
+        z = int(p[2] / spacing[2])
+        if x < 0: x = 0
+        if y < 0: y = 0
+        if z < 0: z = 0
+        if x > size[0] - 1: x = size[0] - 1
+        if y > size[1] - 1: y = size[1] - 1
+        if z > size[2] - 1: z = size[2] - 1
+        return x, y, z
+    # Revision 12/12/2024 >
 
     def setCursorEnabled(self):
         self._cursorenabled = True
@@ -2093,7 +2375,9 @@ class AbstractViewWidget(QFrame):
         if isinstance(v, int):
             if 0 <= v < 5:
                 self._axisconstraint = v
-                if signal: self.ViewMethodCalled.emit(self, 'setAxisConstraintToCursor', v)
+                if signal:
+                    # noinspection PyUnresolvedReferences
+                    self.ViewMethodCalled.emit(self, 'setAxisConstraintToCursor', v)
             else: raise ValueError('parameter value {} is out of range (0 to 3).'.format(v))
         else: raise TypeError('parameter type {} is not int.'.format(type(v)))
 
@@ -2112,9 +2396,10 @@ class AbstractViewWidget(QFrame):
     def setMouseCursor(self, shape, signal=True):
         if isinstance(shape, int):
             self._renderwindow.SetCurrentCursor(shape)
-            if signal: self.ViewMethodCalled.emit(self, 'setMouseCursor', shape)
-        else:
-            raise TypeError('parameter type {} is not int'.format(type(shape)))
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewMethodCalled.emit(self, 'setMouseCursor', shape)
+        else: raise TypeError('parameter type {} is not int'.format(type(shape)))
 
     def setDefaultMouseCursor(self, signal=True):
         self.setMouseCursor(VTK_CURSOR_DEFAULT, signal)
@@ -2169,12 +2454,14 @@ class AbstractViewWidget(QFrame):
             c = vtkWindowToImageFilter()
             c.SetInput(self._renderwindow)
             r = vtkImageExportToArray()
+            # noinspection PyArgumentList
             r.SetInputConnection(c.GetOutputPort())
             cap = r.GetArray()
             d, h, w, ch = cap.shape
             cap = QImage(cap.data, w, h, 3 * w, QImage.Format_RGB888)
             cap = cap.mirrored(False, True)
             return QPixmap.fromImage(cap)
+        else: raise AttributeError('Volume attribute is None.')
 
     def saveCapture(self):
         if self.hasVolume():
@@ -2188,11 +2475,12 @@ class AbstractViewWidget(QFrame):
                      '.png': vtkPNGWriter(), '.tiff': vtkTIFFWriter()}
                 path, ext = splitext(name)
                 w = w[ext]
+                # noinspection PyArgumentList
                 w.SetInputConnection(c.GetOutputPort())
                 w.SetFileName(name)
                 try: w.Write()
                 except Exception as err:
-                    QMessageBox.warning(self, 'Save view capture', 'error : {}'.format(err))
+                    messageBox(self, 'Save view capture', text='error : {}'.format(err))
 
     def copyToClipboard(self):
         if self.hasVolume():
@@ -2200,6 +2488,7 @@ class AbstractViewWidget(QFrame):
             c = vtkWindowToImageFilter()
             c.SetInput(self._renderwindow)
             w = vtkBMPWriter()
+            # noinspection PyArgumentList
             w.SetInputConnection(c.GetOutputPort())
             temp = join(gettempdir(), 'tmp.bmp')
             w.SetFileName(temp)
@@ -2208,7 +2497,7 @@ class AbstractViewWidget(QFrame):
                 p = QPixmap(temp)
                 QApplication.clipboard().setPixmap(p)
             except Exception as err:
-                QMessageBox.warning(self, 'Copy view capture to clipboard', 'error : {}'.format(err))
+                messageBox(self, 'Copy view capture to clipboard', text='error : {}'.format(err))
             finally:
                 if exists(temp): remove(temp)
 
@@ -2217,6 +2506,7 @@ class AbstractViewWidget(QFrame):
             self._renderer.GetActiveCamera().Zoom(1.1)
             self._updateRuler()
             self._renderwindow.Render()
+            # noinspection PyUnresolvedReferences
             self.ZoomChanged.emit(self, self._renderer.GetActiveCamera().GetParallelScale())
 
     def zoomOut(self):
@@ -2224,12 +2514,14 @@ class AbstractViewWidget(QFrame):
             self._renderer.GetActiveCamera().Zoom(0.9)
             self._updateRuler()
             self._renderwindow.Render()
+            # noinspection PyUnresolvedReferences
             self.ZoomChanged.emit(self, self._renderer.GetActiveCamera().GetParallelScale())
 
     def zoomDefault(self):
         self._renderer.GetActiveCamera().SetParallelScale(self._DEFAULTZOOM)
         self._updateRuler()
         self._renderwindow.Render()
+        # noinspection PyUnresolvedReferences
         self.ZoomChanged.emit(self, self._DEFAULTZOOM)
 
     def setZoom(self, z, signal=True):
@@ -2237,7 +2529,9 @@ class AbstractViewWidget(QFrame):
             self._renderer.GetActiveCamera().SetParallelScale(z)
             self._updateRuler()
             self._renderwindow.Render()
-            if signal: self.ZoomChanged.emit(self, z)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ZoomChanged.emit(self, z)
         else: raise TypeError('parameter type {} is not float.'.format(type(z)))
 
     def getZoom(self):
@@ -2270,16 +2564,37 @@ class AbstractViewWidget(QFrame):
     def addDistanceTool(self, name=''):
         if self._accepttools:
             widget = self._tools.newDistanceWidget(name)
+            # < Revision 16/03/2025
+            # add font settings
+            widget.setTextProperty(self._ffamily)
+            widget.setColor(self._lcolor)
+            widget.setSelectedColor(self._slcolor)
+            widget.setOpacity(self._lalpha)
+            # Revision 16/03/2025 >
             widget.EnabledOn()
 
     def addOrthogonalDistanceTool(self, name=''):
         if self._accepttools:
             widget = self._tools.newOrthogonalDistanceWidget(name)
+            # < Revision 16/03/2025
+            # add font settings
+            widget.setTextProperty(self._ffamily)
+            widget.setColor(self._lcolor)
+            widget.setSelectedColor(self._slcolor)
+            widget.setOpacity(self._lalpha)
+            # Revision 16/03/2025 >
             widget.EnabledOn()
 
     def addAngleTool(self, name=''):
         if self._accepttools:
             widget = self._tools.newAngleWidget(name)
+            # < Revision 16/03/2025
+            # add font settings
+            widget.setTextProperty(self._ffamily)
+            widget.setColor(self._lcolor)
+            widget.setSelectedColor(self._slcolor)
+            widget.setOpacity(self._lalpha)
+            # Revision 16/03/2025 >
             widget.EnabledOn()
 
     def addBoxTool(self, p=None, name=''):
@@ -2287,8 +2602,13 @@ class AbstractViewWidget(QFrame):
         x, y = self._getDisplayFromWorld(p[0], p[1], p[2])
         x, y = self._getNormalizedViewportFromDisplay(x, y)
         widget = self._tools.newBoxWidget((x, y), name)
+        widget.setColor(self._lcolor)
+        widget.setOpacity(self._lalpha)
+        # noinspection PyTypeChecker
         widget.AddObserver('InteractionEvent', self._onBoxInteractionEvent)
+        # noinspection PyTypeChecker
         widget.AddObserver('StartInteractionEvent', self._onBoxStartInteractionEvent)
+        # noinspection PyTypeChecker
         widget.AddObserver('EndInteractionEvent', self._onBoxEndInteractionEvent)
         widget.EnabledOn()
 
@@ -2303,6 +2623,12 @@ class AbstractViewWidget(QFrame):
             # Widget creation
             x, y = self._getNormalizedViewportFromDisplay(x, y)
             widget = self._tools.newTextWidget((x, y), self._edit.text())
+            # < Revision 16/03/2025
+            # add font settings
+            widget.setTextProperty(self._ffamily)
+            widget.setColor(self._lcolor)
+            widget.setOpacity(self._lalpha)
+            # Revision 16/03/2025 >
             widget.EnabledOn()
 
     def removeAll2DTools(self, signal=True):
@@ -2310,9 +2636,12 @@ class AbstractViewWidget(QFrame):
         if n > 0:
             for i in range(n-1, -1, -1):
                 if isinstance(self._tools[i], (DistanceWidget, OrthogonalDistanceWidget, AngleWidget)):
+                    # noinspection PyTypeChecker
                     self._tools.remove(i)
             self._renderwindow.Render()
-        if signal: self.ViewMethodCalled.emit(self, 'removeAll2DTools', None)
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.ViewMethodCalled.emit(self, 'removeAll2DTools', None)
 
     # 3D Tools methods
 
@@ -2321,17 +2650,32 @@ class AbstractViewWidget(QFrame):
             from Sisyphe.widgets.volumeViewWidget import VolumeViewWidget
             if p is None: p = self.getCursorWorldPosition()
             widget = self._tools.newHandleWidget(p, name)
+            # < Revision 16/03/2025
+            # add font settings
+            widget.setFontFamily(self._ffamily)
+            widget.setFontSize(int(self._fsize * self._fscale))
+            widget.setColor(self._lcolor)
+            widget.setSelectedColor(self._slcolor)
+            widget.setOpacity(self._lalpha)
+            # Revision 16/03/2025 >
+            # noinspection PyTypeChecker
             widget.AddObserver('InteractionEvent', self._onTargetInteractionEvent)
+            # noinspection PyTypeChecker
             widget.AddObserver('StartInteractionEvent', self._onTargetStartInteractionEvent)
+            # noinspection PyTypeChecker
             widget.AddObserver('EndInteractionEvent', self._onTargetEndInteractionEvent)
             if isinstance(self, VolumeViewWidget): widget.setVolumeDisplay()
             else: widget.setSliceDisplay()
             widget.EnabledOn()
+            # noinspection PyArgumentList
             self._tooltip.AddBalloon(widget.GetHandleRepresentation(), 'Target\n{}'.format(widget.getName()))
             self._renderwindow.Render()
             self._updateToolMenu()
-            if signal: self.ToolAdded.emit(self, widget)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ToolAdded.emit(self, widget)
             return widget
+        else: raise AttributeError('accepttools attribute is False.')
 
     def addTrajectory(self, p1=None, p2=None, angles=None, length: float = 50.0, name='', signal=True):
         if self._accepttools:
@@ -2339,19 +2683,34 @@ class AbstractViewWidget(QFrame):
             if p2 is None: p2 = self.getCursorWorldPosition()  # Target
             if p1 is None: p1 = [p2[0], p2[1], p2[2] + length]  # Entry
             widget = self._tools.newLineWidget(p1, p2, name)
+            # < Revision 16/03/2025
+            # add font settings
+            widget.setFontFamily(self._ffamily)
+            widget.setFontSize(int(self._fsize * self._fscale))
+            widget.setColor(self._lcolor)
+            widget.setSelectedColor(self._slcolor)
+            widget.setOpacity(self._lalpha)
+            # Revision 16/03/2025 >
             if angles is not None:
                 widget.setTrajectoryAngles(angles, length, deg=True)
+            # noinspection PyTypeChecker
             widget.AddObserver('InteractionEvent', self._onTrajectoryInteractionEvent)
+            # noinspection PyTypeChecker
             widget.AddObserver('StartInteractionEvent', self._onTrajectoryStartInteractionEvent)
+            # noinspection PyTypeChecker
             widget.AddObserver('EndInteractionEvent', self._onTrajectoryEndInteractionEvent)
             if isinstance(self, VolumeViewWidget): widget.setVolumeDisplay()
             else: widget.setSliceDisplay()
             widget.EnabledOn()
+            # noinspection PyArgumentList
             self._tooltip.AddBalloon(widget.GetLineRepresentation(), 'Trajectory\n{}'.format(widget.getName()))
             self._renderwindow.Render()
             self._updateToolMenu()
-            if signal: self.ToolAdded.emit(self, widget)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ToolAdded.emit(self, widget)
             return widget
+        else: raise AttributeError('accepttools attribute is False.')
 
     def hasTools(self):
         return len(self._tools) > 0
@@ -2365,7 +2724,7 @@ class AbstractViewWidget(QFrame):
             else: ValueError('tool index {} is out of range.'.format(key))
         if isinstance(key, str):
             if key in self._tools: return self._tools[key]
-            else: ValueError('tool name {} not in SisypheToolCollection.'.format(key))
+            else: raise ValueError('tool name {} not in SisypheToolCollection.'.format(key))
         else: raise TypeError('parameter type {} is not int, str, HandleWidget or LineWidget.'.format(type(key)))
 
     def moveTool(self, key, target, entry=None, angles=None, length=None, signal=True):
@@ -2378,14 +2737,21 @@ class AbstractViewWidget(QFrame):
         if isinstance(key, (HandleWidget, LineWidget)):
             if key.getName() in self._tools:
                 if isinstance(key, HandleWidget):
+                    # noinspection PyUnresolvedReferences
                     self._tools[key.getName()].setPosition(target)
                 else:
-                    if entry is not None: self._tools[key.getName()].setPosition1(entry)
+                    if entry is not None:
+                        # noinspection PyUnresolvedReferences
+                        self._tools[key.getName()].setPosition1(entry)
                     elif angles is not None:
                         if length is None: length = 100.0
+                        # noinspection PyUnresolvedReferences
                         self._tools[key.getName()].setTrajectoryAngles(angles, length, deg=True)
+                    # noinspection PyUnresolvedReferences
                     self._tools[key.getName()].setPosition2(target)
-                if signal: self.ToolMoved.emit(self, key)
+                if signal:
+                    # noinspection PyUnresolvedReferences
+                    self.ToolMoved.emit(self, key)
             else: raise ValueError('tool name {} is not in SisypheToolCollection.'.format(key.getName()))
         else: raise TypeError('parameter type {} is not int, str, HandleWidget or LineWidget.'.format(type(key)))
 
@@ -2398,7 +2764,9 @@ class AbstractViewWidget(QFrame):
             else: ValueError('tool name {} not in SisypheToolCollection.'.format(key))
         if isinstance(key, (HandleWidget, LineWidget)):
             if key.getName() in self._tools:
-                if signal: self.ToolRenamed.emit(self, key, name)
+                if signal:
+                    # noinspection PyUnresolvedReferences
+                    self.ToolRenamed.emit(self, key, name)
                 self._tools[key.getName()].setName(name)
             else: raise ValueError('tool name {} is not in SisypheToolCollection.'.format(key.getName()))
         else: raise TypeError('parameter type {} is not int, str, HandleWidget or LineWidget.'.format(type(key)))
@@ -2413,7 +2781,9 @@ class AbstractViewWidget(QFrame):
         if isinstance(key, (HandleWidget, LineWidget)):
             if key.getName() in self._tools:
                 if tool is not None and isinstance(tool, (HandleWidget, LineWidget)): tool.copyAttributesFrom(key)
-                if signal: self.ToolAttributesChanged.emit(self, key)
+                if signal:
+                    # noinspection PyUnresolvedReferences
+                    self.ToolAttributesChanged.emit(self, key)
             else: raise ValueError('tool {} is not in SisypheToolCollection.'.format(key.getName()))
         else: raise TypeError('parameter type {} is not HandleWidget or LineWidget.'.format(type(key)))
 
@@ -2427,11 +2797,16 @@ class AbstractViewWidget(QFrame):
         if isinstance(key, (HandleWidget, LineWidget)):
             if key.getName() in self._tools:
                 index = self._tools.index(key.getName())
-                if signal: self.ToolRemoved.emit(self, self._tools[index], False)
+                if signal:
+                    # noinspection PyUnresolvedReferences
+                    self.ToolRemoved.emit(self, self._tools[index], False)
                 if isinstance(self._tools[index], HandleWidget):
+                    # noinspection PyUnresolvedReferences
                     self._tooltip.RemoveBalloon(self._tools[index].GetHandleRepresentation())
                 elif isinstance(self._tools[index], LineWidget):
+                    # noinspection PyUnresolvedReferences
                     self._tooltip.RemoveBalloon(self._tools[index].GetLineRepresentation())
+                # noinspection PyUnresolvedReferences
                 self._tools[index].SetEnabled(0)
                 del self._tools[index]
                 self._renderwindow.Render()
@@ -2443,7 +2818,13 @@ class AbstractViewWidget(QFrame):
         if len(self._tools) > 0:
             keys = self._tools.keys()
             for k in keys:
-                if signal: self.ToolRemoved.emit(self, self._tools[k], False)
+                if signal:
+                    # < Revision 02/05/2025
+                    # synchronize only if HandleWidget or LineWidget
+                    if isinstance(self._tools[k], (HandleWidget, LineWidget)):
+                        # noinspection PyUnresolvedReferences
+                        self.ToolRemoved.emit(self, self._tools[k], False)
+                    # Revision 02/05/2025 >
                 self.removeTool(self._tools[k].getName())
             self._tools.clear()
 
@@ -2457,11 +2838,19 @@ class AbstractViewWidget(QFrame):
         if isinstance(key, (HandleWidget, LineWidget)):
             if key.getName() in self._tools:
                 index = self._tools.index(key.getName())
-                if v is True: self._tools[index].On()
-                else: self._tools[index].Off()
+                if v is True:
+                    # noinspection PyUnresolvedReferences
+                    self._tools[index].On()
+                else:
+                    # noinspection PyUnresolvedReferences
+                    self._tools[index].Off()
                 if signal:
-                    if v: self.ViewMethodCalled.emit(self, 'setToolInteractiveOn', self._tools[index])
-                    else: self.ViewMethodCalled.emit(self, 'setToolInteractiveOff', self._tools[index])
+                    if v:
+                        # noinspection PyUnresolvedReferences
+                        self.ViewMethodCalled.emit(self, 'setToolInteractiveOn', self._tools[index])
+                    else:
+                        # noinspection PyUnresolvedReferences
+                        self.ViewMethodCalled.emit(self, 'setToolInteractiveOff', self._tools[index])
             else: raise ValueError('tool {} is not in SisypheToolCollection.'.format(key.getName()))
         else: raise TypeError('parameter type {} is not int, str, HandleWidget or LineWidget.'.format(type(key)))
 
@@ -2481,9 +2870,12 @@ class AbstractViewWidget(QFrame):
         if isinstance(key, (HandleWidget, LineWidget)):
             if key.getName() in self._tools:
                 index = self._tools.index(key.getName())
+                # noinspection PyUnresolvedReferences
                 self._tools[index].ProcessEventsOff()
+                # noinspection PyUnresolvedReferences
                 self._tools[index].ManagesCursorOff()
                 if signal:
+                    # noinspection PyUnresolvedReferences
                     self.ViewMethodCalled.emit(self, 'lockTool', self._tools[index])
             else: raise ValueError('tool {} is not in SisypheToolCollection.'.format(key.getName()))
         else: raise TypeError('parameter type {} is not int, str, HandleWidget or LineWidget.'.format(type(key)))
@@ -2498,9 +2890,12 @@ class AbstractViewWidget(QFrame):
         if isinstance(key, (HandleWidget, LineWidget)):
             if key.getName() in self._tools:
                 index = self._tools.index(key.getName())
+                # noinspection PyUnresolvedReferences
                 self._tools[index].ProcessEventsOn()
+                # noinspection PyUnresolvedReferences
                 self._tools[index].ManagesCursorOn()
                 if signal:
+                    # noinspection PyUnresolvedReferences
                     self.ViewMethodCalled.emit(self, 'unlockTool', self._tools[index])
             else: raise ValueError('tool {} is not in SisypheToolCollection.'.format(key.getName()))
         else: raise TypeError('parameter type {} is not int, str, HandleWidget or LineWidget.'.format(type(key)))
@@ -2514,7 +2909,10 @@ class AbstractViewWidget(QFrame):
             else: ValueError('tool name {} not in SisypheToolCollection.'.format(key))
         if isinstance(key, (HandleWidget, LineWidget)):
             if key.getName() in self._tools:
-                return self._tools[index].GetProcessEvents()
+                # noinspection PyUnresolvedReferences,PyTypeChecker
+                return self._tools[key].GetProcessEvents()
+            else: raise ValueError('tool {} is not in collection (_.tools attribute).'.format(key.getName()))
+        else: raise TypeError('key parameter type {} is not HandleWidget or LineWidget.'.format(type(key)))
 
     # Abstract tool VTK event methods
 
@@ -2533,9 +2931,11 @@ class AbstractViewWidget(QFrame):
     def _onTargetStartInteractionEvent(self, widget, event):
         pass
 
+    # noinspection PyUnusedLocal
     def _onTargetEndInteractionEvent(self, widget, event):
         p = widget.getPosition()
         self.setCursorWorldPosition(p[0], p[1], p[2], signal=True)
+        # noinspection PyUnresolvedReferences
         self.ToolMoved.emit(self, widget)
 
     def _onTrajectoryInteractionEvent(self, widget, event):
@@ -2547,6 +2947,7 @@ class AbstractViewWidget(QFrame):
     def _onTrajectoryEndInteractionEvent(self, widget, event):
         p = widget.getPosition2()  # Target point position
         self.setCursorWorldPosition(p[0], p[1], p[2], signal=True)
+        # noinspection PyUnresolvedReferences
         self.ToolMoved.emit(self, widget)
 
     # Abstract private method
@@ -2607,34 +3008,3 @@ class AbstractViewWidget(QFrame):
 
     def _onKeyReleaseEvent(self, obj, evt_name):
         pass
-
-
-if __name__ == '__main__':
-
-    from sys import argv, exit
-
-    print('Test AbstractViewWidget')
-    app = QApplication(argv)
-    main = QWidget()
-    layout = QHBoxLayout(main)
-    filename = '/Users/Jean-Albert/.PySisyphe/test/3DT1.xvol'
-    img = SisypheVolume()
-    img.identity.setLastname('lastname')
-    img.identity.setFirstname('firstname')
-    img.identity.setDateOfBirthday('2000-01-01')
-    img.acquisition.setSequence('3D T1')
-    img.load(filename)
-    view = AbstractViewWidget()
-    view.setVolume(img)
-    view.setColorbarVisibility(True)
-    view.setCentralCrossVisibility(True)
-    view.setCentralCrossOpacity(0.5)
-    view.setColorbarPosition('left')
-    view.setOrientationMarker('axe')
-    view.setOrientationMarkerVisibilityOn()
-    layout.addWidget(view)
-    layout.setSpacing(0)
-    layout.setContentsMargins(0, 0, 0, 0)
-    main.show()
-    main.activateWindow()
-    exit(app.exec_())

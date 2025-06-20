@@ -1,83 +1,101 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
+
+from sys import platform
+
+from os.path import join
+from os.path import exists
+from os.path import abspath
+from os.path import dirname
+from os.path import basename
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QGroupBox
 from PyQt5.QtWidgets import QButtonGroup
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QVBoxLayout
-from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QWidgetAction
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWebEngineWidgets import QWebEnginePage
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QApplication
 
+# noinspection PyCompatibility
+from Sisyphe.core.sisypheTracts import SisypheStreamlines
+from Sisyphe.core.sisypheROI import SisypheROI
+from Sisyphe.core.sisypheROI import SisypheROICollection
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import IconPushButton
 from Sisyphe.widgets.basicWidgets import LabeledSlider
-from Sisyphe.widgets.basicWidgets import LabeledSpinBox
 from Sisyphe.widgets.basicWidgets import LabeledDoubleSpinBox
 from Sisyphe.widgets.basicWidgets import LabeledComboBox
+from Sisyphe.widgets.basicWidgets import LabeledLineEdit
+from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.iconBarViewWidgets import IconBarViewWidgetCollection
 from Sisyphe.widgets.iconBarViewWidgets import IconBarMultiSliceGridViewWidget
 from Sisyphe.widgets.iconBarViewWidgets import IconBarSynchronisedGridViewWidget
 from Sisyphe.widgets.attributesWidgets import ListROIAttributesWidget
 from Sisyphe.widgets.attributesWidgets import ListMeshAttributesWidget
 from Sisyphe.widgets.attributesWidgets import ListToolAttributesWidget
+from Sisyphe.widgets.attributesWidgets import ListBundleAttributesWidget
 from Sisyphe.widgets.thresholdWidgets import ThresholdViewWidget
 from Sisyphe.widgets.functionsSettingsWidget import SettingsWidget
 from Sisyphe.gui.dialogROIStatistics import DialogROIStatistics
+from Sisyphe.gui.dialogDiffusionBundle import DialogStreamlinesROISelection
+from Sisyphe.gui.dialogDiffusionBundle import DialogStreamlinesAtlasSelection
+from Sisyphe.gui.dialogSettings import DialogFunctionSetting
 from Sisyphe.gui.dialogWait import DialogWait
 
 __all__ = ['TabROIListWidget',
            'TabROIToolsWidget',
            'TabMeshListWidget',
-           'TabTargetListWidget']
+           'TabTargetListWidget',
+           'TabTrackingWidget',
+           'TabHelpWidget']
 
 """
-    Class hierarchy
+Class hierarchy
+~~~~~~~~~~~~~~~
 
-        QWidget -> TabWidget -> TabROIListWidget
-                             -> TabROIToolsWidget
-                             -> TabMeshListWidget
-                             -> TabTargetListWidget
+    - QWidget -> TabWidget
+              -> TabWidget -> TabROIListWidget
+                           -> TabROIToolsWidget
+                           -> TabMeshListWidget
+                           -> TabTargetListWidget
+                           -> TabTrackingWidget
+                           -> TabHelpWidget
 """
-
 
 class TabWidget(QWidget):
     """
-        TabWidget class
+    Description
+    ~~~~~~~~~~~
 
-        Description
+    Base class for all specialized QTabBar page widgets (ROI, Mesh, Target, Tracking, Help)
 
-            Base class for all specialized TabWidgets (ROI, Mesh, Target)
+    Inheritance
+    ~~~~~~~~~~~
 
-        Inheritance
-
-            QWidget -> TabWidget
-
-        Private Attributes
-
-            _views      IconBarViewWidgetCollection
-
-        Public methods
-
-            setViewCollection(IconBarViewWidgetCollection)
-            IconBarViewWidgetCollection = getViewCollection()
-            bool = hasCollection()
-            dynamic collection type = getCollection()
-            bool = hasCollection()
-
-            inherited QWidget methods
+    QWidget -> TabWidget
     """
     _VSIZE = 32
+
+    # Class method
+
+    @classmethod
+    def getDefaultIconSize(cls):
+        return cls._VSIZE
 
     # Special method
 
@@ -90,7 +108,8 @@ class TabWidget(QWidget):
         # Layout
 
         lyout = QVBoxLayout()
-        lyout.setContentsMargins(5, 0, 5, 0)
+        if platform == 'darwin': lyout.setContentsMargins(0, 0, 10, 0)
+        else: lyout.setContentsMargins(0, 0, 0, 0)
         lyout.setSpacing(5)
         self.setLayout(lyout)
 
@@ -115,37 +134,32 @@ class TabWidget(QWidget):
 
 class TabROIListWidget(TabWidget):
     """
-        TabROIListWidget class
+    Description
+    ~~~~~~~~~~~
 
-        Description
+    QTabBar page widget to display ROIListWidget.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> TabROIListWidget
+    QWidget -> TabROIListWidget
 
-        Private Attributes
-
-            _draw       SisypheROIDraw
-            _list       ListROIAttributesWidget
-            _collection SisypheROICollection
-
-        Public methods
-
-            setIconSize(int)
-            int = getIconSize()
-            setViewCollection(IconBarViewWidgetCollection)  override
-            getROIListWidget                                ListROIAttributesWidget
-            union(list of SisypheROI)
-            intersection(list of SisypheROI)
-            symmetricDifference(list of SisypheROI)
-            difference(list of SisypheROI)
-            clear()
-
-            inherited TabWidget methods
-            inherited QWidget methods
+    Last revision: 20/02/2025
     """
 
     # Special method
+
+    """
+    Private attributes
+    
+    _draw               SisypheROIDraw
+    _list               ListROIAttributesWidget
+    _collection         IconBarViewWidgetCollection
+    _btunion            IconPushButton, ROIs union button
+    _btinter            IconPushButton, ROIs intersection button
+    _btsymdiff          IconPushButton, ROIs symmetric difference button
+    _btdiff             IconPushButton, ROIs difference button
+    """
 
     def __init__(self, views=None, parent=None):
         super().__init__(views, parent)
@@ -153,16 +167,20 @@ class TabROIListWidget(TabWidget):
         self._draw = None
         self._list = ListROIAttributesWidget(parent=self)
 
-        # GroupBox
+        # Widgets
 
         self._btunion = IconPushButton('union.png', size=TabWidget._VSIZE)
         self._btinter = IconPushButton('intersection.png', size=TabWidget._VSIZE)
-        self._btsymdiff = IconPushButton('diffirencesym.png', size=TabWidget._VSIZE)
+        self._btsymdiff = IconPushButton('differencesym.png', size=TabWidget._VSIZE)
         self._btdiff = IconPushButton('difference.png', size=TabWidget._VSIZE)
 
+        # noinspection PyUnresolvedReferences
         self._btunion.clicked.connect(self.union)
+        # noinspection PyUnresolvedReferences
         self._btinter.clicked.connect(self.intersection)
+        # noinspection PyUnresolvedReferences
         self._btsymdiff.clicked.connect(self.symmetricDifference)
+        # noinspection PyUnresolvedReferences
         self._btdiff.clicked.connect(self.difference)
 
         self._btunion.setToolTip('Selected and checked ROI union (OR)')
@@ -172,7 +190,7 @@ class TabROIListWidget(TabWidget):
 
         groupbox = QGroupBox('Set operators')
         grouplyout = QHBoxLayout()
-        grouplyout.setContentsMargins(5, 0, 5, 0)
+        grouplyout.setContentsMargins(5, 10, 5, 10)
         grouplyout.setSpacing(5)
         grouplyout.addStretch()
         grouplyout.addWidget(self._btunion)
@@ -211,6 +229,7 @@ class TabROIListWidget(TabWidget):
         self._btsymdiff.setFixedSize(size, size)
         self._btdiff.setIconSize(QSize(size - 8, size - 8))
         self._btdiff.setFixedSize(size, size)
+        self._list.setIconSize(size)
 
     def getIconSize(self):
         return self._btunion.width()
@@ -226,14 +245,28 @@ class TabROIListWidget(TabWidget):
             self._draw = None
             self._collection = None
 
+    # < Revision 02/11/2024
+    # add setMaxCount method
+    def setMaxCount(self, v):
+        if self._list is not None:
+            self._list.setMaxCount(v)
+    # Revision 02/11/2024 >
+
+    # < Revision 02/11/2024
+    # add getMaxCount method
+    def getMaxCount(self):
+        if self._list is not None: return self._list.getMaxCount()
+        else: raise AttributeError('_list attribute is None.')
+    # Revision 02/11/2024 >
+
     def getROIListWidget(self):
         return self._list
 
     def union(self):
-        if self.hasViewCollection():
-            if self.hasCollection():
-                if self._draw.hasROI():
-                    if self._collection.count() > 1:
+        if self.hasViewCollection() and self.hasCollection():
+            if self._draw.hasROI():
+                if self._collection.count() > 1:
+                    if self._list.count() < self._list.getMaxCount():
                         rois = self._list.getCheckedROI()
                         if rois is not None:
                             n = len(rois)
@@ -241,18 +274,24 @@ class TabROIListWidget(TabWidget):
                                 name = 'Union {}'.format(rois[0].getName())
                                 for i in range(1, n): name += ' {}'.format(rois[i].getName())
                                 self._list.new(name)
-                                wait = DialogWait(info='Union...', parent=self)
+                                wait = DialogWait()
                                 wait.open()
+                                wait.setInformationText('Union...')
                                 self._draw.binaryOR(rois)
                                 self._updateROIDisplay()
                                 wait.close()
-                            else: QMessageBox.warning(self, 'ROI Union', 'Less than two ROI checked.')
+                            else: messageBox(self, 'ROI Union', 'Less than two ROI checked.')
+                    else:
+                        messageBox(self, 'ROI union',
+                                   text='Maximum number of ROIs reached.\n'
+                                        'Close a ROI to add a new one.',
+                                   icon=QMessageBox.Information)
 
     def intersection(self):
-        if self.hasViewCollection():
-            if self.hasCollection():
-                if self._draw.hasROI():
-                    if self._collection.count() > 1:
+        if self.hasViewCollection() and self.hasCollection():
+            if self._draw.hasROI():
+                if self._collection.count() > 1:
+                    if self._list.count() < self._list.getMaxCount():
                         rois = self._list.getCheckedROI()
                         if rois is not None:
                             n = len(rois)
@@ -260,18 +299,25 @@ class TabROIListWidget(TabWidget):
                                 name = 'Intersection {}'.format(rois[0].getName())
                                 for i in range(1, n): name += ' {}'.format(rois[i].getName())
                                 self._list.new(name)
-                                wait = DialogWait(info='Intersection...', parent=self)
+                                wait = DialogWait()
                                 wait.open()
+                                wait.setInformationText('Intersection...')
                                 self._draw.binaryAND(rois)
                                 self._updateROIDisplay()
                                 wait.close()
-                            else: QMessageBox.warning(self, 'ROI Intersection', 'Less than two ROI checked.')
+                            else: messageBox(self, 'ROI Intersection', 'Less than two ROI checked.')
+                    else:
+                        messageBox(self,
+                                   'ROI intersection',
+                                   text='Maximum number of ROIs reached.\n'
+                                        'Close a ROI to add a new one.',
+                                   icon=QMessageBox.Information)
 
     def symmetricDifference(self):
-        if self.hasViewCollection():
-            if self.hasCollection():
-                if self._draw.hasROI():
-                    if self._collection.count() > 1:
+        if self.hasViewCollection() and self.hasCollection():
+            if self._draw.hasROI():
+                if self._collection.count() > 1:
+                    if self._list.count() < self._list.getMaxCount():
                         rois = self._list.getCheckedROI()
                         if rois is not None:
                             n = len(rois)
@@ -279,35 +325,58 @@ class TabROIListWidget(TabWidget):
                                 name = 'SymmDiff {}'.format(rois[0].getName())
                                 for i in range(1, n): name += ' {}'.format(rois[i].getName())
                                 self._list.new(name)
-                                wait = DialogWait(info='Symmetric difference...', parent=self)
+                                wait = DialogWait()
                                 wait.open()
+                                wait.setInformationText('Symmetric difference...')
                                 self._draw.binaryXOR(rois)
                                 self._updateROIDisplay()
                                 wait.close()
-                            else: QMessageBox.warning(self, 'ROI Symmetric difference', 'Less than two ROI checked.')
+                            else: messageBox(self, 'ROI Symmetric difference', 'Less than two ROI checked.')
+                    else:
+                        messageBox(self,
+                                   'ROI symmetric difference',
+                                   text='Maximum number of ROIs reached.\n'
+                                        'Close a ROI to add a new one.',
+                                   icon=QMessageBox.Information)
 
     def difference(self):
-        if self.hasViewCollection():
-            if self.hasCollection():
-                if self._draw.hasROI():
-                    if self._collection.count() > 1:
+        if self.hasViewCollection() and self.hasCollection():
+            if self._draw.hasROI():
+                if self._collection.count() > 1:
+                    if self._list.count() < self._list.getMaxCount():
                         rois = self._list.getCheckedROI()
                         if rois is not None:
+                            # current selected ROI, inserted first in list
+                            # diffrence = first - others
                             rois.insert(0, self._draw.getROI())
                             n = len(rois)
                             if n > 0:
                                 name = '{} Diff'.format(rois[0].getName())
                                 for i in range(1, n): name += ' {}'.format(rois[i].getName())
                                 self._list.new(name)
-                                wait = DialogWait(info='Difference...', parent=self)
+                                wait = DialogWait()
                                 wait.open()
+                                wait.setInformationText('Difference...')
                                 self._draw.binaryNAND(rois)
                                 self._updateROIDisplay()
                                 wait.close()
-                            else: QMessageBox.warning(self, 'ROI Difference', 'Less than one ROI checked.')
+                            else: messageBox(self, 'ROI Difference', 'No ROI checked.')
+                    else:
+                        messageBox(self,
+                                   'ROI difference',
+                                   text='Maximum number of ROIs reached.\n'
+                                        'Close a ROI to add a new one.',
+                                   icon=QMessageBox.Information)
 
     def clear(self):
         self._list.removeAll()
+
+    # < Revision 20/02/2025
+    # add setEnabled method
+    def setEnabled(self, v: bool) -> None:
+        super().setEnabled(v)
+        self._list.setEnabled(v)
+    # Revision 20/02/2025 >
 
     # Method aliases
 
@@ -317,221 +386,124 @@ class TabROIListWidget(TabWidget):
 
 class TabROIToolsWidget(TabWidget):
     """
-        TabROIToolsWidget class
+    Description
+    ~~~~~~~~~~~
 
-        Description
+    QTabBar page widget to display ROIToolsWidget.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> TabROIToolsWidget
+    QWidget -> TabROIToolsWidget
 
-        Private Attributes
-
-            _draw           IconBarViewWidgetCollection
-            _collection     SisypheROICollection
-            _threshold      ThresholdViewWidget
-            _athreshold     QAction ThresholdViewWidget
-            _statistics     DialogROIStatistics
-            _btn            dict of IconPushButton
-            _btngroup       QButtonGroup of _btn IconPushButton
-
-
-        Public methods
-
-            setIconSize(int)
-            int = getIconSize()
-            setEnabled(bool)
-            setViewCollection(IconBarViewWidgetCollection)  override
-            brush()
-            interpolate()
-            undo()
-            redo()
-            slcDilate()
-            slcErode()
-            slcOpening()
-            slcClosing()
-            slcInvert()
-            slcHoles()
-            slcFill()
-            slcObject()
-            slcBack()
-            slcThresholding()
-            slcCopy()
-            slcCut()
-            slcPaste()
-            slcClear()
-            slcHFlip()
-            slcVFlip()
-            slcUp()
-            slcDown()
-            slcRight()
-            slcLeft()
-            slcFilterExtent()
-            slcRegionGrowing()
-            slcRegionConfidence()
-            slcBlobDilate()
-            slcBlobErode()
-            slcBlobOpening()
-            slcBlobClosing()
-            slcBlobCopy()
-            slcBlobCut()
-            slcBlobPaste()
-            slcBlobRemove()
-            slcBlobKeep()
-            slcBlobThresholding()
-            slcBlobRegionGrowing()
-            slcBlobRegionConfidence()
-            voiEuclideanExpand()
-            voiEuclideanShrink()
-            voiDilate()
-            voiErode()
-            voiOpening()
-            voiClosing()
-            voiInvert()
-            voiHoles()
-            voiFill()
-            voiObject()
-            voiBack()
-            voiThresholding()
-            voiClear()
-            voiHFlip()
-            voiVFlip()
-            voiUp()
-            voiDown()
-            voiRight()
-            voiLeft()
-            voiFilterExtent()
-            voiRegionGrowing()
-            voiRegionConfidence()
-            voiActiveContour()
-            voiStatistics()
-            voiBlobDilate()
-            voiBlobErode()
-            voiBlobOpening()
-            voiBlobClosing()
-            voiBlobCopy()
-            voiBlobCut()
-            voiBlobPaste()
-            voiBlobRemove()
-            voiBlobKeep()
-            voiBlobExpand()
-            voiBlobShrink()
-            voiBlobThresholding()
-            voiBlobRegionGrowing()
-            voiBlobRegionConfidence()
-
-            inherited TabWidget methods
-            inherited QWidget methods
-
-        Revision:
-
-            12/08/2023  add interpolate() method
-            11/11/2023  slcObject, slcBack, voiObject, voiBack methods bugfix
-                        slcFilterExtent and voiFilterExtent bugfix
+    Last revision: 08/03/2025
     """
 
     # Special method
+
+    """
+    Private attributes
+    
+    _draw               SisypheROIDraw
+    _threshold          ThresholdViewWidget, widget to select threshold value
+    __contourdialog     DialogSettings, active contour settings dialog
+    _athreshold         QWidgetAction, QAction of _threshold widget
+    _menuThreshold      QMenu, displays QWidgetAction _athreshold
+    _statistics         DialogROIStatistics, dialog box to display ROI statistics
+    _btn                dict[str, QAction], buttons
+    _btngroup           QButtonGroup, group of mutual exclusive buttons
+    _brushtype          LabeledComboBox
+    _brushsize          LabeledSlider
+    _fill               QCheckBox, autofill holes
+    _structsize         LabeledSlider, structuring element size
+    _structtype         LabeledComboBox, structuring element shape
+    _move               LabeledSpinBox, ROI displacement, in voxels, after move tools clicking
+    _extent             LabeledSpinBox, Blob extent used as threshold to remove blobs
+    _thick              LabeledDoubleSpinBox, value in mm used by expand/shrink tools
+    _algo               LabeledComboBox, algorithm used for object/background segmentation tools
+    _confidence         LabeledDoubleSpinBox, value used by confidence connected segmentation tools
+    _menu2DRegion       QMenu, 2D region growing algorithm menu
+    _menu2DBlobRegion   QMenu, 2D region growing algorithm menu
+    _menu3DRegion       QMenu, 3D region growing algorithm menu
+    _menu2DBlobRegion   QMenu, 3D region growing algorithm menu
+    _menu3DHoles        QMenu, fill holes menu
+    """
 
     def __init__(self, views=None, parent=None):
         super().__init__(views, parent)
 
         self._draw = None
-        self._threshold = None
-        self._athreshold = None
+        self._threshold = ThresholdViewWidget(None, size=384, parent=self)
+        self._threshold.setThresholdFlagToTwo()
+        self._threshold.setThresholdFlagButtonsVisibility(False)
+        self._threshold.setAutoButtonVisibility(True)
+        self._athreshold = QWidgetAction(self)
+        self._athreshold.setDefaultWidget(self._threshold)
         self._statistics = None
         self._btn = dict()
         self._btngroup = QButtonGroup()
         self._btngroup.setExclusive(True)
 
-        # QWidgets settings
+        # < Revision 24/03/2025
+        # active contour settings management
+        self._contourdialog = DialogFunctionSetting('ActiveContour')
+        if platform == 'win32':
+            import pywinstyles
+            cl = self.palette().base().color()
+            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+            pywinstyles.change_header_color(self._contourdialog, c)
+        self._updateActiveContourParameters()
+        # Revision 24/03/2025 >
 
-        self._brushtype = LabeledComboBox(title='Shape', fontsize=10)
-        self._brushtype.addItem('Full disk')
-        self._brushtype.addItem('Thresholded disk')
+        # Widgets
+
+        self._brushtype = LabeledComboBox(title='Shape', fontsize=12)
+        self._brushtype.addItem('Full disc')
+        self._brushtype.addItem('Thresholded disc')
         self._brushtype.addItem('Full ball')
         self._brushtype.addItem('Thresholded ball')
+        # Revision 20/03/2025
+        # noinspection PyUnresolvedReferences
         self._brushtype.currentIndexChanged.connect(self._brushTypeChanged)
         self._brushtype.setToolTip('Brush shape and behavior.')
 
-        self._brushsize = LabeledSlider(Qt.Horizontal, title='Radius', fontsize=10)
-        self._brushsize.setMaximum(20)
-        self._brushsize.setMinimum(1)
+        # noinspection PyTypeChecker
+        self._brushsize = LabeledSlider(Qt.Horizontal, title='Radius', fontsize=12)
+        self._brushsize.setRange(1, 20)
         self._brushsize.setValue(10)
+        # noinspection PyUnresolvedReferences
         self._brushsize.valueChanged.connect(self._brushSizeChanged)
+        # noinspection PyUnresolvedReferences
         self._brushsize.sliderMoved.connect(self._brushSizeMoved)
+        # noinspection PyUnresolvedReferences
         self._brushsize.sliderReleased.connect(self._brushSizeReleased)
         self._brushsize.setToolTip('Brush radius (voxel unit)')
 
-        self._fill = QCheckBox('Fill holes')
-        self._fill.setStyleSheet('font-family: Arial; font-size: 10pt')
-        self._fill.setChecked(False)
+        # ROI settings
+
+        self._settings = SettingsWidget('ROI')
+        self._settings.setIOButtonsVisibility(False)
+        self._settings.setSettingsButtonText('Brush Settings')
+        self._settings.settingsVisibilityOff()
+        self._settings.setParameterVisibility('MaxCount', False)
+        self._fill = self._settings.getParameterWidget('FillHoles')
+        self._structsize = self._settings.getParameterWidget('StructSize')
+        self._structtype = self._settings.getParameterWidget('StructShape')
+        self._move = self._settings.getParameterWidget('MoveStep')
+        self._extent = self._settings.getParameterWidget('BlobExtent')
+        self._thick = self._settings.getParameterWidget('Thickness')
+        self._algo = self._settings.getParameterWidget('Algo')
+        self._confidence = self._settings.getParameterWidget('Confidence')
+        self._iters = self._settings.getParameterWidget('ConfidenceIter')
         self._fill.stateChanged.connect(self._brushFillChanged)
-        self._fill.setToolTip('Automatic hole filling during drawing.')
-
-        self._structsize = LabeledSlider(Qt.Horizontal, title='Radius', fontsize=10)
-        self._structsize.setMinimum(1)
-        self._structsize.setMaximum(10)
-        self._structsize.setValue(1)
         self._structsize.valueChanged.connect(self._structSizeChanged)
-        self._structsize.setToolTip('Structuring element radius used by\nmorphological tools (voxel unit).')
-
-        self._structtype = LabeledComboBox(title='Struct. element type', fontsize=10)
-        self._structtype.addItem('Ball')
-        self._structtype.addItem('Box')
-        self._structtype.addItem('Cross')
-        self._structtype.addItem('Annulus')
         self._structtype.currentIndexChanged.connect(self._structTypeChanged)
-        self._structtype.setToolTip('Structuring element used by morphological tools.')
-
-        self._move = LabeledSpinBox(title='Move step', fontsize=10)
-        self._move.setMinimum(1)
-        self._move.setMaximum(20)
-        self._move.setValue(1)
-        self._move.setSuffix(' voxel(s)')
-        self._move.setToolTip('ROI displacement, in voxels, after clicking move tools.')
-
-        self._extent = LabeledSpinBox(title='Blob extent', fontsize=10)
-        self._extent.setMinimum(-1)
-        self._extent.setMaximum(65536)
-        self._extent.setValue(0)
-        self._extent.setSuffix(' voxel(s)')
-        self._extent.setToolTip('Value used as threshold to remove blobs\n'
-                                'with lesser number of voxels.\n'
-                                'Only main blob is kept if value is -1.')
-
-        self._thick = LabeledDoubleSpinBox(title='Thickness', fontsize=10)
-        self._thick.setMinimum(0.0)
-        self._thick.setMaximum(50.0)
-        self._thick.setValue(1.0)
-        self._thick.setSuffix(' mm')
+        self._move.valueChanged.connect(self._moveChanged)
+        self._extent.valueChanged.connect(self._extentChanged)
         self._thick.valueChanged.connect(self._thicknessChanged)
-        self._thick.setToolTip('Value in mm used by expand/shrink tools.')
-
-        self._algo = LabeledComboBox(title='Obj./Back. algorithm', fontsize=10)
-        self._algo.addItem('Huang')
-        self._algo.addItem('Intermodes')
-        self._algo.addItem('Isodata')
-        self._algo.addItem('Otsu')
-        self._algo.addItem('Kittler')
-        self._algo.addItem('Li')
-        self._algo.addItem('Maximum Entropy')
-        self._algo.addItem('Mean')
-        self._algo.addItem('Moments')
-        self._algo.addItem('Renyi')
-        self._algo.addItem('Shanbhag')
-        self._algo.addItem('Triangle')
-        self._algo.addItem('Yen')
-        self._algo.addItem('Morphology')
-        self._algo.setCurrentIndex(3)
-        self._algo.setToolTip('Algorithm used for object/background segmentation tools.')
-
-        self._confidence = LabeledDoubleSpinBox(title='Conf. connected', fontsize=10)
-        self._confidence.setMinimum(1.0)
-        self._confidence.setMaximum(5.0)
-        self._confidence.setSingleStep(0.1)
-        self._confidence.setValue(2.5)
-        self._confidence.setSuffix(' sigma')
-        self._confidence.setToolTip('Parameter used by confidence connected segmentation tools.')
+        self._algo.currentIndexChanged.connect(self._algoChanged)
+        self._confidence.valueChanged.connect(self._confidenceChanged)
+        self._iters.valueChanged.connect(self._confidenceIterChanged)
 
         # Brush groupbox
 
@@ -558,68 +530,144 @@ class TabROIToolsWidget(TabWidget):
         self._volumeblobgroupbox = QGroupBox('Volume blob tools')
         self._initVolumeBlobGroupBox()
 
+        self._brushFillChanged(None)
+        self._structSizeChanged(None)
+        self._structTypeChanged(None)
+        self._moveChanged(None)
+        self._extentChanged(None)
+        self._thicknessChanged(None)
+        self._algoChanged(None)
+
         # Popup menu
 
         self._menuThreshold = QMenu(self)
-        self._menuThreshold.aboutToShow.connect(self._showThresholdMenu)
-        self._menuThreshold.aboutToHide.connect(self._hideThresholdMenu)
+        # noinspection PyTypeChecker
+        self._menuThreshold.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._menuThreshold.setWindowFlag(Qt.FramelessWindowHint, True)
+        # self._menuThreshold.setAttribute(Qt.WA_TranslucentBackground, True)
+        self._menuThreshold.addAction(self._athreshold)
+        # noinspection PyUnresolvedReferences
+        self._menuThreshold.aboutToHide.connect(self._brushThresholdChanged)
         self._btn['threshold'].setMenu(self._menuThreshold)
 
         self._menu2DRegion = QMenu()
-        self._menu2DRegion.setStyleSheet('font-family: Arial; font-size: 12pt')
-        action = self._menu2DRegion.addAction('Region growing')
-        action.triggered.connect(self.slcRegionGrowing)
-        action = self._menu2DRegion.addAction('Confidence connected')
-        action.triggered.connect(self.slcRegionConfidence)
+        # noinspection PyTypeChecker
+        self._menu2DRegion.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._menu2DRegion.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._menu2DRegion.setAttribute(Qt.WA_TranslucentBackground, True)
+        self._rg2DRegion = self._menu2DRegion.addAction('Region growing')
+        self._rg2DRegion.setCheckable(True)
+        self._rg2DRegion.setChecked(False)
+        # noinspection PyUnresolvedReferences
+        self._rg2DRegion.triggered.connect(self.slcRegionGrowing)
+        self._cc2DRegion = self._menu2DRegion.addAction('Confidence connected')
+        self._cc2DRegion.setCheckable(True)
+        self._cc2DRegion.setChecked(False)
+        # noinspection PyUnresolvedReferences
+        self._cc2DRegion.triggered.connect(self.slcRegionConfidence)
         self._btn['2Dregion'].setMenu(self._menu2DRegion)
+        self._btn['2Dregion'].clicked.connect(self._2DregionClicked)
 
         self._menu2DBlobRegion = QMenu()
-        self._menu2DBlobRegion.setStyleSheet('font-family: Arial; font-size: 12pt')
-        action = self._menu2DBlobRegion.addAction('Region growing')
-        action.triggered.connect(self.slcBlobRegionGrowing)
-        action = self._menu2DBlobRegion.addAction('Confidence connected')
-        action.triggered.connect(self.slcBlobRegionConfidence)
+        # noinspection PyTypeChecker
+        self._menu2DBlobRegion.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._menu2DBlobRegion.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._menu2DBlobRegion.setAttribute(Qt.WA_TranslucentBackground, True)
+        self._rg2DBlobRegion = self._menu2DBlobRegion.addAction('Region growing')
+        self._rg2DBlobRegion.setCheckable(True)
+        self._rg2DBlobRegion.setChecked(False)
+        # noinspection PyUnresolvedReferences
+        self._rg2DBlobRegion.triggered.connect(self.slcBlobRegionGrowing)
+        self._cc2DBlobRegion = self._menu2DBlobRegion.addAction('Confidence connected')
+        self._cc2DBlobRegion.setCheckable(True)
+        self._cc2DBlobRegion.setChecked(False)
+        # noinspection PyUnresolvedReferences
+        self._cc2DBlobRegion.triggered.connect(self.slcBlobRegionConfidence)
         self._btn['2Dblobregion'].setMenu(self._menu2DBlobRegion)
+        self._btn['2Dblobregion'].clicked.connect(self._2DBlobregionClicked)
 
         self._menu3DRegion = QMenu()
-        self._menu3DRegion.setStyleSheet('font-family: Arial; font-size: 12pt')
-        action = self._menu3DRegion.addAction('Region growing')
-        action.triggered.connect(self.voiRegionGrowing)
-        action = self._menu3DRegion.addAction('Confidence connected')
-        action.triggered.connect(self.voiRegionConfidence)
-        action = self._menu3DRegion.addAction('Active contour')
-        action.triggered.connect(self.voiActiveContour)
+        # noinspection PyTypeChecker
+        self._menu3DRegion.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._menu3DRegion.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._menu3DRegion.setAttribute(Qt.WA_TranslucentBackground, True)
+        self._rg3DRegion = self._menu3DRegion.addAction('Region growing')
+        self._rg3DRegion.setCheckable(True)
+        self._rg3DRegion.setChecked(False)
+        # noinspection PyUnresolvedReferences
+        self._rg3DRegion.triggered.connect(self.voiRegionGrowing)
+        self._cc3DRegion = self._menu3DRegion.addAction('Confidence connected')
+        self._cc3DRegion.setCheckable(True)
+        self._cc3DRegion.setChecked(False)
+        # noinspection PyUnresolvedReferences
+        self._cc3DRegion.triggered.connect(self.voiRegionConfidence)
+        self._menu3DRegion.addSeparator()
+        self._ac3DRegion = self._menu3DRegion.addAction('Active contour')
+        self._ac3DRegion.setCheckable(True)
+        self._ac3DRegion.setChecked(False)
+        # noinspection PyUnresolvedReferences
+        self._ac3DRegion.triggered.connect(self.voiActiveContour)
+        action = self._menu3DRegion.addAction('Active contour settings...')
+        # noinspection PyUnresolvedReferences
+        action.triggered.connect(self._dialogActiveContour)
         self._btn['3Dregion'].setMenu(self._menu3DRegion)
+        self._btn['3Dregion'].clicked.connect(self._3DregionClicked)
 
         self._menu3DBlobRegion = QMenu()
-        self._menu3DBlobRegion.setStyleSheet('font-family: Arial; font-size: 12pt')
-        action = self._menu3DBlobRegion.addAction('Region growing')
-        action.triggered.connect(self.voiBlobRegionGrowing)
-        action = self._menu3DBlobRegion.addAction('Confidence connected')
-        action.triggered.connect(self.voiBlobRegionConfidence)
+        # noinspection PyTypeChecker
+        self._menu3DBlobRegion.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._menu3DBlobRegion.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._menu3DBlobRegion.setAttribute(Qt.WA_TranslucentBackground, True)
+        self._rg3DBlobRegion = self._menu3DBlobRegion.addAction('Region growing')
+        self._rg3DBlobRegion.setCheckable(True)
+        self._rg3DBlobRegion.setChecked(False)
+        # noinspection PyUnresolvedReferences
+        self._rg3DBlobRegion.triggered.connect(self.voiBlobRegionGrowing)
+        self._cc3DBlobRegion = self._menu3DBlobRegion.addAction('Confidence connected')
+        self._cc3DBlobRegion.setCheckable(True)
+        self._cc3DBlobRegion.setChecked(False)
+        # noinspection PyUnresolvedReferences
+        self._cc3DBlobRegion.triggered.connect(self.voiBlobRegionConfidence)
         self._btn['3Dblobregion'].setMenu(self._menu3DBlobRegion)
+        self._btn['3Dblobregion'].clicked.connect(self._3DBlobregionClicked)
 
         self._menu3DHoles = QMenu()
-        self._menu3DHoles.setStyleSheet('font-family: Arial; font-size: 12pt')
+        # noinspection PyTypeChecker
+        self._menu3DHoles.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._menu3DHoles.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._menu3DHoles.setAttribute(Qt.WA_TranslucentBackground, True)
         action = self._menu3DHoles.addAction('3D fill holes')
+        # noinspection PyUnresolvedReferences
         action.triggered.connect(self.voi3DHoles)
         action = self._menu3DHoles.addAction('2D axial fill holes')
+        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda: self.voi2DHoles(0))
         action = self._menu3DHoles.addAction('2D coronal fill holes')
+        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda: self.voi2DHoles(1))
         action = self._menu3DHoles.addAction('2D sagittal fill holes')
+        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda: self.voi2DHoles(2))
         self._btn['3Dholes'].setMenu(self._menu3DHoles)
 
         # Layout
 
         lyout = self.layout()
+        # noinspection PyUnresolvedReferences
         lyout.addStretch()
         lyout.addWidget(self._brushgroupbox)
         lyout.addWidget(self._slicegroupbox)
         lyout.addWidget(self._sliceblobgroupbox)
         lyout.addWidget(self._volumegroupbox)
         lyout.addWidget(self._volumeblobgroupbox)
+        lyout.addWidget(self._settings)
+        # noinspection PyUnresolvedReferences
         lyout.addStretch()
 
     # Private methods
@@ -649,14 +697,13 @@ class TabROIToolsWidget(TabWidget):
         self._btn['redo'].pressed.connect(self.redo)
 
         vlyout = QVBoxLayout()
-        vlyout.setContentsMargins(0, 0, 0, 0)
+        vlyout.setContentsMargins(0, 0, 0, 10)
         lyout = QHBoxLayout()
         lyout.setContentsMargins(5, 0, 5, 0)
         lyout.setSpacing(5)
         lyout.addStretch()
         lyout.addWidget(self._brushtype)
         lyout.addWidget(self._brushsize)
-        lyout.addWidget(self._fill)
         lyout.addStretch()
         vlyout.addLayout(lyout)
         lyout = QHBoxLayout()
@@ -708,7 +755,7 @@ class TabROIToolsWidget(TabWidget):
         self._btn['2Dclose'].setToolTip('Morphology closing in current slice')
         self._btn['2Dinvert'].setToolTip('Invert current slice')
         self._btn['2Dholes'].setToolTip('Fill holes in current slice')
-        self._btn['2Dfill'].setToolTip('Fill from seed pixel')
+        self._btn['2Dfill'].setToolTip('Flood fill in current slice')
         self._btn['2Dobject'].setToolTip('Object segmentation in current slice')
         self._btn['2Dback'].setToolTip('Background segmentation in current slice')
         self._btn['2Dthreshold'].setToolTip('Thresholding current slice')
@@ -750,14 +797,6 @@ class TabROIToolsWidget(TabWidget):
         lyout.setContentsMargins(5, 0, 5, 0)
         lyout.setSpacing(5)
         lyout.addStretch()
-        lyout.addWidget(self._structtype)
-        lyout.addWidget(self._structsize)
-        lyout.addStretch()
-        vlyout.addLayout(lyout)
-        lyout = QHBoxLayout()
-        lyout.setContentsMargins(5, 0, 5, 0)
-        lyout.setSpacing(5)
-        lyout.addStretch()
         lyout.addWidget(self._btn['2Ddilate'])
         lyout.addWidget(self._btn['2Derode'])
         lyout.addWidget(self._btn['2Dopen'])
@@ -769,14 +808,6 @@ class TabROIToolsWidget(TabWidget):
         lyout.addWidget(self._btn['2Dcopy'])
         lyout.addWidget(self._btn['2Dcut'])
         lyout.addWidget(self._btn['2Dpaste'])
-        lyout.addStretch()
-        vlyout.addLayout(lyout)
-        lyout = QHBoxLayout()
-        lyout.setContentsMargins(5, 0, 5, 0)
-        lyout.setSpacing(5)
-        lyout.addStretch()
-        lyout.addWidget(self._algo)
-        lyout.addWidget(self._confidence)
         lyout.addStretch()
         vlyout.addLayout(lyout)
         lyout = QHBoxLayout()
@@ -796,7 +827,7 @@ class TabROIToolsWidget(TabWidget):
         lyout.addStretch()
         lyout.addWidget(self._btn['2Dhflip'])
         lyout.addWidget(self._btn['2Dvflip'])
-        lyout.addWidget(self._move)
+        # lyout.addWidget(self._move)
         lyout.addWidget(self._btn['2Dup'])
         lyout.addWidget(self._btn['2Ddown'])
         lyout.addWidget(self._btn['2Dleft'])
@@ -853,7 +884,7 @@ class TabROIToolsWidget(TabWidget):
         self._btn['2Dblobcopy'].setToolTip('Copy selected blob in current slice')
         self._btn['2Dblobcut'].setToolTip('Cut selected blob in current slice')
         self._btn['2Dblobpaste'].setToolTip('Paste blob in current slice')
-        self._btn['2Dblobthreshold'].setToolTip('Thresholding in blob, current slice')
+        self._btn['2Dblobthreshold'].setToolTip('Blob thresholding in current slice')
         self._btn['2Dblobregion'].setToolTip('Region segmentation in blob, current slice')
 
         self._btn['2Dblobdilate'].pressed.connect(self.slcBlobDilate)
@@ -889,7 +920,6 @@ class TabROIToolsWidget(TabWidget):
         lyout.addStretch()
         lyout.addWidget(self._btn['2Dblobkeep'])
         lyout.addWidget(self._btn['2Dblobremove'])
-        lyout.addWidget(self._extent)
         lyout.addWidget(self._btn['2Dblobextent'])
         lyout.addSpacing(10)
         lyout.addWidget(self._btn['2Dblobthreshold'])
@@ -932,9 +962,9 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dclose'].setToolTip('Morphology closing')
         self._btn['3Dinvert'].setToolTip('Invert')
         self._btn['3Dholes'].setToolTip('Fill holes')
-        self._btn['3Dfill'].setToolTip('Fill from seed voxel')
-        self._btn['3Dexpand'].setToolTip('Euclidean distance expand')
-        self._btn['3Dshrink'].setToolTip('Euclidean distance shrink')
+        self._btn['3Dfill'].setToolTip('Flood fill')
+        self._btn['3Dexpand'].setToolTip('Expand with an isotropic margin in mm')
+        self._btn['3Dshrink'].setToolTip('Shrink with an isotropic margin in mm')
         self._btn['3Dobject'].setToolTip('Object segmentation')
         self._btn['3Dback'].setToolTip('Background segmentation')
         self._btn['3Dthreshold'].setToolTip('Thresholding')
@@ -953,7 +983,7 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dopen'].pressed.connect(self.voiOpening)
         self._btn['3Dclose'].pressed.connect(self.voiClosing)
         self._btn['3Dinvert'].pressed.connect(self.voiInvert)
-        # self._btn['3Dholes'].pressed.connect(self.voi3DHoles)
+        self._btn['3Dholes'].pressed.connect(self.voi3DHoles)
         self._btn['3Dfill'].pressed.connect(self.voiFill)
         self._btn['3Dexpand'].pressed.connect(self.voiEuclideanExpand)
         self._btn['3Dshrink'].pressed.connect(self.voiEuclideanShrink)
@@ -987,7 +1017,6 @@ class TabROIToolsWidget(TabWidget):
         lyout.setContentsMargins(5, 0, 5, 0)
         lyout.setSpacing(5)
         lyout.addStretch()
-        lyout.addWidget(self._thick)
         lyout.addWidget(self._btn['3Dexpand'])
         lyout.addWidget(self._btn['3Dshrink'])
         lyout.addSpacing(10)
@@ -1061,8 +1090,8 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dbloberode'].setToolTip('Blob morphology erode')
         self._btn['3Dblobopen'].setToolTip('Blob morphology opening')
         self._btn['3Dblobclose'].setToolTip('Blob morphology closing')
-        self._btn['3Dblobexpand'].setToolTip('Euclidean distance blob expand')
-        self._btn['3Dblobshrink'].setToolTip('Euclidean distance blob shrink')
+        self._btn['3Dblobexpand'].setToolTip('Expand blob with an isotropic margin in mm')
+        self._btn['3Dblobshrink'].setToolTip('Shrink blob with an isotropic margin in mm')
         self._btn['3Dblobkeep'].setToolTip('Keep selected blob, remove others')
         self._btn['3Dblobremove'].setToolTip('Remove selected blob')
         self._btn['3Dblobextent'].setToolTip('Remove blob smaller than threshold')
@@ -1122,28 +1151,26 @@ class TabROIToolsWidget(TabWidget):
         if self.hasViewCollection() and self.hasCollection():
             self._views.updateROIDisplay()
 
-    def _showThresholdMenu(self):
-        if self._views is not None:
-            vol = self._views.getVolume()
-            if vol is not None:
-                if self._athreshold is not None:
-                    self._menuThreshold.removeAction(self._athreshold)
-                self._threshold = ThresholdViewWidget(vol, size=384)
-                if self._draw is not None:
-                    self._threshold.setThreshold(self._draw.getThresholdMin(), self._draw.getThresholdMax())
-                self._athreshold = QWidgetAction(self)
-                self._athreshold.setDefaultWidget(self._threshold)
-                self._menuThreshold.addAction(self._athreshold)
-
-    def _hideThresholdMenu(self):
+    def _brushThresholdChanged(self):
         if self._draw is not None:
-            self._draw.setThresholds(self._threshold.getMinThreshold(), self._threshold.getMaxThreshold())
-            self._threshold = None
+            vmin = self._threshold.getMinThreshold()
+            vmax = self._threshold.getMaxThreshold()
+            self._draw.setThresholds(vmin, vmax)
+            if vmax < -1.0 or vmax > 1.0:
+                info = '\nLower threshold {:.1f}, upper threshold {:.1f}'.format(vmin, vmax)
+            else: info = '\nLower threshold {}, upper threshold {}'.format(vmin, vmax)
+            self._btn['threshold'].setToolTip('Set voxel value threshold for all thresholding tools' + info)
+            self._btn['2Dthreshold'].setToolTip('Thresholding current slice' + info)
+            self._btn['2Dblobthreshold'].setToolTip('Blob thresholding in current slice' + info)
+            self._btn['3Dthreshold'].setToolTip('Thresholding' + info)
+            self._btn['3Dblobthreshold'].setToolTip('Thresholding in blob' + info)
 
+    # noinspection PyUnusedLocal
     def _brushSizeChanged(self, v):
         if self._draw is not None and self.hasViewCollection():
             self._views.setBrushRadiusROI(self._brushsize.value())
 
+    # noinspection PyUnusedLocal
     def _brushSizeMoved(self, v):
         if self._draw is not None and self.hasViewCollection():
             for widget in self._views:
@@ -1158,31 +1185,194 @@ class TabROIToolsWidget(TabWidget):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.setBrushVisibilityOff()
 
+    # noinspection PyUnusedLocal
     def _brushTypeChanged(self, v):
         if self._draw is not None and self.hasViewCollection():
-            brush = ('solid', 'threshold', 'solid3', 'threshold3')
-            index = self._brushtype.currentIndex()
-            self._draw.setBrushType(brush[index])
+            self._draw.setBrushType(self._brushtype.currentIndex())
+            self._brushtype.setToolTip('Brush shape and behavior\n' + self._brushtype.currentText())
 
+    # noinspection PyUnusedLocal
     def _brushFillChanged(self, v):
         if self._draw is not None and self.hasViewCollection():
             self._views.setFillHolesROIFlag(self._fill.isChecked())
 
+    # noinspection PyUnusedLocal
     def _structSizeChanged(self, v):
         if self._draw is not None and self.hasViewCollection():
             self._draw.setMorphologyRadius(self._structsize.value())
+        info = '\nStructuring element size {}, shape {}'.format(self._structsize.value(),
+                                                                 self._structtype.currentText())
+        self._btn['2Ddilate'].setToolTip('Morphology dilate in current slice' + info)
+        self._btn['2Derode'].setToolTip('Morphology erode in current slice' + info)
+        self._btn['2Dopen'].setToolTip('Morphology opening in current slice' + info)
+        self._btn['2Dclose'].setToolTip('Morphology closing in current slice' + info)
+        self._btn['2Dblobdilate'].setToolTip('Blob morphology dilate in current slice' + info)
+        self._btn['2Dbloberode'].setToolTip('Blob morphology erode in current slice' + info)
+        self._btn['2Dblobopen'].setToolTip('Blob morphology opening in current slice' + info)
+        self._btn['2Dblobclose'].setToolTip('Blob morphology closing in current slice' + info)
+        self._btn['3Ddilate'].setToolTip('Morphology dilate' + info)
+        self._btn['3Derode'].setToolTip('Morphology erode' + info)
+        self._btn['3Dopen'].setToolTip('Morphology opening' + info)
+        self._btn['3Dclose'].setToolTip('Morphology closing' + info)
+        self._btn['3Dblobdilate'].setToolTip('Blob morphology dilate' + info)
+        self._btn['3Dbloberode'].setToolTip('Blob morphology erode' + info)
+        self._btn['3Dblobopen'].setToolTip('Blob morphology opening' + info)
+        self._btn['3Dblobclose'].setToolTip('Blob morphology closing' + info)
 
+    # noinspection PyUnusedLocal
     def _structTypeChanged(self, v):
         if self._draw is not None and self.hasViewCollection():
             struct = ('ball', 'box', 'cross', 'annulus')
             index = self._structtype.currentIndex()
             self._draw.setStructElement(struct[index])
+        info = '\nStructuring element size {}, shape {}'.format(self._structsize.value(),
+                                                                 self._structtype.currentText())
+        self._btn['2Ddilate'].setToolTip('Morphology dilate in current slice' + info)
+        self._btn['2Derode'].setToolTip('Morphology erode in current slice' + info)
+        self._btn['2Dopen'].setToolTip('Morphology opening in current slice' + info)
+        self._btn['2Dclose'].setToolTip('Morphology closing in current slice' + info)
+        self._btn['2Dblobdilate'].setToolTip('Blob morphology dilate in current slice' + info)
+        self._btn['2Dbloberode'].setToolTip('Blob morphology erode in current slice' + info)
+        self._btn['2Dblobopen'].setToolTip('Blob morphology opening in current slice' + info)
+        self._btn['2Dblobclose'].setToolTip('Blob morphology closing in current slice' + info)
+        self._btn['3Ddilate'].setToolTip('Morphology dilate' + info)
+        self._btn['3Derode'].setToolTip('Morphology erode' + info)
+        self._btn['3Dopen'].setToolTip('Morphology opening' + info)
+        self._btn['3Dclose'].setToolTip('Morphology closing' + info)
+        self._btn['3Dblobdilate'].setToolTip('Blob morphology dilate' + info)
+        self._btn['3Dbloberode'].setToolTip('Blob morphology erode' + info)
+        self._btn['3Dblobopen'].setToolTip('Blob morphology opening' + info)
+        self._btn['3Dblobclose'].setToolTip('Blob morphology closing' + info)
 
+    # noinspection PyUnusedLocal
+    def _moveChanged(self, v):
+        info = '\n{} mm step'.format(self._move.value())
+        self._btn['2Dup'].setToolTip('Move up current slice and orientation' + info)
+        self._btn['2Ddown'].setToolTip('Move down current slice and orientation' + info)
+        self._btn['2Dleft'].setToolTip('Move left current slice and orientation' + info)
+        self._btn['2Dright'].setToolTip('Move right current slice and orientation' + info)
+        self._btn['3Dup'].setToolTip('Move up in current orientation' + info)
+        self._btn['3Ddown'].setToolTip('Move down in current orientation' + info)
+        self._btn['3Dleft'].setToolTip('Move left in current orientation' + info)
+        self._btn['3Dright'].setToolTip('Move right in current orientation' + info)
+
+    # noinspection PyUnusedLocal
+    def _extentChanged(self, v):
+        info = '\nBlob size threshold {} voxels'.format(self._extent.value())
+        self._btn['2Dblobextent'].setToolTip('Remove blob with number of voxels smaller\n'
+                                             'than threshold in current slice' + info)
+        self._btn['3Dblobextent'].setToolTip('Remove blob with number of voxels smaller then threshold' + info)
+
+    # noinspection PyUnusedLocal
     def _thicknessChanged(self, v):
         if self._draw is not None and self.hasViewCollection():
             self._draw.setThickness(self._thick.value())
+        info = '\nExpand/shrink thickness {} mm'.format(self._thick.value())
+        self._btn['3Dexpand'].setToolTip('Euclidean distance expand' + info)
+        self._btn['3Dshrink'].setToolTip('Euclidean distance shrink' + info)
+        self._btn['3Dblobexpand'].setToolTip('Euclidean distance blob expand' + info)
+        self._btn['3Dblobshrink'].setToolTip('Euclidean distance blob shrink' + info)
+
+    # noinspection PyUnusedLocal
+    def _algoChanged(self, v):
+        info = '\n{} algorithm'.format(self._algo.currentText())
+        self._btn['2Dobject'].setToolTip('Object segmentation in current slice' + info)
+        self._btn['2Dback'].setToolTip('Background segmentation in current slice' + info)
+        self._btn['3Dobject'].setToolTip('Object segmentation' + info)
+        self._btn['3Dback'].setToolTip('Background segmentation' + info)
+
+    # noinspection PyUnusedLocal
+    def _confidenceChanged(self, v):
+        if self._draw is not None and self.hasViewCollection():
+            self._draw.setConfidenceConnectedSigma(self._confidence.value())
+
+    # noinspection PyUnusedLocal
+    def _confidenceIterChanged(self, v):
+        if self._draw is not None and self.hasViewCollection():
+            self._draw.setConfidenceConnectedIter(self._iters.value())
+
+    def _2DregionClicked(self):
+        if not self._btn['2Dregion'].isChecked():
+            self._rg2Dregion.setChecked(False)
+            self._cc2Dregion.setChecked(False)
+
+    def _3DregionClicked(self):
+        if not self._btn['3Dregion'].isChecked():
+            self._rg3Dregion.setChecked(False)
+            self._cc3Dregion.setChecked(False)
+            self._ac3Dregion.setChecked(False)
+
+    def _2DBlobregionClicked(self):
+        if not self._btn['2Dblobregion'].isChecked():
+            self._rg2DBlobRegion.setChecked(False)
+            self._cc2DBlobRegion.setChecked(False)
+
+    def _3DBlobregionClicked(self):
+        if not self._btn['3Dblobregion'].isChecked():
+            self._rg3DBlobRegion.setChecked(False)
+            self._cc3DBlobRegion.setChecked(False)
+
+    # < Revision 24/03/2025
+    # add _updateActiveContourParameters method
+    def _updateActiveContourParameters(self):
+        if self._draw is not None:
+            w = self._contourdialog.getSettingsWidget()
+            v = w.getParameterValue('Radius')
+            if v is None: v = 2.0
+            self._draw.setActiveContourSeedRadius(v)
+            v = w.getParameterValue('Curvature')
+            if v is None: v = 1.0
+            self._draw.setActiveContourCurvatureWeight(v)
+            v = w.getParameterValue('Advection')
+            if v is None: v = 1.0
+            self._draw.setActiveContourAdvectionWeight(v)
+            v = w.getParameterValue('Propagation')
+            if v is None: v = 1.0
+            self._draw.setActiveContourPropagationWeight(v)
+            v = w.getParameterValue('Iter')
+            if v is None: v = 1000
+            self._draw.setActiveContourNumberOfIterations(v)
+            v = w.getParameterValue('RMS')
+            if v is None: v = 0.01
+            self._draw.setActiveContourConvergence(v)
+            v = w.getParameterValue('Sigma')
+            if v is None: v = 1.0
+            self._draw.setActiveContourSigma(v)
+            v = w.getParameterValue('Factor')
+            if v is None: v = 3.0
+            self._draw.setActiveContourFactor(v)
+            v = w.getParameterValue('Algorithm')
+            if v is None: v = 'geodesic'
+            else: v = v[0].split(' ')[0].lower()
+            self._draw.setActiveContourAlgorithm(v)
+            if self.hasViewCollection():
+                vol = self._views.getVolume()
+                if vol is not None:
+                    r1 = vol.getRange()
+                    r1 = (round(r1[0], 1), round(r1[1], 1))
+                    r2 = self._threshold.getThresholds()
+                    r2 = (round(r2[0], 1), round(r2[1], 1))
+                    if r1 == r2: self._draw.setActiveContourThresholds(None)
+                    else: self._draw.setActiveContourThresholds(self._threshold.getThresholds())
+    # Revision 24/03/2025 >
+
+    # < Revision 24/03/2025
+    # add _dialogActiveContour method
+    def _dialogActiveContour(self):
+        if self._contourdialog.exec() == QDialog.Accepted:
+            self._updateActiveContourParameters()
+    # Revision 24/03/2025 >
 
     # Public methods
+
+    # < Revision 10/03/2025
+    # fix vtkWin32OpenGLRenderWindow error: wglMakeCurrent failed in MakeCurrent()
+    # finalize method must be called before destruction
+    def finalize(self):
+        self._menuThreshold.removeAction(self._athreshold)
+        self._athreshold.releaseWidget(self._threshold)
+        self._threshold.finalize()
+    # Revision 10/03/2025 >
 
     def setIconSize(self, size=TabWidget._VSIZE):
         for k in self._btn:
@@ -1214,6 +1404,15 @@ class TabROIToolsWidget(TabWidget):
         super().setViewCollection(views)
         self._collection = self._views.getROICollection()
         self._draw = self._views.getROIDraw()
+
+    # < Revision 09/03/2025
+    # add updateThresholdWidget method, called by setROIToolsEnabled mainWindow method
+    def updateThresholdWidget(self):
+        vol = self._views.getVolume()
+        if vol is not None:
+            if self._threshold.getVolume() is None: self._threshold.setVolume(vol)
+            elif vol != self._threshold.getVolume(): self._threshold.setVolume(vol)
+    # Revision 09/03/2025 >
 
     # Public tools methods
 
@@ -1440,13 +1639,31 @@ class TabROIToolsWidget(TabWidget):
 
     def slcRegionGrowing(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._btn['2Dregion'].setChecked(True)
-            self._views.set2DRegionGrowingROIFlag()
+            if self._rg2DRegion.isChecked():
+                self._btn['2Dregion'].setChecked(True)
+                self._rg2DRegion.setChecked(True)
+                self._cc2DRegion.setChecked(False)
+                self._views.set2DRegionGrowingROIFlag()
+            else:
+                self._btn['2Dregion'].setChecked(False)
+                self._rg2DRegion.setChecked(False)
+                self._cc2DRegion.setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
 
     def slcRegionConfidence(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._btn['2Dregion'].setChecked(True)
-            self._views.set2DRegionConfidenceROIFlag()
+            if self._cc2DRegion.isChecked():
+                self._btn['2Dregion'].setChecked(True)
+                self._rg2DRegion.setChecked(False)
+                self._cc2DRegion.setChecked(True)
+                self._views.set2DRegionConfidenceROIFlag()
+            else:
+                self._btn['2Dregion'].setChecked(False)
+                self._rg2DRegion.setChecked(False)
+                self._cc2DRegion.setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
 
     # Slice blob actions
 
@@ -1492,13 +1709,31 @@ class TabROIToolsWidget(TabWidget):
 
     def slcBlobRegionGrowing(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._btn['2Dblobregion'].setChecked(True)
-            self._views.set2DBlobRegionGrowingROIFlag()
+            if self._rg2DBlobRegion.isChecked():
+                self._btn['2Dblobregion'].setChecked(True)
+                self._rg2DBlobRegion.setChecked(True)
+                self._cc2DBlobRegion.setChecked(False)
+                self._views.set2DBlobRegionGrowingROIFlag()
+            else:
+                self._btn['2Dblobregion'].setChecked(False)
+                self._rg2DBlobRegion.setChecked(False)
+                self._cc2DBlobRegion.setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
 
     def slcBlobRegionConfidence(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._btn['2Dblobregion'].setChecked(True)
-            self._views.set2DBlobRegionConfidenceROIFlag()
+            if self._cc2DBlobRegion.isChecked():
+                self._btn['2Dblobregion'].setChecked(True)
+                self._rg2DBlobRegion.setChecked(False)
+                self._cc2DBlobRegion.setChecked(True)
+                self._views.set2DBlobRegionConfidenceROIFlag()
+            else:
+                self._btn['2Dblobregion'].setChecked(False)
+                self._rg2DBlobRegion.setChecked(False)
+                self._cc2DBlobRegion.setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
 
     # Volume ROI actions
 
@@ -1506,8 +1741,9 @@ class TabROIToolsWidget(TabWidget):
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 if self._thick.value() > 0.0:
-                    wait = DialogWait(info='Euclidean expand...', parent=self)
+                    wait = DialogWait()
                     wait.open()
+                    wait.setInformationText('Euclidean expand...')
                     QApplication.processEvents()
                     self._draw.euclideanDilate(self._thick.value())
                     self._updateROIDisplay()
@@ -1517,8 +1753,9 @@ class TabROIToolsWidget(TabWidget):
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 if self._thick.value() > 0.0:
-                    wait = DialogWait(info='Euclidean shrink...', parent=self)
+                    wait = DialogWait()
                     wait.open()
+                    wait.setInformationText('Euclidean shrink...')
                     QApplication.processEvents()
                     self._draw.euclideanErode(self._thick.value())
                     self._updateROIDisplay()
@@ -1527,8 +1764,9 @@ class TabROIToolsWidget(TabWidget):
     def voiDilate(self):
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
-                wait = DialogWait(info='Morphology dilate...', parent=self)
+                wait = DialogWait()
                 wait.open()
+                wait.setInformationText('Morphology dilate...')
                 QApplication.processEvents()
                 self._draw.morphoDilate()
                 self._updateROIDisplay()
@@ -1537,8 +1775,9 @@ class TabROIToolsWidget(TabWidget):
     def voiErode(self):
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
-                wait = DialogWait(info='Morphology erode...', parent=self)
+                wait = DialogWait()
                 wait.open()
+                wait.setInformationText('Morphology erode...')
                 QApplication.processEvents()
                 self._draw.morphoErode()
                 self._updateROIDisplay()
@@ -1547,8 +1786,9 @@ class TabROIToolsWidget(TabWidget):
     def voiOpening(self):
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
-                wait = DialogWait(info='Morphology opening...', parent=self)
+                wait = DialogWait()
                 wait.open()
+                wait.setInformationText('Morphology opening...')
                 QApplication.processEvents()
                 self._draw.morphoOpening()
                 self._updateROIDisplay()
@@ -1557,8 +1797,9 @@ class TabROIToolsWidget(TabWidget):
     def voiClosing(self):
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
-                wait = DialogWait(info='Morphology closing...', parent=self)
+                wait = DialogWait()
                 wait.open()
+                wait.setInformationText('Morphology closing...')
                 QApplication.processEvents()
                 self._draw.morphoClosing()
                 self._updateROIDisplay()
@@ -1573,8 +1814,9 @@ class TabROIToolsWidget(TabWidget):
     def voi3DHoles(self):
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
-                wait = DialogWait(info='Fill holes...', parent=self)
+                wait = DialogWait()
                 wait.open()
+                wait.setInformationText('Fill holes...')
                 QApplication.processEvents()
                 self._draw.fillHoles()
                 self._updateROIDisplay()
@@ -1586,8 +1828,9 @@ class TabROIToolsWidget(TabWidget):
                 if dim == 0: info = '2D axial fill holes...'
                 elif dim == 1: info = '2D coronal fill holes...'
                 else: info = '2D sagittal fill holes...'
-                wait = DialogWait(info=info, parent=self)
+                wait = DialogWait()
                 wait.open()
+                wait.setInformationText(info)
                 QApplication.processEvents()
                 self._draw.fillHolesAllSlices(dim)
                 self._updateROIDisplay()
@@ -1606,8 +1849,9 @@ class TabROIToolsWidget(TabWidget):
     def voiObject(self):
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
-                wait = DialogWait(info='Object segmentation...', parent=self)
+                wait = DialogWait()
                 wait.open()
+                wait.setInformationText('Object segmentation...')
                 QApplication.processEvents()
                 algo = self._algo.currentText().lower()
                 algo = algo.replace(' ', '')
@@ -1619,8 +1863,9 @@ class TabROIToolsWidget(TabWidget):
     def voiBack(self):
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
-                wait = DialogWait(info='Background segmentation...', parent=self)
+                wait = DialogWait()
                 wait.open()
+                wait.setInformationText('Background segmentation...')
                 QApplication.processEvents()
                 algo = self._algo.currentText().lower()
                 algo = algo.replace(' ', '')
@@ -1632,8 +1877,9 @@ class TabROIToolsWidget(TabWidget):
     def voiThresholding(self):
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
-                wait = DialogWait(info='Thresholding...', parent=self)
+                wait = DialogWait()
                 wait.open()
+                wait.setInformationText('Thresholding...')
                 self._draw.thresholding()
                 self._updateROIDisplay()
                 wait.close()
@@ -1695,8 +1941,9 @@ class TabROIToolsWidget(TabWidget):
     def voiFilterExtent(self):
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
-                wait = DialogWait(info='Blob filter extent...', parent=self)
+                wait = DialogWait()
                 wait.open()
+                wait.setInformationText('Blob filter extent...')
                 QApplication.processEvents()
                 if self._extent.value() == -1: self._draw.majorBlobSelect()
                 else: self._draw.blobFilterExtent(self._extent.value())
@@ -1705,25 +1952,73 @@ class TabROIToolsWidget(TabWidget):
 
     def voiRegionGrowing(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._btn['3Dregion'].setChecked(True)
-            self._views.set3DRegionGrowingROIFlag()
+            if self._rg3DRegion.isChecked():
+                self._btn['3Dregion'].setChecked(True)
+                self._rg3DRegion.setChecked(True)
+                self._cc3DRegion.setChecked(False)
+                self._ac3DRegion.setChecked(False)
+                self._views.set3DRegionGrowingROIFlag()
+            else:
+                self._btn['3Dregion'].setChecked(False)
+                self._rg3DRegion.setChecked(False)
+                self._cc3DRegion.setChecked(False)
+                self._ac3DRegion.setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
 
     def voiRegionConfidence(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._btn['3Dregion'].setChecked(True)
-            self._views.set3DRegionConfidenceROIFlag()
+            if self._cc3DRegion.isChecked():
+                self._btn['3Dregion'].setChecked(True)
+                self._rg3DRegion.setChecked(False)
+                self._cc3DRegion.setChecked(True)
+                self._ac3DRegion.setChecked(False)
+                self._views.set3DRegionConfidenceROIFlag()
+            else:
+                self._btn['3Dregion'].setChecked(False)
+                self._rg3DRegion.setChecked(False)
+                self._cc3DRegion.setChecked(False)
+                self._ac3DRegion.setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
 
     def voiActiveContour(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._btn['3Dregion'].setChecked(True)
-            self._views.setActiveContourROIFlag()
+            if self._ac3DRegion.isChecked():
+                self._btn['3Dregion'].setChecked(True)
+                self._rg3DRegion.setChecked(False)
+                self._cc3DRegion.setChecked(False)
+                self._ac3DRegion.setChecked(True)
+                self._views.setActiveContourROIFlag()
+            else:
+                self._btn['3Dregion'].setChecked(False)
+                self._rg3DRegion.setChecked(False)
+                self._cc3DRegion.setChecked(False)
+                self._ac3DRegion.setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
 
     def statistics(self):
         if self.hasViewCollection() and self.hasCollection():
+            wait = DialogWait()
+            wait.open()
+            wait.setInformationText('ROI statistics processing...')
+            wait.progressVisibilityOff()
+            QApplication.processEvents()
             self._statistics = DialogROIStatistics()
+            if platform == 'win32':
+                import pywinstyles
+                cl = self.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._statistics, c)
             self._statistics.setVolume(self._views.getVolume())
             self._statistics.setROICollection(self._collection)
-            self._statistics.show()
+            wait.close()
+            self._statistics.exec()
+            # < Reviosn 02/05/2025
+            self._statistics.close()
+            self._statistics = None
+            # Reviosn 02/05/2025 >
 
     # Volume blob actions
 
@@ -1777,13 +2072,31 @@ class TabROIToolsWidget(TabWidget):
 
     def voiBlobRegionGrowing(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._btn['3Dblobregion'].setChecked(True)
-            self._views.set3DBlobRegionGrowingROIFlag()
+            if self._rg3DBlobRegion.isChecked():
+                self._btn['3Dblobregion'].setChecked(True)
+                self._rg3DBlobRegion.setChecked(True)
+                self._cc3DBlobRegion.setChecked(False)
+                self._views.set3DBlobRegionGrowingROIFlag()
+            else:
+                self._btn['3Dblobregion'].setChecked(False)
+                self._rg3DBlobRegion.setChecked(False)
+                self._cc3DBlobRegion.setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
 
     def voiBlobRegionConfidence(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._btn['3Dblobregion'].setChecked(True)
-            self._views.set3DBlobRegionConfidenceROIFlag()
+            if self._cc3DBlobRegion.isChecked():
+                self._btn['3Dblobregion'].setChecked(True)
+                self._rg3DBlobRegion.setChecked(False)
+                self._cc3DBlobRegion.setChecked(True)
+                self._views.set3DBlobRegionConfidenceROIFlag()
+            else:
+                self._btn['3Dblobregion'].setChecked(False)
+                self._rg3DBlobRegion.setChecked(False)
+                self._cc3DBlobRegion.setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
 
     # Method aliases
 
@@ -1793,27 +2106,17 @@ class TabROIToolsWidget(TabWidget):
 
 class TabMeshListWidget(TabWidget):
     """
-        TabMeshListWidget class
+    Description
+    ~~~~~~~~~~~
 
-        Description
+    QTabBar page widget to display MeshListWidget.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> TabMeshListWidget
+    QWidget -> TabMeshListWidget
 
-        Private Attributes
-
-            _list       ListMeshAttributesWidget
-            _collection SisypheMeshCollection
-
-        Public methods
-
-            setViewCollection(IconBarViewWidgetCollection)  override
-            getMeshListWidget()                             ListMeshAttributesWidget
-            clear()
-
-            inherited TabWidget methods
-            inherited QWidget methods
+    Last revision: 02/11/2024
     """
 
     # Special method
@@ -1824,7 +2127,7 @@ class TabMeshListWidget(TabWidget):
         self._list = ListMeshAttributesWidget(views=views, parent=self)
         self._action = dict()
 
-        # GroupBox
+        # Widgets
 
         self._btfilt = IconPushButton('filter.png', size=TabWidget._VSIZE)
         self._dilate = IconPushButton('meshexpand.png', size=TabWidget._VSIZE)
@@ -1834,10 +2137,15 @@ class TabMeshListWidget(TabWidget):
         self._btdiff = IconPushButton('difference.png', size=TabWidget._VSIZE)
         self._btfeatures = IconPushButton('cubefeature.png', size=TabWidget._VSIZE)
 
+        # noinspection PyUnresolvedReferences
         self._btfilt.clicked.connect(self.filters)
+        # noinspection PyUnresolvedReferences
         self._btunion.clicked.connect(self.union)
+        # noinspection PyUnresolvedReferences
         self._btinter.clicked.connect(self.intersection)
+        # noinspection PyUnresolvedReferences
         self._btdiff.clicked.connect(self.difference)
+        # noinspection PyUnresolvedReferences
         self._btfeatures.clicked.connect(self.features)
         self._btfilt.setToolTip('Checked mesh(es) filtering (clean, decimate, fill holes, smooth)')
         self._dilate.setToolTip('Checked mesh(es) isotropic dilatation')
@@ -1849,7 +2157,7 @@ class TabMeshListWidget(TabWidget):
 
         groupbox = QGroupBox('Mesh tools')
         grouplyout = QHBoxLayout()
-        grouplyout.setContentsMargins(5, 0, 5, 0)
+        grouplyout.setContentsMargins(5, 10, 5, 10)
         grouplyout.setSpacing(5)
         grouplyout.addStretch()
         grouplyout.addWidget(self._btfilt)
@@ -1866,11 +2174,16 @@ class TabMeshListWidget(TabWidget):
 
         self._settings = SettingsWidget('Mesh')
         self._settings.setIOButtonsVisibility(False)
-        self._settings.setSettingsButtonText('mesh filter settings')
-        self._settings.settingsVisibilityOn()
-        self._settings.setFontSize(10)
+        self._settings.setSettingsButtonText('Mesh Settings')
+        self._settings.settingsVisibilityOff()
+        self._settings.setParameterVisibility('MaxCount', False)
 
         self._popupDilate = QMenu()
+        # noinspection PyTypeChecker
+        self._popupDilate.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._popupDilate.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._popupDilate.setAttribute(Qt.WA_TranslucentBackground, True)
         self._dmm = LabeledDoubleSpinBox()
         self._dmm.setTitle('Dilate')
         self._dmm.setFontSize(10)
@@ -1883,11 +2196,17 @@ class TabMeshListWidget(TabWidget):
         self._action['dmm'].setDefaultWidget(self._dmm)
         self._popupDilate.addAction(self._action['dmm'])
         self._action['dilate'] = QAction('Dilate mesh')
+        # noinspection PyUnresolvedReferences
         self._action['dilate'].triggered.connect(self.dilate)
         self._popupDilate.addAction(self._action['dilate'])
         self._dilate.setMenu(self._popupDilate)
 
         self._popupErode = QMenu()
+        # noinspection PyTypeChecker
+        self._popupErode.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._popupErode.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._popupErode.setAttribute(Qt.WA_TranslucentBackground, True)
         self._emm = LabeledDoubleSpinBox()
         self._emm.setTitle('Erode')
         self._emm.setFontSize(10)
@@ -1900,6 +2219,7 @@ class TabMeshListWidget(TabWidget):
         self._action['emm'].setDefaultWidget(self._emm)
         self._popupErode.addAction(self._action['emm'])
         self._action['erode'] = QAction('Erode mesh')
+        # noinspection PyUnresolvedReferences
         self._action['erode'].triggered.connect(self.erode)
         self._popupErode.addAction(self._action['erode'])
         self._erode.setMenu(self._popupErode)
@@ -1934,6 +2254,7 @@ class TabMeshListWidget(TabWidget):
         self._btdiff.setFixedSize(size, size)
         self._btfeatures.setIconSize(QSize(size - 8, size - 8))
         self._btfeatures.setFixedSize(size, size)
+        self._list.setIconSize(size)
 
     def getIconSize(self):
         return self._btfilt.width()
@@ -1944,6 +2265,20 @@ class TabMeshListWidget(TabWidget):
             self._list.setViewCollection(views)
             self._collection = views.getMeshCollection()
         else: self._collection = None
+
+    # < Revision 02/11/2024
+    # add setMaxCount method
+    def setMaxCount(self, v):
+        if self._list is not None:
+            self._list.setMaxCount(v)
+    # Revision 02/11/2024 >
+
+    # < Revision 02/11/2024
+    # add getMaxCount method
+    def getMaxCount(self):
+        if self._list is not None: return self._list.getMaxCount()
+        else: raise AttributeError('_list attribute is None.')
+    # Revision 02/11/2024 >
 
     def getMeshListWidget(self):
         return self._list
@@ -1977,6 +2312,13 @@ class TabMeshListWidget(TabWidget):
     def features(self):
         self._list.features()
 
+    # < Revision 20/02/2025
+    # add setEnabled method
+    def setEnabled(self, v: bool) -> None:
+        super().setEnabled(v)
+        self._list.setEnabled(v)
+    # Revision 20/02/2025 >
+
     # Method aliases
 
     getMeshCollection = TabWidget.getCollection
@@ -1985,27 +2327,17 @@ class TabMeshListWidget(TabWidget):
 
 class TabTargetListWidget(TabWidget):
     """
-        TabTargetWidget class
+    Description
+    ~~~~~~~~~~~
 
-        Description
+    QTabBar page widget to display TargetListWidget.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> TabTargetWidget
+    QWidget -> TabTargetWidget
 
-        Private Attributes
-
-            _list       ListToolAttributesWidget
-            _collection
-
-        Public methods
-
-            setViewCollection(IconBarViewWidgetCollection)  override
-            getToolListWidget()                             ListToolAttributesWidget
-            clear()
-
-            inherited TabWidget methods
-            inherited QWidget methods
+    Last revision: 20/02/2025
     """
 
     # Special method
@@ -2025,13 +2357,14 @@ class TabTargetListWidget(TabWidget):
         self.setMinimumWidth(self._list.minimumWidth() +
                              margins1.left() + margins1.right() +
                              margins2.left() + margins2.right())
+
     # Public methods
 
     def setIconSize(self, size=TabWidget._VSIZE):
-        pass
+        self._list.setIconSize(size)
 
     def getIconSize(self):
-        pass
+        return self._list.getIconSize()
 
     def setViewCollection(self, views):
         super().setViewCollection(views)
@@ -2042,13 +2375,462 @@ class TabTargetListWidget(TabWidget):
         else:
             self._collection = None
 
+    # < Revision 02/11/2024
+    # add setMaxCount method
+    def setMaxCount(self, v):
+        if self._list is not None:
+            self._list.setMaxCount(v)
+    # Revision 02/11/2024 >
+
+    # < Revision 02/11/2024
+    # add getMaxCount method
+    def getMaxCount(self):
+        if self._list is not None: return self._list.getMaxCount()
+        else: raise AttributeError('_list attribute is None.')
+    # Revision 02/11/2024 >
+
     def getToolListWidget(self):
         return self._list
 
     def clear(self):
         self._list.removeAll()
 
+    # < Revision 20/02/2025
+    # add setEnabled method
+    def setEnabled(self, v: bool) -> None:
+        super().setEnabled(v)
+        self._list.setEnabled(v)
+    # Revision 20/02/2025 >
+
     # Method aliases
 
     getToolCollection = TabWidget.getCollection
-    hasTollCollection = TabWidget.hasCollection
+    hasToolCollection = TabWidget.hasCollection
+
+
+class TabTrackingWidget(TabWidget):
+    """
+    Description
+    ~~~~~~~~~~~
+
+    QTabBar page widget to display TrackingWidget.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QWidget -> TabTrackingWidget
+
+    Last revision: 20/02/2025
+    """
+
+    # Special method
+
+    def __init__(self, views=None, parent=None):
+        super().__init__(views, parent)
+
+        self._list = ListBundleAttributesWidget(views=views, parent=self)
+        self._tractogram: SisypheStreamlines | None = None
+
+        # Widgets
+
+        self._file = FileSelectionWidget()
+        self._file.setTextLabel('Whole brain tractogram')
+        self._file.setClearButtonVisibility(True)
+        self._file.filterExtension(SisypheStreamlines.getFileExt())
+        self._file.FieldChanged.connect(lambda _, filename: self._loadTractogram(filename))
+        self._file.FieldCleared.connect(self._clearTractogram)
+
+        self._dissection = IconPushButton('tracking.png', size=TabWidget._VSIZE)
+        self._atlas = IconPushButton('tracking-atlas.png', size=TabWidget._VSIZE)
+        self._dissection.setToolTip('Streamlines selection from ROI')
+        self._atlas.setToolTip('Streamlines selection from Atlas')
+        # noinspection PyUnresolvedReferences
+        self._dissection.clicked.connect(self.dissection)
+        # noinspection PyUnresolvedReferences
+        self._atlas.clicked.connect(self.atlas)
+
+        self._roidialog = DialogStreamlinesROISelection()
+        self._atlasdialog = DialogStreamlinesAtlasSelection()
+        if platform == 'win32':
+            import pywinstyles
+            cl = self.palette().base().color()
+            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+            pywinstyles.change_header_color(self._roidialog, c)
+            pywinstyles.change_header_color(self._atlasdialog, c)
+        btlayout = QHBoxLayout()
+        btlayout.setContentsMargins(5, 10, 5, 10)
+        btlayout.setSpacing(5)
+        # btlayout.addStretch()
+        btlayout.addWidget(self._file)
+        btlayout.addWidget(self._dissection)
+        btlayout.addWidget(self._atlas)
+        # btlayout.addStretch()
+        # grp = QGroupBox()
+        # grp.setTitle('Whole brain tractogram processing')
+        # grp.setLayout(btlayout)
+
+        # Layout
+
+        lyout = self.layout()
+        # lyout.addWidget(self._file)
+        # lyout.addWidget(grp)
+        # noinspection PyUnresolvedReferences
+        lyout.addLayout(btlayout)
+        lyout.addWidget(self._list)
+
+        margins1 = self.contentsMargins()
+        margins2 = lyout.contentsMargins()
+        self.setMinimumWidth(self._list.minimumWidth() +
+                             margins1.left() + margins1.right() +
+                             margins2.left() + margins2.right())
+
+    # Private methods
+
+    def _loadTractogram(self, filename: str) -> None:
+        if not self._file.isEmpty():
+            wait = DialogWait()
+            wait.open()
+            wait.setInformationText('Open {}...'.format(basename(filename)))
+            QApplication.processEvents()
+            sl = SisypheStreamlines.openStreamlines(filename)
+            wait.close()
+            if sl.isWholeBrainTractogram():
+                self._tractogram = sl
+                self._file.setToolTip(str(self._tractogram)[:-1])
+                self._list.removeAll()
+                self._list.setReferenceID(self._tractogram.getReferenceID())
+                self._atlas.setVisible(not self._tractogram.isAtlas())
+            else:
+                messageBox(self,
+                           'Open tractogram',
+                           text='{} is not a whole brain tractogram.'.format(basename(filename)))
+                # < Revision 20/02/2025
+                # clear tractogram
+                self._file.clear()
+                # Revision 20/02/2025 >
+
+    def _clearTractogram(self) -> None:
+        self._tractogram = None
+        self._list.removeAll()
+        self._list.setReferenceID('')
+
+    # Public methods
+
+    def setIconSize(self, size=TabWidget._VSIZE):
+        self._list.setIconSize(size)
+        self._dissection.setIconSize(QSize(size - 8, size - 8))
+        self._dissection.setFixedSize(size, size)
+        self._atlas.setIconSize(QSize(size - 8, size - 8))
+        self._atlas.setFixedSize(size, size)
+
+    def getIconSize(self):
+        return self._list.getIconSize()
+
+    def setViewCollection(self, views):
+        super().setViewCollection(views)
+        if isinstance(views, IconBarViewWidgetCollection):
+            self._list.setViewCollection(views)
+            # self._collection =
+        else:
+            self._collection = None
+
+    # < Revision 02/11/2024
+    # add setMaxCount method
+    def setMaxCount(self, v):
+        if self._list is not None:
+            self._list.setMaxCount(v)
+    # Revision 02/11/2024 >
+
+    # < Revision 02/11/2024
+    # add getMaxCount method
+    def getMaxCount(self):
+        if self._list is not None: return self._list.getMaxCount()
+        else: raise AttributeError('_list attribute is None.')
+    # Revision 02/11/2024 >
+
+    def getTrackingListWidget(self):
+        return self._list
+
+    def clear(self):
+        self._clearTractogram()
+
+    def hasTractogram(self):
+        return self._tractogram is not None
+
+    def getTractogram(self):
+        return self._tractogram
+
+    def atlas(self):
+        if self.hasTractogram():
+            slt = self.getTractogram()
+            if not slt.isAtlas():
+                if self._atlasdialog.exec() == QDialog.Accepted:
+                    checked = self._atlasdialog.getAtlasBundlesChecked()
+                    n = len(checked)
+                    if n > 0:
+                        wait = DialogWait()
+                        wait.setInformationText('Streamlines atlas selection...')
+                        wait.setProgressRange(0, n)
+                        wait.setProgressVisibility(n > 1)
+                        wait.open()
+                        if not slt.isAtlasRegistered():
+                            try:
+                                wait.addInformationText('Atlas to {} coregistration...'.format(slt.getName()))
+                                slt.atlasRegistration()
+                                wait.addInformationText('Save {} tractogram...'.format(slt.getName()))
+                                slt.save()
+                            except Exception as err:
+                                messageBox(self,
+                                           title='Streamlines atlas selection',
+                                           text='Atlas registration error\n{}'.format(err))
+                                wait.close()
+                                return
+                        for name in checked:
+                            filename = SisypheStreamlines.getAtlasBundleFilenameFromName(name)
+                            if filename is not None and exists(filename):
+                                slatlas = SisypheStreamlines()
+                                slatlas.load(filename)
+                                wait.addInformationText('{} streamlines selection...'.format(name))
+                                try:
+                                    sl = slt.streamlinesFromAtlas(slatlas,
+                                                                  threshold=self._atlasdialog.getClusteringThreshold(),
+                                                                  reduction=self._atlasdialog.getReductionThreshold(),
+                                                                  pruning=self._atlasdialog.getPruningThreshold(),
+                                                                  reductiondist=self._atlasdialog.getReductionMetric(),
+                                                                  pruningdist=self._atlasdialog.getPruningMetric(),
+                                                                  refine=self._atlasdialog.getRefine(),
+                                                                  refinereduction=self._atlasdialog.getRefineReductionThreshold(),
+                                                                  refinepruning=self._atlasdialog.getRefineReductionThreshold(),
+                                                                  minlength=self._atlasdialog.getMinimalLength(),
+                                                                  wait=wait)
+                                except Exception as err:
+                                    messageBox(self,
+                                               title='Streamlines atlas selection',
+                                               text='Atlas selection error\n{}'.format(err))
+                                    wait.close()
+                                    return
+                                # noinspection PyUnboundLocalVariable
+                                self._list.addBundle(sl)
+                            wait.incCurrentProgressValue()
+                        wait.close()
+            else:
+                messageBox(self,
+                           'Streamlines atlas selection',
+                           '{} is an ICBM152 atlas tractogram.')
+        else: messageBox(self,
+                         'Streamlines atlas selection',
+                         'No whole brain tractogram.')
+
+    def dissection(self):
+        if self.hasTractogram():
+            slt = self.getTractogram()
+            rois = None
+            if self._list.hasListROIAttributeWidget():
+                rois = self._list.getListROIAttributeWidget().getCollection()
+                if rois.count() > 0:
+                    if rois.getReferenceID() == slt.getReferenceID():
+                        names = rois.getName()
+                        self._roidialog.addROINames(names)
+            self._roidialog.setReferenceID(slt.getReferenceID())
+            self._roidialog.setReferenceFOV(slt.getDWIFOV(decimals=1))
+            self._roidialog.inPlaceVisibilityOff()
+            if self._roidialog.exec() == QDialog.Accepted:
+                wait = DialogWait()
+                wait.setInformationText('Streamlines ROI selection...')
+                wait.open()
+                # Minimal streamline length selection
+                l = self._roidialog.getMinimalLength()
+                if l > 0.0:
+                    wait.addInformationText('Minimal length filtering...')
+                    try: slt = slt.getSisypheStreamlinesLongerThan(l=l)
+                    except Exception as err:
+                        wait.close()
+                        messageBox(self,
+                                   title='Streamlines ROI selection',
+                                   text='Length filtering error\n{}'.format(err))
+                        return
+                # virtual dissection
+                incl = self._roidialog.getInclusionROINames()
+                excl = self._roidialog.getExclusionROINames()
+                include = list()
+                rois2 = SisypheROICollection()
+                if len(incl) > 0:
+                    for name in incl:
+                        if rois is not None and name in rois:
+                            rois2.append(rois[name])
+                            include.append(True)
+                        elif exists(name):
+                            roi = SisypheROI()
+                            roi.load(name)
+                            rois2.append(roi)
+                            include.append(True)
+                if len(excl) > 0:
+                    for name in excl:
+                        if rois is not None and name in rois:
+                            rois2.append(rois[name])
+                            include.append(False)
+                        elif exists(name):
+                            roi = SisypheROI()
+                            roi.load(name)
+                            rois2.append(roi)
+                            include.append(False)
+                if len(rois2) > 0:
+                    wait.addInformationText('Streamlines ROI inclusion/exclusion...')
+                    mode = self._roidialog.getSelectionMode()
+                    try: sl = slt.streamlinesRoiSelection(rois2, include, mode, None, wait)
+                    except Exception as err:
+                        wait.close()
+                        messageBox(self,
+                                   title='Streamlines ROI inclusion/exclusion',
+                                   text='Streamlines ROI selection error\n{}'.format(err))
+                        return
+                    sl.setName(self._roidialog.getBundleName())
+                    if sl.count() > 0: self._list.addBundle(sl)
+                    else: messageBox(self,
+                                     'Streamlines ROI selection',
+                                     'All streamlines removed, bundle is empty.')
+                wait.close()
+        else: messageBox(self,
+                         'Streamlines ROI selection',
+                         'No whole brain tractogram.')
+
+    # < Revision 20/02/2025
+    # add setEnabled method
+    def setEnabled(self, v: bool) -> None:
+        super().setEnabled(v)
+        self._list.setEnabled(v)
+    # Revision 20/02/2025 >
+
+    # Method aliases
+
+    getTrackingCollection = TabWidget.getCollection
+    hasTrackingCollection = TabWidget.hasCollection
+
+
+class TabHelpWidget(QWidget):
+    """
+    Description
+    ~~~~~~~~~~~
+
+    QTabBar page widget to display TabHelpWidget.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QWidget -> TabHelpWidget
+
+    Last revision: 07/03/2025
+    """
+
+    # Class method
+
+    @classmethod
+    def getHome(cls):
+        import Sisyphe.doc
+        # < Revision 07/03/2025
+        # return QUrl('file:' + join(dirname(abspath(Sisyphe.doc.__file__)), 'home.html'))
+        return QUrl.fromLocalFile(join(dirname(abspath(Sisyphe.doc.__file__)), 'home.html'))
+        # < Revision 07/03/2025
+
+    @classmethod
+    def getSearch(cls):
+        import Sisyphe.doc
+        # < Revision 07/03/2025
+        # return QUrl('file:' + join(dirname(abspath(Sisyphe.doc.__file__)), 'search.html'))
+        return QUrl.fromLocalFile(join(dirname(abspath(Sisyphe.doc.__file__)), 'search.html'))
+        # < Revision 07/03/2025
+
+    # Special method
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # Widgets
+
+        self._home = IconPushButton('home.png', size=TabWidget.getDefaultIconSize())
+        self._home.setEnabled(True)
+        # noinspection PyUnresolvedReferences
+        self._home.clicked.connect(self.home)
+
+        self._back = IconPushButton('backward.png', size=TabWidget.getDefaultIconSize())
+        self._back.setEnabled(True)
+        # noinspection PyUnresolvedReferences
+        self._back.clicked.connect(self.backward)
+
+        self._for = IconPushButton('forward.png', size=TabWidget.getDefaultIconSize())
+        self._for.setEnabled(True)
+        # noinspection PyUnresolvedReferences
+        self._for.clicked.connect(self.forward)
+
+        self._search = LabeledLineEdit('Search')
+        self._search.returnPressed.connect(self.search)
+
+        self._web = QWebEngineView()
+        self._web.setUrl(self.getHome())
+        # noinspection PyTypeChecker
+        self._web.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # < Revision 07/03/2025
+        # self._web.setZoomFactor(0.8)
+        if platform == 'darwin': self._web.setZoomFactor(0.8)
+        else: self._web.setZoomFactor(1.0)
+        # Revision 07/03/2025 >
+        dlyout = QHBoxLayout()
+        dlyout.setContentsMargins(0, 0, 0, 0)
+        dlyout.addWidget(self._web)
+
+        # Layout
+
+        btlyout = QHBoxLayout()
+        btlyout.setContentsMargins(0, 0, 0, 0)
+        btlyout.setSizeConstraint(QHBoxLayout.SetMinimumSize)
+        btlyout.setSpacing(5)
+        btlyout.addWidget(self._home)
+        btlyout.addWidget(self._back)
+        btlyout.addWidget(self._for)
+        btlyout.addWidget(self._search)
+
+        lyout = QVBoxLayout()
+        if platform == 'darwin': lyout.setContentsMargins(0, 0, 10, 0)
+        else: lyout.setContentsMargins(0, 0, 0, 0)
+        lyout.setSpacing(5)
+        lyout.addLayout(btlyout)
+        lyout.addLayout(dlyout)
+        self.setLayout(lyout)
+
+    # Public method
+
+    def setIconSize(self, size=TabWidget.getDefaultIconSize()):
+        self._home.setIconSize(QSize(size - 8, size - 8))
+        self._back.setIconSize(QSize(size - 8, size - 8))
+        self._for.setIconSize(QSize(size - 8, size - 8))
+        self._home.setFixedSize(size, size)
+        self._back.setFixedSize(size, size)
+        self._for.setFixedSize(size, size)
+
+    def getIconSize(self):
+        return self._home.width()
+
+    def backward(self):
+        self._web.page().triggerAction(QWebEnginePage.WebAction.Back)
+
+    def forward(self):
+        self._web.page().triggerAction(QWebEnginePage.WebAction.Forward)
+
+    def home(self):
+        self._web.setUrl(self.getHome())
+
+    def search(self):
+        filt = 'q={}'.format(self._search.getEditText())
+        url = self.getSearch()
+        url.setQuery(filt)
+        self._web.setUrl(url)
+
+    def setSearch(self, txt):
+        self._search.setEditText(txt)
+        self.search()
+
+    def setZoomFactor(self, v):
+        self._web.setZoomFactor(v)
+
+    def getZoomFactor(self):
+        return self._web.zoomFactor()

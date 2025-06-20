@@ -1,80 +1,78 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
-from PyQt5.QtWidgets import QMenu
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QApplication
+from sys import platform
 
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMenu
+
+# noinspection PyCompatibility
 from Sisyphe.gui.dialogWait import DialogWait
 from Sisyphe.gui.dialogGenericResults import DialogGenericResults
 from Sisyphe.core.sisypheFiducialBox import SisypheFiducialBox
 from Sisyphe.widgets.sliceViewWidgets import SliceViewWidget
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.iconBarViewWidgets import IconBarWidget
 
 __all__ = ['SliceViewFiducialBoxWidget',
            'IconBarSliceViewFiducialBoxWidget']
 
 """
-    Class hierarchy
+Class hierarchy
+~~~~~~~~~~~~~~~
 
-        QFrame -> AbstractViewWidget -> SliceViewWidget -> SliceViewFiducialBoxWidget
-        QWidget -> IconBarWidget -> IconBarSliceViewWidget -> IconBarSliceViewFiducialBoxWidget
+    - QFrame -> AbstractViewWidget -> SliceViewWidget -> SliceViewFiducialBoxWidget
+    - QWidget -> IconBarWidget -> IconBarSliceViewWidget -> IconBarSliceViewFiducialBoxWidget
 
-    Description
+Description
+~~~~~~~~~~~
 
-        Class to display single slice with fiducial markers.   
+Class to display single slice with fiducial markers.   
 """
 
 
 class SliceViewFiducialBoxWidget(SliceViewWidget):
     """
-        SliceViewFiducialBoxWidget class
+    SliceViewFiducialBoxWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            SliceViewWidget with fiducial markers management.
+    SliceViewWidget with fiducial marker management.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceViewFiducialBoxWidget
+    QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceViewFiducialBoxWidget
 
-        Private attributes
-
-            _fid    SisypheFiducialBox
-
-        Public methods
-
-            setVolume(SisypheVolume)    override
-            sliceMinus()                override
-            slicePlus()                 override
-            zoomOnMarker(int)
-            zoomDefault()               override
-            calcTransform()
-            addTransformToVolume()
-            dict = getFiducialBoxDict()
-
-            inherited SliceViewWidget methods
-            inherited AbstractViewWidget methods
-            inherited QWidget methods
+    Last revision: 21/05/2025
     """
 
     # Special method
 
-    def __init__(self, parent=None):
+    """
+    Private attributes
+
+    _fid    SisypheFiducialBox
+    """
+
+    def __init__(self, fid: SisypheFiducialBox, parent=None):
         super().__init__(parent)
 
-        self._fid = None
         self._dz = 0.0
+        if isinstance(fid, SisypheFiducialBox):
+            self._fid = fid
+            # self._volume = fid.getVolume()
+        else: raise ValueError('No SisypheFiducialBox.')
         self._dialog = None
         for i in range(10):
             self.addTarget(p=[0, 0, 0], name='', signal=False)
             tool = self.getTool(i)
-            tool.setText('#{}'.format(i), prefix=False)
+            tool.setText('#{}'.format(i))
             tool.setSphereVisibility(False)
             tool.setLineWidth(2.0)
             tool.setOpacity(0.5)
@@ -95,7 +93,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
                 if z in self._fid:
                     p = self._fid.getMarker(z, i)
                     p = [p[0], p[1], self._getFocalDepth() + self._dz]
-                    if errors is not None: tool.setText('#{}\n{:.2f}'.format(i, errors[z][i]), prefix=False)
+                    if errors is not None: tool.setText('#{}\n{:.2f}'.format(i, errors[z][i]))
                     tool.setPosition(p)
                     tool.setVisibility(True)
                 else: tool.setVisibility(False)
@@ -112,31 +110,40 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
 
     # Public methods
 
+    def frameDetection(self) -> bool | None:
+        if self.hasVolume():
+            wait = DialogWait(title='Stereotactic frame detection', progress=True)
+            self._fid.ProgressTextChanged.connect(wait.setInformationText)
+            self._fid.ProgressRangeChanged.connect(wait.setProgressRange)
+            self._fid.ProgressValueChanged.connect(wait.setCurrentProgressValue)
+            filename = self._volume.getFilename()
+            r = False
+            if self._fid.hasXML(filename):
+                self._fid.loadFromXML(filename)
+                r = True
+            else:
+                if self._fid.markersSearch(self._volume):
+                    wait.setInformationText('Geometric transformation calculation...')
+                    wait.progressVisibilityOff()
+                    self.calcTransform()
+                    wait.close()
+                    self.showErrorStatistics()
+                    r = True
+                else:
+                    wait.close()
+                    messageBox(self, 'Stereotactic frame detection', 'No frame or frame detection failed.')
+            self._fid.ProgressTextChanged.disconnect(wait.setInformationText)
+            self._fid.ProgressRangeChanged.disconnect(wait.setProgressRange)
+            self._fid.ProgressValueChanged.disconnect(wait.setCurrentProgressValue)
+            return r
+        else: raise AttributeError('No volume.')
+
     def setVolume(self, volume):
         super().setVolume(volume)
-        self._dz = - 0.6 * volume.getSpacing()[2]
-        wait = DialogWait(title='Stereotactic frame detection', progress=True, parent=self)
-        self._fid = SisypheFiducialBox()
-        self._fid.ProgressTextChanged.connect(wait.setInformationText)
-        self._fid.ProgressRangeChanged.connect(wait.setProgressRange)
-        self._fid.ProgressValueChanged.connect(wait.setCurrentProgressValue)
-        filename = volume.getFilename()
-        if self._fid.hasXML(filename): self._fid.loadFromXML(filename)
-        wait.open()
-        try:
-            if self._fid.isEmpty(): self._fid.markersSearch(volume)
-            else: self._fid.setVolume(volume)
-            wait.progressVisibilityOff()
-            wait.setInformationText('Geometric transformation calculation...')
-            self.calcTransform()
-        except Exception as err:
-            QMessageBox.warning(self, 'Stereotactic frame detection', 'error: {}'.format(err))
-            errors = self._fid.getErrors()
-            if errors is not None: errors.clear()
-        finally:
-            wait.close()
-            QApplication.processEvents()
-        self.showErrorStatistics()
+        # < Revision 21/05/2025
+        # self._dz = - 0.6 * volume.getSpacing()[2]
+        self._dz = - 0.1
+        # Revision 21/05/2025 >
         if self._fid.getMarkersCount() == 6:
             self.getTool(6).setVisibility(False)
             self.getTool(7).setVisibility(False)
@@ -184,9 +191,18 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
         if not self._fid.isEmpty():
             self._fid.addTransformToVolume()
 
+    def removeTransformFromVolume(self):
+        if not self._fid.isEmpty():
+            self._fid.removeTransformFromVolume()
+
     def showErrorStatistics(self):
         if self._fid.hasErrors():
-            self._dialog = DialogGenericResults(self)
+            self._dialog = DialogGenericResults()
+            if platform == 'win32':
+                import pywinstyles
+                cl = self.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._dialog, c)
             self._dialog.setWindowTitle('Stereotactic frame detection accuracy')
             self._dialog.newTab('Global error')
             self._dialog.newTab('Errors')
@@ -202,9 +218,10 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
             ax.boxplot(data, vert=True, patch_artist=True, showfliers=False)
             ax.yaxis.grid(True)
             ax.set_xlabel('All fiducial markers')
-            ax.set_ylabel('Error values')
-            stats = self._fid.getErrorStatistics()
+            ax.set_ylabel('Error values (mm)')
+            stats = self._fid.getErrorStatistics().copy()
             for k in stats:
+                # noinspection PyTypeChecker
                 stats[k] = [stats[k]]
             self._dialog.setTreeWidgetDict(0, stats)
             # Errors
@@ -219,11 +236,20 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
                 xdata.append(k)
                 for i in range(self._fid.getMarkersCount()):
                     data[i].append(errors[k][i])
+            lbls = ['left posterior',
+                    'left middle',
+                    'left anterior',
+                    'right anterior',
+                    'right middle',
+                    'right posterior',
+                    'anterior right',
+                    'anterior middle',
+                    'anterior left']
             for i in range(self._fid.getMarkersCount()):
-                ax.plot(xdata, data[i], label='Marker#{}'.format(i))
+                ax.plot(xdata, data[i], label='Marker#{} ({})'.format(i, lbls[i]))
             ax.legend()
             self._dialog.setTreeWidgetDict(1, data)
-            self._dialog.show()
+            self._dialog.exec()
 
     def getFiducialBoxDict(self):
         return self._fid
@@ -246,44 +272,48 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
 
 class IconBarSliceViewFiducialBoxWidget(IconBarWidget):
     """
-        IconBarSliceViewWidget
+    IconBarSliceViewWidget
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            SliceViewFiducialBoxWidget with icon bar.
+    SliceViewFiducialBoxWidget with icon bar.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> IconBarWidget -> IconBarSliceViewFiducialBoxWidget
-
-        Private Attributes
-
-        Public methods
-
-            setVolume(SisypheVolume)    override
-            removeVolume()              override
-            calcTransform()             inherited SliceViewFiducialBoxWidget
-            addTransformToVolume()      inherited SliceViewFiducialBoxWidget
-            showErrorStatistics()       inherited SliceViewFiducialBoxWidget
-            removeCurrentSliceMarkers() inherited SliceViewFiducialBoxWidget
-
-            inherited IconBarWidget
-            inherited QWidget methods
+    QWidget -> IconBarWidget -> IconBarSliceViewFiducialBoxWidget
     """
 
-    def __init__(self, widget=None, parent=None):
+    def __init__(self, fid: SisypheFiducialBox, parent=None):
         super().__init__(parent)
 
         self._markermenu = QMenu()
+        # noinspection PyTypeChecker
+        self._markermenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._markermenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._markermenu.setAttribute(Qt.WA_TranslucentBackground, True)
 
-        if widget is None: widget = SliceViewFiducialBoxWidget(parent=self)
-        if isinstance(widget, SliceViewFiducialBoxWidget): self._setViewWidget(widget)
-        else: raise TypeError('parameter type {} is not SliceViewFiducialBoxWidget.'.format(type(widget)))
+        if isinstance(fid, SisypheFiducialBox):
+            widget = SliceViewFiducialBoxWidget(fid, parent=self)
+            self._setViewWidget(widget)
+            if fid.hasVolume(): self.setVolume(fid.getVolume())
+        else: raise ValueError('No SisypheFiducialBox.')
+
+        self.setShowButtonAvailability(False)
+        self.setInfoButtonAvailability(False)
+        self.setActionButtonAvailability(False)
+        self.setIsoButtonAvailability(False)
+        self.setColorbarButtonAvailability(False)
+        self.setRulerButtonAvailability(False)
+        self.setToolButtonAvailability(False)
 
         # Inherited methods from SliceViewFiducialBoxWidget class
 
         setattr(self, 'calcTransform', self._widget.calcTransform)
         setattr(self, 'addTransformToVolume', self._widget.addTransformToVolume)
+        setattr(self, 'removeTransformFromVolume', self._widget.removeTransformFromVolume)
         setattr(self, 'showErrorStatistics', self._widget.showErrorStatistics)
         setattr(self, 'removeCurrentSliceMarkers', self._widget.removeCurrentSliceMarkers)
         setattr(self, 'removeFrontPlateMarkers', self._widget.removeFrontPlateMarkers)
@@ -322,6 +352,7 @@ class IconBarSliceViewFiducialBoxWidget(IconBarWidget):
             self._markermenu.addAction('Marker#6 Anterior right')
             self._markermenu.addAction('Marker#7 Anterior mid')
             self._markermenu.addAction('Marker#8 Anterior left')
+            # noinspection PyUnresolvedReferences
             self._markermenu.triggered.connect(self._onMarkerZoom)
             self._icons['zoom'].setMenu(self._markermenu)
 
@@ -384,30 +415,3 @@ class IconBarSliceViewFiducialBoxWidget(IconBarWidget):
         p.setY(w.height() - p.y() - 1)
         interactor.SetEventInformation(p.x(), p.y())
         interactor.MouseMoveEvent()
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv, exit
-    from PyQt5.QtWidgets import QWidget, QHBoxLayout
-    from Sisyphe.core.sisypheVolume import SisypheVolume
-
-    app = QApplication(argv)
-    main = QWidget()
-    layout = QHBoxLayout(main)
-
-    vlm = SisypheVolume()
-    vlm.load('/Users/Jean-Albert/PycharmProjects/untitled/TESTS/IMAGES/STEREO/CTLEKSELL9.xvol')
-    view = IconBarSliceViewFiducialBoxWidget()
-    view.setVolume(vlm)
-
-    layout.addWidget(view)
-    layout.setSpacing(0)
-    layout.setContentsMargins(0, 0, 0, 0)
-    main.show()
-    exit(app.exec_())
-

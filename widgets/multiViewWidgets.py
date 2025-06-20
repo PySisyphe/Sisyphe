@@ -1,19 +1,21 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        Numpy           https://numpy.org/                                          Scientific computing
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
-        SimpleITK       https://simpleitk.org/                                      Medical image processing
-        skimage         https://scikit-image.org/                                   Image processing
-        vtk             https://vtk.org/                                            Visualization
+    - Numpy, Scientific computing, https://numpy.org/
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - SimpleITK, Medical image processing, https://simpleitk.org/
+    - skimage, Image processing, https://scikit-image.org/
+    - vtk, Visualization, https://vtk.org/
 """
 
 from os import getcwd
+from os import chdir
 from os import remove
+
 from os.path import join
 from os.path import exists
+from os.path import dirname
 
 from platform import system
 
@@ -25,16 +27,15 @@ from numpy import stack
 from skimage.util import montage
 from skimage.io import imsave
 
-from SimpleITK import GradientMagnitude
 from SimpleITK import GradientMagnitudeRecursiveGaussian
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QGridLayout
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QActionGroup
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QApplication
 
@@ -42,6 +43,9 @@ from vtk import vtkWindowToImageFilter
 from vtkmodules.util.vtkImageExportToArray import vtkImageExportToArray
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
+from Sisyphe.core.sisypheMesh import SisypheMeshCollection
+from Sisyphe.core.sisypheTracts import SisypheTractCollection
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.abstractViewWidget import AbstractViewWidget
 from Sisyphe.widgets.sliceViewWidgets import SliceViewWidget
 from Sisyphe.widgets.sliceViewWidgets import SliceOverlayViewWidget
@@ -52,90 +56,61 @@ from Sisyphe.widgets.volumeViewWidget import VolumeViewWidget
 from Sisyphe.widgets.sliceTrajectoryViewWidget import SliceTrajectoryViewWidget
 
 """
-    Class hierarchy
-        
-        QWidget -> MultiViewWidget -> OrthogonalSliceViewWidget -> OrthogonalRegistrationViewWidget
-                                                                -> OrthogonalReorientViewWidget
-                                   -> OrthogonalSliceVolumeViewWidget -> OrthogonalSliceTrajectoryViewWidget
-                                   -> GridViewWidget -> MultiSliceGridViewWidget
-                                                     -> SynchronisedGridViewWidget
-    Description
+Class hierarchy
+~~~~~~~~~~~~~~~
     
-        Classes to display multiple synchronised slices, container of SliceViewWidget derived classes.
+    - QWidget -> MultiViewWidget -> OrthogonalSliceViewWidget -> OrthogonalRegistrationViewWidget
+                                                              -> OrthogonalReorientViewWidget
+                                 -> OrthogonalSliceVolumeViewWidget -> OrthogonalSliceTrajectoryViewWidget
+                                 -> GridViewWidget -> MultiSliceGridViewWidget
+                                                   -> SynchronizedGridViewWidget
+Description
+~~~~~~~~~~~
+
+Classes to display multiple synchronised slices, container of SliceViewWidget derived classes.
 """
 
-
+# noinspection SpellCheckingInspection
 class MultiViewWidget(QWidget):
     """
-        MultiViewWidget class
+    MultiViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            base class to display multiple slices.
+    Base class to display and interact with multiple slices.
 
-        Inheritance
+    It serves as a container for multiple instances of SliceViewWidget derived classes, allowing for the display of
+    synchronised slices. This class provides methods for managing and interacting with the displayed slices. It also
+    includes methods for controlling the layout and appearance of the displayed slices
 
-            QWidget -> MultiViewWidget
+    Inheritance
+    ~~~~~~~~~~~
 
-        Private attributes
+    QWidget -> MultiViewWidget
 
-            _rows       int, number of rows in the grid layout
-            _cols       int, number of columns in the grid layout
-            _n          int, view index for colorbar, orientation, cursor visibility
-            _views      dict of abstractViewWidget instances
-
-        Public methods
-
-            __getitem__()
-            __setitem__()
-            __delitem__()
-            __len__()
-            setViewWidget(int, int, AbstractViewWidget)
-            AbstractViewWidget = getViewWidgetAt(int, int)
-            AbstractViewWidget = getFirstViewWidget()
-            SliceViewWidget = getFirstSliceViewWidget()
-            VolumeViewWidget = getFirstVolumeViewWidget()
-            list = getSliceViewWidgets()
-            list = getVolumeViewWidgets()
-            int, int = getViewWidgetCoordinate(AbstractViewWidget)
-            int = getViewWidgetCount()
-            bool = isEmpty()
-            bool = isNotEmpty()
-            removeViewWidgetFromCoordinate(int, int)                row, column
-            removeViewWidget(AbstractViewWidget)
-            moveViewWidget(int, int, int, int)                      row, column of old and new positions
-            swapViewWidgets(int, int, int, int)                     rows, columns of widgets to swap
-            setRows(int)
-            setCols(int)
-            setRowsAndCols(int, int)
-            int = getRows()
-            int = getCols()
-            int, int = getRowsAndCols()
-            setVisibilityControlToView(int, int)
-            setVisibilityControlToAll()
-            int, int = getVisibilityControl()
-            setFontColor(int)
-            int = getFontColor()
-            saveCapture()
-            copyToClipboard()
-            popupMenuEnabled()
-            popupMenuDisabled()
-            setActionVisibility(str, bool)
-            showAction(str)
-            hideAction(str)
-            setRoundedCursorCoordinatesEnabled()
-            setRoundedCursorCoordinatesDisabled()
-            bool = isRoundedCursorCoordinatesEnabled()
-            updateRender()                                          to update volume display
-
-            inherited QWidget methods
+    Creation: 03/04/2022
+    Last revision: 18/03/2025
     """
 
     # Special methods
 
+    """
+    Private attributes
+
+    _rows       int, number of visible rows in the grid layout
+    _cols       int, number of visible columns in the grid layout
+    _n          int, view index for colorbar, orientation, cursor visibility
+    _views      dict[tuple[int, int], abstractViewWidget]
+    """
+
     def __init__(self, r=1, c=1, parent=None):
         super().__init__(parent)
 
+        if r > 4: r = 4
+        elif r < 1: r = 1
+        if c > 4: c = 4
+        elif c < 1: c = 1
         self._rows = r
         self._cols = c
         self._n = None
@@ -149,7 +124,10 @@ class MultiViewWidget(QWidget):
         self.setLayout(self._layout)
 
     def __getitem__(self, key):
-        return self._views.get(key, None)
+        # < Revision 18/03/2025
+        # return self._views.get(key, None)
+        return self._views[key]
+        # Revision 18/03/2025 >
 
     def __setitem__(self, key, value):
         self.setViewWidget(key[0], key[1], value)
@@ -179,6 +157,14 @@ class MultiViewWidget(QWidget):
 
     # Public methods
 
+    # < Revision 08/03/2025
+    # fix vtkWin32OpenGLRenderWindow error: wglMakeCurrent failed in MakeCurrent()
+    # finalize method must be explicitely called before destruction
+    def finalize(self):
+        for w in self._views.values():
+            w.finalize()
+    # Revision 08/03/2025 >
+
     def setViewWidget(self, r, c, widget):
         if 0 <= r < 4 and 0 <= c < 4:
             if (r, c) in self._views: self.removeViewWidgetFromCoordinate(r, c)
@@ -204,21 +190,23 @@ class MultiViewWidget(QWidget):
             submenu = widget.getPopup().addMenu('Copy view capture to clipboard')
             submenu.addAction(action['clipboardgrid'])
             submenu.addAction(action['clipboard'])
-            # add fullscreen display action
+            # addBundle fullscreen display action
             if system() == 'Windows':
-                action['screen'] = QAction('Fullscreen display', self)
+                # action['screen'] = QAction('Fullscreen display', self)
+                action['screen'] = QAction('Fullscreen display', widget)
                 action['screen'].setCheckable(True)
                 action['screen'].triggered.connect(self.toggleDisplay)
                 widget.getPopup().insertAction(action['synchronisation'], action['screen'])
-            # add expand display action
-            action['expand'] = QAction('Expand display', self)
+            # addBundle expand display action
+            # action['expand'] = QAction('Expand display', self)
+            action['expand'] = QAction('Expand display', widget)
             action['expand'].setCheckable(True)
             action['expand'].triggered.connect(lambda: self.expandViewWidget(widget))
             widget.getPopup().insertAction(action['synchronisation'], action['expand'])
             action['synchronisation'].setVisible(False)
             # synchronise selection
             widget.Selected.connect(self._synchroniseSelection)
-            # add view to layout
+            # addBundle view to layout
             widget.setParent(self)
             widget.setObjectName('{} {} {}'.format(str(type(widget)), str(r), str(c)))
             self._views[(r, c)] = widget
@@ -235,11 +223,13 @@ class MultiViewWidget(QWidget):
         for w in self._views.values():
             if isinstance(w, SliceViewWidget):
                 return w
+        return None
 
     def getFirstVolumeViewWidget(self):
         for w in self._views.values():
             if isinstance(w, VolumeViewWidget):
                 return w
+        return None
 
     def getSliceViewWidgets(self):
         ws = list()
@@ -284,6 +274,7 @@ class MultiViewWidget(QWidget):
             if (r, c) in self._views:
                 self._layout.removeWidget(self._views[(r, c)])
                 return self._views.pop((r, c))
+            else: raise IndexError('invalid row or column.')
         else: raise IndexError('row or column parameter is out of range.')
 
     def removeViewWidget(self, widget):
@@ -293,10 +284,12 @@ class MultiViewWidget(QWidget):
 
     def moveViewWidget(self, r1, c1, r2, c2):
         if 0 <= r1 < 4 and 0 <= c1 < 4 and 0 <= r2 < 4 and 0 <= c2 < 4:
-            if (r1, c1) in self._views:
-                # remove tool from (r1, c1)
+            if (r1, c1) in self._views and (r2, c2) in self._views:
+                self.swapViewWidgets(r1, c1, r2, c2)
+            elif (r1, c1) in self._views and (r2, c2) not in self._views:
+                # remove view from (r1, c1)
                 widget = self.removeWidgetFromCoordinate(self._views[(r1, c1)])
-                # add tool to (r2, c2)
+                # addBundle view to (r2, c2)
                 self._views[(r2, c2)] = widget
                 self._layout.addWidget(widget, r2, c2)
                 self._updateVisibility()
@@ -313,6 +306,11 @@ class MultiViewWidget(QWidget):
                 self._layout.removeWidget(v2)
                 self._layout.addWidget(v1, r2, c2)
                 self._layout.addWidget(v2, r1, c1)
+            elif (r1, c1) in self._views and (r2, c2) not in self._views:
+                self.moveViewWidget(r1, c1, r2, c2)
+            elif (r2, c2) in self._views and (r1, c1) not in self._views:
+                self.moveViewWidget(r2, c2, r1, c1)
+        else: raise IndexError('row or column parameter is out of range.')
 
     def setRows(self, r):
         if 0 <= r < 4:
@@ -331,8 +329,7 @@ class MultiViewWidget(QWidget):
             self._rows = r
             self._cols = c
             self._updateVisibility()
-        else:
-            raise ValueError('row and/or column parameter is out of range.')
+        else: raise ValueError('row and/or column parameter is out of range.')
 
     def getRows(self):
         return self._rows
@@ -345,8 +342,7 @@ class MultiViewWidget(QWidget):
 
     def setVisibilityControlToView(self, r, c):
         if 0 <= r < 4 and 0 <= c < 4:
-            if (r, c) in self._views:
-                self._n = (r, c)
+            if (r, c) in self._views: self._n = (r, c)
             else: raise ValueError('No abstractViewWidget at ({},{}) coordinate.'.format(r, c))
         else: raise IndexError('row and/or column is out of range.')
 
@@ -367,21 +363,29 @@ class MultiViewWidget(QWidget):
             expand = widget.getAction()['expand'].isChecked()
             for i in range(self._rows):
                 for j in range(self._cols):
+                    # noinspection PyNoneFunctionAssignment
                     w = self.getViewWidgetAt(i, j)
-                    if expand: w.setVisible(widget == w)
-                    else:  w.setVisible(True)
+                    if expand:
+                        # noinspection PyUnresolvedReferences
+                        w.setVisible(widget == w)
+                    else:
+                        # noinspection PyUnresolvedReferences
+                        w.setVisible(True)
         else: raise TypeError('parameter type {} is not AbstractViewWidget.'.format(type(widget)))
 
     def isExpanded(self) -> bool:
         for i in range(self._rows):
             for j in range(self._cols):
+                # noinspection PyUnresolvedReferences
                 if self.getViewWidgetAt(i, j).getAction()['expand'].isChecked(): return True
         return False
 
     def getExpandedViewWidget(self) -> AbstractViewWidget | None:
         for i in range(self._rows):
             for j in range(self._cols):
+                # noinspection PyNoneFunctionAssignment
                 w = self.getViewWidgetAt(i, j)
+                # noinspection PyUnresolvedReferences
                 if w.getAction()['expand'].isChecked(): return w
         return None
 
@@ -398,13 +402,16 @@ class MultiViewWidget(QWidget):
                 w.getAction()['screen'].setChecked(False)
 
     def toggleDisplay(self) -> None:
+        # noinspection PyNoneFunctionAssignment
         w = self.getFirstViewWidget()
+        # noinspection PyUnresolvedReferences
         if w.getAction()['screen'].isChecked(): self.setFullScreenDisplay()
         else: self.setNormalDisplay()
 
     def isFullScreenDisplay(self) -> bool:
         if not self.isEmpty():
             return self._views[0, 0].getAction()['screen'].isChecked()
+        else: raise AttributeError('View is empty.')
 
     def popupMenuEnabled(self):
         for w in self._views.values():
@@ -477,39 +484,152 @@ class MultiViewWidget(QWidget):
     def isRoundedCursorCoordinatesEnabled(self):
         return self._views[0, 0].isRoundedCursorCoordinatesEnabled()
 
+    def setAlignCenters(self, v: bool):
+        if len(self._views) > 0:
+            for k in self._views:
+                w = self._views[k]
+                if isinstance(w, SliceOverlayViewWidget):
+                    w.setAlignCenters(v)
+
+    def alignCentersOn(self):
+        self.setAlignCenters(True)
+
+    def alignCentersOff(self):
+        self.setAlignCenters(False)
+
+    def getAlignCenters(self):
+        if len(self._views) > 0:
+            for i in range(0, self._rows):
+                for j in range(0, self._cols):
+                    # noinspection PyNoneFunctionAssignment
+                    w = self.getViewWidgetAt(i, j)
+                    if isinstance(w, SliceOverlayViewWidget):
+                        return w.getAlignCenters()
+        return None
+
     def updateRender(self):
-        for i in range(0, self._rows):
-            for j in range(0, self._cols):
-                w = self.getViewWidgetAt(i, j)
-                if isinstance(w, SliceROIViewWidget): w.updateROIDisplay()
-                else: w.updateRender()
+        if len(self._views) > 0:
+            for i in range(0, self._rows):
+                for j in range(0, self._cols):
+                    # noinspection PyNoneFunctionAssignment
+                    w = self.getViewWidgetAt(i, j)
+                    if isinstance(w, SliceROIViewWidget): w.updateROIDisplay()
+                    else:
+                        # noinspection PyUnresolvedReferences
+                        w.updateRender()
 
-    # AbstractView public methods
+    # Display setting methods
 
-    def getFontColor(self):
-        if self.isNotEmpty():
-            return self._views[(0, 0)].getFontColor()
-
-    def setFontColor(self, r, g, b):
+    def setLineColor(self, c: tuple[float, float, float]):
         if self.isNotEmpty():
             for w in self._views.values():
-                if isinstance(w, AbstractViewWidget):
-                    w.setFontColor(r, g, b)
-                    w.updateRender()
+                w.setLineColor(c, signal=False)
+
+    def setLineSelectedColor(self, c: tuple[float, float, float]):
+        if self.isNotEmpty():
+            for w in self._views.values():
+                w.setLineSelectedColor(c, signal=False)
+
+    def setLineWidth(self, v):
+        if self.isNotEmpty():
+            for w in self._views.values():
+                w.setLineWidth(v, signal=False)
+
+    def setLineOpacity(self, v):
+        if self.isNotEmpty():
+            for w in self._views.values():
+                w.setLineOpacity(v, signal=False)
+
+    def setFontFamily(self, s):
+        if self.isNotEmpty():
+            for w in self._views.values():
+                w.setFontFamily(s, signal=False)
+
+    def setFontSize(self, s):
+        if self.isNotEmpty():
+            for w in self._views.values():
+                w.setFontSize(s, signal=False)
+
+    def setFontScale(self, s):
+        if self.isNotEmpty():
+            for w in self._views.values():
+                w.setFontScale(s)
+
+    def setFontSizeScale(self, s: tuple[int, float]):
+        if self.isNotEmpty():
+            for w in self._views.values():
+                w.setFontSizeScale(s)
+
+    def setFontProperties(self, s: tuple[str, int, float]):
+        if self.isNotEmpty():
+            for w in self._views.values():
+                w.setFontProperties(s)
+
+    # Capture methods
 
     def saveCapture(self):
-        if self.hasVolume():
-            name = QFileDialog.getSaveFileName(self, caption='Save grid capture', directory=getcwd(),
-                                               filter='BMP (*.bmp);;JPG (*.jpg);;PNG (*.png);;TIFF (*.tiff)',
-                                               initialFilter='JPG (*.jpg)')
-            name = name[0]
-            if name != '':
+        if self.isNotEmpty():
+            # noinspection PyUnresolvedReferences
+            if self.getFirstViewWidget().hasVolume():
+                name = QFileDialog.getSaveFileName(self, caption='Save grid capture', directory=getcwd(),
+                                                   filter='BMP (*.bmp);;JPG (*.jpg);;PNG (*.png);;TIFF (*.tiff)',
+                                                   initialFilter='JPG (*.jpg)')
+                name = name[0]
+                if name != '':
+                    chdir(dirname(name))
+                    imglist = list()
+                    c = vtkWindowToImageFilter()
+                    for view in self._views:
+                        if self._views[view].isVisible():
+                            c.SetInput(self._views[view].getRenderWindow())
+                            r = vtkImageExportToArray()
+                            # noinspection PyArgumentList
+                            r.SetInputConnection(c.GetOutputPort())
+                            img = r.GetArray()
+                            img = flip(img.reshape(img.shape[1:]), axis=0)
+                            imglist.append(img)
+                    n = len(imglist)
+                    if n > 0:
+                        # Shape correction
+                        s = list(imglist[0].shape)
+                        for i in range(1, n):
+                            s2 = imglist[i].shape
+                            if s2[0] < s[0]: s[0] = s2[0]
+                            if s2[1] < s[1]: s[1] = s2[1]
+                            if s2[2] < s[2]: s[2] = s2[2]
+                        for i in range(n):
+                            # noinspection PyUnresolvedReferences
+                            imglist[i] = imglist[i][:s[0], :s[1], :s[2]]
+                        # Layout
+                        if n == 1: img = imglist[0]
+                        else:
+                            if n == 2: shape = (1, 2)
+                            elif n == 3: shape = (1, 3)
+                            elif n == 4: shape = (2, 2)
+                            elif n == 6: shape = (2, 3)
+                            elif n == 8: shape = (2, 4)
+                            elif n == 9: shape = (3, 3)
+                            elif n == 12: shape = (3, 4)
+                            elif n == 16: shape = (4, 4)
+                            else: raise ValueError('Invalid shape count.')
+                            img = montage(stack(imglist), grid_shape=shape, channel_axis=3)
+                        try: imsave(name, img)
+                        except Exception as err:
+                            messageBox(self,
+                                       'Save grid capture error: ',
+                                       text='{}\n{}.'.format(type(err), str(err)))
+
+    def copyToClipboard(self):
+        if self.isNotEmpty():
+            # noinspection PyUnresolvedReferences
+            if self.getFirstViewWidget().hasVolume():
                 imglist = list()
                 c = vtkWindowToImageFilter()
                 for view in self._views:
                     if self._views[view].isVisible():
                         c.SetInput(self._views[view].getRenderWindow())
                         r = vtkImageExportToArray()
+                        # noinspection PyArgumentList
                         r.SetInputConnection(c.GetOutputPort())
                         img = r.GetArray()
                         img = flip(img.reshape(img.shape[1:]), axis=0)
@@ -524,6 +644,7 @@ class MultiViewWidget(QWidget):
                         if s2[1] < s[1]: s[1] = s2[1]
                         if s2[2] < s[2]: s[2] = s2[2]
                     for i in range(n):
+                        # noinspection PyUnresolvedReferences
                         imglist[i] = imglist[i][:s[0], :s[1], :s[2]]
                     # Layout
                     if n == 1: img = imglist[0]
@@ -532,81 +653,41 @@ class MultiViewWidget(QWidget):
                         elif n == 3: shape = (1, 3)
                         elif n == 4: shape = (2, 2)
                         elif n == 6: shape = (2, 3)
+                        elif n == 8: shape = (2, 4)
                         elif n == 9: shape = (3, 3)
-                        img = montage(stack(imglist), grid_shape=shape, multichannel=True)
-                    try: imsave(name, img)
+                        elif n == 12: shape = (3, 4)
+                        elif n == 16: shape = (4, 4)
+                        else: raise ValueError('Invalid shape count.')
+                        img = montage(stack(imglist), grid_shape=shape, channel_axis=3)
+                    temp = join(gettempdir(), 'tmp.bmp')
+                    try:
+                        imsave(temp, img)
+                        p = QPixmap(temp)
+                        QApplication.clipboard().setPixmap(p)
                     except Exception as err:
-                        QMessageBox.warning(self, 'Save grid capture', 'error : {}'.format(err))
-
-    def copyToClipboard(self):
-        if self.hasVolume():
-            imglist = list()
-            c = vtkWindowToImageFilter()
-            for view in self._views:
-                if self._views[view].isVisible():
-                    c.SetInput(self._views[view].getRenderWindow())
-                    r = vtkImageExportToArray()
-                    r.SetInputConnection(c.GetOutputPort())
-                    img = r.GetArray()
-                    img = flip(img.reshape(img.shape[1:]), axis=0)
-                    imglist.append(img)
-            n = len(imglist)
-            if n > 0:
-                # Shape correction
-                s = list(imglist[0].shape)
-                for i in range(1, n):
-                    s2 = imglist[i].shape
-                    if s2[0] < s[0]: s[0] = s2[0]
-                    if s2[1] < s[1]: s[1] = s2[1]
-                    if s2[2] < s[2]: s[2] = s2[2]
-                for i in range(n):
-                    imglist[i] = imglist[i][:s[0], :s[1], :s[2]]
-                # Layout
-                if n == 1: img = imglist[0]
-                else:
-                    if n == 2: shape = (1, 2)
-                    elif n == 3: shape = (1, 3)
-                    elif n == 4: shape = (2, 2)
-                    elif n == 6: shape = (2, 3)
-                    elif n == 9: shape = (3, 3)
-                    img = montage(stack(imglist), grid_shape=shape, multichannel=True)
-                temp = join(gettempdir(), 'tmp.bmp')
-                try:
-                    imsave(temp, img)
-                    p = QPixmap(temp)
-                    QApplication.clipboard().setPixmap(p)
-                except Exception as err:
-                    QMessageBox.warning(self, 'Copy grid capture to clipboard', '{}'.format(err))
-                finally:
-                    if exists(temp): remove(temp)
+                        messageBox(self,
+                                   'Copy grid capture to clipboard error: ',
+                                   text='{}\n{}.'.format(type(err), str(err)))
+                    finally:
+                        if exists(temp): remove(temp)
 
 
 class OrthogonalSliceViewWidget(MultiViewWidget):
     """
-        OrthogonalSliceViewWidget class
+    OrthogonalSliceViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Displays synchronised axial, coronal and sagittal slices.
+    Class designed to display synchronised axial, coronal, and sagittal slices from the same 3D volume.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> MultiViewWidget -> OrthogonalSliceViewWidget
+    QWidget -> MultiViewWidget -> OrthogonalSliceViewWidget
 
-        Public methods
-
-            setVolume(SisypheVolume)
-            volumeCloseRequested()
-            bool = hasVolume()
-            addOverlay(SisypheVolume, float)
-            int = getOverlayCount()
-            bool = hasOverlay()
-            removeOverlay(SisypheVolume)
-            removeAllOverlays()
-            SisypheVolume = getOverlayFromIndex(int)
-
-            inherited MultiViewWidget methods
-            inherited QWidget methods
+    Creation: 03/04/2022
+    Last revision: 18/10/2024
     """
 
     # Special method
@@ -632,18 +713,29 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
 
     def _initSynchronisationSignalConnect(self):
         for i in range(3):
+            # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(0, i)
             for j in range(3):
                 if j != i:
+                    # noinspection PyNoneFunctionAssignment
                     w2 = self.getViewWidgetAt(0, j)
+                    # noinspection PyUnresolvedReferences
                     w1.ZoomChanged.connect(w2.synchroniseZoomChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.CursorPositionChanged.connect(w2.synchroniseCursorPositionChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.ToolMoved.connect(w2.synchroniseToolMoved)
+                    # noinspection PyUnresolvedReferences
                     w1.ToolRemoved.connect(w2.synchroniseToolRemoved)
+                    # noinspection PyUnresolvedReferences
                     w1.ToolColorChanged.connect(w2.synchroniseToolColorChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.ToolAttributesChanged.connect(w2.synchroniseToolAttributesChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.ToolRenamed.connect(w2.synchroniseToolRenamed)
+                    # noinspection PyUnresolvedReferences
                     w1.ToolAdded.connect(w2.synchroniseToolAdded)
+                    # noinspection PyUnresolvedReferences
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
                     if isinstance(w1, SliceViewWidget) and isinstance(w2, SliceViewWidget):
                         w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
@@ -655,6 +747,10 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
                         w1.ViewOverlayMethodCalled.connect(w2.synchroniseViewOverlayMethodCalled)
                         w1.TranslationsChanged.connect(w2.synchroniseTranslationsChanged)
                         w1.RotationsChanged.connect(w2.synchroniseRotationsChanged)
+                        w1.IsoIndexChanged.connect(w2.synchroniseIsoIndexChanged)
+                        w1.IsoValuesChanged.connect(w2.synchroniseIsoValuesChanged)
+                        w1.IsoLinesColorChanged.connect(w2.synchroniseIsoLinesColorChanged)
+                        w1.IsoLinesOpacityChanged.connect(w2.synchroniseIsoLinesOpacityChanged)
 
     # Public methods
 
@@ -668,10 +764,19 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
             self[0, 2].setDim2Orientation()
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
+    # < Revision 18/10/2024
+    # add replaceVolume method
+    def replaceVolume(self, volume):
+        if self.hasVolume():
+            self[0, 0].replaceVolume(volume)
+            self[0, 1].replaceVolume(volume)
+            self[0, 2].replaceVolume(volume)
+    # Revision 18/10/2024
+
     def removeVolume(self):
         """
-            self.removeAllOverlays() not called
-            already deleted by self.removeVolume()
+        self.removeAllOverlays() not called
+        already deleted by self.removeVolume()
         """
         self[0, 0].removeVolume()
         self[0, 1].removeVolume()
@@ -714,27 +819,48 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
     def getOverlayFromIndex(self, index):
         return self[0, 0].getOverlayFromIndex(index)
 
+    def setMeshCollection(self, meshes):
+        if isinstance(meshes, SisypheMeshCollection):
+            self[0, 0].setMeshCollection(meshes)
+            self[0, 1].setMeshCollection(meshes)
+            self[0, 2].setMeshCollection(meshes)
+        else: raise TypeError('parameter type {} is not SisypheMeshCollection.'.format(type(meshes)))
+
+    def getMeshCollection(self):
+        self[0, 0].getMeshCollection()
+
+    # View methods
+
+    def getAxialView(self):
+        return self[0, 0]
+
+    def getCoronalView(self):
+        return self[0, 1]
+
+    def getSagittalView(self):
+        return self[0, 2]
+
 
 class OrthogonalRegistrationViewWidget(OrthogonalSliceViewWidget):
     """
-        OrthogonalSliceViewWidget class
+    OrthogonalSliceViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Derived from OrthogonalSliceViewWidget class. Adds capacity to apply rigid transformation and
-            displays a box widget to crop overlay. Used to evaluate registration quality between two volumes.
+    Subclass of the OrthogonalSliceViewWidget class.
 
-        Inheritance
+    It is designed to provide functionalities for evaluating registration quality between two volumes. The class allows
+    users to apply rigid transformations to the volume being viewed. It also includes a synchronised box widget that
+    can be used to crop the overlays in the three orientations.
 
-            QWidget -> MultiViewWidget -> OrthogonalSliceViewWidget -> OrthogonalRegistrationViewWidget
+    Inheritance
+    ~~~~~~~~~~~
 
-        Public methods
+    QWidget -> MultiViewWidget -> OrthogonalSliceViewWidget -> OrthogonalRegistrationViewWidget
 
-            addOverlay(SisypheVolume, float)
-
-            inherited OrthogonalSliceViewWidget
-            inherited MultiViewWidget methods
-            inherited QWidget methods
+    Creation: 03/04/2022
+    Last revision:
     """
 
     def __init__(self, parent=None):
@@ -747,6 +873,9 @@ class OrthogonalRegistrationViewWidget(OrthogonalSliceViewWidget):
             widget = SliceRegistrationViewWidget()
             self.setViewWidget(0, i, widget)
             widget.synchronisationOn()
+            # < Revision 05/09/2024
+            widget.alignCentersOff()
+            # Revision 05/09/2024 >
             widget.getPopup().actions()[3].setVisible(False)  # Orientation menu off
             widget.getAction()['moveoverlayflag'].setVisible(True)
         self[0, 0].setName('Axial view')
@@ -757,9 +886,11 @@ class OrthogonalRegistrationViewWidget(OrthogonalSliceViewWidget):
     def _initSynchronisationSignalConnect(self):
         super()._initSynchronisationSignalConnect()
         for i in range(3):
+            # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(0, i)
             for j in range(3):
                 if j != i:
+                    # noinspection PyNoneFunctionAssignment
                     w2 = self.getViewWidgetAt(0, j)
                     if isinstance(w1, SliceRegistrationViewWidget) and isinstance(w2, SliceRegistrationViewWidget):
                         w1.CropChanged.connect(w2.synchroniseCropChanged)
@@ -773,9 +904,9 @@ class OrthogonalRegistrationViewWidget(OrthogonalSliceViewWidget):
                 gradient = SisypheVolume(img)
                 gradient.getDisplay().getLUT().setLutToHot()
                 rmin, rmax = gradient.getDisplay().getRange()
-                w = (rmax - rmin) / 15
+                w = (rmax - rmin) / 10
                 wmin = rmin + w
-                wmax = rmax - 2 * w
+                wmax = rmax - (2 * w)
                 gradient.getDisplay().setWindow(wmin, wmax)
                 gradient.getDisplay().getLUT().setDisplayBelowRangeColorOn()
                 self[0, 0].addOverlay(volume, gradient, alpha)
@@ -787,44 +918,23 @@ class OrthogonalRegistrationViewWidget(OrthogonalSliceViewWidget):
 
 class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
     """
-        OrthogonalReorientViewWidget class
+    OrthogonalReorientViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Derived from OrthogonalSliceViewWidget class. Adds capacity to apply rigid transformation and
-            displays a box widget to show and manipulate field of view in the three orientations.
+    Subclass of the OrthogonalSliceViewWidget class.
 
-        Inheritance
+    The class allows users to apply rigid transformations to the volume being viewed. It also includes a synchronised
+    box widget to show and manipulate field of view in the three orientations.
 
-            QWidget -> MultiViewWidget -> OrthogonalSliceViewWidget -> OrthogonalReorientViewWidget
+    Inheritance
+    ~~~~~~~~~~~
 
-        Public methods
+    QWidget -> MultiViewWidget -> OrthogonalSliceViewWidget -> OrthogonalReorientViewWidget
 
-            translationsEnabled()
-            translationsDisabled()
-            rotationsEnabled()
-            rotationsDisabled()
-            setFOVBoxVisibility(bool)
-            bool = getFOVBoxVisibility()
-            setResliceCursorColor([float, float, float])
-            [float, float, float] = getResliceCursorColor()
-            setResliceCursorOpacity(float)
-            float = getResliceCursorOpacity()
-            setResliceCursorLineWidth(float)
-            float = getResliceCursorLineWidth()
-            setBoxFovColor([float, float, float])
-            [float, float, float] = getBoxFovColor()
-            setBoxFovOpacity(float)
-            float = getBoxFovOpacity()
-            setBoxFovLineWidth(float)
-            float = getBoxFovLineWidth()
-            setSliceNavigationEnabled()
-            setSliceNavigationDisabled()
-            bool = isSliceNavigationEnabled()
-
-            inherited OrthogonalSliceViewWidget
-            inherited MultiViewWidget methods
-            inherited QWidget methods
+    Creation: 03/04/2022
+    Last revision:
     """
 
     # Special method
@@ -848,17 +958,27 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
 
     def _initSynchronisationSignalConnect(self):
         for i in range(3):
+            # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(0, i)
             for j in range(3):
                 if j != i:
+                    # noinspection PyNoneFunctionAssignment
                     w2 = self.getViewWidgetAt(0, j)
+                    # noinspection PyUnresolvedReferences
                     w1.ZoomChanged.connect(w2.synchroniseZoomChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.CursorPositionChanged.connect(w2.synchroniseCursorPositionChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.ResliceCursorChanged.connect(w2.synchroniseResliceCursorChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.SpacingChanged.connect(w2.synchroniseSpacingChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.SizeChanged.connect(w2.synchroniseSizeChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.TranslationsChanged.connect(w2.synchroniseTranslationsChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.RotationsChanged.connect(w2.synchroniseRotationsChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
                     if isinstance(w1, SliceViewWidget) and isinstance(w2, SliceViewWidget):
                         w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
@@ -982,32 +1102,20 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
 
 class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
     """
-        OrthogonalSliceVolumeViewWidget class
+    OrthogonalSliceVolumeViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Displays synchronised axial, coronal and sagittal slices and volume rendering in 2 x 2 grid.
+    Class designed to display a 2x2 grid of axial, coronal, and sagittal slices, along with a 3D volume rendering.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> MultiViewWidget -> OrthogonalSliceVolumeViewWidget
+    QWidget -> MultiViewWidget -> OrthogonalSliceVolumeViewWidget
 
-        Public methods
-
-            setVolume(SisypheVolume)
-            volumeCloseRequested()
-            bool = hasVolume()
-            addOverlay(SisypheVolume, float)
-            int = getOverlayCount()
-            bool = hasOverlay()
-            removeOverlay(SisypheVolume)
-            removeAllOverlays()
-            SisypheVolume = getOverlayFromIndex(int)
-            removeAllOverlays()
-            SisypheVolume = getOverlayFromIndex(int)
-
-            inherited MultiViewWidget methods
-            inherited QWidget methods
+    Creation: 03/04/2022
+    Last revision: 27/03/2025
     """
 
     # Special method
@@ -1020,14 +1128,18 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
     # Private methods
 
     def _initViews(self):
+        meshes = None
         for i in range(2):
             for j in range(2):
-                if i == 0 and j == 0: widget = VolumeViewWidget()
+                if i == 0 and j == 0:
+                    widget = VolumeViewWidget()
+                    meshes = widget.getMeshCollection()
                 else:
                     widget = SliceOverlayViewWidget()
                     widget.getPopup().actions()[3].setVisible(False)
                     widget.getAction()['moveoverlayflag'].setVisible(False)
                     widget.synchronisationOn()
+                    if meshes is not None: widget.setMeshCollection(meshes)
                 self.setViewWidget(i, j, widget)
         self[0, 0].setName('3D view')
         self[0, 1].setName('Axial view')
@@ -1037,18 +1149,29 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
 
     def _initSynchronisationSignalConnect(self):
         for i in range(4):
+            # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(i // 2, i % 2)
             for j in range(4):
                 if j != i:
+                    # noinspection PyNoneFunctionAssignment
                     w2 = self.getViewWidgetAt(j // 2, j % 2)
+                    # noinspection PyUnresolvedReferences
                     w1.ZoomChanged.connect(w2.synchroniseZoomChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.CursorPositionChanged.connect(w2.synchroniseCursorPositionChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.ToolMoved.connect(w2.synchroniseToolMoved)
+                    # noinspection PyUnresolvedReferences
                     w1.ToolRemoved.connect(w2.synchroniseToolRemoved)
+                    # noinspection PyUnresolvedReferences
                     w1.ToolColorChanged.connect(w2.ToolColorChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.ToolAttributesChanged.connect(w2.synchroniseToolAttributesChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.ToolRenamed.connect(w2.synchroniseToolRenamed)
+                    # noinspection PyUnresolvedReferences
                     w1.ToolAdded.connect(w2.synchroniseToolAdded)
+                    # noinspection PyUnresolvedReferences
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
                     if isinstance(w1, SliceViewWidget) and isinstance(w2, SliceViewWidget):
                         w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
@@ -1060,6 +1183,13 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
                         w1.ViewOverlayMethodCalled.connect(w2.synchroniseViewOverlayMethodCalled)
                         w1.TranslationsChanged.connect(w2.synchroniseTranslationsChanged)
                         w1.RotationsChanged.connect(w2.synchroniseRotationsChanged)
+                        w1.IsoIndexChanged.connect(w2.synchroniseIsoIndexChanged)
+                        w1.IsoValuesChanged.connect(w2.synchroniseIsoValuesChanged)
+                        w1.IsoLinesColorChanged.connect(w2.synchroniseIsoLinesColorChanged)
+                        w1.IsoLinesOpacityChanged.connect(w2.synchroniseIsoLinesOpacityChanged)
+                        w1.MeshVisibilityChanged.connect(w2.synchroniseMeshVisibilityChanged)
+                    if isinstance(w1, VolumeViewWidget) and isinstance(w2, SliceOverlayViewWidget):
+                        w1.MeshOnSliceVisibilityChanged.connect(w2.synchroniseMeshVisibilityChanged)
 
     # Public methods
 
@@ -1076,6 +1206,16 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
             self[0, 1].setTrajectoryToDefault(signal=True)
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
+    # < Revision 18/10/2024
+    # add replaceVolume method
+    def replaceVolume(self, volume):
+        if self.hasVolume():
+            self[0, 0].replaceVolume(volume)
+            self[0, 1].replaceVolume(volume)
+            self[1, 0].replaceVolume(volume)
+            self[1, 1].replaceVolume(volume)
+    # Revision 18/10/2024
+
     def removeVolume(self):
         """
             self.removeAllOverlays()
@@ -1091,6 +1231,8 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
 
     def hasVolume(self):
         return self[0, 0].hasVolume()
+
+    # Overlay methods
 
     def addOverlay(self, volume, alpha=0.5):
         if isinstance(volume, SisypheVolume):
@@ -1123,31 +1265,76 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
     def getOverlayFromIndex(self, index):
         return self[0, 1].getOverlayFromIndex(index)
 
+    # Mesh methods
+
+    # < Revision 23/03/2025
+    def removeAllMeshes(self):
+        if self.isNotEmpty():
+            for w in self._views.values():
+                w.removeAllMeshes()
+    # Revision 23/03/2025 >
+
+    # < Revision 23/03/2025
+    def removeMesh(self, mesh):
+        if self.isNotEmpty():
+            for w in self._views.values():
+                w.removeMesh(mesh)
+    # Revision 23/03/2025 >
+
+    # < Revision 27/03/2025
+    def addMesh(self, mesh):
+        for w in self._views.values():
+            w.addMesh(mesh)
+    # Revision 27/03/2025 >
+
+    # Tracts methods
+
+    def getTractCollection(self) -> SisypheTractCollection:
+        return self[0, 0].getTractCollection()
+
+    def setTractCollection(self, tracts: SisypheTractCollection) -> None:
+        self[0, 0].setTractCollection(tracts)
+
+    def hasTracts(self):
+        return self[0, 0].hasTracts()
+
+    # View methods
+
+    def getVolumeView(self):
+        return self[0, 0]
+
+    def getAxialView(self):
+        return self[0, 1]
+
+    def getCoronalView(self):
+        return self[1, 0]
+
+    def getSagittalView(self):
+        return self[1, 1]
+
 
 class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
     """
-        OrthogonalSliceVolumeViewWidget class
+    OrthogonalTrajectoryViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Derived from OrthogonalSliceVolumeViewWidget class. Adds trajectory management.
+    Subclass of the OrthogonalSliceVolumeViewWidget class.
 
-        Inheritance
+    It extends the functionality of the OrthogonalSliceVolumeViewWidget by adding trajectory management.
+    It includes methods for adding, removing, and manipulating trajectories, as well as for aligning the trajectories
+    with specific anatomical orientations (e.g., axial, coronal, sagittal), with the camera view or with specific
+    anatomical landmarks. It also provides methods for customizing the appearance and behavior of the trajectories,
+    such as changing their color, opacity, and visibility.
 
-            QWidget -> MultiViewWidget -> OrthogonalSliceVolumeViewWidget -> OrthogonalTrajectoryViewWidget
+    Inheritance
+    ~~~~~~~~~~~
 
-        Public methods
+    QWidget -> MultiViewWidget -> OrthogonalSliceVolumeViewWidget -> OrthogonalTrajectoryViewWidget
 
-            popupAlignmentEnabled()
-            popupAlignmentDisabled()
-
-            inherited OrthogonalSliceVolumeViewWidget
-            inherited MultiViewWidget methods
-            inherited QWidget methods
-
-        Revisions:
-
-            02/10/2023  add SlabChanged event in _initSynchronisationSignalConnect() method
+    Creation: 03/04/2022
+    Last Revision: 02/10/2023
     """
 
     # Special method
@@ -1158,17 +1345,20 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
     # Private methods
 
     def _initViews(self):
+        meshes = None
         for i in range(2):
             for j in range(2):
                 if i == 0 and j == 0:
                     widget = VolumeViewWidget()
                     widget.setRoundedCursorCoordinatesDisabled()
                     widget.synchronisationOn()
+                    meshes = widget.getMeshCollection()
                 else:
                     widget = SliceTrajectoryViewWidget()
                     widget.getPopup().actions()[3].setVisible(False)
                     widget.getAction()['moveoverlayflag'].setVisible(False)
                     widget.synchronisationOn()
+                    if meshes is not None: widget.setMeshCollection(meshes)
                 self.setViewWidget(i, j, widget)
         self[0, 0].setName('3D view')
         self[0, 1].setName('Axial view')
@@ -1179,6 +1369,7 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
     def _initSynchronisationSignalConnect(self):
         super()._initSynchronisationSignalConnect()
         for i in range(4):
+            # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(i // 2, i % 2)
             if isinstance(w1, SliceTrajectoryViewWidget):
                 w1.TrajectoryCameraAligned.connect(self.synchroniseTrajectoryCameraAligned)
@@ -1186,6 +1377,7 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
                 w1.CameraChanged.connect(self.synchroniseCameraChanged)
             for j in range(4):
                 if j != i:
+                    # noinspection PyNoneFunctionAssignment
                     w2 = self.getViewWidgetAt(j // 2, j % 2)
                     if isinstance(w1, SliceTrajectoryViewWidget) and isinstance(w2, SliceTrajectoryViewWidget):
                         w1.TrajectoryToolAligned.connect(w2.synchroniseTrajectoryToolAligned)
@@ -1213,6 +1405,7 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
         view = self.getFirstSliceViewWidget()
         if view.isCameraAligned(): self.synchroniseTrajectoryCameraAligned(obj)
 
+    # noinspection PyUnusedLocal
     def synchroniseTrajectoryCameraAligned(self, obj):
         camera = self.getFirstVolumeViewWidget().getRenderer().GetActiveCamera()
         views = self.getSliceViewWidgets()
@@ -1222,40 +1415,29 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
 
 class GridViewWidget(MultiViewWidget):
     """
-        GridViewWidget class
+    GridViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Base class to display 3 x 3 grid of slices.
+    Base class designed to display a 3x3 grid of slices.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> MultiViewWidget -> GridViewWidget
+    QWidget -> MultiViewWidget -> GridViewWidget
 
-        Private attributes
-
-            _menuNumberOfVisibleViews   QMenu
-
-        Public methods
-
-            setAxialOrientation()
-            setCoronalOrientation()
-            setSagittalOrientation()
-            setOrientation(int)
-            int = getOrientation()
-            str = getOrientationAsString()
-            int, int = getViewsArrangement()
-            QMenu = getSubmenuNumberOfVisibleViews()
-            popupMenuOrientationEnabled()
-            popupMenuOrientationDisabled()
-            popupMenuROIEnabled()
-            popupMenuROIDisabled()
-
-            inherited MultiViewWidget methods
-            inherited QWidget methods
+    Creation: 03/04/2022
+    Last revision: 14/10/2024
     """
 
     # Special method
+
+    """
+    Private attributes
+
+    _menuNumberOfVisibleViews   QMenu
+    """
 
     def __init__(self, rois=None, draw=None, parent=None):
         super().__init__(3, 3, parent)
@@ -1269,27 +1451,26 @@ class GridViewWidget(MultiViewWidget):
     # Private methods
 
     def _initViews(self, rois, draw):
-        # ovls = None
-        # rois = None
-        # draw = None
         for i in range(9):
             if i == 0:
                 if rois is not None and draw is not None: w = SliceROIViewWidget(rois=rois, draw=draw)
                 else:
                     w = SliceROIViewWidget()
-                    # ovls = w.getOverlayCollection()
                     rois = w.getROICollection()
                     draw = w.getDrawInstance()
-            # else: w = SliceROIViewWidget(overlays=ovls, rois=rois, draw=draw)
             else: w = SliceROIViewWidget(rois=rois, draw=draw)
             self.setViewWidget(i // 3, i % 3, w)
         self.setVisibilityControlToAll()
 
     def _initActions(self):
         for i in range(9):
+            # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
+            # noinspection PyUnresolvedReferences
             w.setName('view#{}'.format(i))
+            # noinspection PyUnresolvedReferences
             w.synchronisationOn()
+            # noinspection PyUnresolvedReferences
             action = w.getAction()
             action['expand'].setVisible(False)
             action['target'].setVisible(False)
@@ -1328,24 +1509,36 @@ class GridViewWidget(MultiViewWidget):
             self._group_nbviews.addAction(action['22'])
             self._group_nbviews.addAction(action['23'])
             self._group_nbviews.addAction(action['33'])
+            # noinspection PyUnresolvedReferences
             popup = w.getPopup()
-            self._menuNumberOfVisibleViews = QMenu('Number of views', popup)
-            self._menuNumberOfVisibleViews.addAction(action['11'])
-            self._menuNumberOfVisibleViews.addAction(action['12'])
-            self._menuNumberOfVisibleViews.addAction(action['13'])
-            self._menuNumberOfVisibleViews.addAction(action['22'])
-            self._menuNumberOfVisibleViews.addAction(action['23'])
-            self._menuNumberOfVisibleViews.addAction(action['33'])
-            popup.insertMenu(popup.actions()[2], self._menuNumberOfVisibleViews)
+            menuNumberOfVisibleViews = QMenu('Number of views', popup)
+            # noinspection PyTypeChecker
+            menuNumberOfVisibleViews.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+            # noinspection PyTypeChecker
+            menuNumberOfVisibleViews.setWindowFlag(Qt.FramelessWindowHint, True)
+            menuNumberOfVisibleViews.setAttribute(Qt.WA_TranslucentBackground, True)
+            menuNumberOfVisibleViews.addAction(action['11'])
+            menuNumberOfVisibleViews.addAction(action['12'])
+            menuNumberOfVisibleViews.addAction(action['13'])
+            menuNumberOfVisibleViews.addAction(action['22'])
+            menuNumberOfVisibleViews.addAction(action['23'])
+            menuNumberOfVisibleViews.addAction(action['33'])
+            popup.insertMenu(popup.actions()[2], menuNumberOfVisibleViews)
+            if i == 0: self._menuNumberOfVisibleViews = menuNumberOfVisibleViews
 
     def _initSynchronisationSignalConnect(self):
         for i in range(9):
+            # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(i // 3, i % 3)
             for j in range(9):
                 if j != i:
+                    # noinspection PyNoneFunctionAssignment
                     w2 = self.getViewWidgetAt(j // 3, j % 3)
+                    # noinspection PyUnresolvedReferences
                     w1.ZoomChanged.connect(w2.synchroniseZoomChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.CursorPositionChanged.connect(w2.synchroniseCursorPositionChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
                     if isinstance(w1, SliceViewWidget) and isinstance(w2, SliceViewWidget):
                         w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
@@ -1357,6 +1550,10 @@ class GridViewWidget(MultiViewWidget):
                         w1.ViewOverlayMethodCalled.connect(w2.synchroniseViewOverlayMethodCalled)
                         w1.TranslationsChanged.connect(w2.synchroniseTranslationsChanged)
                         w1.RotationsChanged.connect(w2.synchroniseRotationsChanged)
+                        w1.IsoIndexChanged.connect(w2.synchroniseIsoIndexChanged)
+                        w1.IsoValuesChanged.connect(w2.synchroniseIsoValuesChanged)
+                        w1.IsoLinesColorChanged.connect(w2.synchroniseIsoLinesColorChanged)
+                        w1.IsoLinesOpacityChanged.connect(w2.synchroniseIsoLinesOpacityChanged)
                     if isinstance(w1, SliceROIViewWidget) and isinstance(w2, SliceROIViewWidget):
                         w1.ROIAttributesChanged.connect(w2.synchroniseROIAttributesChanged)
                         w1.ROISelectionChanged.connect(w2.synchroniseROISelectionChanged)
@@ -1366,11 +1563,25 @@ class GridViewWidget(MultiViewWidget):
 
     # Public methods
 
+    def updateROIName(self, old, name):
+        if self.isNotEmpty():
+            for w in self._views.values():
+                if isinstance(w, SliceROIViewWidget):
+                    if w.hasROI(): w.updateROIName(old, name)
+
     def setVolume(self, volume):
         if isinstance(volume, SisypheVolume):
             for i in range(0, 9):
                 self[i // 3, i % 3].setVolume(volume)
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
+
+    # < Revision 14/10/2024
+    # add replaceVolume method
+    def replaceVolume(self, volume):
+        if self.hasVolume():
+            for i in range(0, 9):
+                self[i // 3, i % 3].replaceVolume(volume)
+    # Revision 14/10/2024 >
 
     def removeVolume(self):
         """
@@ -1391,6 +1602,7 @@ class GridViewWidget(MultiViewWidget):
         if r == c == 2:
             n = 0
             # Swap views if 2 x 2 grid, to avoid skipping slice (lost view row 0, column 2)
+            # Swap views (0,2) and (1,0)
             self.swapViewWidgets(1, 0, 0, 2)
             self.swapViewWidgets(0, 2, 1, 1)
         else:
@@ -1450,6 +1662,20 @@ class GridViewWidget(MultiViewWidget):
         for w in self._views.values():
             w.popupOrientationDisabled()
 
+    def popupMenuNumberOfVisibleViewsShow(self):
+        for i in range(9):
+            # noinspection PyNoneFunctionAssignment
+            w = self.getViewWidgetAt(i // 3, i % 3)
+            # noinspection PyUnresolvedReferences
+            w.getPopup().actions()[2].setVisible(True)
+
+    def popupMenuNumberOfVisibleViewsHide(self):
+        for i in range(9):
+            # noinspection PyNoneFunctionAssignment
+            w = self.getViewWidgetAt(i // 3, i % 3)
+            # noinspection PyUnresolvedReferences
+            w.getPopup().actions()[2].setVisible(False)
+
     def popupMenuROIEnabled(self):
         for w in self._views.values():
             w.popupROIEnabled()
@@ -1461,50 +1687,40 @@ class GridViewWidget(MultiViewWidget):
 
 class MultiSliceGridViewWidget(GridViewWidget):
     """
-        MultiSliceGridViewWidget class
+    MultiSliceGridViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Derived from GridViewWidget class. Displays several adjacent slices in 3 x 3 grid
-            with overlays and ROI support.
+    Subclass of the GridViewWidget class.
 
-        Inheritance
+    It is designed to display multiple adjacent slices in a 3 x 3 grid layout. This class provides additional
+    functionalities such as overlay support and ROI support.
 
-            QWidget -> MultiViewWidget -> GridViewWidget -> MultiSliceGridViewWidget
+    Inheritance
+    ~~~~~~~~~~~
 
-        Public methods
+    QWidget -> MultiViewWidget -> GridViewWidget -> MultiSliceGridViewWidget
 
-            SliceROIViewWidget = getFirstVisibleView()
-            SliceROIViewWidget = getLastVisibleView()
-            int = getFirstVisibleSliceIndex()
-            int = getLastVisibleSliceIndex()
-            addOverlay(SisypheVolume, float)
-            int = getOverlayCount()
-            bool = hasOverlay()
-            int = getOverlayIndex(SisypheVolume)
-            removeOverlay(SisypheVolume)
-            removeAllOverlays()
-            SisypheVolume = getOverlayFromIndex(int)
-
-            inherited GridViewWidget methods
-            inherited MultiViewWidget methods
-            inherited QWidget methods
-
-        Revision(s):
-
-            12/08/2023  add getFirstVisibleView(), getLastVisibleView() methods
-                        add getFirstVisibleSliceIndex(), getLastVisibleSliceIndex methods
+    Creation: 03/04/2022
+    Last revision: 12/08/2023
     """
 
     # Special method
 
     def __init__(self, rois=None, draw=None, parent=None):
+
         super().__init__(rois, draw, parent)
 
         for i in range(9):
+            # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
+            # noinspection PyUnresolvedReferences
             w.setOffset(i)  # nine consecutive slices of the same volume
-            if i > 0: w.setCursorVisibilityOff()
+            if i > 0:
+                # noinspection PyUnresolvedReferences
+                w.setCursorVisibilityOff()
+            # noinspection PyUnresolvedReferences
             action = w.getAction()
             action['expand'].setVisible(True)
 
@@ -1517,6 +1733,7 @@ class MultiSliceGridViewWidget(GridViewWidget):
             view = self[r, c]
             if view.isVisible():
                 return view
+        return None
 
     def getLastVisibleView(self):
         for i in range(8, -1, -1):
@@ -1525,16 +1742,17 @@ class MultiSliceGridViewWidget(GridViewWidget):
             view = self[r, c]
             if view.isVisible():
                 return view
+        return None
 
     def getFirstVisibleSliceIndex(self):
         view = self.getFirstVisibleView()
-        if isinstance(view, SliceROIViewWidget):
-            return view.getSliceIndex()
+        if isinstance(view, SliceROIViewWidget): return view.getSliceIndex()
+        else: return None
 
     def getLastVisibleSliceIndex(self):
         view = self.getLastVisibleView()
-        if isinstance(view, SliceROIViewWidget):
-            return view.getSliceIndex()
+        if isinstance(view, SliceROIViewWidget): return view.getSliceIndex()
+        else: return None
 
     def addOverlay(self, volume, alpha=0.5):
         if isinstance(volume, SisypheVolume):
@@ -1545,7 +1763,7 @@ class MultiSliceGridViewWidget(GridViewWidget):
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
     def getOverlayCount(self):
-        return self[0, 0].getNumberOfOverlays()
+        return self[0, 0].getOverlayCount()()
 
     def hasOverlay(self):
         return self[0, 0].hasOverlay()
@@ -1567,111 +1785,126 @@ class MultiSliceGridViewWidget(GridViewWidget):
 
 class SynchronisedGridViewWidget(GridViewWidget):
     """
-        SynchronisedGridViewWidget class
+    SynchronisedGridViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Displays same slices of multiple volumes in 3 x 3 grid.
+    Class designed to display the same slices from multiple volumes in a 3 x 3 grid layout. It provides additional
+    functionalities such as overlay support and ROI support.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> MultiViewWidget -> GridViewWidget -> SynchronisedGridViewWidget
+    QWidget -> MultiViewWidget -> GridViewWidget -> SynchronisedGridViewWidget
 
-        Private attributes
-
-            _nbv    int, volumes count
-
-        Public methods
-
-            addSynchronisedVolume(SisypheVolume, int)
-            removeSynchronisedVolume(SisypheVolume)
-            removeAllSynchronisedVolumes()
-            removeSynchronisedVolumeFromIndex(int)
-            int = getSynchronisedVolumeCount()
-            bool = hasSynchronisedVolume()
-
-            inherited GridViewWidget methods
-            inherited MultiViewWidget methods
-            inherited QWidget methods
+    Creation: 03/04/2022
+    Last revision: 27/05/2025
     """
 
     # Special method
 
+    """
+    Private attributes
+
+    _nbv    int, volume count
+    """
+
     def __init__(self, rois=None, draw=None, parent=None):
         super().__init__(rois, draw, parent)
 
-        # _nbv = 1 reference volume + synchronised volumes count
-        self._nbv = 0
-        self._volume = None
-
         for i in range(9):
+            # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
+            # noinspection PyUnresolvedReferences
             action = w.getAction()
             action['expand'].setVisible(True)
 
-    # Private method
+        self.popupMenuNumberOfVisibleViewsHide()
+
+    # Private methods
 
     def _updateVisibleViews(self):
-        if self._nbv < 3: self.setNumberOfVisibleViews(1, self._nbv)
-        elif self._nbv in [3, 4]: self.setNumberOfVisibleViews(2, 2)
-        else: self.setNumberOfVisibleViews(self._nbv // 3 + 1, 3)
+        # update visible views
+        nbv = self[0, 0].getOverlayCount()
+        if nbv < 3: self.setRowsAndCols(nbv // 3 + 1, nbv % 3 + 1)
+        elif nbv == 3: self.setRowsAndCols(2, 2)
+        elif nbv in [4, 5]: self.setRowsAndCols(2, 3)
+        else: self.setRowsAndCols(3, 3)
+        # update overlay display in each visible view
+        # < Revision 27/05/2025
+        # n = 0
+        # for r in range(self.getRows()):
+        #     for c in range(self.getCols()):
+        #         if nbv > 0:
+        #             view = self[r, c]
+        #             if n <= nbv:
+        #                 view.setVisible(True)
+        #                 if n > 0: view.setOverlayColorbar(n - 1)
+        #                 for i in range(nbv):
+        #                     view.setOverlayVisibility(i, i == n - 1, signal=False)
+        #             else: view.setVisible(False)
+        #         n += 1
+        if nbv > 0:
+            for i in range(nbv):
+                for r in range(self.getRows()):
+                    for c in range(self.getCols()):
+                        n = r * self.getCols() + c
+                        view = self[r, c]
+                        if n <= nbv:
+                            view.setVisible(True)
+                            if n > 0: view.setOverlayColorbar(n - 1)
+                            view.setOverlayVisibility(i, i == n - 1, signal=False)
+                        elif n > nbv: view.setVisible(False)
+        # Revision 27/05/2025 >
 
     # Public methods
 
     def setVolume(self, volume):
         super().setVolume(volume)
-        # Reference volume is the first
-        self._nbv = 1
+        for i in range(9):
+            r = i // 3
+            c = i % 3
+            self[r, c].setVolumeVisibility(i == 0, signal=False)
+        # Reference volume is in the first view
+        self._updateVisibleViews()
 
     def addSynchronisedVolume(self, volume):
         if isinstance(volume, SisypheVolume):
-            if self._nbv < 9:
-                r = self._nbv // 3
-                c = self._nbv % 3
-                self[r, c].addOverlay(volume, alpha=1.0)
-                self[r, c].setOverlayColorbar()
-                self._nbv += 1
+            if self.hasVolume():
+                for i in range(0, 9):
+                    self[i // 3, i % 3].addOverlay(volume, 1.0)
                 self._updateVisibleViews()
-            else:
-                self[2, 2].removeOverlay(0)
-                self[2, 2].addOverlay(volume, alpha=1.0)
-        else: raise TypeError('volume parameter type {} is not SisypheVolume.'.format(type(volume)))
+            else: raise ValueError('reference volume must be set before overlay.')
+        else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
     def removeSynchronisedVolume(self, v):
-        if self.hasVolume():
-            if isinstance(v, SisypheVolume):
-                for i in range(0, self._nbv):
-                    r = i // 3
-                    c = i % 3
-                    self[r, c].removeOverlay(v)
-                self._nbv -= 1
+        if isinstance(v, SisypheVolume):
+            if self.hasVolume():
+                for i in range(0, 9):
+                    self[i // 3, i % 3].removeOverlay(v)
                 self._updateVisibleViews()
-            else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(v)))
+            else: raise ValueError('reference volume must be set before overlay.')
+        else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(v)))
 
     def removeAllSynchronisedVolumes(self):
         if self.hasVolume():
-            for i in range(0, self._nbv):
-                r = i // 3
-                c = i % 3
-                self[r, c].removeOverlay(0)
-            self._nbv = 1
-            self._updateVisibleViews()
-
-    def removeSynchronisedVolumeFromIndex(self, index):
-        if self.hasVolume():
-            if isinstance(index, int):
-                if 0 <= index < self._nbv:
-                    self[index // 3, index % 3].removeVolume()
-                    self._nbv -= 1
-                    self._updateVisibleViews()
-                else: raise ValueError('index parameter is out of range.')
-            else: raise TypeError('parameter type {} is not int.'.format(type(index)))
+            if self.hasOverlay():
+                for i in range(0, 9):
+                    self[i // 3, i % 3].removeAllOverlays()
+                self._updateVisibleViews()
 
     def getSynchronisedVolumeCount(self):
-        return self._nbv - 1
+        return self[0, 0].getOverlayCount()()
 
     def hasSynchronisedVolume(self):
-        return self._nbv > 1
+        return self[0, 0].hasOverlay()
+
+    def getSynchronisedVolumeIndex(self, o):
+        return self[0, 0].getOverlayIndex(o)
+
+    def getSynchronisedVolumeFromIndex(self, index):
+        return self[0, 0].getOverlayFromIndex(index)
 
     #  Public method aliases
 
@@ -1679,115 +1912,5 @@ class SynchronisedGridViewWidget(GridViewWidget):
     removeOverlay = removeSynchronisedVolume
     removeAllOverlays = removeAllSynchronisedVolumes
     hasOverlay = hasSynchronisedVolume
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv, exit
-    from PyQt5.QtWidgets import QWidget, QHBoxLayout
-
-    test = 3
-    app = QApplication(argv)
-    main = QWidget()
-    layout = QHBoxLayout(main)
-    if test == 0:  # OrthogonalSliceViewWidget, OK 02/06/2021
-        print('Test OrthogonalSliceViewWidget')
-        file1 = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/anat.nii'
-        file2 = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/overlay.nii'
-        img1 = SisypheVolume()
-        img2 = SisypheVolume()
-        img1.loadFromNIFTI(file1)
-        img2.loadFromNIFTI(file2)
-        img2.display.getLUT().setLutToRainbow()
-        img2.display.getLUT().setDisplayBelowRangeColorOn()
-        view1 = OrthogonalSliceViewWidget()
-        view1.setVolume(img1)
-        view1.addOverlay(img2)
-        view1.getFirstSliceViewWidget().setOverlayOpacity(0, 0.2)
-        view1.getFirstSliceViewWidget().setXAxisConstraintToCursor()
-    elif test == 1:  # OrthogonalSliceVolumeViewWidget OK 03/06/2021
-        print('Test OrthogonalSliceVolumeViewWidget')
-        file1 = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/anat.nii'
-        file2 = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/overlay.nii'
-        img1 = SisypheVolume()
-        img2 = SisypheVolume()
-        img1.loadFromNIFTI(file1)
-        img2.loadFromNIFTI(file2)
-        img2.display.getLUT().setLutToRainbow()
-        img2.display.getLUT().setDisplayBelowRangeColorOn()
-        view1 = OrthogonalSliceVolumeViewWidget()
-        view1.setVolume(img1)
-        view1.addOverlay(img2)
-        view1.getViewWidgetAt(0, 1).setOverlayOpacity(0, 0.2)
-    elif test == 2:  # OrthogonalTrajectoryViewWidget
-        print('Test OrthogonalTrajectoryViewWidget')
-        file1 = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/anat.nii'
-        file2 = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/overlay.nii'
-        img1 = SisypheVolume()
-        img2 = SisypheVolume()
-        img1.loadFromNIFTI(file1)
-        img2.loadFromNIFTI(file2)
-        img2.display.getLUT().setLutToRainbow()
-        img2.display.getLUT().setDisplayBelowRangeColorOn()
-        view1 = OrthogonalTrajectoryViewWidget()
-        view1.setVolume(img1)
-        view1.addOverlay(img2)
-        view1.getFirstSliceViewWidget().setOverlayOpacity(0, 0.2)
-    elif test == 3:  # OrthogonalReorientViewWidget OK 15/06/2021
-        print('Test OrthogonalReorientViewWidget')
-        file1 = '/Users/Jean-Albert/PycharmProjects/untitled/TESTS/IMAGES/OVERLAY/3D.xvol'
-        img1 = SisypheVolume()
-        img1.load(file1)
-        view1 = OrthogonalReorientViewWidget()
-        view1.setVolume(img1)
-    elif test == 4:  # MultiSliceGridViewWidget OK 17/06/2021
-        print('Test MultiSliceGridViewWidget')
-        file1 = '/Users/Jean-Albert/PycharmProjects/untitled/TESTS/ROI/STEREO3D.xvol'
-        img1 = SisypheVolume()
-        img1.load(file1)
-        view1 = MultiSliceGridViewWidget()
-        view1.setVolume(img1)
-        view1.getFirstSliceViewWidget().loadROI('/Users/Jean-Albert/PycharmProjects/untitled/TESTS/ROI/testroi1.xroi')
-        view1.getFirstSliceViewWidget().loadROI('/Users/Jean-Albert/PycharmProjects/untitled/TESTS/ROI/testroi2.xroi')
-        view1.getFirstSliceViewWidget().loadROI('/Users/Jean-Albert/PycharmProjects/untitled/TESTS/ROI/testroi3.xroi')
-        view1.getFirstSliceViewWidget().setBrushRadius(5)
-        view1.getFirstSliceViewWidget().setSolidBrushFlagOn()
-        view1.getFirstSliceViewWidget().setFillHolesFlagOn()
-        view1.getFirstSliceViewWidget().setUndoOn()
-    elif test == 5:  # SynchronisedGridViewWidget OK 17/06/2021
-        print('SynchronisedGridViewWidget')
-        file1 = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/anat.nii'
-        file2 = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/overlay.nii'
-        img1 = SisypheVolume()
-        img1.loadFromNIFTI(file1)
-        img2 = SisypheVolume()
-        img2.loadFromNIFTI(file2)
-        img2.display.getLUT().setLutToRainbow()
-        img2.display.getLUT().setDisplayBelowRangeColorOn()
-        view1 = SynchronisedGridViewWidget()
-        view1.addSynchronisedVolume(img1)
-        view1.addSynchronisedVolume(img2)
-    else:  # OrthogonalRegistrationViewWidget
-        print('Test OrthogonalRegistrationViewWidget')
-        file1 = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/anat.nii'
-        file2 = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/overlay.nii'
-        img1 = SisypheVolume()
-        img2 = SisypheVolume()
-        img1.loadFromNIFTI(file1)
-        img2.loadFromNIFTI(file2)
-        img2.display.getLUT().setLutToRainbow()
-        img2.display.getLUT().setDisplayBelowRangeColorOn()
-        view1 = OrthogonalRegistrationViewWidget()
-        view1.setVolume(img1)
-        view1.addOverlay(img2)
-        view1.getFirstSliceViewWidget().setOverlayOpacity(0, 0.2)
-    layout.addWidget(view1)
-    layout.setSpacing(0)
-    layout.setContentsMargins(0, 0, 0, 0)
-    main.show()
-    main.activateWindow()
-    exit(app.exec_())
+    getOverlayIndex = getSynchronisedVolumeIndex
+    getOverlayFromIndex = getSynchronisedVolumeFromIndex

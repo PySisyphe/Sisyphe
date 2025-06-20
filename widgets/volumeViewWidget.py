@@ -1,23 +1,27 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Homepage link                                               Usage
-
-        Numpy           https://numpy.org/                                          Scientific computing
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
-        SimpleITK       https://simpleitk.org/                                      Medical image processing
-        skimage         https://scikit-image.org/                                   Image processing
-        vtk             https://vtk.org/                                            Visualization
+    - Numpy, Scientific computing, https://numpy.org/
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - SimpleITK, Medical image processing, https://simpleitk.org/
+    - skimage, Image processing, https://scikit-image.org/
+    - vtk, Visualization, https://vtk.org/
 """
 
+from sys import platform
+
 from os import mkdir
+from os import chdir
 from os import getcwd
+
 from os.path import join
 from os.path import exists
+from os.path import dirname
 from os.path import basename
 from os.path import splitext
 
-from math import atan
+from math import atan2
 from math import degrees
 
 from numpy import flip
@@ -28,8 +32,10 @@ from skimage.io import imsave
 
 from vtk import vtkCursor3D
 from vtk import vtkPolyDataMapper
+from vtk import vtkProp
 from vtk import vtkActor
 from vtk import vtkVolume
+from vtk import vtkSphereSource
 from vtk import vtkImageSlice
 from vtk import vtkImageSliceMapper
 from vtk import vtkVolumeProperty
@@ -50,6 +56,7 @@ from SimpleITK import StatisticsImageFilter
 from SimpleITK import BinaryFillholeImageFilter
 from SimpleITK import SmoothingRecursiveGaussian
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QImage
 from PyQt5.QtGui import QPixmap
@@ -58,121 +65,50 @@ from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QActionGroup
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QMessageBox
 
+# noinspection PyCompatibility
 from Sisyphe.core.sisypheImage import simpleITKToVTK
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheLUT import SisypheColorTransfer
 from Sisyphe.core.sisypheMesh import SisypheMesh
 from Sisyphe.core.sisypheMesh import SisypheMeshCollection
+from Sisyphe.core.sisypheTracts import SisypheTractCollection
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.abstractViewWidget import AbstractViewWidget
 from Sisyphe.gui.dialogMeshProperties import DialogMeshProperties
 from Sisyphe.gui.dialogWait import DialogWait
 
+
 """
-    Class hierarchy
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    - QWidget -> AbstractViewWidget -> VolumeViewWidget
     
-        QWidget -> AbstractViewWidget -> VolumeViewWidget
-        
-    Description
-    
-         Class to display 3D render of SisypheVolume instances.
-         Supports texture, mesh, and three orthogonal slices.
-         Interactive management of target and trajectory widgets.
+Description
+~~~~~~~~~~~
+
+Class for displaying 3D rendering of SisypheVolume instances.
+Supports texture, mesh, and three orthogonal slices.
+Interactive management of target and trajectory widgets.
 """
 
 
 class VolumeViewWidget(AbstractViewWidget):
     """
-        VolumeViewWidget class
+    VolumeViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Display volume rendering.
+    Class for displaying volume rendering.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> AbstractViewWidget -> VolumeViewWidget
+    QWidget -> AbstractViewWidget -> VolumeViewWidget
 
-        Private attributes
-
-            _slice0         vtkImageSlice, axial slice
-            _slice1         vtkImageSlice, coronal slice
-            _slice2         vtkImageSlice, sagittal slice
-            _planewidget    vtkImplicitPlaneWidget
-            _texture        vtkVolume
-            _mesh           SisypheMeshCollection
-            _transfer       SisypheColorTransfer
-            _croptag        int, crop direction code
-            _scale0         float, zoom factor before event start, interactive zoom management
-            _mousepos0      (float, float, float), mouse position before event start
-            _campos0        (float, float, float), camera position before event start
-            _camfocal0      float, focal depth before event start
-            _selectedslice  int, number of the selected slice
-            _action         QAction
-            _popup          QMenu, popup menu
-            _menuVisibility QMenu, popup submenu for actors visibility (slices, texture, mesh)
-            _menuPosition   QMenu, popup submenu for predefined camera position
-            _texturepopup   QMenu, popup submenu for texture settings
-            _meshpopup      QMenu, popup menu for mesh settings
-
-        Custom QtSignal
-
-            emitted from DialogMeshProperties
-            UpdateRender            ->          received by VolumeViewWidget
-                                                No parameter
-
-        Public methods
-
-            loadTransfer()
-            saveTransfer()
-            setTransfer(SisypheColorTransfer)
-            SisypheColorTransfer = getTransfer()
-            setGradientOpacity(bool)
-            bool = GetGradientOpacity()
-            gradientOpacityOn()
-            gradientOpacityOff()
-            setVolume(sisypheVolume)
-            QMenu = getPopupCameraPosition()
-            QMenu = getPopupTextureActor()
-            SisypheMeshCollection = getMesh()
-            setMesh(SisypheMeshCollection)
-            setCursorWorldPosition(float, float, float, bool)
-            setCameraToTop()
-            setCameraToBottom()
-            setCameraToLeft()
-            setCameraToRight()
-            setCameraToFront()
-            setCameraToBack()
-            setCameraPosition(str)
-            bool = hasMesh()
-            addMesh(sisypheMesh)
-            updateMeshes()
-            removeMesh(sisypheMesh)
-            removeAllMeshes()
-            int = getNumberOfMeshes()
-            removeMesh(str)
-            removeAllMeshes()
-            setSlice0Visibility(bool)
-            setSlice1Visibility(bool)
-            setSlice2Visibility(bool)
-            setTextureVisibility(bool)
-            bool = getSlice0Visibility()
-            bool = getSlice1Visibility()
-            bool = getSlice2Visibility()
-            bool = getTextureVisibility()
-            int = getBlendMode()
-            str = getBlendModeAsString()
-            setBlendMode(int or str)
-            setBlendModeToComposite()
-            setBlendModeToMaximumIntensity()
-            setBlendModeToMinimumIntensity()
-            setBlendModeToAverageIntensity()
-            setBlendModeToAdditive()
-            setBlendModeToIsoSurface()
-
-            inherited AbstractViewWidget methods
-            inherited QWidget methods
+    Last revision: 27/03/2025
     """
 
     _CODETOBLEND = {0: 'composite', 1: 'MaximumIntensity', 2: 'MinimumIntensity',
@@ -184,24 +120,52 @@ class VolumeViewWidget(AbstractViewWidget):
     # Custom Qt signals
 
     CameraChanged = pyqtSignal(QWidget)
+    MeshOnSliceVisibilityChanged = pyqtSignal(QWidget, bool)
 
     # Public class methods
 
     @classmethod
-    def getBlendAsString(cls, k):
-        if isinstance(k, int):
-            return cls._CODETOBLEND[k]
+    def getBlendAsString(cls, k: int):
+        if isinstance(k, int): return cls._CODETOBLEND[k]
         else: raise TypeError('parameter type {} is not int.'.format(type(k)))
 
     @classmethod
-    def getBlendFromString(cls, k):
-        if isinstance(k, str):
-            return cls._BLENDTOCODE[k]
+    def getBlendFromString(cls, k: str):
+        if isinstance(k, str): return cls._BLENDTOCODE[k]
         else: raise TypeError('parameter type {} is not str.'.format(type(k)))
 
             # Private methods
 
     # Special method
+
+    """
+    Private attributes
+
+    _slice0         vtkImageSlice, axial slice
+    _slice1         vtkImageSlice, coronal slice
+    _slice2         vtkImageSlice, sagittal slice
+    _sph            vtkSphereSource, sphere centered on cursor
+    _cursorsph      vtkActor, sphere actor centered on cursor
+    _planewidget    vtkImplicitPlaneWidget
+    _texture        vtkVolume
+    _mesh           SisypheMeshCollection
+    _tract          SisypheTractCollection
+    _transfer       SisypheColorTransfer
+    _croptag        int, crop direction code
+    _scale0         float, zoom factor before event start, interactive zoom management
+    _mousepos0      (float, float, float), mouse position before event start
+    _campos0        (float, float, float), camera position before event start
+    _camfocal0      float, focal depth before event start
+    _selectedslice  int, number of the selected slice
+    _slprop         vtkProp, selected streamline
+    _slid           int, current point of the selected streamline
+    _action         QAction
+    _popup          QMenu, popup menu
+    _menuVisibility QMenu, popup submenu for actors visibility (slices, texture, mesh)
+    _menuPosition   QMenu, popup submenu for predefined camera position
+    _texturepopup   QMenu, popup submenu for texture settings
+    _meshpopup      QMenu, popup menu for mesh settings
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -209,16 +173,22 @@ class VolumeViewWidget(AbstractViewWidget):
         self._slice0 = None         # vtkImageSlice, axial
         self._slice1 = None         # vtkImageSlice, coronal
         self._slice2 = None         # vtkImageSlice, sagittal
-        self._texture = None        # vtkVolume
+        self._texture = None        # vtkVolume, volume rendering
+        self._sph = None            # vtkSphereSource, sphere centered on cursor
+        self._cursorsph = None      # vtkActor, sphere actor centered on cursor
         self._mesh = SisypheMeshCollection()
+        self._tract = SisypheTractCollection()
+        self._tract.setRenderer(self.getRenderer())
         self._transfer = SisypheColorTransfer()
         self._croptag = 0x361B
 
-        self._scale0 = None         # scale before event start
-        self._mousepos0 = None      # mouse position before event start
-        self._campos0 = None        # camera position before event start
-        self._camfocal0 = None      # camera focal point before event start
-        self._selectedSlice = 0     # number of the selected slice
+        self._scale0 = None                     # scale before event start
+        self._mousepos0 = None                  # mouse position before event start
+        self._campos0 = None                    # camera position before event start
+        self._camfocal0 = None                  # camera focal point before event start
+        self._selectedSlice = 0                 # number of the selected slice
+        self._slprop: vtkProp | None = None     # selected streamline
+        self._slid: int = 0                     # current point of the selected streamline
 
         # Init popup menu
 
@@ -234,6 +204,7 @@ class VolumeViewWidget(AbstractViewWidget):
         self._action['right'].triggered.connect(self.setCameraToRight)
         self._action['front'].triggered.connect(self.setCameraToFront)
         self._action['back'].triggered.connect(self.setCameraToBack)
+        self._action['showmesh'] = QAction('Show mesh(es) on slices', self)
         self._action['showslice0'] = QAction('Show 3D axial slice', self)
         self._action['showslice1'] = QAction('Show 3D coronal slice', self)
         self._action['showslice2'] = QAction('Show 3D sagittal slice', self)
@@ -250,16 +221,20 @@ class VolumeViewWidget(AbstractViewWidget):
         self._group_orient.addAction(self._action['front'])
         self._group_orient.addAction(self._action['back'])
         self._action['left'].setChecked(True)
+        self._action['showmesh'].setCheckable(True)
         self._action['showslice0'].setCheckable(True)
         self._action['showslice1'].setCheckable(True)
         self._action['showslice2'].setCheckable(True)
         self._action['showtexture'].setCheckable(True)
         self._action['showsurface'].setCheckable(True)
+        self._action['showmesh'].setChecked(False)
         self._action['showslice0'].setChecked(True)
         self._action['showslice1'].setChecked(True)
         self._action['showslice2'].setChecked(True)
         self._action['showtexture'].setChecked(False)
         self._action['showsurface'].setChecked(False)
+        self._action['showmesh'].triggered.connect(
+            lambda: self.setMeshOnSliceVisibility(self._action['showmesh'].isChecked()))
         self._action['showslice0'].triggered.connect(
             lambda: self.setSlice0Visibility(self._action['showslice0'].isChecked()))
         self._action['showslice1'].triggered.connect(
@@ -273,6 +248,11 @@ class VolumeViewWidget(AbstractViewWidget):
         self._action['showslices'].triggered.connect(self.showAllSlices)
         self._action['hideslices'].triggered.connect(self.hideAllSlices)
         self._menuPosition = QMenu('Position', self._popup)
+        # noinspection PyTypeChecker
+        self._menuPosition.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._menuPosition.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._menuPosition.setAttribute(Qt.WA_TranslucentBackground, True)
         self._menuPosition.addAction(self._action['top'])
         self._menuPosition.addAction(self._action['bottom'])
         self._menuPosition.addAction(self._action['left'])
@@ -281,6 +261,7 @@ class VolumeViewWidget(AbstractViewWidget):
         self._menuPosition.addAction(self._action['back'])
         self._popup.insertMenu(self._popup.actions()[2], self._menuPosition)
         self._menuVisibility.insertSeparator(self._action['hideall'])
+        self._menuVisibility.insertAction(self._action['hideall'], self._action['showmesh'])
         self._menuVisibility.insertAction(self._action['hideall'], self._action['showslice0'])
         self._menuVisibility.insertAction(self._action['hideall'], self._action['showslice1'])
         self._menuVisibility.insertAction(self._action['hideall'], self._action['showslice2'])
@@ -297,6 +278,7 @@ class VolumeViewWidget(AbstractViewWidget):
         self._action['edittext'].setVisible(False)
         self._action['textprop'].setVisible(False)
         self._action['followflag'].setVisible(False)
+        self._action['showmesh'].setVisible(False)
         # self._action['showorientation'].setVisible(False)
 
         self._action['captureseries'] = QAction('Save captures from multiple camera positions...', self)
@@ -309,6 +291,11 @@ class VolumeViewWidget(AbstractViewWidget):
         # Init texture popup menu
 
         self._texturepopup = QMenu()
+        # noinspection PyTypeChecker
+        self._texturepopup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._texturepopup.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._texturepopup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['crop'] = QAction('Crop picked region', self)
         self._action['uncrop'] = QAction('Uncrop volume rendering', self)
         self._action['loadtransfer'] = QAction('Load transfer function', self)
@@ -348,6 +335,11 @@ class VolumeViewWidget(AbstractViewWidget):
         self._group_blend.addAction(self._action['additive'])
         self._group_blend.addAction(self._action['isosurface'])
         submenu = QMenu('Blend mode', self._texturepopup)
+        # noinspection PyTypeChecker
+        submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         submenu.addAction(self._action['composite'])
         submenu.addAction(self._action['maxintensity'])
         submenu.addAction(self._action['minintensity'])
@@ -356,6 +348,11 @@ class VolumeViewWidget(AbstractViewWidget):
         submenu.addAction(self._action['isosurface'])
         self._texturepopup.addMenu(submenu)
         submenu = QMenu('Transfer function', self._texturepopup)
+        # noinspection PyTypeChecker
+        submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         submenu.addAction(self._action['loadtransfer'])
         submenu.addAction(self._action['savetransfer'])
         self._texturepopup.addMenu(submenu)
@@ -363,6 +360,11 @@ class VolumeViewWidget(AbstractViewWidget):
         # Init mesh popup menu
 
         self._meshpopup = QMenu()
+        # noinspection PyTypeChecker
+        self._meshpopup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._meshpopup.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._meshpopup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['meshprop'] = QAction('Edit properties...', self)
         self._action['meshprop'].triggered.connect(self.editActorProperties)
         self._meshpopup.addAction(self._action['meshprop'])
@@ -373,16 +375,18 @@ class VolumeViewWidget(AbstractViewWidget):
                            '\tMouseWheel slices through selected orientation,\n' \
                            '\tUp or Left key to previous slice in selected orientation,\n' \
                            '\tDown or Right key to next slice in selected orientation,\n' \
-                           '\tMouseWheel + Ctrl Key (Cmd Key mac os) to change zoom,\n' \
-                           '\tUp or Left + Ctrl Key (Cmd Key mac os) to zoom out,\n' \
-                           '\tDown or Right + Ctrl Key (Cmd Key mac os) to zoom in,\n' \
-                           '\tLeft click to select slice,\n' \
-                           '\tLeft click + Ctrl Key to move cursor position,\n' \
-                           '\tLeft click and drag to rotate view,\n' \
-                           '\tLeft click + Ctrl Key (Cmd Key mac os) and drag to change zoom,\n' \
-                           '\tLeft click + Alt Key and drag to pan,\n' \
-                           '\tLeft click + Shift Key and drag to change window/level,\n' \
-                           '\tRight click to display popup menu.'
+                           '\tMouseWheel + CTRL key (CMD key MacOS) to change zoom,\n' \
+                           '\tUp or Left + CTRL Key (CMD key MacOS) to zoom out,\n' \
+                           '\tDown or Right + CTRL key (CMD key MacOS) to zoom in,\n' \
+                           '\tLeft-click to select slice,\n' \
+                           '\tLeft-click to select a streamline,\n'\
+                           '\tand then use mousewheel to move cursor position along the streamline,\n' \
+                           '\tLeft-click + CTRL key to move cursor position,\n' \
+                           '\tLeft-click and drag to rotate view,\n' \
+                           '\tLeft-click + CTRL key (CMD key MacOS) and drag to change zoom,\n' \
+                           '\tLeft-click + ALT key and drag to pan,\n' \
+                           '\tLeft-click + SHIFT key and drag to change window/level,\n' \
+                           '\tRight-click to display popup menu.'
         if self._action['showtooltip'].isChecked(): self.setToolTip(self._tooltipstr)
         else: self.setToolTip('')
 
@@ -398,6 +402,7 @@ class VolumeViewWidget(AbstractViewWidget):
         mapper.SliceFacesCameraOff()
         mapper.SliceAtFocalPointOff()
         slc = vtkImageSlice()
+        slc.SetObjectName('slice')
         slc.SetMapper(mapper)
         prop = slc.GetProperty()
         prop.SetInterpolationTypeToLinear()
@@ -414,11 +419,16 @@ class VolumeViewWidget(AbstractViewWidget):
         mapper.SetBlendModeToComposite()
         mapper.CroppingOff()
         prop = vtkVolumeProperty()
+        # noinspection PyArgumentList
         prop.ShadeOff()
         self.loadTransfer()
+        # noinspection PyArgumentList
         prop.DisableGradientOpacityOff()
+        # noinspection PyArgumentList
         prop.SetColor(self._transfer.getColorTransfer())
+        # noinspection PyArgumentList
         prop.SetScalarOpacity(self._transfer.getAlphaTransfer())
+        # noinspection PyArgumentList
         prop.SetGradientOpacity(self._transfer.getGradientTransfer())
         prop.SetInterpolationTypeToLinear()
         self._texture.SetMapper(mapper)
@@ -432,6 +442,7 @@ class VolumeViewWidget(AbstractViewWidget):
         mask = self._volume.getSITKImage() > threshold
         # Fill mask
         f = BinaryFillholeImageFilter()
+        # noinspection PyUnresolvedReferences
         for i in range(mask.GetSize()[2]):
             slc = mask[:, :, i]
             slc = f.Execute(slc)
@@ -447,6 +458,7 @@ class VolumeViewWidget(AbstractViewWidget):
         f.SetInputData(mask)
         f.ComputeNormalsOn()
         f.SetValue(0, 50.0)
+        # noinspection PyArgumentList
         f.Update()
         # Mesh attributes
         mesh = SisypheMesh()
@@ -464,6 +476,7 @@ class VolumeViewWidget(AbstractViewWidget):
 
     def _initCursor(self):
         if self.hasVolume():
+            # Cursor
             cursor = vtkCursor3D()
             cursor.AxesOn()
             cursor.OutlineOff()
@@ -478,12 +491,30 @@ class VolumeViewWidget(AbstractViewWidget):
             cursor.SetModelBounds(-fx, fx, -fy, fy, -fz, fz)
             cursor.Update()
             mapper = vtkPolyDataMapper()
+            # noinspection PyArgumentList
             mapper.SetInputConnection(cursor.GetOutputPort())
             self._cursor = vtkActor()
             self._cursor.SetMapper(mapper)
             self._cursor.GetProperty().SetColor(self._lcolor[0], self._lcolor[1], self._lcolor[2])
             self._cursor.SetVisibility(False)
             self._renderer.AddActor(self._cursor)
+            # Sphere centered on cursor
+            self._sph = vtkSphereSource()
+            self._sph.SetRadius(0.0)
+            self._sph.SetCenter(0.0, 0.0, 0.0)
+            self._sph.SetThetaResolution(30)
+            self._sph.SetPhiResolution(30)
+            # noinspection PyArgumentList
+            self._sph.Update()
+            mapper = vtkPolyDataMapper()
+            # noinspection PyArgumentList
+            mapper.SetInputConnection(self._sph.GetOutputPort())
+            self._cursorsph = vtkActor()
+            self._cursorsph.SetMapper(mapper)
+            self._cursorsph.GetProperty().SetColor(self._lcolor[0], self._lcolor[1], self._lcolor[2])
+            self._cursorsph.SetVisibility(False)
+            self._cursorsph.GetProperty().SetOpacity(0.5)
+            self._renderer.AddActor(self._cursorsph)
 
     def _getPickedSlice(self):
         x, y = self._window.GetInteractorStyle().GetLastPos()
@@ -533,14 +564,53 @@ class VolumeViewWidget(AbstractViewWidget):
             self._slice1 = self._addSlice(1, 1.0)  # coronal
             self._slice2 = self._addSlice(0, 1.0)  # sagittal
             self._addTexture()
-            # self._addOuterSurfaceMesh()
+            # < Revision 18/10/2024
+            self.setSlice0Visibility(self._action['showslice0'].isChecked())
+            self.setSlice1Visibility(self._action['showslice1'].isChecked())
+            self.setSlice2Visibility(self._action['showslice2'].isChecked())
             self.setTextureVisibility(self._action['showtexture'].isChecked())
+            if self._action['composite'].isChecked(): self.setBlendModeToComposite()
+            elif self._action['maxintensity'].isChecked(): self.setBlendModeToMaximumIntensity()
+            elif self._action['minintensity'].isChecked(): self.setBlendModeToMinimumIntensity()
+            elif self._action['averageintensity'].isChecked(): self.setBlendModeToAverageIntensity()
+            elif self._action['additive'].isChecked(): self.setBlendModeToAdditive()
+            elif self._action['isosurface'].isChecked(): self.setBlendModeToIsoSurface()
+            self._updateTextureTransfer()
+            # Revision 18/10/2024 >
             self._initCursor()
             x, y, z = self._slice0.GetCenter()
             self.setCursorWorldPosition(x, y, z, False)
             self._renderer.GetActiveCamera().SetFocalPoint(x, y, z)
             self.setCameraToLeft()
         else: raise TypeError('parameter type {} is not SisypheVolume'.format(type(volume)))
+
+    # < Revision 18/10/2024
+    # add replaceVolume method
+    # noinspection PyUnusedLocal
+    def replaceVolume(self, volume):
+        if self.hasVolume():
+            self._renderer.RemoveViewProp(self._slice0)
+            self._renderer.RemoveViewProp(self._slice1)
+            self._renderer.RemoveViewProp(self._slice2)
+            self._renderer.RemoveViewProp(self._texture)
+            self._slice0 = self._addSlice(2, 1.0)  # axial
+            self._slice1 = self._addSlice(1, 1.0)  # coronal
+            self._slice2 = self._addSlice(0, 1.0)  # sagittal
+            self._addTexture()
+            # Restore display properties
+            self.setSlice0Visibility(self._action['showslice0'].isChecked())
+            self.setSlice1Visibility(self._action['showslice1'].isChecked())
+            self.setSlice2Visibility(self._action['showslice2'].isChecked())
+            self.setTextureVisibility(self._action['showtexture'].isChecked())
+            if self._action['composite'].isChecked(): self.setBlendModeToComposite()
+            elif self._action['maxintensity'].isChecked(): self.setBlendModeToMaximumIntensity()
+            elif self._action['minintensity'].isChecked(): self.setBlendModeToMinimumIntensity()
+            elif self._action['averageintensity'].isChecked(): self.setBlendModeToAverageIntensity()
+            elif self._action['additive'].isChecked(): self.setBlendModeToAdditive()
+            elif self._action['isosurface'].isChecked(): self.setBlendModeToIsoSurface()
+            self._updateTextureTransfer()
+            self._renderwindow.Render()
+    # Revision 18/10/2024 >
 
     def removeVolume(self):
         if self.hasVolume():
@@ -567,64 +637,6 @@ class VolumeViewWidget(AbstractViewWidget):
 
     def getPopupTextureActor(self):
         return self._texturepopup
-
-    def getMeshCollection(self):
-        return self._mesh
-
-    def setMeshCollection(self, mesh):
-        if isinstance(mesh, SisypheMeshCollection):
-            self._mesh = mesh
-        else: raise TypeError('parameter type {} is not SisypheMeshCollection'.format(type(mesh)))
-
-    def hasMesh(self):
-        return not self._mesh.isEmpty()
-
-    def getNumberOfMeshes(self):
-        return len(self._mesh)
-
-    def addMesh(self, mesh):
-        if isinstance(mesh, SisypheMesh):
-            if mesh.getReferenceID() == self._volume.getID():
-                if mesh not in self._mesh:
-                    self._mesh.append(mesh)
-                    self._renderer.AddViewProp(mesh.getActor())
-                    self.updateRender()
-            else: raise ValueError('mesh ID {} is different from the volume ID'.format(mesh.getReferenceID()))
-        else: raise TypeError('parameter type {} is not SisypheMesh'.format(type(mesh)))
-
-    def updateMeshes(self):
-        c = self._renderer.GetActors()
-        for mesh in self._mesh:
-            if c.IsItemPresent(mesh.getActor()) == 0:
-                self._renderer.AddViewProp(mesh.getActor())
-                self.updateRender()
-
-    def removeMesh(self, mesh):
-        if isinstance(mesh, SisypheMesh):
-            if mesh in self._mesh:
-                if mesh in self._mesh: self._mesh.remove(mesh)
-                self._renderer.RemoveActor(mesh.getActor())
-        else: raise TypeError('parameter type {} is not SisypheMesh'.format(type(mesh)))
-
-    def removeAllMeshes(self):
-        for mesh in self._mesh:
-            self._renderer.RemoveActor(mesh.getActor())
-        self._mesh.clear()
-
-    def setCursorWorldPosition(self, x, y, z, signal=True):
-        x, y, z = self._getRoundedCoordinate([x, y, z])
-        self._cursor.SetPosition(x, y, z)
-        sx, sy, sz = self._volume.getSpacing()
-        # Update slice position
-        self._slice0.GetMapper().SetSliceNumber(int(z / sz))
-        self._slice1.GetMapper().SetSliceNumber(int(y / sy))
-        self._slice2.GetMapper().SetSliceNumber(int(x / sx))
-        # Update cropping planes
-        fx, fy, fz = self._volume.getFieldOfView()
-        mapper = self._texture.GetMapper()
-        mapper.SetCroppingRegionPlanes(x, fx, y, fy, z, fz)
-        self._renderwindow.Render()
-        if self.isSynchronised() and signal: self.CursorPositionChanged.emit(self, x, y, z)
 
     def setCameraToTop(self):
         camera = self._renderer.GetActiveCamera()
@@ -742,6 +754,7 @@ class VolumeViewWidget(AbstractViewWidget):
             c = vtkWindowToImageFilter()
             c.SetInput(self._renderwindow)
             r = vtkImageExportToArray()
+            # noinspection PyArgumentList
             r.SetInputConnection(c.GetOutputPort())
             cap = r.GetArray()
             d, h, w, ch = cap.shape
@@ -756,8 +769,9 @@ class VolumeViewWidget(AbstractViewWidget):
                                            filter='BMP (*.bmp);;JPG (*.jpg);;PNG (*.png);;TIFF (*.tiff)',
                                            initialFilter='JPG (*.jpg)')[0]
         if name != '':
+            chdir(dirname(name))
             campos = ['front', 'left', 'top', 'back', 'right', 'bottom']
-            wait = DialogWait(title, title, progress=False, parent=self)
+            wait = DialogWait(title, title, progress=False)
             wait.open()
             imglist = list()
             for pos in campos:
@@ -768,6 +782,7 @@ class VolumeViewWidget(AbstractViewWidget):
                 c = vtkWindowToImageFilter()
                 c.SetInput(self._renderwindow)
                 r = vtkImageExportToArray()
+                # noinspection PyArgumentList
                 r.SetInputConnection(c.GetOutputPort())
                 cap = r.GetArray()
                 cap = flip(cap.reshape(cap.shape[1:]), axis=0)
@@ -778,7 +793,7 @@ class VolumeViewWidget(AbstractViewWidget):
             wait.setInformationText('Save {} capture.'.format(basename(name)))
             try: imsave(name, cap)
             except Exception as err:
-                QMessageBox.warning(self, title, '{}'.format(err))
+                messageBox(self, title=title, text='{}'.format(err))
             finally:
                 wait.close()
 
@@ -797,7 +812,7 @@ class VolumeViewWidget(AbstractViewWidget):
                      '.png': vtkPNGWriter(), '.tiff': vtkTIFFWriter()}
                 w = w[ext]
                 campos = ['top', 'bottom', 'front', 'back', 'left', 'right']
-                wait = DialogWait(title, title, progress=False, parent=self)
+                wait = DialogWait(title, title, progress=False)
                 wait.open()
                 try:
                     for pos in campos:
@@ -810,13 +825,125 @@ class VolumeViewWidget(AbstractViewWidget):
                         c = vtkWindowToImageFilter()
                         c.SetInput(self._renderwindow)
                         # Save current camera position capture
+                        # noinspection PyArgumentList
                         w.SetInputConnection(c.GetOutputPort())
                         w.SetFileName(slicename)
                         w.Write()
                 except Exception as err:
-                    QMessageBox.warning(self, title, '{}'.format(err))
+                    messageBox(self, title=title, text='{}'.format(err))
                 finally:
                     wait.close()
+
+    # Public mesh methods
+
+    def getMeshCollection(self):
+        return self._mesh
+
+    def setMeshCollection(self, mesh):
+        if isinstance(mesh, SisypheMeshCollection): self._mesh = mesh
+        else: raise TypeError('parameter type {} is not SisypheMeshCollection'.format(type(mesh)))
+
+    def hasMesh(self):
+        return not self._mesh.isEmpty()
+
+    def getNumberOfMeshes(self):
+        return len(self._mesh)
+
+    def addMesh(self, mesh):
+        if isinstance(mesh, SisypheMesh):
+            if mesh.getReferenceID() == self._volume.getID():
+                if mesh not in self._mesh:
+                    self._action['showmesh'].setVisible(True)
+                    self._renderer.AddViewProp(mesh.getActor())
+                    self._renderwindow.Render()
+            else: raise ValueError('mesh ID {} is different from the volume ID'.format(mesh.getReferenceID()))
+        else: raise TypeError('parameter type {} is not SisypheMesh'.format(type(mesh)))
+
+    def removeMesh(self, mesh):
+        if isinstance(mesh, SisypheMesh):
+            if mesh in self._mesh:
+                # self._mesh.remove(mesh)
+                self._renderer.RemoveActor(mesh.getActor())
+                self._action['showmesh'].setVisible(not mesh.isEmpty())
+                self._renderwindow.Render()
+        else: raise TypeError('parameter type {} is not SisypheMesh'.format(type(mesh)))
+
+    def removeAllMeshes(self):
+        if self._mesh.count() > 0:
+            for mesh in self._mesh:
+                self._renderer.RemoveActor(mesh.getActor())
+                self._action['showmesh'].setVisible(False)
+            self._renderwindow.Render()
+
+    def setMeshOnSliceVisibility(self, v, signal=True):
+        self._action['showmesh'].setChecked(v)
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.MeshOnSliceVisibilityChanged.emit(self, v)
+
+    def getMeshOnSliceVisibility(self):
+        return self._action['showmesh'].isChecked()
+
+    # Public cursor methods
+
+    def getSphereCursorRadius(self):
+        # < Revision 03/04/2025
+        # self._sph.GetRadius()
+        return self._sph.GetRadius()
+        # Revision 03/04/2025 >
+
+    def setSphereCursorRadius(self, r: int = 0):
+        self._sph.SetRadius(r)
+        self._sph.Update()
+        self._cursorsph.GetMapper().Update()
+        if r == 0: self._cursorsph.SetVisibility(False)
+        else: self._cursorsph.SetVisibility(self._cursor.GetVisibility())
+        self.updateRender()
+
+    def getSphereCursorOpacity(self):
+        return int(self._cursorsph.GetProperty().GetOpacity() * 100)
+
+    def setSphereCursorOpacity(self, r: int = 0):
+        self._cursorsph.GetProperty().SetOpacity(r/100)
+        self.updateRender()
+
+    def setCursorWorldPosition(self, x, y, z, signal=True):
+        x, y, z = self._getRoundedCoordinate([x, y, z])
+        self._cursor.SetPosition(x, y, z)
+        self._cursorsph.SetPosition(x, y, z)
+        sx, sy, sz = self._volume.getSpacing()
+        # Update slice position
+        self._slice0.GetMapper().SetSliceNumber(int(z / sz))
+        self._slice1.GetMapper().SetSliceNumber(int(y / sy))
+        self._slice2.GetMapper().SetSliceNumber(int(x / sx))
+        # Update cropping planes
+        fx, fy, fz = self._volume.getFieldOfView()
+        mapper = self._texture.GetMapper()
+        mapper.SetCroppingRegionPlanes(x, fx, y, fy, z, fz)
+        self._renderwindow.Render()
+        if self.isSynchronised() and signal: self.CursorPositionChanged.emit(self, x, y, z)
+
+    def setCursorVisibility(self, v, signal=True):
+        if self._cursorsph is not None:
+            self._cursorsph.SetVisibility(v and (self._sph.GetRadius() > 0.0))
+        super().setCursorVisibility(v, signal)
+
+    def setLineColor(self, c, signal=True):
+        if self._cursorsph is not None:
+            self._cursorsph.GetProperty().SetColor(c[0], c[1], c[2])
+        super().setLineColor(c, signal)
+
+    def setLineWidth(self, v, signal=True):
+        if self._cursorsph is not None:
+            self._cursorsph.GetProperty().SetLineWidth(v)
+        super().setLineWidth(v, signal)
+
+    def setLineOpacity(self, v, signal=True):
+        if v > 0.5: v2 = 0.5
+        else: v2 = v
+        if self._cursorsph is not None:
+            self._cursorsph.GetProperty().SetOpacity(v2)
+        super().setLineOpacity(v, signal)
 
     # Public slices methods
 
@@ -1058,6 +1185,18 @@ class VolumeViewWidget(AbstractViewWidget):
         self._texture.GetMapper().SetCroppingRegionFlags(self._croptag)
         self.setCroppingOff()
 
+    # Public tract methods
+
+    def getTractCollection(self) -> SisypheTractCollection:
+        return self._tract
+
+    def setTractCollection(self, tracts: SisypheTractCollection) -> None:
+        self._tract = tracts
+        self._tract.setRenderer(self._renderer)
+
+    def hasTracts(self) -> bool:
+        return not self._tract.isEmpty()
+
     # Public openGL actor methods
 
     def hasSurfaceMesh(self):
@@ -1080,6 +1219,11 @@ class VolumeViewWidget(AbstractViewWidget):
         prop = self._getPickedActor()
         if prop:
             dialog = DialogMeshProperties()
+            if platform == 'win32':
+                import pywinstyles
+                cl = self.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(dialog, c)
             dialog.setProperties(prop.GetProperty())
             dialog.UpdateRender.connect(self._renderwindow.Render)
             dialog.show()
@@ -1100,6 +1244,22 @@ class VolumeViewWidget(AbstractViewWidget):
             if cname == 'vtkVolume': menu = self._texturepopup
             elif cname == 'vtkOpenGLActor': menu = self._meshpopup
             elif cname in ('vtkDistanceRepresentation3D', 'vtkAngleRepresentation3D'): menu = self._toolpopup
+            # < Revision 13/03/2025
+            # tools menu management
+            if cname in ('vtkDistanceRepresentation2D',
+                         'vtkBiDimensionalRepresentation2D',
+                         'vtkAngleRepresentation2D',
+                         'vtkBorderRepresentation',
+                         'vtkTextRepresentation',
+                         'vtkOpenGLBillboardTextActor3D',
+                         'vtkPointHandleRepresentation3D',
+                         'vtkLineRepresentation'):
+                # Show tool popup menu
+                r = (cname == 'vtkTextRepresentation')
+                self._action['edittext'].setVisible(r)
+                self._action['textprop'].setVisible(r)
+                menu = self._toolpopup
+            # Revision 13/03/2025 >
         menu.popup(p)
 
     def _onWheelForwardEvent(self,  obj, evt_name):
@@ -1108,6 +1268,14 @@ class VolumeViewWidget(AbstractViewWidget):
                 self.zoomOut()
             elif self._selectedSlice:
                 self.slicePlus()
+            elif self._slprop is not None:
+                # noinspection PyUnresolvedReferences
+                n = self._slprop.GetMapper().GetInput().GetPoints().GetNumberOfPoints()
+                self._slid += 2
+                if self._slid > n - 1: self._slid = 0
+                # noinspection PyUnresolvedReferences
+                p = self._slprop.GetMapper().GetInput().GetPoints().GetPoint(self._slid)
+                self.setCursorWorldPosition(p[0], p[1], p[2], True)
 
     def _onWheelBackwardEvent(self,  obj, evt_name):
         if self.hasVolume():
@@ -1115,6 +1283,15 @@ class VolumeViewWidget(AbstractViewWidget):
                 self.zoomIn()
             elif self._selectedSlice:
                 self.sliceMinus()
+            elif self._slprop is not None:
+                self._slid -= 2
+                if self._slid < 0:
+                    # noinspection PyUnresolvedReferences
+                    n = self._slprop.GetMapper().GetInput().GetPoints().GetNumberOfPoints()
+                    self._slid = n - 1
+                # noinspection PyUnresolvedReferences
+                p = self._slprop.GetMapper().GetInput().GetPoints().GetPoint(self._slid)
+                self.setCursorWorldPosition(p[0], p[1], p[2], True)
 
     def _onLeftPressEvent(self,  obj, evt_name):
         super()._onLeftPressEvent(obj, evt_name)
@@ -1141,19 +1318,23 @@ class VolumeViewWidget(AbstractViewWidget):
             picker = self._interactor.GetPicker()
             n = picker.Pick(x, y, 0, self._renderer)
             self._selectedSlice = 0
+            self._slprop = None
             if n:
                 prop = picker.GetViewProp()
-                cname = prop.GetClassName()
-                if cname == 'vtkImageSlice':
-                    if prop == self._slice0:
-                        self._selectedSlice = 1
-                    elif prop == self._slice1:
-                        self._selectedSlice = 2
-                    else:
-                        self._selectedSlice = 3
+                # cname = prop.GetClassName()
+                cname = prop.GetObjectName()
+                if cname == 'slice':  # 'vtkImageSlice':
+                    if prop == self._slice0: self._selectedSlice = 1
+                    elif prop == self._slice1: self._selectedSlice = 2
+                    else: self._selectedSlice = 3
                     if k == 'Control_L':
                         x, y, z = picker.GetPickPosition()
                         self.setCursorWorldPosition(x, y, z, True)
+                elif cname == 'streamline':
+                    self._slid = 0
+                    self._slprop = prop
+                    p = prop.GetMapper().GetInput().GetPoints().GetPoint(0)
+                    self.setCursorWorldPosition(p[0], p[1], p[2], True)
 
     def _onLeftReleaseEvent(self,  obj, evt_name):
         if self.hasVolume():
@@ -1174,7 +1355,7 @@ class VolumeViewWidget(AbstractViewWidget):
             interactorstyle = self._window.GetInteractorStyle()
             last = interactorstyle.GetLastPos()
             k = self._interactor.GetKeySym()
-            # Zoom, Control Key (Cmd key on mac)
+            # Zoom, Control Key (Cmd key on Mac)
             if k == 'Control_L' or self.getZoomFlag() is True:
                 if interactorstyle.GetButton() == 1:
                     # Zoom
@@ -1223,14 +1404,16 @@ class VolumeViewWidget(AbstractViewWidget):
                     dx = self._mousepos0[0] - last[0]
                     dy = self._mousepos0[1] - last[1]
                     d = camera.GetDistance()
-                    # to do: replace with atan2
-                    # anglex = degrees(atan2(d, dx)) * 5
-                    # angley = degrees(atan2(d, dy)) * 5
-                    anglex = degrees(atan(dx / d)) * 5
-                    angley = degrees(atan(dy / d)) * 5
+                    # < Revision 13/03/2025
+                    # anglex = degrees(atan(dx / d)) * 5
+                    # angley = degrees(atan(dy / d)) * 5
+                    anglex = degrees(atan2(dx, d)) * 5
+                    angley = degrees(atan2(dy, d)) * 5
+                    # Revision 13/03/2025 >
                     camera.Azimuth(anglex)
                     camera.Elevation(angley)
                     self._renderwindow.Render()
+                    # noinspection PyUnresolvedReferences
                     self.CameraChanged.emit(self)
 
     def _onKeyPressEvent(self,  obj, evt_name):
@@ -1253,29 +1436,3 @@ class VolumeViewWidget(AbstractViewWidget):
         if interactorstyle.GetButton() == 1:
             self.setCentralCrossVisibilityOff()
             self._renderwindow.SetCurrentCursor(VTK_CURSOR_ARROW)
-
-
-if __name__ == '__main__':
-
-    from sys import argv, exit
-    from PyQt5.QtWidgets import QWidget, QHBoxLayout, QApplication
-
-    app = QApplication(argv)
-    main = QWidget()
-    print('Test volumeViewWidget')
-    filename = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/3D.nii'
-    img = SisypheVolume()
-    img.identity.setLastname('lastname')
-    img.identity.setFirstname('firstname')
-    img.identity.setDateOfBirthday('2000-01-01')
-    img.acquisition.setSequence('3D T1')
-    img.loadFromNIFTI(filename)
-    view = VolumeViewWidget()
-    view.setVolume(img)
-    layout = QHBoxLayout(main)
-    layout.addWidget(view)
-    layout.setSpacing(0)
-    layout.setContentsMargins(0, 0, 0, 0)
-    main.show()
-    main.activateWindow()
-    exit(app.exec_())

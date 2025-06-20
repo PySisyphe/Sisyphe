@@ -1,19 +1,21 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Homepage link                                               Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
-        python-docx     https://python-docx.readthedocs.io/en/latest/index.html     Word document management
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - python-docx, Word document management, https://python-docx.readthedocs.io/en/latest/index.html
 """
 
 from os import getcwd
+from os import chdir
 from os import remove
+
 from os.path import join
 from os.path import exists
 from os.path import basename
 from os.path import dirname
 from os.path import splitext
+from os.path import abspath
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QPoint
@@ -36,7 +38,7 @@ from PyQt5.QtWidgets import QTableWidget
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtPrintSupport import QPrinter
 
 from docx import Document
@@ -44,79 +46,57 @@ from docx.shared import Cm
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 from Sisyphe.core.sisypheConstants import getBitmapExt
+from Sisyphe.widgets.basicWidgets import messageBox
+from Sisyphe.widgets.basicWidgets import LabeledComboBox
 
 """
-    Class
+Class hierarchy
+~~~~~~~~~~~~~~~
     
-        ScreenshotsGridWidget
+    - QWidget -> ScreenshotsGridWidget
 """
 
 
 class ScreenshotsGridWidget(QWidget):
     """
-        ScreenshotsGridWidget
+    ScreenshotsGridWidget
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Screenshots management.
+    Screenshots management.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> ScreenshotsGridWidget
+    QWidget -> ScreenshotsGridWidget
 
-        Private attribute
-
-            _rows           int             row count
-            _columns        int             column count
-            _selection      list(int, int)  row, column selection
-            _pixmaps        list(QPixmap)   list of QPixmap displayed in table
-            _orientation    int             0 = portrait or 1 = landscape
-            _table          QTableWidget
-            _popup          QMenu
-            _dragpos0       list(int, int)  Starting drag event, first mouse position
-
-        Public method
-
-            QMenu = getPopup()
-            setRows(int)
-            setColumns(int)
-            setGridSize(int, int)
-            int = getRows()
-            int = getColumns()
-            setOrientation(int)
-            setOrientationToPortrait()
-            setOrientationToLandscape()
-            int = getOrientation(bool)
-            bool = isPortraitOrientation()
-            bool = isLandscapeOrientation()
-            setSelection(int, int)
-            int, int = getSelection()
-            copyImageToCellFromIndex(int, int, str or QPixmap)
-            copyImageToCellFromMouse(int, int, str or QPixmap)
-            copyToClipboard()
-            cutToClipboard()
-            pasteFromClipboard()
-            pasteFromDisk()
-            paste()
-            delete(int, int)
-            deleteSelection()
-            clearAll()
-            str = createHtml(int)
-            saveToHtml(str, int)
-            saveToPdf(str, int)
-            saveToDocx(str, int)
-            saveToBitmap(str, int)
-            save(str, int)
-
-            inherited QWidget
+    Creation: 10/05/2022
+    Last revision: 25/11/2024
     """
 
     _ROWS = 5
     _COLS = 5
     _PORTRAIT = 0
     _LANDSCAPE = 1
+    _BITMAP = ('bmp', 'gif', 'jpeg', 'jpg', 'pbm', 'pgm',
+               'png', 'ppm', 'svg', 'svgz', 'tga', 'tif',
+               'tiff', 'wbmp', 'webp', 'xbm', 'xpm')
 
     # Special methods
+
+    """
+    Private attribute
+
+    _rows           int, row count
+    _columns        int, column count
+    _selection      list[int, int], row, column selection
+    _pixmaps        list[QPixmap | None], list of QPixmap displayed in table
+    _orientation    int, 0 = portrait or 1 = landscape
+    _table          QTableWidget
+    _popup          QMenu
+    _dragpos0       list[int, int], starting drag event, first mouse position
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -124,29 +104,37 @@ class ScreenshotsGridWidget(QWidget):
         self._rows = self._ROWS
         self._columns = self._COLS
         self._selection = [0, 0]
-        self._pixmaps = list()
+        self._pixmaps: list[QPixmap | None] = list()
         self._orientation = self._PORTRAIT
         self._dragpos0 = None
+        self._background = 0
 
         # Init QTableWidget
 
         self._table = QTableWidget()
         self._table.setRowCount(self._ROWS)
         self._table.setColumnCount(self._COLS)
+        self._table.verticalHeader().setVisible(False)
+        self._table.horizontalHeader().setVisible(False)
+        self._table.horizontalScrollBar().setVisible(False)
+        self._table.verticalScrollBar().setVisible(False)
+        self._table.setShowGrid(False)
+        # < Revision 26/04/2025
+        # self._table.setEnabled(False)
+        self._table.setAttribute(Qt.WA_TransparentForMouseEvents)
+        # Revision 26/04/2025 >
         for i in range(0, self._ROWS):
             for j in range(0, self._COLS):
                 self._pixmaps.append(None)
                 w = QLabel()
                 w.setFrameShape(QLabel.Box)
                 w.setScaledContents(False)
+                # noinspection PyTypeChecker
                 w.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-                if i == 0 and j == 0: w.setStyleSheet('background-color: black; border-width: 5px; color: white;')
-                else: w.setStyleSheet('background-color: black; border: none; color: white;')
+                w.setEnabled(True)
+                if i == 0 and j == 0: w.setStyleSheet('background-color: black; border-width: 5px; border-color: rgb(0, 125, 255); margin: 0px;')
+                else: w.setStyleSheet('background-color: black; border: none; border-color: rgb(0, 125, 255); margin: 0px;')
                 self._table.setCellWidget(i, j, w)
-        self._table.verticalHeader().setVisible(False)
-        self._table.horizontalHeader().setVisible(False)
-        self._table.setShowGrid(False)
-        self._table.setEnabled(False)
 
         self._boxtable = QWidget()
         lyout = QVBoxLayout()
@@ -157,18 +145,29 @@ class ScreenshotsGridWidget(QWidget):
         # Init QMenu
 
         self._popup = QMenu()
+        # noinspection PyTypeChecker
+        self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         a = self._popup.addAction('Copy')
+        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.copyToClipboard)
         a = self._popup.addAction('Cut')
+        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.cutToClipboard)
         a = self._popup.addAction('Paste')
+        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.pasteFromClipboard)
         self._popup.addSeparator()
         a = self._popup.addAction('Add bitmap(s)...')
+        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.pasteFromDisk)
         a = self._popup.addAction('Clear selected')
+        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.deleteSelection)
         a = self._popup.addAction('Clear all')
+        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.clearAll)
         self._popup.addSeparator()
         submenu = self._popup.addMenu('Orientation')
@@ -178,10 +177,12 @@ class ScreenshotsGridWidget(QWidget):
         a.setCheckable(True)
         a.setActionGroup(group)
         a.setChecked(True)
+        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.setOrientationToPortrait)
         a = submenu.addAction('Landscape')
         a.setCheckable(True)
         a.setActionGroup(group)
+        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.setOrientationToLandscape)
         submenu = self._popup.addMenu('Row count')
         group = QActionGroup(self)
@@ -191,6 +192,7 @@ class ScreenshotsGridWidget(QWidget):
             a.setCheckable(True)
             a.setActionGroup(group)
             if i == 5: a.setChecked(True)
+            # noinspection PyUnresolvedReferences
             a.triggered.connect(lambda dummy, v=i: self.setRows(v))
         submenu = self._popup.addMenu('Column count')
         group = QActionGroup(self)
@@ -200,11 +202,14 @@ class ScreenshotsGridWidget(QWidget):
             a.setCheckable(True)
             a.setActionGroup(group)
             if i == 5: a.setChecked(True)
+            # noinspection PyUnresolvedReferences
             a.triggered.connect(lambda dummy, v=i: self.setCols(v))
         self._popup.addSeparator()
         a = self._popup.addAction('Save bitmap...')
+        # noinspection PyUnresolvedReferences
         a.triggered.connect(lambda dummy: self.saveToBitmap())
         a = self._popup.addAction('Save...')
+        # noinspection PyUnresolvedReferences
         a.triggered.connect(lambda dummy: self.save())
 
         # Init buttons
@@ -219,42 +224,63 @@ class ScreenshotsGridWidget(QWidget):
         w.addItem('Portrait')
         w.addItem('Landscape')
         w.setCurrentIndex(0)
+        # noinspection PyUnresolvedReferences
         w.currentIndexChanged.connect(self.setOrientation)
         btlyout.addWidget(w)
+        self._backg = LabeledComboBox(title='Background', fontsize=14)
+        self._backg.addItem('black')
+        self._backg.addItem('white')
+        self._backg.setCurrentIndex(0)
+        # noinspection PyUnresolvedReferences
+        self._backg.currentIndexChanged.connect(self._backgroundChanged)
+        btlyout.addWidget(self._backg)
         w = QLabel('Rows')
         btlyout.addWidget(w)
         w = QSpinBox()
         w.setToolTip('Rows count.')
-        w.setRange(0, 5)
+        # < Revision 13/12/2024
+        # w.setRange(0, 5)
+        w.setRange(1, 5)
+        # Revision 13/12/2024 >
         w.setValue(5)
+        # noinspection PyUnresolvedReferences
         w.valueChanged.connect(self.setRows)
         btlyout.addWidget(w)
         w = QLabel('Columns')
         btlyout.addWidget(w)
         w = QSpinBox()
         w.setToolTip('Columns count.')
-        w.setRange(0, 5)
+        # < Revision 13/12/2024
+        # w.setRange(0, 5)
+        w.setRange(1, 5)
+        # Revision 13/12/2024 >
         w.setValue(5)
+        # noinspection PyUnresolvedReferences
         w.valueChanged.connect(self.setCols)
         btlyout.addWidget(w)
         w = QPushButton('Add...')
         w.setToolTip('Add bitmap from disk.')
+        # noinspection PyUnresolvedReferences
         w.clicked.connect(self.pasteFromDisk)
         btlyout.addWidget(w)
         w = QPushButton('Clear')
         w.setToolTip('Clear selected screenshot.')
+        # noinspection PyUnresolvedReferences
         w.clicked.connect(self.deleteSelection)
         btlyout.addWidget(w)
         w = QPushButton('Clear all')
         w.setToolTip('Clear screenshots grid.')
+        # noinspection PyUnresolvedReferences
         w.clicked.connect(self.clearAll)
         btlyout.addWidget(w)
         w = QPushButton('Save...')
         w.setToolTip('Save screenshots grid to word document, html or pdf.')
+        # noinspection PyUnresolvedReferences
         w.clicked.connect(lambda dummy: self.save())
         btlyout.addWidget(w)
         w = QPushButton('Save bitmap...')
         w.setToolTip('Save screenshots grid to bitmap.')
+        # noinspection PyUnresolvedReferences
         w.clicked.connect(lambda dummy: self.saveToBitmap())
         btlyout.addWidget(w)
 
@@ -310,6 +336,7 @@ class ScreenshotsGridWidget(QWidget):
                 img = self._pixmaps[idx]
                 if img is not None:
                     widget = self._table.cellWidget(i, j)
+                    # noinspection PyTypeChecker
                     widget.setPixmap(img.scaled(widget.width(), widget.height(), Qt.KeepAspectRatio))
 
     def _updateCells(self, rows, cols):
@@ -398,7 +425,33 @@ class ScreenshotsGridWidget(QWidget):
         p = self.mapToGlobal(p)
         return self._table.mapFromGlobal(p)
 
+    def _backgroundChanged(self, index: int):
+        if index == 0: self.setBlackBackground()
+        else: self.setWhiteBackground()
+
     # Public methods
+
+    # < Revision 13/12/2024
+    def setWhiteBackground(self):
+        self._background = 1
+        si, sj = self.getSelection()
+        for i in range(0, self._ROWS):
+            for j in range(0, self._COLS):
+                w = self._table.cellWidget(i, j)
+                if i == si and j == sj: w.setStyleSheet('background-color: white; border-width: 5px; border-color: rgb(0, 125, 255); margin: 0px;')
+                else: w.setStyleSheet('background-color: white; border: none; border-color: rgb(0, 125, 255); margin: 0px;')
+    # Revision 13/12/2024 >
+
+    # < Revision 13/12/2024
+    def setBlackBackground(self):
+        self._background = 0
+        si, sj = self.getSelection()
+        for i in range(0, self._ROWS):
+            for j in range(0, self._COLS):
+                w = self._table.cellWidget(i, j)
+                if i == si and j == sj: w.setStyleSheet('background-color: black; border-width: 5px; border-color: rgb(0, 125, 255); margin: 0px;')
+                else: w.setStyleSheet('background-color: black; border: none; border-color: rgb(0, 125, 255); margin: 0px;')
+    # Revision 13/12/2024 >
 
     def getPopup(self):
         return self._popup
@@ -423,6 +476,7 @@ class ScreenshotsGridWidget(QWidget):
             else: raise ValueError('parameter value must be less than 5.')
         else: raise TypeError('parameter type {} is not int.'.format(type(cols)))
 
+    # noinspection PyUnusedLocal
     def setGridSize(self, rows, cols):
         if isinstance(rows, int):
             if rows < 6:
@@ -431,6 +485,7 @@ class ScreenshotsGridWidget(QWidget):
                     else: self._table.hideRow(i)
             else: raise ValueError('parameter value must be less than 5.')
         else: raise TypeError('parameter type {} is not int.'.format(type(rows)))
+        # noinspection PyUnreachableCode
         if isinstance(cols, int):
             if cols < 6:
                 for i in range(0, self._COLS-1):
@@ -438,6 +493,7 @@ class ScreenshotsGridWidget(QWidget):
                     else: self._table.hideColumn(i)
             else: raise ValueError('parameter value must be less than 5.')
         else: raise TypeError('parameter type {} is not int.'.format(type(cols)))
+        # noinspection PyUnreachableCode
         self._updateCells(rows, cols)
 
     def getRows(self):
@@ -477,10 +533,12 @@ class ScreenshotsGridWidget(QWidget):
             if 0 <= r < self._rows and 0 <= c < self._columns:
                 rs, cs = self.getSelection()
                 w = self._table.cellWidget(rs, cs)
-                w.setStyleSheet('background-color: black; border: none; color: white;')
+                if self._background == 0: w.setStyleSheet('background-color: black; border: none; border-color: rgb(0, 125, 255); margin: 0px;')
+                else: w.setStyleSheet('background-color: white; border: none; border-color: rgb(0, 125, 255); margin: 0px;')
                 self._selection = [r, c]
                 w = self._table.cellWidget(r, c)
-                w.setStyleSheet('background-color: black; border-width: 5px; color: white;')
+                if self._background == 0: w.setStyleSheet('background-color: black; border-width: 5px; border-color: rgb(0, 125, 255); margin: 0px;')
+                else: w.setStyleSheet('background-color: white; border-width: 5px; border-color: rgb(0, 125, 255); margin: 0px;')
             else: raise IndexError('Index is out of range.')
         else: raise TypeError('Parameters type is not int.')
 
@@ -537,9 +595,12 @@ class ScreenshotsGridWidget(QWidget):
     def pasteFromDisk(self):
         filt = ['*.' + f.data().decode() for f in QImageReader.supportedImageFormats()]
         filt = ' '.join(filt)
-        filenames = QFileDialog.getOpenFileNames(self, 'Select bitmap image', getcwd(), 'Bitmap ({})'.format(filt))
-        filenames = filenames[0]
+        filenames = QFileDialog.getOpenFileNames(self,
+                                                 'Select bitmap image',
+                                                 getcwd(),
+                                                 'Bitmap ({})'.format(filt))[0]
         if len(filenames) > 0:
+            chdir(dirname(filenames[0]))
             for filename in filenames:
                 img = QPixmap(filename)
                 self._setPixmapToSelection(img)
@@ -584,6 +645,7 @@ class ScreenshotsGridWidget(QWidget):
             for i in range(0, len(self._pixmaps)):
                 if self._pixmaps[i] is not None:
                     r, c = self._getRowColumn(i)
+                    # noinspection PyTypeChecker
                     img = self._pixmaps[i].scaled(wi, hi, Qt.KeepAspectRatio)
                     filename = join(filepath, 'P{}{}.png'.format(r, c))
                     img.save(filename)
@@ -591,7 +653,9 @@ class ScreenshotsGridWidget(QWidget):
             html = '<!DOCTYPE html>\n'
             html += '<html>\n'
             html += '\t<body>\n'
-            html += '\t\t<table style=\"background-color: black; border: none; empty-cell: show;\">\n'
+            if self._backg.currentIndex() == 0:
+                html += '\t\t<table style=\"background-color: black; border: none; empty-cell: show;\">\n'
+            else: html += '\t\t<table style=\"background-color: white; border: none; empty-cell: show;\">\n'
             for i in range(0, self._rows):
                 html += '\t\t\t<tr>\n'
                 for j in range(0, self._columns):
@@ -610,26 +674,31 @@ class ScreenshotsGridWidget(QWidget):
 
     def saveToHtml(self, filename=None, dpi=100):
         if filename is None:
-            filename = QFileDialog.getSaveFileName(self, 'Save screenshots grid to Html', getcwd(), 'Html (*.html)')
+            filename = QFileDialog.getSaveFileName(self, 'Save screenshots to Html', getcwd(), 'Html (*.html)')
             filename = filename[0]
-        if filename is not None:
+        if filename != '':
+            # noinspection PyTypeChecker
             ext = splitext(filename)[1]
-            if ext != '.html': filename = join(basename(filename), '.html')
+            if ext != '.html':
+                # noinspection PyTypeChecker
+                filename = join(basename(filename), '.html')
             html = self.createHtml(dirname(filename), dpi)
             f = open(filename, "w+")
             try: f.write(html)
-            except Exception as err: QMessageBox.warning(self, 'Save screenshot grid to html.',
-                                                         'error : {}'.format(err))
+            except Exception as err:
+                messageBox(self, 'Save screenshot to html.', text='error : {}'.format(err))
             finally: f.close()
 
     def saveToPdf(self,  filename=None, dpi=100):
         if filename is None:
-            filename = QFileDialog.getSaveFileName(self, 'Save screenshots grid to Pdf', getcwd(), 'Pdf (*.pdf)')
+            filename = QFileDialog.getSaveFileName(self, 'Save screenshots to Pdf', getcwd(), 'Pdf (*.pdf)')
             filename = filename[0]
-        if filename is not None:
+        if filename != '':
+            # noinspection PyTypeChecker
             ext = splitext(filename)[1]
-            if ext != '.pdf': filename = join(basename(filename), '.pdf')
-            html = self.createHtml(dirname(filename), dpi)
+            if ext != '.pdf':
+                # noinspection PyTypeChecker
+                filename = join(basename(filename), '.pdf')
             try:
                 printer = QPrinter()
                 if self._orientation == 0: orient = QPrinter.Portrait
@@ -647,28 +716,34 @@ class ScreenshotsGridWidget(QWidget):
                 wi = wp // self._columns
                 hi = hp // self._rows
                 # Copy images
-                painter.fillRect(50, 50, wp, hp, Qt.black)
+                if self._backg.currentIndex() == 0:
+                    painter.fillRect(50, 50, wp, hp, Qt.black)
                 for i in range(0, self._rows):
                     for j in range(0, self._columns):
                         idx = self._getIndex(i, j)
                         x0 = 50 + j * wi
                         y0 = 50 + i * hi
-                        painter.fillRect(x0, y0, wi, hi, Qt.black)
+                        if self._backg.currentIndex() == 0:
+                            painter.fillRect(x0, y0, wi, hi, Qt.black)
                         if self._pixmaps[idx] is not None:
+                            # noinspection PyTypeChecker
                             img = self._pixmaps[idx].scaled(wi, hi, Qt.KeepAspectRatio)
                             x = x0 + int((wi - img.width()) / 2)
                             y = y0 + int((hi - img.height()) / 2)
                             painter.drawPixmap(x, y, img)
                 painter.end()
-            except Exception as err: QMessageBox.warning(self, 'Save screenshot grid to pdf.',
-                                                         'error : {}'.format(err))
+            except Exception as err:
+                messageBox(self, 'Save screenshots to pdf.', text='error : {}'.format(err))
 
     def saveToDocx(self,  filename=None, dpi=60):
         if filename is None:
-            filename = QFileDialog.getSaveFileName(self, 'Save screenshots grid to Word document',
+            filename = QFileDialog.getSaveFileName(self, 'Save screenshots to Word document',
                                                    getcwd(), 'Word (*.docx)')
             filename = filename[0]
-        if filename is not None:
+        if filename != '':
+            # noinspection PyTypeChecker
+            chdir(dirname(filename))
+            # noinspection PyTypeChecker
             tempfile = join(dirname(filename), 'temp.png')
             self.saveToBitmap(tempfile, dpi)
             # Generate docx
@@ -681,9 +756,11 @@ class ScreenshotsGridWidget(QWidget):
                 section.right_margin = Cm(1.0)
             docx.add_picture(tempfile)
             docx.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-            try: docx.save(filename)
-            except Exception as err: QMessageBox.warning(self, 'Save screenshot grid to word document.',
-                                                         'error : {}'.format(err))
+            try:
+                # noinspection PyTypeChecker
+                docx.save(filename)
+            except Exception as err:
+                messageBox(self, 'Save screenshots to word document.', text='error : {}'.format(err))
             # Delete temporary bitmap
             if exists(tempfile): remove(tempfile)
 
@@ -697,11 +774,13 @@ class ScreenshotsGridWidget(QWidget):
         # Copy images
         page = QPixmap(wp, hp)
         painter = QPainter(page)
-        painter.fillRect(0, 0, wp, hp, Qt.black)
+        if self._backg.currentIndex() == 0:
+            painter.fillRect(0, 0, wp, hp, Qt.black)
         for i in range(0, self._rows):
             for j in range(0, self._columns):
                 idx = self._getIndex(i, j)
                 if self._pixmaps[idx] is not None:
+                    # noinspection PyTypeChecker
                     img = self._pixmaps[idx].scaled(wi, hi, Qt.KeepAspectRatio)
                     x = j * wi + int((wi - img.width()) / 2)
                     y = i * hi + int((hi - img.height()) / 2)
@@ -711,22 +790,28 @@ class ScreenshotsGridWidget(QWidget):
         if filename is None:
             filt = 'BMP (*.bmp);;GIF (*.gif);;JPEG (*.jpeg);;JPG (*.jpg);;' \
                    'PNG (*.png);;TIF (*.tif);;TIFF (*.tiff);;WEBP (*.webp)'
-            filename = QFileDialog.getSaveFileName(self, 'Save screenshot grid to bitmap', getcwd(),
+            filename = QFileDialog.getSaveFileName(self, 'Save screenshots to bitmap', getcwd(),
                                                    filt, 'PNG (*.png)')
             filename = filename[0]
-        if filename is not None:
+        if filename != '':
+            # noinspection PyTypeChecker
+            chdir(dirname(filename))
+            # noinspection PyTypeChecker
             ext = splitext(filename)[1]
             if ext in getBitmapExt():
                 try: page.save(filename)
-                except Exception as err: QMessageBox.warning(self, 'Save screenshot grid to bitmap',
-                                                             'error : {}'.format(err))
+                except Exception as err:
+                    messageBox(self, 'Save screenshots to bitmap', text='error : {}'.format(err))
 
     def save(self, filename=None, dpi=100):
         if filename is None:
-            filename = QFileDialog.getSaveFileName(self, 'Save screenshots grid', getcwd(),
+            filename = QFileDialog.getSaveFileName(self, 'Save screenshots', getcwd(),
                                                    'Html (*.html);;Pdf (*.pdf);;Word (*.docx)', 'Pdf (*.pdf)')
             filename = filename[0]
-        if filename is not None:
+        if filename != '':
+            # noinspection PyTypeChecker
+            chdir(dirname(filename))
+            # noinspection PyTypeChecker
             ext = splitext(filename)[1]
             filt = ['.html', '.pdf', '.docx']
             if ext in filt:
@@ -767,10 +852,11 @@ class ScreenshotsGridWidget(QWidget):
     def dropEvent(self, event):
         img = None
         if event.mimeData().hasText():
-            filename = event.mimeData().text()[7:]
-            ext = splitext(filename)[1]
-            if ext[1:] in QImageReader.supportedImageFormats():
-                img = QPixmap(filename)
+            txt = event.mimeData().text()
+            filename = abspath('/'.join([v for v in txt.split('/') if v not in ('file:', '')]))
+            if exists(filename):
+                ext = splitext(filename)[1]
+                if ext[1:] in self._BITMAP: img = QPixmap(filename)
         elif event.mimeData().hasImage():
             r, c = self.getSelection()
             idx = self._table.indexAt(self._mapToTableViewport(event.pos()))
@@ -818,18 +904,3 @@ class ScreenshotsGridWidget(QWidget):
                     drag.setHotSpot(QPoint(icn.width() // 2, icn.height() // 2))
                     drag.exec(Qt.MoveAction)
                     self._dragpos0 = None
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv
-    from PyQt5.QtWidgets import QApplication
-
-    app = QApplication(argv)
-    main = ScreenshotsGridWidget()
-    main.show()
-    app.exec_()

@@ -1,12 +1,15 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Homepage link                                               Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from sys import platform
+
 from os import getcwd
+from os import chdir
+
 from os.path import join
 from os.path import exists
 from os.path import basename
@@ -23,10 +26,10 @@ from time import strftime
 
 from glob import glob
 
+import subprocess
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QPoint
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QDateEdit
@@ -54,45 +57,25 @@ from Sisyphe.core.sisypheDatabase import SisypheDatabase
 from Sisyphe.gui.dialogPatient import DialogPatient
 from Sisyphe.gui.dialogWait import DialogWait
 from Sisyphe.gui.dialogVolumeAttributes import DialogVolumeAttributes
+from Sisyphe.widgets.basicWidgets import messageBox
 
 """
-    Class
+Class hierarchy
+~~~~~~~~~~~~~~~
     
-        DatabaseWidget
+    - QWidget -> DatabaseWidget
 """
 
 
 class DatabaseWidget(QWidget):
     """
-        DatabaseWidget
+    DatabaseWidget
 
-        Inheritance
+    Inheritance
 
-            QWidget -> DatabaseWidget
+    QWidget -> DatabaseWidget
 
-        Private attributes
-
-            _db             SisypheDatabase
-            _patient        QTreeWidget, patient list
-            _files          QTreeWidget, file list for current patient
-            _action         dict() of QAction
-            _popup          QMenu, menu of the widget, displayed in menu bar
-            _popuppatients  QMenu, popup menu for patient list
-            _popupfiles     QMenu, popup menu for file list
-            _mainwindow     QMainWindow, PySisyphe main window
-            + other GUI attributes (button, edit...) not detailed
-
-        Class methods
-
-            QMEnu = getPopup()
-            addFiles(list)                      List of str (filenames)
-            addVolumes(list)                    List of SisypheVolume
-            str = getDefaultIconDirectory()
-            SisypheIdentity = getIdentityFromItem(QTreeWidgetItem)
-
-        Public methods
-
-            inherited QWidget methods
+    Last revision: 28/05/2025
     """
 
     # Class methods
@@ -114,6 +97,20 @@ class DatabaseWidget(QWidget):
 
     # Special method
 
+    """
+    Private attributes
+
+    _db             SisypheDatabase
+    _patient        QTreeWidget, patient list
+    _files          QTreeWidget, file list for current patient
+    _action         dict() of QAction
+    _popup          QMenu, menu of the widget, displayed in menu bar
+    _popuppatients  QMenu, popup menu for patient list
+    _popupfiles     QMenu, popup menu for file list
+    _mainwindow     QMainWindow, PySisyphe main window
+    + other GUI attributes (button, edit...) not detailed
+    """
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -134,8 +131,10 @@ class DatabaseWidget(QWidget):
         self._checklastname.setText('Lastname')
         self._checklastname.setChecked(False)
         self._checklastname.setToolTip('Check box to activate lastname filter edition,\n'
-                                       'uncheck box to inactivate filter.\n')
+                                       'uncheck box to inactivate filter.')
+        # noinspection PyUnresolvedReferences
         self._checklastname.stateChanged.connect(lambda: self._fltlastname.setEnabled(self._checklastname.isChecked()))
+        # noinspection PyUnresolvedReferences
         self._checklastname.stateChanged.connect(lambda: self._fltlastname.setText(''))
         self._fltlastname = QLineEdit()
         self._fltlastname.setEnabled(False)
@@ -143,14 +142,17 @@ class DatabaseWidget(QWidget):
                                      'check box on the left to activate lastname filter edition,\n'
                                      'uncheck box on the left to inactivate filter,\n'
                                      'special characters * and ? can be used in filter.')
+        # noinspection PyUnresolvedReferences
         self._fltlastname.returnPressed.connect(self._update)
         self._checkfirstname = QCheckBox()
         self._checkfirstname.setText('Firstname')
         self._checkfirstname.setChecked(False)
         self._checkfirstname.setToolTip('Check box to activate filter edition,\n'
                                         'uncheck box to inactivate filter.')
+        # noinspection PyUnresolvedReferences
         self._checkfirstname.stateChanged.connect(
             lambda: self._fltfirstname.setEnabled(self._checkfirstname.isChecked()))
+        # noinspection PyUnresolvedReferences
         self._checkfirstname.stateChanged.connect(lambda: self._fltfirstname.setText(''))
         self._fltfirstname = QLineEdit()
         self._fltfirstname.setEnabled(False)
@@ -158,12 +160,14 @@ class DatabaseWidget(QWidget):
                                       'check box on the left to activate firstname filter edition,\n'
                                       'uncheck box on the left to inactivate filter,\n'
                                       'special characters * and ? can be used in filter.')
+        # noinspection PyUnresolvedReferences
         self._fltfirstname.returnPressed.connect(self._update)
         self._checkdate = QCheckBox()
         self._checkdate.setText('Date of birthday')
         self._checkdate.setChecked(False)
         self._checkdate.setToolTip('Check box to activate date of birth filter,\n'
                                    'uncheck box to inactivate filter.')
+        # noinspection PyUnresolvedReferences
         self._checkdate.stateChanged.connect(lambda: self._fltdob.setEnabled(self._checkdate.isChecked()))
         self._fltdob = QDateEdit()
         self._fltdob.setCalendarPopup(True)
@@ -171,9 +175,11 @@ class DatabaseWidget(QWidget):
         self._fltdob.setToolTip('Date of birth filter,\n'
                                 'check box on the left to activate filter edition,\n'
                                 'uncheck box on the left to inactivate filter.')
-        self._search = QPushButton(QIcon(join(self.getDefaultIconDirectory(), 'zoom64.png')), 'Search')
-        self._search.setFixedSize(QSize(100, 32))
+        # self._search = QPushButton(QIcon(join(self.getDefaultIconDirectory(), 'zoom64.png')), 'Search')
+        self._search = QPushButton('Search')
+        # self._search.setFixedSize(QSize(100, 32))
         self._search.setToolTip('Search patient(s) with lastname,\nfirstname and date of birth filters.')
+        # noinspection PyUnresolvedReferences
         self._search.clicked.connect(self._update)
 
         layout = QHBoxLayout()
@@ -189,36 +195,48 @@ class DatabaseWidget(QWidget):
         layout.addStretch()
         self._layout.addLayout(layout)
 
-        font = self.font()
-        font.setPointSize(12)
         self._patients = QTreeWidget()
+        self._files = QTreeWidget()
+        # < Revision 07/03/2025
+        if platform == 'darwin':
+            font = self.font()
+            font.setPointSize(12)
+            self._patients.setFont(font)
+            self._files.setFont(font)
+        # Revision 07/03/2025 >
         self._patients.setMinimumWidth(300)
         self._patients.setHeaderLabels(['Lastname', 'Firstname', 'Date of birth'])
+        # noinspection PyTypeChecker
         self._patients.header().setSectionResizeMode(QHeaderView.ResizeToContents)
         self._patients.header().setSectionsClickable(True)
         self._patients.header().setSortIndicatorShown(True)
         self._patients.header().setStretchLastSection(False)
+        # noinspection PyUnresolvedReferences
         self._patients.header().sectionClicked.connect(self._sortIdentityByColumn)
         self._patients.setAlternatingRowColors(True)
         self._patients.invisibleRootItem()
-        self._patients.setFont(font)
         self._patients.setSelectionMode(QAbstractItemView.SingleSelection)
+        # noinspection PyUnresolvedReferences
         self._patients.itemSelectionChanged.connect(self._updateFileWidget)
         self._patients.setContextMenuPolicy(Qt.CustomContextMenu)
+        # noinspection PyUnresolvedReferences
         self._patients.customContextMenuRequested.connect(self._popupItemPatient)
-        self._files = QTreeWidget()
+
         self._files.setHeaderLabels(['Filename', 'ID', 'Size', 'Last modified', 'Creation'])
+        # noinspection PyTypeChecker
         self._files.header().setSectionResizeMode(QHeaderView.ResizeToContents)
         self._files.header().setSectionsClickable(True)
         self._files.header().setSortIndicatorShown(True)
         self._files.header().setStretchLastSection(False)
+        # noinspection PyUnresolvedReferences
         self._files.header().sectionClicked.connect(self._sortFilesByColumn)
         self._files.setAlternatingRowColors(True)
         self._files.invisibleRootItem()
-        self._files.setFont(font)
         self._files.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self._files.setContextMenuPolicy(Qt.CustomContextMenu)
+        # noinspection PyUnresolvedReferences
         self._files.customContextMenuRequested.connect(self._popupItemFile)
+        # noinspection PyUnresolvedReferences
         self._files.itemDoubleClicked.connect(self._doubleClicked)
 
         splitter = QSplitter()
@@ -237,12 +255,31 @@ class DatabaseWidget(QWidget):
         self._buttonAddVolume.setToolTip('Add a volume to selected patient.')
         self._buttonRemoveFile = QPushButton('Remove file')
         self._buttonRemoveFile.setToolTip('Remove selected volume from database.')
+        # < Revision 28/05/2025
+        # add open in file manager button
+        if platform == 'win32':
+            self._buttonFileManager = QPushButton('File Explorer')
+            self._buttonFileManager.setToolTip('Open current patient folder in File Explorer.')
+        elif platform == 'darwin':
+            self._buttonFileManager = QPushButton('Finder')
+            self._buttonFileManager.setToolTip('Open current patient folder in Finder.')
+            self._buttonFileManager.setToolTip('Remove selected volume from database.')
+        # Revision 28/05/2025 >
         self._buttonBackup = QPushButton('Database backup')
         self._buttonBackup.setToolTip('Backup database to a folder.')
+        # noinspection PyUnresolvedReferences
         self._buttonNewPatient.clicked.connect(lambda dummy: self._newPatient())
+        # noinspection PyUnresolvedReferences
         self._buttonRemovePatient.clicked.connect(self._removePatient)
+        # noinspection PyUnresolvedReferences
         self._buttonAddVolume.clicked.connect(lambda dummy: self.addFiles())
+        # noinspection PyUnresolvedReferences
         self._buttonRemoveFile.clicked.connect(self._removeFiles)
+        # < Revision 28/05/2025
+        # noinspection PyUnresolvedReferences
+        self._buttonFileManager.clicked.connect(self._openFileManager)
+        # Revision 28/05/20025 >
+        # noinspection PyUnresolvedReferences
         self._buttonBackup.clicked.connect(self._backup)
 
         layout = QHBoxLayout()
@@ -253,37 +290,60 @@ class DatabaseWidget(QWidget):
         layout.addWidget(self._buttonRemovePatient)
         layout.addWidget(self._buttonAddVolume)
         layout.addWidget(self._buttonRemoveFile)
+        layout.addWidget(self._buttonFileManager)
         layout.addWidget(self._buttonBackup)
         self._layout.addLayout(layout)
 
         # Popup menu
 
         self._popuppatients = QMenu()
+        # noinspection PyTypeChecker
+        self._popuppatients.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._popuppatients.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._popuppatients.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action = dict()
         self._action['newpat'] = QAction('New patient...', self)
         self._action['delpat'] = QAction('Remove patient', self)
         self._popuppatients.addAction(self._action['newpat'])
         self._popuppatients.addAction(self._action['delpat'])
+        # noinspection PyUnresolvedReferences
         self._action['newpat'].triggered.connect(lambda dummy: self._newPatient())
+        # noinspection PyUnresolvedReferences
         self._action['delpat'].triggered.connect(self._removePatient)
 
         self._popupfiles = QMenu()
+        # noinspection PyTypeChecker
+        self._popupfiles.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._popupfiles.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._popupfiles.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['open'] = QAction('Open volume', self)
         self._action['edit'] = QAction('Edit volume attributes...', self)
         self._action['delvol'] = QAction('Remove volume(s)', self)
         self._popupfiles.addAction(self._action['open'])
         self._popupfiles.addAction(self._action['edit'])
         self._popupfiles.addAction(self._action['delvol'])
+        # noinspection PyUnresolvedReferences
         self._action['open'].triggered.connect(self._open)
+        # noinspection PyUnresolvedReferences
         self._action['edit'].triggered.connect(lambda dummy: self._edit())
+        # noinspection PyUnresolvedReferences
         self._action['delvol'].triggered.connect(self._removeFiles)
 
         self._action['addvol'] = QAction('Add volume...', self)
-        self._action['backup'] = QAction('Backup database...', self)
+        self._action['backup'] = QAction('Backup...', self)
+        # noinspection PyUnresolvedReferences
         self._action['addvol'].triggered.connect(lambda dummy: self.addFiles())
+        # noinspection PyUnresolvedReferences
         self._action['backup'].triggered.connect(self._backup)
 
         self._popup = QMenu()
+        # noinspection PyTypeChecker
+        self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._popup.addAction(self._action['newpat'])
         self._popup.addAction(self._action['delpat'])
         self._popup.addSeparator()
@@ -303,8 +363,7 @@ class DatabaseWidget(QWidget):
         if isinstance(item, QTreeWidgetItem):
             patient = self._patients.selectedItems()[0]
             return '_'.join([patient.text(0), patient.text(1), patient.text(2)])
-        else:
-            raise TypeError('parameter type {} is not QTreeWidgetItem'.format(type(item)))
+        else: raise TypeError('parameter type {} is not QTreeWidgetItem'.format(type(item)))
 
     def _getFilenameFromItem(self, item):
         if isinstance(item, QTreeWidgetItem):
@@ -316,28 +375,37 @@ class DatabaseWidget(QWidget):
         if isinstance(c, int):
             order = self._patients.header().sortIndicatorOrder()
             self._patients.sortItems(c, order)
-        else:
-            raise TypeError('parameter type {} is not int.'.format(type(c)))
+        else: raise TypeError('parameter type {} is not int.'.format(type(c)))
 
     def _sortFilesByColumn(self, c):
         if isinstance(c, int):
             order = self._files.header().sortIndicatorOrder()
             self._files.sortItems(c, order)
-        else:
-            raise TypeError('parameter type {} is not int.'.format(type(c)))
+        else: raise TypeError('parameter type {} is not int.'.format(type(c)))
 
     def _popupItemPatient(self, p):
         if isinstance(p, QPoint):
             item = self._patients.itemAt(p)
-            if item: self._popuppatients.exec(self._patients.mapToGlobal(p))
+            if item:
+                # < Revision 27/10/2024
+                # use popup instead of exec
+                # self._popuppatients.exec(self._patients.mapToGlobal(p))
+                self._popuppatients.popup(self._patients.mapToGlobal(p))
+                # Revision 27/10/2024 >
         else: raise TypeError('parameter type {} is not QPoint.'.format(type(p)))
 
     def _popupItemFile(self, p):
         if isinstance(p, QPoint):
             item = self._files.itemAt(p)
-            if item: self._popupfiles.exec(self._files.mapToGlobal(p))
+            if item:
+                # < Revision 27/10/2024
+                # use popup instead of exec
+                # self._popupfiles.exec(self._files.mapToGlobal(p))
+                self._popupfiles.popup(self._files.mapToGlobal(p))
+                # Revision 27/10/2024 >
         else: raise TypeError('parameter type {} is not QPoint.'.format(type(p)))
 
+    # noinspection PyUnusedLocal
     def _doubleClicked(self, item, c):
         filename = self._getFilenameFromItem(item)
         if exists(filename):
@@ -354,7 +422,9 @@ class DatabaseWidget(QWidget):
         if not self._checkfirstname.isChecked(): first = ''
         else: first = self._fltfirstname.text()
         if not self._checkdate.isChecked(): dob = ''
-        else: dob = self._fltdob.date().toString(Qt.ISODate)
+        else:
+            # noinspection PyTypeChecker
+            dob = self._fltdob.date().toString(Qt.ISODate)
         patients = self._db.searchPatients(last, first, dob)
         self._patients.clear()
         for patient in patients:
@@ -385,7 +455,7 @@ class DatabaseWidget(QWidget):
                         xml = XmlVolume(filename)
                         QApplication.processEvents()
                         item = QTreeWidgetItem(self._files)
-                        item.setToolTip(0, str(xml))
+                        item.setToolTip(0, str(xml)[:-1])
                         # filename
                         item.setText(0, basename(filename))
                         # ID
@@ -395,7 +465,12 @@ class DatabaseWidget(QWidget):
                         font.setPointSize(8)
                         item.setFont(1, font)
                         # size
-                        rawname = join(dirname(filename), xml.getRawName())
+                        raw = xml.getRawName()
+                        # < Revision 25/04/2025
+                        # rawname = join(dirname(filename), xml.getRawName())
+                        if raw == 'self': rawname = filename
+                        else: rawname = join(dirname(filename), xml.getRawName())
+                        # Revision 25/04/2025 >
                         if exists(rawname): v = getsize(rawname)
                         else: v = 0
                         mb = 1024 * 1024
@@ -444,8 +519,9 @@ class DatabaseWidget(QWidget):
                                     v = strftime('%Y-%m-%d %H:%M:%S', strptime(ctime(getctime(filename))))
                                     child.setText(4, v)
                                     item.addChild(child)
-                    # Sisyphe Mesh to do
-                    # Sisyphe Tools to do
+                    # Sisyphe Mesh
+                    # Sisyphe Tools
+                    # Sisyphe Streamlines
 
     def _open(self):
         filenames = list()
@@ -457,14 +533,14 @@ class DatabaseWidget(QWidget):
                     if splitext(filename)[1] == SisypheVolume.getFileExt():
                         filenames.append(filename)
             if len(filenames) > 0: self._mainwindow.open(filenames)
-            else: QMessageBox.warning(self, 'Database', 'No volume selected.')
+            else: messageBox(self, 'Database', 'No volume selected.')
 
     def _edit(self, item=None):
         if item is None:
             item = self._files.selectedItems()
             if len(item) > 0: item = item[0]
             else:
-                QMessageBox.warning(self, 'Database', 'No volume selected.')
+                messageBox(self, 'Database', 'No volume selected.')
                 return
         if isinstance(item, QTreeWidgetItem):
             filename = self._getFilenameFromItem(item)
@@ -473,16 +549,26 @@ class DatabaseWidget(QWidget):
                     vol = SisypheVolume()
                     try: vol.load(filename)
                     except:
-                        QMessageBox.warning(self, 'Database', '{} read error.'.format(basename(filename)))
+                        messageBox(self, 'Database', text='{} read error.'.format(basename(filename)))
                         return
                     dialog = DialogVolumeAttributes(vol=vol)
+                    if platform == 'win32':
+                        import pywinstyles
+                        cl = self.palette().base().color()
+                        c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                        pywinstyles.change_header_color(dialog, c)
                     dialog.exec()
         else: raise TypeError('parameter type {} is not QTreeWidgetItem.'.format(type(item)))
 
     def _removeFiles(self):
         items = self._files.selectedItems()
         if items:
-            if QMessageBox.question(self, 'Database', 'Do you want to remove selected files ?') == QMessageBox.Yes:
+            if messageBox(self,
+                          'Database',
+                          'Do you want to remove selected files ?',
+                          icon=QMessageBox.Question,
+                          buttons=QMessageBox.Yes | QMessageBox.No,
+                          default=QMessageBox.No) == QMessageBox.Yes:
                 identity = self.getIdentityFromItem(self._patients.selectedItems()[0])
                 filenames = list()
                 for item in items:
@@ -490,7 +576,7 @@ class DatabaseWidget(QWidget):
                 n = len(filenames)
                 if n > 0:
                     progress = DialogWait('Database', 'Remove volume(s) from database...', progress=True,
-                                          progressmin=0, progressmax=n, progresstxt=True, parent=self)
+                                          progressmin=0, progressmax=n, progresstxt=True)
                     try:
                         progress.setProgressVisibility(n > 1)
                         progress.open()
@@ -499,14 +585,15 @@ class DatabaseWidget(QWidget):
                             progress.setInformationText('Remove {} from database...'.format(basename(filename)))
                             try: self._db.deleteFileFromPatient(filename, identity)
                             except:
-                                QMessageBox.warning(self, 'Database',
-                                                    'Remove {} from database error.'.format(basename(filename)))
+                                messageBox(self,
+                                           'Database',
+                                           text='Remove {} from database error.'.format(basename(filename)))
                                 continue
                     finally:
                         progress.close()
                         self._updateFileWidget()
                 else:
-                    QMessageBox.warning(self, 'Database', 'No volume selected.')
+                    messageBox(self, 'Database', 'No volume selected.')
 
     def _newPatient(self, identity=None):
         if identity is not None:
@@ -514,45 +601,76 @@ class DatabaseWidget(QWidget):
                 identity = identity.getIdentity()
             if isinstance(identity, SisypheIdentity):
                 try: self._db.createPatient(identity)
-                except: QMessageBox.warning(self, 'Database',
-                                            'Create patient {} {} error.'.format(identity.getLastname(),
-                                                                                 identity.getFirstname()))
+                except: messageBox(self,
+                                   'Database',
+                                   text='Create patient {} {} error.'.format(identity.getLastname(),
+                                                                             identity.getFirstname()))
         else:
             dialog = DialogPatient()
+            if platform == 'win32':
+                import pywinstyles
+                cl = self.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(dialog, c)
             if dialog.exec():
                 identity = dialog.getIdentity()
-                if QMessageBox.question(self, 'Database',
-                                        'Do you want to create patient {} {} ?'.format(identity.getLastname(),
-                                                                                       identity.getFirstname())
-                                        ) == QMessageBox.Yes:
+                if messageBox(self,
+                              'Database',
+                              text='Do you want to create patient {} {} ?'.format(identity.getLastname(),
+                                                                                  identity.getFirstname()),
+                              icon=QMessageBox.Question,
+                              buttons=QMessageBox.Yes | QMessageBox.No,
+                              default=QMessageBox.No) == QMessageBox.Yes:
                     try: self._db.createPatient(identity)
-                    except: QMessageBox.warning(self, 'Database',
-                                                'Create patient {} {} error.'.format(identity.getLastname(),
-                                                                                     identity.getFirstname()))
+                    except: messageBox(self,
+                                       'Database',
+                                       text='Create patient {} {} error.'.format(identity.getLastname(),
+                                                                                 identity.getFirstname()))
         self._update()
 
     def _removePatient(self):
-            items = self._patients.selectedItems()
-            if items:
-                identity = self.getIdentityFromItem(items[0])
-                if QMessageBox.question(self, 'Database',
-                                        'Do you want to remove {} {} from database ?'
-                                        '\nAll files will be deleted.'.format(identity.getLastname(),
-                                                                              identity.getFirstname())
-                                        ) == QMessageBox.Yes:
-                    try: self._db.removePatient(identity)
-                    except: QMessageBox.warning(self, 'Database',
-                                                'Remove patient {} {} error.'.format(identity.getLastname(),
-                                                                                     identity.getFirstname()))
-                    self._update()
-            else:
-                QMessageBox.warning(self, 'Database', 'No patient selected.')
+        items = self._patients.selectedItems()
+        if items:
+            identity = self.getIdentityFromItem(items[0])
+            if messageBox(self,
+                          'Database',
+                          text='Do you want to remove {} {} from database ?'
+                               '\nAll files will be deleted.'.format(identity.getLastname(),
+                                                                     identity.getFirstname()),
+                          icon=QMessageBox.Question,
+                          buttons=QMessageBox.Yes | QMessageBox.No,
+                          default=QMessageBox.No) == QMessageBox.Yes:
+                try: self._db.removePatient(identity)
+                except: messageBox(self,
+                                   'Database',
+                                   text='Remove patient {} {} error.'.format(identity.getLastname(),
+                                                                             identity.getFirstname()))
+                self._update()
+        else: messageBox(self, 'Database', 'No patient selected.')
+
+    # < Revision 28/05/2025
+    # add _openFileManager method
+    def _openFileManager(self):
+        selected = self._patients.selectedItems()
+        if len(selected) > 0:
+            folder = join(self._db.getDatabasePath(), self._getFolderFromItem(selected[0]))
+            # if platform == 'win32': subprocess.Popen('explorer /select,"{}"'.format(folder))
+            if platform == 'win32': subprocess.Popen('explorer "{}"'.format(folder))
+            elif platform == 'darwin':
+                folder = '~' + folder
+                subprocess.call(["open", folder])
+        else:
+            messageBox(self,
+                       'Database',
+                       'No patient selected.')
+    # Revision 28/05/2025 >
 
     def _backup(self):
         folder = QFileDialog.getExistingDirectory(self, 'Select directory',
                                                   getcwd(), QFileDialog.ShowDirsOnly)
         if folder:
-            progress = DialogWait(parent=self)
+            chdir(folder)
+            progress = DialogWait()
             try: self._db.backupDatabase(folder, progress)
             finally: progress.close()
 
@@ -569,9 +687,10 @@ class DatabaseWidget(QWidget):
             filenames = filenames[0]
         n = len(filenames)
         if n > 0:
+            chdir(dirname(filenames[0]))
             vol = SisypheVolume()
             progress = DialogWait('Database', 'Add volume(s) to database...',
-                                  progress=True, progressmin=0, progressmax=n, parent=self)
+                                  progress=True, progressmin=0, progressmax=n)
             try:
                 if n > 1: progress.open()
                 for filename in filenames:
@@ -579,12 +698,11 @@ class DatabaseWidget(QWidget):
                     progress.setInformationText('Add {} to database...'.format(basename(filename)))
                     try: vol.load(filename)
                     except:
-                        QMessageBox.warning(self, 'Database', '{} read error.'.format(basename(filename)))
+                        messageBox(self, 'Database', text='{} read error.'.format(basename(filename)))
                         continue
                     try: self._db.copySisypheVolume(vol)
                     except:
-                        QMessageBox.warning(self, 'Database',
-                                            'Add {} to database error.'.format(basename(filename)))
+                        messageBox(self, 'Database', text='Add {} to database error.'.format(basename(filename)))
                         continue
             finally:
                 progress.close()
@@ -596,7 +714,7 @@ class DatabaseWidget(QWidget):
             n = len(vols)
             if n > 0:
                 progress = DialogWait('Database', 'Add volume(s) to database...',
-                                      progress=True, progressmin=0, progressmax=n, parent=self)
+                                      progress=True, progressmin=0, progressmax=n)
                 try:
                     if n > 1: progress.open()
                     for vol in vols:
@@ -605,12 +723,14 @@ class DatabaseWidget(QWidget):
                         if isinstance(vol, SisypheVolume):
                             try: self._db.copySisypheVolume(vol)
                             except:
-                                QMessageBox.warning(self, 'Database',
-                                                    'Add {} to database error.'.format(vol.getBasename()))
+                                messageBox(self,
+                                           'Database',
+                                           text='Add {} to database error.'.format(vol.getBasename()))
                                 continue
                         else:
-                            QMessageBox.warning(self,
-                                                'Database', '{} is not a PySisyphe volume.'.format(vol.getBasename()))
+                            messageBox(self,
+                                       'Database',
+                                       '{} is not a PySisyphe volume.'.format(vol.getBasename()))
                 finally:
                     progress.close()
                     self._update()
@@ -645,17 +765,3 @@ class DatabaseWidget(QWidget):
             if len(filenames) > 0:
                 self._addVolumes(filenames)
         else: event.ignore()
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv
-
-    app = QApplication(argv)
-    main = DatabaseWidget()
-    main.show()
-    app.exec_()

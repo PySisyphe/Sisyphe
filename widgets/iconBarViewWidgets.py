@@ -1,16 +1,14 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from sys import platform
 from os.path import join
 from os.path import dirname
 from os.path import abspath
-
-from platform import system
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QObject
@@ -26,12 +24,12 @@ from PyQt5.QtWidgets import QWidgetAction
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QActionGroup
+from PyQt5.QtWidgets import QShortcut
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QApplication
 
-
 from Sisyphe.core.sisypheVolume import SisypheVolume
+from Sisyphe.core.sisypheSettings import SisypheSettings
 from Sisyphe.widgets.sliceViewWidgets import SliceROIViewWidget
 from Sisyphe.widgets.multiViewWidgets import OrthogonalSliceViewWidget
 from Sisyphe.widgets.multiViewWidgets import OrthogonalRegistrationViewWidget
@@ -42,116 +40,56 @@ from Sisyphe.widgets.multiViewWidgets import MultiSliceGridViewWidget
 from Sisyphe.widgets.multiViewWidgets import SynchronisedGridViewWidget
 from Sisyphe.widgets.multiViewWidgets import GridViewWidget
 from Sisyphe.widgets.multiViewWidgets import MultiViewWidget
+from Sisyphe.widgets.sliceViewWidgets import SliceOverlayViewWidget
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import RoundedButton
+from Sisyphe.widgets.basicWidgets import LabeledSlider
 from Sisyphe.widgets.basicWidgets import LabeledDoubleSpinBox
+from Sisyphe.widgets.basicWidgets import LabeledLineEdit
+from Sisyphe.widgets.basicWidgets import ColorSelectPushButton
+from Sisyphe.widgets.basicWidgets import OpacityPushButton
 from Sisyphe.widgets.LUTWidgets import TransferWidget
 
 """
-    Class hierarchy
-    
-        QWidget -> IconBarWidget -> IconBarOrthogonalSliceViewWidget
-                                 -> IconBarOrthogonalRegistrationViewWidget -> IconBarOrthogonalRegistrationViewWidget2
-                                 -> IconBarOrthogonalReorientViewWidget
-                                 -> IconBarOrthogonalSliceVolumeViewWidget
-                                 -> IconBarOrthogonalTrajectoryViewWidget
-                                 -> IconBarMultiSliceGridViewWidget -> IconBarSynchronisedGridViewWidget
-                                                                    -> IconBarViewWidgetCollection
-        QObject -> IconBarViewWidgetCollection
-                                                                    
-    Description
-    
-        Adds iconbar support to MultiViewWidget derived classes.
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    - QWidget -> IconBarWidget -> IconBarOrthogonalSliceViewWidget
+                               -> IconBarOrthogonalRegistrationViewWidget -> IconBarOrthogonalRegistrationViewWidget2
+                               -> IconBarOrthogonalReorientViewWidget
+                               -> IconBarOrthogonalSliceVolumeViewWidget
+                               -> IconBarOrthogonalTrajectoryViewWidget
+                               -> IconBarMultiSliceGridViewWidget -> IconBarSynchronisedGridViewWidget
+                                                                  -> IconBarViewWidgetCollection
+    - QObject -> IconBarViewWidgetCollection
+                                                                
+Description
+~~~~~~~~~~~
+
+Adds iconbar support to MultiViewWidget derived classes.
 """
 
 
 class IconBarWidget(QWidget):
     """
-        IconBarWidget class
+    IconBarWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Base class that adds icon bar support to image display widgets (derived from MultiViewWidget)
+    Base class that adds icon bar support to image display widgets (derived from MultiViewWidget)
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> IconBarWidget
+    QWidget -> IconBarWidget
 
-        Private Attributes
-
-            _widget             MultiViewWidget, display widget
-            _bar                QFrame, icon bar
-            _transfer           TransferWidget, widget for transfer function settings
-            _menulut            QWidgetAction
-            _ax                 QIcon, axial icon
-            _cor                QIcon, coronal icon
-            _sag                QIcon, sagittal icon
-            _icons              Dict of QPushButton, iconbar buttons
-            _visibilityflags    Dict of bool, buttons visibility
-            _timerid            int, QTimer identifier
-
-        Custom Qt Signals
-
-            NameChanged.emit()          Emitted when widget name is changed
-
-        Public methods
-
-            MultiViewWidget = __call__()            return encapsulated MultiViewWidget (_widget private attribute)
-            timerEnabled()
-            timerDisabled()
-            updateRender()                          to update volume display
-            str = getName()
-            setName(str)
-            setVolume(SisypheVolume)
-            SisypheVolume = getVolume()
-            addOverlay(SisypheVolume)
-            bool = hasVolume()
-            int = getOverlayCount()
-            bool = hasOverlay()
-            int = getOverlayIndex(SisypheVolume)
-            removeOverlay(SisypheVolume)
-            removeAllOverlays()
-            SisypheVolume = getOverlayFromIndex(int)
-            setViewWidget(MultiViewWidget)
-            MultiViewWidget = getViewWidget()
-            setIconBarVisibility(bool)
-            iconBarVisibilityOn()
-            iconBarVisibilityOff()
-            bool = getIconBarVisibility()
-            setPinButtonAvailability(bool)
-            setExpandButtonAvailability(bool)
-            setGridButtonAvailability(bool)
-            setOrientButtonAvailability(bool)
-            setSliceButtonsAvailability(bool)
-            setShowButtonAvailability(bool)
-            setZoomButtonsAvailability(bool)
-            setActionButtonAvailability(bool)
-            setColorbarButtonAvailability(bool)
-            setLutButtonAvailability(bool)
-            setToolButtonAvailability(bool)
-            setCaptureButtonAvailability(bool)
-            setClipboardButtonAvailability(bool)
-            bool = getPinButtonAvailability()
-            bool = getExpandButtonAvailability()
-            bool = getGridButtonAvailability()
-            bool = getOrientButtonAvailability()
-            bool = getSliceButtonsAvailability()
-            bool = getShowButtonAvailability()
-            bool = getZoomButtonsAvailability()
-            bool = getActionButtonAvailability()
-            bool = getColorbarButtonAvailability()
-            bool = getLutButtonAvailability(bool)
-            bool = getToolButtonAvailability()
-            bool = getCaptureButtonAvailability()
-            bool = getClipboardButtonAvailability()
-            ToolBarThumbnail = getThumbnail()
-            setThumbnail(ToolBarThumbnail)
-            bool = hasThumbnail()
-            timerEvent(QEvent)                      override QWidget
-
-            inherited QWidget methods
+    Creation: 17/04/2023
+    Last revision: 01/05/2025
     """
 
-    _BTSIZE = 40    # button size 48
+    _BTSIZE = 40    # default button size
+    _VSIZE = 24
 
     # Custom Qt signals
 
@@ -164,23 +102,23 @@ class IconBarWidget(QWidget):
         import Sisyphe.gui
         return join(dirname(abspath(Sisyphe.gui.__file__)), 'baricons')
 
-    @classmethod
-    def _createButton(cls, icon0, icon1='', checkable=False, autorepeat=False):
-        button = RoundedButton()
-        button.setSize(cls._BTSIZE)
-        button.setBorderWidth(5)
-        button.setBorderRadius(10)
-        button.setBorderColorToBlack()
-        button.setBackgroundColorToBlack()
-        button.setCheckedBorderColorToWhite()
-        button.setCheckedBackgroundColorToWhite()
-        button.setNormalIcon(join(cls._getDefaultIconDirectory(), icon0))
-        if icon1 != '': button.setCheckedIcon(join(cls._getDefaultIconDirectory(), icon1))
-        button.setCheckable(checkable)
-        button.setAutoRepeat(autorepeat)
-        return button
-
     # Special methods
+
+    """
+    Private Attributes
+
+    _widget             MultiViewWidget, display widget
+    _bar                QFrame, icon bar
+    _transfer           TransferWidget, widget for transfer function settings
+    _menulut            QWidgetAction
+    _ax                 QIcon, axial icon
+    _cor                QIcon, coronal icon
+    _sag                QIcon, sagittal icon
+    _icons              Dict[str, QPushButton], iconbar buttons
+    _visibilityflags    Dict[str, bool], buttons visibility flags
+    _btsize             int, button size
+    _timerid            int, QTimer identifier
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -190,6 +128,13 @@ class IconBarWidget(QWidget):
         self._transfer = None
         self._thumbnail = None
         self._timerid = None
+
+        # < Revision 17/03/2025
+        # add icon size management
+        settings = SisypheSettings()
+        self._btsize = settings.getFieldValue('Viewport', 'IconSize')
+        if self._btsize is None: self._btsize = self._BTSIZE
+        # Revision 17/03/2025 >
 
         # Icon bar
 
@@ -209,6 +154,7 @@ class IconBarWidget(QWidget):
         self._icons['actions'] = self._createButton('whand.png', 'hand.png', checkable=False, autorepeat=False)
         self._icons['show'] = self._createButton('wshow.png', 'show.png', checkable=False, autorepeat=False)
         self._icons['info'] = self._createButton('winfo.png', 'info.png', checkable=False, autorepeat=False)
+        self._icons['iso'] = self._createButton('wiso.png', 'iso.png', checkable=False, autorepeat=False)
         self._icons['colorbar'] = self._createButton('wlut.png', 'lut.png', checkable=False, autorepeat=False)
         self._icons['ruler'] = self._createButton('waxis.png', 'axis.png', checkable=False, autorepeat=False)
         self._icons['tools'] = self._createButton('wruler.png', 'ruler.png', checkable=False, autorepeat=False)
@@ -225,43 +171,110 @@ class IconBarWidget(QWidget):
         self._visibilityflags['actions'] = True
         self._visibilityflags['show'] = True
         self._visibilityflags['info'] = True
+        self._visibilityflags['iso'] = True
         self._visibilityflags['tools'] = True
         self._visibilityflags['colorbar'] = True
         self._visibilityflags['ruler'] = True
         self._visibilityflags['capture'] = True
         self._visibilityflags['clipboard'] = True
 
-        self._icons['screen'].setToolTip('Switch to full-screen view.')
-        self._icons['expand'].setToolTip('Expand selected view.')
-        self._icons['zoomin'].setToolTip('Zoom in.')
-        self._icons['zoomout'].setToolTip('Zoom out.')
-        self._icons['zoom1'].setToolTip('Default zoom.')
+        self._icons['pin'].setToolTip('Pin iconbar.\n'
+                                      'p key')
+        self._icons['screen'].setToolTip('Switch to full-screen view.\n'
+                                         'F11 key')
+        self._icons['expand'].setToolTip('Expand selected view.\n'
+                                         '+ key')
+        self._icons['zoomin'].setToolTip('Zoom in.\n'
+                                         'Up key + CTRL key (CMD key MacOS)\n'
+                                         'MouseWheel + CTRL key (CMD key MacOS)')
+        self._icons['zoomout'].setToolTip('Zoom out.\n'
+                                          'Down key + CTRL key (CMD key MacOS)\n'
+                                          'MouseWheel + CTRL key (CMD key MacOS)')
+        self._icons['zoom1'].setToolTip('Default zoom.\n'
+                                        '0 key')
         self._icons['actions'].setToolTip('Mouse actions management.')
-        self._icons['show'].setToolTip('Set visibility options.')
         self._icons['info'].setToolTip('Set information visibility options.')
+        self._icons['iso'].setToolTip('Set isovalue lines.')
         self._icons['colorbar'].setToolTip('Set color bar position.')
         self._icons['ruler'].setToolTip('Set ruler position.')
         self._icons['tools'].setToolTip('Add tools.')
-        self._icons['capture'].setToolTip('Save capture to disk.')
+        self._icons['capture'].setToolTip('Save capture to disk.\n'
+                                          'SPACE key, send selected capture to screenshot manager')
         self._icons['clipboard'].setToolTip('Copy capture to clipboard.')
 
         submenu = QMenu()
+        # noinspection PyTypeChecker
+        submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         submenu.addAction('Distance')
         submenu.addAction('Orthogonal distances')
         submenu.addAction('Angle')
         submenu.addSeparator()
         submenu.addAction('Remove all')
+        # noinspection PyUnresolvedReferences
         submenu.triggered.connect(self._onMenuTools)
         self._icons['tools'].setMenu(submenu)
 
+        self._isoedit = LabeledLineEdit('Isoline values', fontsize=10)
+        self._isoedit.getQLineEdit().setClearButtonEnabled(True)
+        # noinspection PyUnresolvedReferences
+        self._isoedit.getQLineEdit().editingFinished.connect(self._onIsoEditingFinished)
+
+        self._isocolor = ColorSelectPushButton()
+        self._isocolor.setFixedSize(self._VSIZE, self._VSIZE)
+        self._isocolor.setFloatColor(1.0, 1.0, 1.0, signal=False)
+        self._isocolor.colorChanged.connect(self._onIsoColorChanged)
+
+        self._isoopacity = OpacityPushButton()
+        self._isoopacity.setFixedSize(self._VSIZE, self._VSIZE)
+        self._isoopacity.setOpacity(1.0)
+        self._isoopacity.opacityChanged.connect(self._onIsoOpacityChanged)
+
+        self._isoprop = QWidget()
+        layout = QHBoxLayout()
+        layout.setSpacing(5)
+        layout.setContentsMargins(5, 0, 5, 0)
+        layout.addWidget(self._isocolor)
+        layout.addWidget(self._isoopacity)
+        layout.addWidget(self._isoedit)
+        self._isoprop.setLayout(layout)
+        self._isoprop.setMaximumWidth(400)
+
+        self._isoMenu = QMenu()
+        # noinspection PyTypeChecker
+        self._isoMenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._isoMenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._isoMenu.setAttribute(Qt.WA_TranslucentBackground, True)
+        action = QWidgetAction(self)
+        action.setDefaultWidget(self._isoprop)
+        action.setData(-1)
+        self._isoMenu.addAction(action)
+        self._isoMenu.addSeparator()
+        # noinspection PyUnresolvedReferences
+        self._isoMenu.aboutToShow.connect(self._onShowMenuIso)
+        # noinspection PyUnresolvedReferences
+        self._isoMenu.triggered.connect(self._onMenuIso)
+        self._icons['iso'].setMenu(self._isoMenu)
+
         self._bar = QFrame(self)
+        # < Revision 14/03/2025
+        if platform == 'win32':
+            self._bar.setObjectName('IconBar')
+            self._bar.setStyleSheet('QFrame#IconBar { background-color: #000000; border-color: #000000; } '
+                                    'QToolTip#IconBar { color: #000000; background-color: #FFFFE0; border: 0px; font-size: 8pt; }')
+        else:
+            pal = self.palette()
+            # noinspection PyTypeChecker
+            pal.setColor(QPalette.Background, Qt.black)
+            self.setAutoFillBackground(True)
+            self.setPalette(pal)
+        # Revision 14/03/2025 >
         layout = QVBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
-        pal = self.palette()
-        pal.setColor(QPalette.Background, Qt.black)
-        self.setAutoFillBackground(True)
-        self.setPalette(pal)
         layout.addStretch()
         layout.addWidget(self._icons['pin'])
         layout.addWidget(self._icons['screen'])
@@ -272,6 +285,7 @@ class IconBarWidget(QWidget):
         layout.addWidget(self._icons['actions'])
         layout.addWidget(self._icons['show'])
         layout.addWidget(self._icons['info'])
+        layout.addWidget(self._icons['iso'])
         layout.addWidget(self._icons['colorbar'])
         layout.addWidget(self._icons['ruler'])
         layout.addWidget(self._icons['tools'])
@@ -279,6 +293,39 @@ class IconBarWidget(QWidget):
         layout.addWidget(self._icons['clipboard'])
         layout.addStretch()
         self._bar.setLayout(layout)
+
+        # Shortcuts
+
+        self._icons['expand'].setShortcut(Qt.Key_Plus)
+        self._icons['zoom1'].setShortcut('0')
+        self._shcutp = QShortcut('p', self) # Pin shortcut
+        # noinspection PyUnresolvedReferences
+        self._shcutp.activated.connect(self._onPin)
+        self._shcutA = QShortcut('A', self) # Axial shortcut
+        self._shcutC = QShortcut('C', self) # Coronal shortcut
+        self._shcutS = QShortcut('S', self) # Sagittal shortcut
+        self._shcut1 = QShortcut(Qt.Key_1, self) # Grid 1x1 shortcut
+        self._shcut2 = QShortcut(Qt.Key_2, self) # Grid 1x2 shortcut
+        self._shcut3 = QShortcut(Qt.Key_3, self) # Grid 1x3 shortcut
+        self._shcut4 = QShortcut(Qt.Key_4, self) # Grid 2x2 shortcut
+        self._shcut6 = QShortcut(Qt.Key_6, self) # Grid 2x3 shortcut
+        self._shcut9 = QShortcut(Qt.Key_9, self) # Grid 3x3 shortcut
+        self._shcutx = QShortcut('x', self) # Show cursor shortcut
+        self._shcuti = QShortcut('i', self) # Show information shortcut
+        self._shcutl = QShortcut('l', self) # Show orientation labels shortcut
+        self._shcutm = QShortcut('m', self)  # Show orientation marker shortcut
+        self._shcutb = QShortcut('b', self)  # Show color bar shortcut
+        self._shcutr = QShortcut('r', self)  # Show ruler shortcut
+        self._shcutt = QShortcut('t', self)  # Show tooltip shortcut
+
+        # Drop settings
+
+        # < Revision 18/10/2024
+        # Default setting for drag & drop action
+        self._drop = settings.getFieldValue('Viewport', 'DropInView')
+        if self._drop is not None: self._drop = self._drop[0]
+        else: self._drop = 'Replace'
+        # Revision 18/10/2024 >
 
         # Layout
 
@@ -302,11 +349,28 @@ class IconBarWidget(QWidget):
 
     # Private methods
 
+    def _createButton(self, icon0, icon1='', checkable=False, autorepeat=False):
+        button = RoundedButton()
+        # < Revision 17/03/2025
+        # button.setSize(self._BTSIZE)
+        button.setSize(self._btsize)
+        # Revision 17/03/2025 >
+        button.setBorderWidth(5)
+        button.setBorderRadius(10)
+        button.setBorderColorToBlack()
+        button.setBackgroundColorToBlack()
+        button.setCheckedBorderColorToWhite()
+        button.setCheckedBackgroundColorToWhite()
+        button.setNormalIcon(join(self._getDefaultIconDirectory(), icon0))
+        if icon1 != '': button.setCheckedIcon(join(self._getDefaultIconDirectory(), icon1))
+        button.setCheckable(checkable)
+        button.setAutoRepeat(autorepeat)
+        return button
+
     def _getBaseParent(self):
         w = None
         w2 = self.parent()
         while w2 is not None:
-            print(type(w2))
             w = w2
             w2 = w.parent()
         return w
@@ -325,23 +389,22 @@ class IconBarWidget(QWidget):
                     if s == 'D': w2.addDistanceTool()
                     elif s == 'O': w2.addOrthogonalDistanceTool()
                     else: w2.addAngleTool()
-                else: QMessageBox.warning(self, action.text(), 'Select a view before adding a tool.')
+                else: messageBox(self, title=action.text(), text='Select a view before adding a tool.')
 
     def _onMenuSaveCapture(self, action):
         w = self.getViewWidget()
         if w is not None:
             s = action.text().split()
             if s[0] == 'Save':
-                if s[1] == 'grid':
-                    w.saveCapture()
+                if s[1] == 'grid': w.saveCapture()
                 elif s[1] == 'selected':
                     w2 = w.getSelectedViewWidget()
                     if w2 is not None: w2.saveCapture()
-                    else: QMessageBox.warning(self, 'Save selected view capture', 'Select a view before capturing.')
-                elif s[1] == 'captures':
-                    w.saveSeriesCaptures()
-                elif s[1] == 'single':
-                    w.saveSeriesCapture()
+                    else: messageBox(self,
+                                     'Save selected view capture',
+                                     'No selected view.')
+                elif s[1] == 'captures': w.saveSeriesCaptures()
+                elif s[1] == 'single': w.saveSeriesCapture()
             elif s[0] == 'Send':
                 if s[1] == 'selected':
                     w2 = w.getSelectedViewWidget()
@@ -351,7 +414,9 @@ class IconBarWidget(QWidget):
                             if mainwindow is not None:
                                 cap = w2.getPixmapCapture()
                                 mainwindow.getScreenshots().paste(cap)
-                    else: QMessageBox.warning(self, 'Send selected view capture', 'Select a view before capturing.')
+                    else: messageBox(self,
+                                     'Send selected view capture',
+                                     'No selected view.')
                 elif s[1] == 'captures':
                     if self.hasThumbnail():
                         mainwindow = self.getThumbnail().getMainWindow()
@@ -361,20 +426,127 @@ class IconBarWidget(QWidget):
                                 mainwindow.getScreenshots().paste(cap)
 
     def _onMenuCopyCapture(self, action):
-        s = str(action.text())[-25:-21]
+        s = str(action.text())[5]
         w = self.getViewWidget()
         if w is not None:
-            if s == 'view':
+            if s == 's':
                 w2 = w.getSelectedViewWidget()
-                if w2 is not None:
-                    w2.copyToClipboard()
-                else: QMessageBox.warning(self, 'Copy selected view capture', 'Select a view before capturing.')
-            elif s == 'grid': w.copyToClipboard()
+                if w2 is not None: w2.copyToClipboard()
+                else: messageBox(self,
+                                 'Copy to clipboard',
+                                 'No view selected.')
+            elif s == 'g': w.copyToClipboard()
 
     def _onMenuOrientation(self, v):
         if v == 0: self._icons['orient'].setIcon(self._ax)
         elif v == 1: self._icons['orient'].setIcon(self._cor)
         else: self._icons['orient'].setIcon(self._sag)
+
+    def _onMenuIso(self, action):
+        view = self._widget.getFirstSliceViewWidget()
+        if view is not None and isinstance(view, SliceOverlayViewWidget):
+            n = int(action.data())
+            if n > -1:
+                if action.isChecked():
+                    if n == 0: v = view.getVolume()
+                    else: v = view.getOverlayFromIndex(n - 1)
+                    iso = v.getMean()
+                    if v.isIntegerDatatype(): iso = int(iso)
+                    else: iso = round(iso, 1)
+                    self._isoedit.setEditText('{}'.format(iso))
+                    view.setIsoValues([iso], signal=True)
+                    view.setIsoIndex(n, signal=True)
+                else: view.setIsoIndex(-1, signal=True)
+
+    def _onShowMenuIso(self):
+        view = self._widget.getFirstSliceViewWidget()
+        if view is not None and isinstance(view, SliceOverlayViewWidget):
+            n = view.getIsoIndex()
+            if n > -1:
+                c = view.getIsoLinesColor()
+                self._isocolor.setFloatColor(c[0], c[1], c[2], signal=False)
+                self._isoopacity.setOpacity(view.getIsoLinesOpacity())
+                self._isoprop.setEnabled(True)
+            else: self._isoprop.setEnabled(False)
+            actions = self._isoMenu.actions()
+            for action in actions:
+                d = action.data()
+                if d is not None and d != -1:
+                    self._isoMenu.removeAction(action)
+            if self.hasVolume():
+                group = QActionGroup(self)
+                group.setExclusionPolicy(QActionGroup.ExclusionPolicy.ExclusiveOptional)
+                name = self.getVolume().getName()
+                if name == '': name = 'Displayed volume'
+                action = QAction(name)
+                action.setData(0)
+                group.addAction(action)
+                action.setCheckable(True)
+                action.setChecked(n == 0)
+                self._isoMenu.addAction(action)
+                if view.hasOverlay():
+                    for i in range(view.getOverlayCount()):
+                        name = view.getOverlayFromIndex(i).getName()
+                        if name == '': name = 'Overlay volume #{}'.format(i)
+                        action = QAction(name)
+                        action.setData(i + 1)
+                        group.addAction(action)
+                        action.setCheckable(True)
+                        action.setChecked(n == i + 1)
+                        self._isoMenu.addAction(action)
+
+    def _onIsoEditingFinished(self):
+        view = self._widget.getFirstSliceViewWidget()
+        if view is not None and isinstance(view, SliceOverlayViewWidget):
+            if self._isoedit.isEmpty():
+                view.setIsoIndex(-1, signal=True)
+            else:
+                n = view.getIsoIndex()
+                if n == 0: dt = view.getVolume().isIntegerDatatype()
+                else: dt = view.getOverlayFromIndex(n - 1).isIntegerDatatype()
+                l = self._isoedit.getEditText().split(' ')
+                iso = list()
+                for v in l:
+                    try:
+                        if dt: iso.append(int(v))
+                        else: iso.append(round(float(v), 1))
+                    except: continue
+                if len(iso) > 0:
+                    view.setIsoValues(iso, signal=True)
+                    self._isoedit.setEditText(' '.join([str(i) for i in iso]))
+                    if n > -1: view.setIsoIndex(n, signal=True)
+                else:
+                    self._isoedit.setEditText('')
+                    view.setIsoIndex(-1, signal=True)
+
+    def _onIsoColorChanged(self):
+        view = self._widget.getFirstSliceViewWidget()
+        if view is not None and isinstance(view, SliceOverlayViewWidget):
+            n = view.getIsoIndex()
+            if n > -1:
+                c = list(self._isocolor.getFloatColor())
+                view.setIsoLinesColor(c, signal=True)
+
+    # noinspection PyUnusedLocal
+    def _onIsoOpacityChanged(self, w):
+        view = self._widget.getFirstSliceViewWidget()
+        if view is not None and isinstance(view, SliceOverlayViewWidget):
+            n = view.getIsoIndex()
+            if n > -1:
+                v = self._isoopacity.getOpacity()
+                view.setIsoLinesOpacity(v, signal=True)
+
+    # < Revision 01/05/2025
+    # add _onTransferMenuChanged method
+    def _onTransferMenuChanged(self):
+        if self._transfer is not None:
+            menu = self._icons['transfer'].menu()
+            self._transfer.adjustSize()
+            menu.hide()
+            menu.setFixedHeight(self._transfer.size().height())
+            menu.show()
+            QApplication.processEvents()
+    # Revision 01/05/2025 >
 
     def _onExpand(self):
         if self._widget is not None:
@@ -396,29 +568,66 @@ class IconBarWidget(QWidget):
         if isinstance(w, WindowSisyphe): w.toggleFullscreen()
         else: self._icons['screen'].setVisible(False)
 
+    def _onPin(self):
+        if self._icons['pin'].isVisible():
+            self._icons['pin'].setChecked(False)
+        else: self._icons['pin'].setChecked(True)
+
     def _connectExpandAction(self):
         for i in range(0, self._widget.getRows()):
             for j in range(0, self._widget.getCols()):
-                action = self._widget[i, j].getAction()['expand']
-                if action is not None:
-                    action.triggered.connect(self._icons['expand'].setChecked)
+                try:
+                    action = self._widget[i, j].getAction()['expand']
+                    if action is not None:
+                        action.triggered.connect(self._icons['expand'].setChecked)
+                except: return
 
     def _showViewWidget(self):
         self._bar.show()
         self._widget.show()
+        QApplication.processEvents()
 
     def _hideViewWidget(self):
         self._bar.hide()
         self._widget.hide()
+        QApplication.processEvents()
 
     # Public method
 
+    # < Revision 17/03/2025
+    # add setIconSize method
+    def setIconSize(self, size: int | None):
+        if size > 64: self._btsize = 64
+        elif size < 0: self._btsize = self._BTSIZE
+        elif size is None: self._btsize = self._BTSIZE
+        else: self._btsize = size
+        for k in self._icons:
+            self._icons[k].setSize(self._btsize)
+    # Revision 17/03/2025 >
+
+    # < Revision 17/03/2025
+    # add getIconSize method
+    def getIconSize(self) -> int:
+        return self._btsize
+
+    # < Revision 08/03/2025
+    # fix vtkWin32OpenGLRenderWindow error: wglMakeCurrent failed in MakeCurrent()
+    # finalize method must be called before destruction
+    def finalize(self):
+        if self._widget is not None:
+            self._widget.finalize()
+    # Revision 08/03/2025 >
+
     def timerEnabled(self):
+        # timer used to detect when mouse leaves icon bar
+        # call timerEvent Qt event method
         if self._widget.hasVolume():
             if self._timerid is None:
                 self._timerid = self.startTimer(0)
 
     def timerDisabled(self):
+        # timer used to detect when mouse leaves icon bar
+        # call timerEvent Qt event method
         if self._timerid is not None:
             self.killTimer(self._timerid)
             self._timerid = None
@@ -432,14 +641,25 @@ class IconBarWidget(QWidget):
     def setName(self, name):
         if isinstance(name, str):
             self.setObjectName(name)
+            # noinspection PyUnresolvedReferences
             self.NameChanged.emit()
         else: raise TypeError('parameter type {} is not str.'.format(type(name)))
+
+    # Public reference volume methods
 
     def setVolume(self, vol):
         if isinstance(vol, SisypheVolume):
             if self._widget is not None:
                 self._widget.setVolume(vol)
                 self._showViewWidget()
+
+    # < Revision 18/10/2024
+    # add replaceVolume method
+    def replaceVolume(self, vol):
+        if isinstance(vol, SisypheVolume):
+            if self._widget is not None:
+                self._widget.replaceVolume(vol)
+    # Revision 18/10/2024 >
 
     def getVolume(self):
         return self._widget.getVolume()
@@ -449,8 +669,11 @@ class IconBarWidget(QWidget):
 
     def removeVolume(self):
         if self._widget is not None:
-            self._widget.removeVolume()
             self._hideViewWidget()
+            QApplication.processEvents()
+            self._widget.removeVolume()
+
+    # Public overlay methods
 
     def addOverlay(self, volume):
         if self._widget is not None:
@@ -459,18 +682,21 @@ class IconBarWidget(QWidget):
 
     def getOverlayCount(self):
         if self._widget is not None:
-            if self._widget.hasVolume():
-                return self._widget.getOverlayCount()
+            if self._widget.hasVolume(): return self._widget.getOverlayCount()
+            else: raise AttributeError('no volume in _widget attribute.')
+        else: raise AttributeError('_widget attribute is None.')
 
     def hasOverlay(self):
         if self._widget is not None:
-            if self._widget.hasVolume():
-                return self._widget.hasOverlay()
+            if self._widget.hasVolume(): return self._widget.hasOverlay()
+            else: raise AttributeError('no volume in _widget attribute.')
+        else: raise AttributeError('_widget attribute is None.')
 
     def getOverlayIndex(self, o):
         if self._widget is not None:
-            if self._widget.hasVolume():
-                return self._widget.getOverlayIndex(o)
+            if self._widget.hasVolume(): return self._widget.getOverlayIndex(o)
+            else: raise AttributeError('no volume in _widget attribute.')
+        else: raise AttributeError('_widget attribute is None.')
 
     def removeOverlay(self, o):
         if self._widget is not None:
@@ -484,8 +710,27 @@ class IconBarWidget(QWidget):
 
     def getOverlayFromIndex(self, index):
         if self._widget is not None:
-            if self._widget.hasVolume():
-                return self._widget.getOverlayFromIndex(index)
+            if self._widget.hasVolume(): return self._widget.getOverlayFromIndex(index)
+            else: raise AttributeError('no volume in _widget attribute.')
+        else: raise AttributeError('_widget attribute is None.')
+
+    def setAlignCenters(self, v: bool):
+        if self._widget is not None:
+            self._widget.setAlignCenters(v)
+
+    def alignCentersOn(self):
+        if self._widget is not None:
+            self._widget.setAlignCentersOn()
+
+    def alignCentersOff(self):
+        if self._widget is not None:
+            self._widget.setAlignCentersOff()
+
+    def getAlignCenters(self):
+        if self._widget is not None: return self._widget.getAlignCenters()
+        else: raise AttributeError('_widget attribute is None.')
+
+    # Public view widget methods
 
     def setViewWidget(self, widget):
         if isinstance(widget, MultiViewWidget):
@@ -493,38 +738,44 @@ class IconBarWidget(QWidget):
             self._widget.setParent(self)
             self._layout.addWidget(widget)
             grid = isinstance(widget, GridViewWidget)
+            multi = isinstance(widget, MultiSliceGridViewWidget)
             orthoslc = isinstance(widget, OrthogonalSliceViewWidget)
             orthovol = isinstance(widget, OrthogonalSliceVolumeViewWidget)
             view1 = widget.getFirstSliceViewWidget()
             view2 = widget.getFirstVolumeViewWidget()
             """
-            
-                Common to all widgets
-                
+            Common to all widgets 
             """
+            # noinspection PyUnresolvedReferences
             self._icons['expand'].clicked.connect(self._onExpand)
             self._connectExpandAction()
-            # self._icons['screen'].clicked.connect(self.getViewWidget().toggleDisplay)
+            # noinspection PyUnresolvedReferences
             self._icons['screen'].clicked.connect(lambda _: self._onFullScreen())
+            # noinspection PyUnresolvedReferences
             self._icons['zoomin'].clicked.connect(view1.zoomIn)
+            # noinspection PyUnresolvedReferences
             self._icons['zoomout'].clicked.connect(view1.zoomOut)
+            # noinspection PyUnresolvedReferences
             self._icons['zoom1'].clicked.connect(view1.zoomDefault)
             self._icons['actions'].setMenu(view1.getPopupActions())
             self._icons['info'].setMenu(view1.getPopupInformation())
             self._icons['colorbar'].setMenu(view1.getPopupColorbarPosition())
             self._icons['ruler'].setMenu(view1.getPopupRulerPosition())
             submenu = QMenu()
+            # noinspection PyTypeChecker
+            submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+            # noinspection PyTypeChecker
+            submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+            submenu.setAttribute(Qt.WA_TranslucentBackground, True)
             submenu.addAction('Copy grid capture to clipboard')
             submenu.addAction('Copy selected view capture to clipboard')
+            # noinspection PyUnresolvedReferences
             submenu.triggered.connect(self._onMenuCopyCapture)
             self._icons['clipboard'].setMenu(submenu)
             """
-            
-                Grid widget actions
-            
+            Grid widget actions
             """
             if grid:
-                self._icons['grid'] = self._createButton('wgrid.png', 'grid.png', checkable=False, autorepeat=False)
                 self._icons['orient'] = self._createButton('wdimz.png', 'dimz.png', checkable=False, autorepeat=False)
                 self._icons['sliceminus'] = self._createButton('wminus.png', 'minus.png', checkable=False, autorepeat=True)
                 self._icons['sliceplus'] = self._createButton('wplus.png', 'plus.png', checkable=False, autorepeat=True)
@@ -533,9 +784,16 @@ class IconBarWidget(QWidget):
                 menu.actions()[0].triggered.connect(lambda dummy, v=0: self._onMenuOrientation(v))
                 menu.actions()[1].triggered.connect(lambda dummy, v=1: self._onMenuOrientation(v))
                 menu.actions()[2].triggered.connect(lambda dummy, v=2: self._onMenuOrientation(v))
+                # noinspection PyUnresolvedReferences
+                self._shcutA.activated.connect(lambda: menu.actions()[0].trigger())
+                # noinspection PyUnresolvedReferences
+                self._shcutC.activated.connect(lambda: menu.actions()[1].trigger())
+                # noinspection PyUnresolvedReferences
+                self._shcutS.activated.connect(lambda: menu.actions()[2].trigger())
+                # noinspection PyUnresolvedReferences
                 self._icons['sliceminus'].clicked.connect(view1.slicePlus)
+                # noinspection PyUnresolvedReferences
                 self._icons['sliceplus'].clicked.connect(view1.sliceMinus)
-                self._visibilityflags['grid'] = True
                 self._visibilityflags['orient'] = True
                 self._visibilityflags['sliceminus'] = True
                 self._visibilityflags['sliceplus'] = True
@@ -543,35 +801,93 @@ class IconBarWidget(QWidget):
                 layout.insertWidget(3, self._icons['sliceplus'])
                 layout.insertWidget(3, self._icons['sliceminus'])
                 layout.insertWidget(3, self._icons['orient'])
-                layout.insertWidget(3, self._icons['grid'])
-                self._icons['grid'].setToolTip('Set row and column counts.')
-                self._icons['orient'].setToolTip('Set view orientation (axial, coronal, sagittal).')
-                self._icons['sliceminus'].setToolTip('Go to previous slice.')
-                self._icons['sliceplus'].setToolTip('Go to next slice.')
+                self._icons['sliceminus'].setToolTip('Previous slice.\n'
+                                                     'Up or Left key\n'
+                                                     'MouseWheel')
+                self._icons['sliceplus'].setToolTip('Next slice.\n'
+                                                    'Down or Right key\n'
+                                                    'MouseWheel')
+                self._icons['orient'].setToolTip('Set view orientation (axial, coronal, sagittal).\n'
+                                                 'A key to set axial orientation,\n'
+                                                 'C key to set coronal orientation,\n'
+                                                 'S key to set sagitall orientation.')
+                self._icons['sliceminus'].setToolTip('Go to previous slice.\n'
+                                                     'Up or Left key')
+                self._icons['sliceplus'].setToolTip('Go to next slice.\n'
+                                                    'Down or Right key')
                 self._icons['show'].setMenu(view1.getPopupVisibility())
-                self._icons['grid'].setMenu(widget.getPopupMenuNumberOfVisibleViews())
+                self._icons['show'].setToolTip('Set visibility options.\n'
+                                               'x key show/hide cursor\n'
+                                               'i key show/hide information\n'
+                                               'l key show/hide orientation labels\n'
+                                               'm key show/hide orientation marker\n'
+                                               'b key show/hide colorbar\n'
+                                               'r key show/hide ruler\n'
+                                               't key show/hide tooltip')
+                # noinspection PyUnresolvedReferences
+                self._shcutx.activated.connect(lambda: self._icons['show'].menu().actions()[0].trigger())
+                # noinspection PyUnresolvedReferences
+                self._shcuti.activated.connect(lambda: self._icons['show'].menu().actions()[1].trigger())
+                # noinspection PyUnresolvedReferences
+                self._shcutl.activated.connect(lambda: self._icons['show'].menu().actions()[2].trigger())
+                # noinspection PyUnresolvedReferences
+                self._shcutm.activated.connect(lambda: self._icons['show'].menu().actions()[3].trigger())
+                # noinspection PyUnresolvedReferences
+                self._shcutb.activated.connect(lambda: self._icons['show'].menu().actions()[6].trigger())
+                # noinspection PyUnresolvedReferences
+                self._shcutr.activated.connect(lambda: self._icons['show'].menu().actions()[7].trigger())
+                # noinspection PyUnresolvedReferences
+                self._shcutt.activated.connect(lambda: self._icons['show'].menu().actions()[8].trigger())
                 widget.popupMenuROIDisabled()
+                if multi:
+                    self._icons['grid'] = self._createButton('wgrid.png', 'grid.png', checkable=False, autorepeat=False)
+                    self._visibilityflags['grid'] = True
+                    self._icons['grid'].setToolTip('Set row and column count.\n'
+                                                   '1 key 1x1\n'
+                                                   '2 key 1x2\n'
+                                                   '3 key 1x3\n'
+                                                   '4 key 2x2\n'
+                                                   '6 key 2x3\n'
+                                                   '9 key 3x3')
+                    self._icons['grid'].setMenu(widget.getPopupMenuNumberOfVisibleViews())
+                    # noinspection PyUnresolvedReferences
+                    self._shcut1.activated.connect(lambda: self._icons['grid'].menu().actions()[0].trigger())
+                    # noinspection PyUnresolvedReferences
+                    self._shcut2.activated.connect(lambda: self._icons['grid'].menu().actions()[1].trigger())
+                    # noinspection PyUnresolvedReferences
+                    self._shcut3.activated.connect(lambda: self._icons['grid'].menu().actions()[2].trigger())
+                    # noinspection PyUnresolvedReferences
+                    self._shcut4.activated.connect(lambda: self._icons['grid'].menu().actions()[3].trigger())
+                    # noinspection PyUnresolvedReferences
+                    self._shcut6.activated.connect(lambda: self._icons['grid'].menu().actions()[4].trigger())
+                    # noinspection PyUnresolvedReferences
+                    self._shcut9.activated.connect(lambda: self._icons['grid'].menu().actions()[5].trigger())
+                    layout.insertWidget(3, self._icons['grid'])
             if grid or orthoslc:
                 self._icons['show'].setMenu(view1.getPopupVisibility())
                 submenu = QMenu()
+                # noinspection PyTypeChecker
+                submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+                # noinspection PyTypeChecker
+                submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+                submenu.setAttribute(Qt.WA_TranslucentBackground, True)
                 submenu.addAction('Save grid capture...')
                 submenu.addAction('Save selected view capture...')
                 submenu.addAction('Save captures from slice series...')
                 submenu.addSeparator()
-                submenu.addAction('Send selected view capture to screenshots preview')
+                action = submenu.addAction('Send selected view capture to screenshots preview')
+                action.setShortcut(Qt.Key_Space)
+                # noinspection PyUnresolvedReferences
                 submenu.triggered.connect(self._onMenuSaveCapture)
                 self._icons['capture'].setMenu(submenu)
-            """
-                
-                OrthogonalSliceVolume widget actions
-                
+            """    
+            OrthogonalSliceVolume widget actions 
             """
             if orthovol:
-
                 self._icons['campos'] = self._createButton('wrotate.png', 'rotate.png', checkable=False,
                                                            autorepeat=False)
                 self._icons['texture'] = self._createButton('whead.png', 'head.png', checkable=False, autorepeat=False)
-                self._icons['transfer'] = self._createButton('wtransfer.png', 'trasnfer.png', checkable=False,
+                self._icons['transfer'] = self._createButton('wtransfer.png', 'transfer.png', checkable=False,
                                                              autorepeat=False)
                 self._icons['align'] = self._createButton('wview.png', 'view.png', checkable=False, autorepeat=False)
                 self._icons['campos'].setMenu(view2.getPopupCameraPosition())
@@ -580,8 +896,14 @@ class IconBarWidget(QWidget):
 
                 self._transfer = TransferWidget(size=256)
                 self._transfer.colorDialogClosed.connect(self._icons['transfer'].showMenu)
+                self._transfer.gradientTransferVisibilityChanged.connect(self._onTransferMenuChanged)
 
                 submenu = QMenu()
+                # noinspection PyTypeChecker
+                submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+                # noinspection PyTypeChecker
+                submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+                submenu.setAttribute(Qt.WA_TranslucentBackground, True)
                 a = QWidgetAction(self)
                 a.setDefaultWidget(self._transfer)
                 submenu.addAction(a)
@@ -594,23 +916,55 @@ class IconBarWidget(QWidget):
                 layout.insertWidget(3, self._icons['texture'])
 
                 self._icons['show'].setMenu(view2.getPopupVisibility())
+                self._icons['show'].setToolTip('Set visibility options.\n'
+                                               'x key show/hide cursor\n'
+                                               'i key show/hide information\n'
+                                               'm key show/hide orientation marker\n'
+                                               'b key show/hide colorbar\n'
+                                               'r key show/hide ruler\n'
+                                               't key show/hide tooltip')
+                # noinspection PyUnresolvedReferences
+                self._shcutx.activated.connect(lambda: self._icons['show'].menu().actions()[0].trigger())
+                # noinspection PyUnresolvedReferences
+                self._shcuti.activated.connect(lambda: self._icons['show'].menu().actions()[1].trigger())
+                # noinspection PyUnresolvedReferences
+                self._shcutm.activated.connect(lambda: self._icons['show'].menu().actions()[2].trigger())
+                # noinspection PyUnresolvedReferences
+                self._shcutb.activated.connect(lambda: self._icons['show'].menu().actions()[3].trigger())
+                # noinspection PyUnresolvedReferences
+                self._shcutr.activated.connect(lambda: self._icons['show'].menu().actions()[4].trigger())
+                # noinspection PyUnresolvedReferences
+                self._shcutt.activated.connect(lambda: self._icons['show'].menu().actions()[5].trigger())
 
+
+                # < Revision 12/12/2024
+                # add align visibility flag
+                self._visibilityflags['align'] = True
+                # Revision 12/12/2024 >
                 self._visibilityflags['campos'] = True
                 self._visibilityflags['texture'] = True
                 self._visibilityflags['transfer'] = True
 
-                self._icons['campos'].setToolTip('Predefined camera positions.')
+                self._icons['campos'].setToolTip('Predefined camera positions in 3D view.')
+                self._icons['align'].setToolTip('Slice normal direction.')
                 self._icons['texture'].setToolTip('3D texture volume rendering settings.')
                 self._icons['transfer'].setToolTip('Set color and alpha transfer functions.')
 
                 submenu = QMenu()
+                # noinspection PyTypeChecker
+                submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+                # noinspection PyTypeChecker
+                submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+                submenu.setAttribute(Qt.WA_TranslucentBackground, True)
                 submenu.addAction('Save grid capture...')
                 submenu.addAction('Save selected view capture...')
                 submenu.addAction('Save captures from multiple camera positions...')
                 submenu.addAction('Save single capture from multiple camera positions...')
                 submenu.addSeparator()
-                submenu.addAction('Send selected view capture to screenshots preview')
+                action = submenu.addAction('Send selected view capture to screenshots preview')
+                action.setShortcut(Qt.Key_Space)
                 submenu.addAction('Send captures from multiple camera positions to screenshots preview')
+                # noinspection PyUnresolvedReferences
                 submenu.triggered.connect(self._onMenuSaveCapture)
                 self._icons['capture'].setMenu(submenu)
 
@@ -618,6 +972,23 @@ class IconBarWidget(QWidget):
 
     def getViewWidget(self):
         return self._widget
+
+    def viewWidgetVisibleOn(self):
+        self.setViewWidgetVisibility(True)
+
+    def viewWidgetVisibleOff(self):
+        self.setViewWidgetVisibility(False)
+
+    def setViewWidgetVisibility(self, v):
+        if isinstance(v, bool):
+            self._widget.setVisible(v)
+            QApplication.processEvents()
+        else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
+
+    def getViewWidgetVisibility(self):
+        return self._widget.isVisible()
+
+    # Public icon bar widget methods
 
     def iconBarVisibleOff(self):
         self.setIconBarVisibility(False)
@@ -670,6 +1041,12 @@ class IconBarWidget(QWidget):
         if isinstance(v, bool):
             self._visibilityflags['info'] = v
             if not v: self._icons['info'].setVisible(v)
+        else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
+
+    def setIsoButtonAvailability(self, v):
+        if isinstance(v, bool):
+            self._visibilityflags['iso'] = v
+            if not v: self._icons['iso'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setSliceButtonsAvailability(self, v):
@@ -764,6 +1141,9 @@ class IconBarWidget(QWidget):
     def getInfoButtonAvailability(self):
         return self._visibilityflags['info']
 
+    def getIsoButtonAvailability(self):
+        return self._visibilityflags['iso']
+
     def getActionButtonAvailability(self):
         return self._visibilityflags['actions']
 
@@ -800,6 +1180,9 @@ class IconBarWidget(QWidget):
     def hasThumbnail(self):
         return self._thumbnail is not None
 
+    def getButtons(self):
+        return self._icons
+
     # Event loop, solves VTK mouse move event bug
 
     @classmethod
@@ -811,26 +1194,15 @@ class IconBarWidget(QWidget):
     def timerEvent(self, event):
         w = self._widget
         # Icon bar visibility management
-        if not self._icons['pin'].isChecked():
+        if self._icons['pin'].isChecked():
+            if not self.getIconBarVisibility(): self.iconBarVisibleOn()
+        else:
             if self.getIconBarVisibility():
-                if not self._bar.underMouse(): self.iconBarVisibleOff()
+                if self._widgetUnderCursor(w): self.iconBarVisibleOff()
             else:
                 p = w.cursor().pos()
                 p = w.mapFromGlobal(p)
-                if p.x() < self._icons['pin'].width(): self.iconBarVisibleOn()
-        # Mouse move event management
-        # solves VTK mouse move event bug
-        if self._widgetUnderCursor(w):
-            for i in range(0, w.getRows()):
-                for j in range(0, w.getCols()):
-                    view = w.getViewWidgetAt(i, j)
-                    if self._widgetUnderCursor(view):
-                        interactor = view.getWindowInteractor()
-                        p = view.cursor().pos()
-                        p = view.mapFromGlobal(p)
-                        p.setY(view.height() - p.y() - 1)
-                        interactor.SetEventInformation(p.x(), p.y())
-                        interactor.MouseMoveEvent()
+                if 0 <= p.x() < self._icons['pin'].width() and 0 <= p.y() < w.height(): self.iconBarVisibleOn()
 
     # Qt events
 
@@ -845,27 +1217,62 @@ class IconBarWidget(QWidget):
             if txt[0:3] == 'idx':
                 index = int(txt.split()[1])
                 if self.hasThumbnail():
-                    self._thumbnail.getWidgetFromIndex(index).display()
+                    if self.hasVolume():
+                        # Replace setting
+                        if self._drop == 'Replace': self._thumbnail.getWidgetFromIndex(index).displayInSliceView()
+                        # Overlay setting
+                        elif self._drop == 'Overlay': self._thumbnail.getWidgetFromIndex(index).displayOverlay()
+                        # Registered setting
+                        elif self._drop == 'Registered':
+                            moving = self._thumbnail.getWidgetFromIndex(index).getVolume()
+                            fixed = self.getVolume()
+                            if moving is not None:
+                                if moving.hasSameID(fixed):
+                                    self._thumbnail.getWidgetFromIndex(index).displayOverlay()
+                                    return
+                                elif moving.hasTransform(fixed):
+                                    self._thumbnail.getWidgetFromIndex(index).displayOverlay()
+                                    return
+                            self._thumbnail.getWidgetFromIndex(index).displayInSliceView()
+                        # Dialog setting
+                        else:
+                            # noinspection PyTypeChecker
+                            dialog = QMessageBox(icon=QMessageBox.Question,
+                                                 title='Display volume',
+                                                 text='Display volume as overlay or replace ?')
+                            btReplace = dialog.addButton('Replace', QMessageBox.AcceptRole)
+                            btOverlay = dialog.addButton('Overlay', QMessageBox.AcceptRole)
+                            dialog.setDefaultButton(btReplace)
+                            dialog.addButton('Cancel', QMessageBox.RejectRole)
+                            if platform == 'win32':
+                                import pywinstyles
+                                cl = self.palette().base().color()
+                                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                                pywinstyles.change_header_color(dialog, c)
+                            dialog.exec()
+                            if dialog.clickedButton() == btReplace:
+                                self._thumbnail.getWidgetFromIndex(index).displayInSliceView()
+                            elif dialog.clickedButton() == btOverlay:
+                                self._thumbnail.getWidgetFromIndex(index).displayOverlay()
+                    else: self._thumbnail.getWidgetFromIndex(index).displayInSliceView()
 
 
 class IconBarOrthogonalSliceViewWidget(IconBarWidget):
     """
-        IconBarOrthogonalSliceViewWidget class
+    IconBarOrthogonalSliceViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            OrthogonalSliceViewWidget with icon bar.
+    OrthogonalSliceViewWidget with icon bar.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> IconBarWidget -> IconBarOrthogonalSliceViewWidget
+    QWidget -> IconBarWidget -> IconBarOrthogonalSliceViewWidget
 
-        Private Attributes
-
-        Public methods
-
-            inherited IconBarWidget
-            inherited QWidget methods
+    Creation: 17/04/2022
+    Last revision: 17/04/2022
     """
 
     # Special method
@@ -880,35 +1287,20 @@ class IconBarOrthogonalSliceViewWidget(IconBarWidget):
 
 class IconBarOrthogonalRegistrationViewWidget(IconBarWidget):
     """
-        IconBarOrthogonalRegistrationViewWidget class
+    IconBarOrthogonalRegistrationViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            OrthogonalRegistrationViewWidget with icon bar.
+    OrthogonalRegistrationViewWidget with icon bar.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> IconBarWidget -> IconBarOrthogonalRegistrationViewWidget
+    QWidget -> IconBarWidget -> IconBarOrthogonalRegistrationViewWidget
 
-        Private Attributes
-
-        Public methods
-
-            setCrop(bool)
-            bool = getCrop()
-            cropOn()
-            cropOff()
-            setRegistrationBoxVisibility(bool)
-            bool = getRegistrationBoxVisibility()
-            registrationBoxOn()
-            registrationBoxOff()
-            getRegistrationBoxMatrixArea()
-            displayEdge()
-            displayNative()
-            displayEdgeAndNative()
-
-            inherited IconBarWidget
-            inherited QWidget methods
+    Creation: 17/04/2022
+    Last revision: 17/04/2022
     """
 
     # Special method
@@ -918,10 +1310,14 @@ class IconBarOrthogonalRegistrationViewWidget(IconBarWidget):
         if widget is None: widget = OrthogonalRegistrationViewWidget()
         if isinstance(widget, OrthogonalRegistrationViewWidget): self.setViewWidget(widget)
         else: raise TypeError('parameter type {} is not OrthogonalRegistrationViewWidget.'.format(type(widget)))
+        self.setPinButtonAvailability(False)
+        self.setExpandButtonAvailability(False)
         self.setShowButtonAvailability(False)
         self.setInfoButtonAvailability(False)
         self.setColorbarButtonAvailability(False)
         self.setToolButtonAvailability(False)
+        self.setRulerButtonAvailability(False)
+        self.setIsoButtonAvailability(False)
         self._hideViewWidget()
 
         # Registration area box synchronisation
@@ -976,32 +1372,20 @@ class IconBarOrthogonalRegistrationViewWidget(IconBarWidget):
 
 class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationViewWidget):
     """
-        IconBarOrthogonalRegistrationViewWidget2 class
+    IconBarOrthogonalRegistrationViewWidget2 class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            OrthogonalRegistrationViewWidget with icon bar and rigid transformation buttons.
+    OrthogonalRegistrationViewWidget with icon bar and rigid transformation buttons.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> IconBarWidget -> IconBarOrthogonalRegistrationViewWidget
-            -> IconBarOrthogonalRegistrationViewWidget2
+    QWidget -> IconBarWidget -> IconBarOrthogonalRegistrationViewWidget -> IconBarOrthogonalRegistrationViewWidget2
 
-        Private Attributes
-
-        Public methods
-
-            setMoveOverlayOn()
-            setMoveOverlayOff()
-            setMoveButtonsVisibility(bool)
-            bool = getMoveButtonsVisibility()
-            setMoveStep(float)
-            float = getMoveStep()
-
-            inherited IconBarWidget
-            inherited QWidget methods
-
-        Revision 16/04/2023, button tooltips update
+    Creation: 17/04/2022
+    Last revision: 22/05/2025
     """
 
     # Special method
@@ -1014,17 +1398,23 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
 
         # Axial buttons
 
-        self._buttons['up0'] = self._createButton('wup.png', 'up.ong', checkable=False, autorepeat=True)
+        self._buttons['up0'] = self._createButton('wup.png', 'up.png', checkable=False, autorepeat=True)
         self._buttons['down0'] = self._createButton('wdown.png', 'down.png', checkable=False, autorepeat=True)
         self._buttons['left0'] = self._createButton('wleft.png', 'left.png', checkable=False, autorepeat=True)
         self._buttons['right0'] = self._createButton('wright.png', 'right.png', checkable=False, autorepeat=True)
         self._buttons['rotc0'] = self._createButton('wrot1.png', 'rot1.png', checkable=False, autorepeat=True)
         self._buttons['rota0'] = self._createButton('wrot2.png', 'rot2.png', checkable=False, autorepeat=True)
+        # noinspection PyUnresolvedReferences
         self._buttons['up0'].clicked.connect(lambda: self._ytranslation(self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['down0'].clicked.connect(lambda: self._ytranslation(-self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['left0'].clicked.connect(lambda: self._xtranslation(self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['right0'].clicked.connect(lambda: self._xtranslation(-self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['rotc0'].clicked.connect(lambda: self._zrotation(self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['rota0'].clicked.connect(lambda: self._zrotation(-self._step))
         self._buttons['up0'].setToolTip('Forward translation')
         self._buttons['down0'].setToolTip('Backward translation')
@@ -1044,17 +1434,23 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
 
         # Coronal buttons
 
-        self._buttons['up1'] = self._createButton('wup.png', 'up.ong', checkable=False, autorepeat=True)
+        self._buttons['up1'] = self._createButton('wup.png', 'up.png', checkable=False, autorepeat=True)
         self._buttons['down1'] = self._createButton('wdown.png', 'down.png', checkable=False, autorepeat=True)
         self._buttons['left1'] = self._createButton('wleft.png', 'left.png', checkable=False, autorepeat=True)
         self._buttons['right1'] = self._createButton('wright.png', 'right.png', checkable=False, autorepeat=True)
         self._buttons['rotc1'] = self._createButton('wrot1.png', 'rot1.png', checkable=False, autorepeat=True)
         self._buttons['rota1'] = self._createButton('wrot2.png', 'rot2.png', checkable=False, autorepeat=True)
+        # noinspection PyUnresolvedReferences
         self._buttons['up1'].clicked.connect(lambda: self._ztranslation(self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['down1'].clicked.connect(lambda: self._ztranslation(-self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['left1'].clicked.connect(lambda: self._xtranslation(self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['right1'].clicked.connect(lambda: self._xtranslation(-self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['rotc1'].clicked.connect(lambda: self._yrotation(-self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['rota1'].clicked.connect(lambda: self._yrotation(self._step))
         self._buttons['up1'].setToolTip('Cranial translation')
         self._buttons['down1'].setToolTip('Caudal translation')
@@ -1074,17 +1470,23 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
 
         # Sagittal buttons
 
-        self._buttons['up2'] = self._createButton('wup.png', 'up.ong', checkable=False, autorepeat=True)
+        self._buttons['up2'] = self._createButton('wup.png', 'up.png', checkable=False, autorepeat=True)
         self._buttons['down2'] = self._createButton('wdown.png', 'down.png', checkable=False, autorepeat=True)
         self._buttons['left2'] = self._createButton('wleft.png', 'left.png', checkable=False, autorepeat=True)
         self._buttons['right2'] = self._createButton('wright.png', 'right.png', checkable=False, autorepeat=True)
         self._buttons['rotc2'] = self._createButton('wrot1.png', 'rot1.png', checkable=False, autorepeat=True)
         self._buttons['rota2'] = self._createButton('wrot2.png', 'rot2.png', checkable=False, autorepeat=True)
+        # noinspection PyUnresolvedReferences
         self._buttons['up2'].clicked.connect(lambda: self._ztranslation(self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['down2'].clicked.connect(lambda: self._ztranslation(-self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['left2'].clicked.connect(lambda: self._ytranslation(self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['right2'].clicked.connect(lambda: self._ytranslation(-self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['rotc2'].clicked.connect(lambda: self._xrotation(self._step))
+        # noinspection PyUnresolvedReferences
         self._buttons['rota2'].clicked.connect(lambda: self._xrotation(-self._step))
         self._buttons['up2'].setToolTip('Cranial translation')
         self._buttons['down2'].setToolTip('Caudal translation')
@@ -1109,11 +1511,28 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         layout.addLayout(layout1)
         layout.addLayout(layout2)
 
+        # < Revision 22/05/2025
+        # black background of button bar
+        self._frame = QFrame(self)
+        if platform == 'win32':
+            self._frame.setObjectName('TrfBar')
+            self._frame.setStyleSheet('QFrame#TrfBar { background-color: #000000; border-color: #000000; } '
+                                      'QToolTip#TrfBar { color: #000000; background-color: #FFFFE0; border: 0px; font-size: 8pt; }')
+        else:
+            self._frame.setAutoFillBackground(True)
+            # noinspection PyTypeChecker
+            self._frame.palette().setColor(QPalette.Window, Qt.black)
+        self._frame.setLayout(layout)
+        # Revision 22/05/2025 >
+
         for view in self.getViewWidget().getSliceViewWidgets():
             view.TranslationsChanged.connect(lambda d1, d2: self._updateTooltips())
             view.RotationsChanged.connect(lambda d1, d2: self._updateTooltips())
 
-        self._vlayout.addLayout(layout)
+        # < Revision 22/05/2025
+        # self._vlayout.addLayout(layout)
+        self._vlayout.addWidget(self._frame)
+        # Revision 22/05/2025 >
         self._hideViewWidget()
 
     # Private methods
@@ -1143,9 +1562,9 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
 
     def _xtranslation(self, v):
         widget = self().getFirstSliceViewWidget()
-        t = list(widget.getTranslations())
+        t = list(widget.getTranslations(index=0))
         t[0] += v
-        widget.setTranslations(tuple(t))
+        widget.setTranslations(tuple(t), index=0)
         self._buttons['left0'].setToolTip('Right translation\nX Translation {:.2f} mm'.format(t[0]))
         self._buttons['right0'].setToolTip('Left translation\nX Translation {:.2f} mm'.format(t[0]))
         self._buttons['left1'].setToolTip('Right translation\nX Translation {:.2f} mm'.format(t[0]))
@@ -1153,9 +1572,9 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
 
     def _ytranslation(self, v):
         widget = self().getFirstSliceViewWidget()
-        t = list(widget.getTranslations())
+        t = list(widget.getTranslations(index=0))
         t[1] += v
-        widget.setTranslations(tuple(t))
+        widget.setTranslations(tuple(t), index=0)
         self._buttons['up0'].setToolTip('Forward translation\nY Translation {:.2f} mm'.format(t[1]))
         self._buttons['down0'].setToolTip('Backward translation\nY Translation {:.2f} mm'.format(t[1]))
         self._buttons['left2'].setToolTip('Forward translation\nY Translation {:.2f} mm'.format(t[1]))
@@ -1163,9 +1582,9 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
 
     def _ztranslation(self, v):
         widget = self().getFirstSliceViewWidget()
-        t = list(widget.getTranslations())
+        t = list(widget.getTranslations(index=0))
         t[2] += v
-        widget.setTranslations(tuple(t))
+        widget.setTranslations(tuple(t), index=0)
         self._buttons['up1'].setToolTip('Cranial translation\nZ Translation {:.2f} mm'.format(t[2]))
         self._buttons['down1'].setToolTip('Caudal translation\nZ Translation {:.2f} mm'.format(t[2]))
         self._buttons['up2'].setToolTip('Cranial translation\nZ Translation {:.2f} mm'.format(t[2]))
@@ -1173,25 +1592,25 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
 
     def _xrotation(self, v):
         widget = self().getFirstSliceViewWidget()
-        r = list(widget.getRotations())
+        r = list(widget.getRotations(index=0))
         r[0] += v
-        widget.setRotations(tuple(r))
+        widget.setRotations(tuple(r), index=0)
         self._buttons['rotc2'].setToolTip('Clockwise X rotation\nX Rotation {:.2f}°'.format(r[0]))
         self._buttons['rota2'].setToolTip('Counter-clockwise X Rotation\nX Rotation {:.2f}°'.format(r[0]))
 
     def _yrotation(self, v):
         widget = self().getFirstSliceViewWidget()
-        r = list(widget.getRotations())
+        r = list(widget.getRotations(index=0))
         r[1] += v
-        widget.setRotations(tuple(r))
+        widget.setRotations(tuple(r), index=0)
         self._buttons['rotc1'].setToolTip('Clockwise Y rotation\nY Rotation {:.2f}°'.format(r[1]))
         self._buttons['rota1'].setToolTip('Counter-clockwise Y Rotation\nY Rotation {:.2f}°'.format(r[1]))
 
     def _zrotation(self, v):
         widget = self().getFirstSliceViewWidget()
-        r = list(widget.getRotations())
+        r = list(widget.getRotations(index=0))
         r[2] += v
-        widget.setRotations(tuple(r))
+        widget.setRotations(tuple(r), index=0)
         self._buttons['rotc0'].setToolTip('Clockwise Z rotation\nZ Rotation {:.2f}°'.format(r[2]))
         self._buttons['rota0'].setToolTip('Counter-clockwise Z Rotation\nZ Rotation {:.2f}°'.format(r[2]))
 
@@ -1228,22 +1647,20 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
 
 class IconBarOrthogonalReorientViewWidget(IconBarWidget):
     """
-        IconBarOrthogonalReorientViewWidget class
+    IconBarOrthogonalReorientViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            OrthogonalReorientViewWidget with icon bar.
+    OrthogonalReorientViewWidget with icon bar.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> IconBarWidget -> IconBarOrthogonalReorientViewWidget
+    QWidget -> IconBarWidget -> IconBarOrthogonalReorientViewWidget
 
-        Private Attributes
-
-        Public methods
-
-            inherited IconBarWidget
-            inherited QWidget methods
+    Creation: 17/04/2022
+    Last revision:
     """
 
     def __init__(self, widget=None, parent=None):
@@ -1251,32 +1668,26 @@ class IconBarOrthogonalReorientViewWidget(IconBarWidget):
         if widget is None: widget = OrthogonalReorientViewWidget()
         if isinstance(widget, OrthogonalReorientViewWidget): self.setViewWidget(widget)
         else: raise TypeError('parameter type {} is not OrthogonalReorientViewWidget.'.format(type(widget)))
+        self.setIsoButtonAvailability(False)
         self._hideViewWidget()
 
 
 class IconBarOrthogonalSliceVolumeViewWidget(IconBarWidget):
     """
-        IconBarOrthogonalSliceVolumeViewWidget class
+    IconBarOrthogonalSliceVolumeViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            OrthogonalSliceVolumeViewWidget with icon bar.
+    OrthogonalSliceVolumeViewWidget with icon bar.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> IconBarWidget -> IconBarOrthogonalSliceVolumeViewWidget
+    QWidget -> IconBarWidget -> IconBarOrthogonalSliceVolumeViewWidget
 
-        Private Attributes
-
-        Public methods
-
-            setCameraPositionButtonAvailability(bool)
-            setTextureSettingsButtonAvailability(bool)
-            bool = getCameraPositionButtonAvailability()
-            bool = getTextureSettingsButtonAvailability()
-
-            inherited IconBarWidget
-            inherited QWidget methods
+    Creation: 17/04/2022
+    Last revision:
     """
 
     # Special method
@@ -1315,29 +1726,20 @@ class IconBarOrthogonalSliceVolumeViewWidget(IconBarWidget):
 
 class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
     """
-        IconBarOrthogonalSliceTrajectoryViewWidget
+    IconBarOrthogonalSliceTrajectoryViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            OrthogonalSliceTrajectoryViewWidget with icon bar.
+    OrthogonalSliceTrajectoryViewWidget with icon bar.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> IconBarWidget -> IconBarOrthogonalSliceTrajectoryViewWidget
+    QWidget -> IconBarWidget -> IconBarOrthogonalSliceTrajectoryViewWidget
 
-        Private Attributes
-
-        Public methods
-
-            setSlabThicknessButtonAvailability(bool)
-            bool = getSlabThicknessButtonAvailability()
-
-            inherited IconBarWidget
-            inherited QWidget methods
-
-        Revisions:
-
-            02/10/2023  add slab thickness management
+    Creation: 17/04/2022
+    Last Revision: 06/12/2024
     """
 
     def __init__(self, widget=None, parent=None):
@@ -1353,7 +1755,6 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
 
         self._icons['thick'] = self._createButton('wthickness.png', 'thickness.png', checkable=True, autorepeat=False)
         self._icons['thick'].setToolTip('Slab thickness management.')
-        self._visibilityflags['thick'] = True
 
         self._sstep = LabeledDoubleSpinBox(title='Slice step', fontsize=10)
         self._sstep.setValue(1.0)
@@ -1367,6 +1768,11 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
         self._sthick.setSuffix(' mm')
 
         menu = QMenu()
+        # noinspection PyTypeChecker
+        menu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        menu.setWindowFlag(Qt.FramelessWindowHint, True)
+        menu.setAttribute(Qt.WA_TranslucentBackground, True)
         a = QWidgetAction(self)
         a.setDefaultWidget(self._sstep)
         menu.addAction(a)
@@ -1384,9 +1790,13 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
         action['mean'].setCheckable(True)
         action['sum'].setCheckable(True)
         action['mean'].setChecked(True)
+        # noinspection PyUnresolvedReferences
         action['min'].triggered.connect(lambda _: self._slabTypeChanged(0))
+        # noinspection PyUnresolvedReferences
         action['max'].triggered.connect(lambda _: self._slabTypeChanged(1))
+        # noinspection PyUnresolvedReferences
         action['mean'].triggered.connect(lambda _: self._slabTypeChanged(2))
+        # noinspection PyUnresolvedReferences
         action['sum'].triggered.connect(lambda _: self._slabTypeChanged(3))
         self._group = QActionGroup(self)
         self._group.setExclusive(True)
@@ -1398,11 +1808,49 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
         submenu.addAction(action['sum'])
         submenu.addAction(action['min'])
         submenu.addAction(action['max'])
+        # noinspection PyUnresolvedReferences
         menu.aboutToHide.connect(self._slabThicknessChanged)
         self._icons['thick'].setMenu(menu)
 
         layout = self._bar.layout()
         layout.insertWidget(7, self._icons['thick'])
+
+        # Sphere cursor
+
+        self._icons['sphere'] = self._createButton('wcursor.png', 'cursor.png', checkable=True, autorepeat=False)
+        self._icons['sphere'].setToolTip('Sphere cursor management.')
+
+        view = self._widget[0, 0]
+        menu = QMenu()
+        # noinspection PyTypeChecker
+        menu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        menu.setWindowFlag(Qt.FramelessWindowHint, True)
+        menu.setAttribute(Qt.WA_TranslucentBackground, True)
+        a = QWidgetAction(self)
+        w = LabeledSlider(title='Cursor radius', fontsize=10)
+        w.setRange(0, 50)
+        w.setValue(0)
+        # noinspection PyUnresolvedReferences
+        w.valueChanged.connect(view.setSphereCursorRadius)
+        a.setDefaultWidget(w)
+        menu.addAction(a)
+        a = QWidgetAction(self)
+        w = LabeledSlider(title='Cursor opacity', fontsize=10)
+        w.setRange(0, 100)
+        w.setValue(50)
+        # noinspection PyUnresolvedReferences
+        w.valueChanged.connect(view.setSphereCursorOpacity)
+        a.setDefaultWidget(w)
+        menu.addAction(a)
+        self._icons['sphere'].setMenu(menu)
+
+        layout.insertWidget(13, self._icons['sphere'])
+
+        # < Revision 06/12/2024
+        self._visibilityflags['thick'] = True
+        self._visibilityflags['sphere'] = True
+        # Revision 06/12/2024 >
 
     # Private methods
 
@@ -1425,6 +1873,13 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
     def setVolume(self, vol):
         super().setVolume(vol)
         self._transfer.setViewWidget(self().getFirstVolumeViewWidget())
+        # < Revision 18/10/2024
+        # Reset slab properties
+        self._sstep.setValue(1.0)
+        self._sthick.setValue(0.0)
+        self._widget[0, 1].setSlabThickness(0.0, signal=False)
+        self._widget[0, 1].setSliceStep(1.0, signal=False)
+        # Revision 18/10/2024
 
     def setSlabThicknessButtonAvailability(self, v):
         if isinstance(v, bool):
@@ -1438,25 +1893,21 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
 
 class IconBarMultiSliceGridViewWidget(IconBarWidget):
     """
-        IconBarMultiSliceGridViewWidget
+    IconBarMultiSliceGridViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            MultiSliceGridViewWidget with icon bar.
-            Displays several adjacent slices in 3 x 3 grid with overlays and ROI support.
+    MultiSliceGridViewWidget with icon bar.
+    Displays several adjacent slices in 3 x 3 grid with overlays and ROI support.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> IconBarWidget -> IconBarMultiSliceGridViewWidget
+    QWidget -> IconBarWidget -> IconBarMultiSliceGridViewWidget
 
-        Private Attributes
-
-        Public methods
-
-            addOverlay(SisypheVolume)
-
-            inherited IconBarWidget
-            inherited QWidget methods
+    Creation: 17/04/2022
+    Last revision:
     """
 
     def __init__(self, widget=None, rois=None, draw=None, parent=None):
@@ -1481,23 +1932,21 @@ class IconBarMultiSliceGridViewWidget(IconBarWidget):
 
 class IconBarSynchronisedGridViewWidget(IconBarWidget):
     """
-        IconBarSynchronisedGridViewWidget
+    IconBarSynchronisedGridViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            SynchronisedGridViewWidget with icon bar.
-            Displays same slices of multiple volumes in 3 x 3 grid.
+    SynchronisedGridViewWidget with icon bar.
+    Displays same slices of multiple volumes in 3 x 3 grid.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> IconBarWidget -> IconBarSynchronisedGridViewWidget
+    QWidget -> IconBarWidget -> IconBarSynchronisedGridViewWidget
 
-        Private Attributes
-
-        Public methods
-
-            inherited IconBarWidget
-            inherited QWidget methods
+    Creation: 17/04/2022
+    Last revision:
     """
 
     def __init__(self, widget=None, rois=None, draw=None, parent=None):
@@ -1507,25 +1956,35 @@ class IconBarSynchronisedGridViewWidget(IconBarWidget):
         else: raise TypeError('parameter type {} is not SynchronisedGridViewWidget.'.format(type(widget)))
         self._hideViewWidget()
 
+    # Private method
+
+    def setVolume(self, vol):
+        super().setVolume(vol)
+        if vol.isThickAnisotropic():
+            # Display in native orientation
+            orient = vol.getNative2DOrientation()
+            if orient == 1: self().setAxialOrientation()
+            elif orient == 2: self().setCoronalOrientation()
+            elif orient == 3: self().setSagittalOrientation()
+            else: self().setAxialOrientation()
+
 
 class IconBarSliceViewWidget(IconBarWidget):
     """
-        IconBarSliceViewWidget
+    IconBarSliceViewWidget class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            SliceViewWidget with icon bar.
+    SliceViewWidget with icon bar.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> IconBarWidget -> IconBarSliceViewWidget
+    QWidget -> IconBarWidget -> IconBarSliceViewWidget
 
-        Private Attributes
-
-        Public methods
-
-            inherited IconBarWidget
-            inherited QWidget methods
+    Creation: 17/04/2022
+    Last revision: 07/12/2024
     """
 
     def __init__(self, widget=None, rois=None, draw=None, parent=None):
@@ -1548,6 +2007,7 @@ class IconBarSliceViewWidget(IconBarWidget):
     def _setViewWidget(self, widget):
         if isinstance(widget, SliceROIViewWidget):
             self._widget = widget
+            self._widget.setName('SliceViewWidget')
             self._layout.addWidget(widget)
             widget.setSelectable(False)
             self.setExpandButtonAvailability(False)
@@ -1555,7 +2015,9 @@ class IconBarSliceViewWidget(IconBarWidget):
             self._icons['sliceminus'] = self._createButton('wminus.png', 'minus.png', checkable=False, autorepeat=True)
             self._icons['sliceplus'] = self._createButton('wplus.png', 'plus.png', checkable=False, autorepeat=True)
             self._icons['orient'].setMenu(widget.getPopupOrientation())
+            # noinspection PyUnresolvedReferences
             self._icons['sliceminus'].clicked.connect(widget.sliceMinus)
+            # noinspection PyUnresolvedReferences
             self._icons['sliceplus'].clicked.connect(widget.slicePlus)
             self._visibilityflags['orient'] = True
             self._visibilityflags['sliceminus'] = True
@@ -1567,10 +2029,15 @@ class IconBarSliceViewWidget(IconBarWidget):
             self._icons['show'].setMenu(widget.getPopupVisibility())
             self._icons['actions'].setMenu(widget.getPopupActions())
             self._icons['colorbar'].setMenu(widget.getPopupColorbarPosition())
+            # noinspection PyUnresolvedReferences
             self._icons['zoomin'].clicked.connect(widget.zoomIn)
+            # noinspection PyUnresolvedReferences
             self._icons['zoomout'].clicked.connect(widget.zoomOut)
+            # noinspection PyUnresolvedReferences
             self._icons['zoom1'].clicked.connect(widget.zoomDefault)
+            # noinspection PyUnresolvedReferences
             self._icons['capture'].clicked.connect(widget.saveCapture)
+            # noinspection PyUnresolvedReferences
             self._icons['clipboard'].clicked.connect(widget.copyToClipboard)
             widget.getAction()['axial'].triggered.connect(lambda: self._icons['orient'].setIcon(self._ax))
             widget.getAction()['coronal'].triggered.connect(lambda: self._icons['orient'].setIcon(self._cor))
@@ -1581,10 +2048,14 @@ class IconBarSliceViewWidget(IconBarWidget):
 
     def setVolume(self, vol):
         super().setVolume(vol)
+        # timer used to detect when mouse leaves icon bar
+        # call timerEvent Qt event method
         self.timerEnabled()
 
     def removeVolume(self):
         super().removeVolume()
+        # timer used to detect when mouse leaves icon bar
+        # call timerEvent Qt event method
         self.timerDisabled()
 
     def timerEvent(self, event):
@@ -1592,11 +2063,13 @@ class IconBarSliceViewWidget(IconBarWidget):
         # Icon bar visibility management
         if not self._icons['pin'].isChecked():
             if self.getIconBarVisibility():
-                if not self._bar.underMouse(): self.iconBarVisibleOff()
+                if self._widgetUnderCursor(w): self.iconBarVisibleOff()
             else:
                 p = w.cursor().pos()
                 p = w.mapFromGlobal(p)
-                if p.x() < self._icons['pin'].width(): self.iconBarVisibleOn()
+                if 0 <= p.x() < self._icons['pin'].width() and 0 <= p.y() < w.height(): self.iconBarVisibleOn()
+        """
+        # < Revision 13/03/2025
         # Mouse move event management
         # solves VTK mouse move event bug
         interactor = w.getWindowInteractor()
@@ -1605,94 +2078,26 @@ class IconBarSliceViewWidget(IconBarWidget):
         p.setY(w.height() - p.y() - 1)
         interactor.SetEventInformation(p.x(), p.y())
         interactor.MouseMoveEvent()
+        # Revision 13/03/2025 >
+        """
 
 
 class IconBarViewWidgetCollection(QObject):
     """
-        IconBarViewWidgetCollection
+    IconBarViewWidgetCollection
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Indexed dict-like container of IconBarWidgets.
+    Indexed dict-like container of IconBarWidgets.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            object -> IconBarViewWidgetCollection
+    QObject -> IconBarViewWidgetCollection
 
-        Private attributes
-
-            _widgets    list of IconBarWidget
-            _index      index for Iterator
-
-        Public methods
-
-            __getitem__(int)
-            __setitem__(IconBarWidget)
-            __delitem__(int)
-            __len__
-            __contains__(str or IconBarWidget)
-            __iter__
-            __next__
-            clear()
-            bool = isEmpty()
-            int = count()
-            remove(int, str or IconBarWidget)
-            list = keys()
-            int = index(str or IconBarWidget)
-            reverse()
-            append(IconBarWidget)
-            insert(str or int, IconBarWidget)
-            clear()
-            sort()
-            IconBarViewWidgetCollection = copy()
-            list = copyToList()
-            updateKeys()
-            setVolume(SisypheVolume, DIALOGWait)
-            SisypheVolume = getVolume()
-            removeVolume()
-            addOverlay(SisypheVolume, DIALOGWait)
-            removeOverlay(SisypheVolume)
-            SisypheROICollection = getROICollection()
-            SisypheROIDraw = getROIDraw()
-            int = getCurrentSliceIndex()
-            int = getSelectedSliceIndex()
-            int = getCurrentOrientation()
-            updateROIDisplay()
-            updateROIAttributes()
-            setUndoOn()
-            setUndoOff()
-            setROIVisibility(bool)
-            setActiveROI(str)
-            setBrushRadiusROI(int)
-            setBrushROIFlag(int)
-            setFillHolesROIFlag(bool)
-            bool = getFillHolesROIFlag()
-            set2DBlobDilateROIFlag()
-            set2DBlobErodeROIFlag()
-            set2DBlobCloseROIFlag()
-            set2DBlobOpenROIFlag()
-            set2DBlobCopyROIFlag()
-            set2DBlobCutROIFlag()
-            set2DBlobPasteROIFlag()
-            set2DBlobRemoveROIFlag()
-            set2DBlobKeepROIFlag()
-            set3DBlobDilateROIFlag()
-            set3DBlobErodeROIFlag()
-            set3DBlobCloseROIFlag()
-            set3DBlobOpenROIFlag()
-            set3DBlobCopyROIFlag()
-            set3DBlobCutROIFlag()
-            set3DBlobPasteROIFlag()
-            set3DBlobRemoveROIFlag()
-            set3DBlobKeepROIFlag()
-            OrthogonalSliceTrajectoryViewWidget = getOrthogonalSliceTrajectoryViewWidget()
-            MultiSliceGridViewWidget = getMultiSliceGridViewWidget()
-            SynchronisedGridViewWidget = getSynchronisedGridViewWidget()
-            updateRender()
-
-        Revisions:
-
-            03/08/2023  Add setNoROIFlag() and getBrushFlag() methods
+    Creation: 17/04/2022
+    Last Revision: 27/05/2025
     """
 
     __slots__ = ['_widgets', '_index']
@@ -1704,6 +2109,13 @@ class IconBarViewWidgetCollection(QObject):
         return keys.index(key)
 
     # Special methods
+
+    """
+    Private attributes
+
+    _widgets    list[IconBarWidget]
+    _index      int, index for Iterator
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -1728,9 +2140,8 @@ class IconBarViewWidgetCollection(QObject):
         if isinstance(index, str):
             index = self._KeyToIndex(index)
         if isinstance(index, int):
-            if 0 <= index < len(self._widgets):
-                return self._widgets[index][1]
-            else: IndexError('parameter value {} is out of range.'.format(index))
+            if 0 <= index < len(self._widgets): return self._widgets[index][1]
+            else: raise IndexError('parameter value {} is out of range.'.format(index))
         else: raise TypeError('parameter type {} is not int or str.'.format(type(index)))
 
     def __setitem__(self, index, value):
@@ -1844,8 +2255,7 @@ class IconBarViewWidgetCollection(QObject):
         if isinstance(vol, SisypheVolume):
             if self.count() > 0:
                 if wait is not None:
-                    wait.setProgressMinimum(0)
-                    wait.setProgressMaximum(self.count())
+                    wait.setProgressRange(0, self.count())
                     wait.progressVisibilityOn()
                 for widget in self:
                     if wait is not None:
@@ -1863,30 +2273,56 @@ class IconBarViewWidgetCollection(QObject):
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
     def getVolume(self):
-        if self.count() > 0:
-            return self[0].getVolume()
+        # < Revision 20/02/2025
+        # if self.count() > 0: return self[0].getVolume()
+        # else: return None
+        n = self.count()
+        if n > 0:
+            for i in range(n):
+                if self[i].hasVolume():
+                    return self[i].getVolume()
+        return None
+        # Revision 20/02/2025 >
+
+    def hasVolume(self):
+        if self.count() > 0: return self[0].hasVolume()
+        else: return False
 
     def removeVolume(self):
         if self.count() > 0:
             for widget in self:
-                widget.removeVolume()
+                if widget.hasVolume():
+                    widget.removeVolume()
 
     # Overlay methods
 
     def addOverlay(self, vol, wait=None):
         if isinstance(vol, SisypheVolume):
+            # < Revision 27/05/2025
+            # add flag return value
+            # add overlay count test
+            flag = False
             if self.count() > 0:
                 if wait is not None:
-                    wait.setProgressMinimum(0)
-                    wait.setProgressMaximum(self.count())
+                    wait.setProgressRange(0, self.count())
                     wait.progressVisibilityOn()
-                for widget in self:
-                    if wait is not None:
-                        info = '{} display as overlay in {} view...'.format(vol.getBasename(), widget.getName())
-                        wait.setInformationText(info)
-                        wait.incCurrentProgressValue()
-                    widget.addOverlay(vol)
-                    QApplication.processEvents()
+                if self.getFirstSliceView().getOverlayCount() < 8:
+                    for widget in self:
+                        if wait is not None:
+                            info = '{} display as overlay in {} view...'.format(vol.getBasename(), widget.getName())
+                            wait.setInformationText(info)
+                            wait.incCurrentProgressValue()
+                        widget.addOverlay(vol)
+                        QApplication.processEvents()
+                    flag = True
+                else:
+                    wait.hide()
+                    messageBox(title='Add overlay...',
+                               text='Maximum number of overlays reached.\n'
+                                    'Removing an overlay before opening a new one.')
+
+            return flag
+            # Revision 27/05/2025 >
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
     def removeOverlay(self, vol):
@@ -1896,15 +2332,57 @@ class IconBarViewWidgetCollection(QObject):
                     widget.removeOverlay(vol)
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
+    def removeAllOverlays(self):
+        if self.count() > 0:
+            for widget in self:
+                widget.removeAllOverlays()
+
+    def setAlignCenters(self, v: bool):
+        if self.count() > 0:
+            for widget in self:
+                widget.setAlignCenters(v)
+
+    def alignCentersOn(self):
+        if self.count() > 0:
+            for widget in self:
+                widget.setAlignCentersOn()
+
+    def alignCentersOff(self):
+        if self.count() > 0:
+            for widget in self:
+                widget.setAlignCentersOff()
+
+    def getAlignCenters(self):
+        return self._widgets[0].getAlignCenters()
+
     # ROI methods
 
+    # < Revision 20/02/2025
+    # add canDisplayROI method
+    def canDisplayROI(self):
+        r = False
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, IconBarMultiSliceGridViewWidget):
+                    if widget.hasVolume():
+                        r = True
+                        break
+                elif isinstance(widget, IconBarSynchronisedGridViewWidget):
+                    if widget.hasVolume():
+                        r = True
+                        break
+        return r
+    # Revision 20/02/2025 >
+
     def getROICollection(self):
+        # noinspection PyInconsistentReturns
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getROICollection()
                     else: return None
+        return None
 
     def getROIDraw(self):
         if self.count() > 0:
@@ -1913,6 +2391,7 @@ class IconBarViewWidgetCollection(QObject):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getDrawInstance()
                     else: return None
+        return None
 
     def getCurrentSliceIndex(self):
         if self.count() > 0:
@@ -1921,6 +2400,7 @@ class IconBarViewWidgetCollection(QObject):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getSliceIndex()
                     else: return None
+        return None
 
     def getSelectedSliceIndex(self):
         if self.count() > 0:
@@ -1929,6 +2409,7 @@ class IconBarViewWidgetCollection(QObject):
                     sliceview = widget().getSelectedViewWidget()
                     if sliceview is not None: return sliceview.getSliceIndex()
                     else: return None
+        return None
 
     def getCurrentOrientation(self):
         if self.count() > 0:
@@ -1937,6 +2418,7 @@ class IconBarViewWidgetCollection(QObject):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getOrientation()
                     else: return None
+        return None
 
     def updateROIDisplay(self):
         if self.count() > 0:
@@ -1951,6 +2433,12 @@ class IconBarViewWidgetCollection(QObject):
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.updateROIAttributes(signal=True)
+
+    def updateROIName(self, old, name):
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    widget().updateROIName(old, name)
 
     def setUndoOn(self):
         draw = self.getROIDraw()
@@ -1979,7 +2467,9 @@ class IconBarViewWidgetCollection(QObject):
                 for widget in self:
                     if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                         sliceview = widget().getFirstSliceViewWidget()
-                        if sliceview is not None: sliceview.setActiveROI(roiname, signal=True)
+                        if sliceview is not None:
+                            if sliceview.hasVolume():
+                                sliceview.setActiveROI(roiname, signal=True)
         else: raise TypeError('parameter type {} is not str.'.format(type(roiname)))
 
     def setBrushRadiusROI(self, radius=10):
@@ -2004,6 +2494,7 @@ class IconBarViewWidgetCollection(QObject):
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getBrushFlag()
+        return None
 
     def setBrushROIFlag(self, brushtype=0):
         if isinstance(brushtype, int):
@@ -2012,11 +2503,14 @@ class IconBarViewWidgetCollection(QObject):
                     if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                         sliceview = widget().getFirstSliceViewWidget()
                         if sliceview is not None:
+                            # < Revision 20/03/2025
+                            # fix order, as used in TabROIToolsWidget _brushtype attribute
                             if brushtype == 0: sliceview.setSolidBrushFlag(True, signal=True)
-                            elif brushtype == 1: sliceview.setSolidBrush3Flag(True, signal=True)
-                            elif brushtype == 2: sliceview.setThresholdBrushFlag(True, signal=True)
+                            elif brushtype == 1: sliceview.setThresholdBrushFlag(True, signal=True)
+                            elif brushtype == 2: sliceview.setSolidBrush3Flag(True, signal=True)
                             elif brushtype == 3: sliceview.setThresholdBrush3Flag(True, signal=True)
                             else: sliceview.setSolidBrushFlag(False, signal=True)
+                            # Revision 20/03/2025 >
 
     def setFillHolesROIFlag(self, f):
         if self.count() > 0:
@@ -2033,6 +2527,7 @@ class IconBarViewWidgetCollection(QObject):
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getFillHolesFlag()
+        return None
 
     def set2DBlobDilateROIFlag(self):
         if self.count() > 0:
@@ -2303,6 +2798,28 @@ class IconBarViewWidgetCollection(QObject):
                     return widget()
         return None
 
+    # < Revision 15/10/2024
+    # add getProjectionViewWidget method
+    def getProjectionViewWidget(self):
+        if self.count() > 0:
+            from Sisyphe.widgets.projectionViewWidget import IconBarMultiProjectionViewWidget
+            for widget in self:
+                if isinstance(widget, IconBarMultiProjectionViewWidget):
+                    return widget()
+        return None
+    # Revision 15/10/2024 >
+
+    # < Revision 11/12/2024
+    # add getMultiComponentViewWidget method
+    def getMultiComponentViewWidget(self):
+        if self.count() > 0:
+            from Sisyphe.widgets.multiComponentViewWidget import IconBarMultiComponentViewWidget
+            for widget in self:
+                if isinstance(widget, IconBarMultiComponentViewWidget):
+                    return widget()
+        return None
+    # Revision 11/12/2024 >
+
     def getMeshCollection(self):
         if self.count() > 0:
             for widget in self:
@@ -2321,93 +2838,16 @@ class IconBarViewWidgetCollection(QObject):
                     if view is not None: return view.getToolCollection()
         return None
 
+    def getTractCollection(self):
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarOrthogonalSliceVolumeViewWidget,
+                                       IconBarOrthogonalSliceTrajectoryViewWidget)):
+                    view = widget().getFirstVolumeViewWidget()
+                    if view is not None: return view.getTractCollection()
+        return None
+
     def updateRender(self):
         if self.count() > 0:
             for widget in self:
                 widget.updateRender()
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv, exit
-
-    test = 2
-    app = QApplication(argv)
-    # IconBarOrthogonalSliceViewWidget
-    if test == 0:
-        print('Test IconBarOrthogonalSliceViewWidget')
-        file1 = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/anat.nii'
-        file2 = '/Users/Jean-Albert/PycharmProjects/untitled/IMAGES/NIFTI/overlay.nii'
-        img1 = SisypheVolume()
-        img2 = SisypheVolume()
-        img1.loadFromNIFTI(file1)
-        img2.loadFromNIFTI(file2)
-        img2.display.getLUT().setLutToRainbow()
-        img2.display.getLUT().setDisplayBelowRangeColorOn()
-        main = IconBarOrthogonalSliceViewWidget()
-        main().setVolume(img1)
-        main().addOverlay(img2)
-        main().getFirstSliceViewWidget().setOverlayOpacity(0, 0.2)
-    # IconBarOrthogonalRegistrationViewWidget
-    elif test == 1:
-        print('Test IconBarOrthogonalSliceViewWidget')
-        file1 = '/Users/Jean-Albert/PycharmProjects/untitled/TESTS/IMAGES/NIFTI/anat.nii'
-        file2 = '/Users/Jean-Albert/PycharmProjects/untitled/TESTS/IMAGES/NIFTI/overlay.nii'
-        img1 = SisypheVolume()
-        img2 = SisypheVolume()
-        img1.loadFromNIFTI(file1)
-        img2.loadFromNIFTI(file2)
-        img2.display.getLUT().setLutToRainbow()
-        img2.display.getLUT().setDisplayBelowRangeColorOn()
-        main = IconBarOrthogonalRegistrationViewWidget2()
-        main().setVolume(img1)
-        main().addOverlay(img2)
-        main().getFirstSliceViewWidget().setOverlayOpacity(0, 0.2)
-    # IconBarOrthogonalReorientViewWidget
-    elif test == 2:
-        print('Test IconBarOrthogonalReorientViewWidget')
-        file = '/Users/Jean-Albert/PycharmProjects/untitled/TESTS/IMAGES/NIFTI/3D.nii'
-        main = IconBarOrthogonalReorientViewWidget()
-        img = SisypheVolume()
-        img.loadFromNIFTI(file)
-        main.setVolume(img)
-    # IconBarOrthogonalSliceVolumeViewWidget
-    elif test == 3:
-        pass
-    # IconBarOrthogonalSliceTrajectoryViewWidget
-    elif test == 4:
-        pass
-    # IconBarMultiSliceGridViewWidget
-    elif test == 5:
-        print('Test IconBarMultiSliceGridViewWidget')
-        file1 = '/Users/Jean-Albert/PycharmProjects/untitled/Sisyphe/templates/mni_icbm152_sym_9c_brain.xvol'
-        file2 = '/Users/Jean-Albert/PycharmProjects/untitled/Sisyphe/templates/mni_icbm152_sym_9c_gm.xvol'
-        img1 = SisypheVolume()
-        img2 = SisypheVolume()
-        img1.load(file1)
-        img2.load(file2)
-        img2.display.getLUT().setLutToRainbow()
-        img2.display.getLUT().setDisplayBelowRangeColorOn()
-        main = IconBarMultiSliceGridViewWidget()
-        main().setVolume(img1)
-        main().addOverlay(img2)
-        main().setOverlayOpacity(0, 0.2)
-    # IconBarSynchronisedGridViewWidget
-    elif test == 6:
-        pass
-    # IconBarSliceViewWidget
-    elif test == 7:
-        print('Test IconBarSliceViewWidget')
-        file = '/Users/Jean-Albert/PycharmProjects/untitled/TESTS/3D.xvol'
-        img = SisypheVolume()
-        img.load(file)
-        main = IconBarSliceViewWidget()
-        main.setVolume(img)
-    main.show()
-    main.activateWindow()
-    exit(app.exec_())
-
