@@ -1,0 +1,49 @@
+IPython commands
+
+<object>?
+    Returns <object> docstring
+
+%cd
+    Change the current working directory.
+    %cd <dir>   changes to directory <dir>
+	%cd ..      changes to previous directory
+	%cd -       changes to last visited directory.
+
+%colors <scheme>
+    Switch color scheme for prompts, info system and exception handlers.
+    Currently implemented schemes: nocolor, linux, lightbg.
+
+%config <class>[.<field>=<value>]
+    %config with no argument to see what <classes> are available.
+    %config <class>, to view <fields> for a given class.
+    %config <class>.<field> = <value>, setting <value> to <field>.<class>.
+
+%env <var> [<value>]
+    Get, set, or list environment variables.
+    %env with no argument, lists all environment variables/values.
+    %env <var> get value for environment variable <var>.
+    %env <var> <value> set <value> for <var>.
+
+%ls
+
+%notebook <filename>
+    Export and convert IPython notebooks.
+
+%pip
+    Run the pip package manager within the current kernel.
+    %pip install <package>
+
+%pwd
+    Return the current working directory path.
+
+%run <filename.py>
+    Run the named file <filename.py> inside IPython as a program.
+
+%time <python expression>
+    Time execution of a Python statement or expression.
+
+%who
+    Print all interactive variables, with some minimal formatting.
+
+%whos
+    Like %who, but gives some extra information about each variable.
