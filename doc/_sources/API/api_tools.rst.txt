@@ -1,0 +1,5 @@
+Sisyphe.core.sisypheTools
+=========================
+
+.. automodule:: Sisyphe.core.sisypheTools
+   :members:

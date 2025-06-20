@@ -1,0 +1,260 @@
+.. _page-multicomponentview:
+
+Multi-component view widget
+===========================
+
+- :ref:`multi-section-controls`
+- :ref:`multi-section-iconbar`
+- :ref:`multi-section-popup`
+
+.. image:: /GUI/multi-view.png
+   :align: center
+|
+This widget, placed in the central area, displays in a grid the same slice from adjacent volumes of a time series multi-component reference volume. Other volume(s) can overlay the reference (popup menu **Display as overlay** of one or more thumbnail volumes). It does not display ROI, mesh, trajectory/target tools or streamlines (:ref:`Mesh <page-dockmesh>`, :ref:`Target/Trajectory <page-docktarget>`, :ref:`Tracking <page-docktracking>`).
+
+The lower part of this widget is occupied by a chart (volume index in the time series on x-axis, signal of the displayed slice on y-axis). A yellow frame covers the indices of adjacent volumes displayed in the grid. Two default curves are generated at the beginnning: mean signal of the displayed slice (in blue) and signal of a single voxel at the cursor position (in orange). 
+
+.. _multi-section-controls:
+Controls:
+--------
+
+- MouseWheel slices through image,
+- **Up or Left** key to display previous slice,
+- **Down or Right** key to display next slice,
+- MouseWheel + **CTRL** key (CMD key MacOs platform) to change zoom,
+- **Up or Left + CTRL** key (CMD key MacOs platform) to zoom out,
+- **Down or Right + CTRL** key (CMD key MacOs platform) to zoom in,
+- Left-click to move cursor position,
+- Left-click + **CTRL** key (CMD key MacOs platform) and drag to change zoom,
+- Left-click + **ALT** key and drag to move the viewpoint,
+- Left-click + **SHIFT** key and drag to change window/level,
+- Right-click + **CTRL** Key (CMD key MacOs platform) to show a popup menu.
+
+.. _multi-section-iconbar:
+Icon bar
+--------
+
+Multi-component view widget includes a vertical icon bar to the left:
+
+|pin|
+	Left-click to select/unselect. When this button is unselected, the icon bar is hidden when the mouse cursor leaves it. The icon bar is displayed when the mouse cursor is moved to the left border of the grid. If this button is selected, the icon bar is always visible.
+
+|fullscreen|
+	Left-click to select/unselect. Toggle between full-screen and normal display modes. In full-screen mode, the slice view widget is extended to the full screen. Press **F11** or **ESC** key to exit full-screen mode.
+
+|grid|
+	Change the number of grid cells (slices). Proposed number of rows/columns: **1x1** (**1** shortkey), **1x2** (**2** shortkey), **1x3** (**3** shortkey)), **2x2** (**4** shortkey), **2x3** (**6** shortkey), **3x3** (**9** shortkey).
+
+|dimx| |dimy| |dimz|
+	Change orientation of slices (**A**, **C**, **S** shortkeys).
+
+|right|
+	Left-click to increase indices of adjacent volumes displayed in the grid. The graph's yellow frame moves to the right (**PageDown** shortkey).
+
+|left|
+	Left-click to decrease indices of adjacent volumes displayed in the grid. The graph's yellow frame moves to the left (**PageUp** shortkey).
+
+|minus|
+	Left-click to display previous slice (**Up** or **Left** shortkeys).
+
+|plus|
+	Left-click to display next slice (**Down** or **Right** shortkeys).
+
+|expand|
+	Left-click to select/unselect. Expand the selected cell to the whole widget surface (**+** shortkey).
+
+|zoomin|
+	Left-click to zoom in (**CTRL Up** shortkey or **CTRL** MouseWheel).
+
+|zoomout|
+	Left-click to zoom out (**CTRL Down** shortkey or **CTRL** MouseWheel).
+
+|zoom1|
+	Left-click to apply default zoom (**0** shortkey).
+
+.. _multi-section-action:
+|hand|
+	Left-click to display a menu and choose an action mode:
+
+	- **Move**, move the slice viewpoint by pressing the left mouse button and dragging.
+	- **Zoom**, change the zoom factor by pressing the left mouse button and dragging.
+	- **Level/window**, change the window thresholds by pressing the left mouse button and dragging.
+	- **Cursor follows mouse**, in this mode, the cursor position follows the mouse without clicking.
+	- **Centered cursor**, in this mode, slice viewpoint is moved and centered on the point clicked with the left mouse button.
+	- **No action**, exit action mode.
+
+.. _multi-section-show:
+|show|
+	Left-click to display a menu and set widget visibility.
+
+	- **cursor** (**x** shortkey), cursor visbility (horizontal and vertical white lines intersect).
+	- **Information** (**i** shortkey), information visibility. Various information can be displayed in each corner of the cell n, (type of information is selected with |info| button).
+	- **Orientation labels** (**l** shortkey), orientation labels visibility: **L** (left), **R** (right), **S** (superior), **I** (inferior), **A** (anterior), **P** (posterior).
+	- **Orientation marker** (**m** shortkey), orientation marker visibility, 3D marker can be displayed at bottom-right (type of marker is selected with |info| button).
+	- **Colorbar** (**b** shortkey), colorbar visibility (select colorbar position with |lut| button).
+	- **Ruler** (**r** shortkey), ruler visibility (select colorbar position with |axis| button).
+	- **Tooltip** (**t** shortkey), tooltip visibility.
+	- **Chart** (**g** shortkey), chart visibility
+
+.. _multi-section-info:
+|info|
+	Left-click to display a menu and select the type of information displayed, if |show| **information** is checked.
+
+	- **Identity**, patient identity (firstname, lastname, birthdate) at top-left corner.
+	- **Image attributes**, image attributes (ID, matrix size, field-of-view, voxel spacing, datatype) at top-right corner.
+	- **Acquisition attributes**, acquisition attributes (orientation, modality, sequence, date of scan) at bottom-left.
+	- **World coordinate**, world coordinates in mm at mouse position.
+	- **Leksell coordinate**, Leksell space coordinates at mouse position (if fiducial markers of a Leksell stereotaxic frame are first detected).
+	- **AC-PC**, relative AC-PC world coordinates in mm at mouse position (if anterior and posterior commissures are selected first).
+	- **Voxel value**, scalar value of voxel at mouse position.
+	- **Voxel overlay value**, overlay scalar value of voxel at mouse position.
+	- **Orientation marker shape**, Cube with **L**-**R**-**S**-**I**-**A**-**P** labels on its faces, 3D brain, 3D head, 3D bust, 3D body or 3D axes.
+
+|lut|
+	Left-click to display a menu and select the colorbar position: **left**, **right**, **top** or **bottom** border.
+
+|axis|
+	Left-click to display a menu and select ruler position: **left**, **right**, **top** or **bottom** border.
+
+.. _multi-section-ruler:
+|ruler|
+	Left-click to display a menu to add an interactive tool.
+
+	- **Distance**, used to measure the distance in mm between two points. Left-click in the view widget to position the two endpoints. Left-press and drag to move the endpoints. Right-click on distance label to display popup menu to select color or delete tool.
+	- **Orthogonal distances**, used to measure two orthogonal distances in mm. Left-click in the view widget to position the four endpoints. Left-press and drag to move the endpoints. Right-click on distance label to display popup menu to select color or delete tool.
+	- **Angle**, used to measure angle in degrees between two lines. Left-click in the view widget to position the three endpoints. Left-press and drag to move the endpoints. Right-click on angle label to display popup menu to select color or delete tool.
+	- **Remove all**, remove all tools.
+
+|curve|
+	Left-click to display a curve management menu:
+
+	- **Add current curve**, a copy of the current curve of a single voxel at the cursor position is added to the chart.
+	- **Clean chart**, remove all non-default curves.
+	- **Save curve values**, save curve values (.csv, .json, .tex, .xlsx or PySisyphe .xsheet format)
+	- **Save chart**, save chart as bitmap (.bmp, .jpg, .png, .tiff or .svg format)
+	- **Copy chart to clipboard**, copy bitmap chart to the clipboard.
+	- **Send chart to screenshot preview**, copy bitmap chart into the screenshot manager.
+
+.. _multi-section-photo:
+|photo|
+	Left-click to display a screenshots management menu:
+
+	- **Save grid capture...**, take a screenshot of the slice view.
+	- **Save selected view capture**, take a screenshot of the selected cell (outlined in white, **SPACE** shortkey)
+	- **Save capture from slice series**, take a series of screenshots of each slice, in the current orientation.
+	- **Send selected view capture to screenshots preview** or shortcut key **SPACE**, take a screenshot of the selected cell and copy it to the screenshot manager.
+
+.. _multi-section-clipboard:
+|clipboard|
+	Left-click to display a menu to take screenshot and copy it to the clipboard.
+
+	- **Copy grid capture to clipboard**, take a screenshot of the slice view and copy it to the clipboard.
+	- **Copy selected view capture to clipboard**, take a screenshot of the selected cell and copy it to the clipboard.
+
+.. _multi-section-popup:
+Popup menu
+----------
+
+Right-click in view area to open a popup menu:
+
+- **Expand display**
+- **Number of views** >
+	1x1, 1x2, 1x3, 2x2, 2x3, 3x3
+
+- **Orientation** >
+	Axial, Coronal, Sagitall
+
+- **Zoom** >
+	Zoom in, Zoom out, Default zoom
+
+- :ref:`Actions <multi-section-action>` >
+	No action, Move, Zoom, Level/Window, Cursor follows mouse, Cenetred cursor
+
+- :ref:`Visibility <multi-section-show>` >
+	Show cursor, Show information, Show orientation labels, Show orientation marker, Show ROI, Show colorbar, Show ruler, Show tooltip, Show chart, Show all, Hide all
+
+- :ref:`Information <multi-section-info>` >
+	Identity, Image attributes, Acquisition attributes, Cursor world coordinates, Voxel value at mouse position, Orientationmarker shape >
+		Cube, Brain, Head, Bust, Body, Axes
+
+- **Colorbar position** >
+	Left, Right, Top, "Bottom
+
+- **Ruler position** >
+	Left, Right, Top, Bottom
+
+- :ref:`Tools <multi-section-ruler>` > 
+	Distance, Orthogonal distance, Angle, Remove all
+
+- :ref:`Save view capture <multi-section-photo>` >
+	Save grid capture..., Save current view capture, Save captures from slice series
+
+- :ref:`Copy view capture to clipboard <multi-section-clipboard>` > 
+	Copy grid capture to clipboard, Copy current view capture to clipboard
+
+The same menu is available via the menu bar ("Views" -> "Multi-component view").
+
+.. |axis| image:: /GUI/view/axis.png
+   :scale: 50 %
+.. |clipboard| image:: /GUI/view/clipboard.png
+   :scale: 50 %
+.. |cursor| image:: /GUI/view/cursor.png
+   :scale: 50 %
+.. |curve| image:: /GUI/view/curve.png
+   :scale: 50 %
+.. |depth| image:: /GUI/view/depth.png
+   :scale: 50 %
+.. |dimx| image:: /GUI/view/dimx.png
+   :scale: 50 %
+.. |dimy| image:: /GUI/view/dimy.png
+   :scale: 50 %
+.. |dimz| image:: /GUI/view/dimz.png
+   :scale: 50 %
+.. |down| image:: /GUI/view/down.png
+   :scale: 50 %
+.. |expand| image:: /GUI/view/expand.png
+   :scale: 50 %
+.. |fullscreen| image:: /GUI/view/fullscreen.png
+   :scale: 50 %
+.. |grid| image:: /GUI/view/grid.png
+   :scale: 50 %
+.. |hand| image:: /GUI/view/hand.png
+   :scale: 50 %
+.. |head| image:: /GUI/view/head.png
+   :scale: 50 %
+.. |info| image:: /GUI/view/info.png
+   :scale: 50 %
+.. |left| image:: /GUI/view/left.png
+   :scale: 50 %
+.. |lut| image:: /GUI/view/lut.png
+   :scale: 50 %
+.. |minus| image:: /GUI/view/minus.png
+   :scale: 50 %
+.. |move| image:: /GUI/view/move.png
+   :scale: 50 %
+.. |photo| image:: /GUI/view/photo.png
+   :scale: 50 %
+.. |pin| image:: /GUI/view/pin.png
+   :scale: 50 %
+.. |plus| image:: /GUI/view/plus.png
+   :scale: 50 %
+.. |right| image:: /GUI/view/right.png
+   :scale: 50 %
+.. |rotate| image:: /GUI/view/rotate.png
+   :scale: 50 %
+.. |ruler| image:: /GUI/view/ruler.png
+   :scale: 50 %
+.. |save| image:: /GUI/view/save.png
+   :scale: 50 %
+.. |show| image:: /GUI/view/show.png
+   :scale: 50 %
+.. |up| image:: /GUI/view/up.png
+   :scale: 50 %
+.. |view| image:: /GUI/view/view.png
+   :scale: 50 %
+.. |zoom1| image:: /GUI/view/zoom1.png
+   :scale: 50 %
+.. |zoomin| image:: /GUI/view/zoomin.png
+   :scale: 50 %
+.. |zoomout| image:: /GUI/view/zoomout.png
+   :scale: 50 %

@@ -1,0 +1,35 @@
+.. _page-main:
+
+Main window
+===========
+
+.. image:: /GUI/main.png
+   :align: center
+|
+The main window has several components, among them:
+
+1. :ref:`Menubar <page-menubar>`
+2. :ref:`Toolbar <page-toolbar>`: horizontal bar containing various actions and tools for controlling the application.
+3. :ref:`Thumbnail bar <page-thumbnailbar>`: horizontal bar of thumbnails.
+4. :ref:`Thumbnail <page-thumbnailbar>`: loaded image.
+5. Dock - vertical area with a stack of tabbed widgets:
+   
+   - :ref:`ROI <page-dockroi>`,
+   - :ref:`ROI Tools <page-dockroitools>`,
+   - :ref:`Mesh <page-dockmesh>`,
+   - :ref:`Target/Trajectory <page-docktarget>`,
+   - :ref:`Tracking <page-docktracking>`,
+   - :ref:`Documentation <page-dockhelp>`.
+
+6. Tab view - central area with a stack of tabbed widgets:
+   
+   - :ref:`Slice view <page-sliceview>`,
+   - :ref:`Orthogonal view <page-orthogonalview>`,
+   - :ref:`Synchronized view <page-synchronizedview>`,
+   - :ref:`Projection view <page-projectionview>`,
+   - :ref:`Multi-component view <page-multicomponentview>`,
+   - :ref:`Database manager <page-database>`,
+   - :ref:`Screenshots manager <page-screenshots>`,
+   - :ref:`IPython console <page-ipython>`.
+   
+7. Status bar - horizontal bar displaying information and status messages.

@@ -1,0 +1,206 @@
+.. _page-projectionview:
+
+Projection view widget
+======================
+
+- :ref:`proj-section-controls`
+- :ref:`proj-section-iconbar`
+- :ref:`proj-section-popup`
+
+.. image:: /GUI/proj-view.png
+   :align: center
+|
+This widget, placed in the central area, displays a reference volume in a grid of fixed (non-interactive) 3D projections in left, right, mid-left, mid-right, cranial, caudal, anterior and posterior orientations.
+
+If the reference volume is in ICBM152 space, it is overlaid on pre-calculated 3D projections of the asymmetric ICBM152 3D T1 template.
+
+Left-click to select the slice in a grid cell. Some controls can be applied only to a selected cell. This cell is outlined in white.
+
+.. _proj-section-controls:
+Controls
+--------
+
+- MouseWheel + **CTRL** key (CMD key MacOS platform) to change zoom,
+- **Up or Left + CTRL** key (CMD key MacOS platform) to zoom out,
+- **Down or Right + CTRL** key (CMD key MacOS platform) to zoom in,
+- Left-click + **CTRL** key (CMD key MacOS platform) and drag to change zoom,
+- Left-click + **ALT** key and drag to pan,
+- Left-click + **SHIFT** key and drag to change window/level,
+- Right-click + **CTRL** key (CMD key MacOS platform) or middle-click to display popup menu.
+
+.. _proj-section-iconbar:
+Icon bar
+--------
+
+Projection view widget includes a vertical icon bar to the left:
+
+|pin|
+	Left-click to select/unselect. When this button is unselected, the icon bar is hidden when the mouse cursor leaves it. The icon bar is displayed when the mouse cursor is moved to the left border of the grid. If this button is selected, the icon bar is always visible.
+
+|fullscreen|
+	Left-click to select/unselect. Toggle between full-screen and normal display modes. In full-screen mode, the slice view widget is extended to the full screen. Press **F11** or **ESC** key to exit full-screen mode.
+
+|expand|
+	Left-click to select/unselect. Expand the selected cell to the whole widget surface (**+** shortkey).
+
+|integral|
+	Left-click to display a menu and select the method used to accumulate signal in the thickness of the projection (depth in mm below the outer surface): **maximum**, **mean**, **median**, **standard deviation**.
+
+|depth|
+	Left-click to display a menu and edit the depth in mm below the outer surface used to calculate projection.
+
+|opacity|
+	Left-click to display a menu and edit the opacity of the reference volume (0.0 transparent, 1.0 opaque).
+
+|zoomin|
+	Left-click to zoom in (**CTRL Up** shortkey or **CTRL** MouseWheel).
+
+|zoomout|
+	Left-click to zoom out (**CTRL Down** shortkey or **CTRL** MouseWheel).
+
+|zoom1|
+	Left-click to apply default zoom (**0** shortkey).
+
+.. _proj-section-action:
+|hand|
+	Left-click to display a menu and choose an action mode:
+
+	- **Move**, move the slice viewpoint by pressing the left mouse button and dragging.
+	- **Zoom**, change the zoom factor by pressing the left mouse button and dragging.
+	- **Level/window**, change the window thresholds by pressing the left mouse button and dragging.
+	- **Centered cursor**, in this mode, slice viewpoint is moved and centered on the point clicked with the left mouse button.
+	- **No action**, exit previous action mode.
+
+.. _proj-section-show:
+|show|
+	Left-click to display a menu and set widget visibility.
+
+	- **Information** (**i** shortkey), information visibility. Various information can be displayed in each corner of the cell (type of information is selected with |info| button).
+	- **Orientation labels** (**l** shortkey), orientation labels visibility: **L** (left), **R** (right), **S** (superior), **I** (inferior), **A** (anterior), **P** (posterior).
+	- **Colorbar** (**b** shortkey), colorbar visibility (select colorbar position with |lut| button).
+	- **Tooltip** (**t** shortkey), tooltip visibility.
+	- **Show all**, show all widgets.
+	- **Hide all**, hide all widgets.
+
+.. _proj-section-info:
+|info|
+	Left-click to display a menu and select the type of information displayed, if |show| **information** is checked.
+
+	- **Identity**, patient identity (firstname, lastname, birthdate) at top-left corner.
+	- **Image attributes**, image attributes (ID, matrix size, field-of-view, voxel spacing, datatype) at top-right corner.
+	- **Acquisition attributes**, acquisition attributes (orientation, modality, sequence, date of scan) at bottom-left.
+	- **Anatomy label at cursor position**, gyrus name and brodman area under the mouse position.
+
+|lut|
+	Left-click to display a menu and select the colorbar position: **left**, **right**, **top** or **bottom** border.
+
+.. _proj-section-ruler:
+|ruler|
+	Left-click to display a menu to add an interactive tool.
+
+	- **Distance**, used to measure the distance in mm between two points. Left-click in the view widget to position the two endpoints. Left-press and drag to move the endpoints. Right-click on distance label to display popup menu to select color or delete tool.
+	- **Orthogonal distances**, used to measure two orthogonal distances in mm. Left-click in the view widget to position the four endpoints. Left-press and drag to move the endpoints. Right-click on distance label to display popup menu to select color or delete tool.
+	- **Angle**, used to measure angle in degrees between two lines. Left-click in the view widget to position the three endpoints. Left-press and drag to move the endpoints. Right-click on angle label to display popup menu to select color or delete tool.
+	- **Remove all**, remove all tools.
+
+.. _proj-section-photo:
+|photo|
+	Left-click to display a screenshots management menu:
+
+	- **Save grid capture...**, take a screenshot of the slice view.
+	- **Save selected view capture**, take a screenshot of the selected cell (outlined in white, **SPACE** shortkey)
+	- **Send selected view capture to screenshots preview** or shortcut key **SPACE**, take a screenshot of the selected cell and copy it to the screenshot manager.
+
+.. _proj-section-clipboard:
+|clipboard|
+	Left-click to display a menu to take screenshot and copy it to the clipboard.
+
+	- **Copy grid capture to clipboard**, take a screenshot of the slice view and copy it to the clipboard.
+	- **Copy selected view capture to clipboard**, take a screenshot of the selected cell and copy it to the clipboard.
+
+.. _proj-section-popup:
+Popup menu
+----------
+
+Right-click in view area to open a popup menu:
+
+- **Expand display**
+- **Zoom** >
+	Zoom in, Zoom out, Default zoom
+
+- :ref:`Actions <proj-section-action>` >
+	No action, Move, Zoom, Level/Window, Cenetred cursor
+
+- :ref:`Visibility <proj-section-show>` >
+	Show information, Show orientation labels, Show colorbar, Show ruler, Show tooltip, Show all, Hide all
+
+- :ref:`Information <proj-section-info>` >
+	Identity, Image attributes, Acquisition attributes, Anatomy label at cursor position
+
+- **Colorbar position** >
+	Left, Right, Top, "Bottom
+
+- **Ruler position** >
+	Left, Right, Top, Bottom
+
+- :ref:`Tools <proj-section-ruler>` > 
+	Distance, Orthogonal distance, Angle, Remove all
+
+- :ref:`Save view capture <proj-section-photo>` >
+	Save grid capture..., Save current view capture...
+
+- :ref:`Copy view capture to clipboard <proj-section-clipboard>` > 
+	Copy grid capture to clipboard, Copy current view capture to clipboard
+
+The same menu is available via the menu bar ("Views" -> "Projection view").
+
+Right-click in view area to open a popup menu:
+
+.. |axis| image:: /GUI/view/axis.png
+   :scale: 50 %
+.. |clipboard| image:: /GUI/view/clipboard.png
+   :scale: 50 %
+.. |depth| image:: /GUI/view/depth.png
+   :scale: 50 %
+.. |down| image:: /GUI/view/down.png
+   :scale: 50 %
+.. |expand| image:: /GUI/view/expand.png
+   :scale: 50 %
+.. |fullscreen| image:: /GUI/view/fullscreen.png
+   :scale: 50 %
+.. |hand| image:: /GUI/view/hand.png
+   :scale: 50 %
+.. |info| image:: /GUI/view/info.png
+   :scale: 50 %
+.. |integral| image:: /GUI/view/integral.png
+   :scale: 50 %
+.. |iso| image:: /GUI/view/iso.png
+   :scale: 50 %
+.. |lut| image:: /GUI/view/lut.png
+   :scale: 50 %
+.. |minimize| image:: /GUI/view/minimize.png
+   :scale: 50 %
+.. |move| image:: /GUI/view/move.png
+   :scale: 50 %
+.. |opacity| image:: /GUI/view/opacity.png
+   :scale: 50 %
+.. |photo| image:: /GUI/view/photo.png
+   :scale: 50 %
+.. |pin| image:: /GUI/view/pin.png
+   :scale: 50 %
+.. |ruler| image:: /GUI/view/ruler.png
+   :scale: 50 %
+.. |save| image:: /GUI/view/save.png
+   :scale: 50 %
+.. |show| image:: /GUI/view/show.png
+   :scale: 50 %
+.. |up| image:: /GUI/view/up.png
+   :scale: 50 %
+.. |view| image:: /GUI/view/view.png
+   :scale: 50 %
+.. |zoom1| image:: /GUI/view/zoom1.png
+   :scale: 50 %
+.. |zoomin| image:: /GUI/view/zoomin.png
+   :scale: 50 %
+.. |zoomout| image:: /GUI/view/zoomout.png
+   :scale: 50 %

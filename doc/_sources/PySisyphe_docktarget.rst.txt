@@ -1,0 +1,226 @@
+.. _page-docktarget:
+
+Target/Trajectory tab of the dock
+=================================
+
+- :ref:`target-section-target-list`
+- :ref:`target-section-target-item`
+
+Target/trajectory tools are displayed only in orthogonal view widget.
+
+This dock shows a Target/trajectory list frame.
+
+.. _target-section-target-list:
+Target/Trajectory list
+----------------------
+
+Left-click to select a target or a trajectory element in the list (blue outline in Windows platform, blue background in MasOS platform).
+
+|open|
+	Left-click to show a Target/Trajectory selection dialog (PySisyphe XTOOLS file, xml format), adds selected Target(s)/Trajectory(ies) to the list and displays them in the orthogonal view widget.
+
+|target|
+	Left-click to show a dialog box to add a new Target. This dialog allows you to set the target position in 4 different ways:
+
+	- **Cursor position**, check this option to set the target at the cursor position of the view widget.
+	- **Absolute position**, check this option to set the target at the worlds coordinates (RAS+ convention, in mm) defined in the three edit boxes **X**, **Y** and **Z**. The default coordinates are set to the center of the field of view.
+	- **Weighted position**, Check this option to set the target to the weighted barycenter of, at least, two Targets/Trajectoryies. 
+
+		A table, below the **Weighted position** check box, lists the available Target(s)/trajectory(ies). A relative weight can be edited for each Target/Trajectory in the second column of the table. Absolute weights in the third column (i.e. sum of absolute weights equal to 1.0) cannot be modified, but are automatically updated when the relative weight of a Target/Trajectory is modified.
+
+		The new target at the weighted barycenter is locked by default. Its position is automatically updated when an associated weighted Target/Trajectory is interactively moved by the user, as long as it remains locked.
+
+	- **Relative position**, check this option to set the target relative to another Target/Trajectory used as a reference. 
+
+		A combobox, below the **Relative position** check box, lists the available Target(s)/trajectory(ies) and is used to select one of them as a reference. 
+
+		In each axis, the calculation involves absolute translation in mm relative to the reference Target/Trajectory and, optionally, an absolute multiplicative factor of the distance between two further Targets/Trajectories: <New target> = <Reference target> + <Translation> + <Factor> x euclidean distance(<target#1>, <target#2>). This formula is used in each direction **Antero-posterior** (y-axis), **Laterally** (x-axis) and **Height** (z-axis). 
+
+		The first edit box is the <Translation> parameter, the second edit box is the <Factor> parameter and the two lastest, with available Targets/Trajectories, are the <target#1> and <target#2> parameters. The result of the formula, giving absolute translation in each direction, is displayed in the fifth edit box. The new target is locked by default. Its position is automatically updated when the reference Target/Trajectory is interactively moved by the user, as long as it remains locked.
+
+	Click **OK** to validate position and display the new Target in the view widget.
+
+|line|
+	Left-click to show a dialog box to add a new Trajectory. This dialog allows you to set the target and entry positions of the trajectory:
+
+	- The **Cursor position**, **Absolute position**, **Weighted position**, **Relative position** options for defining the target position of the trajectory are identical to those described above in |target|.
+	- The entry position can be defined by a **trajectory** with two angles in degrees and a length in mm, or by an **absolute position** with three coordinates in **X**, **Y** and **Z** axes.
+
+	Click **OK** to validate positions and display the new Trajectory in the view widget.
+
+|save|
+	Left-click show a dialog box to save all Target(s)/Trajectory(ies) of the list in a PySisyphe XTOOLS file (xml format).
+
+|delete|
+	Left-click to remove all Target(s)/Trajectory(ies) from the list and from the view widget.
+
+|cross|
+	Left-click to remove checked Target(s)/Trajectory(ies) from the list and from the view widget.
+
+|check|
+	Left-click to check all Target(s)/Trajectory(ies) of the list.
+
+|uncheck|
+	Left-click to uncheck all Target(s)/Trajectory(ies) of the list.
+
+|duplicate|
+	Left-click to add a copy of the selected Target/Trajectory in the list.
+
+|toolfeature|
+	Left-click to show a dialog of Target(s)/Trajectory(ies) features. This dialog have two tables **Coordinates** and **distances**.
+
+	The first table shows coordinates of each Target/Trajectory in various reference systems:
+
+	- **World coordinates**, x, y, z coordinates in mm, RAS+ convention. 
+	- **Image coordinates**, x, y, z matrix indices
+	- **Leksell**, x, y, z Leksell stereotactic coordinates in lateral-right convention.
+	- **AC**, x, y, z relative to anterior commissure coordinates.
+	- **PC**, x, y, z relative to posterior commissure coordinates.
+	- **Mid AC-PC**, x, y, z relative to mid AC-PC coordinates.
+	- **Lenght**, trajectory length in mm (Empty for Target).
+	- **Sagittal angle**, sagittal angle of the trajectory around the x-axis in degrees (Empty for Target).
+	- **Coronale angle**, coronal angle of the trajectory around the y-axis in degrees (Empty for Target).
+
+	The second table shows the distances between all Target(s)/Trajectory(ies) of the list.
+
+	Two buttons are avalaible at the bottom:
+
+	- **Copy to screenshots**, to take a bitmap capture of the displayed table and copy it to the :ref:`Screenshots manager <page-screenshots>`.
+	- **Save dataset**, show a dialog box to save the displayed table (supported formats CSV, JSON, Latex, TEXT, Excel XLSX, Pysisyphe XSHEET)
+
+|toolfeature2|
+	Left-click to show a dialog of distances between Target(s)/Trajectory(ies) and mesh(es). This dialog have three tables:
+
+	- **Inside mesh**, True if Target/Trajectory coordinate is inside mesh.
+	- **Distance to mesh surface**, euclidean distance between the Target/Trajectory and the nearest point of the mesh surface.
+	- **Distance to mesh center of mass**, eucliddistance distance between the Target/Trajectory and the mesh center of mass.
+
+	Two buttons are avalaible at the bottom:
+
+	- **Copy to screenshots**, to take a bitmap capture of the displayed table and copy it to the :ref:`Screenshots manager <page-screenshots>`.
+	- **Save dataset**, show a dialog box to save the displayed table (supported formats CSV, JSON, Latex, TEXT, Excel XLSX, Pysisyphe XSHEET)
+
+.. _target-section-target-item:
+Target/Trajectory item
+----------------------
+
+**Common options**:
+
+|view|
+	Left-click to toogle Target/Trajectory visibility in the view widget(s).
+
+|ftarget|
+	Left-click to move the cursor to target/Trajectory target point in the view widget(s).
+
+|lock|
+	Left-click to toogle Target/Trajectory lock. A locked tool can no longer be moved by the mouse in the viewing widget(s).
+
+|opacity|
+	Left-click to select Target/Trajectory opacity in the view widget(s) (0.0 transparent, 1.0 opaque).
+
+|palette|
+	Left-click to display a Target/Trajectory color dialog.
+
+|target|
+	Left-click to move cursor to the target coordinate in the viewing widget(s).
+
+|move|
+	Left-click to display a dialog box to move Target/Trajectory target point.
+
+	- **Laterality**, to edit a relative x-axis movement in mm (+ right, - left in world reference)
+	- **Antero-posterior**, to edit a relative y-axis movement in mm (+ anterior, - posterior)
+	- **Heigth**, to edit a relative z-axis movement in mm (+ cranial, - caudal)
+	- **Orientation** combobox, to choose the Cartesian coordinate system orientation: **Native** (image reference) or **Camera** (reference aligned with the line between the camera and the focal point).
+	- **Point projection** combobox, to choose a projection movement: 
+
+		- **No**, no projection, a relative movement is performed if **Laterality**, **Antero-posterior**, **Heigth** are not empty.
+		- **Current axial slice**, to project the Target/Trajectory onto the displayed axial slice. Relative movement parameters are ignored.
+		- **Current coronal slice**, to project the Target/Trajectory onto the displayed coronal slice. Relative movement parameters are ignored.
+		- **Current sagittal slice**, to project the Target/Trajectory onto the displayed sagittal slice. Relative movement parameters are ignored.
+		- List of mesh(es) loaded in the mesh dock, to perform an x-axis, y-axis or z-axis projection of the Target/Trajectory onto the mesh surface. No movement if there is no intersection with the mesh on the target projection line of the selected axis (x-axis, y-axis or z-axis). Relative movement parameters are ignored.
+
+|settings|
+	Left-click to show a dialog to edit Target/Trajectory properties:
+
+	- **Target text**, to edit Target/Trajectory name displayed in the view widget.
+	- **Font size**, to define font size used to display Target/Trajectory name in the view widget.
+	- **Font family**, combobox to define font family (**Arial**, **Courier** or **Times**) used to display Target/Trajectory name in the view widget.
+	- **Font bold**, checkbox to display Target/Trajectory name in bold.
+	- **Font italic**, checkbox to display Target/Trajectory name in italic.
+	- **Text offset**, to define the distance, in pixels, between the Target/Trajectory and the name along the x (first exit box) and y (second edit box) axes.
+	- **Text visbility**, checkbox to define Target/Trajectory name visibility.
+	- **Color**, show a dialog box to choose Target/Trajectory color.
+	- **Selected color**, show a dialog box to choose Target/Trajectory selected color.
+	- **Opacity**, to define Target/Trajectory opacity (0% transparent, 100% opaque).
+	- **Handle size**, to define handle size in pixels.
+	- **Handle line width**, to define handle line width in pixels.
+	- **Safety radius**, to define margin displayed as a sphere around Target in mm, margin displayed as cylinder around Trajectory in mm.
+	- **safety visbility**, checkbox to select safety visibility.
+	- **Tolerance**, to define tolerance around handles (in pixels) for mouse selection.
+
+|save|
+	Left-click to save the Target/Trajectory, Target/Trajectory name is used as file name.
+
+|cross|
+	Left-click to remove Target/Trajectory from list and from view widget(s).
+
+**Trajectory specific options**:
+
+|fentry|
+	Left-click to move the cursor to Trajectory entry point in the view widget(s).
+
+|length|
+	Left-click to display a dialog box to move the Trajectory target/entry points. This dialog shows the following options:
+
+	- **Extend entry**, to move entry in the trajectory direction (+ extension, - shortening)
+	- **Extend target**, to move target in the trajectory direction (+ extension, - shortening)
+	- **Project entry onto mesh surface** combobox, to choose a projection movement of the Trajectory entry point.
+
+		- **No**, no projection, an extend movement is performed if **Extend entry** or **Extend target** is not empty.
+		- **Current axial slice**, to project the Trajectory entry point onto the displayed axial slice. Extend movement parameters are ignored.
+		- **Current coronal slice**, to project the Trajectory entry point onto the displayed coronal slice. Extend movement parameters are ignored.
+		- **Current sagittal slice**, to project the Trajectory entry point onto the displayed sagittal slice. Extend movement parameters are ignored.
+		- List of mesh(es) loaded in the mesh dock. The Trajectory entry point is projected to the nearest point on the mesh surface.
+
+	- **Project target onto mesh surface**, combobox with same options as for entry point, to choose a projection movement of the Trajectory target point. 
+
+.. |open| image:: /GUI/dock/open.png
+   :scale: 50 %
+.. |target| image:: /GUI/dock/target.png
+   :scale: 50 %
+.. |line| image:: /GUI/dock/line.png
+   :scale: 50 %
+.. |save| image:: /GUI/dock/save.png
+   :scale: 50 %
+.. |delete| image:: /GUI/dock/delete2.png
+   :scale: 50 %
+.. |cross| image:: /GUI/dock/cross.png
+   :scale: 50 %
+.. |check| image:: /GUI/dock/check.png
+   :scale: 50 %
+.. |uncheck| image:: /GUI/dock/uncheck.png
+   :scale: 50 %
+.. |duplicate| image:: /GUI/dock/duplicate.png
+   :scale: 50 %
+.. |toolfeature| image:: /GUI/dock/toolfeature.png
+   :scale: 50 %
+.. |toolfeature2| image:: /GUI/dock/toolfeature2.png
+   :scale: 50 %
+.. |view| image:: /GUI/dock/view.png
+   :scale: 50 %
+.. |ftarget| image:: /GUI/dock/ftarget.png
+   :scale: 50 %
+.. |fentry| image:: /GUI/dock/fentry.png
+   :scale: 50 %
+.. |lock| image:: /GUI/dock/lock.png
+   :scale: 50 %
+.. |opacity| image:: /GUI/dock/opacity.png
+   :scale: 50 %
+.. |palette| image:: /GUI/dock/palette.png
+   :scale: 50 %
+.. |move| image:: /GUI/dock/move.png
+   :scale: 50 %
+.. |length| image:: /GUI/dock/length.png
+   :scale: 50 %
+.. |settings| image:: /GUI/dock/settings.png
+   :scale: 50 %

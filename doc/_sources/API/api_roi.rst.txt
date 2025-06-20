@@ -1,0 +1,5 @@
+Sisyphe.core.sisypheROI
+=======================
+
+.. automodule:: Sisyphe.core.sisypheROI
+   :members:

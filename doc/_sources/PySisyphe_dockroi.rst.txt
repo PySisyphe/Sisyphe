@@ -1,0 +1,138 @@
+.. _page-dockroi:
+
+ROI tab of the dock
+===================
+
+- :ref:`roi-section-roi-list`
+- :ref:`roi-section-roi-item`
+- :ref:`roi-section-icon-bar`
+- :ref:`roi-section-set-operators`
+
+ROIs are editable in slice view and synchronized view widgets.
+
+.. _roi-section-roi-list:
+ROI list
+--------
+
+ROI list frame at the top. Left-click to select a ROI element in the list (blue outline in Windows platform, blue background in MasOS platform).
+
+.. _roi-section-roi-item:
+ROI item
+--------
+
+ROI item widgets:
+
+**Check box**
+	Some processes are performed on checked ROI(s) such as export, duplicate, distance map, mesh conversion and set operators.
+
+**Edit box**
+	To display and edit ROI name.
+
+|view|
+	Left-click to toogle ROI visibility in the view widget(s).
+
+|opacity|
+	Left-click to select ROI opacity in the view widget(s) (0.0 transparent, 1.0 opaque).
+
+|palette|
+	Left-click to display a ROI color dialog.
+
+|save|
+	Left-click to save ROI (PySisyphe XROI file, xml format), ROI name is used as file name.
+
+|cross|
+	Left-click to remove ROI from list and from view widget(s).
+
+.. _roi-section-icon-bar:
+Icon bar
+--------
+
+Icon bar below ROI list:
+
+|open|
+	Left-click to show ROI selection dialog (PySisyphe XROI file, xml format), adds selected ROI(s) to the list and displays them in the view widget(s). **This ROI must be in the same space as the reference volume displayed in the view widget i.e. same space ID**.
+
+|add|
+	Left-click to add a new empty ROI to the list.
+
+|save|
+	Left-click to save all ROI(s) of the list.
+
+|delete|
+	Left-click to remove all ROI(s) from the list and from the view widget(s).
+
+|cross|
+	Left-click to remove checked ROI(s) from the list and from the view widget(s).
+
+|export|
+	Left-click to export checked ROI(s), supported formats are: PySisysphe volume (.xvol), Nifti, Nrrd, Minc, Numpy, vtk or DICOM RTSTRUCT.
+
+|duplicate|
+	Left-click to add a copy of the selected ROI in the list.
+
+|check|
+	Left-click to check all ROI(s) of the list.
+
+|uncheck|
+	Left-click to uncheck all ROI(s) of the list.
+
+|map|
+	Left-click to calculate and save distance map(s) of checked ROI(s).
+
+|roi2mesh|
+	Left-click to convert checked ROI(s) to mesh(es) and save.
+
+.. _roi-section-set-operators:
+Set Operators
+-------------
+
+Set operators icons at the bottom:
+
+|union|
+	Left-click to process union of the checked ROI(s), adds result to the ROI list and displays it in the view widget(s).
+
+|intersection|
+	Left-click to process intersection of the checked ROI(s), adds result to the ROI list and displays it in the view widget(s).
+
+|difference|
+	Left-click to process difference betwenn selected ROI and checked ROI(s), adds result to the ROI list and displays it in the view widget(s).
+
+|differencesym|
+	Left-click to process symmetric difference betwenn selected ROI and checked ROI(s), adds result to the ROI list and displays it in the view widget(s).
+
+.. |open| image:: /GUI/dock/open.png
+   :scale: 50 %
+.. |add| image:: /GUI/dock/add.png
+   :scale: 50 %
+.. |save| image:: /GUI/dock/save.png
+   :scale: 50 %
+.. |delete| image:: /GUI/dock/delete2.png
+   :scale: 50 %
+.. |cross| image:: /GUI/dock/cross.png
+   :scale: 50 %
+.. |export| image:: /GUI/dock/export.png
+   :scale: 50 %
+.. |duplicate| image:: /GUI/dock/duplicate.png
+   :scale: 50 %
+.. |check| image:: /GUI/dock/check.png
+   :scale: 50 %
+.. |uncheck| image:: /GUI/dock/uncheck.png
+   :scale: 50 %
+.. |map| image:: /GUI/dock/map.png
+   :scale: 50 %
+.. |roi2mesh| image:: /GUI/dock/roi2mesh.png
+   :scale: 50 %
+.. |union| image:: /GUI/dock/union.png
+   :scale: 50 %
+.. |intersection| image:: /GUI/dock/intersection.png
+   :scale: 50 %
+.. |difference| image:: /GUI/dock/difference.png
+   :scale: 50 %
+.. |differencesym| image:: /GUI/dock/differencesym.png
+   :scale: 50 %
+.. |view| image:: /GUI/dock/view.png
+   :scale: 50 %
+.. |opacity| image:: /GUI/dock/opacity.png
+   :scale: 50 %
+.. |palette| image:: /GUI/dock/palette.png
+   :scale: 50 %

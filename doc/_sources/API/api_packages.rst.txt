@@ -1,0 +1,86 @@
+Packages
+========
+
+Links to the main packages used in the PySisyphe API:
+
+__ https://github.com/ANTsX/ANTsPyNet
+__ https://antsx.github.io/ANTsPyNet/docs/build/html/index.html
+__ https://github.com/ANTsX/ANTsPy
+__ https://antspy.readthedocs.io/en/latest/
+__ https://github.com/albertosottile/darkdetect
+__ https://github.com/iitzco/deepbrain
+__ https://dipy.org/
+__ https://docs.dipy.org/stable/reference/index.html
+__ https://py-pdf.github.io/fpdf2/index.html
+__ https://py-pdf.github.io/fpdf2/fpdf/
+__ https://ipython.org/
+__ https://ipython.readthedocs.io/en/stable/
+__ https://itk.org/
+__ https://docs.itk.org/projects/doxygen/en/stable/index.html
+__ https://matplotlib.org/
+__ https://matplotlib.org/3.6.3/api/index.html
+__ https://github.com/odwyersoftware/mega.py
+__ https://nipy.org/nibabel/
+__ https://nipy.org/nibabel/api.html
+__ https://nilearn.github.io/stable/index.html
+__ https://nilearn.github.io/stable/modules/index.html
+__ https://numpy.org/
+__ https://numpy.org/doc/stable/reference/index.html#reference
+__ https://pandas.pydata.org/
+__ https://pandas.pydata.org/docs/reference/index.html#api
+__ https://github.com/ipython/pickleshare/tree/master
+__ https://pypi.org/project/PyQtDarkTheme-fork/
+__ https://pyqtdarktheme.readthedocs.io/en/stable/reference/index.html
+__ https://github.com/pydicom/pydicom
+__ https://pydicom.github.io/pydicom/stable/reference/index.html
+__ https://doc.qt.io/qt-5/
+__ https://doc.qt.io/qt-5/qtwebengine-index.html
+__ https://github.com/bhklab/pyradiomics-fork
+__ https://pyradiomics.readthedocs.io/en/latest/
+__ https://python-docx.readthedocs.io/en/latest/
+__ https://python-docx.readthedocs.io/en/latest/#api-documentation
+__ https://pypi.org/project/pywinstyles/
+__ https://qtconsole.readthedocs.io/en/stable/
+__ https://scikit-image.org/
+__ https://scikit-image.org/docs/stable/api/api.html
+__ https://scikit-learn.org/stable/
+__ https://scikit-learn.org/stable/api/index.html
+__ https://scipy.org/
+__ https://docs.scipy.org/doc/scipy/reference/index.html#scipy-api
+__ https://simpleitk.org/
+__ https://simpleitk.org/doxygen/v2_5/html/
+__ https://simpleitk.readthedocs.io/en/master/index.html
+__ https://simpleitk.readthedocs.io/en/master/link_examples.html
+__ https://vtk.org/
+__ https://vtk.org/doc/nightly/html/
+__ https://examples.vtk.org/site/PythonicAPI/
+__ https://github.com/djeada/Vtk-Examples
+
+- ANTsPyNet `website`__ , `API documentation`__
+- ANTsPy `website`__ , `API documentation`__
+- Darkdetect `website`__
+- DeepBrain `website`__
+- DIPY (1.11.0) `website`__, `API documentation`__
+- fpdf2 `website`__, `API documentation`__
+- IPython (8.33.0) `website`__, `API documentation`__
+- Insight Toolkit (ITK) `website`__, `API documentation`__
+- Matplotlib (3.6.3) `website`__, `API documentation`__
+- Mega.py (1.0.8) `website`__
+- NiBabel `website`__, `API documentation`__
+- Nilearn `website`__, `API documentation`__
+- NumPy `website`__, `API documentation`__
+- pandas `website`__, `API documentation`__
+- pickleshare `website`__
+- PyQtDarkTheme-fork `website`__, `API documentation`__
+- Pydicom `website`__, `API documentation`__
+- PyQt5 `website`__ (C++)
+- PyQtWebEngine `website`__ (C++)
+- pyradiomics-bhklab `website`__, `API documentation`__
+- python-docx `website`__, `API documentation`__
+- pywinstyles `website`__
+- Qt Console `website`__
+- scikit-image `website`__, `API documentation`__
+- scikit-learn `website`__, `API documentation`__
+- SciPy `website`__, `API documentation`__
+- SimpleITK `website`__, `API documentation`__ (C++), `python documentation`__, `python examples`__
+- VTK `website`__, `API documentation`__ (C++), `python examples`__, `other python examples`__

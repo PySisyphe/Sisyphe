@@ -1,0 +1,44 @@
+.. PySisyphe documentation master file, created by
+   sphinx-quickstart on Tue Dec  5 13:40:09 2023.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+PySisyphe documentation
+=======================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   ./home.rst
+   ./PySisyphe_overview.rst
+   ./PySisyphe_installation.rst
+   ./PySisyphe_main.rst
+   ./PySisyphe_toolbar.rst
+   ./PySisyphe_thumbnailbar.rst
+   ./PySisyphe_widgets.rst
+   ./PySisyphe_sliceview.rst
+   ./PySisyphe_orthogonalview.rst
+   ./PySisyphe_synchronizedview.rst
+   ./PySisyphe_projectionview.rst
+   ./PySisyphe_multicomponentview.rst
+   ./PySisyphe_database.rst
+   ./PySisyphe_screenshots.rst
+   ./PySisyphe_ipython.rst
+   ./PySisyphe_dockroi.rst
+   ./PySisyphe_dockroitools.rst
+   ./PySisyphe_dockmesh.rst
+   ./PySisyphe_docktarget.rst
+   ./PySisyphe_docktracking.rst
+   ./PySisyphe_dockhelp.rst
+   ./PySisyphe_menubar.rst
+   ./API/index.rst
+   ./PySisyphe_license.rst
+   ./PySisyphe_contact.rst
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

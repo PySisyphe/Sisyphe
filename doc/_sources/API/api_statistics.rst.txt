@@ -1,0 +1,5 @@
+Sisyphe.core.sisypheStatistics
+==============================
+
+.. automodule:: Sisyphe.core.sisypheStatistics
+   :members:

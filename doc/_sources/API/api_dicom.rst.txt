@@ -1,0 +1,5 @@
+Sisyphe.core.sisypheDicom
+=========================
+
+.. automodule:: Sisyphe.core.sisypheDicom
+   :members:

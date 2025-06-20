@@ -1,0 +1,5 @@
+Sisyphe.core.sisypheRecent
+==========================
+
+.. automodule:: Sisyphe.core.sisypheRecent
+   :members:

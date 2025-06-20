@@ -1,0 +1,5 @@
+Sisyphe.core.sisypheFiducialBox
+===============================
+
+.. automodule:: Sisyphe.core.sisypheFiducialBox
+   :members:

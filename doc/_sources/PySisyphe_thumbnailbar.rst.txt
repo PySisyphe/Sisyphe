@@ -1,0 +1,100 @@
+.. _page-thumbnailbar:
+
+Thumbnail bar
+=============
+
+- :ref:`thumb-section-thumbnail`
+- :ref:`thumb-section-popup`
+- :ref:`thumb-section-lut`
+- :ref:`thumb-section-overlay`
+
+The thumbnail bar is displayed below toolbar. Volumes opened in PySisyphe are displayed as thumbnails in this bar.
+
+To open a volume, double-click on an empty space in the thumbnail bar.
+
+Right-click on an empty space in the thumbnail bar to display a popup menu:
+
+- **Open volume**, to open a volume in the thumbnail bar.
+- **Save all volume(s)**, to save all volumes opened in the thumbnail bar.
+- **Close all volume(s)**, to close all volumes opened in the thumbnail bar.
+
+.. _thumb-section-thumbnail:
+Thumbnails
+----------
+
+.. image:: /GUI/thumbnails.png
+   :align: center
+   :scale: 75%
+|
+Thumbnail volume has three possible states:
+
+- **No color border**: volume of the current thumbnail is neither displayed as a reference nor as an overlay in the central viewing area (slice view, orthogonal view, synchronized view, projection vien or multi-component view)
+- **Blue border**: volume of the current thumbnail is displayed as reference in the central viewing area (slice view, orthogonal view, synchronized view, projection vien or multi-component view)
+- **White border**: volume of the current thumbnail is displayed as overlay in the central viewing area (slice view, orthogonal view, synchronized view, projection vien or multi-component view)
+
+A tooltip pops when mouse pointer remains over a thumbnail. It shows all the thumbnail's volume attributes.
+
+.. _thumb-section-popup:
+Popup menu
+----------
+
+Left-Click on the lower right of the thumbnail (on the three dots "..."), or right-click on any part of the thumbnail to show a popup menu:
+
+- **Display in slice view**, display the thumbnail volume as reference in the slice view. Select the thumbnail volume (blue border) if it is not.
+- **Display in orthogonal view**, display the thumbnail volume as reference in the orthogonal view. Select the thumbnail volume (blue border) if it is not.
+- **Display in synchronized view**, display the thumbnail volume as reference in the synchronized view. Select the thumbnail volume (blue border) if it is not.
+- **Display in projection view**, display the thumbnail volume as reference in the projection view. Select the thumbnail volume (blue border) if it is not.
+- **Display in multi-component view**, display the thumbnail volume as reference in the multi-component view. Select the thumbnail volume (blue border) if it is not.
+- **Display in all views**, display the thumbnail volume as reference in all views (slice view, orthogonal view, synchronized view, projection view, multi-component view). Select the thumbnail volume (blue border) if it is not.
+- **Display as overlay**, display the thumbnail volume as overlay in views.
+- **Save**, save the thumbnail volume.
+- **Save as...**, display a dialog box to save volume with a new file name.
+- **Close**, close the thumbnail volume.
+- **Windowing >**
+
+	- **Automatic window...**, automatic windowing of the Look-Up-Table colormap.
+	- **Default window...**, set windowing of the Look-Up-Table colormap to default (lower window = minimum array value and upper window = maximum array value)
+	- **Brain window**, reserved to CT modality. Set windowing to enhance brain contrast.
+	- **Bone window**, reserved to CT modality. Set windowing to enhance bone contrast.
+	- **Metallic window**, reserved to CT modality. Set windowing to enhance metallic contrast.
+
+- **Anonymize**, Anonymize the thumbnail volume.
+- **Edit attributes...**, display a dialog box to edit attributes (identity, acquisition, image) of the thumbnail volume.
+- **Set Origin to default**, set origin attribute of the thumbnail volume to default i.e. (0.0, 0.0, 0.0)
+- **Set Directions to default**, Set directions attribute of the thumbnail volume to default i.e. (0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0)
+- **Set Modality**, change modality attribute of the thumbnail volume (**CT** computed tomography, **LB** label volume, **MR** magnetic Resonance, **NM** single photon emission tomography, **PT** positon emission tomography, **TP** template)
+- **Datatype conversion**, change array value datatype of the thumbnail volume (**int8**, **int16**, **int32**, **int64**, **unit8**, **uint16**, **uint32**, **uint64**, **float32**, **float64**)
+- **Descriptive statistics**, display a dialog box giving descriptive statistics of the thumbnail volume (minimum, 5th percentile, 25th percentile, median, 75th percentile, 95th percentile, std, mean, skewness, kurtosis).
+- **Add to database**, add the thumbnail volume to the patient database.
+- **AC-PC selection...**, display a dialog box to select anterior and posterior commissure of a the thumbnail volume.
+- **Reorientation...**, display a dialog box to reorient a the thumbnail volume and/or change the field-of-view.
+- **Stereotactic frame detection...**, display a dialog box for detecting fiducial markers of a Leksell stereotaxic frame of the thumbnail volume.
+- **Flip**, flip axes of the thumbnail volume (left/right axis, anterior/posterior axis, or cranial/caudal axis).
+- **Swap axis**, permute volume axes (swap axis order to **y-z-x**, **z-x-y**, **x-z-y**, **y-z-x**, or **z-y-x**).
+- **Remove neck slices**, Remove the lowest slices of the neck, typically in a 3D sagittal scan.
+
+.. _thumb-section-lut:
+LUT widget
+----------
+
+.. image:: /GUI/lut.png
+   :align: center
+   :scale: 75%
+|
+A Look-Up-Table (LUT) colormap widget is displayed last in the popup menu.
+
+The upper part of the widget shows the extent of the windowing as a yellow frame (1) overlaid on the volume histogram. The left edge of the frame represents the lower threshold, the right edge the upper threshold. Threshold values are written vertically in the center of each edge. The frame can be moved by pressing the left mouse button and dragging. Press the left mouse button and drag to move the left or right border (2, click inner part inside the frame).
+
+At the bottom of the widget, there are two boxes to the left and right (4, 5). They display and modify the range of volume values, from minimum (left box) to maximum (right box). The combobox in the middle (3) allows you to change the LUT colormap. The order of colors in the colormap can be reversed with the "Reverse" check box.
+
+.. _thumb-section-overlay:
+Overlay widget
+--------------
+
+When the thumbnail volume is displayed as overlay, new widgets are displayed above the LUT widget:
+
+- |view| show/hide overlay.
+- horizontal slide bar to change overlay opacity (from 0 to 100%).
+
+.. |view| image:: /GUI/dock/view.png
+   :scale: 50 %

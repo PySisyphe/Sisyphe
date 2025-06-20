@@ -1,0 +1,5 @@
+Sisyphe.core.sisypheXml
+=======================
+
+.. automodule:: Sisyphe.core.sisypheXml
+   :members:

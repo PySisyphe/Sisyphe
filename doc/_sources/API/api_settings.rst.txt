@@ -1,0 +1,5 @@
+Sisyphe.core.sisypheSettings
+============================
+
+.. automodule:: Sisyphe.core.sisypheSettings
+   :members:

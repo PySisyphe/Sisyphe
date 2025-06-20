@@ -1,0 +1,5 @@
+Sisyphe.core.sisypheImageAttributes
+===================================
+
+.. automodule:: Sisyphe.core.sisypheImageAttributes
+   :members:

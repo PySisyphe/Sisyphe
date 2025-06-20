@@ -1,0 +1,243 @@
+.. _page-sliceview:
+
+Slice view widget
+=================
+
+- :ref:`slice-section-controls`
+- :ref:`slice-section-iconbar`
+- :ref:`slice-section-popup`
+
+.. image:: /GUI/slice-view.png
+   :align: center
+|
+This widget, placed in the central area, displays a series of adjacent slices of a reference volume in a grid.
+Other volume(s) can overlay the reference (popup menu "Display as overlay" of one or more thumbnail volumes).
+This widget can be used to display and edit ROI (:ref:`ROI <page-dockroi>`, :ref:`ROI Tools <page-dockroitools>`). However, it does not display mesh, trajectory/target tools and streamlines (:ref:`Mesh <page-dockmesh>`, :ref:`Target/Trajectory <page-docktarget>`, :ref:`Tracking <page-docktracking>`).
+
+Left-click to select the slice in a grid cell. Some controls can be applied only to a selected cell. This cell is outlined in white.
+
+.. _slice-section-controls:
+Controls
+--------
+
+- MouseWheel slices through image,
+- **Up or Left** key to display previous slice,
+- **Down or Right** key to display next slice,
+- MouseWheel + **CTRL** key (CMD key MacOs platform) to change zoom,
+- **Up or Left + CTRL** key (CMD key MacOs platform) to zoom out,
+- **Down or Right + CTRL** key (CMD key MacOs platform) to zoom in,
+- **A** or **a** key to set axial orientation,
+- **C** or **c** key to set coronal orientation,
+- **S** or **s** key to set sagitall orientation,
+- Left-click to move cursor position,
+- Left-click + **CTRL** key (CMD key MacOs platform) and drag to change zoom,
+- Left-click + **ALT** key and drag to move the viewpoint,
+- Left-click + **SHIFT** key and drag to change window/level,
+- Right-click + **CTRL** Key (CMD key MacOs platform) to show a popup menu.
+
+Brush controls (if a ROI is displayed):
+
+- Left-click to brush, right-click to erase in draw mode (:ref:`ROI Tools <page-dockroitools>`),
+- MouseWheel + **ALT** Key to change brush size.
+
+.. _slice-section-iconbar:
+Icon bar
+--------
+
+Slice view widget includes a vertical icon bar to the left:
+
+|pin|
+	Left-click to select/unselect. When this button is unselected, the icon bar is hidden when the mouse cursor leaves it. The icon bar is displayed when the mouse cursor is moved to the left border of the grid. If this button is selected, the icon bar is always visible.
+
+|fullscreen|
+	Left-click to select/unselect. Toggle between full-screen and normal display modes. In full-screen mode, the slice view widget is extended to the full screen. Press **F11** or **ESC** key to exit full-screen mode.
+
+|grid|
+	Change the number of grid cells (slices). Proposed number of rows/columns: **1x1** (**1** shortkey), **1x2** (**2** shortkey), **1x3** (**3** shortkey)), **2x2** (**4** shortkey), **2x3** (**6** shortkey), **3x3** (**9** shortkey).
+
+|dimx| |dimy| |dimz|
+	Change orientation of slices (**A**, **C**, **S** shortkeys).
+
+|minus|
+	Left-click to display previous slice (**Up** or **Left** shortkeys).
+
+|plus|
+	Left-click to display next slice (**Down** or **Right** shortkeys).
+
+|expand|
+	Left-click to select/unselect. Expand the selected cell to the whole widget surface (**+** shortkey).
+
+|zoomin|
+	Left-click to zoom in (**CTRL Up** shortkey or **CTRL** MouseWheel).
+
+|zoomout|
+	Left-click to zoom out (**CTRL Down** shortkey or **CTRL** MouseWheel).
+
+|zoom1|
+	Left-click to apply default zoom (**0** shortkey).
+
+.. _slice-section-action:
+|hand|
+	Left-click to display a menu and choose an action mode:
+
+	- **Move**, move the slice viewpoint by pressing the left mouse button and dragging.
+	- **Zoom**, change the zoom factor by pressing the left mouse button and dragging.
+	- **Level/window**, change the window thresholds by pressing the left mouse button and dragging.
+	- **Cursor follows mouse**, in this mode, the cursor position follows the mouse without clicking.
+	- **Centered cursor**, in this mode, slice viewpoint is moved and centered on the point clicked with the left mouse button.
+	- **No action**, exit previous action mode.
+
+.. _slice-section-show:
+|show|
+	Left-click to display a menu and set widget visibility.
+
+	- **cursor** (**x** shortkey), cursor visbility (horizontal and vertical white lines intersect).
+	- **Information** (**i** shortkey), information visibility. Various information can be displayed in each corner of each cell (type of information is selected with |info| button).
+	- **Orientation labels** (**l** shortkey), orientation labels visibility: **L** (left), **R** (right), **S** (superior), **I** (inferior), **A** (anterior), **P** (posterior).
+	- **Orientation marker** (**m** shortkey), orientation marker visibility, 3D marker can be displayed at bottom-right (type of marker is selected with |info| button).
+	- **ROI**, ROI visibility.
+	- **Colorbar** (**b** shortkey), colorbar visibility (select colorbar position with |lut| button).
+	- **Ruler** (**r** shortkey), ruler visibility (select ruler position with |axis| button).
+	- **Tooltip** (**t** shortkey), tooltip visibility.
+
+.. _slice-section-info:
+|info|
+	Left-click to display a menu and select the type of information displayed, if |show| **information** is checked.
+
+	- **Identity**, patient identity (firstname, lastname, birthdate) at top-left corner.
+	- **Image attributes**, image attributes (ID, matrix size, field-of-view, voxel spacing, datatype) at top-right corner.
+	- **Acquisition attributes**, acquisition attributes (orientation, modality, sequence, date of scan) at bottom-left.
+	- **Cursor world coordinates**, world coordinates in mm at mouse position.
+	- **Leksell coordinate**, Leksell space coordinates at mouse position (if fiducial markers of a Leksell stereotaxic frame are detected).
+	- **AC-PC**, relative AC-PC world coordinates in mm at mouse position (if anterior and posterior commissures are defined).
+	- **Voxel value at mouse position**, scalar value of voxel at mouse position.
+	- **Voxel overlay value at mouse position**, overlay scalar value of voxel at mouse position.
+	- **Orientation marker shape**, Cube with **L**-**R**-**S**-**I**-**A**-**P** labels on its faces, 3D brain, 3D head, 3D bust, 3D body or 3D axes.
+
+|iso|
+	Left-click to display a menu to display iso-value lines as overlay.
+
+	- |palette| to chose line color. 
+	- |opacity2| to chose line opacity.
+	- **Isoline value** box to edit one or more iso-value splits using a space character.
+	- Check volume name (reference volume or overlays) used to perform iso-value lines.
+
+|lut|
+	Left-click to display a menu and select colorbar position: **left**, **right**, **top** or **bottom** border.
+
+|axis|
+	Left-click to display a menu and select ruler position: **left**, **right**, **top** or **bottom** border.
+
+.. _slice-section-ruler:
+|ruler|
+	Left-click to display a menu to add an interactive tool.
+
+	- **Distance**, used to measure the distance in mm between two points. Left-click in the view widget to position the two endpoints. Left-press and drag to move the endpoints. Right-click on distance label to display popup menu to select color or delete tool.
+	- **Orthogonal distances**, used to measure two orthogonal distances in mm. Left-click in the view widget to position the four endpoints. Left-press and drag to move the endpoints. Right-click on distance label to display popup menu to select color or delete tool.
+	- **Angle**, used to measure angle in degrees between two lines. Left-click in the view widget to position the three endpoints. Left-press and drag to move the endpoints. Right-click on angle label to display popup menu to select color or delete tool.
+	- **Remove all**, remove all tools.
+
+.. _slice-section-photo:
+|photo|
+	Left-click to display a screenshots management menu:
+
+	- **Save grid capture...**, take a screenshot of the slice view.
+	- **Save selected view capture**, take a screenshot of the selected cell (outlined in white, **SPACE** shortkey)
+	- **Save capture from slice series**, take a series of screenshots of each slice, in the current orientation.
+	- **Send selected view capture to screenshots preview** or shortcut key **SPACE**, take a screenshot of the selected cell and copy it to the screenshot manager.
+
+.. _slice-section-clipboard:
+|clipboard|
+	Left-click to display a menu to take screenshot and copy it to the clipboard.
+
+	- **Copy grid capture to clipboard**, take a screenshot of the slice view and copy it to the clipboard.
+	- **Copy selected view capture to clipboard**, take a screenshot of the selected cell and copy it to the clipboard.
+
+.. _slice-section-popup:
+Popup menu
+----------
+
+Right-click in view area to open a popup menu:
+
+- **Expand display**
+- **Number of views** >
+	1x1, 1x2, 1x3, 2x2, 2x3, 3x3
+
+- **Orientation** >
+	Axial, Coronal, Sagitall
+
+- **Zoom** >
+	Zoom in, Zoom out, Default zoom
+
+- :ref:`Actions <slice-section-action>` >
+	No action, Move, Zoom, Level/Window, Cursor follows mouse, Cenetred cursor
+
+- :ref:`Visibility <slice-section-show>` >
+	Show cursor, Show information, Show orientation labels, Show orientation marker, Show ROI, Show colorbar, Show ruler, Show tooltip, Show all, Hide all
+
+- :ref:`Information <slice-section-info>` >
+	Identity, Image attributes, Acquisition attributes, Cursor world coordinates, Voxel value at mouse position, Orientationmarker shape > Cube, Brain, Head, Bust, Body, Axes
+
+- **Colorbar position** >
+	Left, Right, Top, "Bottom
+
+- **Ruler position** >
+	Left, Right, Top, Bottom
+
+- :ref:`Tools <slice-section-ruler>` > 
+	Distance, Orthogonal distance, Angle, Remove all
+
+- :ref:`Save view capture <slice-section-photo>` >
+	Save grid capture..., Save current view capture, Save capture from slice series
+
+- :ref:`Copy view capture to clipboard <slice-section-clipboard>` > 
+	Copy grid capture to clipboard, Copy current view capture to clipboard
+
+The same menu is available via the menu bar ("Views" -> "Slice view").
+
+.. |axis| image:: /GUI/view/axis.png
+   :scale: 50 %
+.. |clipboard| image:: /GUI/view/clipboard.png
+   :scale: 50 %
+.. |dimx| image:: /GUI/view/dimx.png
+   :scale: 50 %
+.. |dimy| image:: /GUI/view/dimy.png
+   :scale: 50 %
+.. |dimz| image:: /GUI/view/dimz.png
+   :scale: 50 %
+.. |expand| image:: /GUI/view/expand.png
+   :scale: 50 %
+.. |fullscreen| image:: /GUI/view/fullscreen.png
+   :scale: 50 %
+.. |grid| image:: /GUI/view/grid.png
+   :scale: 50 %
+.. |hand| image:: /GUI/view/hand.png
+   :scale: 50 %
+.. |info| image:: /GUI/view/info.png
+   :scale: 50 %
+.. |iso| image:: /GUI/view/iso.png
+   :scale: 50 %
+.. |lut| image:: /GUI/view/lut.png
+   :scale: 50 %
+.. |minus| image:: /GUI/view/minus.png
+   :scale: 50 %
+.. |photo| image:: /GUI/view/photo.png
+   :scale: 50 %
+.. |pin| image:: /GUI/view/pin.png
+   :scale: 50 %
+.. |plus| image:: /GUI/view/plus.png
+   :scale: 50 %
+.. |ruler| image:: /GUI/view/ruler.png
+   :scale: 50 %
+.. |show| image:: /GUI/view/show.png
+   :scale: 50 %
+.. |zoom1| image:: /GUI/view/zoom1.png
+   :scale: 50 %
+.. |zoomin| image:: /GUI/view/zoomin.png
+   :scale: 50 %
+.. |zoomout| image:: /GUI/view/zoomout.png
+   :scale: 50 %
+.. |palette| image:: /GUI/dock/palette.png
+   :scale: 50 %
+.. |opacity2| image:: /GUI/dock/opacity.png
+   :scale: 50 %

@@ -1,0 +1,245 @@
+.. _page-docktracking:
+
+Tracking tab of the dock
+========================
+
+- :ref:`tracking-section-tractogram`
+- :ref:`tracking-section-bundle-list`
+- :ref:`tracking-section-bundle-item`
+
+Streamlines/bundle are only displayed in orthogonal view widget.
+
+This dock contains :ref:`tracking-section-tractogram` at the top and a :ref:`tracking-section-bundle-list` frame below.
+
+.. _tracking-section-tractogram:
+Whole tractogram virtual dissection tools
+-----------------------------------------
+
+**Whole brain tractogram**
+	This file selection widget is used to load a tractogram (PySisyphe XTRACTS file, xml format), usually previously processed via the menu "**Diffusion** -> Tractogram generation...". **This tractogram must be in the same space as the reference volume displayed in the view widget i.e. same space ID**.
+
+.. image:: /GUI/tracking-roi-selection.png
+   :align: center
+   :scale: 50%
+|
+|tracking|
+	Left-click to show a dialog box for virtual dissection with inclusion and exlusion ROI(s).
+
+	The list box on the left (1) shows avalaible ROI(s) i.e. ROI(s) loaded in :ref:`ROI dock <page-dockroi>`. It is possible to load ROI(s) from disk into this box provided they have the same space ID or, failing that, the same field of view. Left click on **Add ROI(s)..** to display a ROI selection dialog. There are two list boxes on the right, the top box lists the inclusion ROI(s) and the bottom box lists the exclusion ROI(s). The |left| buttons moves a selected ROI from the box of available ROI(s) to the box of inclusion or exclusion. The |right| buttons to remove a selected ROI from the include or exclude box and return it to the box of available ROI(s).
+
+	Settings fields are at the bottom of the dialog box:
+
+	- **Bundle name**, to edit the name of the new bundle.
+	- **Minimal length**, to set a length criterion for selecting streamlines of the bundle (in mm). No length selection by default (0.0).
+	- **Selection mode** combobox:
+
+		- **any**, a streamline is included (or excluded, according to ROI type) if one of its points is inside ROI (Default).
+		- **all**, a streamline is included (or excluded, according to ROI type) if all of its points are inside the ROI.
+		- **end**, a streamline is included (or excluded, according to ROI type) if one of the endpoints is inside the ROI.
+
+.. image:: /GUI/tracking-atlas-selection.png
+   :align: center
+   :scale: 50%
+|
+|tracking-atlas|
+	Left-click to show a dialog box for virtual dissection using atlas bundle templates (see `HCP842 tractography atlas <https://brain.labsolver.org/hcp_trk_atlas.html>`_). This function recognizes white matter bundles using local and global streamline-based registration to an atlas tractogram, and clustering method based on similarity of streamlines with bundles of this atlas (see `Dipy RecoBundles class <https://docs.dipy.org/dev/reference/dipy.segment.html#dipy.segment.bundles.RecoBundles>`_).
+
+	This dialog box displays a list box of atlas bundles at the top. The bundles to be detected in this list must be checked. Settings fields are at the bottom of the dialog box:
+
+	- **Minimal length**, to set a length criterion for selecting streamlines of the bundle (in mm). No length selection by default (0.0).
+	- **Clustering threshold**, to set a distance threshold (mdf, Minimum average Direct-Flip distance) for model bundle clustering (default 15.0 mm). Get the centroids of the model bundle and work with centroids instead of all streamlines. This helps speed up processing. The larger the value of the threshold, the fewer centroids will be, and smaller the threshold value, the more centroids will be. If you prefer to use all the streamlines of the model bundle, you can set this threshold to 0.1 mm.
+	- **Reduction metric** combobox, to choose the reduction distance metric.
+
+		- **mdf**, minimum average Direct-Flip distance.
+		- **mam**, mean average minimum distance.
+
+	- **Reduction threshold**, to edit the threshold for the reduction metric. This threshold will be used to reduce the search space for finding the streamlines that match atlas bundle streamlines in shape. Instead of looking at the entire tractogram, now we will be looking at neighboring region of a model bundle in the tractogram. Increase the threshold to increase the search space. Recommended range is 15 - 30 mm.
+	- **Pruning metric** combobox, to choose the pruning distance metric (same options as **Reduction metric**).
+	- **Pruning threshold**, to edit the threshold for the pruning metric. This threshold will filter the streamlines for which the distance to the atlas bundle is greater. This is used to filter the neighborhood area i.e. search space, to get streamlines that are like the atlas bundle. Recommended range is 8 - 12 mm.
+	- **Refine** check box, two stage algorithm (recognize and refine) if checked, otherwise recognize only.
+
+.. _tracking-section-bundle-list:
+Bundle list
+-----------
+
+Left-click to select a bundle element in the list (blue outline in Windows platform, blue background in MasOS platform).
+
+|open|
+	Left-click to show a Bundle selection dialog (PySisyphe XTRACTS file, xml format), adds selected Bundle(s) to the list and displays them in the view widget. **This (These) Bundle(s) must be in the same space as the reference volume displayed in the view widget i.e. same space ID**.
+
+|save|
+	Left-click to save all Bundle(s) of the list.
+
+|delete|
+	Left-click to remove all Bundle(s) from the list and from the view widget.
+
+|cross|
+	Left-click to remove checked Bundle(s) from list and from view widget(s).
+
+|attach|
+	Left-click to process union of the checked Bundles, adds result to the Bundle list and displays it in the view widget.
+
+|duplicate|
+	Left-click to add a copy of the selected Bundle in the list.
+
+|map|
+	Left-click to calculate density map(s) of the checked bundle(s). The scalar values of the density map voxels are the number of fibers crossing them. Displays a save dialog box after processing to choose a density map file name (bundle name by default).
+
+|roi|
+	Left-click to convert checked bundles(s) to ROI(s). Displays a menu: **Count threshold**, value used to threshold density map to produce the binary ROI. Select **Convert to ROI(s)** to calculate ROI. Displays a save dialog box after processing to choose a ROI file name (bundle name by default).
+
+|mesh|
+	Left-click to convert checked bundles(s) to Mesh(es). Displays a menu: **Count threshold**, value used to threshold density map to produce the mesh. Select **Convert to Mesh(es)** to calculate Mesh. Displays a save dialog box after processing to choose a mesh file name (bundle name by default).
+
+|check|
+	Left-click to check all Bundle(s) of the list.
+
+|uncheck|
+	Left-click to uncheck all Bundle(s) of the list.
+
+|tracking|
+	Left-click to display a dialog box (see :ref:`tracking-section-tractogram`) for virtual dissection with inclusion and exlusion ROI(s) of the checked bundles. New bundle(s) are added to the list with a default name (suffixed with a number).
+
+|3daxis|
+	This button provides interactive selection of the streamlines from the orthogonal view widget. Streamlines of the checked bundle(s) will be excluded if they cross (or not, depending on the menu type) the cursor sphere or slice planes of the 3D volume renderer in the orthogonal view widget. Left-click this button displays a menu:
+
+	- **Exclude streamlines that cross cursor sphere**
+	- **Exclude streamlines that do not cross cursor sphere**
+	- **Exclude streamlines that cross cursor axial slice**
+	- **Exclude streamlines that do not cross cursor axial slice**
+	- **Exclude streamlines that cross cursor coronal slice**
+	- **Exclude streamlines that do not cross cursor coronal slice**
+	- **Exclude streamlines that cross cursor sagittal slice**
+	- **Exclude streamlines that do not cross cursor sagittal slice**
+
+	Left-click on a streamline in the orthogonal slice view to select it, and use the mouse wheel to move the cursor along its trajectory. To adjust the cursor sphere radius, left-click |cursor| in the icon bar.
+
+	Left-click on a slice plane to select it, and use the mouse wheel to move it.
+
+|filter|
+	Left-click to displays a settings dialog box to filter a bundle. Create a new bundle with streamlines of a bundle selected by a clustering confidence algorithm. Computes the cluster confidence index (cci), which is an estimation of the support a set of streamlines gives to a particular pathway. The cci provides a voting system where by each streamline (within a set tolerance) gets to vote on how much support it lends to. Outlier pathways score relatively low on cci, since they do not have many streamlines voting for them. These outliers are removed by thresholding on the cci metric (see `Dipy Cluster_Confidence function <https://docs.dipy.org/stable/reference/dipy.tracking.html#cluster-confidence>`_).
+
+	Dialog box options:
+
+	- **Minimal length**, to set a length criterion for selecting streamlines of the bundle (in mm). No length selection by default (0.0).
+	- **Maximum MDF distance**, maximum MDF distance (minimum average Direct-Flip distance in mm) that will be considered a "supporting" streamline and included in cci calculation (default 5 mm).
+	- **Cluster confidence threshold**
+	- **Power**, power to which the MDF distance for each streamline will be raised to determine how much it contributes to the cci. High values of power make the contribution value degrade much faster. e.g., a streamline with 5 mm MDF similarity contributes 1/5 to the cci if power is 1, but only contributes 1/5^2 = 1/25 if power is 2 (default 1).
+	- **Streamline sampling**, bundle streamlines are subsampled with a fixed number of points.
+	- **Replace current bundle**
+
+	A new filtered bundle is added to the list after processing with a default name, or replaces the original bundle if the **Replace current bundle** is checked.
+
+|cluster|
+	Left-click to display a bundle clustering settings dialog box with the following options (see `Dipy QuickBundles class <https://docs.dipy.org/stable/reference/dipy.segment.html#dipy.segment.clustering.QuickBundles>`_):
+
+	- **Metric**, metric used for clustering: **Average pointwise euclidean distance**, **Center of mass euclidean distance**, **mid-point euclidean distance**, **Length**, **Angle between vector endpoints**
+	- **Metric threshold**, metric threshold (in mm or degrees, according to the metric).
+	- **Streamline sampling**, bundle streamlines are subsampled with a fixed number of points.
+	- **Get cluster centroids**, adds centroid(s) of each cluster to the list if checked.
+
+	New bundles (+/- centroids if **Get cluster centroids** option is checked) are added to the list after processing with default name(s).
+
+|centroid|
+	This option is used to calcule the centroid of the checked bundle(s). Left-click to display a bundle centroid settings dialog box with the following options:
+
+	- **Metric threshold**, **Average pointwise euclidean distance** threshold (in mm).
+	- **Streamline sampling**, bundle streamlines are subsampled with a fixed number of points.
+
+	New centroid(s) is(are) added to the list after processing with default name(s).
+
+|statistics|
+	To get statistics about checked bundle(s). Left-click shows a menu:
+
+	- **Cluster confidence statistics...**
+	- **Length statistics...**
+	- **Mean curvature statistics...**
+	- **Cosine distance between end vectors statistics...**
+	- **Euclidean distance between end points statistics...**
+
+	The statistics dialog box is occupied by a tabbed stack widget with two tabs:
+
+	- **Descriptive statistics** tab: There is a Box and Whisker plot (see `Box and Whisker plot in wikipedia <https://en.wikipedia.org/wiki/Box_plot>`_) at the top and a table at the bottom with the followings values for each bundle: **minimum**, **5th percentile**, **25th percentile**, **median**, **75th percentile**, **95th percentile**, **maximum**, **standard deviation**, **mean**, **skewness**, **kurtosis**.
+	- **Histogram** tab: There is a histogram at the top and a table with all streamline values at the bottom.
+
+	There is a button bar at the bottom:
+
+	- **Save bitamp**, show a dialog box to save a bitmap of the displayed chart (supported bitmap formats BMP, JPG, PNG, TIFF and SVG)
+	- **Copy to clipboard**, copy a bitmap capture of the displayed chart to the clipboard.
+	- **Copy to screenshots**, copy a bitmap capture of the displayed chart to the :ref:`Screenshots manager <page-screenshots>`.
+	- **Save Dataset**, show a dialog box to save the displayed table (supported formats CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET).
+
+.. _tracking-section-bundle-item:
+Bundle item
+-----------
+
+Bundle item widgets:
+
+|view|
+	Left-click to toogle Bundle visibility in the view widget(s).
+
+|opacity|
+	Left-click to select Bundle opacity in the view widget(s) (0.0 transparent, 1.0 opaque).
+
+|palette|
+	Left-click to display a Bundle color dialog.
+
+|width|
+	Left-click to select the streamlines width of the Bundle in mm.
+
+|save|
+	Left-click to save the Bundle (PySisyphe XTRACTS file, xml format), Bundle name is used as file name.
+
+|cross|
+	Left-click to remove Bundle from list and from view widget(s).
+
+.. |open| image:: /GUI/dock/open.png
+   :scale: 50 %
+.. |save| image:: /GUI/dock/save.png
+   :scale: 50 %
+.. |delete| image:: /GUI/dock/delete2.png
+   :scale: 50 %
+.. |cross| image:: /GUI/dock/cross.png
+   :scale: 50 %
+.. |attach| image:: /GUI/dock/attach.png
+   :scale: 50 %
+.. |duplicate| image:: /GUI/dock/duplicate.png
+   :scale: 50 %
+.. |map| image:: /GUI/dock/map.png
+   :scale: 50 %
+.. |roi| image:: /GUI/dock/roi.png
+   :scale: 50 %
+.. |mesh| image:: /GUI/dock/mesh.png
+   :scale: 50 %
+.. |check| image:: /GUI/dock/check.png
+   :scale: 50 %
+.. |uncheck| image:: /GUI/dock/uncheck.png
+   :scale: 50 %
+.. |tracking| image:: /GUI/dock/tracking.png
+   :scale: 50 %
+.. |3daxis| image:: /GUI/dock/3daxis.png
+   :scale: 50 %
+.. |filter| image:: /GUI/dock/filter.png
+   :scale: 50 %
+.. |cluster| image:: /GUI/dock/cluster.png
+   :scale: 50 %
+.. |centroid| image:: /GUI/dock/centroid.png
+   :scale: 50 %
+.. |statistics| image:: /GUI/dock/statistics.png
+   :scale: 50 %
+.. |tracking-atlas| image:: /GUI/dock/tracking-atlas.png
+   :scale: 50 %
+.. |view| image:: /GUI/dock/view.png
+   :scale: 50 %
+.. |opacity| image:: /GUI/dock/opacity.png
+   :scale: 50 %
+.. |palette| image:: /GUI/dock/palette.png
+   :scale: 50 %
+.. |width| image:: /GUI/dock/width.png
+   :scale: 50 %
+.. |left| image:: /GUI/view/left.png
+   :scale: 50 %
+.. |right| image:: /GUI/view/right.png
+   :scale: 50 %
+.. |cursor| image:: /GUI/view/cursor.png
+   :scale: 50 %

@@ -1,0 +1,45 @@
+.. _page-installation:
+
+Installation
+============
+
+- :ref:`install-section-from-binary`
+- :ref:`install-section-from-source`
+
+.. _install-section-from-binary:
+From binary installer
+---------------------
+
+Download the binary installer for MS Windows or MacOS Intel platforms from https://github.com/PySisyphe/Sisyphe.
+There is no version for the Linux platform, as some of the modules required to run PySisyphe are not yet available on this operating system.
+
+Additional content (templates, atlases, samples, various modality scans from volunteer groups...) can be retrieved directly from the download manager integrated into the PySisyphe interface (menu File -> Download manager...). 
+
+.. _install-section-from-source:
+From source
+-----------
+
+If you plan to develop plugins, you will need to install PySisyphe from source.
+
+PySisyphe runs on Python version 3.10, download the last release with binary installer (3.10.11, release date: April 5, 2023) at https://www.python.org/downloads/release/python-31011/, and install it.
+
+We recommend working with the PyCharm IDE development environment (JetBrains Distributions s.r.o., Czech Republic), download community edition at https://www.jetbrains.com/fr-fr/pycharm/, and install it. Run PyCharm IDE and create a new project (menu File -> New project) with venv interpreter type and previously installed Python 3.10.11 version.
+
+1. Download PySisyphe source at https://github.com/PySisyphe/Sisyphe ("<> Code" button, and select Download ZIP).
+2. Unzip "Sisyphe-main.zip" archive.
+3. Rename "Sisyphe-main" folder to "Sisyphe".
+4. Copy "Sisyphe" folder in the PyCharm project folder.
+5. Open the Pycharm terminal (ALT-F12), the current folder is by default the root of the project folder (a requirements.txt exists in this folder).
+6. To install the python modules needed to work with PySisyphe, type at the command line: pip install -r requirements.txt
+
+At this stage, all external and PySisyphe modules are installed for your own development.
+PySisyphe core (Sisyphe.core.<module name>) and widget (Sisyphe.widgets.<module name>) modules can be imported with: 
+ 
+- from Sisyphe.core.<module name> import * (to import all functions/classes of the Sisyphe.core.<module name>)
+- from Sisyphe.core.<module name> import <function/class name> (to import the function/class <function/class name> of the Sisyphe.core.<module name>)
+
+To run PySisyphe in PyCharm IDE:
+
+1. Run PyCharm IDE, project will be opened by default.
+2. Load PySisyphe.py if not already open (menu File -> Open...)
+3. Run PySisyphe.py (menu Run -> Run 'PySisyphe', or ALT+F10)

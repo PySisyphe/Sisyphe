@@ -1,0 +1,331 @@
+.. _page-toolbar:
+
+Toolbar
+=======
+
+Toolbar icons are shortcuts to the most common PySisyphe functions.
+
+Icons displayed in toolbar can be modified in the **settings** dialog box (tab General -> Toolbar icons, left-click on the |view| icon to toggle visbility).
+
+|open|
+	Display a file selection dialog box to open a PySisyphe volume (.xvol). You can also use menubar (File -> Open...), or double-clicking on an empty space in the thumbnail bar, or select the thumbnail bar popup menu "open volume", or press the keyboard shortcut **CTRL-O** (**CMD-O** MacOs platform).
+
+|save|
+	Save the selected volume of the thumbnail bar (blue border), displayed in a view widget. You can also use menubar (File -> Save...), or select the thumbnail popup menu "Save", or press the keyboard shortcut **CTRL-S** (**CMD-S** MacOs platform).
+
+|saveall|
+	Save all open volumes in the thumbnail bar. You can also use menubar (File -> Save all), or select the thumbnail bar popup menu **Save all volume(s)**.
+
+|close|
+	Close the selected volume of the thumbnail bar (blue border). You can also use menubar (File -> Close), or press DEL key.
+
+|closeall|
+	Close all open volumes in the thumbnail bar. You can also use menubar (File -> Close all), or the thumbnail bar popup menu **Close all volume(s)**.
+
+|list|
+	Display a dialog box to edit attributes (identity, acquisition, image) of the selected volume in the thumbnail bar (blue border). You can also use menubar (File -> Edit attributes...), or press the keyboard shortcut **CTRL-?** (**CMD-?** MacOs platform).
+
+|id|
+	Display a dialog box to copy a reference volume ID to a list of volume(s), ROI(s), meshs(es) or streamlines. You can also use menubar (File -> ID replacement...).
+
+|anonymize|
+	Display a dialog box to anonymize a list of volume(s). You can also use menubar (File -> Anonymize...), or select the thumbnail popup menu **Anonymize**.
+
+|labels|
+	Display a dialog box to edit labels of the the selected volume in the thumbnail bar (blue border). This function is assigned to a label volume with LB modality. In this volume, each scalar value in the image array is associated with a label. These labels are written to a xml file with the same name as the volume and .xlabels extension. You can also use menubar (File -> Edit volume labels...).
+
+|importdcm|
+	Display a dialog box to import Dicom files. You can also use menubar (File -> DICOM -> DICOM import...).
+
+|importmnc|
+	Display a dialog box to import Minc volume(s) (.mnc). You can also use menubar (File -> Import -> Import Minc...).
+
+|importnii|
+	Display a dialog box to import Nifti volume(s) (.img, .img.gz, .hdr, .nii, .nii.gz, .nia). You can also use menubar (File -> Import -> Import Nifti...).
+
+|importnrrd|
+	Display a dialog box to import Nrrd volume(s) (.nrrd). You can also use menubar (File -> Import -> Import Nrrd...).
+
+|importvol|
+	Display a dialog box to import old format Sisyphe volume(s) (.vol). You can also use menubar (File -> Import -> Import Sisyphe...).
+
+|importvtk|
+	Display a dialog box to import VTK volume(s) (.vtk, vti). You can also use menubar (File -> Import -> Import VTK...).
+
+|open-mgh|
+	Display a file selection dialog box to open a FreeSurfer volume (.mgh). You can also use menubar (File -> Open from format... -> Open FreeSurfer MGH...).
+
+|open-mnc|
+	Display a file selection dialog box to open a Minc volume (.mnc). You can also use menubar (File -> Open from format... -> Open Minc...).
+
+|open-nii|
+	Display a file selection dialog box to open a Nifti volume (.img, .img.gz, .hdr, .nii, .nii.gz, .nia). You can also use menubar (File -> Open from format... -> Open Nifti...).
+
+|open-nrrd|
+	Display a file selection dialog box to open a Nrrd volume (.nrrd). You can also use menubar (File -> Open from format... -> Open Nrrd...).
+
+|open-vmr|
+	Display a file selection dialog box to open a BrainVoyager volume (.vmr). You can also use menubar (File -> Open from format... -> Open BrainVoyager VMR...).
+
+|open-vol|
+	Display a file selection dialog box to open an old format Sisyphe volume (.vol). You can also use menubar (File -> Open from format... -> Open Sisyphe...).
+
+|open-vtk|
+	Display a file selection dialog box to open an VTK volume (.vtk, .vti). You can also use menubar (File -> Open from format... -> Open VTK...).
+
+|save-nii|
+	Save the selected volume in the thumbnail bar (blue border) in Nifti format (.nii). You can also use menubar (File -> Save to format... -> Save Nifti...).
+
+|save-npy|
+	Save the selected volume in the thumbnail bar (blue border) in Numpy format (.npy). You can also use menubar (File -> Save to format... -> Save Numpy...).
+
+|save-nrrd|
+	Save the selected volume in the thumbnail bar (blue border) in Nrrd format (.nrrd). You can also use menubar (File -> Save to format... -> Save Nrrd...).
+
+|save-mnc|
+	Save the selected volume in the thumbnail bar (blue border) in Minc format (.mnc). You can also use menubar (File -> Save to format... -> Save Minc...).
+
+|save-vtk|
+	Save the selected volume in the thumbnail bar (blue border) in VTK format (.vtk). You can also use menubar (File -> Save to format... -> Save VTK...).
+
+|importdcm|
+	Display a dialog box to import Dicom files. You can also use menubar (File -> DICOM -> DICOM Import...).
+
+|slice-view|
+	Display the selected volume of the thumbnail bar (blue border) in the slice view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the slice view. You can also select thumbail popup menu **Display in slice view**, or press **F1** key.
+
+|ortho-view|
+	Display the selected volume of the thumbnail bar (blue border) in the orthogonal view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the orthogonal view. You can also select thumbail popup menu **Display in orthogonal view**, or press **F2** key.
+
+|sync-view|
+	Display the selected volume of the thumbnail bar (blue border) in the synchronized view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the synchronized view. You can also select thumbail popup menu **Display in synchronized view**, or press **F3** key.
+
+|proj-view|
+	Display the selected volume of the thumbnail bar (blue border) in the projection view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the projection view. You can also select thumbail popup menu **Display in projection view**, or press **F4** key.
+
+|multi-view|
+	Display the selected volume of the thumbnail bar (blue border) in the multi-component view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the multi-component view. This viewer is assigned to multi-component volume (array image values are vectors, not scalar values). You can also select thumbail popup menu **Display in multi-component view**, or press **F5** key.
+
+|join|
+	Join several single-component volumes to produce a multi-component volume. Display a file selection dialog box to open a list of single-component volumes. You can also use menubar (Functions -> Join single component volume(s)...).
+
+|split|
+	Break down a multi-component volume into single-component volumes. Display a file selection dialog box to open multi-component volumes. You can also use menubar (Functions -> Split multi component volume(s)...).
+
+|flip|
+	Display a dialog box to flip volume axes (x-axis left/right, y-axis anterior/posterior, z-axis cranial/caudal). You can also use menubar (Functions -> Flip axis...).
+
+|axis|
+	Display a dialog box to permute volume axes. This function is used to correct axes order i.e. coronal to axial conversion or sagittal to axial conversion. You can also use menubar (Functions -> Permute axis...).
+
+|editattr|
+	Display a dialog box to edit attributes (modality, sequence, scalar value unit, frame, set default origin and set default directions) of a volume list. You can also use menubar (Functions -> Attributes conversion...).
+
+|rgb|
+	Display a dialog box for building or editing lookup tables. You can also use menubar (File -> Edit LUT...).
+
+|texture|
+	Display a dialog box to perform texture features. You can also use menubar (Functions -> Texture feature maps...).
+
+|filtermean|
+	Display a dialog box to process mean filtering. You can also use menubar (Functions -> Filters -> Mean...).
+
+|filtermedian|
+	Display a dialog box to perform median filtering. You can also use menubar (Functions -> Filters -> Median...).
+
+|filtergaussian|
+	Display a dialog box to perform gaussian filtering. You can also use menubar (Functions -> Filters -> Gaussian...).
+
+|filtergrad|
+	Display a dialog box to perform gradient magnitude. You can also use menubar (Functions -> Filters -> Gradient magnitude...).
+
+|filterlapl|
+	Display a dialog box to perform gradient laplacian. You can also use menubar (Functions -> Filters -> Laplacian...).
+
+|filteraniso|
+	Display a dialog box to perform anisotropic diffusion filtering. You can also use menubar (Functions -> Filters -> Anisotropic diffusion...).
+
+|filterbias|
+	Display a dialog box to perform bias field filtering. You can also use menubar (Functions -> Bias field correction...).
+
+|algebra|
+	Display a dialog box for voxel by voxel. You can also use menubar (Functions -> Voxel-by-voxel processing -> Algebra...).
+
+|workflow|
+	Display a dialog box to automate a series of processings. You can also use menubar (Functions -> Workflow processing...).
+
+|frame|
+	Display a dialog box for detecting fiducial markers of a Leksell stereotaxic frame. You can also use menubar (Registration -> Stereotacitc frame detection...).
+
+|acpc|
+	Display a dialog box to select anterior and posterior commissure of a volume. You can also use menubar (Registration -> AC-PC selection...).
+
+|reorient|
+	Display a dialog box to reorient a volume and/or change the field-of-view. You can also use menubar (Registration -> Volume reorientation...).
+
+|manual|
+	Display a dialog box to perform a manual co-registration of two volumes. You can also use menubar (Registration -> Manual registration...).
+
+|rigid|
+	Display a dialog box to perform a rigid co-registration of two volumes. You can also use menubar (Registration -> Rigid registration...).
+
+|affine|
+	Display a dialog box to perform an affine co-registration of two volumes. You can also use menubar (Registration -> Affine registration...).
+
+|diffeo|
+	Display a dialog box to perform an non linear displacement field-based co-registration of two volumes. You can also use menubar (Registration -> Displacement field registration...).
+
+|icbm|
+	Display a dialog box to perform an ICBM152 spatial normalization of a volume. You can also use menubar (Registration -> ICBM normalization...).
+
+|asym|
+	Display a dialog box to perform an asymmetry analysis of a volume. You can also use menubar (Registration -> Asymmetry displacement field...).
+
+|field|
+	Display a dialog box for processing the Jacobian determinant of a displacement field. Assigned to the multi-component volume and displacement field sequence attribute. You can also use menubar (Registration -> Displacemlent field jacobian determinant...).
+
+|strip|
+	Display a dialog box to perform a skull stripping of a volume. This function make use of pre-trained deep learning models. You can also use menubar (Segmentation -> skull stripping...).
+
+|seg|
+	Display a dialog box to perform prior-based tissue segmentation of a volume (three to six classes: cortical gray matter, subcortical gray matter, white matter, cerebro-spinal fluid, brainstem, cerebellum). You can also use menubar (Registration -> Tissue segmentation...).
+
+|fullscreen|
+	Toggle between full-screen and normal display modes. In full-screen mode, the central area of the current visualization widget (sectional view, orthogonal view, synchronized view, projection view, multi-component view) is extended to the full screen. Press F11 or ESC key to exit full-screen mode.
+
+|settings|
+	Display a dialog box for editing PySisyphe preferences. You can also use menubar (File -> preferences...).
+
+|exit|
+	Close PySisyphe. You can also use menubar (File -> Quit...).
+
+.. |view| image:: /GUI/dock/view.png
+   :scale: 50 %
+.. |open| image:: /GUI/toolbar/open.png
+   :scale: 25 %
+.. |save| image:: /GUI/toolbar/save.png
+   :scale: 25 %
+.. |saveall| image:: /GUI/toolbar/saveall.png
+   :scale: 25 %
+.. |close| image:: /GUI/toolbar/close.png
+   :scale: 25 %
+.. |closeall| image:: /GUI/toolbar/closeall.png
+   :scale: 25 %
+.. |list| image:: /GUI/toolbar/list.png
+   :scale: 25 %
+.. |id| image:: /GUI/toolbar/id.png
+   :scale: 25 %
+.. |anonymize| image:: /GUI/toolbar/anonymize.png
+   :scale: 25 %
+.. |labels| image:: /GUI/toolbar/labels.png
+   :scale: 25 %
+.. |importdcm| image:: /GUI/toolbar/importdcm.png
+   :scale: 25 %
+.. |importmnc| image:: /GUI/toolbar/importmnc.png
+   :scale: 25 %
+.. |importnii| image:: /GUI/toolbar/importnii.png
+   :scale: 25 %
+.. |importnrrd| image:: /GUI/toolbar/importnrrd.png
+   :scale: 25 %
+.. |importvol| image:: /GUI/toolbar/importvol.png
+   :scale: 25 %
+.. |importvtk| image:: /GUI/toolbar/importvtk.png
+   :scale: 25 %
+.. |open-mgh| image:: /GUI/toolbar/open-mgh.png
+   :scale: 25 %
+.. |open-mnc| image:: /GUI/toolbar/open-mnc.png
+   :scale: 25 %
+.. |open-nii| image:: /GUI/toolbar/open-nii.png
+   :scale: 25 %
+.. |open-nrrd| image:: /GUI/toolbar/open-nrrd.png
+   :scale: 25 %
+.. |open-vmr| image:: /GUI/toolbar/open-vmr.png
+   :scale: 25 %
+.. |open-vol| image:: /GUI/toolbar/open-vol.png
+   :scale: 25 %
+.. |open-vtk| image:: /GUI/toolbar/open-vtk.png
+   :scale: 25 %
+.. |save-mnc| image:: /GUI/toolbar/save-mnc.png
+   :scale: 25 %
+.. |save-nii| image:: /GUI/toolbar/save-nii.png
+   :scale: 25 %
+.. |save-npy| image:: /GUI/toolbar/save-npy.png
+   :scale: 25 %
+.. |save-nrrd| image:: /GUI/toolbar/save-nrrd.png
+   :scale: 25 %
+.. |save-vtk| image:: /GUI/toolbar/save-vtk.png
+   :scale: 25 %
+.. |importdcm| image:: /GUI/toolbar/importvtk.png
+   :scale: 25 %
+.. |slice-view| image:: /GUI/toolbar/slice-view.png
+   :scale: 25 %
+.. |ortho-view| image:: /GUI/toolbar/ortho-view.png
+   :scale: 25 %
+.. |sync-view| image:: /GUI/toolbar/sync-view.png
+   :scale: 25 %
+.. |proj-view| image:: /GUI/toolbar/proj-view.png
+   :scale: 25 %
+.. |multi-view| image:: /GUI/toolbar/multi-view.png
+   :scale: 25 %
+.. |join| image:: /GUI/toolbar/join.png
+   :scale: 25 %
+.. |split| image:: /GUI/toolbar/split.png
+   :scale: 25 %
+.. |flip| image:: /GUI/toolbar/flip.png
+   :scale: 25 %
+.. |axis| image:: /GUI/toolbar/axis.png
+   :scale: 25 %
+.. |editattr| image:: /GUI/toolbar/editattr.png
+   :scale: 25 %
+.. |rgb| image:: /GUI/toolbar/rgb.png
+   :scale: 25 %
+.. |texture| image:: /GUI/toolbar/texture.png
+   :scale: 25 %
+.. |filteraniso| image:: /GUI/toolbar/filteraniso.png
+   :scale: 25 %
+.. |filterbias| image:: /GUI/toolbar/filterbias.png
+   :scale: 25 %
+.. |filtergaussian| image:: /GUI/toolbar/filtergaussian.png
+   :scale: 25 %
+.. |filtergrad| image:: /GUI/toolbar/filtergrad.png
+   :scale: 25 %
+.. |filterlapl| image:: /GUI/toolbar/filterlapl.png
+   :scale: 25 %
+.. |filtermean| image:: /GUI/toolbar/filtermean.png
+   :scale: 25 %
+.. |filtermedian| image:: /GUI/toolbar/filtermedian.png
+   :scale: 25 %
+.. |algebra| image:: /GUI/toolbar/algebra.png
+   :scale: 25 %
+.. |workflow| image:: /GUI/toolbar/workflow.png
+   :scale: 25 %
+.. |frame| image:: /GUI/toolbar/frame.png
+   :scale: 25 %
+.. |acpc| image:: /GUI/toolbar/acpc.png
+   :scale: 25 %
+.. |reorient| image:: /GUI/toolbar/reorient.png
+   :scale: 25 %
+.. |manual| image:: /GUI/toolbar/manual.png
+   :scale: 25 %
+.. |rigid| image:: /GUI/toolbar/rigid.png
+   :scale: 25 %
+.. |affine| image:: /GUI/toolbar/affine.png
+   :scale: 25 %
+.. |diffeo| image:: /GUI/toolbar/diffeo.png
+   :scale: 25 %
+.. |icbm| image:: /GUI/toolbar/icbm.png
+   :scale: 25 %
+.. |asym| image:: /GUI/toolbar/asym.png
+   :scale: 25 %
+.. |field| image:: /GUI/toolbar/field.png
+   :scale: 25 %
+.. |strip| image:: /GUI/toolbar/strip.png
+   :scale: 25 %
+.. |seg| image:: /GUI/toolbar/seg.png
+   :scale: 25 %
+.. |fullscreen| image:: /GUI/toolbar/fullscreen.png
+   :scale: 25 %
+.. |settings| image:: /GUI/toolbar/settings.png
+   :scale: 25 %
+.. |exit| image:: /GUI/toolbar/exit.png
+   :scale: 25 %
