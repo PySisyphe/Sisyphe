@@ -46,7 +46,7 @@ List of available post-processings:
 - Prior-based tissue segmentation (gray matter, white matter, cerebro-spinal fluid)
 - Registration-based segmentation
 - Cortical thickness map
-- Deep learning segmentation (skull striping, hippocampus, medial temporal lobe, tumor, T1 hypo-intensity lesions, white matter hyper-intensities, TOF vessels)
+- Deep learning segmentation (skull striping, hippocampus, medial temporal lobe, tumor, T1 hypo-intensity lesions, white matter hyper-intensities)
 - fMRI analysis (model, contrast, conjunction...)
 - Time series analysis (ICA)
 - Dynamic susceptibility contrast MR perfusion maps
