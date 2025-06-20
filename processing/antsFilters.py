@@ -1,10 +1,9 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        ANTs            https://github.com/ANTsX/ANTsPy                             Image registration
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - ANTs, image registration, http://stnava.github.io/ANTs/
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
 import sys
@@ -20,7 +19,6 @@ from multiprocessing import Lock
 from multiprocessing import Queue
 
 from ants.core import from_numpy
-from ants.utils import denoise_image
 from ants.segmentation import atropos
 from ants.segmentation import kelly_kapowski
 
@@ -29,44 +27,42 @@ from PyQt5.QtWidgets import QApplication
 from Sisyphe.core.sisypheVolume import SisypheVolume
 
 __all__ = ['CapturedStdout',
-           'antsNonLocalMeansFilter',
-           'antsSupervisedKMeansSegmentation',
+           'ProcessAtropos',
+           'ProcessThickness',
+           'antsKMeansSegmentation',
            'antsPriorBasedSegmentation',
            'antsCorticalThickness']
 
 """
-    Class hierarchy
+Class hierarchy
+~~~~~~~~~~~~~~~
 
-        CaptureStdout
-        Process -> ProcessNonLocalMeansFiler
-                -> ProcessAtropos
-                -> ProcessThickness
+    - CaptureStdout
+    - Process -> ProcessAtropos
+              -> ProcessThickness
 """
 
 
 class CapturedStdout:
     """
-        CaptureStdout
+    CaptureStdout
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Class to redirect std::cout from the C++ registration
-            function (ants library) to a text file. Used to follow progress
-
-        Inheritance
-
-        Private attributes
-
-            prevfd      file
-            prev        file
-            _filename   str
-
-        Public methods
-
-            inherited Process methods
+    Class to redirect std::cout from the C++ registration function (ants library) to a text file.
+    Used to follow progress.
     """
 
     # Special methods
+
+    """
+    Private attributes
+
+    prevfd      file
+    prev        file
+    _filename   str
+    """
 
     def __init__(self, filename):
         self.prevfd = None
@@ -86,80 +82,29 @@ class CapturedStdout:
         sys.stdout = self.prev
 
 
-class ProcessNonLocalMeansFilter(Process):
-    """
-        ProcessAtropos
-
-        Description
-
-            Multiprocessing Process class for ants non-local means denoising filter.
-
-        Inheritance
-
-            Process -> ProcessNonLocalMeansFilter
-
-        Private attributes
-
-            _stdout     str, c++ stdout redirected to _stdout file
-            _result     Queue
-
-        Public methods
-
-            run()       override
-
-            inherited Process methods
-     """
-
-    # Special method
-
-    def __init__(self, volume, shrink, patchradius, searchradius, noise, stdout, queue):
-        Process.__init__(self)
-        self._volume = volume.getNumpy(defaultshape=False).astype('float32')
-        self._spacing = volume.getSpacing()
-        self._shrink = shrink
-        self._patchradius = patchradius
-        self._searchradius = searchradius
-        self._noise = noise
-        self._stdout = stdout
-        self._result = queue
-
-    # Public methods
-
-    def run(self):
-        vol = from_numpy(self._volume, spacing=self._spacing)
-        try:
-            with CapturedStdout(self._stdout) as F:
-                r = denoise_image(vol, shrink_factor=self._shrink, p=self._patchradius,
-                                  r=self._searchradius, noise_model=self._noise, v=1)
-                self._result.put(r.getNumpy())
-        except: self.terminate()
-
-
 class ProcessAtropos(Process):
     """
-        ProcessAtropos
+    ProcessAtropos
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Multiprocessing Process class for ants atropos function.
+    Multiprocessing Process class for ants atropos function.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            Process -> ProcessAtropos
-
-        Private attributes
-
-            _stdout     str, c++ stdout redirected to _stdout file
-            _result     Queue
-
-        Public methods
-
-            run()       override
-
-            inherited Process methods
+    Process -> ProcessAtropos
      """
 
     # Special method
+
+    """
+    Private attributes
+
+    _stdout     str, c++ stdout redirected to _stdout file
+    _result     Queue
+    """
 
     def __init__(self, volume, mask, init, mrf, conv, weight, stdout, queue):
         Process.__init__(self)
@@ -182,20 +127,21 @@ class ProcessAtropos(Process):
 
     def run(self):
         vol = from_numpy(self._volume, spacing=self._spacing)
-        d = vol.direction
+        # d = vol.direction
         # PySisyphe volume LPI orientation
-        d[0, 0] = -1
-        d[1, 1] = -1
+        # d[0, 0] = -1
+        # d[1, 1] = -1
         mask = from_numpy(self._mask, spacing=self._spacing)
-        vol.set_direction(d)
-        mask.set_direction(d)
+        # vol.set_direction(d)
+        # mask.set_direction(d)
         if isinstance(self._init, list):
             init = list()
             for i in range(len(self._init)):
                 init.append(from_numpy(self._init[i], spacing=self._spacing))
         else: init = self._init
         try:
-            with CapturedStdout(self._stdout) as F:
+            # with CapturedStdout(self._stdout) as F:
+            with CapturedStdout(self._stdout):
                 r = atropos(vol, mask, i=init, m=self._mrf, c=self._conv,
                             priorweight=self._weight, verbose=1)
                 self._result.put(r['segmentation'].view())
@@ -206,29 +152,27 @@ class ProcessAtropos(Process):
 
 class ProcessThickness(Process):
     """
-        ProcessThickness
+    ProcessThickness
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Multiprocessing Process class for ants kelly_kapowski function.
+    Multiprocessing Process class for ants kelly_kapowski function.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            Process -> ProcessThickness
-
-        Private attributes
-
-            _stdout     str, c++ stdout redirected to _stdout file
-            _result     Queue
-
-        Public methods
-
-            run()       override
-
-            inherited Process methods
+    Process -> ProcessThickness
      """
 
     # Special method
+
+    """
+    Private attributes
+
+    _stdout     str, c++ stdout redirected to _stdout file
+    _result     Queue
+    """
 
     def __init__(self, seg, gm, wm, niter, grdstep, grdsmooth, stdout, queue):
         Process.__init__(self)
@@ -246,124 +190,64 @@ class ProcessThickness(Process):
 
     def run(self):
         seg = from_numpy(self._seg, spacing=self._spacing)
-        d = seg.direction
+        # d = seg.direction
         # PySisyphe volume LPI orientation
-        d[0, 0] = -1
-        d[1, 1] = -1
+        # d[0, 0] = -1
+        # d[1, 1] = -1
         gm = from_numpy(self._gm, spacing=self._spacing)
         wm = from_numpy(self._wm, spacing=self._spacing)
-        seg.set_direction(d)
-        gm.set_direction(d)
-        wm.set_direction(d)
+        # seg.set_direction(d)
+        # gm.set_direction(d)
+        # wm.set_direction(d)
         try:
-            with CapturedStdout(self._stdout) as F:
+            # with CapturedStdout(self._stdout) as F:
+            with CapturedStdout(self._stdout):
                 r = kelly_kapowski(s=seg, g=gm, w=wm, its=self._niter, r=self._grdstep, m=self._grdsmooth, verbose=1)
                 self._result.put(r.view())
         except: self.terminate()
 
 
 """
-    Functions
+Functions
+~~~~~~~~~
 
-        antsNonLocalMeansFilter
-        antsSupervisedKMeansSegmentation
-        antsPriorBasedSegmentation
-        antsCorticalThickness
+    - antsSupervisedKMeansSegmentation
+    - antsPriorBasedSegmentation
+    - antsCorticalThickness
 """
 
 
-def antsNonLocalMeansFilter(vol, shrink=1, patchradius=1, searchradius=3, noise='Rician',
-                            save=False, prefix='f_', suffix='', wait=None):
+def antsKMeansSegmentation(vol, mask=None, nclass=3, niter=3, smooth=0.3, radius=1,
+                           save=False, segprefix='seg_', segsuffix='',
+                           classprefix='', classsuffix='class*_', wait=None):
     """
-        vol             SisypheVolume
-        shrink          int, downsampling level performed within the algorithm, default 1
-        patchradius     int, patch radius for local sample, default 1
-        searchradius    int, search radius from which to choose extra local samples, default 3
-        noise           str, 'Rician' or 'Gaussian', noise model, default 'Rician'
-        prefix          str, prefix for filtered volume filename
-        suffix          str, suffix for filtered volume filename
-        wait            DialogWait
+    Parameters
+    ----------
+    vol : SisypheVolume
+    mask : SisypheVolume | SisypheROI | SisypheImage
+    nclass : int
+        number of classes, default 1
+    niter : int
+        number of iterations, default 3
+    smooth : float
+        mrf parameter
+    radius : int
+        mrf parameter
+    save : bool
+        save segmentation result if True (default False)
+    segprefix : str
+        prefix for label segmentation result filename
+    segsuffix : str
+        suffix for label segmentation result filename
+    classprefix : str
+        prefix for probability segmentation result filename
+    classsuffix : str
+        suffix for probability segmentation result filename
+    wait : DialogWait
 
-        return          SisypheVolume, filtered volume
-    """
-
-    def progress():
-        lock = Lock()
-        with lock:
-            with open(stdout, 'r') as f:
-                verbose = f.readlines()
-        if len(verbose) > 0:
-            for line in reversed(verbose):
-                if line[0] == '*': wait.setCurrentProgressValue(len(line))
-
-    if not isinstance(vol, SisypheVolume):
-        raise TypeError('image parameter type {} is not SisypheVolume.'.format(type(vol)))
-
-    if wait is not None:
-        wait.setInformationText('{} non locals means filter initialization...'.format(vol.getBasename()))
-        wait.setButtonVisibility(False)
-        wait.setProgressVisibility(False)
-        wait.setProgressRange(0, 107)
-        wait.setCurrentProgressValue(0)
-    # Parameters initialization
-    queue = Queue()
-    stdout = join(vol.getDirname(), 'stdout.log')
-    # Process
-    flt = ProcessNonLocalMeansFilter(vol, shrink, patchradius, searchradius, noise, stdout, queue)
-    try:
-        if wait is not None:
-            wait.setInformationText('{} non locals means filter...'.format(vol.getBasename()))
-            wait.setButtonVisibility(True)
-            wait.setProgressVisibility(True)
-            wait.open()
-        flt.start()
-        while flt.is_alive():
-            QApplication.processEvents()
-            if wait is not None:
-                if exists(stdout): progress()
-                if wait.getStopped(): flt.terminate()
-    except Exception as err:
-        if flt.is_alive(): flt.terminate()
-        if wait is not None: wait.hide()
-        raise Exception
-    finally:
-        # Remove temporary std::cout file
-        if exists(stdout): remove(stdout)
-    if wait is not None:
-        wait.setButtonVisibility(False)
-        wait.setProgressVisibility(False)
-    # Save
-    fltvol = None
-    if not queue.empty():
-        img = queue.get()
-        if img is not None:
-            fltvol = SisypheVolume()
-            fltvol.copyAttributesFrom(vol)
-            fltvol.copyFromNumpyArray(img, vol.getSpacing(), vol.getOrigin(), defaultshape=False)
-            if save:
-                fltvol.setFilename(vol.getFilename())
-                fltvol.setFilenamePrefix(prefix)
-                fltvol.setFilenameSuffix(suffix)
-                wait.setInformationText('Save {}...'.format(fltvol.getBasename()))
-                fltvol.save()
-    if wait is not None: wait.hide()
-    return fltvol
-
-def antsSupervisedKMeansSegmentation(vol, mask=None, nclass=3, niter=3, smooth=0.3, radius=1,
-                                     save=False, segprefix='seg_', segsuffix='',
-                                     classprefix='', classsuffix='class*_', wait=None):
-    """
-        vol             SisypheVolume
-        mask            SisypheVolume, SisypheROI or SisypheImage
-        nclass          int, number of classes, default 1
-        niter           int, number of iterations, default 3
-        smooth          float, mrf parameter
-        radius          int, mrf parameter
-        prefix          str, prefix for filtered volume filename
-        suffix          str, suffix for filtered volume filename
-        wait            DialogWait
-
-        return          list[SisypheVolume]
+    Returns
+    -------
+    list[SisypheVolume]
     """
 
     def progress(p):
@@ -420,7 +304,7 @@ def antsSupervisedKMeansSegmentation(vol, mask=None, nclass=3, niter=3, smooth=0
     except Exception as err:
         if flt.is_alive(): flt.terminate()
         if wait is not None: wait.hide()
-        raise Exception
+        raise err
     finally:
         # Remove temporary std::cout file
         if exists(stdout): remove(stdout)
@@ -471,20 +355,39 @@ def antsSupervisedKMeansSegmentation(vol, mask=None, nclass=3, niter=3, smooth=0
     if wait is not None: wait.hide()
     return r
 
+
 def antsPriorBasedSegmentation(vol, priors, mask=None, weight=0.5, niter=10, smooth=0.3, radius=1, conv=None,
                                save=False, segprefix='seg_', segsuffix='', wait=None):
     """
-        vol             SisypheVolume
-        priors          list[SisypheVolume], prior probability images registered to vol
-        mask            SisypheVolume, SisypheROI or SisypheImage
-        weight          float, prior weight (0.0 to 1.0, default 0.5)
-        niter           int, number of iterations, default 3
-        smooth          float, mrf parameter, default 0.3
-        radius          int, mrf parameter, default 1
-        conv            float, convergence threshold, usual value 1e-6
-        wait            DialogWait
+    Parameters
+    ----------
+    vol : SisypheVolume
+    priors : list[SisypheVolume]
+        prior probability images registered to vol
+    mask : SisypheVolume | SisypheROI | SisypheImage
+    weight : float
+        prior weight (0.0 to 1.0, default 0.5)
+    niter : int
+        number of iterations, default 3
+    smooth : float
+        mrf parameter, default 0.3
+    radius : int
+        mrf parameter, default 1
+    conv : float
+        convergence threshold, usual value 1e-6
+    save : bool
+        save segmentation result if True (default False)
+    segprefix : str
+        prefix for label segmentation result filename
+    segsuffix : str
+        suffix for label segmentation result filename
+    wait : DialogWait
 
-        return          list[SisypheVolume]
+    Returns
+    -------
+    list[SisypheVolume]
+
+    Last revision: 23/07/2024
     """
 
     def progress(p):
@@ -509,8 +412,7 @@ def antsPriorBasedSegmentation(vol, priors, mask=None, weight=0.5, niter=10, smo
     if not isinstance(vol, SisypheVolume):
         raise TypeError('image parameter type {} is not SisypheVolume.'.format(type(vol)))
 
-    if not isinstance(priors, list):
-        raise TypeError('image parameter type {} is not SisypheVolume.'.format(type(vol)))
+    if not isinstance(priors, list): priors = 'Kmeans[3]'
 
     if wait is not None:
         wait.setInformationText('{} segmentation initialization...'.format(vol.getBasename()))
@@ -543,7 +445,7 @@ def antsPriorBasedSegmentation(vol, priors, mask=None, weight=0.5, niter=10, smo
     except Exception as err:
         if flt.is_alive(): flt.terminate()
         if wait is not None: wait.hide()
-        raise Exception
+        raise err
     finally:
         # Remove temporary std::cout file
         if exists(stdout): remove(stdout)
@@ -593,18 +495,34 @@ def antsPriorBasedSegmentation(vol, priors, mask=None, weight=0.5, niter=10, smo
     if wait is not None: wait.hide()
     return r
 
+
 def antsCorticalThickness(seg, gm, wm, niter=50, grdstep=0.5, grdsmooth=1,
                           save=False, prefix='thickness_', suffix='', wait=None):
     """
-        seg             SisypheVolume
-        gm              SisypheVolume
-        wm              SisypheVolume
-        niter           int, number of iterations, default 50
-        grdstep         float, gradient descent step, default 0.025
-        grdsmooth       float, gradient field smoothing, default 1.4
-        wait            DialogWait
+    Parameters
+    ----------
+    seg : SisypheVolume
+    gm : SisypheVolume
+        grey matter map
+    wm : SisypheVolume
+        white matter map
+    niter : int
+        number of iterations, default 50
+    grdstep : float
+        gradient descent step, default 0.025
+    grdsmooth : float
+        gradient field smoothing, default 1.4
+    save : bool
+        save cortical thickness map if True (default False)
+    prefix : str
+        prefix for cortical thickness map filename
+    suffix : str
+        suffix for cortical thickness map filename
+    wait : DialogWait
 
-        return          SisypheVolume
+    Returns
+    -------
+    SisypheVolume
     """
 
     def progress(p):
@@ -629,14 +547,22 @@ def antsCorticalThickness(seg, gm, wm, niter=50, grdstep=0.5, grdsmooth=1,
     if not isinstance(seg, SisypheVolume):
         raise TypeError('seg parameter type {} is not SisypheVolume.'.format(type(seg)))
     if not isinstance(gm, SisypheVolume):
-        raise TypeError('seg parameter type {} is not SisypheVolume.'.format(type(gm)))
+        raise TypeError('gm parameter type {} is not SisypheVolume.'.format(type(gm)))
     if not isinstance(wm, SisypheVolume):
-        raise TypeError('seg parameter type {} is not SisypheVolume.'.format(type(wm)))
+        raise TypeError('wm parameter type {} is not SisypheVolume.'.format(type(wm)))
+
+    o = seg.getOrigin()
+    seg.setDefaultOrigin()
+    gm.setDefaultOrigin()
+    wm.setDefaultOrigin()
+    seg.setDefaultDirections()
+    gm.setDefaultDirections()
+    wm.setDefaultDirections()
 
     if wait is not None:
         wait.setInformationText('{} cortical thickness initialization...'.format(seg.getBasename()))
-        wait.setButtonVisibility(False)
-        wait.setProgressVisibility(False)
+        wait.buttonVisibilityOff()
+        wait.progressVisibilityOff()
         wait.setProgressRange(0, niter)
         wait.setCurrentProgressValue(0)
     # Parameters initialization
@@ -645,12 +571,11 @@ def antsCorticalThickness(seg, gm, wm, niter=50, grdstep=0.5, grdsmooth=1,
     # Process
     flt = ProcessThickness(seg, gm, wm, niter, grdstep, grdsmooth, stdout, queue)
     try:
+        flt.start()
         if wait is not None:
             wait.setInformationText('{} cortical thickness processing...'.format(seg.getBasename()))
-            wait.setButtonVisibility(True)
-            wait.setProgressVisibility(True)
-            wait.open()
-        flt.start()
+            wait.buttonVisibilityOn()
+            wait.progressVisibilityOn()
         pos = 0
         while flt.is_alive():
             QApplication.processEvents()
@@ -660,17 +585,13 @@ def antsCorticalThickness(seg, gm, wm, niter=50, grdstep=0.5, grdsmooth=1,
     except Exception as err:
         if flt.is_alive(): flt.terminate()
         if wait is not None: wait.hide()
-        raise Exception
+        raise err
     finally:
         # Remove temporary std::cout file
         if exists(stdout): remove(stdout)
     if wait is not None:
-        wait.setButtonVisibility(False)
-        wait.setProgressVisibility(False)
-    # Save
-    if wait is not None:
-        wait.setButtonVisibility(False)
-        wait.setProgressVisibility(False)
+        wait.buttonVisibilityOff()
+        wait.progressVisibilityOff()
     # Save
     fltvol = None
     if not queue.empty():
@@ -683,6 +604,7 @@ def antsCorticalThickness(seg, gm, wm, niter=50, grdstep=0.5, grdsmooth=1,
                 fltvol.setFilename(seg.getFilename())
                 fltvol.setFilenamePrefix(prefix)
                 fltvol.setFilenameSuffix(suffix)
+                fltvol.setOrigin(o)
                 if wait is not None: wait.setInformationText('Save {}...'.format(fltvol.getBasename()))
                 fltvol.save()
     if wait is not None: wait.hide()

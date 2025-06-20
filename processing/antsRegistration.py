@@ -1,12 +1,11 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        ANTs            https://github.com/ANTsX/ANTsPy                             Image registration
-        Numpy           https://numpy.org/                                          Scientific computing
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
-        SimpleITK       https://simpleitk.org/                                      Medical image processing
+    - ANTs, image registration, http://stnava.github.io/ANTs/
+    - Numpy, scientific computing, https://numpy.org/
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - SimpleITK, medical image processing, https://simpleitk.org/
 """
 
 from os import remove
@@ -25,7 +24,6 @@ from PyQt5.QtWidgets import QApplication
 
 from SimpleITK import Cast
 from SimpleITK import sitkFloat32
-from SimpleITK import sitkVectorFloat64
 from SimpleITK import sitkLinear
 from SimpleITK import sitkBSpline
 from SimpleITK import sitkGaussian
@@ -36,7 +34,6 @@ from SimpleITK import sitkLanczosWindowedSinc
 from SimpleITK import sitkBlackmanWindowedSinc
 from SimpleITK import sitkNearestNeighbor
 from SimpleITK import AffineTransform
-
 from SimpleITK import CenteredTransformInitializerFilter
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
@@ -46,60 +43,57 @@ from Sisyphe.processing.antsFilters import CapturedStdout
 
 __all__ = ['antsRegistration']
 
-
 """
-    Class hierarchy
+Class hierarchy
+~~~~~~~~~~~~~~~
 
-        Process -> ProcessRegistration
+    - Process -> ProcessRegistration
 """
 
 
 class ProcessRegistration(Process):
     """
-        ProcessRegistration
+    ProcessRegistration
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Multiprocessing Process class for ants registration function.
+    Multiprocessing Process class for ants registration function.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            Process -> ProcessRegistration
-
-        Private attributes
-
-            _fixed      SisypheVolume
-            _moving     SisypheVolume
-            _mask       SisypheVolume
-            _regtype    str
-            _transform  SisypheTransform
-            _verbose    bool
-            _stdout     str
-            _result     Queue
-
-        Public methods
-
-            run()       override
-
-            inherited Process methods
+    Process -> ProcessRegistration
     """
 
     # Special method
 
-    def __init__(self, fixed, moving, mask, trf, regtype, metric, step, flow, iters, verbose, stdout, queue):
+    """
+    Private attributes
+
+    _fixed      SisypheVolume
+    _moving     SisypheVolume
+    _mask       SisypheVolume
+    _regtype    str
+    _transform  SisypheTransform
+    _verbose    bool
+    _stdout     str
+    _result     Queue
+    """
+
+    def __init__(self, fixed, moving, mask, trf, regtype, metric, sampling, verbose, stdout, queue):
         Process.__init__(self)
         self._fixed = fixed.getNumpy(defaultshape=False).astype('float32')
         self._moving = moving.getNumpy(defaultshape=False).astype('float32')
-        self._mask = mask.getNumpy(defaultshape=False)
+        if mask is not None: self._mask = mask.getNumpy(defaultshape=False)
+        else: self._mask = None
         self._fspacing = fixed.getSpacing()
         self._mspacing = moving.getSpacing()
         self._transform = join(moving.getDirname(), 'temp.mat')
         write_transform(trf.getANTSTransform(), self._transform)
         self._regtype = regtype
         self._metric = metric
-        self._step = step
-        self._flow = flow
-        self._iters = iters
+        self._sampling = sampling
         self._verbose = verbose
         self._stdout = stdout
         self._result = queue
@@ -110,7 +104,8 @@ class ProcessRegistration(Process):
         try:
             fixed = from_numpy(self._fixed, spacing=self._fspacing)
             moving = from_numpy(self._moving, spacing=self._mspacing)
-            mask = from_numpy(self._mask, spacing=self._fspacing)
+            if self._mask is not None: mask = from_numpy(self._mask, spacing=self._fspacing)
+            else: mask = None
             """         
                 registration return
                 r = {'warpedmovout': ANTsImage,
@@ -120,6 +115,7 @@ class ProcessRegistration(Process):
                 fwdtransforms: transformation filename
                 invtransforms: inverse transformation filename               
             """
+            # noinspection PyUnusedLocal
             with CapturedStdout(self._stdout) as F:
                 """
                     ants.registration(fixed, moving, type_of_transform="SyN", initial_transform=None, outprefix="",
@@ -145,9 +141,8 @@ class ProcessRegistration(Process):
                     ( smoothing_in_mm : boolean; currently only impacts low dimensional registration )
                 """
                 r = registration(fixed, moving, type_of_transform=self._regtype,
-                                 initial_transform=self._transform, mask=mask,
-                                 syn_metric=self._metric, grad_step=self._step,
-                                 flow_sigma=self._flow, reg_iterations=self._iters,
+                                 initial_transform=self._transform, mask=mask, aff_metric=self._metric[0],
+                                 syn_metric=self._metric[1], aff_random_sampling_rate=self._sampling,
                                  verbose=self._verbose)
             if exists(self._transform): remove(self._transform)
             if len(r['fwdtransforms']) == 1:
@@ -169,55 +164,92 @@ class ProcessRegistration(Process):
 
 
 """
-    Function
+Function
+~~~~~~~~
 
-        antsRegistration
+    - antsRegistration
 """
 
 
-def antsRegistration(fvol, mvol, rvol=(), algo='AntsRigid', interpol='linear',
-                     prefix='r_', suffix='', fprefix='field_', fsuffix='', wait=None):
+def antsRegistration(fvol, mvol, rvol=(), algo='AntsRigid', interpol='linear', estim='no', metric=('mattes', 'mattes'),
+                     sampling=0.2, prefix='r_', suffix='', wait=None):
     """
-        fvol        SisypheVolume, fixed volume
-        mvol        SisypheVolume, moving volume
-        rvol        tuple[SisypheVolume], volume(s) to resample
-        regtype     str, type of registration:
-                    'Translation', 'FastRigid', 'DenseRigid', 'AntsRigid', 'AntsFastRigid', 'BoldRigid', 'Similarity',
-                    'Affine', 'FastAffine', 'DenseAffine', 'AntsAffine', 'AntsFastAffine', 'BoldAffine', 'Elastic',
-                    'Diffeomorphic', 'DenseDiffeomorphic', 'CCDiffeomorphic', 'BoldDiffeomorphic',
-                    'AntsSplineDiffeomorphic', 'AntsDiffeomorphic', 'AntsFastSplineDiffeomorphic',
-                    'AntsRigidSplineDiffeomorphic', 'AntsRigidDiffeomorphic', 'AntsFastRigidSplineDiffeomorphic',
-                    'AntsFastRigidDiffeomorphic', 'AntsSplineDiffeomorphicOnly', 'AntsFastSplineDiffeomorphicOnly',
-                    'AntsFastDiffeomorphicOnly'
-        interpol    str, interpolation algorithm:
-                    'nearest', 'linear', 'bspline', 'gaussian', 'hamming', 'cosine', 'welch', 'lanczos', 'blackman'
-        fprefix     str, prefix for displacement field filename
-        fsuffix     str, suffix for displacement field filename
-        wait        DialogWaitRegistration
+    Registration function.
 
-        return      SisypheVolume,resampled moving volume
+    Parameters
+    ----------
+    fvol : Sisyphe.core.sisypheVolume.SisypheVolume
+        fixed volume
+    mvol : Sisyphe.core.sisypheVolume.SisypheVolume
+        moving volume
+    rvol : tuple[Sisyphe.core.sisypheVolume.SisypheVolume,]
+        volume(s) to resample (with the same space as moving volume)
+    algo : str
+        registration algorithm: 'Translation', 'FastRigid', 'DenseRigid', 'AntsRigid', 'AntsFastRigid' (default),
+        'BoldRigid', 'Similarity', 'Affine', 'FastAffine', 'DenseAffine', 'AntsAffine', 'AntsFastAffine', 'BoldAffine',
+        'Elastic', 'Diffeomorphic', 'DenseDiffeomorphic', 'CCDiffeomorphic', 'BoldDiffeomorphic',
+        'AntsSplineDiffeomorphic', 'AntsDiffeomorphic', 'AntsFastSplineDiffeomorphic', 'AntsRigidSplineDiffeomorphic',
+        'AntsRigidDiffeomorphic', 'AntsFastRigidSplineDiffeomorphic', 'AntsFastRigidDiffeomorphic',
+        'AntsSplineDiffeomorphicOnly', 'AntsFastSplineDiffeomorphicOnly', 'AntsFastDiffeomorphicOnly'
+    interpol : str
+        interpolation algorithm: 'nearest', 'linear', 'bspline', 'gaussian', 'hamming', 'cosine', 'welch',
+        'lanczos', 'blackman'
+    estim : str
+        transform initialization 'no' as default, 'geometric', 'moment'
+    metric : tuple[str, str]
+        - first str: affine metric ('mattes' default, 'CC', 'meansquares')
+        - second str: non linear metric ('mattes' default, 'CC', 'meansquares', 'demons')
+    sampling : float
+        image subsampling percent (default 0.2)
+    prefix : str
+        prefix for resampled volume filename
+    suffix : str
+        suffix for resampled volume filename
+    wait : Sisyphe.gui.dialogWait.DialogWaitRegistration | None
+        progress bar
+
+    Returns
+    -------
+    Sisyphe.core.sisypheVolume.SisypheVolume
+        resampled moving volume
     """
-    """
-        Set origin to (0.0, 0.0, 0.0) before registration
-    """
+    # Set origin to (0.0, 0.0, 0.0) before registration
     fvol.setDefaultOrigin()
     mvol.setDefaultOrigin()
+    # < Revision 20/09/2024
+    # set volume directions to default
+    fvol.setDefaultDirections()
+    mvol.setDefaultDirections()
+    # Revision 19/09/2024 >
     # Automatic fixed mask calculation
     if wait is not None: wait.setInformationText('Registration - Mask calculation...')
     mask = fvol.getMask(algo='mean', morpho='dilate', kernel=4, fill='2d')
     """
         Estimating translations
     """
-    if wait is not None: wait.setInformationText('Registration - Translations estimation...')
-    f = CenteredTransformInitializerFilter()
-    img1 = Cast(fvol.getSITKImage(), sitkFloat32)
-    img2 = Cast(mvol.getSITKImage(), sitkFloat32)
-    ttrf = AffineTransform()
-    ttrf.SetIdentity()
-    ttrf = AffineTransform(f.Execute(img1, img2, ttrf))
     trf = SisypheTransform()
-    trf.setSITKTransform(ttrf)
+    trf.setIdentity()
     trf.setAttributesFromFixedVolume(fvol)
+    estim = estim[0].lower()
+    if estim == 'g':
+        if not fvol.hasSameFieldOfView(mvol):
+            wait.setInformationText('FOV center alignment...')
+            f = CenteredTransformInitializerFilter()
+            f.GeometryOn()
+            img1 = Cast(fvol.getSITKImage(), sitkFloat32)
+            img2 = Cast(mvol.getSITKImage(), sitkFloat32)
+            t = AffineTransform(f.Execute(img1, img2, trf.getSITKTransform()))
+            trf.setSITKTransform(t)
+    elif estim == 'm':
+        wait.setInformationText('Center of mass alignment...')
+        f = CenteredTransformInitializerFilter()
+        f.MomentsOn()
+        img1 = Cast(fvol.getSITKImage(), sitkFloat32)
+        img2 = Cast(mvol.getSITKImage(), sitkFloat32)
+        t = AffineTransform(f.Execute(img1, img2, trf.getSITKTransform()))
+        trf.setSITKTransform(t)
+    # Set center of rotation to fixed image center
+    trf.setCenter(fvol.getCenter())
     """
         Registration parameters initialization
     """
@@ -309,7 +341,7 @@ def antsRegistration(fvol, mvol, rvol=(), algo='AntsRigid', interpol='linear',
     elif algo == 'BoldAffine':
         regtype = 'BOLDAffine'
         stages = ['Affine']
-        iters = [100, 20]
+        iters = [[100, 20]]
         progbylevel = [[100, 200]]
         convergence = [6]
         field = False
@@ -350,7 +382,7 @@ def antsRegistration(fvol, mvol, rvol=(), algo='AntsRigid', interpol='linear',
         field = True
     elif algo == 'AntsSplineDiffeomorphic':
         regtype = 'antsRegistrationSyN[s]'
-        stages = ['Rigid', 'Affine', 'Diffeomorphic']
+        stages = ['Rigid', 'Affine', 'Spline diffeomorphic']
         iters = [[1000, 500, 250, 100], [1000, 500, 250, 100], [100, 70, 50, 20]]
         progbylevel = [[100, 200, 400, 800], [100, 200, 400, 800], [100, 200, 400, 800]]
         convergence = [6, 6, 6]
@@ -364,7 +396,7 @@ def antsRegistration(fvol, mvol, rvol=(), algo='AntsRigid', interpol='linear',
         field = True
     elif algo == 'AntsFastSplineDiffeomorphic':
         regtype = 'antsRegistrationSyNQuick[s]'
-        stages = ['Rigid', 'Affine', 'Diffeomorphic']
+        stages = ['Rigid', 'Affine', 'Spline diffeomorphic']
         iters = [[1000, 500, 250, 1], [1000, 500, 250, 1], [100, 70, 50, 1]]
         progbylevel = [[100, 200, 400, 0], [100, 200, 400, 0], [100, 200, 400, 0]]
         convergence = [6, 6, 6]
@@ -378,7 +410,7 @@ def antsRegistration(fvol, mvol, rvol=(), algo='AntsRigid', interpol='linear',
         field = True
     elif algo == 'AntsRigidSplineDiffeomorphic':
         regtype = 'antsRegistrationSyN[sr]'
-        stages = ['Rigid', 'Diffeomorphic']
+        stages = ['Rigid', 'Spline diffeomorphic']
         iters = [[1000, 500, 250, 100], [100, 70, 50, 20]]
         progbylevel = [[100, 200, 400, 800], [100, 200, 400, 800]]
         convergence = [6, 6]
@@ -392,42 +424,42 @@ def antsRegistration(fvol, mvol, rvol=(), algo='AntsRigid', interpol='linear',
         field = True
     elif algo == 'AntsFastRigidSplineDiffeomorphic':
         regtype = 'antsRegistrationSyNQuick[sr]'
-        stages = ['Rigid', 'Diffeomorphic']
+        stages = ['Rigid', 'Spline diffeomorphic']
         iters = [[1000, 500, 250, 1], [100, 70, 50, 1]]
         progbylevel = [[100, 200, 400, 0], [100, 200, 400, 0]]
         convergence = [6, 6]
         field = True
     elif algo == 'AntsFastRigidDiffeomorphic':
         regtype = 'antsRegistrationSyNQuick[br]'
-        stages = ['Rigid', 'Affine', 'Diffeomorphic']
+        stages = ['Rigid', 'Diffeomorphic']
         iters = [[1000, 500, 250, 100], [100, 70, 50, 1]]
         progbylevel = [[100, 200, 400, 800], [100, 200, 400, 0]]
         convergence = [6, 6]
         field = True
     elif algo == 'AntsSplineDiffeomorphicOnly':
         regtype = 'antsRegistrationSyN[so]'
-        stages = ['Diffeomorphic']
+        stages = ['Spline diffeomorphic']
         iters = [[100, 70, 50, 20]]
         progbylevel = [[100, 200, 400, 800]]
         convergence = [6]
         field = True
     elif algo == 'AntsDiffeomorphicOnly':
         regtype = 'antsRegistrationSyN[bo]'
-        stages = ['Rigid', 'Affine', 'Diffeomorphic']
+        stages = ['Diffeomorphic']
         iters = [[100, 70, 50, 20]]
         progbylevel = [[100, 200, 400, 800]]
         convergence = [6]
         field = True
     elif algo == 'AntsFastSplineDiffeomorphicOnly':
         regtype = 'antsRegistrationSyNQuick[so]'
-        stages = ['Rigid', 'Affine', 'Diffeomorphic']
+        stages = ['Spline diffeomorphic']
         iters = [[100, 70, 50, 1]]
         progbylevel = [[100, 200, 400, 0]]
         convergence = [6]
         field = True
     elif algo == 'AntsFastDiffeomorphicOnly':
         regtype = 'antsRegistrationSyNQuick[bo]'
-        stages = ['Rigid', 'Affine', 'Diffeomorphic']
+        stages = ['Diffeomorphic']
         iters = [[100, 70, 50, 1]]
         progbylevel = [[100, 200, 400, 0]]
         convergence = [6]
@@ -439,17 +471,13 @@ def antsRegistration(fvol, mvol, rvol=(), algo='AntsRigid', interpol='linear',
         wait.setProgressByLevel(progbylevel)
         wait.setConvergenceThreshold(convergence)
     # Default custom parameters
-    metric = 'mattes'
-    step = 0.2
-    flow = 3
-    iters = (40, 20, 0)
+    metric = list(metric)
     """
         Registration
     """
     queue = Queue()
     stdout = join(fvol.getDirname(), 'stdout.log')
-    reg = ProcessRegistration(fvol, mvol, mask, trf, regtype, metric, step, flow, iters, True, stdout, queue)
-    if wait is not None: wait.buttonVisibilityOn()
+    reg = ProcessRegistration(fvol, mvol, mask, trf, regtype, metric, sampling, True, stdout, queue)
     try:
         reg.start()
         while reg.is_alive():
@@ -457,7 +485,7 @@ def antsRegistration(fvol, mvol, rvol=(), algo='AntsRigid', interpol='linear',
             if wait is not None:
                 if exists(stdout): wait.setAntsRegistrationProgress(stdout)
                 if wait.getStopped(): reg.terminate()
-    except Exception as err:
+    except Exception:
         if reg.is_alive(): reg.terminate()
         if wait is not None: wait.hide()
         raise Exception
@@ -468,40 +496,59 @@ def antsRegistration(fvol, mvol, rvol=(), algo='AntsRigid', interpol='linear',
         wait.buttonVisibilityOff()
         wait.setProgressVisibility(False)
     if not queue.empty():
-        trf.setANTSTransform(read_transform(queue.get()))
-    """
-         Save displacement field
-    """
-    if field and not queue.empty():
-        fld = queue.get()  # Displacement field nifti filename
-        if fld is not None:
-            if wait is not None: wait.setInformationText('Save displacement field...')
-            # Open diffeomorphic displacement field
-            field = SisypheVolume()
-            field.copyPropertiesFrom(fvol)
-            field.loadFromNIFTI(fld, reorient=False)
-            field.acquisition.setSequenceToDisplacementField()
-            # Remove temporary ants displacement field
-            remove(fld)
-            # Affine to displacement field conversion -> Affine displacement field
-            trf.AffineToDisplacementField(inverse=False)
-            # Add to elastic/diffeomorphic displacement field
-            # Final displacement field = Affine + Diffeomorphic displacement fields
-            img = Cast(field.getSITKImage(), sitkVectorFloat64) + \
-                  trf.getSITKDisplacementFieldSITKImage()
-            field.setSITKImage(img)
-            field.setFilename(mvol.getFilename())
-            field.setFilenamePrefix(fprefix)
-            if fsuffix != '': field.setFilenameSuffix(fsuffix)
-            field.save()
-            trf.setSITKDisplacementFieldImage(field.getSITKImage())
+        t = queue.get()
+        if t is not None:
+            trf.setAttributesFromFixedVolume(fvol)
+            trf.setANTSTransform(read_transform(t))
+            # Set center of rotation to default (0.0, 0.0, 0.0)
+            trf = trf.getEquivalentTransformWithNewCenterOfRotation([0.0, 0.0, 0.0])
+            # Remove temporary ants affine transform
+            remove(t)
+            """
+                 Save displacement field
+            """
+            if field and not queue.empty():
+                fld = queue.get()  # Displacement field nifti filename
+                if fld is not None:
+                    if wait is not None: wait.setInformationText('Save displacement field...')
+                    # Open diffeomorphic displacement field
+                    dfield = SisypheVolume()
+                    dfield.loadFromNIFTI(fld, reorient=False)
+                    dfield.acquisition.setSequenceToDisplacementField()
+                    # debug:
+                    #   dfield.setFilename(mvol.getFilename())
+                    #   dfield.setFilenamePrefix('field_spline')
+                    #   dfield.save()
+                    dfield = dfield.cast('float64')
+                    # Convert affine transform to affine displacement field
+                    trf.affineToDisplacementField(inverse=False)
+                    afield = trf.getDisplacementField()
+                    # debug:
+                    #   afield.setFilename(mvol.getFilename())
+                    #   afield.setFilenamePrefix('field_affine')
+                    #   afield.save()
+                    # Final displacement field = affine + diffeomorphic displacement fields
+                    rfield = afield + dfield
+                    rfield.acquisition.setSequenceToDisplacementField()
+                    trf.copyFromDisplacementFieldImage(rfield)
+                    # Save displacement field image
+                    trf.setID(fvol)
+                    trf.saveDisplacementField(mvol.getFilename())
+                    # Remove temporary ants diffeomorphic displacement field
+                    remove(fld)
+                    # Remove temporary inverse ants diffeomorphic displacement field
+                    fld = queue.get()  # Inverse displacement field nifti filename
+                    if fld is not None:
+                        remove(fld)
+        else: trf = None
     """
         Resample volume(s)
     """
     if trf is not None and len(rvol) > 0:
         resampled = list()
         f = SisypheApplyTransform()
-        if trf.isAffineTransform(): f.setTransform(trf.getInverseTransform())
+        # SisypheApplyTransform uses forward geometric transform
+        if trf.isAffine(): f.setTransform(trf.getInverseTransform())
         else: f.setTransform(trf)
         if interpol == 'nearest': f.setInterpolator(sitkNearestNeighbor)
         elif interpol == 'linear': f.setInterpolator(sitkLinear)

@@ -1,15 +1,21 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        Numpy           https://numpy.org/                                          Scientific computing
-        SimpleITK       https://simpleitk.org/                                      Medical image processing
+    - Numpy, Scientific computing, https://numpy.org/
+    - SimpleITK, Medical image processing, https://simpleitk.org/
+    - scikit-learn, Machine Learning, https://scikit-learn.org/stable/
 """
 
 from math import sqrt, log, ceil
 
 from numpy import mean
+from numpy import percentile
+from numpy import expand_dims
+from numpy import where
+
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
 
 from SimpleITK import Image as sitkImage
 from SimpleITK import Cast as sitkCast
@@ -24,6 +30,7 @@ from SimpleITK import DiscreteGaussianImageFilter as sitkDiscreteGaussianImageFi
 from SimpleITK import RecursiveGaussianImageFilter as sitkRecursiveGaussianImageFilter
 from SimpleITK import GradientAnisotropicDiffusionImageFilter as sitkGradientAnisotropicDiffusionImageFilter
 from SimpleITK import CurvatureAnisotropicDiffusionImageFilter as sitkCurvatureAnisotropicDiffusionImageFilter
+from SimpleITK import MinMaxCurvatureFlowImageFilter as sitkMinMaxCurvatureFlowImageFilter
 from SimpleITK import CurvatureFlowImageFilter as sitkCurvatureFlowImageFilter
 from SimpleITK import HistogramMatchingImageFilter as sitkHistogramMatching
 from SimpleITK import MedianImageFilter as sitkMedianImageFilter
@@ -48,38 +55,41 @@ __all__ = ['biasFieldCorrection',
            'gradientAnisotropicDiffusionFilter',
            'curvatureAnisotropicDiffusionFilter',
            'curvatureFlowFilter',
+           'minMaxCurvatureFlowFilter',
            'meanFilter',
            'medianFilter',
            'gradientMagnitudeFilter',
            'gradientMagnitudeRecursiveFilter',
            'laplacianFilter',
            'laplacianRecursiveFilter',
-           'histogramMatching',
+           'histogramIntensityMatching',
+           'regressionIntensityMatching',
            'CoronalToAxial',
            'SagittalToAxial']
 
 """
-    Functions
-    
-        biasFieldCorrection
-        kmeans
-        slicFilter
-        gaussianFilter
-        recursiveGaussianFilter
-        gradientAnisotropicDiffusionFilter
-        curvatureAnisotropicDiffusionFilter
-        curvatureFlowFilter
-        nonLocalMeansFilter
-        patchBasedDenoisingImageFilter
-        meanFilter
-        medianFilter
-        gradientMagnitudeFilter
-        gradientMagnitudeRecursiveFilter
-        laplacianFilter
-        laplacianRecursiveFilter
-        histogramMatching
-        CoronalToAxial
-        SagittalToAxial
+Functions
+~~~~~~~~~
+
+    - biasFieldCorrection
+    - kmeans
+    - slicFilter
+    - gaussianFilter
+    - recursiveGaussianFilter
+    - gradientAnisotropicDiffusionFilter
+    - curvatureAnisotropicDiffusionFilter
+    - curvatureFlowFilter
+    - minMaxCurvatureFlowFilter
+    - meanFilter
+    - medianFilter
+    - gradientMagnitudeFilter
+    - gradientMagnitudeRecursiveFilter
+    - laplacianFilter
+    - laplacianRecursiveFilter
+    - histogramIntensityMatching
+    - regressionIntensityMatching
+    - CoronalToAxial
+    - SagittalToAxial
 """
 
 
@@ -119,7 +129,6 @@ def biasFieldCorrection(img, shrink=1, bins=200, biasfwhm=0.15, convergence=0.00
 
     if isinstance(refimg, sitkImage):
         pid = refimg.GetPixelID()
-        if wait is not None: wait.addInformationText('Preprocessing - cast to float32...')
         refimg = sitkCast(refimg, sitkFloat32)
     else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
 
@@ -144,7 +153,7 @@ def biasFieldCorrection(img, shrink=1, bins=200, biasfwhm=0.15, convergence=0.00
 
     if wait is not None:
         if wait.getStopped(): return None, None
-        wait.addInformationText('Filter processing...')
+        wait.addInformationText('')
 
     if mask is not None: simg = filtr.Execute(buffimg, mask)
     else: simg = filtr.Execute(buffimg)
@@ -156,9 +165,7 @@ def biasFieldCorrection(img, shrink=1, bins=200, biasfwhm=0.15, convergence=0.00
 
     if not stop:
         bimg = filtr.GetLogBiasFieldAsImage(refimg)
-
         if shrink > 1: simg = refimg / sitkExp(bimg)
-
         simg = sitkCast(simg, pid)
 
         if isinstance(img, sitkImage):
@@ -178,9 +185,11 @@ def biasFieldCorrection(img, shrink=1, bins=200, biasfwhm=0.15, convergence=0.00
             bias = SisypheImage()
             bias.setSITKImage(bimg)
             return result, bias
+        else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
     else: return None, None
 
-def kmeans(img, mask=None, wait=None):
+
+def kmeans(img, mask=None, nclass=3, wait=None):
     if isinstance(img, (SisypheImage, SisypheVolume)): simg = img.getSITKImage()
     elif isinstance(img, sitkImage): simg = img
     else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
@@ -194,11 +203,19 @@ def kmeans(img, mask=None, wait=None):
 
     filtr = sitkKMeansFilter()
 
+    # Init means for each class
+    m = list()
+    step = 100.0 / nclass
+    v = sitkGetArrayViewFromImage(simg).flatten()
+    for i in range(nclass):
+        perc = int(step * (i + 0.5))
+        m.append(percentile(v, perc))
+
+    filtr.SetClassWithInitialMean(m)
+
     if wait is not None:
         wait.setSimpleITKFilter(filtr)
         wait.addSimpleITKFilterProcessCommand()
-        wait.progressVisibilityOn()
-        wait.buttonVisibilityOn()
 
     simg = filtr.Execute(simg)
 
@@ -219,9 +236,11 @@ def kmeans(img, mask=None, wait=None):
             fimg = SisypheImage()
             fimg.setSITKImage(simg)
             return fimg
+        else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
     else: return None
 
-def slicFilter(img, connect=True, perturb=True, niter=5, weight=10.0, gridsize=(3, 50)):
+
+def slicFilter(img, connect=True, perturb=True, niter=5, weight=10.0, gridsize=(3, 50), wait=None):
     if isinstance(img, (SisypheImage, SisypheVolume)):
         simg = img.getSITKImage()
     elif isinstance(img, sitkImage):
@@ -235,17 +254,32 @@ def slicFilter(img, connect=True, perturb=True, niter=5, weight=10.0, gridsize=(
     filtr.SetSpatialProximityWeight(weight)
     filtr.SetSuperGridSize(gridsize)
 
-    if isinstance(img, sitkImage):
-        return filtr.Execute(simg)
-    elif isinstance(img, SisypheVolume):
-        fimg = SisypheVolume()
-        fimg.setSITKImage(filtr.Execute(simg))
-        img.copyAttributesTo(fimg)
-        return fimg
-    else:
-        fimg = SisypheImage()
-        fimg.setSITKImage(filtr.Execute(simg))
-        return fimg
+    if wait is not None:
+        wait.setSimpleITKFilter(filtr)
+        wait.addSimpleITKFilterProcessCommand()
+        wait.progressVisibilityOn()
+        wait.buttonVisibilityOn()
+
+    simg = filtr.Execute(simg)
+
+    stop = False
+    if wait is not None:
+        stop = wait.getStopped()
+
+    if not stop:
+        if isinstance(img, sitkImage):
+            return filtr.Execute(simg)
+        elif isinstance(img, SisypheVolume):
+            fimg = SisypheVolume()
+            fimg.setSITKImage(filtr.Execute(simg))
+            img.copyAttributesTo(fimg)
+            return fimg
+        else:
+            fimg = SisypheImage()
+            fimg.setSITKImage(filtr.Execute(simg))
+            return fimg
+    else: return None
+
 
 def gaussianFilter(img, fwhm, wait=None):
     """
@@ -273,7 +307,6 @@ def gaussianFilter(img, fwhm, wait=None):
     stop = False
     if wait is not None:
         stop = wait.getStopped()
-        wait.buttonVisibilityOff()
 
     if not stop:
         if isinstance(img, sitkImage):
@@ -287,7 +320,9 @@ def gaussianFilter(img, fwhm, wait=None):
             fimg = SisypheImage()
             fimg.setSITKImage(simg)
             return fimg
+        else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
     else: return None
+
 
 def recursiveGaussianFilter(img, fwhm, wait=None):
     """
@@ -314,7 +349,6 @@ def recursiveGaussianFilter(img, fwhm, wait=None):
     stop = False
     if wait is not None:
         stop = wait.getStopped()
-        wait.buttonVisibilityOff()
 
     if not stop:
         if isinstance(img, sitkImage):
@@ -328,17 +362,25 @@ def recursiveGaussianFilter(img, fwhm, wait=None):
             fimg = SisypheImage()
             fimg.setSITKImage(simg)
             return fimg
+        else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
     else: return None
 
-def gradientAnisotropicDiffusionFilter(img, step=0.0625, conductance=2, niter=5, wait=None):
+
+def gradientAnisotropicDiffusionFilter(img, step=0.0625, conductance=2.0, niter=5, wait=None):
     """
         niter       number of iteration, default 5 (larger , smoother)
         step        default 0.0625 (< spacing / 2 ^(n+1))
-        conductance lower preserve image features (edge), 1 to 2
+        conductance lower preserve image features (edge), 1.0 to 2.0
     """
     if isinstance(img, (SisypheImage, SisypheVolume)): simg = img.getSITKImage()
     elif isinstance(img, sitkImage): simg = img
     else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
+
+    # < Revision 28/09/2024
+    # Cast to sitkFloat32
+    pid = simg.GetPixelID()
+    if pid != sitkFloat32: simg = sitkCast(simg, sitkFloat32)
+    # Revision 28/09/2024 >
 
     filtr = sitkGradientAnisotropicDiffusionImageFilter()
     filtr.SetTimeStep(step)
@@ -353,11 +395,14 @@ def gradientAnisotropicDiffusionFilter(img, step=0.0625, conductance=2, niter=5,
         wait.buttonVisibilityOn()
 
     simg = filtr.Execute(simg)
+    # < Revision 28/09/2024
+    # Cast to native datatype
+    if pid != sitkFloat32: simg = sitkCast(simg, pid)
+    # Revision 28/09/2024 >
 
     stop = False
     if wait is not None:
         stop = wait.getStopped()
-        wait.buttonVisibilityOff()
 
     if not stop:
         if isinstance(img, sitkImage):
@@ -371,17 +416,25 @@ def gradientAnisotropicDiffusionFilter(img, step=0.0625, conductance=2, niter=5,
             fimg = SisypheImage()
             fimg.setSITKImage(simg)
             return fimg
+        else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
     else: return None
 
-def curvatureAnisotropicDiffusionFilter(img, step=0.0625, conductance=3, niter=5, wait=None):
+
+def curvatureAnisotropicDiffusionFilter(img, step=0.0625, conductance=3.0, niter=5, wait=None):
     """
         niter       number of iteration, default 5 (larger , smoother)
         step        default 0.0625 (< spacing / 2 ^(n+1))
-        conductance lower preserve image features (edge), default 3
+        conductance lower preserve image features (edge), default 3.0
     """
     if isinstance(img, (SisypheImage, SisypheVolume)): simg = img.getSITKImage()
     elif isinstance(img, sitkImage): simg = img
     else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
+
+    # < Revision 28/09/2024
+    # Cast to sitkFloat32
+    pid = simg.GetPixelID()
+    if pid != sitkFloat32: simg = sitkCast(simg, sitkFloat32)
+    # Revision 28/09/2024 >
 
     filtr = sitkCurvatureAnisotropicDiffusionImageFilter()
     filtr.SetTimeStep(step)
@@ -396,6 +449,10 @@ def curvatureAnisotropicDiffusionFilter(img, step=0.0625, conductance=3, niter=5
         wait.buttonVisibilityOn()
 
     simg = filtr.Execute(simg)
+    # < Revision 28/09/2024
+    # Cast to native datatype
+    if pid != sitkFloat32: simg = sitkCast(simg, pid)
+    # Revision 28/09/2024 >
 
     stop = False
     if wait is not None:
@@ -414,7 +471,9 @@ def curvatureAnisotropicDiffusionFilter(img, step=0.0625, conductance=3, niter=5
             fimg = SisypheImage()
             fimg.setSITKImage(simg)
             return fimg
+        else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
     else: return None
+
 
 def curvatureFlowFilter(img, step=0.0625, niter=5, wait=None):
     """
@@ -424,6 +483,12 @@ def curvatureFlowFilter(img, step=0.0625, niter=5, wait=None):
     if isinstance(img, (SisypheImage, SisypheVolume)): simg = img.getSITKImage()
     elif isinstance(img, sitkImage): simg = img
     else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
+
+    # < Revision 28/09/2024
+    # Cast to sitkFloat32
+    pid = simg.GetPixelID()
+    if pid != sitkFloat32: simg = sitkCast(simg, sitkFloat32)
+    # Revision 28/09/2024 >
 
     filtr = sitkCurvatureFlowImageFilter()
     filtr.SetTimeStep(step)
@@ -436,6 +501,10 @@ def curvatureFlowFilter(img, step=0.0625, niter=5, wait=None):
         wait.buttonVisibilityOn()
 
     simg = filtr.Execute(simg)
+    # < Revision 28/09/2024
+    # Cast to native datatype
+    if pid != sitkFloat32: simg = sitkCast(simg, pid)
+    # Revision 28/09/2024 >
 
     stop = False
     if wait is not None:
@@ -454,7 +523,58 @@ def curvatureFlowFilter(img, step=0.0625, niter=5, wait=None):
             fimg = SisypheImage()
             fimg.setSITKImage(simg)
             return fimg
+        else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
     else: return None
+
+
+def minMaxCurvatureFlowFilter(img, step=0.05, radius=2, niter=5, wait=None):
+    if isinstance(img, (SisypheImage, SisypheVolume)): simg = img.getSITKImage()
+    elif isinstance(img, sitkImage): simg = img
+    else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
+
+    # < Revision 28/09/2024
+    # Cast to sitkFloat32
+    pid = simg.GetPixelID()
+    if pid != sitkFloat32: simg = sitkCast(simg, sitkFloat32)
+    # Revision 28/09/2024 >
+
+    filtr = sitkMinMaxCurvatureFlowImageFilter()
+    filtr.SetTimeStep(step)
+    filtr.SetStencilRadius(radius)
+    filtr.SetNumberOfIterations(niter)
+
+    if wait is not None:
+        wait.setSimpleITKFilter(filtr)
+        wait.addSimpleITKFilterProcessCommand()
+        wait.progressVisibilityOn()
+        wait.buttonVisibilityOn()
+
+    simg = filtr.Execute(simg)
+    # < Revision 28/09/2024
+    # Cast to native datatype
+    if pid != sitkFloat32: simg = sitkCast(simg, pid)
+    # Revision 28/09/2024 >
+
+    stop = False
+    if wait is not None:
+        stop = wait.getStopped()
+        wait.buttonVisibilityOff()
+
+    if not stop:
+        if isinstance(img, sitkImage):
+            return simg
+        elif isinstance(img, SisypheVolume):
+            fimg = SisypheVolume()
+            fimg.setSITKImage(simg)
+            img.copyAttributesTo(fimg)
+            return fimg
+        elif isinstance(img, SisypheImage):
+            fimg = SisypheImage()
+            fimg.setSITKImage(simg)
+            return fimg
+        else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
+    else: return None
+
 
 def meanFilter(img, radius=3, fast=False, wait=None):
     if isinstance(img, (SisypheImage, SisypheVolume)): simg = img.getSITKImage()
@@ -492,6 +612,7 @@ def meanFilter(img, radius=3, fast=False, wait=None):
             return fimg
     else: return None
 
+
 def medianFilter(img, radius=3, wait=None):
     if isinstance(img, (SisypheImage, SisypheVolume)): simg = img.getSITKImage()
     elif isinstance(img, sitkImage): simg = img
@@ -527,6 +648,7 @@ def medianFilter(img, radius=3, wait=None):
             return fimg
     else: return None
 
+
 def gradientMagnitudeFilter(img, wait=None):
     if isinstance(img, (SisypheImage, SisypheVolume)): simg = img.getSITKImage()
     elif isinstance(img, sitkImage): simg = img
@@ -560,6 +682,7 @@ def gradientMagnitudeFilter(img, wait=None):
             fimg.setSITKImage(simg)
             return fimg
     else: return None
+
 
 def gradientMagnitudeRecursiveFilter(img, sigma=1.0, wait=None):
     if isinstance(img, (SisypheImage, SisypheVolume)): simg = img.getSITKImage()
@@ -596,10 +719,17 @@ def gradientMagnitudeRecursiveFilter(img, sigma=1.0, wait=None):
             return fimg
     else: return None
 
+
 def laplacianFilter(img, wait=None):
     if isinstance(img, (SisypheImage, SisypheVolume)): simg = img.getSITKImage()
     elif isinstance(img, sitkImage): simg = img
     else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
+
+    # < Revision 28/09/2024
+    # Cast to sitkFloat32
+    pid = simg.GetPixelID()
+    if pid != sitkFloat32: simg = sitkCast(simg, sitkFloat32)
+    # Revision 28/09/2024 >
 
     filtr = sitkLaplacianImageFilter()
 
@@ -610,6 +740,10 @@ def laplacianFilter(img, wait=None):
         wait.buttonVisibilityOn()
 
     simg = filtr.Execute(simg)
+    # < Revision 28/09/2024
+    # Cast to native datatype
+    if pid != sitkFloat32: simg = sitkCast(simg, pid)
+    # Revision 28/09/2024 >
 
     stop = False
     if wait is not None:
@@ -630,10 +764,17 @@ def laplacianFilter(img, wait=None):
             return fimg
     else: return None
 
+
 def laplacianRecursiveFilter(img, sigma=1.0, wait=None):
     if isinstance(img, (SisypheImage, SisypheVolume)): simg = img.getSITKImage()
     elif isinstance(img, sitkImage): simg = img
     else: raise TypeError('image parameter type {} is not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
+
+    # < Revision 28/09/2024
+    # Cast to sitkFloat32
+    pid = simg.GetPixelID()
+    if pid != sitkFloat32: simg = sitkCast(simg, sitkFloat32)
+    # Revision 28/09/2024 >
 
     filtr = sitkLaplacianRecursiveGaussianImageFilter()
     filtr.SetSigma(sigma)
@@ -645,6 +786,10 @@ def laplacianRecursiveFilter(img, sigma=1.0, wait=None):
         wait.buttonVisibilityOn()
 
     simg = filtr.Execute(simg)
+    # < Revision 28/09/2024
+    # Cast to native datatype
+    if pid != sitkFloat32: simg = sitkCast(simg, pid)
+    # Revision 28/09/2024 >
 
     stop = False
     if wait is not None:
@@ -665,10 +810,11 @@ def laplacianRecursiveFilter(img, sigma=1.0, wait=None):
             return fimg
     else: return None
 
-def histogramMatching(img, rimg, bins=128, match=2, threshold=True, wait=None):
+
+def histogramIntensityMatching(img, rimg, bins=128, match=2, threshold=True, wait=None):
     """
-        rimg    reference img
-        simg    source img to be normalized
+    img     source img to be matched
+    rimg    reference img
     """
     # Convert source image to sitkImage
     if isinstance(img, (SisypheImage, SisypheVolume)): simg = img.getSITKImage()
@@ -711,11 +857,58 @@ def histogramMatching(img, rimg, bins=128, match=2, threshold=True, wait=None):
             fimg.setSITKImage(simg)
             img.copyAttributesTo(fimg)
             return fimg
-        else:
+        elif isinstance(img, SisypheImage):
             fimg = SisypheImage()
             fimg.setSITKImage(simg)
             return fimg
+        else: raise TypeError('image parameter type {} is not not sitkImage, SisypheImage or SisypheVolume.'.format(type(img)))
     else: return None
+
+
+# < Revision 21/10/2024
+# add regressionIntensityMatching function
+def regressionIntensityMatching(img: SisypheVolume,
+                                rimg: SisypheVolume,
+                                mask: SisypheVolume | SisypheROI | None = None,
+                                order: int = 1,
+                                truncate: bool = True):
+    """
+    img     source img to be matched
+    rimg    reference img
+    """
+    if img.hasSameSize(rimg):
+        if mask is None:
+            src = expand_dims(img.getNumpy().flatten(), axis=1)
+            ref = expand_dims(rimg.getNumpy().flatten(), axis=1)
+        else:
+            mask = mask.getNumpy().flatten()
+            src = expand_dims(img.getNumpy().flatten()[where(mask != 0)], axis=1)
+            ref = expand_dims(rimg.getNumpy().flatten()[where(mask != 0)], axis=1)
+        poly = PolynomialFeatures(degree=order)
+        srcpoly = poly.fit_transform(src)
+        model = LinearRegression()
+        model.fit(srcpoly, ref)
+        if mask is not None:
+            srcpoly = poly.fit_transform(expand_dims(img.getNumpy().flatten().flatten(), axis=1))
+        matched = model.predict(srcpoly)
+        if truncate:
+            # noinspection PyArgumentList
+            rmin = ref.min()
+            # noinspection PyArgumentList
+            rmax = ref.max()
+            matched[matched < rmin] = rmin
+            matched[matched > rmax] = rmax
+        # < Revision 29/11/2024
+        # bug fix, reshape vector image
+        matched = matched.reshape(img.getNumpy().shape)
+        # Revision 29/11/2024 >
+        r = SisypheVolume()
+        r.copyFromNumpyArray(matched, spacing=img.getSpacing())
+        r.copyPropertiesFrom(img, slope=False)
+        return r
+    else: raise ValueError('Source and reference images have not the same size.')
+# Revision 21/10/2024 >
+
 
 def CoronalToAxial(img):
     if isinstance(img, (SisypheImage, SisypheVolume)):
@@ -737,6 +930,7 @@ def CoronalToAxial(img):
         fimg.setSITKImage(sitkPermuteAxes(simg, [0, 2, 1]))
         return fimg
 
+
 def SagittalToAxial(img):
     if isinstance(img, (SisypheImage, SisypheVolume)):
         simg = img.getSITKImage()
@@ -756,4 +950,3 @@ def SagittalToAxial(img):
         fimg = SisypheImage()
         fimg.setSITKImage(sitkPermuteAxes(simg, [1, 2, 0]))
         return fimg
-
