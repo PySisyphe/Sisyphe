@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <xdcm version="1.0">
 	<SpecificCharacterSet VM="1" VR="CS">ISO_IR 100</SpecificCharacterSet>
-	<ImageType VM="3" VR="CS">DERIVED SECONDARY AXIAL</ImageType>
+	<ImageType VM="3" VR="CS">DERIVED|SECONDARY|AXIAL</ImageType>
 	<InstanceCreationDate VM="1" VR="DA">20000101</InstanceCreationDate>
 	<InstanceCreationTime VM="1" VR="TM">000000.000000</InstanceCreationTime>
 	<SOPClassUID VM="1" VR="UI">1.2.840.10008.5.1.4.1.1.4</SOPClassUID>
@@ -16,7 +16,7 @@
 	<ContentTime VM="1" VR="TM">000000.000000</ContentTime>
 	<AccessionNumber VM="1" VR="SH">A</AccessionNumber>
 	<Modality VM="1" VR="CS">OT</Modality>
-	<SeriesDescription VM="1" VR="LO">Unknown</SeriesDescription>
+	<SeriesDescription VM="1" VR="LO">None</SeriesDescription>
 	<DerivationDescription VM="1" VR="ST">2:1 JPEGLOSSLESSPROCFIRSTORDERREDICT</DerivationDescription>
 	<PatientName VM="1" VR="PN">Unknown^Unknown</PatientName>
 	<PatientBirthDate VM="1" VR="DA">20000101</PatientBirthDate>
@@ -31,8 +31,8 @@
 	<SeriesNumber VM="1" VR="IS">1</SeriesNumber>
 	<AcquisitionNumber VM="1" VR="IS">1</AcquisitionNumber>
 	<InstanceNumber VM="1" VR="IS">1</InstanceNumber>
-	<ImagePositionPatient VM="3" VR="DS">1.0 1.0 1.0</ImagePositionPatient>
-	<ImageOrientationPatient VM="6" VR="DS">1.0 0.0 0.0 0.0 1.0 0.0</ImageOrientationPatient>
+	<ImagePositionPatient VM="3" VR="DS">1.0|1.0|1.0</ImagePositionPatient>
+	<ImageOrientationPatient VM="6" VR="DS">1.0|0.0|0.0|0.0|1.0|0.0</ImageOrientationPatient>
 	<FrameOfReferenceUID VM="1" VR="UI">1.2.840</FrameOfReferenceUID>
 	<ImagesInAcquisition VM="1" VR="IS">1</ImagesInAcquisition>
 	<SliceLocation VM="1" VR="DS">1.0</SliceLocation>
@@ -40,7 +40,7 @@
 	<PhotometricInterpretation VM="1" VR="CS">MONOCHROME2</PhotometricInterpretation>
 	<Rows VM="1" VR="US">256</Rows>
 	<Columns VM="1" VR="US">256</Columns>
-	<PixelSpacing VM="2" VR="DS">1.0 1.0</PixelSpacing>
+	<PixelSpacing VM="2" VR="DS">1.0|1.0</PixelSpacing>
 	<BitsAllocated VM="1" VR="US">16</BitsAllocated>
 	<BitsStored VM="1" VR="US">16</BitsStored>
 	<HighBit VM="1" VR="US">15</HighBit>

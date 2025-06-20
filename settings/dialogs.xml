@@ -22,12 +22,12 @@
 		<FlipX label="Flip left/right axis" vartype="bool">False</FlipX>
 		<FlipY label="Flip antero-posterior axis" vartype="bool">False</FlipY>
 		<FlipZ label="Flip cranio-caudal axis" vartype="bool">False</FlipZ>
-		<Prefix vartype="str">flip_</Prefix>
+		<Prefix vartype="str">flip</Prefix>
 	</FlipAxes>
 	<SwapAxes>
 		<Volumes vartype="vols"/>
 		<SwapOrder vartype="lstr">y,z,x|z,x,y|x,z,y|y,z,x|z,y,x</SwapOrder>
-		<Prefix vartype="str">swap_</Prefix>
+		<Prefix vartype="str">swap</Prefix>
 	</SwapAxes>
 	<ChartProperties>
 		<TitleVisibility vartype="bool">False</TitleVisibility>
@@ -40,4 +40,37 @@
 		<Legend vartype="lstr">No|Best|Upper right|Upper left|Lower right|Lower left|Lower center|Upper center|Center</Legend>
 		<FigColor label="Figure background color" vartype="color">1.0 1.0 1.0</FigColor>
 	</ChartProperties>
+	<TractColor>
+		<ColorMode vartype="lstr">RGB Direction|Solid|Scalars</ColorMode>
+		<SolidColor vartype="color">1.0 1.0 1.0</SolidColor>
+		<ScalarsVolume label="Scalars values volume" vartype="vol"/>
+		<ScalarsLut vartype="lut">hot</ScalarsLut>
+	</TractColor>
+	<StatisticalModel>
+		<Norm label="Signal normalization" vartype="lstr">No</Norm>
+		<Ancova label="ANCOVA normalization" vartype="lstr">No</Ancova>
+		<Roi1 label="ROI signal normalization" vartype="roi"/>
+		<Mask label="Mask" vartype="lstr">Auto|Auto and ROI</Mask>
+		<Roi2 label="Mask ROI" vartype="roi"/>
+		<Age label="Age covariable" vartype="lstr">No</Age>
+	</StatisticalModel>
+	<Attributes>
+		<Anonymize vartype="bool">False</Anonymize>
+		<SetModality label="Set modality" vartype="bool">False</SetModality>
+		<Modality vartype="lstr">dummy</Modality>
+		<SetSequence label="Set sequence" vartype="bool">False</SetSequence>
+		<OT vartype="lstr">dummy</OT>
+		<MR vartype="lstr">dummy</MR>
+		<CT vartype="lstr">dummy</CT>
+		<NM vartype="lstr">dummy</NM>
+		<PT vartype="lstr">dummy</PT>
+		<LB vartype="lstr">LABELS</LB>
+		<TP vartype="lstr">dummy</TP>
+		<SetUnit label="Set unit" vartype="bool">False</SetUnit>
+		<Unit vartype="lstr">dummy</Unit>
+		<SetFrame label="Set frame" vartype="bool">False</SetFrame>
+		<Frame vartype="lstr">dummy</Frame>
+		<SetOrigin label="Set origin to default" vartype="bool">False</SetOrigin>
+		<SetDirections label="Set directions to default" vartype="bool">False</SetDirections>
+	</Attributes>
 </settings>

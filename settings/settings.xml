@@ -5,6 +5,9 @@
 		<ToolbarVisibility vartype="bool">True</ToolbarVisibility>
 		<ThumbnailSize varmax="256" varmin="64" vartype="int">96</ThumbnailSize>
 		<IconSize varmax="64" varmin="24" vartype="int">32</IconSize>
+		<FontFamily vartype="font"></FontFamily>
+		<FontSize varmax="24" varmin="8" vartype="int">10</FontSize>
+		<ZoomFactor label="Documentation zoom factor" varmax="1.0" varmin="0.5" vartype="float">0.8</ZoomFactor>
 	</GUI>
 	<ToolbarIcons>
 		<open label="Open" icon="open.png" vartype="visibility">True</open>
@@ -12,19 +15,63 @@
 		<saveall label="Save all" icon="saveall.png" vartype="visibility">True</saveall>
 		<close label="Close" icon="close.png" vartype="visibility">True</close>
 		<closeall label="Close all" icon="closeall.png" vartype="visibility">True</closeall>
+		<opennii label="Open nifti" icon="open-nii.png" vartype="visibility">True</opennii>
+		<opennrrd label="Open nrrd" icon="open-nrrd.png" vartype="visibility">False</opennrrd>
+		<openmnc label="Open minc" icon="open-mnc.png" vartype="visibility">False</openmnc>
+		<openmgh label="Open FreeSurfer" icon="open-mgh.png" vartype="visibility">False</openmgh>
+		<openvmr label="Open Brainvoyager" icon="open-vmr.png" vartype="visibility">False</openvmr>
+		<openvol label="Open Sisyphe" icon="open-vol.png" vartype="visibility">False</openvol>
+		<openvtk label="Open vtk" icon="open-vtk.png" vartype="visibility">False</openvtk>
+		<savenii label="Save nifti" icon="save-nii.png" vartype="visibility">True</savenii>
+		<savenpy label="Save numpy" icon="save-npy.png" vartype="visibility">False</savenpy>
+		<savenrrd label="Save nrrd" icon="save-nrrd.png" vartype="visibility">False</savenrrd>
+		<savemnc label="Save minc" icon="save-mnc.png" vartype="visibility">False</savemnc>
+		<savevtk label="Save vtk" icon="save-vtk.png" vartype="visibility">False</savevtk>
 		<editattr label="Edit attributes" icon="list.png" vartype="visibility">True</editattr>
-		<dcmimport label="Dicom import" icon="import.png" vartype="visibility">True</dcmimport>
+		<editid label="Change ID" icon="id.png" vartype="visibility">False</editid>
+		<anonymize label="Anonymize" icon="anonymize.png" vartype="visibility">False</anonymize>
+		<editlabels label="Edit labels" icon="labels.png" vartype="visibility">True</editlabels>
+		<dcmimport label="Dicom import" icon="importdcm.png" vartype="visibility">True</dcmimport>
+		<slice label="Slice view" icon="slice-view.png" vartype="visibility">True</slice>
+		<ortho label="Orthogonal view" icon="ortho-view.png" vartype="visibility">True</ortho>
+		<synchro label="Synchronised view" icon="sync-view.png" vartype="visibility">True</synchro>
+		<proj label="Projection view" icon="proj-view.png" vartype="visibility">True</proj>
+		<multi label="Multi-component view" icon="multi-view.png" vartype="visibility">True</multi>
 		<join label="Join" icon="join.png" vartype="visibility">True</join>
 		<split label="Split" icon="split.png" vartype="visibility">True</split>
 		<flip label="Flip" icon="flip.png" vartype="visibility">True</flip>
 		<axis label="Axis order" icon="axis.png" vartype="visibility">True</axis>
+		<attributes label="Attributes conversion" icon="editattr.png" vartype="visibility">True</attributes>
 		<lutedit label="Lut edit" icon="rgb.png" vartype="visibility">True</lutedit>
+		<texture label="Texture feature maps" icon="texture.png" vartype="visibility">True</texture>
+		<mean label="Mean filter" icon="filtermean.png" vartype="visibility">True</mean>
+		<median label="Median filter" icon="filtermedian.png" vartype="visibility">True</median>
+		<gaussian label="Gaussian filter" icon="filtergaussian.png" vartype="visibility">True</gaussian>
+		<gradient label="Gradient magnitude filter" icon="filtergrad.png" vartype="visibility">True</gradient>
+		<laplacian label="Laplacian filter" icon="filterlapl.png" vartype="visibility">True</laplacian>
+		<aniso label="Anisotropic diffusion filter" icon="filteraniso.png" vartype="visibility">True</aniso>
+		<bias label="Bias field correction" icon="filterbias.png" vartype="visibility">True</bias>
+		<algebra label="Voxel-by-voxel algebra" icon="algebra.png" vartype="visibility">True</algebra>
+		<workflow label="Workflow processing" icon="workflow.png" vartype="visibility">True</workflow>
+		<frame label="Stereotactic frame detection" icon="frame.png" vartype="visibility">True</frame>
+		<acpc label="AC-PC selection" icon="acpc.png" vartype="visibility">True</acpc>
+		<orient label="Volume reorientation" icon="reorient.png" vartype="visibility">True</orient>
+		<hand label="Manual registration" icon="manual.png" vartype="visibility">True</hand>
+		<rigid label="Rigid registration" icon="rigid.png" vartype="visibility">True</rigid>
+		<affine label="Affine registration" icon="affine.png" vartype="visibility">True</affine>
+		<field label="Displacement field registration" icon="diffeo.png" vartype="visibility">True</field>
+		<icbm label="Spatial ICBM normalization" icon="icbm.png" vartype="visibility">True</icbm>
+		<asym label="Asymmetry displacement field" icon="asym.png" vartype="visibility">True</asym>
+		<jac label="Displacement field jacobian determinant" icon="field.png" vartype="visibility">True</jac>
+		<skull label="Skull stripping" icon="strip.png" vartype="visibility">True</skull>
+		<seg label="Tissue segmentation" icon="seg.png" vartype="visibility">True</seg>
+		<fullscrn label="Full screen" icon="fullscreen.png" vartype="visibility">True</fullscrn>
 		<pref label="Preferences" icon="settings.png" vartype="visibility">True</pref>
 		<exit label="Exit" icon="exit.png" vartype="visibility">True</exit>
 	</ToolbarIcons>
 	<Viewport>
-		<FontSize varmax="24" varmin="6" vartype="int">12</FontSize>
-		<FontFamily vartype="lstr">Arial|Courier|Times</FontFamily>
+		<IconSize varmax="64" varmin="24" vartype="int">48</IconSize>
+		<FontSizeScale varmax="2.0" varmin="1.0" vartype="float">1.0</FontSizeScale>
 		<LineWidth varmax="5.0" varmin="0.5" vartype="float">2.0</LineWidth>
 		<LineOpacity label="Font/Line opacity" vartype="percent">1.0</LineOpacity>
 		<LineColor label="Font/Line color" vartype="color">1.0 1.0 1.0</LineColor>
@@ -49,8 +96,25 @@
 		<OrientationMarkerShape vartype="lstr">Head|Cube|Axes|Bust|Body|Brain</OrientationMarkerShape>
 		<OrientationMarkerVisibility vartype="bool">False</OrientationMarkerVisibility>
 		<TooltipVisibility vartype="bool">True</TooltipVisibility>
+		<Align label="Align image centers" vartype="bool">True</Align>
+		<ProjectionOperator vartype="lstr">Max|Mean|Median|Standard deviation</ProjectionOperator>
+		<ProjectionDepth varmax="20" varmin="5" vartype="int">10</ProjectionDepth>
+		<DropInView label="Drop in view action" vartype="lstr">Registered|Replace|Overlay|Dialog</DropInView>
 	</Viewport>
+	<ROI>
+		<MaxCount varmax="50" varmin="10" vartype="int">10</MaxCount>
+		<FillHoles vartype="bool">False</FillHoles>
+		<StructSize label="Structuring element size" varmax="10" varmin="1" vartype="int">1</StructSize>
+		<StructShape label="Structuring element shape" vartype="lstr">Ball|Box|Cross|Annulus</StructShape>
+		<MoveStep label="Move step (px)" varmax="20" varmin="1" vartype="int">1</MoveStep>
+		<BlobExtent label="Blob extent threshold (px)" varmax="65535" varmin="0" vartype="int">1</BlobExtent>
+		<Thickness label="Expand/shrink margin (mm)" varmax="50.0" varmin="1.0" vartype="float">1.0</Thickness>
+		<Algo label="Object/background algorithm" vartype="lstr">Huang|Intermodes|Isodata|Otsu|Kittler|Li|Maximum Entropy|Mean|Moments|Renyi|Shanbhag|Triangle|Yen|Morphology</Algo>
+		<Confidence label="Cluster confidence sigma" varmax="5.0" varmin="1.0" vartype="float">2.5</Confidence>
+		<ConfidenceIter label="Cluster confidence iterations" varmax="20" varmin="2" vartype="int">4</ConfidenceIter>
+	</ROI>
 	<Mesh>
+		<MaxCount varmax="50" varmin="10" vartype="int">20</MaxCount>
 		<SegmentationAlgorithm vartype="lstr">Otsu|Huang|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Entropy|Kittler|Isodata|Moments|Mean</SegmentationAlgorithm>
 		<IsosurfaceAlgorithm vartype="lstr">Contour|MarchingCube|FlyingEdge</IsosurfaceAlgorithm>
 		<Decimate vartype="bool">True</Decimate>
@@ -65,6 +129,7 @@
 		<SmoothPassBand varmax="1.0" varmin="0.0" vartype="float">0.1</SmoothPassBand>
 	</Mesh>
 	<Tools>
+		<MaxCount varmax="50" varmin="10" vartype="int">20</MaxCount>
 		<TextEntry vartype="str">Entry</TextEntry>
 		<TextTarget vartype="str">Target</TextTarget>
 		<FontSize vartype="int" varmax="24" varmin="6">12</FontSize>
@@ -84,21 +149,25 @@
 		<SafetyVisibility vartype="bool">True</SafetyVisibility>
 		<Tolerance vartype="int" varmax="100" varmin="2">20</Tolerance>
 	</Tools>
+	<Bundles>
+		<MaxCount varmax="50" varmin="10" vartype="int">20</MaxCount>
+	</Bundles>
 	<Templates>
-		<T1 vartype="vol">/ICBM152/icbm152_template_T1.xvol</T1>
-		<T2 vartype="vol">/ICBM152/icbm152_template_T2.xvol</T2>
-		<PD vartype="vol"/>
-		<EPI vartype="vol"/>
-		<TEP vartype="vol"/>
-		<SPECT vartype="vol"/>
-		<GM label="Gray matter" vartype="vol">/ICBM152/icbm152_template_gm.xvol</GM>
-		<CGM label="Cortical gray matter" vartype="vol">/ICBM152/icbm152_template_cortical_gm.xvol</CGM>
-		<SCGM label="Sub-cortical gray matter" vartype="vol">/ICBM152/icbm152_template_subcortical_gm.xvol</SCGM>
-		<WM label="White matter" vartype="vol">/ICBM152/icbm152_template_wm.xvol</WM>
-		<CSF label="Cerebro-spinal fluid" vartype="vol">/ICBM152/icbm152_template_csf.xvol</CSF>
-		<BSTEM label="Brainstem" vartype="vol">/ICBM152/icbm152_template_brainstem.xvol</BSTEM>
-		<CEREB label="Cerebellum" vartype="vol">/ICBM152/icbm152_template_cerebellum.xvol</CEREB>
-		<BRAINMASK label="Brain mask" vartype="vol">/ICBM152/icbm152_template_mask_brain.xvol</BRAINMASK>
+		<T1 label="MR T1-weighted" vartype="vol">/ICBM152/icbm152_sym_template_t1.xvol</T1>
+		<T2 label="MR T2-weighted" vartype="vol">/ICBM152/icbm152_sym_template_t2.xvol</T2>
+		<PD label="MR PD-weighted" vartype="vol">/ICBM152/icbm152_sym_template_pd.xvol</PD>
+		<FLAIR label="MR FLAIR" vartype="vol">/ICBM152/icbm152_template_flair.xvol</FLAIR>
+		<PT label="FDG PET" vartype="vol">/ICBM152/icbm152_template_pet.xvol</PT>
+		<NM label="HMPAO SPECT" vartype="vol">/ICBM152/icbm152_template_spect.xvol</NM>
+		<GM label="Gray matter" vartype="vol">/ICBM152/icbm152_sym_template_gm.xvol</GM>
+		<CGM label="Cortical gray matter" vartype="vol">/ICBM152/icbm152_sym_template_cortical_gm.xvol</CGM>
+		<SCGM label="Sub-cortical gray matter" vartype="vol">/ICBM152/icbm152_sym_template_subcortical_gm.xvol</SCGM>
+		<WM label="White matter" vartype="vol">/ICBM152/icbm152_sym_template_wm.xvol</WM>
+		<CSF label="Cerebro-spinal fluid" vartype="vol">/ICBM152/icbm152_sym_template_csf.xvol</CSF>
+		<BSTEM label="Brainstem" vartype="vol">/ICBM152/icbm152_sym_template_brainstem.xvol</BSTEM>
+		<CEREB label="Cerebellum" vartype="vol">/ICBM152/icbm152_sym_template_cerebellum.xvol</CEREB>
+		<BRAINMASK label="Brain mask" vartype="vol">/ICBM152/icbm152_sym_template_mask.xvol</BRAINMASK>
+		<CT label="Computed tomography" vartype="vol">/ICBM152/icbm152_asym_template_ct.xvol</CT>
 	</Templates>
 	<Database>
 		<CurrentPath vartype="dir">/Users/Jean-Albert/.PySisyphe/database</CurrentPath>

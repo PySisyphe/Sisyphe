@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <xdcm version="1.0">
 	<SpecificCharacterSet VM="1" VR="CS">ISO_IR 100</SpecificCharacterSet>
-	<ImageType VM="3" VR="CS">DERIVED SECONDARY AXIAL</ImageType>
+	<ImageType VM="3" VR="CS">DERIVED|SECONDARY|AXIAL</ImageType>
 	<InstanceCreationDate VM="1" VR="DA">20000101</InstanceCreationDate>
 	<InstanceCreationTime VM="1" VR="TM">000000.000000</InstanceCreationTime>
 	<SOPClassUID VM="1" VR="UI">1.2.840.10008.5.1.4.1.1.4</SOPClassUID>
@@ -16,14 +16,14 @@
 	<ContentTime VM="1" VR="TM">000000.000000</ContentTime>
 	<AccessionNumber VM="1" VR="SH">A</AccessionNumber>
 	<Modality VM="1" VR="CS">MR</Modality>
-	<Manufacturer VM="1" VR="LO">Unknown</Manufacturer>
-	<InstitutionName VM="1" VR="LO">Unknown</InstitutionName>
-	<StationName VM="1" VR="SH">Unknown</StationName>
-	<StudyDescription VM="1" VR="LO">Unknown</StudyDescription>
-	<SeriesDescription VM="1" VR="LO">Unknown</SeriesDescription>
-	<InstitutionalDepartmentName VM="1" VR="LO">Unknown</InstitutionalDepartmentName>
-	<ManufacturerModelName VM="1" VR="LO">Unknown</ManufacturerModelName>
-	<SoftwareVersions VM="3" VR="LO">Unknown</SoftwareVersions>
+	<Manufacturer VM="1" VR="LO">None</Manufacturer>
+	<InstitutionName VM="1" VR="LO">None</InstitutionName>
+	<StationName VM="1" VR="SH">None</StationName>
+	<StudyDescription VM="1" VR="LO">None</StudyDescription>
+	<SeriesDescription VM="1" VR="LO">None</SeriesDescription>
+	<InstitutionalDepartmentName VM="1" VR="LO">None</InstitutionalDepartmentName>
+	<ManufacturerModelName VM="1" VR="LO">None</ManufacturerModelName>
+	<SoftwareVersions VM="3" VR="LO">None|None|None</SoftwareVersions>
 	<DerivationDescription VM="1" VR="ST">2:1 JPEGLOSSLESSPROCFIRSTORDERREDICT</DerivationDescription>
 	<PatientName VM="1" VR="PN">Unknown^Unknown</PatientName>
 	<PatientBirthDate VM="1" VR="DA">20000101</PatientBirthDate>
@@ -31,10 +31,10 @@
 	<PatientAge VM="1" VR="AS">040Y</PatientAge>
 	<PatientWeight VM="1" VR="DS">0.0</PatientWeight>
 	<ContrastBolusAgent VM="1" VR="LO">NO</ContrastBolusAgent>
-	<ScanningSequence VM="1" VR="CS">Unknown</ScanningSequence>
-	<SequenceVariant VM="3" VR="CS">Unknown Unknown Unknown</SequenceVariant>
-	<MRAcquisitionType VM="1" VR="CS">Unknown</MRAcquisitionType>
-	<AngioFlag VM="1" VR="CS">Unknown</AngioFlag>
+	<ScanningSequence VM="1" VR="CS">None</ScanningSequence>
+	<SequenceVariant VM="3" VR="CS">None|None|None</SequenceVariant>
+	<MRAcquisitionType VM="1" VR="CS">None</MRAcquisitionType>
+	<AngioFlag VM="1" VR="CS">None</AngioFlag>
 	<SliceThickness VM="1" VR="DS">1.0</SliceThickness>
 	<SpacingBetweenSlices VM="1" VR="DS">1.0</SpacingBetweenSlices>
 	<RepetitionTime VM="1" VR="DS">0.0</RepetitionTime>
@@ -48,12 +48,12 @@
 	<PercentSampling VM="1" VR="DS">0.0</PercentSampling>
 	<PercentPhaseFieldOfView VM="1" VR="DS">0.0</PercentPhaseFieldOfView>
 	<PixelBandwidth VM="1" VR="DS">0.0</PixelBandwidth>
-	<ProtocolName VM="1" VR="LO">Unknown</ProtocolName>
+	<ProtocolName VM="1" VR="LO">None</ProtocolName>
 	<ContrastBolusRoute VM="1" VR="LO">IV</ContrastBolusRoute>
 	<ReconstructionDiameter VM="1" VR="DS">250</ReconstructionDiameter>
 	<ReceiveCoilName VM="1" VR="SH">HEAD</ReceiveCoilName>
 	<TransmitCoilName VM="1" VR="SH">HEAD</TransmitCoilName>
-	<AcquisitionMatrix VM="4" VR="US">0 255 255 0</AcquisitionMatrix>
+	<AcquisitionMatrix VM="4" VR="US">0|255|255|0</AcquisitionMatrix>
 	<InPlanePhaseEncodingDirection VM="1" VR="CS">ROW</InPlanePhaseEncodingDirection>
 	<FlipAngle VM="1" VR="DS">0.0</FlipAngle>
 	<VariableFlipAngleFlag VM="1" VR="CS">N</VariableFlipAngleFlag>
@@ -65,17 +65,17 @@
 	<SeriesNumber VM="1" VR="IS">1</SeriesNumber>
 	<AcquisitionNumber VM="1" VR="IS">1</AcquisitionNumber>
 	<InstanceNumber VM="1" VR="IS">1</InstanceNumber>
-	<ImagePositionPatient VM="3" VR="DS">1.0 1.0 1.0</ImagePositionPatient>
-	<ImageOrientationPatient VM="6" VR="DS">1.0 0.0 0.0 0.0 1.0 0.0</ImageOrientationPatient>
+	<ImagePositionPatient VM="3" VR="DS">1.0|1.0|1.0</ImagePositionPatient>
+	<ImageOrientationPatient VM="6" VR="DS">1.0|0.0|0.0|0.0|1.0|0.0</ImageOrientationPatient>
 	<FrameOfReferenceUID VM="1" VR="UI">1.2.840</FrameOfReferenceUID>
 	<ImagesInAcquisition VM="1" VR="IS">1</ImagesInAcquisition>
-	<PositionReferenceIndicator VM="0" VR="LO">Unknown</PositionReferenceIndicator>
+	<PositionReferenceIndicator VM="0" VR="LO">None</PositionReferenceIndicator>
 	<SliceLocation VM="1" VR="DS">1.0</SliceLocation>
 	<SamplesPerPixel VM="1" VR="US">1</SamplesPerPixel>
 	<PhotometricInterpretation VM="1" VR="CS">MONOCHROME2</PhotometricInterpretation>
 	<Rows VM="1" VR="US">256</Rows>
 	<Columns VM="1" VR="US">256</Columns>
-	<PixelSpacing VM="2" VR="DS">1.0 1.L0</PixelSpacing>
+	<PixelSpacing VM="2" VR="DS">1.0|1.L0</PixelSpacing>
 	<BitsAllocated VM="1" VR="US">16</BitsAllocated>
 	<BitsStored VM="1" VR="US">16</BitsStored>
 	<HighBit VM="1" VR="US">15</HighBit>

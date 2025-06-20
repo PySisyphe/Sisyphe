@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <xdcm version="1.0">
 	<SpecificCharacterSet VM="1" VR="CS">ISO_IR 100</SpecificCharacterSet>
-	<ImageType VM="3" VR="CS">DERIVED SECONDARY AXIAL</ImageType>
+	<ImageType VM="3" VR="CS">DERIVED|SECONDARY|AXIAL</ImageType>
 	<InstanceCreationDate VM="1" VR="DA">20000101</InstanceCreationDate>
 	<InstanceCreationTime VM="1" VR="TM">000000.000000</InstanceCreationTime>
 	<SOPClassUID VM="1" VR="UI">1.2.840.10008.5.1.4.1.1.20</SOPClassUID>
@@ -16,14 +16,14 @@
 	<ContentTime VM="1" VR="TM">000000.000000</ContentTime>
 	<AccessionNumber VM="1" VR="SH">A</AccessionNumber>
 	<Modality VM="1" VR="CS">NM</Modality>
-	<Manufacturer VM="1" VR="LO">Unknown</Manufacturer>
-	<InstitutionName VM="1" VR="LO">Unknown</InstitutionName>
-	<StationName VM="1" VR="SH">Unknown</StationName>
-	<StudyDescription VM="1" VR="LO">Unknown</StudyDescription>
-	<SeriesDescription VM="1" VR="LO">Unknown</SeriesDescription>
-	<InstitutionalDepartmentName VM="1" VR="LO">Unknown</InstitutionalDepartmentName>
-	<ManufacturerModelName VM="1" VR="LO">Unknown</ManufacturerModelName>
-	<SoftwareVersions VM="3" VR="LO">Unknown</SoftwareVersions>
+	<Manufacturer VM="1" VR="LO">None</Manufacturer>
+	<InstitutionName VM="1" VR="LO">None</InstitutionName>
+	<StationName VM="1" VR="SH">None</StationName>
+	<StudyDescription VM="1" VR="LO">None</StudyDescription>
+	<SeriesDescription VM="1" VR="LO">None</SeriesDescription>
+	<InstitutionalDepartmentName VM="1" VR="LO">None</InstitutionalDepartmentName>
+	<ManufacturerModelName VM="1" VR="LO">None</ManufacturerModelName>
+	<SoftwareVersions VM="3" VR="LO">None|None|None</SoftwareVersions>
 	<DerivationDescription VM="1" VR="ST">10:1 JPEGLOSSLESSPROCFIRSTORDERREDICT</DerivationDescription>
 	<PatientName VM="1" VR="PN">Unknown^Unknown</PatientName>
 	<PatientBirthDate VM="1" VR="DA">20000101</PatientBirthDate>
@@ -33,9 +33,9 @@
 	<SliceThickness VM="1" VR="DS">1.0</SliceThickness>
 	<SpacingBetweenSlices VM="1" VR="DS">1.0</SpacingBetweenSlices>
 	<CountsAccumulated VM="1" VR="IS">0</CountsAccumulated>
-	<AcquisitionTerminationCondition VM="1" VR="CS">Unknown</AcquisitionTerminationCondition>
-	<ProtocolName VM="1" VR="LO">Unknown</ProtocolName>
-	<TriggerSourceOrType VM="1" VR="LO">Unknown</TriggerSourceOrType>
+	<AcquisitionTerminationCondition VM="1" VR="CS">None</AcquisitionTerminationCondition>
+	<ProtocolName VM="1" VR="LO">None</ProtocolName>
+	<TriggerSourceOrType VM="1" VR="LO">None</TriggerSourceOrType>
 	<CountRate VM="1" VR="IS">1</CountRate>
 	<StudyInstanceUID VM="1" VR="UI">1.2.840</StudyInstanceUID>
 	<SeriesInstanceUID VM="1" VR="UI">1.2.840</SeriesInstanceUID>
@@ -43,18 +43,18 @@
 	<SeriesNumber VM="1" VR="IS">1</SeriesNumber>
 	<AcquisitionNumber VM="1" VR="IS">1</AcquisitionNumber>
 	<InstanceNumber VM="1" VR="IS">1</InstanceNumber>
-	<ImagePositionPatient VM="3" VR="DS">1.0 1.0 1.0</ImagePositionPatient>
-	<ImageOrientationPatient VM="6" VR="DS">1.0 0.0 0.0 0.0 1.0 0.0</ImageOrientationPatient>
+	<ImagePositionPatient VM="3" VR="DS">1.0|1.0|1.0</ImagePositionPatient>
+	<ImageOrientationPatient VM="6" VR="DS">1.0|0.0|0.0|0.0|1.0|0.0</ImageOrientationPatient>
 	<FrameOfReferenceUID VM="1" VR="UI">1.2.840</FrameOfReferenceUID>
 	<ImagesInAcquisition VM="1" VR="IS">1</ImagesInAcquisition>
-	<PositionReferenceIndicator VM="0" VR="LO">Unknown</PositionReferenceIndicator>
+	<PositionReferenceIndicator VM="0" VR="LO">None</PositionReferenceIndicator>
 	<SliceLocation VM="1" VR="DS">1.0</SliceLocation>
 	<SamplesPerPixel VM="1" VR="US">1</SamplesPerPixel>
 	<PhotometricInterpretation VM="1" VR="CS">MONOCHROME2</PhotometricInterpretation>
 	<Rows VM="1" VR="US">128</Rows>
 	<Columns VM="1" VR="US">128</Columns>
-	<PixelSpacing VM="2" VR="DS">1.0 1.0</PixelSpacing>
-	<CorrectedImage VM="0" VR="CS">Unknown</CorrectedImage>
+	<PixelSpacing VM="2" VR="DS">1.0|1.0</PixelSpacing>
+	<CorrectedImage VM="0" VR="CS">None</CorrectedImage>
 	<BitsAllocated VM="1" VR="US">16</BitsAllocated>
 	<BitsStored VM="1" VR="US">16</BitsStored>
 	<HighBit VM="1" VR="US">15</HighBit>
@@ -69,5 +69,5 @@
 	<NumberOfEnergyWindows VM="1" VR="US">1</NumberOfEnergyWindows>
 	<NumberOfDetectors VM="1" VR="US">1</NumberOfDetectors>
 	<NumberOfRotations VM="1" VR="US">1</NumberOfRotations>
-	<TypeOfDetectorMotion VM="1" VR="CS">Unknown</TypeOfDetectorMotion>
+	<TypeOfDetectorMotion VM="1" VR="CS">None</TypeOfDetectorMotion>
 </xdcm>

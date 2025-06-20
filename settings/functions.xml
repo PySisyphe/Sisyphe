@@ -1,59 +1,86 @@
 <?xml version="1.0" ?>
 <functions version="1.0">
+	<ActiveContour>
+		<Algorithm label="Level set algorihtm" vartype="lstr">Geodesic active contour|Shape detection|Threshold segmentation</Algorithm>
+		<Radius label="Seed radius (mm)" varmax="20.0" varmin="1.0" vartype="float">2.0</Radius>
+		<Curvature label="Curvature weight" varmax="10.0" varmin="0.1" vartype="float">1.0</Curvature>
+		<Propagation label="Propagation weight" varmax="10.0" varmin="0.1" vartype="float">1.0</Propagation>
+		<Advection label="Advection weight" varmax="10.0" varmin="0.1" vartype="float">1.0</Advection>
+		<RMS label="RMS convergence threshold" varmax="1.0" varmin="1e-6" vartype="float">0.01</RMS>
+		<Iter label="Number of iterations" varmax="5000" varmin="100" vartype="int">1000</Iter>
+		<Sigma label="Gaussian kernel sigma" varmax="10.0" varmin="0.1" vartype="float">1.0</Sigma>
+		<Factor label="Threshold factor" varmax="6.0" varmin="1.0" vartype="float">2.0</Factor>
+	</ActiveContour>
+	<RemoveNeckSlices>
+		<ExtentFactor varmax="2.0" varmin="1.5" vartype="float">1.8</ExtentFactor>
+		<Prefix vartype="str">crop</Prefix>
+		<Suffix vartype="str"/>
+	</RemoveNeckSlices>
 	<MeanImageFilter>
 		<Fast vartype="bool">False</Fast>
 		<KernelRadius varmax="10" varmin="2" vartype="int">3</KernelRadius>
-		<Prefix vartype="str">f_mean_</Prefix>
+		<Prefix vartype="str">f_mean</Prefix>
 		<Suffix vartype="str"/>
 	</MeanImageFilter>
 	<MedianImageFilter>
 		<KernelRadius varmax="10" varmin="2" vartype="int">3</KernelRadius>
-		<Prefix vartype="str">f_median_</Prefix>
+		<Prefix vartype="str">f_median</Prefix>
 		<Suffix vartype="str"/>
 	</MedianImageFilter>
 	<GaussianImageFilter>
 		<Algorithm vartype="lstr">Convolve|Recursive</Algorithm>
 		<Fwhm varmax="20" varmin="0.1" vartype="float">4.0</Fwhm>
-		<Prefix vartype="str">f_gaussian_</Prefix>
+		<Prefix vartype="str">f_gaussian</Prefix>
 		<Suffix vartype="str"/>
 	</GaussianImageFilter>
 	<GradientMagnitudeImageFilter>
 		<Algorithm vartype="lstr">Discrete|Recursive</Algorithm>
 		<Sigma varmax="20" varmin="0.1" vartype="float">1.0</Sigma>
-		<Prefix vartype="str">f_gradient_</Prefix>
+		<Prefix vartype="str">f_gradient</Prefix>
 		<Suffix vartype="str"/>
 	</GradientMagnitudeImageFilter>
 	<LaplacianImageFilter>
 		<Algorithm vartype="lstr">Discrete|Recursive</Algorithm>
 		<Sigma varmax="20" varmin="0.1" vartype="float">1.0</Sigma>
-		<Prefix vartype="str">f_laplacian_</Prefix>
+		<Prefix vartype="str">f_laplacian</Prefix>
 		<Suffix vartype="str"/>
 	</LaplacianImageFilter>
 	<AnisotropicDiffusionImageFilter>
-		<Algorithm vartype="lstr">Gradient|Curvature|Flow</Algorithm>
-		<GradientTimeStep varmax="1.0" varmin="0.01" vartype="float">0.125</GradientTimeStep>
-		<CurvatureTimeStep varmax="1.0" varmin="0.01" vartype="float">0.0625</CurvatureTimeStep>
-		<FlowTimeStep varmax="1.0" varmin="0.01" vartype="float">0.05</FlowTimeStep>
-		<Conductance varmax="10" varmin="0.1" vartype="float">2</Conductance>
-		<NumberOfIterations varmax="20" varmin="1" vartype="int">5</NumberOfIterations>
-		<Prefix vartype="str">f_aniso_</Prefix>
+		<Algorithm vartype="lstr">Gradient|Curvature|MinMaxCurvature|Flow</Algorithm>
+		<GradientTimeStep varmax="1.0" varmin="0.001" decimals="4" vartype="float">0.0625</GradientTimeStep>
+		<CurvatureTimeStep varmax="1.0" varmin="0.001" decimals="4" vartype="float">0.0625</CurvatureTimeStep>
+		<FlowTimeStep varmax="1.0" varmin="0.001" decimals="4" vartype="float">0.0625</FlowTimeStep>
+		<MinMaxCurvatureTimeStep varmax="1.0" varmin="0.001" decimals="4" vartype="float">0.05</MinMaxCurvatureTimeStep>
+		<Conductance varmax="5.0" varmin="1.0" decimals="1" vartype="float">1.0</Conductance>
+		<Radius varmax="10" varmin="1" vartype="int">2</Radius>
+		<NumberOfIterations varmax="20" varmin="1" vartype="int">2</NumberOfIterations>
+		<Prefix vartype="str">f_aniso</Prefix>
 		<Suffix vartype="str"/>
 	</AnisotropicDiffusionImageFilter>
-	<NonLocalMeansImageFilter>
-		<Shrink varmax="3" varmin="1" vartype="int">1</Shrink>
-		<PatchRadius varmax="3" varmin="1" vartype="int">1</PatchRadius>
-		<SearchRadius varmax="3" varmin="1" vartype="int">3</SearchRadius>
-		<NoiseModel vartype="lstr">Rician|Gaussian</NoiseModel>
-		<Prefix vartype="str">f_nlmeans_</Prefix>
+	<TextureImageFilter>
+		<KernelRadius varmax="5" varmin="1" vartype="int">2</KernelRadius>
+		<VoxelBatch label="Number of voxels in one batch" varmax="16384" varmin="2048" vartype="int">1024</VoxelBatch>
+	</TextureImageFilter>
+	<RegressionIntensityMatchingImageFilter>
+		<Order label="Polynomial Order of fit" varmax="3" varmin="1" vartype="int">1</Order>
+		<Truncate vartype="bool">False</Truncate>
+		<ExcludeBackground vartype="bool">True</ExcludeBackground>
+		<Prefix vartype="str">match</Prefix>
 		<Suffix vartype="str"/>
-	</NonLocalMeansImageFilter>
-	<HistogramMatchingImageFilter>
+	</RegressionIntensityMatchingImageFilter>
+	<HistogramIntensityMatchingImageFilter>
 		<ExcludeBackground vartype="bool">True</ExcludeBackground>
 		<NumberOfMatchPoints varmax="50" varmin="2" vartype="int">5</NumberOfMatchPoints>
 		<NumberOfHistogramBins varmax="512" varmin="32" vartype="int">200</NumberOfHistogramBins>
-		<Prefix vartype="str">histmatch_</Prefix>
+		<Prefix vartype="str">match</Prefix>
 		<Suffix vartype="str"/>
-	</HistogramMatchingImageFilter>
+	</HistogramIntensityMatchingImageFilter>
+	<IntensityNormalizationImageFilter>
+		<Method vartype="lstr">zscore|rescale [0, 1]</Method>
+		<Truncate label="Truncate centile" varmax="10" varmin="0" vartype="int">0</Truncate>
+		<Prefix vartype="str">norm</Prefix>
+		<Suffix vartype="str"/>
+	</IntensityNormalizationImageFilter>
 	<BiasFieldCorrectionImageFilter>
 		<UseMask vartype="bool">True</UseMask>
 		<ShrinkFactor varmax="4" varmin="1" vartype="int">3</ShrinkFactor>
@@ -65,107 +92,288 @@
 		<ConvergenceThreshold varmax="0.01" varmin="1e-6" vartype="float">0.001</ConvergenceThreshold>
 		<WienerFilterNoise varmax="0.1" varmin="1e-6" vartype="float">0.01</WienerFilterNoise>
 		<BiasFieldFullWidthAtHalfMaximum varmax="1.0" varmin="1e-6" vartype="float">0.15</BiasFieldFullWidthAtHalfMaximum>
-		<Prefix label="Bias field corrected prefix" vartype="str">f_biascorr_</Prefix>
+		<Prefix label="Bias field corrected prefix" vartype="str">f_bias</Prefix>
 		<Suffix label="Bias field corrected suffix" vartype="str"/>
-		<BiasFieldPrefix label="Bias field map prefix" vartype="str">biasfield_</BiasFieldPrefix>
+		<BiasFieldPrefix label="Bias field map prefix" vartype="str">biasfield</BiasFieldPrefix>
 		<BiasFieldSuffix label="Bias field map suffix" vartype="str"/>
 	</BiasFieldCorrectionImageFilter>
 	<SkullStripping>
-		<Model label="Deep learning model" vartype="lstr">DeepBrain U-net|ANTs U-net</Model>
+		<Model label="Pre-trained U-net model" vartype="lstr">ANTs U-net|DeepBrain U-net</Model>
+		<TrainingData label="Training modality" vartype="lstr">T1|T2|T2*|FLAIR|EPI|FA|TOF</TrainingData>
 		<Mask label="Save brain mask" vartype="bool">True</Mask>
 		<ROIMask label="Save brain mask as ROI" vartype="bool">True</ROIMask>
-		<MaskPrefix label="Brain mask prefix" vartype="str">brainmask_</MaskPrefix>
-		<Probability label="Save brain probability" vartype="bool">True</Probability>
-		<ProbabilityPrefix label="Brain probability prefix" vartype="str">mask_</ProbabilityPrefix>
-		<Prefix vartype="str">brain_</Prefix>
-		<Suffix vartype="str"/>
+		<MaskPrefix label="Brain mask prefix" vartype="str">mask</MaskPrefix>
+		<MaskSuffix label="Brain mask suffix" vartype="str"/>
+		<ProbMask label="Save brain probability" vartype="bool">True</ProbMask>
+		<ProbPrefix label="Brain probability prefix" vartype="str">mask_prob</ProbPrefix>
+		<ProbSuffix label="Brain probability suffix" vartype="str"/>
+		<Prefix label="Skull stripped prefix" vartype="str">brain</Prefix>
+		<Suffix label="Skull stripped suffix" vartype="str"/>
 	</SkullStripping>
-	<UnsupervisedKMeans>
-		<NonLocalMeansFilter vartype="bool">True</NonLocalMeansFilter>
+	<KMeansClustering>
+		<AnisotropicDiffusionFilter vartype="bool">True</AnisotropicDiffusionFilter>
 		<BiasFieldCorrection vartype="bool">True</BiasFieldCorrection>
-		<AutoMask label="Automatic mask" vartype="bool">True</AutoMask>
-		<Prefix vartype="str">kmeans_</Prefix>
-		<Suffix vartype="str"/>
-	</UnsupervisedKMeans>
-	<SupervisedKMeans>
-		<NonLocalMeansFilter vartype="bool">True</NonLocalMeansFilter>
+		<NumberOfClasses varmax="10" varmin="2" vartype="int">5</NumberOfClasses>
+		<Prefix label="Labeled volume prefix" vartype="str">kmeans</Prefix>
+		<Suffix label="Labeled volume prefix" vartype="str"/>
+		<ClassRoi label="Save classes as ROI" vartype="bool">True</ClassRoi>
+		<RoiPrefix label="Class ROI suffix" vartype="str"/>
+		<RoiSuffix label="Class ROI prefix" vartype="str">clust*</RoiSuffix>
+	</KMeansClustering>
+	<KMeansSegmentation>
+		<AnisotropicDiffusionFilter vartype="bool">True</AnisotropicDiffusionFilter>
 		<BiasFieldCorrection vartype="bool">True</BiasFieldCorrection>
-		<NumberOfClasses varmax="10" varmin="1" vartype="int">3</NumberOfClasses>
+		<NumberOfClasses varmax="10" varmin="2" vartype="int">3</NumberOfClasses>
 		<NumberOfIterations varmax="30" varmin="2" vartype="int">3</NumberOfIterations>
 		<Smoothing label="MRF smoothing factor" varmax="0.1" varmin="1.0" vartype="float">0.3</Smoothing>
 		<Radius label="MRF neighborhood (radius)" varmax="3" varmin="1" vartype="int">1</Radius>
-		<SegPrefix label="Labeled volume prefix" vartype="str">seg_</SegPrefix>
+		<SegPrefix label="Labeled volume prefix" vartype="str">labels</SegPrefix>
 		<SegSuffix label="Labeled volume suffix" vartype="str"/>
-		<Prefix label="Class volume prefix" vartype="str">class*_</Prefix>
+		<Prefix label="Class volume prefix" vartype="str">class*</Prefix>
 		<Suffix label="Class volume suffix" vartype="str"/>
-	</SupervisedKMeans>
+	</KMeansSegmentation>
 	<PriorBasedSegmentation>
-		<NonLocalMeansFilter vartype="bool">True</NonLocalMeansFilter>
+		<AnisotropicDiffusionFilter vartype="bool">True</AnisotropicDiffusionFilter>
 		<BiasFieldCorrection vartype="bool">True</BiasFieldCorrection>
-		<Algorithm vartype="lstr">Finite mixture modeling|Deep Atropos</Algorithm>
 		<NumberOfIterations varmax="25" varmin="5" vartype="int">10</NumberOfIterations>
-		<NumberOfPriors vartype="lstr">3|6</NumberOfPriors>
-		<PriorWeight varmax="1.0" varmin="0.0" vartype="float">0.5</PriorWeight>
-		<Smoothing label="MRF smoothing factor" varmax="0.1" varmin="1.0" vartype="float">0.3</Smoothing>
+		<Smoothing label="MRF smoothing factor" varmax="1.0" varmin="0.1" vartype="float">0.2</Smoothing>
 		<Radius label="MRF neighborhood (radius)" varmax="3" varmin="1" vartype="int">1</Radius>
 		<Convergence label="Convergence threshold" vartype="lstr">No (All iterations)|1e-4|1e-5|1e-6|1e-7</Convergence>
-		<T1 label="T1 template" vartype="vol">icbm152_template_T1.xvol</T1>
-		<Mask label="Mask template" vartype="vol">icbm152_template_mask_brain.xvol</Mask>
-		<CGMPrior label="Cortical gray matter prior" vartype="vol">icbm152_template_cortical_gm.xvol</CGMPrior>
-		<SCGMPrior label="Sub-cortical gray matter prior" vartype="vol">icbm152_template_subcortical_gm.xvol</SCGMPrior>
-		<WMPrior label="White matter prior" vartype="vol">icbm152_template_wm.xvol</WMPrior>
-		<CSFPrior label="Cerebro-spinal fluid prior" vartype="vol">icbm152_template_csf.xvol</CSFPrior>
-		<BrainstemPrior label="Cerebro-spinal fluid prior" vartype="vol">icbm152_template_brainstem.xvol</BrainstemPrior>
-		<CerebellumPrior label="Cerebro-spinal fluid prior" vartype="vol">icbm152_template_cerebellum.xvol</CerebellumPrior>
-		<SegPrefix label="Labeled volume prefix" vartype="str">seg_</SegPrefix>
+		<Priors vartype="lstr">ICBM152|ATROPOS|CUSTOM|KMEANS</Priors>
+		<NumberOfPriors vartype="lstr">4|3|6</NumberOfPriors>
+		<PriorWeight varmax="0.5" varmin="0.0" decimals="2" vartype="float">0.25</PriorWeight>
+		<PriorSmoothing label="Prior FWHM smoothing" varmax="12.0" varmin="0.0" vartype="float">0.0</PriorSmoothing>
+		<PriorsRegistration vartype="lstr">Affine|Diffeomorphic</PriorsRegistration>
+		<PriorsRegistrationEstimation vartype="lstr">FOV center alignment|Center of mass alignment|No estimation</PriorsRegistrationEstimation>
+		<PriorMaskRadius label="Kernel radius dilatation of prior mask" varmax="10" varmin="0" vartype="int">4</PriorMaskRadius>
+		<BrainMaskRadius label="Kernel radius morphology for brain extraction" varmax="10" varmin="0" vartype="int">2</BrainMaskRadius>
+		<T1 label="T1 template" vartype="vol"/>
+		<Mask label="Mask template" vartype="vol"/>
+		<GMPrior label="Grey matter prior" vartype="vol"/>
+		<CGMPrior label="Cortical grey matter prior" vartype="vol"/>
+		<SCGMPrior label="Sub-cortical grey matter prior" vartype="vol"/>
+		<WMPrior label="White matter prior" vartype="vol"/>
+		<CSFPrior label="Cerebro-spinal fluid prior" vartype="vol"/>
+		<BrainstemPrior label="Brainstem prior" vartype="vol"/>
+		<CerebellumPrior label="Cerebellum prior" vartype="vol"/>
+		<SkullStrip label="Skull strip" vartype="bool">True</SkullStrip>
+		<SegSGM label="Labelled volume excluding subcortical grey matter" vartype="bool">True</SegSGM>
+		<SegPrefix label="Labeled volume prefix" vartype="str">labels</SegPrefix>
 		<SegSuffix label="Labeled volume suffix" vartype="str"/>
 	</PriorBasedSegmentation>
 	<CorticalThickness>
 		<NumberOfIterations varmax="100" varmin="10" vartype="int">50</NumberOfIterations>
-		<Convergence label="Convergence threshold" vartype="lstr">No (All iterations)|1e-4|1e-5|1e-6|1e-7</Convergence>
-		<GradientStep varmax="0.1" varmin="0.01" vartype="float">0.025</GradientStep>
-		<SmoothingVariance varmax="2.0" varmin="0.5" vartype="float">1.0</SmoothingVariance>
-		<Prefix label="Prefix" vartype="str">thickness_</Prefix>
+		<GradientStep varmax="0.1" varmin="0.01" decimals="3" vartype="float">0.025</GradientStep>
+		<GradientSmoothing varmax="2.0" varmin="0.5" decimals="1" vartype="float">1.0</GradientSmoothing>
+		<Prefix label="Prefix" vartype="str">thickness</Prefix>
 		<Suffix label="Suffix" vartype="str"/>
 	</CorticalThickness>
+	<RegistrationBasedSegmentation>
+		<RegistrationSequence label="Sequence used for registration" vartype="lstr">T1|GM|WM|CSF</RegistrationSequence>
+		<GlobalStageTransform1 label="Global stage transform" vartype="lstr">AntsAffine|AntsFastAffine</GlobalStageTransform1>
+		<GlobalStageTransform2 label="Global stage transform" vartype="lstr">AntsAffine|AntsFastAffine|AntsSplineDiffeomorphic|AntsFastSplineDiffeomorphic|AntsDiffeomorphic|AntsFastDiffeomorphic</GlobalStageTransform2>
+		<LocalStage vartype="bool">False</LocalStage>
+		<LocalMargin varmax="10" varmin="0" vartype="int">5</LocalMargin>
+		<LocalStageTransform vartype="lstr">AntsDiffeomorphic|AntsFastDiffeomorphic|AntsSplineDiffeomorphic|AntsFastSplineDiffeomorphic</LocalStageTransform>
+		<SamplingRate varmax="1.0" varmin="0.1" vartype="float">0.5</SamplingRate>
+		<StructureTissue vartype="lstr">GM|WM|CSF|GM+WM|CSF+GM</StructureTissue>
+		<TissueCorrectionAlgorithm vartype="lstr">No|Masking|NearestNeighborTransform</TissueCorrectionAlgorithm>
+		<PMAPCorrection label="Probability map correction" vartype="lstr">p = p(STRUCT) ^ (0.5 / p(TISSUE))|p = p(STRUCT) ^ (1 + log(0.5 / p(TISSUE)))</PMAPCorrection>
+	</RegistrationBasedSegmentation>
+	<UnetTumorSegmentation>
+		<SaveROI label="Save ROI" vartype="bool">False</SaveROI>
+		<Prefix label="Label segmentation prefix" vartype="str">tumor_labels</Prefix>
+		<Suffix label="Label segmentation suffix" vartype="str"/>
+	</UnetTumorSegmentation>
+	<UnetHippocampusSegmentation>
+		<SaveROI label="Save ROI" vartype="bool">False</SaveROI>
+		<Prefix label="Label segmentation prefix" vartype="str">hippocampus_labels</Prefix>
+		<Suffix label="Label segmentation suffix" vartype="str"/>
+	</UnetHippocampusSegmentation>
+	<UnetMedialTemporalSegmentation>
+		<UseT2 label="Use T2" vartype="bool">False</UseT2>
+		<Model label="Pre-trained U-net model" vartype="lstr">yassa|wip</Model>
+		<SaveProbability label="Save probability maps" vartype="bool">True</SaveProbability>
+		<SaveROI label="Save ROI" vartype="bool">False</SaveROI>
+		<Prefix label="Label segmentation prefix" vartype="str">temporal_labels</Prefix>
+		<Suffix label="Label segmentation suffix" vartype="str"/>
+	</UnetMedialTemporalSegmentation>
+	<UnetLesionSegmentation>
+		<SaveROI label="Save ROI" vartype="bool">False</SaveROI>
+		<Prefix label="Probability map prefix" vartype="str">lesion_mask</Prefix>
+		<Suffix label="Probability map suffix" vartype="str"/>
+	</UnetLesionSegmentation>
+	<UnetWMHSegmentation>
+		<UseT1 label="Use T1" vartype="bool">False</UseT1>
+		<Model label="Pre-trained U-net model" vartype="lstr">sysu|hypermapp3r|antsxnet</Model>
+		<SaveROI label="Save ROI" vartype="bool">False</SaveROI>
+		<Prefix label="Probability map prefix" vartype="str">wmh_mask</Prefix>
+		<Suffix label="Probability map suffix" vartype="str"/>
+	</UnetWMHSegmentation>
+	<UnetTOFSegmentation>
+		<SaveROI label="Save ROI" vartype="bool">False</SaveROI>
+		<Prefix label="Probability map prefix" vartype="str">vessels_mask</Prefix>
+		<Suffix label="Probability map suffix" vartype="str"/>
+	</UnetTOFSegmentation>
+	<UnetTissueSegmentation>
+		<SaveProbability label="Save probability maps" vartype="bool">True</SaveProbability>
+		<SaveROI label="Save ROI" vartype="bool">False</SaveROI>
+		<Prefix label="Label segmentation prefix" vartype="str">tissue_labels</Prefix>
+		<Suffix label="Label segmentation suffix" vartype="str"/>
+	</UnetTissueSegmentation>
 	<Registration>
 		<FixedMask label="Fixed volume mask" vartype="bool">True</FixedMask>
-		<Estimation vartype="lstr">Translations|Rotations and translations|Nothing</Estimation>
+		<Estimation vartype="lstr">FOV center alignment|Center of mass alignment|No estimation</Estimation>
 		<ManualRegistration label="Manual registration/Registration area" vartype="bool">False</ManualRegistration>
-		<Rigid vartype="lstr">Rigid|Translation|FastRigid|DenseRigid|AntsRigid|AntsFastRigid|BoldRigid</Rigid>
-		<Affine vartype="lstr">Affine|Similarity|FastAffine|DenseAffine|AntsAffine|AntsFastAffine|RigidBoldAffine</Affine>
-		<DisplacementField vartype="lstr">Elastic|Diffeomorphic|DenseDiffeomorphic|AntsSplineDiffeomorphic|AntsDiffeomorphic|AntsFastSplineDiffeomorphic|AntsFastDiffeomorphic|AntsRigidSplineDiffeomorphic|AntsRigidDiffeomorphic|AntsFastRigidSplineDiffeomorphic|AntsFastRigidDiffeomorphic|AntsSplineDiffeomorphicOnly|AntsDiffeomorphicOnly|AntsFastSplineDiffeomorphicOnly|AntsFastDiffeomorphicOnly|BoldDiffeomorphic</DisplacementField>
-		<CustomParameters vartype="bool">False</CustomParameters>
-		<Metric vartype="lstr">IM|CC|MS|DEMONS</Metric>
-		<GradientStep varmax="2.0" varmin="0.1" vartype="float">0.25</GradientStep>
-		<FlowSigma varmax="5" varmin="1" vartype="int">3</FlowSigma>
-		<LowResolutionIterations varmax="500" varmin="10" vartype="int">40</LowResolutionIterations>
-		<MediumResolutionIterations varmax="200" varmin="10" vartype="int">20</MediumResolutionIterations>
-		<HighResolutionIterations varmax="100" varmin="0" vartype="int">0</HighResolutionIterations>
+		<Batch vartype="lstr">Rigid|Affine|DisplacementField</Batch>
+		<Rigid vartype="lstr">AntsRigid|AntsFastRigid</Rigid>
+		<Affine vartype="lstr">AntsAffine|AntsFastAffine</Affine>
+		<DisplacementField vartype="lstr">AntsSplineDiffeomorphic|AntsDiffeomorphic|AntsFastSplineDiffeomorphic|AntsFastDiffeomorphic|AntsRigidSplineDiffeomorphic|AntsRigidDiffeomorphic|AntsFastRigidSplineDiffeomorphic|AntsFastRigidDiffeomorphic|AntsSplineDiffeomorphicOnly|AntsDiffeomorphicOnly|AntsFastSplineDiffeomorphicOnly|AntsFastDiffeomorphicOnly</DisplacementField>
+		<Transform vartype="lstr">AntsAffine|AntsFastAffine|AntsSplineDiffeomorphic|AntsDiffeomorphic|AntsFastSplineDiffeomorphic|AntsFastDiffeomorphic</Transform>
+		<LinearMetric vartype="lstr">IM|CC|MS</LinearMetric>
+		<NonLinearMetric vartype="lstr">IM|CC|MS|DEMONS</NonLinearMetric>
+		<SamplingRate varmax="1.0" varmin="0.1" vartype="float">0.5</SamplingRate>
+		<Inverse label="Save inverse displacement field" vartype="bool">False</Inverse>
 		<CheckRegistration vartype="bool">True</CheckRegistration>
-		<Prefix label="Displacement field prefix" vartype="str">field_</Prefix>
-		<Suffix label="Displacement field suffix" vartype="str"/>
 		<Resample vartype="bool">True</Resample>
 	</Registration>
+	<T1Normalization>
+		<Transform vartype="lstr">AntsDiffeomorphic|AntsAffine|AntsFastAffine|AntsSplineDiffeomorphic|AntsFastSplineDiffeomorphic|AntsFastDiffeomorphic</Transform>
+		<LinearMetric vartype="lstr">IM|CC|MS</LinearMetric>
+		<NonLinearMetric vartype="lstr">IM|CC|MS|DEMONS</NonLinearMetric>
+		<SamplingRate varmax="1.0" varmin="0.1" vartype="float">0.5</SamplingRate>
+	</T1Normalization>
+	<T2Normalization>
+		<Transform vartype="lstr">AntsDiffeomorphic|AntsAffine|AntsFastAffine|AntsSplineDiffeomorphic|AntsFastSplineDiffeomorphic|AntsFastDiffeomorphic</Transform>
+		<LinearMetric vartype="lstr">IM|CC|MS</LinearMetric>
+		<NonLinearMetric vartype="lstr">IM|CC|MS|DEMONS</NonLinearMetric>
+		<SamplingRate varmax="1.0" varmin="0.1" vartype="float">0.5</SamplingRate>
+	</T2Normalization>
+	<PDNormalization>
+		<Transform vartype="lstr">AntsDiffeomorphic|AntsAffine|AntsFastAffine|AntsSplineDiffeomorphic|AntsFastSplineDiffeomorphic|AntsFastDiffeomorphic</Transform>
+		<LinearMetric vartype="lstr">IM|CC|MS</LinearMetric>
+		<NonLinearMetric vartype="lstr">IM|CC|MS|DEMONS</NonLinearMetric>
+		<SamplingRate varmax="1.0" varmin="0.1" vartype="float">0.5</SamplingRate>
+	</PDNormalization>
+	<PTNormalization>
+		<Transform vartype="lstr">AntsFastSplineDiffeomorphic|AntsAffine|AntsFastAffine|AntsSplineDiffeomorphic|AntsDiffeomorphic|AntsFastDiffeomorphic</Transform>
+		<LinearMetric vartype="lstr">IM|CC|MS</LinearMetric>
+		<NonLinearMetric vartype="lstr">IM|CC|MS|DEMONS</NonLinearMetric>
+		<SamplingRate varmax="1.0" varmin="0.1" vartype="float">0.5</SamplingRate>
+	</PTNormalization>
+	<NMNormalization>
+		<Transform vartype="lstr">AntsFastSplineDiffeomorphic|AntsAffine|AntsFastAffine|AntsSplineDiffeomorphic|AntsDiffeomorphic|AntsFastDiffeomorphic</Transform>
+		<LinearMetric vartype="lstr">IM|CC|MS</LinearMetric>
+		<NonLinearMetric vartype="lstr">IM|CC|MS|DEMONS</NonLinearMetric>
+		<SamplingRate varmax="1.0" varmin="0.1" vartype="float">0.5</SamplingRate>
+	</NMNormalization>
+	<GMNormalization>
+		<Transform vartype="lstr">AntsDiffeomorphic|AntsAffine|AntsFastAffine|AntsSplineDiffeomorphic|AntsFastSplineDiffeomorphic|AntsFastDiffeomorphic</Transform>
+		<LinearMetric vartype="lstr">MS|IM|CC</LinearMetric>
+		<NonLinearMetric vartype="lstr">MS|IM|CC|DEMONS</NonLinearMetric>
+		<SamplingRate varmax="1.0" varmin="0.1" vartype="float">0.5</SamplingRate>
+	</GMNormalization>
+	<WMNormalization>
+		<Transform vartype="lstr">AntsDiffeomorphic|AntsAffine|AntsFastAffine|AntsSplineDiffeomorphic|AntsFastSplineDiffeomorphic|AntsFastDiffeomorphic</Transform>
+		<LinearMetric vartype="lstr">MS|IM|CC</LinearMetric>
+		<NonLinearMetric vartype="lstr">MS|IM|CC|DEMONS</NonLinearMetric>
+		<SamplingRate varmax="1.0" varmin="0.1" vartype="float">0.5</SamplingRate>
+	</WMNormalization>
+	<CSFNormalization>
+		<Transform vartype="lstr">AntsDiffeomorphic|AntsAffine|AntsFastAffine|AntsSplineDiffeomorphic|AntsFastSplineDiffeomorphic|AntsFastDiffeomorphic</Transform>
+		<LinearMetric vartype="lstr">MS|IM|CC</LinearMetric>
+		<NonLinearMetric vartype="lstr">MS|IM|CC|DEMONS</NonLinearMetric>
+		<SamplingRate varmax="1.0" varmin="0.1" vartype="float">0.5</SamplingRate>
+	</CSFNormalization>
+	<CTNormalization>
+		<Transform vartype="lstr">AntsDiffeomorphic|AntsAffine|AntsFastAffine|AntsSplineDiffeomorphic|AntsFastSplineDiffeomorphic|AntsFastDiffeomorphic</Transform>
+		<LinearMetric vartype="lstr">IM|CC|MS</LinearMetric>
+		<NonLinearMetric vartype="lstr">IM|CC|MS|DEMONS</NonLinearMetric>
+		<SamplingRate varmax="1.0" varmin="0.1" vartype="float">0.5</SamplingRate>
+	</CTNormalization>
+	<EddyCurrent>
+		<Transform vartype="lstr">AntsAffine|AntsFastSplineDiffeomorphicOnly|AntsSplineDiffeomorphicOnly|AntsDiffeomorphicOnly|AntsFastDiffeomorphicOnly</Transform>
+		<LinearMetric vartype="lstr">IM|CC|MS</LinearMetric>
+		<NonLinearMetric vartype="lstr">IM|CC|MS|DEMONS</NonLinearMetric>
+		<SamplingRate varmax="1.0" varmin="0.1" vartype="float">0.5</SamplingRate>
+		<Prefix vartype="str">eddy</Prefix>
+		<Suffix vartype="str"/>
+	</EddyCurrent>
 	<Realignment>
 		<Reference vartype="lstr">First|Middle|Mean|Median</Reference>
+		<Metric vartype="lstr">MS|IM|CC</Metric>
+		<SamplingRate varmax="1.0" varmin="0.1" vartype="float">0.5</SamplingRate>
+		<Mean label="Compute mean volume" vartype="bool">True</Mean>
 	</Realignment>
 	<Resample>
 		<Dialog vartype="bool">False</Dialog>
 		<Interpolator vartype="lstr">Linear|NearestNeighbor|Bspline|Gaussian|HammingSinc|CosineSinc|WelchSinc|LanczosSinc|BlackmanSinc</Interpolator>
-		<Prefix vartype="str">r_</Prefix>
+		<Prefix vartype="str">r</Prefix>
 		<Suffix vartype="str"/>
+		<NormalizationPrefix vartype="str">icbm152</NormalizationPrefix>
+		<NormalizationSuffix vartype="str"/>
 	</Resample>
 	<DisplacementFieldJacobianDeterminant>
-		<Prefix vartype="str">jac_</Prefix>
+		<Prefix vartype="str">jac</Prefix>
 		<Suffix vartype="str"/>
 	</DisplacementFieldJacobianDeterminant>
+	<Conjunction>
+		<Method vartype="lstr">Fisher|Mudholkar|Stouffer|Tippett|Worsley</Method>
+		<DefaultFileName vartype="str">conjunction</DefaultFileName>
+	</Conjunction>
+	<TimeSeriesPreprocessing>
+		<TissueConfounds vartype="bool">False</TissueConfounds>
+		<TissueMap label="Tissue label map" vartype="vol"/>
+		<Smoothing label="Gaussian smoothing fwhm (mm)" varmax="12.0" decimals="1" varmin="0.0" vartype="float">0.0</Smoothing>
+		<Detrend vartype="bool">True</Detrend>
+		<Std label="Standardize" vartype="bool">False</Std>
+		<StdConfounds label="Standardize confounders" vartype="bool">True</StdConfounds>
+		<HighConfounds label="High variance confounds" vartype="bool">False</HighConfounds>
+		<LowPass label="Low pass filter cutoff" varmax="1.0" varmin="0.0" decimals="3" vartype="float">0.0</LowPass>
+		<HighPass label="High pass filter cutoff" varmax="1.0" varmin="0.0" decimals="4" vartype="float">0.0</HighPass>
+		<DCM label="Get TR from dicom file" vartype="dcm"/>
+		<TR label="TR (ms)" varmax="20000" varmin="1" vartype="int">2000</TR>
+		<Prefix vartype="str">flt</Prefix>
+		<Suffix vartype="str"/>
+	</TimeSeriesPreprocessing>
+	<TimeSeriesFastICA>
+		<NumberOfComponents varmax="30" varmin="1" vartype="int">10</NumberOfComponents>
+		<Threshold label="High variance confounds" varmax="1.0" varmin="0.0" decimals="4" vartype="float">0.8</Threshold>
+		<Preprocessing vartype="bool">False</Preprocessing>
+	</TimeSeriesFastICA>
+	<TimeSeriesGroupICA>
+		<NumberOfComponents varmax="30" varmin="1" vartype="int">20</NumberOfComponents>
+		<Algorithm vartype="lstr">Canonical ICA|Dict Learning</Algorithm>
+	</TimeSeriesGroupICA>
+	<TimeSeriesSeedToVoxel>
+		<Preprocessing vartype="bool">False</Preprocessing>
+		<Seed label="Seed ROI" vartype="roi"/>
+	</TimeSeriesSeedToVoxel>
+	<TimeSeriesConnectivityMatrix>
+		<Preprocessing vartype="bool">False</Preprocessing>
+		<Label label="Label volume" vartype="vol"/>
+	</TimeSeriesConnectivityMatrix>
+	<Perfusion>
+		<DCM label="Get TR/TE from dicom file" vartype="dcm"/>
+		<TR label="TR (ms)" varmax="10000.0" varmin="1.0" vartype="float">2000.0</TR>
+		<TE label="TE (ms)" varmax="10000.0" varmin="1.0" vartype="float">20.0</TE>
+		<Masking label="Masking algorithm" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximumentropy|Kittler|Isodata|Moments</Masking>
+		<Baseline label="Baseline indices (first, last)" varmax="10" varmin="0" vartype="lint">0 4</Baseline>
+		<VoxelCount label="Number of AIF voxels" varmax="100" varmin="10" vartype="int">10</VoxelCount>
+		<Dialog label="AIF dialog"  vartype="bool">True</Dialog>
+		<Smoothing vartype="bool">False</Smoothing>
+		<Recovery label="Signal recovery maps processing" vartype="bool">True</Recovery>
+		<DSC label="DSC maps processing" vartype="bool">True</DSC>
+		<Fitting label="Gamma variate fitting" vartype="bool">True</Fitting>
+		<Deconvolution vartype="bool">True</Deconvolution>
+		<Leakage label="Leakage" vartype="bool">False</Leakage>
+	</Perfusion>
 	<DiffusionPreprocessing>
 		<Mask vartype="bool">True</Mask>
 		<Algo label="Background thresholding algorithm (mask)" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximum Entropy|Kittler|Isodata|Moments</Algo>
 		<Size label="Morphological operator size (mask)" varmax="10" varmin="1" vartype="int">1</Size>
 		<Iter label="Number of morphological operator iterations (mask)"  varmax="10" varmin="1" vartype="int">2</Iter>
-		<GibbsSuppression vartype="bool">True</GibbsSuppression>
+		<GibbsSuppression label="Gibbs artefact correction" vartype="bool">True</GibbsSuppression>
 		<GibbsNeighbour varmax="10" varmin="1" vartype="int">3</GibbsNeighbour>
 		<Denoise label="Denoising algorithm" vartype="lstr">No|Local PCA|General function PCA|Marcenko-Pastur PCA|Non-local means|Self-Supervised Denoising|Adaptive soft coefficient matching</Denoise>
 		<NoiseEstimation label="Noise estimation algorithm" vartype="lstr">Local patches|Piesno</NoiseEstimation>
@@ -191,43 +399,104 @@
 	<DiffusionModel>
 		<Model label="Diffusion model" vartype="lstr">DTI|DKI|SHCSA|SHCSD|DSI|DSID</Model>
 		<Algo label="Background thresholding algorithm (mask)" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximumentropy|Kittler|Isodata|Moments</Algo>
-		<Size label="Morphological operator size (mask)" varmax="10" varmin="1" vartype="int">0</Size>
-		<Iter label="Number of morphological operator iterations (mask)" varmax="10" varmin="0" vartype="int">2</Iter>
-		<Save label="Save model" vartype="bool">False</Save>
+		<Size label="Morphological kernel size (mask)" varmax="10" varmin="1" vartype="int">1</Size>
+		<Iter label="Number of morphological operator iterations (mask)" varmax="10" varmin="1" vartype="int">2</Iter>
+		<Orientation label="Gadient orientation conversion" vartype="bool">True</Orientation>
+		<Save label="Save model" vartype="bool">True</Save>
 	</DiffusionModel>
 	<DTIModel>
 		<Method label="Fitting algorithm" vartype="lstr">WLS|OLS|NLLS|RT</Method>
-		<FA vartype="bool">False</FA>
-		<GA vartype="bool">False</GA>
-		<MD vartype="bool">False</MD>
-		<Linearity vartype="bool">False</Linearity>
-		<Planarity vartype="bool">False</Planarity>
-		<Sphericity vartype="bool">False</Sphericity>
+		<FA label="Fractional anisotropy" vartype="bool">False</FA>
+		<GA label="Geodesic anisotropy" vartype="bool">False</GA>
+		<MD label="Mean diffusivity" vartype="bool">False</MD>
 		<Trace vartype="bool">False</Trace>
-		<AD vartype="bool">False</AD>
-		<RD vartype="bool">False</RD>
-		<Isotropic vartype="bool">False</Isotropic>
-		<Deviatropic vartype="bool">False</Deviatropic>
+		<AD label="Axial diffusivity" vartype="bool">False</AD>
+		<RD label="Radial diffusivity" vartype="bool">False</RD>
 	</DTIModel>
 	<DKIModel>
 		<Method label="Fitting algorithm" vartype="lstr">WLS|OLS|CLS|CWLS</Method>
-		<FA vartype="bool">False</FA>
-		<KFA vartype="bool">False</KFA>
-		<GA vartype="bool">False</GA>
-		<MD vartype="bool">False</MD>
-		<Linearity vartype="bool">False</Linearity>
-		<Planarity vartype="bool">False</Planarity>
-		<Sphericity vartype="bool">False</Sphericity>
+		<FA label="Fractional anisotropy" vartype="bool">False</FA>
+		<GA label="Geodesic anisotropy" vartype="bool">False</GA>
+		<MD label="Mean diffusivity" vartype="bool">False</MD>
 		<Trace vartype="bool">False</Trace>
-		<AD vartype="bool">False</AD>
-		<RD vartype="bool">False</RD>
+		<AD label="Axial diffusivity" vartype="bool">False</AD>
+		<RD label="Radial diffusivity" vartype="bool">False</RD>
 	</DKIModel>
 	<SHCSAModel>
 		<Order varmax="10" varmin="2" vartype="int">6</Order>
-		<GFA vartype="bool">False</GFA>
+		<GFA label="Generalized fractional anisotropy" vartype="bool">False</GFA>
 	</SHCSAModel>
 	<SHCSDModel>
 		<Order varmax="10" varmin="2" vartype="int">6</Order>
-		<GFA vartype="bool">False</GFA>
+		<GFA label="Generalized fractional anisotropy" vartype="bool">False</GFA>
 	</SHCSDModel>
+	<DSIModel>
+		<GFA label="Generalized fractional anisotropy" vartype="bool">False</GFA>
+	</DSIModel>
+	<DSIDModel>
+		<GFA label="Generalized fractional anisotropy" vartype="bool">False</GFA>
+	</DSIDModel>
+	<Tracking>
+		<BundleName vartype="str">tractogram</BundleName>
+		<TrackingAlgorithm vartype="lstr">Deterministic|Probabilistic</TrackingAlgorithm>
+		<DeterministicAlgorithm vartype="lstr">Euler EuDX|Fiber orientation distribution|Parallel transport|Closest peak direction</DeterministicAlgorithm>
+		<ProbabilisticAlgorithm vartype="lstr">Bootstrap direction|Fiber orientation distribution</ProbabilisticAlgorithm>
+		<SeedMethod vartype="lstr">FA/GFA|ROI</SeedMethod>
+		<SeedFAThreshold label="FA/GFA Threshold seed" varmax="1.0" varmin="0.0" vartype="float">0.2</SeedFAThreshold>
+		<SeedROI label="Seed ROI" vartype="rois"/>
+		<SeedCount varmax="10" varmin="1" vartype="int">1</SeedCount>
+		<StepSize varmax="2.0" varmin="0.5" vartype="float">1.0</StepSize>
+		<MinimalLength varmax="200.0" varmin="0.0" vartype="float">0.0</MinimalLength>
+		<RelativePeakThreshold varmax="1.0" varmin="0.0" vartype="float">0.5</RelativePeakThreshold>
+		<MinSeparationAngle label="Minimum separation angle" varmax="90.0" varmin="0.0" vartype="float">30.0</MinSeparationAngle>
+		<NPeaks label="Maximum number of peaks" varmax="10" varmin="1" vartype="int">5</NPeaks>
+		<StoppingCriterion vartype="lstr">FA/GFA|ROI|GM/WM/CSF</StoppingCriterion>
+		<StoppingFAThreshold label="FA/GFA Threshold stopping criterion" varmax="1.0" varmin="0.0" vartype="float">0.1</StoppingFAThreshold>
+		<StoppingROI label="ROI stopping criterion" vartype="roi"/>
+		<StoppingGM label="Gray matter map stopping criterion" vartype="vol"/>
+		<StoppingWM label="White matter map stopping criterion" vartype="vol"/>
+		<StoppingCSF label="CSF map stopping criterion" vartype="vol"/>
+	</Tracking>
+	<BundleROISelection>
+		<BundleName vartype="str">tract</BundleName>
+		<MinimalLength varmax="200.0" varmin="0.0" vartype="float">0.0</MinimalLength>
+		<Mode label="Selection mode" vartype="lstr">Any|End|All</Mode>
+		<Inplace label="Replace current bundle" vartype="bool">True</Inplace>
+	</BundleROISelection>
+	<BundleAtlasSelection>
+		<MinimalLength varmax="200.0" varmin="0.0" vartype="float">50.0</MinimalLength>
+		<ClusteringThreshold label="Bundle clustering threshold" varmax="30.0" varmin="0.1" vartype="float">0.1</ClusteringThreshold>
+		<ReductionMetric vartype="lstr">mdf, average pointwise euclidean distance|mam, mean average minimum distance</ReductionMetric>
+		<ReductionThreshold varmax="30.0" varmin="0.0" vartype="float">25.0</ReductionThreshold>
+		<PruningMetric vartype="lstr">mdf, average pointwise euclidean distance|mam, mean average minimum distance</PruningMetric>
+		<PruningThreshold varmax="30.0" varmin="0.0" vartype="float">12.0</PruningThreshold>
+		<Refine vartype="bool">True</Refine>
+		<RefineReductionThreshold varmax="30.0" varmin="0.0" vartype="float">15.0</RefineReductionThreshold>
+		<RefinePruningThreshold varmax="30.0" varmin="0.0" vartype="float">6.0</RefinePruningThreshold>
+	</BundleAtlasSelection>
+	<BundleToROI>
+		<ThresholdType vartype="str">Absolute|Percentile</ThresholdType>
+		<Absolute label="Absolute streamline count per voxel" varmax="10000" varmin="1" vartype="int">100</Absolute>
+		<Percentile label="Percentile of streamline count per voxel distribution" varmax="100" varmin="1" vartype="int">95</Percentile>
+	</BundleToROI>
+	<BundleFiltering>
+		<BundleName vartype="str">tract</BundleName>
+		<Length label="Minimal streamline length" varmax="300.0" varmin="1.0" vartype="float">20.0</Length>
+		<MaximumDistance label="Maximum MDF distance (mm)" varmax="20" varmin="0.0" vartype="float">5.0</MaximumDistance>
+		<Threshold label="Cluster confidence threshold" varmax="500.0" varmin="1.0" vartype="float">1.0</Threshold>
+		<Power varmax="3" varmin="1" vartype="int">1</Power>
+		<Subsampling label="Streamline sampling (number of points)" varmax="30" varmin="10" vartype="int">12</Subsampling>
+		<Inplace label="Replace current bundle" vartype="bool">True</Inplace>
+	</BundleFiltering>
+	<BundleClustering>
+		<Metric vartype="lstr">Average pointwise euclidean distance|Center of mass euclidean distance|Midpoint euclidean distance|Length|Angle between vector endpoint</Metric>
+		<Threshold label="Metric threshold" varmax="90.0" varmin="1.0" vartype="float">10.0</Threshold>
+		<Subsampling label="Streamline sampling (number of points)" varmax="30" varmin="10" vartype="int">12</Subsampling>
+		<ClusterSize label="Minimal cluster size (number of streamlines)" varmax="1000" varmin="1" vartype="int">10</ClusterSize>
+		<Centroid label="Get cluster centroids" vartype="bool">True</Centroid>
+	</BundleClustering>
+	<BundleConnectivityMatrix>
+		<BundleLength label="Bundle length threshold (mm)" varmax="100.0" varmin="10.0" vartype="float">10.0</BundleLength>
+		<Values label="Matrix values" vartype="lstr">Absolute|Diagonal ratio</Values>
+	</BundleConnectivityMatrix>
 </functions>
