@@ -8,15 +8,15 @@ Versions for MS Windows and MacOS platforms are available.
 
 It supports advanced 2D and 3D visualization modes and a comprehensive collection of post-processing functions: filtering, texture analysis, co-registration, segmentation, fMRI analysis, time series analysis, perfusion and diffusion/tractography processing.
 
-Visualization functions are based on the [VTK](https://docs.vtk.org/en/latest/) library. Reference libraries provide post-processing: [ITK](https://simpleitk.org/doxygen/latest/html/), [SimpleITK](https://simpleitk.org/doxygen/latest/html/) (filetring, Region-Of-Interest tools), [pyradiomics](https://pyradiomics.readthedocs.io/en/latest/) (texture analysis),[ANTspyx](https://github.com/ANTsX/ANTsPy) (co-registration, prior-based registration, cortical thickness), [ANTspynet](https://github.com/antsx/antspy) (deep learning segmentation), [nilearn](https://nilearn.github.io/stable/index.html) (time-series analysis), [dipy](https://dipy.org/index.html) (diffusion/tracking analysis).
+Visualization functions are based on the [VTK](https://docs.vtk.org/en/latest/) library. Reference libraries provide post-processing: [ITK](https://itk.org/), [SimpleITK](https://simpleitk.org/) (filetring, Region-Of-Interest tools), [pyradiomics](https://pyradiomics.readthedocs.io/en/latest/) (texture analysis),[ANTspyx](https://github.com/ANTsX/ANTsPy) (co-registration, prior-based registration, cortical thickness), [ANTspynet](https://github.com/antsx/antspy) (deep learning segmentation), [nilearn](https://nilearn.github.io/stable/index.html) (time-series analysis), [dipy](https://dipy.org/index.html) (diffusion/tracking analysis).
 
 Five viewing widgets are integrated:
 
-- Slice view: grid of adjacent slices with axial, coronal or sagittal orientation.
-- Orthogonal view: three synchronized orthogonal slices and a 3D surface/texture renderer.
-- Synchronized view: grid of slices from multiple synchronized volumes.
-- Projection view: grid of fixed (non-interactive) 3D projections in left, right, mid-left, mid-right, cranial, caudal, anterior and posterior orientations.
-- Multi-component view: grid of slices from adjacent volumes of a time series multi-component volume.
+- **Slice view**: grid of adjacent slices with axial, coronal or sagittal orientation.
+- **Orthogonal view**: three synchronized orthogonal slices and a 3D surface/texture renderer.
+- **Synchronized view**: grid of slices from multiple synchronized volumes.
+- **Projection view**: grid of fixed (non-interactive) 3D projections in left, right, mid-left, mid-right, cranial, caudal, anterior and posterior orientations.
+- **Multi-component view**: grid of slices from adjacent volumes of a time series multi-component volume.
 
 Common tools of viewing widgets: look-up table management, overlay(s) management, isovalue display, ROI display, mesh display, target/trajectory tools, measurement tools (distance, orthogonal distances, angle), screenshots.
 
