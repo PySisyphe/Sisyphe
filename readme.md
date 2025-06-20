@@ -1,4 +1,4 @@
-![](https://github.com/PySisyphe/Sisyphe/logo.png)
+![logo](https://github.com/PySisyphe/Sisyphe/logo.png)
 
 Overview
 ========
