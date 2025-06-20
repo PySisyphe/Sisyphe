@@ -1,19 +1,24 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        Matplotlib      https://matplotlib.org/                                     Plotting library
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
-        SimpleITK       https://simpleitk.org/                                      Medical image processing
+    - Matplotlib, Plotting library, https://matplotlib.org/
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - SimpleITK, Medical image processing, https://simpleitk.org/
 """
+
+from sys import platform
 
 from os.path import abspath
 from os.path import dirname
-from os.path import join
+
+from datetime import datetime
 
 from math import log10
 from math import isinf
+from math import isnan
+
+from numpy import array
 
 from multiprocessing import Lock
 
@@ -21,9 +26,6 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QSize
-from PyQt5.QtCore import QTimer
-from PyQt5.QtGui import QMovie
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QProgressBar
@@ -38,29 +40,30 @@ from SimpleITK import sitkProgressEvent
 from SimpleITK import sitkIterationEvent
 from SimpleITK import ImageFilter as sitkImageFilter
 
+# noinspection PyCompatibility
+import __main__
+
 __all__ = ['UserAbortException',
            'DialogWait',
            'DialogWaitRegistration']
 
 """
-    Class hierarchy
+Class hierarchy
+~~~~~~~~~~~~~~~
 
-        Exception -> UserAbortException
-        QDialog -> DialogWait -> QDialogWaitRegistration
+    - Exception -> UserAbortException
+    - QDialog -> DialogWait -> QDialogWaitRegistration
 """
 
 
 class UserAbortException(Exception):
     """
-        UserAbortException
+    UserAbortException
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Custom python exception to abort processing
-
-        Inheritance
-
-            Exception -> UserAbortException
+    Custom python exception to abort processing.
     """
     def __init__(self, *args):
         super().__init__(*args)
@@ -68,86 +71,19 @@ class UserAbortException(Exception):
 
 class DialogWait(QDialog):
     """
-        DialogWait class
+    DialogWait class
 
-        Inheritance
+    Description
+    ~~~~~~~~~~~
 
-            QWidget - > QDialog -> DialogWait
+    Wait and progress GUI dialog.
 
-        Private attributes
+    Inheritance
+    ~~~~~~~~~~~
 
-            _label          QLabel, information text
-            _fig            Figure, information chart
-            _progress       QProgressBar
-            _anim           QMovie, gif animation movie
-            _labelanim      QLabel, gif animation display
-            _abort          QPushButton, cancel button
-            _stopped        bool, tag to abort
-            _filter         sitkImageFilter
-            _currentiter    int
-            _timer          QTimer
+    QWidget - > QDialog -> DialogWait
 
-        Public class method
-
-            str = getModuleClassDirectory()
-
-        Public methods
-
-            reset()
-            setSimpleITKFilter(sitkImageFilter)
-            addSimpleITKFilterIterationCommand(int)
-            addSimpleITKFilterProcessCommand()
-            setStopped()
-            resetStopped()
-            bool = getStopped()
-            setInformationText(str)
-            addInformationText(str)
-            str = getInformationText()
-            setProgressVisibility(bool)
-            progressVisibilityOn()
-            progressVisibilityOff()
-            bool = getProgressVisibility()
-            setProgressTextVisibility(bool)
-            progressTextVisibilityOn()
-            progressTextVisibilityOff()
-            bool = getProgressTextVisibility()
-            setAnimationVisibility(bool)
-            animationVisibilityOn()
-            animationVisibilityOff()
-            bool = getAnimationVisibility()
-            setFigureVisibility(bool)
-            FigureVisibilityOn()
-            FigureVisibilityOff()
-            bool = getFigureVisibility()
-            Figure = getFigure()
-            setProgressMaximum(int)
-            int = getProgressMaximum()
-            setProgressMinimum(int)
-            int = getProgressMinimum()
-            setProgressRange(int, int)
-            (int, int) = getProgressRange()
-            setCurrentProgressValue(int)
-            setCurrentProgressValueToMinimum()
-            setCurrentProgressValueToMaximum()
-            int = getCurrentProgressValue()
-            incCurrentProgressValue()
-            animationStart()
-            animationStop()
-            buttonEnabled()
-            setAnimationSize(int)
-            int = getAnimationSize()
-            setButtonVisibility()
-            buttonVisibilityOn()
-            buttonVisibilityOff()
-            getButtonVisibility()
-
-            inherited QDialog methods
-            inherited QWidget methods
-
-        Revision
-
-            12/05/2023  incCurrentProgressValue method, checks maximum
-            11/11/2023  add self.adjustSize() to setInformationText() and addInformationText() methods
+    Last revision: 21/05/2025
     """
 
     # Class method
@@ -159,51 +95,77 @@ class DialogWait(QDialog):
 
     # Special method
 
+    """
+    Private attributes
+
+    _label          QLabel, information text
+    _fig            Figure, information chart
+    _progress       QProgressBar
+    _abort          QPushButton, cancel button
+    _stopped        bool, tag to abort
+    _filter         sitkImageFilter
+    _currentiter    int
+    """
+
+    # noinspection PyUnusedLocal
     def __init__(self, title='', info='',
                  progress=False,
                  progressmin=None,
                  progressmax=None,
                  progresstxt=False,
-                 anim=False,
                  chart=False,
                  cancel=False,
                  parent=None):
         super().__init__(parent)
 
+        # Window
+
+        self.setObjectName('DialogWait')
+        if platform == 'win32':
+            # noinspection PyTypeChecker
+            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+            # import pywinstyles
+            # cl = self.palette().base().color()
+            # c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+            # pywinstyles.change_header_color(self, c)
+            try: __main__.updateWindowTitleBarColor(self)
+            except: pass
+        elif platform == 'darwin':
+            # noinspection PyTypeChecker
+            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+        # < Revision 21/05/2025
+        self.setModal(True)
+        # Revision 21/05/2025 >
+
         self._stopped = False
         self._filter = None
         self._currentiter = 0
         self._baseinfo = ''
-        self._timer = QTimer()
-        self._timer.timeout.connect(self._onTimer)
+
+        # Widgets
 
         self._fig = Figure()
         self._canvas = FigureCanvas(self._fig)
 
-        self._info = QLabel()
+        self._info = QLabel(parent=self)
         self._info.setAlignment(Qt.AlignCenter | Qt.AlignBottom)
-        gif = join(self.getModuleClassDirectory(), 'icons', 'wait01.gif')
-        self._anim = QMovie(gif)
-        self._labelanim = QLabel()
-        self._labelanim.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-        self._labelanim.setMovie(self._anim)
-        self._progress = QProgressBar()
+        self._progress = QProgressBar(parent=self)
         self._progress.setFixedSize(200, 20)
-        self._abort = QPushButton('Cancel')
+        self._abort = QPushButton('Cancel', parent=self)
         self._abort.setFixedWidth(100)
         self._abort.setAutoDefault(True)
         self._abort.setDefault(True)
+        # noinspection PyUnresolvedReferences
         self._abort.clicked.connect(self._stop)
 
         # Set defaults
 
-        self.setWindowTitle(title)
+        # self.setWindowTitle(title)
         self._info.setText(info)
         self._progress.setVisible(progress)
         self._progress.setTextVisible(progresstxt)
         if progressmin is not None: self._progress.setMinimum(progressmin)
         if progressmax is not None: self._progress.setMaximum(progressmax)
-        self._labelanim.setVisible(anim)
         self._canvas.setVisible(chart)
         self._abort.setVisible(cancel)
 
@@ -215,47 +177,49 @@ class DialogWait(QDialog):
         self.setLayout(self._layout)
 
         self._layout.addWidget(self._canvas)
-        self._layout.addWidget(self._labelanim)
         self._layout.addWidget(self._info)
         layout = QHBoxLayout()
         layout.setSpacing(10)
         layout.setContentsMargins(10, 5, 10, 5)
+        layout.addStretch()
         layout.addWidget(self._progress)
         layout.addWidget(self._abort)
+        layout.addStretch()
         self._layout.addLayout(layout)
-
-        # Window
-
-        self.setWindowFlags(Qt.CustomizeWindowHint)
-        self.setWindowModality(Qt.ApplicationModal)
 
     # Private method
 
     def _stop(self):
         self._stopped = True
-        QApplication.processEvents()
-
-    @staticmethod
-    def _onTimer():
+        # < Revision 10/10/2024
+        # add self.buttonVisibilityOff()
+        self.buttonVisibilityOff()
+        # Revision 10/10/2024 >
         QApplication.processEvents()
 
     def _onIteration(self):
         self._currentiter += 1
         if self.getProgressVisibility(): self._progress.setValue(self._currentiter)
         else: self._info.setText('{} iteration {}'.format(self._baseinfo, self._currentiter))
-        if self._stopped: raise UserAbortException()
+        QApplication.processEvents()
+        if self._stopped:
+            self.buttonVisibilityOff()
+            raise UserAbortException
         QApplication.processEvents()
 
     def _onProgress(self):
         self._progress.setValue(int(self._filter.GetProgress() * 100))
-        if self._stopped: raise UserAbortException()
+        QApplication.processEvents()
+        if self._stopped:
+            self.buttonVisibilityOff()
+            raise UserAbortException
         QApplication.processEvents()
 
     def _onStart(self):
-        if self._labelanim.isVisible(): self.animationStart()
+        pass
 
     def _onEnd(self):
-        if self._labelanim.isVisible(): self.animationStop()
+        pass
 
     def _center(self):
         QApplication.processEvents()
@@ -314,14 +278,13 @@ class DialogWait(QDialog):
             self._baseinfo = txt
             self._info.setText(txt)
             self.adjustSize()
-            QApplication.processEvents()
             self._center()
         else: raise TypeError('parameter type {} is not str.'.format(type(txt)))
 
     def addInformationText(self, txt):
-        self._info.setText('{}\n{}'.format(self._baseinfo, txt))
+        if txt == '': self._info.setText(self._baseinfo)
+        else: self._info.setText('{}\n{}'.format(self._baseinfo, txt))
         self.adjustSize()
-        QApplication.processEvents()
         self._center()
 
     def getInformationText(self):
@@ -330,7 +293,6 @@ class DialogWait(QDialog):
     def setProgressVisibility(self, v):
         if isinstance(v, bool):
             self._progress.setVisible(v)
-            QApplication.processEvents()
             self._center()
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
@@ -339,30 +301,18 @@ class DialogWait(QDialog):
 
     def progressVisibilityOff(self):
         self.setProgressVisibility(False)
+        # < Revision 05/11/2024
+        # add size and position adjustment
+        self.adjustSize()
+        self._center()
+        # Revision 05/11/2024 >
 
     def getProgressVisibility(self):
         return self._progress.isVisible()
 
-    def setAnimationVisibility(self, v):
-        if isinstance(v, bool):
-            self._labelanim.setVisible(v)
-            QApplication.processEvents()
-            self._center()
-        else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
-
-    def animationVisibilityOn(self):
-        self.setAnimationVisibility(True)
-
-    def animationVisibilityOff(self):
-        self.setAnimationVisibility(False)
-
-    def getAnimationVisibility(self):
-        return self._labelanim.isVisible()
-
     def setFigureVisibility(self, v):
         if isinstance(v, bool):
             self._canvas.setVisible(v)
-            QApplication.processEvents()
             self._center()
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
@@ -381,7 +331,6 @@ class DialogWait(QDialog):
     def setProgressTextVisibility(self, v):
         if isinstance(v, bool):
             self._progress.setTextVisible(v)
-            QApplication.processEvents()
             self._center()
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
@@ -429,12 +378,17 @@ class DialogWait(QDialog):
         else:
             raise TypeError('parameter type {} is not int.'.format(type(v)))
 
+    # noinspection PyUnusedLocal
     def setCurrentProgressValuePercent(self, v, dummy):
         if isinstance(v, float):
-            if 0.0 <= v <= 1.0: self._progress.setValue(int(v*100))
+            if 0.0 <= v <= 1.0:
+                self._progress.setValue(int(v*100))
+                QApplication.processEvents()
             else: raise ValueError('parameter value {} is not between 0.0 and 1.0.'.format(v))
         elif isinstance(v, int):
-            if 0 <= v <= 100: self._progress.setValue(v)
+            if 0 <= v <= 100:
+                self._progress.setValue(v)
+                QApplication.processEvents()
             else: raise ValueError('parameter value {} is not between 0 and 100.'.format(v))
         else: raise TypeError('parameter type {} is not int or float.'.format(type(v)))
 
@@ -454,23 +408,6 @@ class DialogWait(QDialog):
         self.setCurrentProgressValue(self._progress.maximum())
         QApplication.processEvents()
 
-    def animationStart(self):
-        self.animationVisibilityOn()
-        self._anim.start()
-
-    def animationStop(self):
-        self._anim.stop()
-        self.animationVisibilityOff()
-
-    def setAnimationSize(self, v):
-        if isinstance(v, int):
-            self._anim.setScaledSize(QSize(v, v))
-            QApplication.processEvents()
-        else: raise TypeError('parameter type {} is not int'.format(type(v)))
-
-    def getAnimationSize(self):
-        return self._anim.scaledSize().width()
-
     def buttonEnabled(self, v):
         if isinstance(v, bool):
             self._abort.setEnabled(v)
@@ -480,7 +417,6 @@ class DialogWait(QDialog):
     def setButtonVisibility(self, v):
         if isinstance(v, bool):
             self._abort.setVisible(v)
-            QApplication.processEvents()
             self._center()
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
@@ -497,71 +433,62 @@ class DialogWait(QDialog):
 
     def showEvent(self, event):
         self._stopped = False
-        if self.getAnimationVisibility() or self.getButtonVisibility(): self._timer.start()
         self._center()
-
-    def hideEvent(self, event):
-        if self._timer.isActive(): self._timer.stop()
 
 
 class DialogWaitRegistration(DialogWait):
     """
-        DialogWait class
+    DialogWaitRegistration class
 
-        Inheritance
+    Description
+    ~~~~~~~~~~~
 
-            QWidget - > QDialog -> DialogWait -> DialogWaitRegistration
+    Wait and progress GUI dialog invoked while registering.
 
-        Private attributes
+    Inheritance
+    ~~~~~~~~~~~
 
-            _cstage         int
-            _clevel         int
-            _citer          int
-            _progbystage    list[int], cumulative progress in each stage
-            _progbylevel    list[list[int]], number of iterations in each stage and multiresolution level
-            _conv           list[float], convergence threshold in each stage
-            _multir         list[int], number of iterations per level in multi-resolution scheme
-            _stages         list[str], name of each stage
-            _nstages        int, number of stages ( = len(_stages) )
-            _pos            int, position in log file
+    QWidget - > QDialog -> DialogWait -> DialogWaitRegistration
 
-        Public methods
-
-            setMultiResolutionIterations(list[int])
-            setStages(list[str])
-            setProgressByLevel(list[list[int]])
-            setConvergenceThreshold(list[float])
-            setAntsRegistrationProgress(str)
-
-            inherited QDialogWaitRegistration methods
-            inherited QDialog methods
-            inherited QWidget methods
+    Last revision: 03/06/2025
     """
 
     # Special method
+
+    """
+    Private attributes
+
+    _cstage         int
+    _clevel         int
+    _citer          int
+    _progbystage    list[int], cumulative progress in each stage
+    _progbylevel    list[list[int]], number of iterations in each stage and multiresolution level
+    _conv           list[float], convergence threshold in each stage
+    _multir         list[int], number of iterations per level in multi-resolution scheme
+    _stages         list[str], name of each stage
+    _nstages        int, number of stages ( = len(_stages) )
+    _pos            int, position in log file
+    """
 
     def __init__(self, title='', info='',
                  progress=False,
                  progressmin=None,
                  progressmax=None,
                  progresstxt=False,
-                 anim=False,
                  chart=False,
                  cancel=False,
                  parent=None):
         super().__init__(title, info, progress, progressmin, progressmax,
-                         progresstxt, anim, chart, cancel, parent)
-        self._nstages = 0
-        self._citer = 0
-        self._clevel = 0
-        self._cstage = 0
-        self._cprogress = 0
+                         progresstxt, chart, cancel, parent)
         self._pos = 0
+        self._nstages = 0
+        self._clevel = None
+        self._cstage = None
         self._progbylevel = None
-        self._progbystage = None
         self._multir = None
         self._stages = None
         self._conv = None
+        self._time = None
 
     # Public method
 
@@ -570,12 +497,10 @@ class DialogWaitRegistration(DialogWait):
             if self._nstages == 0: self._nstages = len(v)
             if len(v) == self._nstages:
                 self._multir = v
-                self.setProgressVisibility(True)
                 # Reset attributes
-                self._citer = 0
-                self._clevel = 0
-                self._cstage = 0
-                self._cprogress = 0
+                self._clevel = None
+                self._cstage = None
+                self._time = None
                 self._pos = 0
                 self.setCurrentProgressValue(0)
             else: raise ValueError('Incorrect number of items in list '
@@ -592,17 +517,10 @@ class DialogWaitRegistration(DialogWait):
 
     def setProgressByLevel(self, v):
         if isinstance(v, list):
-            if self._nstages == 0: self._nstages = len(v)
+            if self._nstages == 0:
+                self._nstages = len(v)
             if len(v) == self._nstages:
-                self._progbylevel = v
-                self._progbystage = list()
-                for sv in v:
-                    c = 0
-                    buff = [0]
-                    for psv in sv:
-                        c += psv
-                        buff.append(c)
-                    self._progbystage.append(buff)
+                self._progbylevel = array(v)
             else: raise ValueError('Incorrect number of items in list '
                                    'parameter (set {} and must be {}).'.format(len(v), self._nstages))
         else: raise TypeError('parameter type {} is not list.'.format(type(v)))
@@ -623,62 +541,270 @@ class DialogWaitRegistration(DialogWait):
                 verbose = f.readlines()
                 self._pos = f.tell()
         if len(verbose) > 0:
-            citer = 0
-            cprogress = 0
+            pstage = self._cstage
             plevel = self._clevel
-            for line in reversed(verbose):
+            for line in verbose:
                 sub = line[:5]
-                # Current iter
-                if sub in (' 2DIA', ' 1DIA'):
-                    # 2DIA Rigid/Affine, 1DIA Displacement Field
-                    if cprogress == 0:
-                        w = line.split(',')
-                        if len(w) > 4:  # line contains convergence value
-                            citer = int(w[1])
-                            v = float(w[3])
-                            if isinf(v): cprogress = 0
-                            else:
-                                if self._cstage == 0: cconv = self._conv[0]
-                                else: cconv = self._conv[self._cstage - 1]
-                                cprogress = (log10(float(w[3])) + cconv) / cconv
-                            continue
-                # Current level Affine/Rigid
-                elif sub in ('DIAGN', 'XXDIA'):
-                    # DIAGN Rigid/Affine, XXDIA Displacement Field
-                    self._clevel += 1
-                    continue
-                # Current stage
+                # < Revision 14/11/2024
+                # add 'WDIAG' code
+                # Revision 14/11/2024 >
+                # Current iteration increment
+                if sub in (' 2DIA', ' 1DIA', 'WDIAG'):
+                    # '2DIA' if rigid/affine, '1DIA', 'WDIAG' if displacement Field
+                    w = line.split(',')
+                    if len(w) > 4:  # line contains convergence value
+                        try: v = float(w[3])
+                        except: continue
+                        if isnan(v) or isinf(v): continue
+                        else:
+                            conv = self._conv[self._cstage]
+                            try: progress = 1.0 - ((log10(float(w[3])) + conv) / conv)
+                            except: continue
+                            if progress > 1.0: progress = 1.0
+                        # print(v)
+                        progress = int(progress * self._progbylevel[self._cstage, self._clevel])
+                        # print('progress in level {}'.format(progress))
+                        if self._clevel > 0: progress += int(self._progbylevel[self._cstage, :self._clevel].sum())
+                        # print('progress in stage {}'.format(progress))
+                        if progress > self.getCurrentProgressValue():
+                            self.setCurrentProgressValue(progress)
+                # < Revision 14/11/2024
+                # add 'XDIAG' code
+                # Revision 14/11/2024 >
+                # Current multiresolution level increment
+                elif sub in ('DIAGN', 'XXDIA', 'XDIAG'):
+                    # 'DIAGN' if  rigid/affine, 'XXDIA', 'XDIAG' if displacement Field
+                    if self._clevel is None: self._clevel = 0
+                    else: self._clevel += 1
+                    nlevels = len(self._multir[self._cstage])
+                    if self._clevel > nlevels - 1:
+                        self._clevel = nlevels - 1
+                    progress = int(self._progbylevel[self._cstage, self._clevel])
+                    self.setCurrentProgressValue(progress)
+                    # print('level #{}'.format(self._clevel))
+                # Current stage increment
                 elif sub == 'Stage':
                     w = line.split(' ')
                     if len(w) == 2:
-                        self._cstage = int(w[1]) + 1
-                        self.setProgressRange(0, self._progbystage[self._cstage - 1][-1])
+                        # self._cstage = int(w[1][0]) - 1
+                        if self._cstage is None: self._cstage = 0
+                        else: self._cstage += 1
+                        if self._cstage > self._nstages - 1:
+                            self._cstage = self._nstages - 1
+                        self.setProgressRange(0, self._progbylevel[self._cstage].sum())
                         self.setCurrentProgressValue(0)
-                        self._clevel = self._clevel - plevel
-                        break
-            # Update current iter and current progress
-            if plevel == self._clevel:
-                if citer > self._citer: self._citer = citer
-                if cprogress > self._cprogress: self._cprogress = cprogress
-            else:
-                self._citer = citer
-                self._cprogress = cprogress
-            if self._cstage > 0 and self._clevel > 0:
-                v = citer / self._multir[self._cstage-1][self._clevel-1]
-                if v > self._cprogress: self._cprogress = v
-                nb1 = self._progbystage[self._cstage - 1]
-                nb2 = self._progbylevel[self._cstage - 1]
-                v = int(nb1[self._clevel - 1] + nb2[self._clevel - 1] * self._cprogress)
-                info = 'Registration stage {}/{} {}\nMultiresolution Level {}/{}'.format(self._cstage,
-                                                                                         len(self._stages),
-                                                                                         self._stages[self._cstage-1],
-                                                                                         self._clevel,
-                                                                                         len(self._multir[self._cstage-1]))
-            else:
-                v = 0
-                info = 'Registration stage 1/{} {}\nMultiresolution Level 1/{}'.format(len(self._stages),
-                                                                                       self._stages[0],
-                                                                                       len(self._multir[0]))
-            self.setInformationText(info)
-            self.setCurrentProgressValue(v)
+                        self._clevel = None
+                        # print('stage #{}'.format(self._cstage))
+            # Update information field
+            if self._cstage is not None and self._clevel is not None:
+                if self._cstage != pstage or self._clevel != plevel:
+                    info = '{} registration\nMultiresolution level {}/{}'.format(self._stages[self._cstage],
+                                                                                 self._clevel + 1,
+                                                                                 len(self._multir[self._cstage]))
+                    if not self.getButtonVisibility(): self.buttonVisibilityOn()
+                    if not self.getProgressVisibility(): self.progressVisibilityOn()
+                    self.setInformationText(info)
 
+    def setNumberOfIterations(self, n):
+        self.setProgressRange(0, n)
+        self.setCurrentProgressValue(0)
+        self._pos = 0
+        self._time = None
+
+    def setAntsAtroposProgress(self, stdout):
+        lock = Lock()
+        with lock:
+            with open(stdout, 'r') as f:
+                f.seek(self._pos)
+                verbose = f.readlines()
+                self._pos = f.tell()
+        if len(verbose) > 0:
+            for line in verbose:
+                line = line.lstrip()
+                if len(line) > 0:
+                    if line[0] == 'I':
+                        if self._time is not None:
+                            delta = datetime.now() - self._time
+                            delta *= self.getProgressMaximum() - self.getCurrentProgressValue()
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0: self.addInformationText('Estimated time remaining {} s.'.format(s))
+                            else: self.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                        self._time = datetime.now()
+                        if not self.getButtonVisibility(): self.buttonVisibilityOn()
+                        if not self.getProgressVisibility(): self.progressVisibilityOn()
+                        self.incCurrentProgressValue()
+
+    def setAntsCorticalThicknessProgress(self, stdout):
+        lock = Lock()
+        with lock:
+            with open(stdout, 'r') as f:
+                f.seek(self._pos)
+                verbose = f.readlines()
+                self._pos = f.tell()
+        if len(verbose) > 0:
+            for line in verbose:
+                line = line.lstrip()
+                if len(line) > 0:
+                    if line[:2] == 'It':
+                        if self._time is not None:
+                            delta = datetime.now() - self._time
+                            delta *= self.getProgressMaximum() - self.getCurrentProgressValue()
+                            # noinspection PyTypeChecker
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0: self.addInformationText('Estimated time remaining {} s.'.format(s))
+                            else: self.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                        self._time = datetime.now()
+                        if not self.getButtonVisibility(): self.buttonVisibilityOn()
+                        if not self.getProgressVisibility(): self.progressVisibilityOn()
+                        self.incCurrentProgressValue()
+
+    # < Revision 03/06/2025
+    # add setAntspynetTumorProgress method
+    def setAntspynetTumorProgress(self, stdout):
+        lock = Lock()
+        with lock:
+            with open(stdout, 'r', encoding='utf8', errors='ignore') as f:
+                f.seek(self._pos)
+                verbose = f.readlines()
+                self._pos = f.tell()
+        if len(verbose) > 0:
+            for line in verbose:
+                line = line.lstrip()
+                if len(line) > 0:
+                    ch = line[:7]
+                    if ch == 'Brain e': self.setInformationText('Preprocessing: brain extraction...')
+                    elif ch == 'Stage 1': self.setInformationText('Stage 1: U-net tumor segmentation...')
+                    elif ch == 'Stage 2': self.setInformationText('Stage 2: U-net tumor clustering...')
+                    elif ch == 'Predict':
+                        try:
+                            r = list(filter(lambda x: x != '' ,line.split(' ')))
+                            if len(r) == 5:
+                                if not self.getProgressVisibility():
+                                    self.progressVisibilityOn()
+                                self.setProgressMaximum(int(r[4]))
+                                self.setCurrentProgressValue(int(r[2]))
+                        except: pass
+    # Revision 03/06/2025 >
+
+    # < Revision 03/06/2025
+    # add setAntspynetHippocamusProgress method
+    def setAntspynetHippocamusProgress(self, stdout):
+        lock = Lock()
+        with lock:
+            with open(stdout, 'r', encoding='utf8', errors='ignore') as f:
+                f.seek(self._pos)
+                verbose = f.readlines()
+                self._pos = f.tell()
+        if len(verbose) > 0:
+            for line in verbose:
+                line = line.lstrip()
+                if len(line) > 0:
+                    ch = line[:7]
+                    if ch == 'Brain e': self.setInformationText('Preprocessing: brain extraction...')
+                    elif ch == 'Running': self.setInformationText('Preprocessing: bias correction...')
+                    elif ch == 'HippMap': self.setInformationText('Preprocessing: spatial normalization...')
+                    elif ch == 'Monte C':
+                        try:
+                            r = line.split(' ')
+                            if len(r) == 7:
+                                if not self.getProgressVisibility():
+                                    self.setInformationText('U-net hippocampus segmentation...')
+                                    self.progressVisibilityOn()
+                                self.setProgressMaximum(int(r[6]))
+                                self.setCurrentProgressValue(int(r[3]))
+                        except: pass
+    # Revision 03/06/2025 >
+
+    # < Revision 03/06/2025
+    # add setAntspynetTemporalProgress method
+    def setAntspynetTemporalProgress(self, stdout):
+        lock = Lock()
+        with lock:
+            with open(stdout, 'r', encoding='utf8', errors='ignore') as f:
+                f.seek(self._pos)
+                verbose = f.readlines()
+                self._pos = f.tell()
+        if len(verbose) > 0:
+            for line in verbose:
+                line = line.lstrip()
+                if len(line) > 0:
+                    ch = line[:7]
+                    if ch == 'Brain e': self.setInformationText('Preprocessing: brain extraction...')
+                    elif ch == 'Running': self.setInformationText('Preprocessing: bias correction...')
+                    elif ch == 'antsReg': self.setInformationText('Preprocessing: spatial normalization...')
+                    elif ch == 'Predict':
+                        if self._nstages == 0:
+                            self.setInformationText('U-net left temporal segmentation...')
+                            self._nstages = 1
+                        else: self.setInformationText('U-net right temporal segmentation...')
+    # Revision 03/06/2025 >
+
+    # < Revision 03/06/2025
+    # add setAntspynetLesionProgress method
+    def setAntspynetLesionProgress(self, stdout):
+        lock = Lock()
+        with lock:
+            with open(stdout, 'r', encoding='utf8', errors='ignore') as f:
+                f.seek(self._pos)
+                verbose = f.readlines()
+                self._pos = f.tell()
+        if len(verbose) > 0:
+            for line in verbose:
+                line = line.lstrip()
+                if len(line) > 0:
+                    ch = line[:7]
+                    if ch == 'Brain e': self.setInformationText('Preprocessing: brain extraction...')
+                    elif ch == 'Running': self.setInformationText('Preprocessing: bias correction...')
+                    elif ch == 'antsReg': self.setInformationText('Preprocessing: spatial normalization...')
+                    elif ch == 'Total e': self.setInformationText('U-net lesion segmentation...')
+    # Revision 03/06/2025 >
+
+    # < Revision 03/06/2025
+    # add setAntspynetTemporalProgress method
+    def setAntspynetVesselProgress(self, stdout):
+        lock = Lock()
+        with lock:
+            with open(stdout, 'r', encoding='utf8', errors='ignore') as f:
+                f.seek(self._pos)
+                verbose = f.readlines()
+                self._pos = f.tell()
+        if len(verbose) > 0:
+            for line in verbose:
+                line = line.lstrip()
+                if len(line) > 0:
+                    ch = line[:7]
+                    if ch == 'Brain e': self.setInformationText('Preprocessing: brain extraction...')
+                    elif ch == 'antsReg': self.setInformationText('Preprocessing: spatial normalization...')
+                    elif ch == 'Predict':
+                        try:
+                            r = list(filter(lambda x: x != '', line.split(' ')))
+                            if len(r) == 5:
+                                if not self.getProgressVisibility():
+                                    self.progressVisibilityOn()
+                                self.setProgressMaximum(int(r[4]))
+                                self.setCurrentProgressValue(int(r[2]))
+                        except: pass
+    # Revision 03/06/2025 >
+
+    # < Revision 03/06/2025
+    # add setAntspynetTemporalProgress method
+    def setAntspynetTissueProgress(self, stdout):
+        lock = Lock()
+        with lock:
+            with open(stdout, 'r', encoding='utf8', errors='ignore') as f:
+                f.seek(self._pos)
+                verbose = f.readlines()
+                self._pos = f.tell()
+        if len(verbose) > 0:
+            for line in verbose:
+                line = line.lstrip()
+                if len(line) > 0:
+                    ch = line[:7]
+                    if ch == 'Brain e': self.setInformationText('Preprocessing: brain extraction...')
+                    elif ch == 'antsReg': self.setInformationText('Preprocessing: spatial normalization...')
+                    elif ch == 'antsReg': self.setInformationText('Preprocessing: spatial normalization...')
+                    elif ch == 'Running': self.setInformationText('Preprocessing: bias correction...')
+                    elif ch == 'DeepAtr': self.setInformationText('Tissue segmentation...')
+    # Revision 03/06/2025 >

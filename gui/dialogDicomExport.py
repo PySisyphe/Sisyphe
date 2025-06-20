@@ -1,3 +1,12 @@
+"""
+External packages/modules
+-------------------------
+
+    - PyQt5,Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+"""
+
+from sys import platform
+
 from os.path import join
 from os.path import basename
 
@@ -8,43 +17,43 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheDicom import ExportToDicom
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.gui.dialogWait import DialogWait
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
 
 """
-    Class
+Class hierarchy
+~~~~~~~~~~~~~~~
 
-        DialogDicomExport
+    QDialog -> DialogDicomExport
 """
 
 
 class DialogDicomExport(QDialog):
     """
-        DialogDicomExport
+    DialogDicomExport
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QDialog -> DialogDicomExport
-
-        Private attributes
-
-        Public methods
-
-            convert()
-
-            inherited QDialog methods
+    QDialog -> DialogDicomExport
     """
 
     # Special method
 
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.setWindowTitle('DICOM export')
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        screen = QApplication.primaryScreen().geometry()
+        self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
 
         # Init QLayout
 
@@ -64,8 +73,9 @@ class DialogDicomExport(QDialog):
         self._savedir.setTextLabel('Export directory')
         self._savedir.setContentsMargins(0, 0, 0, 0)
         self._convert = QPushButton(QIcon(join(self._savedir.getDefaultIconDirectory(), 'export.png')), '')
-        self._convert.setFixedSize(QSize(64, 32))
+        # self._convert.setFixedSize(QSize(64, 32))
         self._convert.setToolTip('Convert Sisyphe volumes to DICOM format.')
+        # noinspection PyUnresolvedReferences
         self._convert.clicked.connect(self.convert)
         layout = QHBoxLayout()
         layout.setSpacing(10)
@@ -76,6 +86,7 @@ class DialogDicomExport(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
@@ -86,15 +97,9 @@ class DialogDicomExport(QDialog):
         layout.addStretch()
 
         self._layout.addLayout(layout)
-
+        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
 
-        # Window
-
-        screen = QApplication.primaryScreen().geometry()
-        self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
-
-        self.setWindowTitle('DICOM export')
         self.setModal(True)
 
     # Public method
@@ -104,7 +109,7 @@ class DialogDicomExport(QDialog):
         n = len(filenames)
         if n > 0:
             # Set ProgressBar
-            progress = DialogWait(parent=self)
+            progress = DialogWait()
             progress.setProgressRange(0, n)
             progress.setCurrentProgressValue(0)
             progress.buttonVisibilityOff()
@@ -120,28 +125,15 @@ class DialogDicomExport(QDialog):
                     progress.setInformationText('Load {}...'.format(basename(filename)))
                     try: vol.load(filename)
                     except:
-                        QMessageBox.warning(self, 'DICOM export',
-                                            '{} read error.'.format(basename(filename)))
+                        messageBox(self,
+                                   'DICOM export',
+                                   text='{} read error.'.format(basename(filename)))
                     export.setVolume(vol)
                     if not self._savedir.isEmpty(): export.setBackupDicomDirectory(self._savedir.getPath())
                     progress.setInformationText('Export {} to DICOM...'.format(basename(filename)))
                     try: export.execute()
-                    except: QMessageBox.warning(self, 'DICOM export', 'DICOM write error.')
+                    except: messageBox(self, 'DICOM export', 'DICOM write error.')
                     progress.incCurrentProgressValue()
             finally:
                 progress.hide()
                 self._files.clearall()
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv
-
-    app = QApplication(argv)
-    main = DialogDicomExport()
-    main.show()
-    app.exec_()

@@ -1,17 +1,22 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
-        SimpleITK       https://simpleitk.org/                                      Medical image processing
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - SimpleITK, medical image processing, https://simpleitk.org/
 """
 
+from sys import platform
+
 from os import getcwd
+from os import chdir
+
 from os.path import exists
+from os.path import dirname
+from os.path import basename
+from os.path import abspath
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QSpinBox
 from PyQt5.QtWidgets import QDoubleSpinBox
@@ -26,6 +31,8 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
+from SimpleITK import Cast
+from SimpleITK import sitkVectorFloat64
 from SimpleITK import sitkLinear
 from SimpleITK import sitkBSpline
 from SimpleITK import sitkGaussian
@@ -38,61 +45,66 @@ from SimpleITK import sitkNearestNeighbor
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheTransform import SisypheTransform
+from Sisyphe.core.sisypheTransform import SisypheTransforms
 from Sisyphe.core.sisypheTransform import SisypheApplyTransform
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import LabeledComboBox
 from Sisyphe.widgets.basicWidgets import MenuPushButton
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.functionsSettingsWidget import FunctionSettingsWidget
 from Sisyphe.gui.dialogWait import DialogWait
 
-"""
-    Class hierarchy
+__all__ = ['DialogResample']
 
-        QDialog -> DialogResample
-        
+"""
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    - QDialog -> DialogResample
 """
 
 
 class DialogResample(QDialog):
     """
-        DialogResample
+    DialogResample
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            GUI dialog for volume resampling.
+    GUI dialog for volume resampling.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QDialog -> DialogResample
-
-        Private attributes
-
-            _moving         FileSelectionWidget
-            _selftrf        QCheckBox
-            _freetrf        QCheckBox
-            _settings       FunctionSettingsWidget
-            _list           QComboBox, list of geometric transformations
-            _trfpreview     QTextEdit
-            _trf            SisypheTransform
-            _trfs           SisypheTransforms
-
-        Public methods
-
-            execute()
-            reset()
-
-            inherited QDialog methods
+    QDialog -> DialogResample
     """
 
     # Special method
+
+    """
+    Private attributes
+
+    _moving         FileSelectionWidget
+    _selftrf        QCheckBox
+    _freetrf        QCheckBox
+    _settings       FunctionSettingsWidget
+    _list           QComboBox, list of geometric transformations
+    _trfpreview     QTextEdit
+    _trf            SisypheTransform
+    _trfs           SisypheTransforms
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Resample')
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         self._strf = None
         self._ftrf = SisypheTransform()
+        self._ftrf.setSize([256, 256, 256])
+        self._ftrf.setSpacing([1.0, 1.0, 1.0])
         self._trfs = None
 
         # Init QLayout
@@ -113,11 +125,15 @@ class DialogResample(QDialog):
         self._selftrf = QRadioButton('Self geometric transform')
         self._selftrf.setChecked(True)
         self._selftrf.setAutoExclusive(True)
+        # noinspection PyUnresolvedReferences
         self._selftrf.toggled.connect(self._updateVisible)
+        # noinspection PyUnresolvedReferences
         self._selftrf.toggled.connect(self._center)
         self._freetrf = QRadioButton('Free geometric transform')
         self._freetrf.setAutoExclusive(True)
+        # noinspection PyUnresolvedReferences
         self._freetrf.toggled.connect(self._updateVisible)
+        # noinspection PyUnresolvedReferences
         self._freetrf.toggled.connect(self._center)
         lyout = QHBoxLayout()
         lyout.addStretch()
@@ -128,9 +144,10 @@ class DialogResample(QDialog):
 
         self._list = LabeledComboBox('Transformations', fontsize=13)
         self._list.setMinimumWidth(400)
+        # noinspection PyUnresolvedReferences
         self._list.currentIndexChanged.connect(self._transformChanged)
         self._fixed = QPushButton('Get fixed volume')
-        self._fixed.setFixedWidth(150)
+        # noinspection PyUnresolvedReferences
         self._fixed.pressed.connect(self._getFixedID)
         self._layout.addWidget(self._list)
         self._layout.addWidget(self._fixed)
@@ -142,17 +159,20 @@ class DialogResample(QDialog):
         self._sizex.setAlignment(Qt.AlignCenter)
         self._sizey.setAlignment(Qt.AlignCenter)
         self._sizez.setAlignment(Qt.AlignCenter)
-        self._sizex.setFixedWidth(60)
-        self._sizey.setFixedWidth(60)
-        self._sizez.setFixedWidth(60)
+        self._sizex.setFixedWidth(100)
+        self._sizey.setFixedWidth(100)
+        self._sizez.setFixedWidth(100)
         self._sizex.setRange(10, 1024)
         self._sizey.setRange(10, 1024)
         self._sizez.setRange(10, 1024)
         self._sizex.setValue(256)
         self._sizey.setValue(256)
         self._sizez.setValue(256)
+        # noinspection PyUnresolvedReferences
         self._sizex.valueChanged.connect(self._updateValues)
+        # noinspection PyUnresolvedReferences
         self._sizey.valueChanged.connect(self._updateValues)
+        # noinspection PyUnresolvedReferences
         self._sizez.valueChanged.connect(self._updateValues)
         self._label1 = QLabel('Size')
         lyout = QHBoxLayout()
@@ -170,9 +190,9 @@ class DialogResample(QDialog):
         self._spacex.setAlignment(Qt.AlignCenter)
         self._spacey.setAlignment(Qt.AlignCenter)
         self._spacez.setAlignment(Qt.AlignCenter)
-        self._spacex.setFixedWidth(60)
-        self._spacey.setFixedWidth(60)
-        self._spacez.setFixedWidth(60)
+        self._spacex.setFixedWidth(100)
+        self._spacey.setFixedWidth(100)
+        self._spacez.setFixedWidth(100)
         self._spacex.setDecimals(2)
         self._spacey.setDecimals(2)
         self._spacez.setDecimals(2)
@@ -185,8 +205,11 @@ class DialogResample(QDialog):
         self._spacex.setValue(1.0)
         self._spacey.setValue(1.0)
         self._spacez.setValue(1.0)
+        # noinspection PyUnresolvedReferences
         self._spacex.valueChanged.connect(self._updateValues)
+        # noinspection PyUnresolvedReferences
         self._spacey.valueChanged.connect(self._updateValues)
+        # noinspection PyUnresolvedReferences
         self._spacez.valueChanged.connect(self._updateValues)
         self._label2 = QLabel('Spacing')
         lyout = QHBoxLayout()
@@ -202,6 +225,7 @@ class DialogResample(QDialog):
         self._fixed2.setToolTip('Get resampling field of view from selected volume,\n'
                                 'and align center of the moving volumes')
         self._fixed2.setFixedWidth(200)
+        # noinspection PyUnresolvedReferences
         self._fixed2.pressed.connect(self._updateGeometryFromVolume)
         self._layout.addWidget(self._fixed2)
         self._layout.setAlignment(self._fixed2, Qt.AlignHCenter)
@@ -218,17 +242,20 @@ class DialogResample(QDialog):
         self._transx.setSingleStep(0.1)
         self._transy.setSingleStep(0.1)
         self._transz.setSingleStep(0.1)
-        self._transx.setFixedWidth(60)
-        self._transy.setFixedWidth(60)
-        self._transz.setFixedWidth(60)
+        self._transx.setFixedWidth(100)
+        self._transy.setFixedWidth(100)
+        self._transz.setFixedWidth(100)
         self._transx.setRange(-256.0, 256.0)
         self._transy.setRange(-256.0, 256.0)
         self._transz.setRange(-256.0, 256.0)
         self._transx.setValue(0.0)
         self._transy.setValue(0.0)
         self._transz.setValue(0.0)
+        # noinspection PyUnresolvedReferences
         self._transx.valueChanged.connect(self._updateValues)
+        # noinspection PyUnresolvedReferences
         self._transy.valueChanged.connect(self._updateValues)
+        # noinspection PyUnresolvedReferences
         self._transz.valueChanged.connect(self._updateValues)
         self._label3 = QLabel('Translations (mm)')
         lyout = QHBoxLayout()
@@ -253,17 +280,20 @@ class DialogResample(QDialog):
         self._rotx.setSingleStep(0.1)
         self._roty.setSingleStep(0.1)
         self._rotz.setSingleStep(0.1)
-        self._rotx.setFixedWidth(60)
-        self._roty.setFixedWidth(60)
-        self._rotz.setFixedWidth(60)
+        self._rotx.setFixedWidth(100)
+        self._roty.setFixedWidth(100)
+        self._rotz.setFixedWidth(100)
         self._rotx.setRange(-180.0, 180.0)
         self._roty.setRange(-180.0, 180.0)
         self._rotz.setRange(-180.0, 180.0)
         self._rotx.setValue(0.0)
         self._roty.setValue(0.0)
         self._rotz.setValue(0.0)
+        # noinspection PyUnresolvedReferences
         self._rotx.valueChanged.connect(self._updateValues)
+        # noinspection PyUnresolvedReferences
         self._roty.valueChanged.connect(self._updateValues)
+        # noinspection PyUnresolvedReferences
         self._rotz.valueChanged.connect(self._updateValues)
         self._label4 = QLabel('Rotations (°)')
         lyout = QHBoxLayout()
@@ -275,23 +305,41 @@ class DialogResample(QDialog):
         flyout.addRow(self._label4, lyout)
         self._layout.addLayout(flyout)
 
+        # < Revision 11/06/2025
+        self._label3.adjustSize()
+        self._label1.setMinimumWidth(self._label3.width())
+        self._label2.setMinimumWidth(self._label3.width())
+        # Revision 11/06/2025 >
+
         self._field = FileSelectionWidget()
         self._field.setTextLabel('Displacement field')
+        self._field.filterDisplacementField()
         self._layout.addWidget(self._field)
         self._field.FieldChanged.connect(self._loadField)
 
         self._load = MenuPushButton('Load')
-        self._load.setFixedWidth(60)
-        self._load.setToolTip('Load geometric transformation')
+        self._load.setToolTip('Load a geometric transformation')
         self._load.addAction('PySisyphe transform (*.xtrf)')
         self._load.addAction('ANTs transform (*.mat)')
         self._load.addAction('ITK transform (*.tfm)')
         self._load.addAction('MINC transform (*.xfm)')
         self._load.addAction('Matlab transform (*.mat)')
         self._load.addAction('Text transform (*.txt)')
+        # noinspection PyUnresolvedReferences
         self._load.getPopupMenu().triggered.connect(self._loadTransform)
+
+        # < Revision 11/06/2025
+        self._load2 = MenuPushButton('Load transforms')
+        self._load2.setToolTip('Load a collection of geometric transformations\n'
+                               'with the same space (same ID) as the moving volume')
+        self._load2.addAction('PySisyphe transforms (*.xtrfs)')
+        self._load2.addAction('PySisyphe transforms from volume (*.xvol)')
+        # noinspection PyUnresolvedReferences
+        self._load2.getPopupMenu().triggered.connect(self._loadTransforms)
+        # Revision 11/06/2025 >
+
         self._save = MenuPushButton('Save')
-        self._save.setFixedWidth(60)
+        # self._save.setFixedWidth(60)
         self._save.setToolTip('Save geometric transformation')
         self._save.addAction('PySisyphe transform (*.xtrf)')
         self._save.addAction('ANTs transform (*.mat)')
@@ -299,14 +347,18 @@ class DialogResample(QDialog):
         self._save.addAction('MINC transform (*.xfm)')
         self._save.addAction('Matlab transform (*.mat)')
         self._save.addAction('Text transform (*.txt)')
+        # noinspection PyUnresolvedReferences
         self._save.getPopupMenu().triggered.connect(self._saveTransform)
         self._field2 = QPushButton('Affine to displacement field')
+        # noinspection PyUnresolvedReferences
         self._field2.pressed.connect(self._affineToDisplacementField)
         lyout = QHBoxLayout()
         lyout.setSpacing(10)
         lyout.addWidget(self._load)
+        lyout.addWidget(self._load2)
         lyout.addWidget(self._save)
         lyout.addWidget(self._field2)
+        lyout.addStretch()
         self._layout.addLayout(lyout)
 
         self._trfpreview = QTextEdit()
@@ -315,6 +367,8 @@ class DialogResample(QDialog):
         self._layout.addWidget(self._trfpreview)
 
         self._settings = FunctionSettingsWidget('Resample')
+        self._settings.setParameterVisibility('NormalizationPrefix', False)
+        self._settings.setParameterVisibility('NormalizationSuffix', False)
         self._settings.VisibilityToggled.connect(self._center)
         self._layout.addWidget(self._settings)
 
@@ -336,17 +390,21 @@ class DialogResample(QDialog):
         self._field.setEnabled(False)
         self._field2.setEnabled(False)
         self._load.setEnabled(False)
+        # < Revision 11/06/2025
+        self._load2.setEnabled(False)
+        # Revision 11/06/2025 >
         self._save.setEnabled(False)
 
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)
         self._execute = QPushButton('Resample')
-        self._execute.setFixedSize(QSize(120, 32))
+        # self._execute.setFixedWidth(100)
         self._execute.setToolTip('Resample moving volume')
         self._execute.setAutoDefault(True)
         self._execute.setDefault(True)
@@ -356,18 +414,26 @@ class DialogResample(QDialog):
         layout.addStretch()
 
         self._layout.addLayout(layout)
-        self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
-        self.setSizeGripEnabled(False)
 
         self._updateVisible(True)
 
         # Qt Signals
 
+        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
+        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
+
+        # < Revision 11/06/2025
+        self.adjustSize()
+        screen = QApplication.primaryScreen().geometry()
+        self._moving.setMinimumWidth(int(screen.width() * 0.33))
+        self.setModal(True)
+        # Revision 11/06/2025 >
 
     # Private methods
 
+    # noinspection PyUnusedLocal
     def _center(self, widget):
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
@@ -380,6 +446,10 @@ class DialogResample(QDialog):
                     v = SisypheVolume()
                     v.load(filename)
                     self._trfs = v.getTransforms()
+                    # < Revision 03/09/2024
+                    # add self._list.blockSignals(True)
+                    self._list.blockSignals(True)
+                    # Revision 03/09/2024 >
                     self._list.clear()
                     if len(self._trfs) > 0:
                         for trf in self._trfs:
@@ -389,6 +459,10 @@ class DialogResample(QDialog):
                     else: self._strf = None
                     self._trfpreview.clear()
                     self._trfpreview.append(str(self._strf))
+                    # < Revision 03/09/2024
+                    # add self._list.blockSignals(False)
+                    self._list.blockSignals(False)
+                    # Revision 03/09/2024 >
         v = not self._moving.isEmpty()
         self._list.setEnabled(v)
         self._fixed.setEnabled(v)
@@ -408,9 +482,13 @@ class DialogResample(QDialog):
         self._field.setEnabled(v)
         self._field2.setEnabled(v)
         self._load.setEnabled(v)
+        # < Revision 114/06/2025
+        self._load2.setEnabled(v)
+        # Revision 114/06/2025 >
         self._save.setEnabled(v)
         self._execute.setEnabled(v)
 
+    # noinspection PyUnusedLocal
     def _updateVisible(self, v):
         self._trfpreview.clear()
         v = self._selftrf.isChecked()
@@ -425,25 +503,36 @@ class DialogResample(QDialog):
                     self._trfpreview.append(str(self._strf))
                 else: self._strf = None
         v = not v
+        e = not (self._ftrf is not None and self._ftrf.isDisplacementField())
         self._sizex.setVisible(v)
         self._sizey.setVisible(v)
         self._sizez.setVisible(v)
         self._spacex.setVisible(v)
         self._spacey.setVisible(v)
         self._spacez.setVisible(v)
-        self._transx.setVisible(v)
-        self._transy.setVisible(v)
-        self._transz.setVisible(v)
-        self._rotx.setVisible(v)
-        self._roty.setVisible(v)
-        self._rotz.setVisible(v)
+        self._transx.setVisible(v and e)
+        self._transy.setVisible(v and e)
+        self._transz.setVisible(v and e)
+        self._rotx.setVisible(v and e)
+        self._roty.setVisible(v and e)
+        self._rotz.setVisible(v and e)
         self._label1.setVisible(v)
         self._label2.setVisible(v)
-        self._label3.setVisible(v)
-        self._label4.setVisible(v)
-        self._fixed2.setVisible(v)
+        self._label3.setVisible(v and e)
+        self._label4.setVisible(v and e)
+        self._fixed2.setVisible(v and e)
         self._field.setVisible(v)
         self._load.setVisible(v)
+        # < Revision 11/06/2025
+        self._load2.setVisible(not v)
+        # Revision 11/06/2025 >
+
+        self._sizex.setEnabled(e)
+        self._sizey.setEnabled(e)
+        self._sizez.setEnabled(e)
+        self._spacex.setEnabled(e)
+        self._spacey.setEnabled(e)
+        self._spacez.setEnabled(e)
         if v:
             self._trfpreview.append(str(self._ftrf))
 
@@ -452,6 +541,7 @@ class DialogResample(QDialog):
         self._trfpreview.clear()
         self._trfpreview.append(str(self._strf))
 
+    # noinspection PyUnusedLocal
     def _updateValues(self, v):
         sizex = self._sizex.value()
         sizey = self._sizey.value()
@@ -459,16 +549,17 @@ class DialogResample(QDialog):
         spacex = self._spacex.value()
         spacey = self._spacey.value()
         spacez = self._spacez.value()
-        transx = self._transx.value()
-        transy = self._transy.value()
-        transz = self._transz.value()
-        rotx = self._rotx.value()
-        roty = self._roty.value()
-        rotz = self._rotz.value()
         self._ftrf.setSize([sizex, sizey, sizez])
         self._ftrf.setSpacing([spacex, spacey, spacez])
-        self._ftrf.setTranslations([transx, transy, transz])
-        self._ftrf.setRotations([rotx, roty, rotz], deg=True)
+        if not self._ftrf.isDisplacementField():
+            transx = self._transx.value()
+            transy = self._transy.value()
+            transz = self._transz.value()
+            rotx = self._rotx.value()
+            roty = self._roty.value()
+            rotz = self._rotz.value()
+            self._ftrf.setTranslations([transx, transy, transz])
+            self._ftrf.setRotations([rotx, roty, rotz], deg=True)
         self._trfpreview.clear()
         self._trfpreview.append(str(self._ftrf))
 
@@ -477,6 +568,8 @@ class DialogResample(QDialog):
                                                filter='PySisyphe volume (*.xvol)')[0]
         QApplication.processEvents()
         if filename:
+            filename = abspath(filename)
+            chdir(dirname(filename))
             v = SisypheVolume()
             v.load(filename)
             size = v.getSize()
@@ -493,9 +586,12 @@ class DialogResample(QDialog):
             if not self._moving.isEmpty():
                 moving = self._moving.getVolume()
                 if not moving.isDefaultOrigin() and not v.isDefaultOrigin():
-                    r = QMessageBox.question(self, self.windowTitle(),
-                                             'Do you want to align origins ?',
-                                             QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                    r = messageBox(self,
+                                   title=self.windowTitle(),
+                                   text='Do you want to align origins ?',
+                                   icon=QMessageBox.Question,
+                                   buttons=QMessageBox.Yes | QMessageBox.No,
+                                   default=QMessageBox.No)
                     if r == QMessageBox.Yes:
                         cv = v.getOrigin()
                         co = moving.getOrigin()
@@ -505,9 +601,12 @@ class DialogResample(QDialog):
                         self._transz.setValue(t[2])
                         self._ftrf.setTranslations(t)
                 else:
-                    r = QMessageBox.question(self, self.windowTitle(),
-                                             'Do you want to align image centers ?',
-                                             QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                    r = messageBox(self,
+                                   title=self.windowTitle(),
+                                   text='Do you want to align image centers ?',
+                                   icon=QMessageBox.Question,
+                                   buttons=QMessageBox.Yes | QMessageBox.No,
+                                   default=QMessageBox.No)
                     if r == QMessageBox.Yes:
                         cv = v.getCenter()
                         co = moving.getCenter()
@@ -519,6 +618,7 @@ class DialogResample(QDialog):
             self._trfpreview.clear()
             self._trfpreview.append(str(self._ftrf))
 
+    # noinspection PyUnusedLocal
     def _updateDisplacement(self, v):
         filename = self._field.getFilename()
         if exists(filename):
@@ -534,6 +634,8 @@ class DialogResample(QDialog):
                                                    filter='PySisyphe volume (*.xvol)')[0]
             QApplication.processEvents()
             if filename:
+                filename = abspath(filename)
+                chdir(dirname(filename))
                 v = SisypheVolume()
                 v.load(filename)
                 ID = v.getID()
@@ -545,31 +647,63 @@ class DialogResample(QDialog):
                                                                                 v.getBasename()))
                     self._trfpreview.append(str(self._strf))
                 else:
-                    QMessageBox.information(self, self.windowTitle(),
-                                            '{} is not registered to {}'.format(v.getBasename(),
-                                                                                self._moving.getBasename()))
+                    messageBox(self,
+                               title=self.windowTitle(),
+                               text='{} is not registered to {}'.format(v.getBasename(),
+                                                                        self._moving.getBasename()),
+                               icon=QMessageBox.Information)
 
     def _affineToDisplacementField(self):
         if self._freetrf.isChecked():
-            if self._ftrf.isAffineTransform():
-                self._ftrf.AffineToDisplacementField()
+            if self._ftrf.isAffine():
+                self._ftrf.affineToDisplacementField()
                 self._trfpreview.clear()
                 self._trfpreview.append(str(self._ftrf))
         else:
             if self._strf is not None:
-                if self._strf.isAffineTransform():
-                    self._strf.AffineToDisplacementField()
+                if self._strf.isAffine():
+                    self._strf.affineToDisplacementField()
                     self._trfpreview.clear()
                     self._trfpreview.append(str(self._strf))
 
     def _loadField(self):
-        pass
+        self._ftrf = SisypheTransform()
+        if not self._field.isEmpty():
+            field = SisypheVolume()
+            field.load(self._field.getFilename())
+            if (field.getNumberOfComponentsPerPixel() == 3 and
+                    field.isFloatDatatype() and
+                    field.getAcquisition().isDisplacementField()):
+                self._ftrf.setSITKDisplacementFieldImage(Cast(field.getSITKImage(), sitkVectorFloat64))
+                size = field.getSize()
+                spacing = field.getSpacing()
+                self._sizex.blockSignals(True)
+                self._sizey.blockSignals(True)
+                self._sizez.blockSignals(True)
+                self._spacex.blockSignals(True)
+                self._spacey.blockSignals(True)
+                self._spacez.blockSignals(True)
+                self._sizex.setValue(size[0])
+                self._sizey.setValue(size[1])
+                self._sizez.setValue(size[2])
+                self._spacex.setValue(spacing[0])
+                self._spacey.setValue(spacing[0])
+                self._spacez.setValue(spacing[0])
+                self._sizex.blockSignals(False)
+                self._sizey.blockSignals(False)
+                self._sizez.blockSignals(False)
+                self._spacex.blockSignals(False)
+                self._spacey.blockSignals(False)
+                self._spacez.blockSignals(False)
+        else: self._updateValues(None)
+        self._updateVisible(False)
 
     def _loadTransform(self, action):
         flt = action.text()
-        print(flt)
         filename = QFileDialog.getOpenFileName(self, 'Load geometric transformation...', getcwd(), filter=flt)[0]
         if filename:
+            filename = abspath(filename)
+            chdir(dirname(filename))
             self._ftrf = SisypheTransform()
             flt = flt[:2]
             try:
@@ -579,10 +713,29 @@ class DialogResample(QDialog):
                 elif flt == 'MI': self._ftrf.loadFromXfmTransform(filename)
                 elif flt == 'Ma': self._ftrf.loadFromMatfileTransform(filename)
                 elif flt == 'Te': self._ftrf.loadFromTxtTransform(filename)
-                self._trfpreview.clear()
-                self._trfpreview.append(str(self._ftrf))
+                self._sizex.blockSignals(True)
+                self._sizey.blockSignals(True)
+                self._sizez.blockSignals(True)
+                self._spacex.blockSignals(True)
+                self._spacey.blockSignals(True)
+                self._spacez.blockSignals(True)
+                size = self._ftrf.getSize()
+                self._sizex.setValue(size[0])
+                self._sizey.setValue(size[1])
+                self._sizez.setValue(size[2])
+                spacing = self._ftrf.getSpacing()
+                self._spacex.setValue(spacing[0])
+                self._spacey.setValue(spacing[0])
+                self._spacez.setValue(spacing[0])
+                self._sizex.blockSignals(False)
+                self._sizey.blockSignals(False)
+                self._sizez.blockSignals(False)
+                self._spacex.blockSignals(False)
+                self._spacey.blockSignals(False)
+                self._spacez.blockSignals(False)
+                self._updateVisible(False)
             except Exception as err:
-                QMessageBox.warning(self, self.windowTitle(), '{}'.format(err))
+                messageBox(self, title=self.windowTitle(), text='{}'.format(err))
                 self._trf = None
 
     def _saveTransform(self, action):
@@ -592,6 +745,8 @@ class DialogResample(QDialog):
             flt = action.text()
             filename = QFileDialog.getSaveFileName(self, 'Save geometric transformation...', getcwd(), filter=flt)[0]
             if filename:
+                filename = abspath(filename)
+                chdir(dirname(filename))
                 flt = flt[:2]
                 try:
                     if flt == 'Py': trf.saveAs(filename)
@@ -601,7 +756,50 @@ class DialogResample(QDialog):
                     elif flt == 'Ma': trf.saveToMatfileTransform(filename)
                     elif flt == 'Te': trf.saveToTxtTransform(filename)
                 except Exception as err:
-                    QMessageBox.warning(self, self.windowTitle(), '{}'.format(err))
+                    QMessageBox(self, title=self.windowTitle(), text='{}'.format(err))
+
+    def _loadTransforms(self, action):
+        flt = action.text()
+        filename = QFileDialog.getOpenFileName(self, 'Load geometric transformations...', getcwd(), filter=flt)[0]
+        if filename:
+            filename = abspath(filename)
+            chdir(dirname(filename))
+            vid = SisypheVolume().getVolumeAttribute(self._moving.getFilename(), 'id')
+            flt = flt.split()[-1]
+            if flt == '(*.xtrfs)':
+                trfs = SisypheTransforms()
+                trfs.load(filename)
+                if trfs.getReferenceID() != vid:
+                    trfs = None
+                    messageBox(self,
+                               'Load geometric transformations',
+                               'ID mismatch between {} and moving volume  {}.'.format(basename(filename),
+                                                                                      self._moving.getBasename()))
+            elif flt == '(*.xvol)':
+                v = SisypheVolume()
+                v.load(filename)
+                trfs = v.getTransforms()
+                if trfs.getReferenceID() != vid:
+                    trfs = None
+                    messageBox(self,
+                               'Load geometric transformations',
+                               'ID mismatch between {} and moving volume  {}.'.format(v.getBasename(),
+                                                                                      self._moving.getBasename()))
+            else: raise ValueError('Invalid action ({})'.format(action.text()))
+            if trfs is not None:
+                self._selftrf.setChecked(True)
+                self._trfs = trfs
+                self._list.blockSignals(True)
+                self._list.clear()
+                if len(self._trfs) > 0:
+                    for trf in self._trfs:
+                        self._list.addItem(trf.getID())
+                    self._list.setCurrentIndex(0)
+                    self._strf = self._trfs[0]
+                else: self._strf = None
+                self._trfpreview.clear()
+                self._trfpreview.append(str(self._strf))
+                self._list.blockSignals(False)
 
     # Public method
 
@@ -640,22 +838,25 @@ class DialogResample(QDialog):
             if v is not None:
                 f.setMoving(v)
                 f.setTransform(trf)
-                wait = DialogWait(title='Resample', parent=self)
-                wait.setInformationText('Resample {} ...'.format(self._moving.getBasename()))
+                wait = DialogWait(title='Resample')
                 wait.open()
+                wait.setInformationText('Resample {} ...'.format(self._moving.getBasename()))
                 try:
                     f.execute(fixed=None, save=True, dialog=dialog, prefix=prefix, suffix=suffix, wait=wait)
                 except Exception as err:
-                    QMessageBox.warning(self, self.windowTitle(), '{}'.format(err))
+                    messageBox(self, title=self.windowTitle(), text='{}'.format(err))
                 wait.close()
             """
             
                 Exit
             
             """
-            r = QMessageBox.question(self, self.windowTitle(),
-                                     'Do you want to resample another volume ?',
-                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            r = messageBox(self,
+                           title=self.windowTitle(),
+                           text='Do you want to resample another volume ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
             if r == QMessageBox.Yes:
                 self._moving.clear()
             else: self.accept()
@@ -674,18 +875,4 @@ class DialogResample(QDialog):
         self._roty.setValue(0.0)
         self._rotz.setValue(0.0)
         self._ftrf = SisypheTransform()
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv
-    from os import chdir
-
-    chdir('/Users/Jean-Albert/PycharmProjects/untitled/TESTS/IMAGES/REGISTRATION/REG2')
-    app = QApplication(argv)
-    main = DialogResample()
-    main.exec()
+        self._updateVisible(False)

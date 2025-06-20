@@ -1,15 +1,19 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - PyQt5,Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from sys import platform
+
 from os import getcwd
-from os.path import join
+from os import chdir
+
 from os.path import exists
 from os.path import splitext
+from os.path import dirname
+from os.path import abspath
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
@@ -21,8 +25,10 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QWidgetAction
 from PyQt5.QtWidgets import QTreeWidget
 from PyQt5.QtWidgets import QTreeWidgetItem
+from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import MenuPushButton
 from Sisyphe.widgets.basicWidgets import LabeledSpinBox
 from Sisyphe.widgets.basicWidgets import LabeledLineEdit
@@ -31,40 +37,41 @@ from Sisyphe.widgets.iconBarViewWidgets import IconBarSliceViewWidget
 _all__ = ['DialogEditLabels']
 
 """
-    Class hierarchy
+Class hierarchy
+~~~~~~~~~~~~~~~
 
-        QDialog -> DialogEditLabels
-
+    - QDialog -> DialogEditLabels
 """
 
 
 class DialogEditLabels(QDialog):
     """
-        DialogEditLabels class
+    DialogEditLabels class
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> QDialog -> DialogEditLabels
+    QWidget -> QDialog -> DialogEditLabels
 
-        Private attributes
-
-            _volume     SisypheVolume
-
-        Public methods
-
-            setVolume(SisypheVolume)
-
-            inherited QDialog methods
-            inherited QWidget methods
+    Last revision: 08/11/2024
     """
 
     # Special method
+
+    """
+    Private attributes
+
+    _volume     SisypheVolume
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Edit labels')
-        self.setMinimumSize(1000, 400)
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        screen = QApplication.primaryScreen().geometry()
+        self.setMinimumWidth(int(screen.width() * 0.5))
 
         self._volume = None
 
@@ -82,6 +89,17 @@ class DialogEditLabels(QDialog):
         layout.setSpacing(5)
 
         self._view = IconBarSliceViewWidget()
+        self._view().popupMenuDisabled()
+        self._view.setExpandButtonAvailability(False)
+        self._view.setFullscreenButtonAvailability(False)
+        self._view.setRulerButtonAvailability(False)
+        self._view.setInfoButtonAvailability(False)
+        self._view.setToolButtonAvailability(False)
+        self._view.setCaptureButtonAvailability(False)
+        self._view.setClipboardButtonAvailability(False)
+        self._view.setColorbarButtonAvailability(False)
+        self._view.setIsoButtonAvailability(False)
+        self._view.setActionButtonAvailability(False)
 
         self._tree = QTreeWidget()
         self._tree.setSelectionMode(QTreeWidget.SingleSelection)
@@ -94,6 +112,7 @@ class DialogEditLabels(QDialog):
             edit = QLineEdit()
             self._tree.setItemWidget(item, 1, edit)
         self._tree.topLevelItem(0).setSelected(True)
+        # noinspection PyUnresolvedReferences
         self._tree.itemSelectionChanged.connect(self._selectionChanged)
 
         layout.addWidget(self._view)
@@ -124,16 +143,20 @@ class DialogEditLabels(QDialog):
         menu.addSeparator()
         load = menu.addAction('Load labels from text file...')
         save = menu.addAction('Save labels to text file...')
+        # noinspection PyUnresolvedReferences
         load.triggered.connect(self._load)
+        # noinspection PyUnresolvedReferences
         save.triggered.connect(self._save)
 
         clear = QPushButton('Clear labels')
         clear.setFixedWidth(100)
+        # noinspection PyUnresolvedReferences
         clear.clicked.connect(self._clear)
 
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
@@ -149,7 +172,9 @@ class DialogEditLabels(QDialog):
         layout.addWidget(clear)
         layout.addWidget(io)
         self._layout.addLayout(layout)
+        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self._saveLabels)
+        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
 
     # Private method
@@ -176,25 +201,39 @@ class DialogEditLabels(QDialog):
         if self._volume is not None:
             filename = QFileDialog.getOpenFileName(self, 'Load labels from text file...', getcwd(), filter='text file (*.txt)')[0]
             if filename and exists(filename):
-                with open(filename, 'r') as f:
-                    lines = f.readlines()
-                idxint = self._indexpos.value()
-                idxlbl = self._labelpos.value()
-                sep = self._sep.getEditText()
-                for line in lines:
-                    r = line.split(sep)
-                    idx = int(r[idxint])
-                    lbl = str(r[idxlbl])
-                    if 0 <= idx < 256:
-                        item = self._tree.topLevelItem(idx)
-                        edit = self._tree.itemWidget(item, 1)
-                        edit.setText(lbl)
+                filename = abspath(filename)
+                chdir(dirname(filename))
+                try:
+                    with open(filename, 'r') as f:
+                        lines = f.readlines()
+                    idxint = self._indexpos.value()
+                    idxlbl = self._labelpos.value()
+                    sep = self._sep.getEditText()
+                    if sep == '': sep = ' '
+                    for line in lines:
+                        r = line.split(sep)
+                        # < Revision 08/11/2024
+                        # 2 conditions added
+                        if len(r) > max(idxint, idxlbl):
+                            if r[idxint].isnumeric():
+                                # Revision 08/11/2024 >
+                                idx = int(r[idxint])
+                                lbl = str(r[idxlbl])
+                                if 0 <= idx < 256:
+                                    item = self._tree.topLevelItem(idx)
+                                    edit = self._tree.itemWidget(item, 1)
+                                    edit.setText(lbl)
+                except: messageBox(self,
+                                   'Load labels from text file',
+                                   'text read error.')
 
     def _save(self):
         if self._volume is not None:
             filename = splitext(self._volume.getFilename())[0] + '.txt'
             filename = QFileDialog.getSaveFileName(self, 'Save labels to text file...', filename, filter='text file (*.txt)')[0]
             if filename:
+                filename = abspath(filename)
+                chdir(dirname(filename))
                 sep = self._sep.getEditText()
                 with open(filename, 'w') as f:
                     for i in range(256):
@@ -231,23 +270,3 @@ class DialogEditLabels(QDialog):
 
     def getVolume(self):
         return self._volume
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv
-    from PyQt5.QtWidgets import QApplication
-
-    app = QApplication(argv)
-    main = DialogEditLabels()
-    v = SisypheVolume()
-    v.load('/Users/jean-albert/PycharmProjects/python310Project/TESTS/LABELS/ICBM_LABELS_181x197x181.xvol')
-    main.setVolume(v)
-    main.show()
-    app.exec_()
-
-

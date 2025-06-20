@@ -1,68 +1,77 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        Numpy           https://numpy.org/                                          Scientific computing
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - Numpy, Scientific computing, https://numpy.org/
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from sys import platform
+
 from os import chdir
+
 from os.path import dirname
+from os.path import abspath
 
-from numpy import *
-
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QListWidgetItem
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QApplication
 
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.gui.dialogWait import DialogWait
 from Sisyphe.widgets.basicWidgets import LabeledLineEdit
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
 
-"""
-    Class hierarchy
+__all__ = ['DialogAlgebra']
 
-        QDialog -> DialogAlgebra
+"""
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+QDialog -> DialogAlgebra
 """
 
 
 class DialogAlgebra(QDialog):
     """
-        DialogAlgebra
+    DialogAlgebra
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            GUI dialog window for voxel by voxel algebraic calculation
+    GUI dialog window for voxel by voxel algebraic calculation.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QDialog -> DialogAlgebra
+    QDialog -> DialogAlgebra
 
-        Private attributes
-
-            _files      FilesSelectionWidget
-            _formula    LabeledLineEdit
-
-        Public methods
-
-            inherited QDialog methods
+    Last revision: 10/11/2024
     """
 
     # Special method
+
+    """
+    Private attributes
+
+    _files      FilesSelectionWidget
+    _formula    LabeledLineEdit
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Voxel by voxel algebraic calculation')
-        self.resize(QSize(600, 500))
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        screen = QApplication.primaryScreen().geometry()
+        self.setMinimumWidth(int(screen.width() * 0.33))
 
         # Init QLayout
 
@@ -73,7 +82,7 @@ class DialogAlgebra(QDialog):
 
         # Files selection widgets
 
-        self._files = FilesSelectionWidget()
+        self._files = FilesSelectionWidget(parent=self)
         self._files.filterSisypheVolume()
         self._files.filterSameSize()
         self._files.setCurrentVolumeButtonVisibility(False)
@@ -83,14 +92,19 @@ class DialogAlgebra(QDialog):
         # Formula edit widget
 
         self._formula = LabeledLineEdit()
+        # noinspection PyTypeChecker
+        self._formula.setFocusPolicy(Qt.StrongFocus)
         self._formula.setLabelText('Formula')
         self._formula.setToolTip('All functions and operators of the Numpy library can be used in formula.\n'
-                                 'Double-click on filename adds volume to the formula.')
+                                 'All Numpy functions must be prefixed with \'np.\' (numpy is imported with the alias np)\n'
+                                 'Volume number i is inserted into the formula using a list variable named img: img[i].\n'
+                                 'or double-click on the filename to add the volume to the formula.')
         self._layout.addWidget(self._formula)
 
         # Init default dialog buttons
 
         lyout = QHBoxLayout()
+        if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
         lyout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
@@ -106,8 +120,12 @@ class DialogAlgebra(QDialog):
 
         # Qt Signals
 
+        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
+        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
+
+        self.setModal(True)
 
     # Private method
 
@@ -119,18 +137,23 @@ class DialogAlgebra(QDialog):
             idx = self._files.getIndexFromItem(v)
             f = f[:i] + ' img[{}] '.format(idx) + f[i:]
             self._formula.setEditText(f)
+            # noinspection PyTypeChecker
+            self._formula.setFocus(Qt.OtherFocusReason)
         else: raise TypeError('parameter type {} is not str.'.format(type(v)))
 
     # Public methods
+
+    def getFilesSelectionWidget(self):
+        return self._files
 
     def execute(self):
         title = 'Voxel by voxel algebraic calculation'
         f = self._formula.getEditText()
         if f != '' and self._files.filenamesCount() > 0:
             wait = DialogWait(title=title, progress=False, progressmin=0, progressmax=0,
-                              progresstxt=False, anim=False, cancel=False, parent=self)
-            wait.setInformationText(title)
+                              progresstxt=False, cancel=False)
             wait.open()
+            wait.setInformationText(title)
             QApplication.processEvents()
             try:
                 img = list()
@@ -139,10 +162,15 @@ class DialogAlgebra(QDialog):
                     v = SisypheVolume()
                     v.load(filename)
                     img.append(v.copyToNumpyArray())
-                f = 'r = ' + f
+                # < Revision 10/11/2024
+                # add numpy import
+                # f = 'r = ' + f
+                f = 'import numpy as np\nr = ' + f
+                # Revision 10/11/2024 >
                 exec(f)
                 result = locals()['r']
                 m = SisypheVolume()
+                # noinspection PyUnboundLocalVariable
                 m.copyFromNumpyArray(result, spacing=v.getSpacing())
                 m.copyAttributesFrom(v, display=False)
                 m.setFilename(filenames[0])
@@ -151,26 +179,14 @@ class DialogAlgebra(QDialog):
                 filename = QFileDialog.getSaveFileName(self, title, m.getFilename(),
                                                        filter='PySisyphe volume (*.xvol)')[0]
                 if filename:
+                    filename = abspath(filename)
                     chdir(dirname(filename))
                     m.updateArrayID()
                     m.saveAs(filename)
-                self._formula.setEditText('')
+                # < Revision 22/05/2025
+                # self._formula.setEditText('')
+                # Revision 22/05/2025 >
             except Exception as err:
                 wait.hide()
-                QMessageBox.warning(self, title, 'Formula error.\n{}'.format(err))
+                messageBox(self, title, 'Formula error.\n{}'.format(err))
             wait.close()
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv, exit
-
-    app = QApplication(argv)
-    main = DialogAlgebra()
-    main.show()
-    app.exec_()
-    exit()

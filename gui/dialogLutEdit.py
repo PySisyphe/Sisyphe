@@ -1,11 +1,13 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Homepage link                                               Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from sys import platform
+
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
@@ -13,38 +15,41 @@ from PyQt5.QtWidgets import QPushButton
 
 from Sisyphe.widgets.LUTWidgets import LutEditWidget
 
+__all__ = ['DialogLutEdit']
+
 """
-    Class 
+Class hierarchy
+~~~~~~~~~~~~~~~
     
-        DialogLutEdit
+    - QDialog -> DialogLutEdit
 """
 
 
 class DialogLutEdit(QDialog):
     """
-        DialogLutEdit class
+    DialogLutEdit class
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QDialog -> DialogLutEdit
+    QDialog -> DialogLutEdit
+    """
 
-        Private attributes
+    # Special method
 
-            _lutwidget  LutEditWidget
+    """
+    Private attributes
 
-        Public methods
-
-            SisypheLut = getLut()
-
-            inherited QDialog
+    _lutwidget  LutEditWidget    
     """
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Edit Lut')
-        self.setFixedWidth(512)
-        self.setFixedHeight(96)
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        self.setSizeGripEnabled(False)
 
         self._lutwidget = LutEditWidget()
         self._lutwidget.setContentsMargins(5, 5, 5, 5)
@@ -59,11 +64,12 @@ class DialogLutEdit(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         save = QPushButton('Save')
         save.setFixedWidth(100)
-        ok = QPushButton('OK')
+        ok = QPushButton('Close')
         ok.setFixedWidth(100)
         ok.setAutoDefault(True)
         ok.setDefault(True)
@@ -74,26 +80,12 @@ class DialogLutEdit(QDialog):
         self._layout.addWidget(self._lutwidget)
         self._layout.addLayout(layout)
 
+        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
+        # noinspection PyUnresolvedReferences
         save.clicked.connect(self._lutwidget.save)
+
+    # Public method
 
     def getLut(self):
         return self._lutwidget.getSisypheLut()
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv, exit
-    from PyQt5.QtWidgets import QApplication
-
-    app = QApplication(argv)
-    main = DialogLutEdit()
-    main.show()
-    main.activateWindow()
-    print(main.width(), main.height())
-    app.exec_()
-    exit()

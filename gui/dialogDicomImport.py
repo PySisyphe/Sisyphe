@@ -1,37 +1,29 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Homepage link                                               Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
-        SimpleITK       https://simpleitk.org/                                      Medical image processing
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - SimpleITK, medical image processing, https://simpleitk.org/
 """
 
+from sys import platform
+
 from os.path import join
-from os.path import exists
 from os.path import basename
 from os.path import dirname
 from os.path import splitext
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMenu
-from PyQt5.QtWidgets import QAction
-from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QCheckBox
-from PyQt5.QtWidgets import QComboBox
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from SimpleITK import GetArrayViewFromImage
 from SimpleITK import GetImageFromArray
 
-from Sisyphe.core.sisypheConstants import getDicomExt
 from Sisyphe.core.sisypheConstants import getNiftiExt
 from Sisyphe.core.sisypheConstants import getMincExt
 from Sisyphe.core.sisypheConstants import getNrrdExt
@@ -55,40 +47,48 @@ from Sisyphe.core.sisypheImageIO import readFromDicomFilenames
 from Sisyphe.core.sisypheImageIO import convertImageToAxialOrientation
 from Sisyphe.core.sisypheImageIO import flipImageToVTKDirectionConvention
 from Sisyphe.widgets.basicWidgets import LabeledComboBox
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.dicomWidgets import DicomFilesEnhancedTreeWidget
 from Sisyphe.gui.dialogWait import DialogWait
 
+__all__ = ['DialogDicomImport']
+
 """
-    Class hierarchy
-    
-        QDialog -> DialogDicomImport
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    - QDialog -> DialogDicomImport
 """
 
 
 class DialogDicomImport(QDialog):
     """
-        DialogDicomImport
+    DialogDicomImport
 
-        Inheritance
+    Inheritance
 
-            QDialog -> DialogDicomImport
+    QDialog -> DialogDicomImport
 
-        Private attributes
-
-            _series     DicomFilesTreeViewWidget
-
-        Public methods
-
-            convert()           convert to Nifti, Minc, Nrrd, Vtk or Numpy
-
-            inherited QDialog methods
+    Last revision: 27/03/2025
     """
 
     # Special method
 
+    """
+    Private attributes
+
+    _series     DicomFilesTreeViewWidget
+    """
+
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.setWindowTitle('DICOM import')
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        screen = QApplication.primaryScreen().geometry()
+        self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.50))
 
         # Init QLayout
 
@@ -117,7 +117,12 @@ class DialogDicomImport(QDialog):
         self._series.setModalityFilterToImages()
 
         self._origin = QCheckBox('Keep Dicom origin')
-        self._origin.setCheckState(Qt.Checked)
+        self._origin.setCheckState(Qt.Unchecked)
+        self._origin.setToolTip('Copy Dicom origin into converted volume.')
+
+        self._acq = QCheckBox('Use acquisition number')
+        self._acq.setCheckState(Qt.Unchecked)
+        self._acq.setToolTip('Use acquisition number as suffix in converted file name.')
 
         self._savedir = FileSelectionWidget()
         self._savedir.filterDirectory()
@@ -126,6 +131,7 @@ class DialogDicomImport(QDialog):
 
         self._convert = QPushButton('Import')
         self._convert.setToolTip('Import checked DICOM files.')
+        # noinspection PyUnresolvedReferences
         self._convert.clicked.connect(self.convert)
 
         self._layout.addWidget(self._series)
@@ -134,6 +140,7 @@ class DialogDicomImport(QDialog):
         layout.setSpacing(10)
         layout.addWidget(self._savedir)
         layout.addWidget(self._format)
+        layout.addWidget(self._acq)
         layout.addWidget(self._origin)
         layout.addWidget(self._convert)
         self._layout.addLayout(layout)
@@ -141,6 +148,7 @@ class DialogDicomImport(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
@@ -152,14 +160,9 @@ class DialogDicomImport(QDialog):
 
         self._layout.addLayout(layout)
 
+        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
 
-        # Window
-
-        screen = QApplication.primaryScreen().geometry()
-        self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.50))
-
-        self.setWindowTitle('DICOM import')
         self.setModal(True)
 
     # Public methods
@@ -167,15 +170,13 @@ class DialogDicomImport(QDialog):
     def convert(self):
         fmt = self._format.currentIndex()
         tree = self._series.getTreeWidget()
-        wait = DialogWait(info='DICOM import...',
-                          progress=True,
-                          progressmin=0,
-                          progressmax=self._series.getSelectedAcquisitionsCount(),
-                          progresstxt=True,
-                          cancel=True,
-                          parent=self)
-        wait.setCurrentProgressValue(0)
+        wait = DialogWait()
         wait.open()
+        wait.setInformationText('DICOM import...')
+        wait.setProgressVisibility(True)
+        wait.setProgressTextVisibility(True)
+        wait.setButtonVisibility(True)
+        wait.setProgressRange(0, self._series.getSelectedAcquisitionsCount())
         QApplication.processEvents()
         # Series
         nseries = tree.topLevelItemCount()
@@ -205,7 +206,7 @@ class DialogDicomImport(QDialog):
                                 filenames.append(filename)
                         if len(filenames) > 0:
                             idt = getIdentityFromDicom(filenames[0])
-                            acq = getAcquisitionFromDicom(filenames[0])
+                            acq = getAcquisitionFromDicom(filenames[0], useacqnumber=self._acq.checkState() > 0)
                             acq3D = acq.getType()
                             if acq3D == '2D' or acq3D in acq.getSequence(): acq3D = ''
                             acqdate = acq.getDateOfScan(True)
@@ -231,9 +232,7 @@ class DialogDicomImport(QDialog):
                             # DICOM filenames conversion to SimpleITK image
                             try: img = readFromDicomFilenames(filenames)
                             except:
-                                QMessageBox.warning(self,
-                                                    'DICOM import',
-                                                    'DICOM read error.')
+                                messageBox(self,'DICOM import','DICOM read error.')
                                 continue
                             # Siemens mosaic conversion
                             if tree.isMosaic(series):
@@ -246,16 +245,21 @@ class DialogDicomImport(QDialog):
                             img = flipImageToVTKDirectionConvention(img)
                             # Axial orientation conversion
                             img = convertImageToAxialOrientation(img)[0]
+                            img.SetDirection(getRegularDirections())
                             if not self._origin.isChecked():
                                 img.SetOrigin((0.0, 0.0, 0.0))
-                                img.SetDirection(getRegularDirections())
                             # Save
                             try:
                                 if fmt == 0:  # SisypheVolume
                                     vol = SisypheVolume()
+                                    vol.setSITKImage(img)
+                                    # < Revision 09/10/2024
+                                    # cast to int16 or uint16
+                                    if vol.display.getRangeMin() < 0: vol = vol.cast('int16')
+                                    else: vol = vol.cast('uint16')
+                                    # Revision 09/10/2024 >
                                     vol.identity = idt
                                     vol.acquisition = acq
-                                    vol.setSITKImage(img)
                                     vol.save(savename)
                                 elif fmt == 1: writeToMINC(img, savename)   # Minc
                                 elif fmt == 2: writeToNIFTI(img, savename)  # Nifti
@@ -263,9 +267,9 @@ class DialogDicomImport(QDialog):
                                 elif fmt == 4: writeToNumpy(img, savename)  # Numpy
                                 else: writeToVTK(img, savename)  # VTK
                             except:
-                                QMessageBox.warning(self,
-                                                    'DICOM import',
-                                                    '{} write error.'.format(basename(savename)))
+                                messageBox(self,
+                                           'DICOM import',
+                                           text='{} write error.'.format(basename(savename)))
                                 continue
                             # Save XmlDicom
                             xml = DicomToXmlDicom()
@@ -274,9 +278,9 @@ class DialogDicomImport(QDialog):
                             if self._savedir.getPath() != '': xml.setBackupXmlDicomDirectory(dirname(savename))
                             try: xml.execute()
                             except:
-                                QMessageBox.warning(self,
-                                                    'DICOM import',
-                                                    '{} XML dicom conversion error.'.format(xml.getXmlDicomFilename()))
+                                messageBox(self,
+                                           'DICOM import',
+                                           text='{} XML dicom conversion error.'.format(xml.getXmlDicomFilename()))
                                 continue
                             if nacq > 1:
                                 r = getDiffusionParametersFromDicom(filenames[0])
@@ -306,16 +310,3 @@ class DialogDicomImport(QDialog):
                 del tree.getDict()[series]
         tree.treeUpdate()
         wait.close()
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv
-
-    app = QApplication(argv)
-    main = DialogDicomImport()
-    main.open()
-    app.exec_()

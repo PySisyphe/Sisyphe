@@ -1,10 +1,11 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Homepage link                                               Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
+
+from sys import platform
 
 from os import mkdir
 from os.path import join
@@ -16,49 +17,56 @@ from os.path import splitext
 from glob import glob
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheROI import SisypheROI
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.gui.dialogWait import DialogWait
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
 
-"""
-    Class hierarchy
+__all__ = ['DialogOldSisypheImport']
 
-        QDialog -> DialogOldSisypheImport
+"""
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    - QDialog -> DialogOldSisypheImport
 """
 
 
 class DialogOldSisypheImport(QDialog):
     """
-        DialogImport
+    DialogImport
 
-        Inheritance
+    Description
+    ~~~~~~~~~~~
 
-            QDialog -> DialogOldSisypheImport
+    GUI dialog for importing old Sisyphe *.vol format.
 
-        Private attributes
+    Inheritance
+    ~~~~~~~~~~~
 
-        Public methods
+    QDialog -> DialogOldSisypheImport
 
-            convert()
-
-            inherited QDialog methods
+    Last revision: 29/11/2024
     """
 
     # Special method
 
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.setWindowTitle('Sisyphe import')
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        screen = QApplication.primaryScreen().geometry()
+        self.setMinimumWidth(int(screen.width() * 0.33))
 
         # Init QLayout
 
@@ -77,19 +85,24 @@ class DialogOldSisypheImport(QDialog):
         self._savedir.filterDirectory()
         self._savedir.setTextLabel('Import directory')
         self._savedir.setContentsMargins(0, 0, 0, 0)
-        self._convert = QPushButton(QIcon(join(self._savedir.getDefaultIconDirectory(), 'download64.png')), 'Convert')
-        self._convert.setFixedSize(QSize(100, 32))
-        self._convert.setToolTip('Convert Sisyphe old binary format to Sisyphe volume.')
+        # < Revision 14/11/2024
+        # self._convert = QPushButton(QIcon(join(self._savedir.getDefaultIconDirectory(), 'download64.png')), 'Convert')
+        # self._convert.setFixedSize(QSize(100, 32))
+        self._convert = QPushButton('Import')
+        # Revision 14/11/2024 >
+        self._convert.setToolTip('Import Sisyphe old binary format (*.vol).')
+        # noinspection PyUnresolvedReferences
         self._convert.clicked.connect(self.convert)
         layout = QHBoxLayout()
         layout.setSpacing(10)
-        layout.addWidget(self._convert)
         layout.addWidget(self._savedir)
+        layout.addWidget(self._convert)
         self._layout.addLayout(layout)
 
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
@@ -101,14 +114,9 @@ class DialogOldSisypheImport(QDialog):
 
         self._layout.addLayout(layout)
 
+        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
 
-        # Window
-
-        screen = QApplication.primaryScreen().geometry()
-        self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
-
-        self.setWindowTitle('Sisyphe import')
         self.setModal(True)
 
     # Public method
@@ -118,7 +126,7 @@ class DialogOldSisypheImport(QDialog):
         if folders:
             n = len(folders)
             # Set ProgressBar
-            progress = DialogWait(parent=self)
+            progress = DialogWait()
             progress.buttonVisibilityOff()
             progress.progressTextVisibilityOn()
             progress.setProgressVisibility(n > 1)
@@ -139,8 +147,9 @@ class DialogOldSisypheImport(QDialog):
                             vol = SisypheVolume()
                             try: vol.loadFromSisyphe(filename)
                             except:
-                                QMessageBox.warning(self, 'Sisyphe old binary format import',
-                                                    '{} read error.'.format(basename(filename)))
+                                messageBox(self,
+                                           'Sisyphe old binary format import',
+                                           text='{} read error.'.format(basename(filename)))
                                 continue
                             if not self._savedir.isEmpty():
                                 savename = join(self._savedir.getPath(), basename(folder), basename(filename))
@@ -148,10 +157,13 @@ class DialogOldSisypheImport(QDialog):
                             else: savename = filename
                             progress.setInformationText('Folder {}, '
                                                         'save {}'.format(basename(folder), basename(savename)))
-                            try: vol.saveAs(savename)
+                            try:
+                                # noinspection PyTypeChecker
+                                vol.saveAs(savename)
                             except:
-                                QMessageBox.warning(self, 'Sisyphe old binary format import',
-                                                    '{} write error.'.format(basename(savename)))
+                                messageBox(self,
+                                           'Sisyphe old binary format import',
+                                           text='{} write error.'.format(basename(savename)))
                                 continue
                             size = vol.getSize()
                             # Convert roi associated to current volume in current folder
@@ -169,25 +181,12 @@ class DialogOldSisypheImport(QDialog):
                                                                 .format(basename(folder), basename(saveroi)))
                                     try: roi.saveAs(saveroi)
                                     except:
-                                        QMessageBox.warning(self, 'Sisyphe old binary format import',
-                                                            '{} write error.'.format(basename(saveroi)))
+                                        messageBox(self,
+                                                   'Sisyphe old binary format import',
+                                                   text='{} write error.'.format(basename(saveroi)))
                                         continue
                                     del roiname
                             progress.incCurrentProgressValue()
             finally:
                 progress.hide()
                 self._files.clearall()
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv
-
-    app = QApplication(argv)
-    main = DialogOldSisypheImport()
-    main.show()
-    app.exec_()

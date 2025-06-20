@@ -1,11 +1,13 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from sys import platform
+
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
@@ -14,38 +16,41 @@ from PyQt5.QtWidgets import QPushButton
 from Sisyphe.widgets.LUTWidgets import LutWidget
 from Sisyphe.core.sisypheVolume import SisypheVolume
 
-"""
-    Class 
+__all__ = ['DialogLutSettings']
 
-        DialogLutSettings
+"""
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    QDialog -> DialogLutSettings
 """
 
 
 class DialogLutSettings(QDialog):
     """
-        DialogLutSettings class
+    DialogLutSettings class
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QDialog -> DialogLutSettings
+    QDialog -> DialogLutSettings
+    """
 
-        Private attributes
+    # Special method
 
-            _lutwidget  LutWidget
+    """
+    Private attributes
 
-        Public methods
-
-            setVolume(SisypheVolume)
-
-            inherited QDialog
+    _lutwidget  LutWidget    
     """
 
     def __init__(self, volume=None, size=256, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Lut Settings')
-        self.setFixedWidth(256)
-        self.setFixedHeight(288)
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        self.setSizeGripEnabled(False)
         self._lutwidget = LutWidget(volume=volume, size=size)
         self._lutwidget.setContentsMargins(5, 5, 5, 5)
 
@@ -59,6 +64,7 @@ class DialogLutSettings(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         save = QPushButton('Save')
@@ -73,32 +79,13 @@ class DialogLutSettings(QDialog):
         self._layout.addWidget(self._lutwidget)
         self._layout.addLayout(layout)
 
+        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
+
+    # Public method
 
     def setVolume(self, v):
         if isinstance(v, SisypheVolume):
             self._lutwidget.setVolume(v)
         else:
             raise TypeError('parameter type {} is not SisypheVolume.'.format(type(v)))
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv, exit
-    from PyQt5.QtWidgets import QApplication
-
-    app = QApplication(argv)
-    filename = '/Users/Jean-Albert/PycharmProjects/untitled/Sisyphe/tests/IMAGES/img.xvol'
-    img = SisypheVolume()
-    img.load(filename)
-    main = DialogLutSettings()
-    main.setVolume(img)
-    main.show()
-    main.activateWindow()
-    print(main.width(), main.height())
-    app.exec_()
-    exit()

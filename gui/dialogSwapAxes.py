@@ -1,13 +1,14 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Homepage link                                               Usage
-
-        SimpleITK       https://simpleitk.org/                                      Medical image processing
+    - SimpleITK, Medical image processing, https://simpleitk.org/
 """
 
 from os.path import exists
 from os.path import basename
+
+from PyQt5.QtWidgets import QApplication
 
 from SimpleITK import PermuteAxes as sitkPermuteAxes
 
@@ -18,30 +19,27 @@ from Sisyphe.gui.dialogFromXml import DialogFromXml
 __all__ = ['DialogSwapAxes']
 
 """
-    Class hierarchy
+Class hierarchy
+~~~~~~~~~~~~~~~
 
-        QDialog -> DialogFromXml -> DialogSwapAxes
+    - QDialog -> DialogFromXml -> DialogSwapAxes
 """
 
 class DialogSwapAxes(DialogFromXml):
     """
-        DialogSwapAxes class
+    DialogSwapAxes class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            GUI dialog window to swap volume axes
+    GUI dialog window to swap volume axes.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QDialog -> DialogFromXml -> DialogSwapAxes
+    QDialog -> DialogFromXml -> DialogSwapAxes
 
-        Private attributes
-
-        Public methods
-
-
-            inherited DialogFromXml methods
-            inherited QDialog methods
+    Last revision: 13/02/2025
     """
 
     # Special method
@@ -49,12 +47,41 @@ class DialogSwapAxes(DialogFromXml):
     def __init__(self, parent=None):
         super().__init__('Swap axes', 'SwapAxes', parent)
 
+        screen = QApplication.primaryScreen().geometry()
+        self.setMinimumWidth(int(screen.width() * 0.33))
+
         widget = self.getFieldsWidget(0)
         self._files = widget.getParameterWidget('Volumes')
         self._swap = widget.getParameterWidget('SwapOrder')
         self._prefix = widget.getParameterWidget('Prefix')
 
     # Public method
+
+    # < Revision 13/02/2025
+    def setFilenames(self, filenames: str | list[str]):
+        if isinstance(filenames, str): filenames = [filenames]
+        self._files.add(filenames)
+    # Revision 13/02/2025 >
+
+    def getFilenames(self) -> list[str]:
+        return self._files.getFilenames()
+
+    # < Revision 13/02/2025
+    def getParametersDict(self) -> dict:
+        params = dict()
+        params['SwapOrder'] = self._swap.currentText()
+        params['Prefix'] = self._prefix.text()
+        return params
+    # Revision 13/02/2025 >
+
+    # < Revision 13/02/2025
+    def setParametersFromDict(self, params: dict):
+        if len(params) > 0:
+            p = ['SwapOrder', 'Prefix']
+            widget = self.getFieldsWidget(0)
+            for k in list(params.keys()):
+                if k in p: widget.setParameterValue(k, params[k])
+    # Revision 13/02/2025 >
 
     def accept(self):
         axes = self._swap.currentText().split(',')
@@ -65,7 +92,7 @@ class DialogSwapAxes(DialogFromXml):
             if n == 1: progress, cancel = False, False
             else: progress, cancel = True, True
             wait = DialogWait(title='Swap axes', progress=progress, progressmin=0, progressmax=n,
-                              progresstxt=True, anim=False, cancel=cancel, parent=self)
+                              progresstxt=True, cancel=cancel)
             for file in files:
                 if exists(file):
                     wait.setInformationText('Swap {} axes...'.format(basename(file)))
@@ -78,18 +105,3 @@ class DialogSwapAxes(DialogFromXml):
                     wait.incCurrentProgressValue()
                     if wait.getStopped(): break
         super().accept()
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv
-    from PyQt5.QtWidgets import QApplication
-
-    app = QApplication(argv)
-    main = DialogSwapAxes()
-    main.show()
-    app.exec_()

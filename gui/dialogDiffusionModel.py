@@ -1,11 +1,12 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Homepage link                                               Usage
-
-        Numpy           https://numpy.org/                                          Scientific computing
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - Numpy, scientific computing, https://numpy.org/
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
+
+from sys import platform
 
 from os.path import exists
 from os.path import basename
@@ -13,11 +14,11 @@ from os.path import splitext
 
 from numpy import array
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QVBoxLayout
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheDicom import loadBVal
@@ -30,35 +31,33 @@ from Sisyphe.core.sisypheTracts import SisypheDSIModel
 from Sisyphe.core.sisypheTracts import SisypheDSIDModel
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheVolume import SisypheVolumeCollection
-from Sisyphe.core.sisypheSettings import SisypheFunctionsSettings
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.functionsSettingsWidget import FunctionSettingsWidget
 from Sisyphe.gui.dialogWait import DialogWait
 
-"""
-    Class hierarchy
+__all__ = ['DialogDiffusionModel']
 
-        QDialog -> DialogDiffusionModel
+"""
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    - QDialog -> DialogDiffusionModel
 """
 
 class DialogDiffusionModel(QDialog):
     """
-        DialogDiffusionPreprocessing
+    Description
+    ~~~~~~~~~~~
 
-        Description
+    GUI dialog window for defining the diffusion model, model parameters and diffusion-derived maps to be processed.
 
-            GUI dialog window for defining the diffusion model, model parameters
-            and diffusion-derived maps to be processed.
+    Inheritance
+    ~~~~~~~~~~~
 
-        Inheritance
+    QDialog -> DialogDiffusionModel
 
-            QDialog -> DialogDiffusionPreprocessing
-
-        Public methods
-
-            save()
-
-            inherited QDialog methods
+    Last revision 17/06/2025
     """
 
     # Special method
@@ -68,10 +67,9 @@ class DialogDiffusionModel(QDialog):
 
         # Init window
 
-        self.setWindowTitle('Diffusion gradients')
-        screen = QApplication.primaryScreen().geometry()
-        self.setMinimumWidth(int(screen.width() * 0.33))
-        # self.setMinimumSize(int(screen.width() * 0.25), int(screen.height() * 0.25))
+        self.setWindowTitle('Diffusion model')
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
 
@@ -84,13 +82,14 @@ class DialogDiffusionModel(QDialog):
 
         self._bvals = FileSelectionWidget()
         self._bvals.filterExtension('.xbval')
-        self._bvals.setTextLabel('B values')
+        self._bvals.setTextLabel('B-values')
         self._bvals.FieldChanged.connect(self._updateBVals)
         self._bvals.FieldCleared.connect(self._bvalsCleared)
 
         self._bvecs = FileSelectionWidget()
         self._bvecs.filterExtension('.xbvec')
         self._bvecs.setTextLabel('Gradient directions')
+        self._bvecs.alignLabels(self._bvals)
         self._bvecs.FieldChanged.connect(self._updateBVecs)
         self._bvecs.FieldCleared.connect(self._bvecsCleared)
 
@@ -105,23 +104,33 @@ class DialogDiffusionModel(QDialog):
         self._DKI = FunctionSettingsWidget('DKIModel')
         self._SHCSA = FunctionSettingsWidget('SHCSAModel')
         self._SHCSD = FunctionSettingsWidget('SHCSDModel')
+        self._DSI = FunctionSettingsWidget('DSI Model')
+        self._DSID = FunctionSettingsWidget('DSID Model')
         self._DTI.setSettingsButtonText('DTI Model')
         self._DKI.setSettingsButtonText('DKI Model')
         self._SHCSA.setSettingsButtonText('SHCSA Model')
         self._SHCSD.setSettingsButtonText('SHCSD Model')
+        self._DSI.setSettingsButtonText('DSI Model')
+        self._DSID.setSettingsButtonText('DSID Model')
         self._DTI.settingsVisibilityOn()
         self._DKI.settingsVisibilityOn()
         self._SHCSA.settingsVisibilityOn()
         self._SHCSD.settingsVisibilityOn()
+        self._DSI.settingsVisibilityOn()
+        self._DSID.settingsVisibilityOn()
         self._DTI.hideIOButtons()
         self._DKI.hideIOButtons()
         self._SHCSA.hideIOButtons()
         self._SHCSD.hideIOButtons()
+        self._DSI.hideIOButtons()
+        self._DSID.hideIOButtons()
         self._modelChanged()
         self._DTI.VisibilityToggled.connect(self._center)
         self._DKI.VisibilityToggled.connect(self._center)
         self._SHCSA.VisibilityToggled.connect(self._center)
         self._SHCSD.VisibilityToggled.connect(self._center)
+        self._DSI.VisibilityToggled.connect(self._center)
+        self._DSID.VisibilityToggled.connect(self._center)
 
         self._layout.addWidget(self._bvals)
         self._layout.addWidget(self._bvecs)
@@ -134,31 +143,43 @@ class DialogDiffusionModel(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
-        exit = QPushButton('Close')
-        exit.setAutoDefault(True)
-        exit.setDefault(True)
-        exit.setFixedWidth(100)
-        self._save = QPushButton('Save')
+        exitb = QPushButton('Close')
+        exitb.setAutoDefault(True)
+        exitb.setDefault(True)
+        exitb.setFixedWidth(100)
+        self._save = QPushButton('Execute')
         self._save.setFixedWidth(100)
-        self._save.setToolTip('save diffusion model')
+        self._save.setToolTip('Diffusion model processing')
         self._save.setEnabled(False)
-        layout.addWidget(exit)
+        layout.addWidget(exitb)
         layout.addWidget(self._save)
         layout.addStretch()
 
         self._layout.addLayout(layout)
-        # self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
-        self.setSizeGripEnabled(False)
 
         # Qt Signals
 
-        exit.clicked.connect(self.accept)
+        # noinspection PyUnresolvedReferences
+        exitb.clicked.connect(self.accept)
+        # noinspection PyUnresolvedReferences
         self._save.clicked.connect(self.save)
+
+        # < Revision 17/06/2025
+        self.adjustSize()
+        # imposing dialog width -> set minimum width to a child widget of the main layout
+        screen = QApplication.primaryScreen().geometry()
+        self._bvals.setMinimumWidth(int(screen.width() * 0.33))
+        # dialog resize off
+        self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
+        # Revision 17/06/2025 >
+        self.setModal(True)
 
     # Private methods
 
+    # noinspection PyUnusedLocal
     def _center(self, widget):
         self.adjustSize()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
@@ -175,9 +196,9 @@ class DialogDiffusionModel(QDialog):
     def _updateBVals(self):
         try: v1 = loadBVal(self._bvals.getFilename(), format='xml')
         except:
-            QMessageBox.warning(self,
-                                self.windowTitle(),
-                                '{} format is invalid.'.format(basename(self._bvals.getFilename())))
+            messageBox(self,
+                       title=self.windowTitle(),
+                       text='{} format is invalid.'.format(basename(self._bvals.getFilename())))
             self._bvals.clear(signal=False)
             self._bvals.setToolTip('')
             self._save.setEnabled(False)
@@ -193,9 +214,9 @@ class DialogDiffusionModel(QDialog):
         if exists(filename):
             try: v2 = loadBVec(filename, format='xml')
             except:
-                QMessageBox.warning(self,
-                                    self.windowTitle(),
-                                    '{} format is invalid.'.format(basename(filename)))
+                messageBox(self,
+                           title=self.windowTitle(),
+                           text='{} format is invalid.'.format(basename(filename)))
                 return None
             if list(v1.keys()) == list(v2.keys()):
                 self._bvecs.open(filename, signal=False)
@@ -206,14 +227,18 @@ class DialogDiffusionModel(QDialog):
                     buff = '{}: {}'.format(basename(dwi[0]), ' '.join([str(j) for j in v[0]]))
                     for i in range(1, len(v)):
                         buff += '\n{}: {}'.format(basename(dwi[i]), ' '.join([str(j) for j in v[i]]))
+                    # noinspection PyInconsistentReturns
                     self._bvecs.setToolTip(buff)
+                else: raise ValueError('b-vectors and b-values count <= 1.')
+            else: raise ValueError('b-vectors and b-values mismatch.')
+        else: raise IOError('No such file {}.'.format(filename))
 
     def _updateBVecs(self):
         try: v1 = loadBVec(self._bvecs.getFilename(), format='xml')
         except:
-            QMessageBox.warning(self,
-                                self.windowTitle(),
-                                '{} format is invalid.'.format(basename(self._bvecs.getFilename())))
+            messageBox(self,
+                       title=self.windowTitle(),
+                       text='{} format is invalid.'.format(basename(self._bvecs.getFilename())))
             self._bvecs.clear(signal=False)
             self._bvecs.setToolTip('')
             self._save.setEnabled(False)
@@ -229,9 +254,9 @@ class DialogDiffusionModel(QDialog):
         if exists(filename):
             try: v2 = loadBVal(filename, format='xml')
             except:
-                QMessageBox.warning(self,
-                                    self.windowTitle(),
-                                    '{} format is invalid.'.format(basename(filename)))
+                messageBox(self,
+                           title=self.windowTitle(),
+                           text='{} format is invalid.'.format(basename(filename)))
                 return None
             if list(v1.keys()) == list(v2.keys()):
                 self._bvals.open(filename, signal=False)
@@ -242,7 +267,11 @@ class DialogDiffusionModel(QDialog):
                     buff = '{}: {}'.format(basename(dwi[0]), str(v[0]))
                     for i in range(1, len(v)):
                         buff += '\n{}: {}'.format(basename(dwi[i]), str(v[i]))
+                    # noinspection PyInconsistentReturns
                     self._bvals.setToolTip(buff)
+                else: raise ValueError('b-vectors and b-values count <= 1.')
+            else: raise ValueError('b-vectors and b-values mismatch.')
+        else: raise IOError('No such file {}.'.format(filename))
 
     def _modelChanged(self):
         self._DTI.setVisible(self._combo.currentText() == 'DTI')
@@ -251,71 +280,71 @@ class DialogDiffusionModel(QDialog):
         self._SHCSD.setVisible(self._combo.currentText() == 'SHCSD')
         self._center(None)
 
-    # Public methods
+    # Public method
 
     def save(self):
         if not (self._bvals.isEmpty() or self._bvecs.isEmpty()):
-            wait = DialogWait(parent=self)
+            wait = DialogWait()
+            wait.open()
             wait.setInformationText('Model definition...')
             wait.progressVisibilityOff()
-            wait.open()
             filename = splitext(self._bvals.getFilename())[0] + SisypheDTIModel.getFileExt()
-            fa = kfa = ga = gfa = md = ly = py = sy = tr = ad = rd = ic = dc = False
+            fa = ga = gfa = md = tr = ad = rd = False
             if self._combo.currentText() == 'DTI':
                 wait.setInformationText('DTI Model definition...')
                 model = SisypheDTIModel()
-                method = self._DTI.getParameterValue('Method')
+                method = self._DTI.getParameterValue('Method')[0]
                 model.setFitAlgorithm(method)
                 fa = self._DTI.getParameterValue('FA')
                 ga = self._DTI.getParameterValue('GA')
                 md = self._DTI.getParameterValue('MD')
-                ly = self._DTI.getParameterValue('Linearity')
-                py = self._DTI.getParameterValue('Planarity')
-                sy = self._DTI.getParameterValue('Sphericity')
                 tr = self._DTI.getParameterValue('Trace')
                 ad = self._DTI.getParameterValue('AD')
                 rd = self._DTI.getParameterValue('RD')
-                ic = self._DTI.getParameterValue('Isotropic')
-                dc = self._DTI.getParameterValue('Deviatropic')
-                tag = fa or ga or md or ly or py or sy or tr or ad or rd or ic or dc
+                tag = fa or ga or md or tr or ad or rd
+                ndmin = 6
             elif self._combo.currentText() == 'DKI':
                 wait.setInformationText('DKI Model definition...')
                 model = SisypheDKIModel()
-                method = self._DTI.getParameterValue('Method')
+                method = self._DKI.getParameterValue('Method')[0]
                 model.setFitAlgorithm(method)
                 fa = self._DKI.getParameterValue('FA')
-                kfa = self._DKI.getParameterValue('KFA')
                 ga = self._DKI.getParameterValue('GA')
                 md = self._DKI.getParameterValue('MD')
-                ly = self._DKI.getParameterValue('Linearity')
-                py = self._DKI.getParameterValue('Planarity')
-                sy = self._DKI.getParameterValue('Sphericity')
                 tr = self._DKI.getParameterValue('Trace')
                 ad = self._DKI.getParameterValue('AD')
-                rd = self._DKI.getParameterValue('PD')
-                tag = fa or kfa or ga or md or ly or py or sy or tr or ad or rd
+                rd = self._DKI.getParameterValue('RD')
+                tag = fa or ga or md or tr or ad or rd
+                ndmin = 15
             elif self._combo.currentText() == 'SHCSA':
                 wait.setInformationText('SHCSA Model definition...')
                 model = SisypheSHCSAModel()
-                order = self._DTI.getParameterValue('Order')
+                order = self._SHCSA.getParameterValue('Order')
                 model.setOrder(order)
                 gfa = self._SHCSA.getParameterValue('GFA')
                 tag = gfa
+                ndmin = 100
             elif self._combo.currentText() == 'SHCSD':
                 wait.setInformationText('SHCSD Model definition...')
                 model = SisypheSHCSDModel()
-                order = self._DTI.getParameterValue('Order')
+                order = self._SHCSD.getParameterValue('Order')
                 model.setOrder(order)
                 gfa = self._SHCSD.getParameterValue('GFA')
                 tag = gfa
+                ndmin = 20
             elif self._combo.currentText() == 'DSI':
                 wait.setInformationText('DSI Model definition...')
+                gfa = self._DSI.getParameterValue('GFA')
                 model = SisypheDSIModel()
-                tag = False
-            else:
+                tag = gfa
+                ndmin = 100
+            elif self._combo.currentText() == 'DSID':
                 wait.setInformationText('DSID Model definition...')
+                gfa = self._DSID.getParameterValue('GFA')
                 model = SisypheDSIDModel()
-                tag = False
+                tag = gfa
+                ndmin = 100
+            else: raise ValueError('Invalid model name ({}).'.format(self._combo.currentText()))
             # Load bvecs and bvals
             wait.setInformationText('Load gradient B values...')
             bvals = loadBVal(self._bvals.getFilename(), format='xml')
@@ -323,127 +352,168 @@ class DialogDiffusionModel(QDialog):
             bvals = array(list(bvals.values()))
             wait.setInformationText('Load gradient directions...')
             bvecs = loadBVec(self._bvecs.getFilename(), format='xml', numpy=True)
-            model.setGradients(bvals, bvecs)
+            # < Revision 08/04/2025
+            # LPS+ to RAS+ orientation conversion
+            conv = self._model.getParameterValue('Orientation')
+            if conv is None: conv = False
+            model.setGradients(bvals, bvecs, lpstoras=conv)
+            # Revision 08/04/2025 >
+            # < Revision 04/04/2025
+            # verification of consistency between model and acquisition (DWI count)
+            nd = len(bvals)
+            nb0 = 0  # B0 count
+            for i in range(nd):
+                if bvals[i] == 0: nb0 += 1
+            nd -= nb0  # DWI count
+            # Acqusition validation
+            if nd < ndmin:
+                messageBox(self, self.windowTitle(), 'Number of DWI images is not consistent with the {} model.\n'
+                                                     '{}'.format(self._combo.currentText(),
+                                                                 self._combo.toolTip()))
+                return
+            # Revision 04/04/2025 >
             # Load dwi volumes
             vols = SisypheVolumeCollection()
             wait.setInformationText('Load diffusion weighted volumes...')
             wait.setProgressRange(0, len(dwinames)-1)
             wait.progressVisibilityOn()
             for dwiname in dwinames:
-                wait.setInformationText('Load {}...'.format(dwiname))
-                wait.incCurrentProgressValue()
-                vol = SisypheVolume()
-                vol.load(dwiname)
-                vols.append(vol)
+                if exists(dwiname):
+                    wait.setInformationText('Load {}...'.format(dwiname))
+                    wait.incCurrentProgressValue()
+                    vol = SisypheVolume()
+                    vol.load(dwiname)
+                    vols.append(vol)
+                else:
+                    wait.close()
+                    messageBox(self, self.windowTitle(), 'No such file {}'.format(dwiname))
+                    return
+            model.setDWI(vols)
+            # Save mean B0
+            """
+            wait.setInformationText('save mean B0...')
+            # < Revision 04/04/2025
+            b0vols = SisypheVolumeCollection()
+            for i in range(len(bvals)):
+                if bvals[i] == 0:
+                    if exists(dwinames[i]): b0vols.load(dwinames[i])
+            if b0vols.count() == 1:
+                b0 = b0vols[0]
+                refid = b0.getID()
+            elif b0vols.count() > 1:
+                b0 = b0vols.getMeanVolume()
+                b0.setID(b0.getArrayID())
+                refid = b0.getID()
+            else:
+                b0 = None
+                refid = vols[0].getID()
+            if b0 is not None:
+                b0.setFilename(filename)
+                b0.setFilenameSuffix('B0')
+                b0.acquisition.setSequenceToB0()
+                b0.save()
+            """
             # Mask processing
             wait.setInformationText('Mask processing...')
             wait.progressVisibilityOff()
             QApplication.processEvents()
-            algo = self._model.getParameterValue('Algo')
+            algo = self._model.getParameterValue('Algo')[0]
             niter = self._model.getParameterValue('Iter')
             size = self._model.getParameterValue('Size')
-            model.setDWI(vols, algo, niter, size)
+            model.calcMask(algo, niter, size)
+            """
+            mask = SisypheVolume()
+            mask.copyFromNumpyArray(model.getMask(),
+                                    vols[0].getSpacing(),
+                                    vols[0].getOrigin(),
+                                    vols[0].getDirections(),
+                                    defaultshape=False)
+            mask.acquisition.setSequenceToMask()
+            mask.setFilename(filename)
+            mask.setFilenameSuffix('mask')
+            mask.setID(refid)
+            mask.save()
+            """
+            # Model fitting
+            filename = splitext(filename)[0] + model.getFileExt()
+            wait.setInformationText('Model fitting...')
+            try: model.computeFitting()
+            except Exception as err:
+                messageBox(self, self.windowTitle(), '{}'.format(err))
             # Save model
-            wait.setInformationText('Save model...')
-            QApplication.processEvents()
-            model.saveModel(filename, wait)
-            # Maps processing
+            if self._model.getParameterValue('Save'):
+                wait.setInformationText('Save model...')
+                QApplication.processEvents()
+                model.saveModel(filename, wait)
+            # Save maps
             if tag:
-                filename = splitext(filename)[0] + SisypheVolume.getFileExt()
-                wait.setInformationText('Model fitting...')
-                model.computeFitting()
+                # Revision 04/04/2025 >
                 if fa:
-                    wait.setInformationText('FA map processing...')
+                    wait.setInformationText('Save Fractional anisotropy map...')
                     v = model.getFA()
                     v.setFilename(filename)
                     v.setFilenameSuffix('FA')
-                    v.save()
-                if kfa:
-                    wait.setInformationText('KFA map processing...')
-                    v = model.getKFA()
-                    v.setFilename(filename)
-                    v.setFilenameSuffix('KFA')
+                    v.acquisition.setSequenceToFractionalAnisotropyMap()
+                    v.setID(model.getReferenceID())
                     v.save()
                 if ga:
-                    wait.setInformationText('GA map processing...')
+                    wait.setInformationText('Save Geodesic anisotropy map...')
                     v = model.getGA()
                     v.setFilename(filename)
                     v.setFilenameSuffix('GA')
+                    v.acquisition.setModalityToOT()
+                    v.acquisition.setSequence('GA')
+                    v.setID(model.getReferenceID())
                     v.save()
                 if gfa:
-                    wait.setInformationText('GFA map processing...')
+                    wait.setInformationText('Save Generalized fractional anisotropy map...')
                     v = model.getGFA()
                     v.setFilename(filename)
                     v.setFilenameSuffix('GFA')
+                    v.acquisition.setModalityToOT()
+                    v.acquisition.setSequence('GFA')
+                    v.setID(model.getReferenceID())
                     v.save()
                 if md:
-                    wait.setInformationText('MD map processing...')
+                    wait.setInformationText('Save Mean diffusivity map...')
                     v = model.getMD()
                     v.setFilename(filename)
                     v.setFilenameSuffix('MD')
-                    v.save()
-                if ly:
-                    wait.setInformationText('Linearity map processing...')
-                    v = model.getLinearity()
-                    v.setFilename(filename)
-                    v.setFilenameSuffix('Linearity')
-                    v.save()
-                if py:
-                    wait.setInformationText('Planarity map processing...')
-                    v = model.getPlanarity()
-                    v.setFilename(filename)
-                    v.setFilenameSuffix('Planarity')
-                    v.save()
-                if sy:
-                    wait.setInformationText('Sphericity map processing...')
-                    v = model.getSphericity()
-                    v.setFilename(filename)
-                    v.setFilenameSuffix('Sphericity')
+                    v.acquisition.setModalityToOT()
+                    v.acquisition.setSequence('MD')
+                    v.setID(model.getReferenceID())
                     v.save()
                 if tr:
-                    wait.setInformationText('Trace map processing...')
+                    wait.setInformationText('Save Trace map...')
                     v = model.getTrace()
                     v.setFilename(filename)
                     v.setFilenameSuffix('TR')
+                    v.acquisition.setSequenceToApparentDiffusionMap()
+                    v.setID(model.getReferenceID())
                     v.save()
                 if ad:
-                    wait.setInformationText('Axial diffusivity map processing...')
+                    wait.setInformationText('Save Axial diffusivity map...')
                     v = model.getAxialDiffusivity()
                     v.setFilename(filename)
                     v.setFilenameSuffix('AD')
+                    v.acquisition.setModalityToOT()
+                    v.acquisition.setSequence('AD')
+                    v.setID(model.getReferenceID())
                     v.save()
                 if rd:
-                    wait.setInformationText('Radial diffusivity map processing...')
+                    wait.setInformationText('Save Radial diffusivity map...')
                     v = model.getRadialDiffusivity()
                     v.setFilename(filename)
                     v.setFilenameSuffix('RD')
-                    v.save()
-                if ic:
-                    wait.setInformationText('Isotropic diffusivity map processing...')
-                    v = model.getIsotropic()
-                    v.setFilename(filename)
-                    v.setFilenameSuffix('Isotropic')
-                    v.save()
-                if dc:
-                    wait.setInformationText('Deviatropic diffusivity map processing...')
-                    v = model.getDeviatropic()
-                    v.setFilename(filename)
-                    v.setFilenameSuffix('Deviatropic')
+                    v.acquisition.setModalityToOT()
+                    v.acquisition.setSequence('RD')
+                    v.setID(model.getReferenceID())
                     v.save()
             wait.close()
             self._bvals.clear(signal=False)
             self._bvecs.clear(signal=False)
             self._save.setEnabled(False)
 
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-    from sys import argv
-    from PyQt5.QtWidgets import QApplication
-
-    app = QApplication(argv)
-    main = DialogDiffusionModel()
-    main.show()
-    app.exec_()
+    def showEvent(self, a0):
+        super().showEvent(a0)
+        self.move(self.screen().availableGeometry().center() - self.rect().center())

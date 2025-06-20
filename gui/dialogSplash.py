@@ -1,11 +1,10 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Homepage link                                               Usage
-
-        darkdetect      https://github.com/albertosottile/darkdetect                OS Dark Mode detection
-        psutil          https://github.com/giampaolo/psutil                         Process and system utilities
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - darkdetect, OS dark Mode detection, https://github.com/albertosottile/darkdetect
+    - psutil, Process and system utilities, https://github.com/giampaolo/psutil
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
 import sys
@@ -20,8 +19,8 @@ import platform
 from psutil import cpu_freq
 from psutil import cpu_count
 from psutil import virtual_memory
-
-import darkdetect
+from psutil import disk_partitions
+from psutil import disk_usage
 
 import itk
 import vtk
@@ -29,12 +28,13 @@ from numpy.version import version as vnumpy
 from matplotlib import __version__ as vmplt
 from pydicom import __version__ as vpdcm
 from SimpleITK import __version__ as vsitk
-from ants.version import __version__ as vants
+from ants import __version__ as vants
 from dipy import __version__ as vdipy
 from radiomics import __version__ as vradiomics
 from pandas import __version__ as vpandas
 from skimage import __version__ as vski
 from scipy import __version__ as vscipy
+# noinspection PyProtectedMember
 from docx import __version__ as vdocx
 from qtconsole import __version__ as vcons
 
@@ -51,39 +51,31 @@ from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.version import __version__ as versionSisyphe
 
+__all__ = ['DialogSplash']
+
 """
-    Class hierarchy
+Class hierarchy
+~~~~~~~~~~~~~~~
     
-        QDialog -> DialogSplash
+    - QDialog -> DialogSplash
 """
 
 
 class DialogSplash(QDialog):
     """
-        DialogSplash
+    DialogSplash
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            Splash screen displayed before main window.
+    Splash screen displayed before main window.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QDialog -> DialogSplash
+    QDialog -> DialogSplash
 
-        Private attribute
-
-        Public method
-
-            setButtonVisibility(bool)
-            buttonVisibilityOn()
-            buttonVisibilityOff()
-            bool = getButtonVisibility()
-            setProgressBarVisibility(bool)
-            progressBarVisibilityOn()
-            progressBarVisibilityOff()
-            bool = getProgressVisibility()
-
-            inherited QDialog
+    Last revision: 07/03/2025
     """
 
     # Class method
@@ -101,43 +93,43 @@ class DialogSplash(QDialog):
         # Init QLayout
 
         self._layout = QVBoxLayout()
-        self._layout.setContentsMargins(0, 20, 0, 0)
+        self._layout.setContentsMargins(20, 20, 20, 20)
         self._layout.setSpacing(10)
         self.setLayout(self._layout)
 
         # Init QWidgets
         """
-            How to get version ?
-            
-            Python      sys.version_info.major, sys.version_info.minor, sys.version_info.micro
-            Qt          PyQt5.QtCore.PYQT_VERSION_STR
-            Numpy       numpy.version.version
-            Matplotlib  matplotlib.__version__
-            Pydicom     pydicom.__version__
-            SimpleITK   SimpleITK.__version__
-            ITK         itk.Version.GetITKVersion()
-            VTK         vtk.vtkVersion.GetVTKVersion()
-            ANTs        ants.__version__
-            Dipy        dipy.__version__
-            pyradiomics radiomics.__version__
-            
-            OS              platform.uname().system
-            OS version      platform.uname().release
-            CPU type        platform.uname().machine
-            CPU core        os.cpu_count()
-            Mac OS
-                Username    os.environ['USER'] or os.environ['LOGNAME']
-                Home        os.environ['HOME']
-            Windows
-                Username    os.environ['USERNAME']    
-                Home        os.environ['USERPROFILE']
-            Physical cores  psutil.cpu_count(False)
-            Logical cores   psutil.cpu_count(True)
-            Frequency       psutil.cpu_freq().max, psutil.cpu_freq().min, psutil.cpu_freq().current
-            Memory          psutil.virtual_memory().total, 
-                            psutil.virtual_memory().available,
-                            psutil.virtual_memory().used,
-                            psutil.virtual_memory().percent
+        How to get version ?
+        
+        Python      sys.version_info.major, sys.version_info.minor, sys.version_info.micro
+        Qt          PyQt5.QtCore.PYQT_VERSION_STR
+        Numpy       numpy.version.version
+        Matplotlib  matplotlib.__version__
+        Pydicom     pydicom.__version__
+        SimpleITK   SimpleITK.__version__
+        ITK         itk.Version.GetITKVersion()
+        VTK         vtk.vtkVersion.GetVTKVersion()
+        ANTs        ants.__version__
+        Dipy        dipy.__version__
+        pyradiomics radiomics.__version__
+        
+        OS              platform.uname().system
+        OS version      platform.uname().release
+        CPU type        platform.uname().machine
+        CPU core        os.cpu_count()
+        Mac OS
+            Username    os.environ['USER'] or os.environ['LOGNAME']
+            Home        os.environ['HOME']
+        Windows
+            Username    os.environ['USERNAME']    
+            Home        os.environ['USERPROFILE']
+        Physical cores  psutil.cpu_count(False)
+        Logical cores   psutil.cpu_count(True)
+        Frequency       psutil.cpu_freq().max, psutil.cpu_freq().min, psutil.cpu_freq().current
+        Memory          psutil.virtual_memory().total, 
+                        psutil.virtual_memory().available,
+                        psutil.virtual_memory().used,
+                        psutil.virtual_memory().percent
         """
         system = sys.platform[:3]
         if system == 'dar':
@@ -152,49 +144,73 @@ class DialogSplash(QDialog):
             vsysname = 'Windows'
             vrelease = platform.uname().version
             vmachine = platform.uname().machine
+        else:
+            vuser = ''
+            vhome = ''
+            vsysname = ''
+            vrelease = ''
+            vmachine = ''
 
         vpython = '{}.{}.{}'.format(sys.version_info.major, sys.version_info.minor, sys.version_info.micro)
+        # noinspection PyUnresolvedReferences
         vitk = itk.Version.GetITKVersion()
+        # noinspection PyArgumentList
         vvtk = vtk.vtkVersion.GetVTKVersion()
+        screen = QApplication.primaryScreen()
 
-        if darkdetect.isDark(): icndir = 'darkicons'
-        else: icndir = 'icons'
+        diskpart = disk_partitions()
+        diskusage = disk_usage('/')
 
-        self._pixmap = QLabel()
+        icndir = 'logos'
+
+        self._pixmap = QLabel(parent=self)
         self._pixmap.setPixmap(QPixmap(join(self.getModuleClassDirectory(), icndir, 'Logo Original.png')))
         self._pixmap.setScaledContents(True)
         self._pixmap.setFixedSize(1000, 320)
         self._info = QLabel()
         self._info.setFixedWidth(1000)
-        self._info.setText('PySisyphe {} (2021), developed by Jean-Albert Lotterie, lotterie.ja@gmail.com\n'
-                           'Python {}, Qt {}, Numpy {}, Pandas {}, Matplotlib {}, Pydicom {},\n'
-                           'SimpleITK {}, ITK {}, VTK {}, ANTs {}, Dipy {}, pyradiomics {}.\n'
+        self._info.setWordWrap(True)
+        self._info.setText('PySisyphe {} (2021), developed by Jean-Albert Lotterie, contact: pysisyphe@gmail.com\n\n'
+                           'Python {}, Qt {}, Numpy {}, Pandas {}, Matplotlib {}, Pydicom {}, '
+                           'SimpleITK {}, ITK {}, VTK {}, ANTs {}, Dipy {}, pyradiomics {}, '
                            'Scikit-image {}, SciPy {}, python-docx {}, qtconsole {}\n\n'
                            'User: {}, Home path: {}\n'
-                           'Platform: {}, version {}, CPU {} {:.1f} GHz, {} physical cores, '
-                           '{} logical cores, memory {:.1f} GB'.format(versionSisyphe,
-                                                                       vpython, PYQT_VERSION_STR, vnumpy,
-                                                                       vpandas, vmplt, vpdcm,
-                                                                       vsitk, vitk, vvtk, vants, vdipy, vradiomics[1:],
-                                                                       vski, vscipy, vdocx, vcons,
-                                                                       vuser, vhome, vsysname,
-                                                                       vrelease, vmachine,
-                                                                       cpu_freq().max / 1000, cpu_count(False),
-                                                                       cpu_count(True),
-                                                                       virtual_memory().total / (1024*1024)))
-        self._message = QLabel()
+                           'Platform: {}, version {}\n'
+                           'CPU {} {:.1f} GHz, {} cores {} threads\n'
+                           'Memory {:.1f} GB\n'
+                           'Screen size {}x{}, scaling factor {:.1f}, {:.1f} DPI\n'
+                           'Primary disk {}, {} file system, {:.1f} '
+                           'GBytes, {:.1f}% free'.format(versionSisyphe,
+                                                         vpython, PYQT_VERSION_STR, vnumpy,
+                                                         vpandas, vmplt, vpdcm,
+                                                         vsitk, vitk, vvtk, vants, vdipy, vradiomics[1:],
+                                                         vski, vscipy, vdocx, vcons,
+                                                         vuser, vhome, vsysname,
+                                                         vrelease, vmachine,
+                                                         cpu_freq().max / 1000, cpu_count(False),
+                                                         cpu_count(True),
+                                                         virtual_memory().total / (1024*1024),
+                                                         screen.size().width(),
+                                                         screen.size().height(),
+                                                         screen.devicePixelRatio(),
+                                                         screen.logicalDotsPerInch(),
+                                                         diskpart[0][0], diskpart[0][2],
+                                                         diskusage[0] / (1024 ** 3),
+                                                         100 - diskusage[3]))
+        self._message = QLabel(parent=self)
         self._message.setAlignment(Qt.AlignCenter)
         self._message.setFixedWidth(1000)
         self._message.setText('Starting PySisyphe...')
-        self._progress = QProgressBar()
+        self._progress = QProgressBar(parent=self)
         self._progress.setMinimum(0)
         self._progress.setMaximum(10)
         self._progress.setValue(0)
         self._progress.setAlignment(Qt.AlignCenter)
-        self._exit = QPushButton('Close')
+        self._exit = QPushButton('Close', parent=self)
         self._exit.setFixedWidth(100)
         self._exit.setAutoDefault(True)
         self._exit.setDefault(True)
+        # noinspection PyUnresolvedReferences
         self._exit.clicked.connect(self._close)
 
         layout = QHBoxLayout()
@@ -207,10 +223,13 @@ class DialogSplash(QDialog):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(5)
         layout.setAlignment(Qt.AlignCenter)
-        size = 32
 
-        label = QLabel()
-        pixmap = QPixmap(join(self.getModuleClassDirectory(), 'icons', 'LogoANTs.png'))
+        dpi = QApplication.primaryScreen().logicalDotsPerInch()
+        if dpi > 100: size = int(32 * dpi / 800) * 8
+        else: size = 32
+
+        label = QLabel(parent=self)
+        pixmap = QPixmap(join(self.getModuleClassDirectory(), icndir, 'LogoANTs.png'))
         r = pixmap.width() / pixmap.height()
         label.setPixmap(pixmap)
         label.setScaledContents(True)
@@ -218,8 +237,8 @@ class DialogSplash(QDialog):
         label.setToolTip('ANTs {}'.format(vants))
         layout.addWidget(label)
 
-        label = QLabel()
-        pixmap = QPixmap(join(self.getModuleClassDirectory(), 'icons', 'LogoDipy.png'))
+        label = QLabel(parent=self)
+        pixmap = QPixmap(join(self.getModuleClassDirectory(), icndir, 'LogoDipy.png'))
         r = pixmap.width() / pixmap.height()
         label.setPixmap(pixmap)
         label.setScaledContents(True)
@@ -227,8 +246,8 @@ class DialogSplash(QDialog):
         label.setToolTip('Dipy {}'.format(vdipy))
         layout.addWidget(label)
 
-        label = QLabel()
-        pixmap = QPixmap(join(self.getModuleClassDirectory(), 'icons', 'LogoITK.png'))
+        label = QLabel(parent=self)
+        pixmap = QPixmap(join(self.getModuleClassDirectory(), icndir, 'LogoITK.png'))
         r = pixmap.width() / pixmap.height()
         label.setPixmap(pixmap)
         label.setScaledContents(True)
@@ -236,8 +255,8 @@ class DialogSplash(QDialog):
         label.setToolTip('ITK {}'.format(vitk))
         layout.addWidget(label)
 
-        label = QLabel()
-        pixmap = QPixmap(join(self.getModuleClassDirectory(), 'icons', 'LogoMatplotlib.png'))
+        label = QLabel(parent=self)
+        pixmap = QPixmap(join(self.getModuleClassDirectory(), icndir, 'LogoMatplotlib.png'))
         r = pixmap.width() / pixmap.height()
         label.setPixmap(pixmap)
         label.setScaledContents(True)
@@ -245,8 +264,8 @@ class DialogSplash(QDialog):
         label.setToolTip('Matplotlib {}'.format(vmplt))
         layout.addWidget(label)
 
-        label = QLabel()
-        pixmap = QPixmap(join(self.getModuleClassDirectory(), 'icons', 'LogoNumpy.png'))
+        label = QLabel(parent=self)
+        pixmap = QPixmap(join(self.getModuleClassDirectory(), icndir, 'LogoNumpy.png'))
         r = pixmap.width() / pixmap.height()
         label.setPixmap(pixmap)
         label.setScaledContents(True)
@@ -254,8 +273,8 @@ class DialogSplash(QDialog):
         label.setToolTip('Numpy {}'.format(vnumpy))
         layout.addWidget(label)
 
-        label = QLabel()
-        pixmap = QPixmap(join(self.getModuleClassDirectory(), 'icons', 'LogoPandas.png'))
+        label = QLabel(parent=self)
+        pixmap = QPixmap(join(self.getModuleClassDirectory(), icndir, 'LogoPandas.png'))
         r = pixmap.width() / pixmap.height()
         label.setPixmap(pixmap)
         label.setScaledContents(True)
@@ -263,8 +282,8 @@ class DialogSplash(QDialog):
         label.setToolTip('Pandas {}'.format(vpandas))
         layout.addWidget(label)
 
-        label = QLabel()
-        pixmap = QPixmap(join(self.getModuleClassDirectory(), 'icons', 'LogoPydicom.png'))
+        label = QLabel(parent=self)
+        pixmap = QPixmap(join(self.getModuleClassDirectory(), icndir, 'LogoPydicom.png'))
         r = pixmap.width() / pixmap.height()
         label.setPixmap(pixmap)
         label.setScaledContents(True)
@@ -272,8 +291,8 @@ class DialogSplash(QDialog):
         label.setToolTip('Pydicom {}'.format(vpdcm))
         layout.addWidget(label)
 
-        label = QLabel()
-        pixmap = QPixmap(join(self.getModuleClassDirectory(), 'icons', 'LogoQt.png'))
+        label = QLabel(parent=self)
+        pixmap = QPixmap(join(self.getModuleClassDirectory(), icndir, 'LogoQt.png'))
         r = pixmap.width() / pixmap.height()
         label.setPixmap(pixmap)
         label.setScaledContents(True)
@@ -281,8 +300,8 @@ class DialogSplash(QDialog):
         label.setToolTip('Qt {}'.format(PYQT_VERSION_STR))
         layout.addWidget(label)
 
-        label = QLabel()
-        pixmap = QPixmap(join(self.getModuleClassDirectory(), 'icons', 'Logoscipy.png'))
+        label = QLabel(parent=self)
+        pixmap = QPixmap(join(self.getModuleClassDirectory(), icndir, 'Logoscipy.png'))
         r = pixmap.width() / pixmap.height()
         label.setPixmap(pixmap)
         label.setScaledContents(True)
@@ -290,8 +309,8 @@ class DialogSplash(QDialog):
         label.setToolTip('SciPy {}'.format(vski))
         layout.addWidget(label)
 
-        label = QLabel()
-        pixmap = QPixmap(join(self.getModuleClassDirectory(), 'icons', 'LogoSimpleITK.png'))
+        label = QLabel(parent=self)
+        pixmap = QPixmap(join(self.getModuleClassDirectory(), icndir, 'LogoSimpleITK.png'))
         r = pixmap.width() / pixmap.height()
         label.setPixmap(pixmap)
         label.setScaledContents(True)
@@ -299,8 +318,8 @@ class DialogSplash(QDialog):
         label.setToolTip('SimpleITK {}'.format(vsitk))
         layout.addWidget(label)
 
-        label = QLabel()
-        pixmap = QPixmap(join(self.getModuleClassDirectory(), 'icons', 'Logoskimage.png'))
+        label = QLabel(parent=self)
+        pixmap = QPixmap(join(self.getModuleClassDirectory(), icndir, 'Logoskimage.png'))
         r = pixmap.width() / pixmap.height()
         label.setPixmap(pixmap)
         label.setScaledContents(True)
@@ -308,8 +327,8 @@ class DialogSplash(QDialog):
         label.setToolTip('Scikit-image {}'.format(vscipy))
         layout.addWidget(label)
 
-        label = QLabel()
-        pixmap = QPixmap(join(self.getModuleClassDirectory(), 'icons', 'LogoVTK.png'))
+        label = QLabel(parent=self)
+        pixmap = QPixmap(join(self.getModuleClassDirectory(), icndir, 'LogoVTK.png'))
         r = pixmap.width() / pixmap.height()
         label.setPixmap(pixmap)
         label.setScaledContents(True)
@@ -334,19 +353,29 @@ class DialogSplash(QDialog):
         self._layout.addLayout(layout)
 
         layout = QHBoxLayout()
-        layout.setContentsMargins(60, 0, 60, 0)
+        layout.setContentsMargins(60, 0, 60, 10)
         layout.setSpacing(5)
         layout.setAlignment(Qt.AlignCenter)
         layout.addWidget(self._progress)
         self._layout.addLayout(layout)
 
         layout = QHBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
+        if sys.platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        elif sys.platform == 'darwin': layout.setContentsMargins(0, 0, 0, 0)
         layout.addStretch()
         layout.addWidget(self._exit)
         self._layout.addLayout(layout)
 
-        self.setWindowFlags(Qt.CustomizeWindowHint)
+        # Window
+
+        if sys.platform == 'win32':
+            # noinspection PyTypeChecker
+            self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        elif sys.platform == 'darwin':
+            # noinspection PyTypeChecker
+            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+        # noinspection PyTypeChecker
+        self.setWindowModality(Qt.WindowModal)
 
     # Private method
 
@@ -358,8 +387,8 @@ class DialogSplash(QDialog):
     def setButtonVisibility(self, v):
         if isinstance(v, bool):
             self._exit.setVisible(v)
-        else:
-            raise TypeError('parameter type {} is not bool.'.format(type(v)))
+            QApplication.processEvents()
+        else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def buttonVisibilityOn(self):
         self.setButtonVisibility(True)
@@ -374,8 +403,8 @@ class DialogSplash(QDialog):
         if isinstance(v, bool):
             self._message.setVisible(v)
             self._progress.setVisible(v)
-        else:
-            raise TypeError('parameter type {} is not bool.'.format(type(v)))
+            QApplication.processEvents()
+        else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def progressBarVisibilityOn(self):
         self._message.setVisible(True)
@@ -388,18 +417,10 @@ class DialogSplash(QDialog):
     def getProgressBarVisibility(self):
         return self._progress.isVisible()
 
+    def setMessage(self, msg: str):
+        self.activateWindow()
+        self._message.setText(msg)
+        QApplication.processEvents()
 
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv, exit
-
-    app = QApplication(argv)
-    main = DialogSplash()
-    main.activateWindow()
-    main.show()
-    app.exec_()
-    exit()
+    def getProgressBar(self) -> QProgressBar:
+        return self._progress

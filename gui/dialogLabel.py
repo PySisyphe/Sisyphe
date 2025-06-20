@@ -1,67 +1,84 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
-from os import getcwd
+from sys import platform
+
+from os import chdir
+
 from os.path import exists
 from os.path import basename
+from os.path import dirname
+from os.path import abspath
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheVolume import SisypheVolumeCollection
 from Sisyphe.core.sisypheImageAttributes import SisypheAcquisition
 from Sisyphe.core.sisypheROI import SisypheROI
 from Sisyphe.core.sisypheROI import SisypheROICollection
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
 from Sisyphe.gui.dialogWait import DialogWait
 
-"""
-    Class hierarchy
+__all__ = ['DialogVOLtoLabel',
+           'DialogROItoLabel',
+           'DialogLabeltoROI']
 
-        QDialog -> DialogVOLtoLabel
-        QDialog -> DialogROItoLabel
-        QDialog -> DialogLabeltoROI
+"""
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    - QDialog -> DialogVOLtoLabel
+              -> DialogROItoLabel
+              -> DialogLabeltoROI
 """
 
 class DialogVOLtoLabel(QDialog):
     """
-        DialogVOLtoLabel class
+    DialogVOLtoLabel class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            GUI dialog window to convert volumes to label volume
+    GUI dialog window to convert volume to label volume.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QDialog -> DialogVOLtoLabel
+    QDialog -> DialogVOLtoLabel
 
-        Private attributes
-
-            _list   FilesSelectionWidget
-
-        Public methods
-
-            convert()
-
-            inherited QDialog methods
+    Last revision: 13/02/2025
     """
 
     # Special method
 
+    """
+    Private attributes
+
+    _list   FilesSelectionWidget
+    """
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.setWindowTitle('Volumes to Label volume')
+        self.setWindowTitle('Probability volumes to Label volume')
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        screen = QApplication.primaryScreen().geometry()
+        self.setMinimumWidth(int(screen.width() * 0.33))
+        self.setSizeGripEnabled(False)
 
         # Init QLayout
 
@@ -85,6 +102,7 @@ class DialogVOLtoLabel(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
@@ -101,16 +119,22 @@ class DialogVOLtoLabel(QDialog):
 
         # Qt Signals
 
+        # noinspection PyUnresolvedReferences
         self._ok.clicked.connect(self.convert)
+        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
 
     # Public methods
+
+    def setFilenames(self, filenames: str | list[str]) -> None:
+        if isinstance(filenames, str): filenames = [filenames]
+        self._list.setFilenames(filenames)
 
     def convert(self):
         if not self._list.isEmpty():
             vols = SisypheVolumeCollection()
             wait = DialogWait(info=self.windowTitle(),
-                              progressmin=0, progressmax=self._list.filenamesCount(), parent=self)
+                              progressmin=0, progressmax=self._list.filenamesCount())
             wait.open()
             wait.progressVisibilityOn()
             wait.buttonVisibilityOff()
@@ -132,11 +156,16 @@ class DialogVOLtoLabel(QDialog):
                                                        vols[0].getDirname(),
                                                        filter=lbl.getFilterExt())[0]
                 if filename:
+                    filename = abspath(filename)
+                    chdir(dirname(filename))
                     lbl.saveAs(filename)
             else: wait.hide()
-            r = QMessageBox.question(self, self.windowTitle(),
-                                     'Do you want to make a new conversion ?',
-                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            r = messageBox(self,
+                           title=self.windowTitle(),
+                           text='Do you want to make a new conversion ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
             if r == QMessageBox.Yes: self._list.clear()
             else: self.accept()
             wait.close()
@@ -144,33 +173,38 @@ class DialogVOLtoLabel(QDialog):
 
 class DialogROItoLabel(QDialog):
     """
-        DialogROItoLabel class
+    DialogROItoLabel class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            GUI dialog window to convert ROIs to label volume
+    GUI dialog window to convert ROIs to label volume.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QDialog -> DialogROItoLabel
+    QDialog -> DialogROItoLabel
 
-        Private attributes
-
-            _list   FilesSelectionWidget
-
-        Public methods
-
-            convert()
-
-            inherited QDialog methods
+    Last revision: 13/02/2025
     """
 
     # Special method
+
+    """
+    Private attributes
+
+    _list   FilesSelectionWidget
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('ROI(s) to Label volume')
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        screen = QApplication.primaryScreen().geometry()
+        self.setMinimumWidth(int(screen.width() * 0.33))
+        self.setSizeGripEnabled(False)
 
         # Init QLayout
 
@@ -193,6 +227,7 @@ class DialogROItoLabel(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
@@ -209,16 +244,22 @@ class DialogROItoLabel(QDialog):
 
         # Qt Signals
 
+        # noinspection PyUnresolvedReferences
         self._ok.clicked.connect(self.convert)
+        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
 
     # Public methods
+
+    def setFilenames(self, filenames: str | list[str]) -> None:
+        if isinstance(filenames, str): filenames = [filenames]
+        self._list.setFilenames(filenames)
 
     def convert(self):
         if not self._list.isEmpty():
             rois = SisypheROICollection()
             wait = DialogWait(info=self.windowTitle(),
-                              progressmin=0, progressmax=self._list.filenamesCount(), parent=self)
+                              progressmin=0, progressmax=self._list.filenamesCount())
             wait.open()
             wait.progressVisibilityOn()
             for filename in self._list.getFilenames():
@@ -238,11 +279,16 @@ class DialogROItoLabel(QDialog):
                                                        rois[0].getDirname(),
                                                        filter=lbl.getFilterExt())[0]
                 if filename:
+                    filename = abspath(filename)
+                    chdir(dirname(filename))
                     lbl.saveAs(filename)
             wait.hide()
-            r = QMessageBox.question(self, self.windowTitle(),
-                                     'Do you want to make a new conversion ?',
-                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            r = messageBox(self,
+                           title=self.windowTitle(),
+                           text='Do you want to make a new conversion ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
             if r == QMessageBox.Yes: self._list.clear()
             else: self.accept()
             wait.close()
@@ -250,33 +296,38 @@ class DialogROItoLabel(QDialog):
 
 class DialogLabeltoROI(QDialog):
     """
-        DialogLabelToROI class
+    DialogLabelToROI class
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            GUI dialog window to convert label volume to ROIs
+    GUI dialog window to convert label volume to ROIs.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QDialog -> DialogLabelToROI
+    QDialog -> DialogLabelToROI
 
-        Private attributes
-
-            _list   FilesSelectionWidget
-
-        Public methods
-
-            convert()
-
-            inherited QDialog methods
+    Last revision: 13/02/2025
     """
 
     # Special method
+
+    """
+    Private attributes
+
+    _list   FilesSelectionWidget
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Label volume(s) to ROI(s)')
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        screen = QApplication.primaryScreen().geometry()
+        self.setMinimumWidth(int(screen.width() * 0.33))
+        self.setSizeGripEnabled(False)
 
         # Init QLayout
 
@@ -297,6 +348,7 @@ class DialogLabeltoROI(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
@@ -313,33 +365,40 @@ class DialogLabeltoROI(QDialog):
 
         # Qt Signals
 
+        # noinspection PyUnresolvedReferences
         self._ok.clicked.connect(self.convert)
+        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
 
     # Public methods
+
+    def setFilenames(self, filenames: str | list[str]) -> None:
+        if isinstance(filenames, str): filenames = [filenames]
+        self._list.setFilenames(filenames)
 
     def convert(self):
         if not self._list.isEmpty():
             v = SisypheVolume()
             wait = DialogWait(info=self.windowTitle(),
-                              progressmin=0, progressmax=self._list.filenamesCount(), parent=self)
-            wait.progressVisibilityOn()
+                              progressmin=0, progressmax=self._list.filenamesCount())
             wait.open()
+            wait.progressVisibilityOn()
             for filename in self._list.getFilenames():
                 wait.setInformationText('{} conversion...'.format(basename(filename)))
                 wait.incCurrentProgressValue()
                 if exists(filename):
-                    wait.open()
                     wait.incCurrentProgressValue()
                     v.load(filename)
                     rois = SisypheROICollection()
                     rois.fromLabelVolume(v)
                     rois.save()
             wait.hide()
-            r = QMessageBox.question(self, self.windowTitle(),
-                                     'Do you want to make a new conversion ?',
-                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            r = messageBox(self,
+                           title=self.windowTitle(),
+                           text='Do you want to make a new conversion ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
             if r == QMessageBox.Yes: self._list.clear()
             else: self.accept()
             wait.close()
-

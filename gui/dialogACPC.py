@@ -1,17 +1,15 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
-        SimpleITK       https://simpleitk.org/                                      Medical image processing
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - SimpleITK, medical image processing, https://simpleitk.org/
 """
 
-from math import atan2
-from math import degrees
+from sys import platform
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QWidgetAction
@@ -30,62 +28,65 @@ from Sisyphe.widgets.basicWidgets import LabeledSlider
 from Sisyphe.widgets.basicWidgets import LabeledDoubleSpinBox
 from Sisyphe.widgets.iconBarViewWidgets import IconBarOrthogonalReorientViewWidget
 
-"""
-    Class hierarchy
+__all__ = ['DialogACPC']
 
-        QDialog -> DialogACPC
+"""
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    - QDialog -> DialogACPC
 """
 
 
 class DialogACPC(QDialog):
     """
-        DialogACPC
+    DialogACPC
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            GUI dialog for anterior and posterior commissures selection.
-            Control of y rotation in coronal view. x and z rotations are
-            calculated with the position of the commissures.
+    GUI dialog for anterior and posterior commissure selection.
+    Control of y rotation in coronal view. x and z rotations are
+    calculated with the position of the commissures.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QDialog -> DialogACPC
+    QDialog -> DialogACPC
 
-        Private attributes
-
-            _views      IconBarOrthogonalReorientViewWidget
-            _acpc       SisypheACPC
-            _lut        LutWidget
-            _mode1      QRadioButton
-            _mode2      QRadioButton
-            _setac      QPushButton
-            _getac      QPushButton
-            _setpc      QPushButton
-            _getpc      QPushButton
-            _reset      QPushButton
-            _resettrf   QPushButton
-            _opacity    LabeledSlider
-            _width      LabeledDoubleSpinBox
-
-        Public methods
-
-            setResliceCursorOpacity(float)
-            setResliceCursorWidth(float)
-            setVolume(SisypheVolume)
-            SisypheVolume = getVolume()
-            exit()
-            ok()
-
-            inherited QDialog methods
+    Last revision: 08/03/2025
     """
 
     # Special method
+
+    """
+    Private attributes
+
+    _views      IconBarOrthogonalReorientViewWidget
+    _acpc       SisypheACPC
+    _lut        LutWidget
+    _mode1      QRadioButton
+    _mode2      QRadioButton
+    _setac      QPushButton
+    _getac      QPushButton
+    _setpc      QPushButton
+    _getpc      QPushButton
+    _reset      QPushButton
+    _resettrf   QPushButton
+    _opacity    LabeledSlider
+    _width      LabeledDoubleSpinBox
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('AC-PC selection')
-        self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
 
@@ -117,12 +118,16 @@ class DialogACPC(QDialog):
         self._mode1.setChecked(True)
         self._mode2 = QRadioButton('Rotations')
         self._mode2.setVisible(False)
+        # noinspection PyUnresolvedReferences
         self._mode1.toggled.connect(self._updateMode)
+        # noinspection PyUnresolvedReferences
         self._mode2.toggled.connect(self._updateMode)
         self._setac = QPushButton('Set AC')
         self._setac.setToolTip('Set AC at the current cursor position.')
+        # noinspection PyUnresolvedReferences
         self._setac.pressed.connect(self._setAC)
         self._getac = QPushButton('Get AC')
+        # noinspection PyUnresolvedReferences
         self._getac.pressed.connect(self._getAC)
         self._vac = QLineEdit()
         self._vac.setReadOnly(True)
@@ -130,8 +135,10 @@ class DialogACPC(QDialog):
         self._vac.setVisible(False)
         self._setpc = QPushButton('Set PC')
         self._setpc.setToolTip('Set PC at the current cursor position.')
+        # noinspection PyUnresolvedReferences
         self._setpc.pressed.connect(self._setPC)
         self._getpc = QPushButton('Get PC')
+        # noinspection PyUnresolvedReferences
         self._getpc.pressed.connect(self._getPC)
         self._vpc = QLineEdit()
         self._vpc.setReadOnly(True)
@@ -139,18 +146,20 @@ class DialogACPC(QDialog):
         self._vpc.setAlignment(Qt.AlignCenter)
         self._setrot = QPushButton('Set rotations')
         self._setrot.setToolTip('Set Y rotation, update AC/PC with X and Z rotations.')
+        # noinspection PyUnresolvedReferences
         self._setrot.pressed.connect(self._setRotation)
         self._vrot = QLineEdit()
         self._vrot.setReadOnly(True)
-        self._vrot.setFixedWidth(75)
+        # self._vrot.setFixedWidth(75)
         self._vrot.setAlignment(Qt.AlignCenter)
         self._resettrf = QPushButton('Reset')
         self._resettrf.setVisible(False)
         self._resettrf.setToolTip('Reset Y rotation.')
+        # noinspection PyUnresolvedReferences
         self._resettrf.pressed.connect(self._resetRotation)
         self._opacity = LabeledSlider(title='Reslice cursor opacity')
         self._opacity.setRange(0, 100)
-        self._opacity.setFixedWidth(200)
+        # self._opacity.setFixedWidth(200)
         self._opacity.setValue(int(self._views().getFirstViewWidget().getLineOpacity() * 100))
         self._opacity.valueChanged.connect(self.setResliceCursorOpacity)
         self._width = LabeledDoubleSpinBox('Line width')
@@ -158,6 +167,7 @@ class DialogACPC(QDialog):
         self._width.setRange(0.5, 5.0)
         self._width.setAlignment(Qt.AlignCenter)
         self._width.setValue(self._views().getFirstViewWidget().getLineWidth())
+        # noinspection PyUnresolvedReferences
         self._width.valueChanged.connect(self.setResliceCursorWidth)
 
         lyout = QHBoxLayout()
@@ -185,6 +195,7 @@ class DialogACPC(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
@@ -192,7 +203,8 @@ class DialogACPC(QDialog):
         cancel.setAutoDefault(True)
         cancel.setDefault(True)
         self._ok = QPushButton('OK')
-        self._ok.setFixedSize(QSize(120, 32))
+        self._ok.setFixedWidth(100)
+        # self._ok.setFixedSize(QSize(120, 32))
         self._ok.setToolTip('Save AC-PC and exit.')
         self._ok.setEnabled(False)
         layout.addWidget(self._ok)
@@ -202,11 +214,14 @@ class DialogACPC(QDialog):
 
         # Qt Signals
 
+        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.exit)
+        # noinspection PyUnresolvedReferences
         self._ok.clicked.connect(self.ok)
 
     # Private method
 
+    # noinspection PyUnusedLocal
     def _updateMode(self, v):
         v = self._mode1.isChecked()
         self._setac.setVisible(v)
@@ -236,8 +251,8 @@ class DialogACPC(QDialog):
     def _setAC(self):
         p = self._views().getFirstViewWidget().getResliceCursorPosition()
         self._acpc.setAC(p)
-        self._getac.setToolTip(str(self._acpc))
-        self._getpc.setToolTip(str(self._acpc))
+        self._getac.setToolTip(str(self._acpc)[:-1])
+        self._getpc.setToolTip(str(self._acpc)[:-1])
         self._vac.setVisible(True)
         self._vac.setText('{ac[0]:.1f} {ac[1]:.1f} {ac[2]:.1f}'.format(ac=p))
         v = self._acpc.hasACPC()
@@ -249,8 +264,8 @@ class DialogACPC(QDialog):
     def _setPC(self):
         p = self._views().getFirstViewWidget().getResliceCursorPosition()
         self._acpc.setPC(p)
-        self._getac.setToolTip(str(self._acpc))
-        self._getpc.setToolTip(str(self._acpc))
+        self._getac.setToolTip(str(self._acpc)[:-1])
+        self._getpc.setToolTip(str(self._acpc)[:-1])
         self._vpc.setVisible(True)
         self._vpc.setText('{pc[0]:.1f} {pc[1]:.1f} {pc[2]:.1f}'.format(pc=p))
         v = self._acpc.hasACPC()
@@ -263,11 +278,13 @@ class DialogACPC(QDialog):
         if self._acpc.hasAC():
             p = self._acpc.getAC()
             self._views().getFirstViewWidget().setCursorWorldPosition(p[0], p[1], p[2])
+            self._views().getFirstViewWidget().setResliceCursorPosition(p)
 
     def _getPC(self):
         if self._acpc.hasPC():
             p = self._acpc.getPC()
             self._views().getFirstViewWidget().setCursorWorldPosition(p[0], p[1], p[2])
+            self._views().getFirstViewWidget().setResliceCursorPosition(p)
 
     def _setRotation(self):
         # Update AC and PC from reslice cursor rotations
@@ -281,8 +298,8 @@ class DialogACPC(QDialog):
         trf.setRotations(r, deg=True)
         self._acpc.setAC(trf.applyToPoint(self._acpc.getAC()))
         self._acpc.setPC(trf.applyToPoint(self._acpc.getPC()))
-        self._getac.setToolTip(str(self._acpc))
-        self._getpc.setToolTip(str(self._acpc))
+        self._getac.setToolTip(str(self._acpc)[:-1])
+        self._getpc.setToolTip(str(self._acpc)[:-1])
         self._vac.setText('{ac[0]:.1f} {ac[1]:.1f} {ac[2]:.1f}'.format(ac=self._acpc.getAC()))
         self._vpc.setText('{pc[0]:.1f} {pc[1]:.1f} {pc[2]:.1f}'.format(pc=self._acpc.getPC()))
         # Set Y rotation
@@ -327,6 +344,8 @@ class DialogACPC(QDialog):
                 self._acpc.setPC(p)
                 self._vpc.setVisible(True)
                 self._vpc.setText('{pc[0]:.1f} {pc[1]:.1f} {pc[2]:.1f}'.format(pc=p))
+            self._getac.setToolTip(str(self._acpc)[:-1])
+            self._getpc.setToolTip(str(self._acpc)[:-1])
             # copy SisypheVolume Y Rotation
             r = vol.acpc.getRotations(deg=True)[1]
             self._acpc.setYRotation(r, deg=True)
@@ -352,20 +371,12 @@ class DialogACPC(QDialog):
             vol.save()
             self.close()
 
+    # Qt events
 
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-    from sys import argv
-    from os import chdir
-
-    chdir('/Users/Jean-Albert/PycharmProjects/python310Project/TESTS/REGISTRATION')
-    app = QApplication(argv)
-    main = DialogACPC()
-    vv = SisypheVolume()
-    vv.load('FLAIR.xvol')
-    main.setVolume(vv)
-    main.show()
-    app.exec_()
+    def closeEvent(self, a0: QCloseEvent | None) -> None:
+        super().closeEvent(a0)
+        # < Revision 10/03/2025
+        # fix vtkWin32OpenGLRenderWindow error: wglMakeCurrent failed in MakeCurrent()
+        if platform == 'win32':
+            self._views.finalize()
+        # Revision 10/03/2025 >

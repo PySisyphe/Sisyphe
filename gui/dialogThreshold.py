@@ -1,71 +1,62 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from sys import platform
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QPushButton
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
-# from Sisyphe.widgets.thresholdWidgets import ThresholdWidget
-# from Sisyphe.widgets.thresholdWidgets import GradientThresholdWidget
 from Sisyphe.widgets.thresholdWidgets import ThresholdViewWidget
 from Sisyphe.widgets.thresholdWidgets import GradientThresholdViewWidget
 
-"""
-    Class
+__all__ = ['DialogThreshold',
+           'DialogGradientThreshold']
 
-        DialogThreshold
+"""
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    QDialog -> DialogThreshold -> DialogGradientThreshold
 """
 
 
 class DialogThreshold(QDialog):
     """
-        DialogThreshold class
+    DialogThreshold class
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> QDialog -> DialogThreshold
+    QWidget -> QDialog -> DialogThreshold
 
-        Private attributes
-
-            _volume     SisypheVolume
-            _size       int, tool size
-
-        Public methods
-
-            SisypheVolume = getVolume()
-            setVolume(SisypheVolume)
-            int = getSize()
-            setSize(int)
-            int or (int, int)= getThresholds()
-            setThresholdFlagToMinimum()
-            setThresholdFlagToMaximum()
-            setThresholdFlagToTwo()
-            setThresholdFlagButtonsVisibility(bool)
-            getThresholdFlagButtonsVisibility()
-
-            inherited QDialog methods
-            inherited QWidget methods
-
-        Revisions:
-
-            25/07/2023  setVolume() bugfix
-            15/08/2023  replace ThresholdWidget with ThresholdViewWidget
-                        in _initWidget() and setVolume() methods
+    Last revision: 15/08/2023
     """
 
     # Special method
+
+    """
+    Private attributes
+
+    _volume     SisypheVolume
+    _size       int, tool size
+    """
 
     def __init__(self, vol=None, size=256, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Set threshold')
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        self.setSizeGripEnabled(False)
 
         if isinstance(vol, SisypheVolume): self._vol = vol
         else: self._vol = None
@@ -88,6 +79,7 @@ class DialogThreshold(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setDirection(QHBoxLayout.RightToLeft)
@@ -101,14 +93,15 @@ class DialogThreshold(QDialog):
         layout.addWidget(cancel)
         layout.addStretch()
         self._layout.addLayout(layout)
+        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
+        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self._reject)
 
     # Private methods
 
     def _initWidget(self, vol, size=256):
         return ThresholdViewWidget(vol, size=size, parent=self)
-        #  return ThresholdWidget(vol, size=size, parent=self)
 
     def _reject(self):
         self._threshold.setThreshold(self._vol.display.getRangeMin(),
@@ -127,7 +120,6 @@ class DialogThreshold(QDialog):
                 self._layout.removeWidget(self._threshold)
                 del self._threshold
             self._threshold = ThresholdViewWidget(vol, size=self._size, parent=self)
-            # self._threshold = ThresholdWidget(vol, size=self._size, parent=self)
             self._layout.insertWidget(0, self._threshold)
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
@@ -143,7 +135,7 @@ class DialogThreshold(QDialog):
             if size < 256: size = 256
             self._size = size
             del self._threshold
-            self._threshold = ThresholdWidget(self._vol, size=self._size, parent=self)
+            self._threshold = ThresholdViewWidget(self._vol, size=self._size, parent=self)
 
     def getThreshold(self):
         flag = self._threshold.getThresholdFlag()
@@ -167,35 +159,39 @@ class DialogThreshold(QDialog):
     def getThresholdFlagButtonsVisibility(self):
         self._threshold.getThresholdFlagButtonsVisibility()
 
+    # Qt events
+
+    def closeEvent(self, a0: QCloseEvent | None) -> None:
+        super().closeEvent(a0)
+        # < Revision 10/03/2025
+        # fix vtkWin32OpenGLRenderWindow error: wglMakeCurrent failed in MakeCurrent()
+        if platform == 'win32':
+            if self._threshold is not None:
+                self._threshold.finalize()
+        # Revision 10/03/2025 >
 
 class DialogGradientThreshold(DialogThreshold):
     """
-        DialogGradientThreshold class
+    DialogGradientThreshold class
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> QDialog -> DialogThreshold -> DialogGradientThreshold
+    QWidget -> QDialog -> DialogThreshold -> DialogGradientThreshold
 
-        Private attributes
-
-        Public methods
-
-            inherited DialogThreshold methods
-            inherited QDialog methods
-            inherited QWidget methods
-
-        Revision:
-
-            15/08/2023  replace GradientThresholdWidget with GradientThresholdViewWidget
-                        in _initWidget() and setVolume() methods
+    Last revision: 15/08/2023
     """
 
     def __init__(self, vol=None, size=256, parent=None):
         super().__init__(vol, size, parent)
 
+    # Private method
+
     def _initWidget(self, vol, size=256):
         return GradientThresholdViewWidget(vol, size=size, parent=self)
         # return GradientThresholdWidget(vol, size=size, parent=self)
+
+    # Public method
 
     def setVolume(self, vol):
         if isinstance(vol, SisypheVolume):
@@ -207,24 +203,3 @@ class DialogGradientThreshold(DialogThreshold):
             # self._threshold = GradientThresholdWidget(vol, size=self._size, parent=self)
             self._layout.addWidget(self._threshold)
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
-
-
-if __name__ == '__main__':
-
-    from sys import argv
-    from PyQt5.QtWidgets import QApplication
-
-    test = 0
-    app = QApplication(argv)
-    filename = '/Users/Jean-Albert/PycharmProjects/untitled/TESTS/IMAGES/NIFTI/STEREO3D.nii'
-    img = SisypheVolume()
-    img.loadFromNIFTI(filename)
-    img.display.getLUT().setDefaultLut()
-    if test == 0:
-        main = DialogThreshold(img, size=256)
-    else:
-        main = DialogGradientThreshold(img, size=256)
-    main.setThresholdFlagToMinimum()
-    main.setThresholdFlagButtonsVisibility(False)
-    main.show()
-    app.exec_()

@@ -1,34 +1,34 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        pydicom         https://pydicom.github.io/pydicom/stable/                   DICOM library
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - pydicom, DICOM library, https://pydicom.github.io/pydicom/stable/
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from sys import platform
+
 from os import getcwd
-from os.path import join
+from os import chdir
+
 from os.path import exists
 from os.path import splitext
 from os.path import basename
+from os.path import dirname
+from os.path import abspath
 
 from csv import writer
 from csv import QUOTE_NONNUMERIC
 
-from pydicom import read_file
+from pydicom import dcmread as read_file
 from pydicom.multival import MultiValue
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QLabel
-from PyQt5.QtWidgets import QMenu
-from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QSplitter
 from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QPushButton
@@ -37,42 +37,48 @@ from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheImageIO import isDicom
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
 from Sisyphe.widgets.dicomWidgets import DicomHeaderTreeViewWidget
 from Sisyphe.widgets.dicomWidgets import DicomComboBoxWidget
 
-"""
-    Class hierarchy
+__all__ = ['DialogDicomDataset']
 
-       QDialog ->  DialogDicomDataset
+"""
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+   - QDialog ->  DialogDicomDataset
 """
 
 
 class DialogDicomDataset(QDialog):
     """
-        DialogDicomDataset
+    DialogDicomDataset
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QDialog -> DialogDicomDataset
-
-        Private attributes
-
-            _dataset    DicomHeaderTreeViewWidget
-            _searchtag  DicomComboBoxWidget
-
-        Public methods
-
-            setDicomSeriesFilesVisibility(bool)
-            bool = getDicomSeriesFilesVisibility()
-
-            inherited QDialog methods
+    QDialog -> DialogDicomDataset
     """
 
     # Special method
 
+    """
+    Private attributes
+
+    _dataset    DicomHeaderTreeViewWidget
+    _searchtag  DicomComboBoxWidget
+    """
+
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.setWindowTitle('DICOM dataset')
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        screen = QApplication.primaryScreen().geometry()
+        self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
 
         # Init QLayout
 
@@ -80,20 +86,6 @@ class DialogDicomDataset(QDialog):
         self._layout.setContentsMargins(5, 0, 5, 0)
         self._layout.setSpacing(0)
         self.setLayout(self._layout)
-
-        # Init save menu
-
-        self._savemenu = QMenu()
-        self._action = dict()
-        self._action['dcm'] = QAction('Save DICOM file', self)
-        self._action['csv'] = QAction('Save checked DataElements to CSV file', self)
-        self._action['txt'] = QAction('Save checked DataElements to text file', self)
-        self._action['dcm'].triggered.connect(self._saveDCM)
-        self._action['csv'].triggered.connect(self._saveCSV)
-        self._action['txt'].triggered.connect(self._saveTXT)
-        self._savemenu.addAction(self._action['dcm'])
-        self._savemenu.addAction(self._action['csv'])
-        self._savemenu.addAction(self._action['txt'])
 
         # Init widgets
 
@@ -110,10 +102,12 @@ class DialogDicomDataset(QDialog):
         self._searchtag.setPrivateTagVisibility(False)
         self._searchtag.setEditable(True)
         self._searchtag.setFixedWidth(200)
+        # noinspection PyUnresolvedReferences
         self._searchtag.currentIndexChanged.connect(self._searchChanged)
 
         self._private = QCheckBox('Remove private DataElements')
         self._private.setCheckState(2)
+        # noinspection PyUnresolvedReferences
         self._private.stateChanged.connect(self._privateTagChanged)
 
         hlayout = QHBoxLayout()
@@ -138,30 +132,53 @@ class DialogDicomDataset(QDialog):
         self._splitter.setStretchFactor(0, 1)
         self._splitter.setStretchFactor(1, 5)
 
-        self._check = QPushButton(QIcon(join(self._files.getDefaultIconDirectory(), 'check.png')), '')
-        self._uncheck = QPushButton(QIcon(join(self._files.getDefaultIconDirectory(), 'uncheck.png')), '')
-        self._save = QPushButton(QIcon(join(self._files.getDefaultIconDirectory(), 'save.png')), '')
-        self._save.setMenu(self._savemenu)
-        self._save.setFixedWidth(60)
-        self._check.setFixedSize(QSize(32, 32))
-        self._uncheck.setFixedSize(QSize(32, 32))
+        # self._check = QPushButton(QIcon(join(self._files.getDefaultIconDirectory(), 'check.png')), '')
+        # self._uncheck = QPushButton(QIcon(join(self._files.getDefaultIconDirectory(), 'uncheck.png')), '')
+        self._check = QPushButton('Check selected')
+        self._uncheck = QPushButton('Uncheck selected')
+        # < Revision 20/09/2024
+        # self.save = QPushButton(QIcon(join(self._files.getDefaultIconDirectory(), 'save.png')), '')
+        # self.save.setMenu(self._savemenu)
+        # bug Qt 5 in QDialog with exec method
+        self._csv = QPushButton('Save to csv')
+        self._txt = QPushButton('Save to text')
+        self._dcm = QPushButton('Save to dicom')
+        self._csv.setToolTip('Save checked DataElements to CSV file')
+        self._txt.setToolTip('Save checked DataElements to text file')
+        self._dcm.setToolTip('Save current DICOM dataset')
+        # noinspection PyUnresolvedReferences
+        self._csv.clicked.connect(self._saveCSV)
+        # noinspection PyUnresolvedReferences
+        self._txt.clicked.connect(self._saveTXT)
+        # noinspection PyUnresolvedReferences
+        self._dcm.clicked.connect(self._saveDCM)
+        # self._csv.setFixedWidth(100)
+        # self._txt.setFixedWidth(100)
+        # self._dcm.setFixedWidth(100)
+        # Revision 20/09/2024 >
+        # self._check.setFixedSize(QSize(32, 32))
+        # self._uncheck.setFixedSize(QSize(32, 32))
         self._check.setToolTip('Check selected DICOM DataElements.')
         self._uncheck.setToolTip('Uncheck selected DICOM DataElements.')
-        self._save.setToolTip('Save DataElements selection.')
+        # noinspection PyUnresolvedReferences
         self._check.clicked.connect(self._dataset.checkSelectedRows)
+        # noinspection PyUnresolvedReferences
         self._uncheck.clicked.connect(self._dataset.uncheckSelectedRows)
 
         layout = QHBoxLayout()
         layout.setSpacing(2)
         layout.addWidget(self._check)
         layout.addWidget(self._uncheck)
-        layout.addWidget(self._save)
+        layout.addWidget(self._csv)
+        layout.addWidget(self._txt)
+        layout.addWidget(self._dcm)
         layout.addStretch()
         self._layout.addLayout(layout)
 
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
@@ -173,14 +190,9 @@ class DialogDicomDataset(QDialog):
 
         self._layout.addLayout(layout)
 
+        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
 
-        # Window
-
-        screen = QApplication.primaryScreen().geometry()
-        self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
-
-        self.setWindowTitle('DICOM dataset')
         self.setModal(True)
 
     # Private methods
@@ -198,6 +210,7 @@ class DialogDicomDataset(QDialog):
 
     def _fileSelectionCleared(self, obj):
         if obj == self._files:
+            # noinspection PyUnresolvedReferences
             self._dataset.model().clear()
 
     def _privateTagChanged(self):
@@ -229,7 +242,9 @@ class DialogDicomDataset(QDialog):
             QApplication.processEvents()
             filename = filename[0]
             if filename:
-                with open(filename, mode='tool') as csvfile:
+                filename = abspath(filename)
+                chdir(dirname(filename))
+                with open(filename, mode='w') as csvfile:
                     try:
                         csvwriter = writer(csvfile, delimiter=',', quotechar='"', quoting=QUOTE_NONNUMERIC)
                         # First row
@@ -249,10 +264,12 @@ class DialogDicomDataset(QDialog):
                                 if isinstance(dedict[de][i], MultiValue):
                                     for j in range(len(dedict[de][i])):
                                         row.append(str(dedict[de][i][j]))
-                                else: row.append(str(dedict[de][i]))
+                                else:
+                                    # noinspection PyUnresolvedReferences
+                                    row.append(str(dedict[de][i]))
                             csvwriter.writerow(row)
                             i += 1
-                    except: QMessageBox.warning(self, 'Save CSV file', 'CSV write error.')
+                    except: messageBox(self, 'Save CSV file', 'CSV write error.')
 
     def _saveTXT(self):
         dedict = self._checkedToDict()
@@ -261,7 +278,9 @@ class DialogDicomDataset(QDialog):
             QApplication.processEvents()
             filename = filename[0]
             if filename:
-                with open(filename, mode='tool') as txtfile:
+                filename = abspath(filename)
+                chdir(dirname(filename))
+                with open(filename, mode='w') as txtfile:
                     try:
                         # First row
                         row = ['filename']
@@ -283,29 +302,31 @@ class DialogDicomDataset(QDialog):
                                 else: row.append(str(dedict[de][i]))
                             txtfile.write('\t'.join(row) + '\n')
                             i += 1
-                    except: QMessageBox.warning(self, 'Save txt file', 'txt write error.')
+                    except: messageBox(self, 'Save txt file', 'txt write error.')
 
     def _saveDCM(self):
         # list of edited DataElements
         edited = self._dataset.getEditedDataElements()
         if edited and len(edited) > 0:
-            dialog = QMessageBox()
-            dialog.setText('Dicom Dataset')
-            dialog.setInformativeText('Do you want to overwrite the dicom file ?')
-            dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-            dialog.setIcon(QMessageBox.Question)
-            r = dialog.exec()
+            r= messageBox(self,
+                          'Dicom Dataset',
+                          'Do you want to overwrite the dicom file ?',
+                          icon=QMessageBox.Question,
+                          buttons=QMessageBox.Yes | QMessageBox.No,
+                          default=QMessageBox.Yes)
             if len(edited) == 1:
                 if r == QMessageBox.Yes:
                     try: self._dataset.getDicomDataset().save_as(self._dataset.getDicomDataset().filename)
-                    except: QMessageBox.warning(self, 'Dicom Dataset', 'DICOM write error.')
+                    except: messageBox(self, 'Dicom Dataset', 'DICOM write error.')
                 else:
                     filename = QFileDialog.getSaveFileName(self, 'Save DICOM file', getcwd(), 'Dicom file (*.dcm)')
                     filename = filename[0]
                     if filename:
+                        filename = abspath(filename)
+                        chdir(dirname(filename))
                         # write DICOM
                         try: self._dataset.getDicomDataset().save_as(filename)
-                        except: QMessageBox.warning(self, 'Dicom Dataset', 'DICOM write error.')
+                        except: messageBox(self, 'Dicom Dataset', 'DICOM write error.')
             else:
                 filenames = self._files.getFilenames()
                 # constant DataElement value in series files, to remove from save
@@ -313,34 +334,41 @@ class DialogDicomDataset(QDialog):
                 ds2 = read_file(filenames[1], stop_before_pixels=True)
                 for de in edited:
                     if ds1[de] != ds2[de]:
-                        QMessageBox.information(self, 'Dicom Dataset',
-                                                '{} is not a constant DataElement, removed from save.'.format(de))
+                        messageBox(self,
+                                   'Dicom Dataset',
+                                   text='{} is not a constant DataElement, removed from save.'.format(de),
+                                   icon=QMessageBox.Information)
                         del de
                 # write DICOM
                 if r == QMessageBox.No:
                     base = QFileDialog.getSaveFileName(self, 'Save DICOM file', getcwd(), 'Dicom file (*.dcm)')
                     base = base[0]
                     if not base:
-                        QMessageBox.information(self, 'Dicom Dataset', 'Save canceled.')
+                        # noinspection PyUnusedLocal
+                        filename = abspath(base)
+                        chdir(dirname(base))
+                        messageBox(self,
+                                   'Dicom Dataset',
+                                   'Save canceled.',
+                                   icon=QMessageBox.Information)
                         return
+                else: base = None
                 if len(edited) > 0:
                     for filename in filenames:
                         ds = read_file(filename)
                         for de in edited:
                             ds[de] = self._dataset.getDicomDataset()[de]
-                            if r == QMessageBox.No:
+                            if r == QMessageBox.No and base is not None:
                                 buff, ext = splitext(base)
                                 suffix = '00000{}'.format(edited.index(de))[-5:]
                                 savename = '{}{}{}'.format(buff, suffix, ext)
                                 try: ds.save_as(savename)
-                                except: QMessageBox.warning(self, 'Dicom Dataset', 'DICOM write error.')
+                                except: messageBox(self, 'Dicom Dataset', 'DICOM write error.')
                             else:
                                 try: ds.save_as(filename)
-                                except: QMessageBox.warning(self, 'Dicom Dataset', 'DICOM write error.')
-                else:
-                    QMessageBox.information(self, 'Dicom Dataset', 'Save canceled.')
-        else:
-            QMessageBox.information(self, 'Dicom Dataset', 'No DataElement has been edited.')
+                                except: messageBox(self, 'Dicom Dataset', 'DICOM write error.')
+                else: messageBox(self, 'Dicom Dataset', 'Save canceled.')
+        else: messageBox(self, 'Dicom Dataset', 'No DataElement has been edited.')
 
     def _savePreference(self):
         pass
@@ -355,17 +383,3 @@ class DialogDicomDataset(QDialog):
 
     def getDicomSeriesFilesVisibility(self):
         return self._files.isVisible()
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv
-
-    app = QApplication(argv)
-    main = DialogDicomDataset()
-    main.show()
-    app.exec_()

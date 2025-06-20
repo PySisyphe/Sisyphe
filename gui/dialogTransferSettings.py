@@ -1,11 +1,13 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Homepage link                                               Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from sys import platform
+
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
@@ -14,37 +16,40 @@ from PyQt5.QtWidgets import QPushButton
 from Sisyphe.widgets.LUTWidgets import TransferWidget
 from Sisyphe.core.sisypheVolume import SisypheVolume
 
-"""
-    Class 
+__all__ = ['DialogTransferSettings']
 
-        DialogTransferSettings
+"""
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    - QDialog -> DialogTransferSettings
 """
 
 class DialogTransferSettings(QDialog):
     """
-        DialogTransferSettings class
+    DialogTransferSettings class
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QDialog -> DialogTransferSettings
-
-        Private attributes
-
-            _lutwidget  LutWidget
-
-        Public methods
-
-            setVolume(SisypheVolume)
-
-            inherited QDialog
+    QDialog -> DialogTransferSettings
     """
 
+    # Special method
+
+    """
+    Private attributes
+
+    _lutwidget  LutWidget
+    """
     def __init__(self, volume=None, transfer=None, gradient=True, size=256, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Transfer Settings')
-        # self.setFixedWidth(256)
-        # self.setFixedHeight(288)
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        self.setSizeGripEnabled(False)
+
         self._transferwidget = TransferWidget(volume=volume, transfer=transfer, gradient=gradient, size=size)
         self._transferwidget.setContentsMargins(5, 5, 5, 5)
 
@@ -58,6 +63,7 @@ class DialogTransferSettings(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         load = QPushButton('Load')
@@ -76,33 +82,17 @@ class DialogTransferSettings(QDialog):
         self._layout.addWidget(self._transferwidget)
         self._layout.addLayout(layout)
 
+        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
+        # noinspection PyUnresolvedReferences
         load.clicked.connect(self._transferwidget.load)
+        # noinspection PyUnresolvedReferences
         save.clicked.connect(self._transferwidget.save)
+
+    # Public method
 
     def setVolume(self, v):
         if isinstance(v, SisypheVolume):
             self._transferwidget.setVolume(v)
         else:
             raise TypeError('parameter type {} is not SisypheVolume.'.format(type(v)))
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv, exit
-    from PyQt5.QtWidgets import QApplication
-
-    app = QApplication(argv)
-    filename = '/Users/Jean-Albert/PycharmProjects/untitled/Sisyphe/tests/IMAGES/img.xvol'
-    img = SisypheVolume()
-    img.load(filename)
-    main = DialogTransferSettings(volume=img)
-    main.show()
-    main.activateWindow()
-    print(main.width(), main.height())
-    app.exec_()
-    exit()

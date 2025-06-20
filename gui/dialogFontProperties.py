@@ -1,11 +1,12 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Homepage link                                               Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
-        vtk             https://vtk.org/                                            Visualization
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - vtk, visualization engine/3D rendering, https://vtk.org/
 """
+
+from sys import platform
 
 from vtk import vtkTextProperty
 
@@ -13,7 +14,6 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtWidgets import QColorDialog
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QLabel
@@ -25,151 +25,147 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtWidgets import QGraphicsView
 
-"""
-    Class
+from Sisyphe.widgets.basicWidgets import colorDialog
 
-        DialogFontProperties
+__all__ = ['DialogFontProperties']
+
+"""
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    - QDialog -> DialogFontProperties
 """
 
 
 class DialogFontProperties(QDialog):
     """
-        DialogFontProperties class
+    DialogFontProperties class
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QWidget -> QDialog -> DialogFontProperties
+    QWidget -> QDialog -> DialogFontProperties
 
-        Private attributes
+    Last revision: 18/03/2025
+    """
 
-            _properties             vtkTextProperty, properties to edit
-            _previousproperties     vtkTextProperty, copy of properties before edition
+    # Special method
 
-        Public methods
+    """
+    Private attributes
 
-            setProperties(vtkTextProperty)
-            vtkTextProperty = getProperties()
-            setColor(float, float, float)
-            float, float, float = getColor()
-            setOpacity(float)
-            float = getOpacity()
-            setBackgroundColor(float, float, float)
-            float, float, float = getBackgroundColor
-            setBackgroundOpacity(float)
-            float = getBackgroundOpacity()
-            setFrame(bool)
-            bool = getFrame()
-            setFrameColor(float, float, float)
-            float, float, float = getFrameColor()
-            setFontFamily(int)
-            int = getFontFamily()
-            setFontSize(int)
-            int = getFontSize()
-            setBold(bool)
-            bool = getBold()
-            setItalic(bool)
-            bool = getItalic()
-            setJustification(int)
-            int = getJustification()
-            setVerticalJustification(int)
-            int = getVerticalJustification()
-
-            inherited QDialog methods
-            inherited QWidget methods
+    _properties             vtkTextProperty, properties to edit
+    _previousproperties     vtkTextProperty, copy of properties before edition
     """
 
     def __init__(self, parent=None, properties=None):
         super().__init__(parent)
 
         self.setWindowTitle('Font properties')
-        self.setFixedWidth(296)
-        self.setFixedHeight(399)
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Text color and opacity
 
-        self._tcolor = QPushButton()
-        self._tcolor.setFixedWidth(25)
+        self._tcolor = QPushButton(self)
+        self._tcolor.setFixedWidth(self._tcolor.height())
         self._tcolor.setAutoFillBackground(True)
         self._tcolor.setStyleSheet('background-color: rgb(255, 0, 0)')
+        # noinspection PyUnresolvedReferences
         self._tcolor.clicked.connect(self._changeColor)
 
-        self._topacity = QDoubleSpinBox()
+        self._topacity = QDoubleSpinBox(self)
         self._topacity.setMinimum(0.0)
         self._topacity.setMaximum(1.0)
         self._topacity.setValue(1.0)
         self._topacity.setDecimals(2)
-        self._topacity.setSingleStep(0.01)
-        self._topacity.setFixedWidth(50)
+        self._topacity.setSingleStep(0.1)
+        self._topacity.adjustSize()
+        # self._topacity.setFixedWidth(50)
         self._topacity.setAlignment(Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._topacity.valueChanged.connect(self._propertyChange)
 
         # Background color and opacity
 
-        self._bcolor = QPushButton()
-        self._bcolor.setFixedWidth(25)
+        self._bcolor = QPushButton(self)
+        self._bcolor.setFixedWidth(self._bcolor.height())
         self._bcolor.setAutoFillBackground(True)
         self._bcolor.setStyleSheet('background-color: rgb(255, 0, 0)')
+        # noinspection PyUnresolvedReferences
         self._bcolor.clicked.connect(self._changeBackgroundColor)
 
-        self._bopacity = QDoubleSpinBox()
+        self._bopacity = QDoubleSpinBox(self)
         self._bopacity.setMinimum(0.0)
         self._bopacity.setMaximum(1.0)
         self._bopacity.setValue(1.0)
         self._bopacity.setDecimals(2)
         self._bopacity.setSingleStep(0.01)
-        self._bopacity.setFixedWidth(50)
+        self._bopacity.adjustSize()
+        # self._bopacity.setFixedWidth(50)
         self._bopacity.setAlignment(Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._bopacity.valueChanged.connect(self._propertyChange)
 
         # Frame color
 
         self._frame = QCheckBox('Frame')
+        # noinspection PyUnresolvedReferences
         self._frame.stateChanged.connect(self._propertyChange)
 
-        self._fcolor = QPushButton()
-        self._fcolor.setFixedWidth(25)
+        self._fcolor = QPushButton(self)
+        self._fcolor.setFixedWidth(self._fcolor.height())
         self._fcolor.setAutoFillBackground(True)
         self._fcolor.setStyleSheet('background-color: rgb(255, 0, 0)')
+        # noinspection PyUnresolvedReferences
         self._fcolor.clicked.connect(self._changeFrameColor)
 
         # Font family, size, bold, italic
 
-        self._fontname = QComboBox()
+        self._fontname = QComboBox(self)
         self._fontname.setEditable(False)
-        self._fontname.setFixedWidth(80)
+        # self._fontname.setFixedWidth(80)
         self._fontname.addItem('Arial')
         self._fontname.addItem('Courier')
         self._fontname.addItem('Times')
+        self._fontname.adjustSize()
+        # noinspection PyUnresolvedReferences
         self._fontname.currentIndexChanged.connect(self._propertyChange)
 
-        self._fontsize = QSpinBox()
+        self._fontsize = QSpinBox(self)
         self._fontsize.setMinimum(8)
         self._fontsize.setMaximum(80)
         self._fontsize.setValue(12)
-        self._fontsize.setFixedWidth(50)
+        self._fontsize.adjustSize()
+        # self._fontsize.setFixedWidth(50)
+        # noinspection PyUnresolvedReferences
         self._fontsize.valueChanged.connect(self._propertyChange)
 
         self._bold = QCheckBox('Bold')
+        # noinspection PyUnresolvedReferences
         self._bold.stateChanged.connect(self._propertyChange)
 
         self._italic = QCheckBox('Italic')
+        # noinspection PyUnresolvedReferences
         self._italic.stateChanged.connect(self._propertyChange)
 
         # Horizontal and vertical justification
 
-        self._hjustfy = QComboBox()
+        self._hjustfy = QComboBox(self)
         self._hjustfy.setEditable(False)
-        self._hjustfy.setFixedWidth(80)
+        # self._hjustfy.setFixedWidth(80)
         self._hjustfy.addItem('Left')
         self._hjustfy.addItem('Center')
         self._hjustfy.addItem('Right')
+        self._hjustfy.adjustSize()
 
-        self._vjustfy = QComboBox()
+        self._vjustfy = QComboBox(self)
         self._vjustfy.setEditable(False)
-        self._vjustfy.setFixedWidth(80)
+        # self._vjustfy.setFixedWidth(80)
         self._vjustfy.addItem('Top')
         self._vjustfy.addItem('Center')
         self._vjustfy.addItem('Bottom')
+        self._vjustfy.adjustSize()
 
         # Demonstration scene
 
@@ -201,8 +197,8 @@ class DialogFontProperties(QDialog):
         # Init widgets position
 
         layout = QHBoxLayout()
-        layout.setContentsMargins(5, 0, 5, 0)
-        layout.setSpacing(5)
+        layout.setContentsMargins(10, 5, 10, 5)
+        layout.setSpacing(10)
         layout.addStretch()
         layout.addWidget(QLabel('Font'), alignment=Qt.AlignRight)
         layout.addWidget(self._fontname)
@@ -211,8 +207,8 @@ class DialogFontProperties(QDialog):
         layout.addStretch()
         self._layout.addLayout(layout)
         layout = QHBoxLayout()
-        layout.setContentsMargins(5, 0, 5, 0)
-        layout.setSpacing(15)
+        layout.setContentsMargins(10, 5, 10, 5)
+        layout.setSpacing(10)
         layout.addStretch()
         layout.addWidget(QLabel('Text'), alignment=Qt.AlignRight)
         layout.addWidget(self._tcolor)
@@ -223,24 +219,24 @@ class DialogFontProperties(QDialog):
         layout.addStretch()
         self._layout.addLayout(layout)
         layout = QHBoxLayout()
-        layout.setContentsMargins(5, 0, 5, 0)
-        layout.setSpacing(5)
+        layout.setContentsMargins(10, 5, 10, 5)
+        layout.setSpacing(10)
         layout.addWidget(QLabel('Text opacity'), alignment=Qt.AlignRight)
         layout.addWidget(self._topacity)
         layout.addWidget(QLabel('Back opacity'), alignment=Qt.AlignRight)
         layout.addWidget(self._bopacity)
         self._layout.addLayout(layout)
         layout = QHBoxLayout()
-        layout.setContentsMargins(5, 0, 5, 0)
-        layout.setSpacing(5)
+        layout.setContentsMargins(10, 5, 10, 5)
+        layout.setSpacing(10)
         layout.addWidget(QLabel('Horizontal'), alignment=Qt.AlignRight)
         layout.addWidget(self._hjustfy)
         layout.addWidget(QLabel('Vertical'), alignment=Qt.AlignRight)
         layout.addWidget(self._vjustfy)
         self._layout.addLayout(layout)
         layout = QHBoxLayout()
-        layout.setContentsMargins(5, 0, 5, 0)
-        layout.setSpacing(5)
+        layout.setContentsMargins(10, 5, 10, 5)
+        layout.setSpacing(10)
         layout.addWidget(self._frame, alignment=Qt.AlignCenter)
         layout.addWidget(self._bold, alignment=Qt.AlignCenter)
         layout.addWidget(self._italic, alignment=Qt.AlignCenter)
@@ -250,6 +246,8 @@ class DialogFontProperties(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        else: layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         reset = QPushButton('Reset')
@@ -265,32 +263,55 @@ class DialogFontProperties(QDialog):
         layout.addStretch()
         layout.addWidget(reset)
         self._layout.addLayout(layout)
+        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self._accept)
+        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
+        # noinspection PyUnresolvedReferences
         reset.clicked.connect(self._reset)
+
+        self.adjustSize()
+        self.setFixedSize(self.size())
 
     # Private methods
 
     def _changeColor(self):
-        c = QColorDialog().getColor(parent=self, title='Mesh color', options=QColorDialog.DontUseNativeDialog)
-        if c.isValid():
-            buff = 'background-color: rgb({}, {}, {})'.format(c.red(), c.green(), c.blue())
-            self._tcolor.setStyleSheet(buff)
-            self._propertyChange()
+        # < Revision 18/03/2025
+        # c = QColorDialog().getColor(parent=self, title='Mesh color', options=QColorDialog.DontUseNativeDialog)
+        c = self.getColor()
+        c = [int(i * 255) for i in c]
+        c = colorDialog(title='Mesh color', color=QColor(c[0], c[1], c[2]))
+        if c is not None:
+            if c.isValid():
+                buff = 'background-color: rgb({}, {}, {})'.format(c.red(), c.green(), c.blue())
+                self._tcolor.setStyleSheet(buff)
+                self._propertyChange()
+        # Revision 18/03/2025 >
 
     def _changeBackgroundColor(self):
-        c = QColorDialog().getColor(parent=self, title='Vertex color', options=QColorDialog.DontUseNativeDialog)
-        if c.isValid():
-            buff = 'background-color: rgb({}, {}, {})'.format(c.red(), c.green(), c.blue())
-            self._bcolor.setStyleSheet(buff)
-            self._propertyChange()
+        # < Revision 18/03/2025
+        # c = QColorDialog().getColor(parent=self, title='Vertex color', options=QColorDialog.DontUseNativeDialog)
+        c = self.getBackgroundColor()
+        c = [int(i * 255) for i in c]
+        c = colorDialog(title='Vertex color', color=QColor(c[0], c[1], c[2]))
+        if c is not None:
+            if c.isValid():
+                buff = 'background-color: rgb({}, {}, {})'.format(c.red(), c.green(), c.blue())
+                self._bcolor.setStyleSheet(buff)
+                self._propertyChange()
+        # Revision 18/03/2025 >
 
     def _changeFrameColor(self):
-        c = QColorDialog().getColor(parent=self, title='Edge color', options=QColorDialog.DontUseNativeDialog)
-        if c.isValid():
-            buff = 'background-color: rgb({}, {}, {})'.format(c.red(), c.green(), c.blue())
-            self._fcolor.setStyleSheet(buff)
-            self._propertyChange()
+        # < Revision 18/03/2025
+        # c = QColorDialog().getColor(parent=self, title='Edge color', options=QColorDialog.DontUseNativeDialog)
+        c = self.getFrameColor()
+        c = [int(i * 255) for i in c]
+        c = colorDialog(title='Edge color', color=QColor(c[0], c[1], c[2]))
+        if c is not None:
+            if c.isValid():
+                buff = 'background-color: rgb({}, {}, {})'.format(c.red(), c.green(), c.blue())
+                self._fcolor.setStyleSheet(buff)
+                self._propertyChange()
 
     def _propertyChange(self):
         self._font.setBold(self.getBold())
@@ -500,23 +521,3 @@ class DialogFontProperties(QDialog):
 
     def getVerticalJustification(self):
         return self._vjustfy.currentIndex()
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv, exit
-    from PyQt5.QtWidgets import QApplication
-
-    app = QApplication(argv)
-    main = DialogFontProperties()
-    p = vtkTextProperty()
-    main.setProperties(p)
-    main.activateWindow()
-    main.show()
-    print(main.width(), main.height())
-    app.exec_()
-    exit()

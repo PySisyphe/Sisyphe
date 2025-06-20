@@ -1,54 +1,74 @@
+"""
+External packages/modules
+-------------------------
+
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+"""
+
+from sys import platform
+
 from os.path import join
 from os.path import basename
 from os.path import splitext
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.gui.dialogWait import DialogWait
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
 
-"""
-    Class hierarchy
+__all__ = ['DialogImport']
 
-        QDialog -> DialogImport
+"""
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    - QDialog -> DialogImport
 """
 
 
 class DialogImport(QDialog):
     """
-        DialogImport
+    DialogImport
 
-        Inheritance
+    Description
+    ~~~~~~~~~~~
 
-            QDialog -> DialogImport
+    GUI dialog for importing nifti, minc, nrrd, vtk, npy image formats.
 
-        Private attributes
+    Inheritance
+    ~~~~~~~~~~~
 
-            _ioformat   str, import format (nifti, minc, nrrd, vtk, npy)
+    QDialog -> DialogImport
 
-        Public methods
-
-            convert()
-
-            inherited QDialog methods
+    Last revision: 14/11/2024
     """
 
     # Special method
+
+    """
+    Private attributes
+
+    _ioformat   str, import format (nifti, minc, nrrd, vtk, npy)
+    """
 
     def __init__(self, io='Nifti', parent=None):
         super().__init__(parent)
 
         self._ioformat = io
+        self.setWindowTitle('{} import'.format(io))
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        screen = QApplication.primaryScreen().geometry()
+        self.setMinimumSize(int(screen.width() * 0.50), int(screen.height() * 0.50))
+        self.setSizeGripEnabled(False)
 
         # Init QLayout
 
@@ -72,9 +92,13 @@ class DialogImport(QDialog):
         self._savedir.filterDirectory()
         self._savedir.setTextLabel('Import directory')
         self._savedir.setContentsMargins(0, 0, 0, 0)
-        self._convert = QPushButton(QIcon(join(self._savedir.getDefaultIconDirectory(), 'import.png')), '')
-        self._convert.setFixedSize(QSize(64, 32))
-        self._convert.setToolTip('Convert {} files to Sisyphe volume.'.format(self._ioformat))
+        # < Revision 14/11/2024
+        # self._convert = QPushButton(QIcon(join(self._savedir.getDefaultIconDirectory(), 'import.png')), '')
+        # self._convert.setFixedSize(QSize(64, 32))
+        self._convert = QPushButton('Import')
+        # Revision 14/11/2024 >
+        self._convert.setToolTip('Import {} files.'.format(self._ioformat))
+        # noinspection PyUnresolvedReferences
         self._convert.clicked.connect(self.convert)
         layout = QHBoxLayout()
         layout.setSpacing(5)
@@ -85,6 +109,7 @@ class DialogImport(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
@@ -96,14 +121,9 @@ class DialogImport(QDialog):
 
         self._layout.addLayout(layout)
 
+        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
 
-        # Window
-
-        screen = QApplication.primaryScreen().geometry()
-        self.setMinimumSize(int(screen.width() * 0.25), int(screen.height() * 0.25))
-
-        self.setWindowTitle('{} import'.format(io))
         self.setModal(True)
 
     # Public method
@@ -115,7 +135,7 @@ class DialogImport(QDialog):
             if n > 0:
                 # Set ProgressBar
                 progress = DialogWait(title='{} import'.format(self._ioformat),
-                                      progressmin=0, progressmax=n, progresstxt=True, cancel=True, parent=self)
+                                      progressmin=0, progressmax=n, progresstxt=True, cancel=True)
                 progress.setProgressVisibility(n > 1)
                 progress.open()
                 try:
@@ -151,25 +171,12 @@ class DialogImport(QDialog):
                                 savename = join(self._savedir.getPath(), basename(savename))
                             vol.save(savename)
                         except:
-                            QMessageBox.warning(self, '{} import'.format(self._ioformat),
-                                                '{} read/write error.'.format(self._ioformat))
+                            messageBox(self,
+                                       title='{} import'.format(self._ioformat),
+                                       text='{} IO error.'.format(self._ioformat))
                             continue
                         progress.incCurrentProgressValue()
                         if progress.getStopped(): break
                 finally:
                     progress.hide()
                     self._files.clearall()
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv
-
-    app = QApplication(argv)
-    main = DialogImport('Nifti')
-    main.show()
-    app.exec_()

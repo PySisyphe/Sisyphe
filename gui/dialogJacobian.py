@@ -1,68 +1,74 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
-        SimpleITK       https://simpleitk.org/                                      Medical image processing
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - SimpleITK, medical image processing, https://simpleitk.org/
 """
+
+from sys import platform
 
 from os.path import basename
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from SimpleITK import DisplacementFieldJacobianDeterminantFilter
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
 from Sisyphe.widgets.functionsSettingsWidget import FunctionSettingsWidget
 from Sisyphe.gui.dialogWait import DialogWait
 
+__all__ = ['DialogJacobian']
+
 """
-    Class hierarchy
+Class hierarchy
+~~~~~~~~~~~~~~~
 
-        QDialog -> DialogJacobian
-
+    - QDialog -> DialogJacobian
 """
 
 
 class DialogJacobian(QDialog):
     """
-        DialogJacobian
+    DialogJacobian
 
-        Description
+    Description
+    ~~~~~~~~~~~
 
-            GUI dialog to calculate determinant
-            of the Jacobian of a deformation field.
+    GUI dialog to calculate determinant of the Jacobian of a deformation field.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            QDialog -> DialogJacobian
-
-        Private attributes
-        
-            _fields     FilesSelectionWidget
-            _settings
-
-        Public methods
-
-            execute()
-
-            inherited QDialog methods
+    QDialog -> DialogJacobian
     """
 
     # Special method
+
+    """
+    Private attributes
+    
+    _fields     FilesSelectionWidget
+    _settings   FunctionSettingsWidget
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Jacobian determinant of displacement field')
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        screen = QApplication.primaryScreen().geometry()
+        self.setMinimumWidth(int(screen.width() * 0.33))
+        self.setSizeGripEnabled(False)
 
         # Init QLayout
 
@@ -87,12 +93,13 @@ class DialogJacobian(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)
         self._execute = QPushButton('Execute')
-        self._execute.setFixedSize(QSize(120, 32))
+        # self._execute.setFixedSize(QSize(120, 32))
         self._execute.setToolTip('Jacobian determinant calculation')
         self._execute.setAutoDefault(True)
         self._execute.setDefault(True)
@@ -101,16 +108,17 @@ class DialogJacobian(QDialog):
         layout.addStretch()
 
         self._layout.addLayout(layout)
-        self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
-        self.setSizeGripEnabled(False)
 
         # Qt Signals
 
+        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
+        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
     # Private method
 
+    # noinspection PyUnusedLocal
     def _center(self, widget):
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
@@ -123,10 +131,10 @@ class DialogJacobian(QDialog):
     def execute(self):
         n = self._fields.filenamesCount()
         if n > 0:
-            wait = DialogWait(title=self.windowTitle(), progressmin=0, progressmax=n, cancel=True, parent=None)
-            if n > 1: wait.open()
+            wait = DialogWait(title=self.windowTitle(), progressmin=0, progressmax=n, cancel=True)
+            wait.open()
             for filename in self._fields.getFilenames():
-                wait.setInformationText('{} Jacobian determinant calculation...'.format(basename(filename)))
+                wait.setInformationText('{} Jacobian determinant processing...'.format(basename(filename)))
                 wait.incCurrentProgressValue()
                 v = SisypheVolume()
                 v.load(filename)
@@ -135,7 +143,7 @@ class DialogJacobian(QDialog):
                 try:
                     img = f.Execute(v.getSITKImage())
                 except Exception as err:
-                    QMessageBox.warning(self, self.windowTitle(), '{}'.format(err))
+                    messageBox(self, title=self.windowTitle(), text='{}'.format(err))
                 if wait.getStopped(): break
                 if img is not None:
                     r = SisypheVolume()
@@ -145,25 +153,11 @@ class DialogJacobian(QDialog):
                     suffix = self._settings.getParameterValue('Suffix')
                     r.setFilenamePrefix(prefix)
                     r.setFilenameSuffix(suffix)
-                    r.getAcquisition().setSequenceToAlgebraMap()  
+                    r.getAcquisition().setSequenceToAlgebraMap()
+                    # noinspection PyArgumentList
                     r.setIdentity(v.getIdentity())
                     wait.setInformationText('Save {}'.format(r.getBasename()))
                     r.save()
                 if wait.getStopped(): break
             wait.close()
-            self._fields.clear()
-
-
-"""
-    Test
-"""
-
-if __name__ == '__main__':
-
-    from sys import argv
-    from os import chdir
-
-    chdir('/Users/Jean-Albert/PycharmProjects/untitled/TESTS/IMAGES/REGISTRATION/REG2')
-    app = QApplication(argv)
-    main = DialogJacobian()
-    main.exec()
+            self._fields.clearall()
