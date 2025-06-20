@@ -1,0 +1,1144 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sisyphe.core.sisypheXml &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=049aceee"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="License" href="../PySisyphe_license.html" />
+    <link rel="prev" title="Sisyphe.core.sisypheVolume" href="api_volume.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Sisyphe
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api_packages.html">Packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html">Sisyphe.core.sisypheConstants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_database.html">Sisyphe.core.sisypheDatabase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html">Sisyphe.core.sisypheDicom</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_download.html">Sisyphe.core.sisypheDownload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_fiducial.html">Sisyphe.core.sisypheFiducialBox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_image.html">Sisyphe.core.sisypheImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageattributes.html">Sisyphe.core.sisypheImageAttributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html">Sisyphe.core.sisypheImageIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_lut.html">Sisyphe.core.sisypheLUT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_mesh.html">Sisyphe.core.sisypheMesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html">Sisyphe.core.sisypheMeshIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_recent.html">Sisyphe.core.sisypheRecent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_roi.html">Sisyphe.core.sisypheROI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html">Sisyphe.core.sisypheSettings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_sheet.html">Sisyphe.core.sisypheSheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html">Sisyphe.core.sisypheStatistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html">Sisyphe.core.sisypheTools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html">Sisyphe.core.sisypheTracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_transform.html">Sisyphe.core.sisypheTransform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_volume.html">Sisyphe.core.sisypheVolume</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Sisyphe.core.sisypheXml</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheXml.AbstractXml"><code class="docutils literal notranslate"><span class="pre">AbstractXml</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.AbstractXml.getFieldList"><code class="docutils literal notranslate"><span class="pre">AbstractXml.getFieldList()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.AbstractXml.getFieldNodes"><code class="docutils literal notranslate"><span class="pre">AbstractXml.getFieldNodes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.AbstractXml.getFieldValues"><code class="docutils literal notranslate"><span class="pre">AbstractXml.getFieldValues()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.AbstractXml.hasField"><code class="docutils literal notranslate"><span class="pre">AbstractXml.hasField()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlROI"><code class="docutils literal notranslate"><span class="pre">XmlROI</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlROI.getAlpha"><code class="docutils literal notranslate"><span class="pre">XmlROI.getAlpha()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlROI.getColor"><code class="docutils literal notranslate"><span class="pre">XmlROI.getColor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlROI.getFOV"><code class="docutils literal notranslate"><span class="pre">XmlROI.getFOV()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlROI.getFloatAlpha"><code class="docutils literal notranslate"><span class="pre">XmlROI.getFloatAlpha()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlROI.getFloatColor"><code class="docutils literal notranslate"><span class="pre">XmlROI.getFloatColor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlROI.getID"><code class="docutils literal notranslate"><span class="pre">XmlROI.getID()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlROI.getName"><code class="docutils literal notranslate"><span class="pre">XmlROI.getName()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlROI.getQColor"><code class="docutils literal notranslate"><span class="pre">XmlROI.getQColor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlROI.getSize"><code class="docutils literal notranslate"><span class="pre">XmlROI.getSize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlROI.getSpacing"><code class="docutils literal notranslate"><span class="pre">XmlROI.getSpacing()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getAffineTransform"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.getAffineTransform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getAlpha"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.getAlpha()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getColor"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.getColor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getFOV"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.getFOV()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getFloatAlpha"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.getFloatAlpha()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getFloatColor"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.getFloatColor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getID"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.getID()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getLineWidth"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.getLineWidth()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getLut"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.getLut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getName"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.getName()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getQColor"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.getQColor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getSize"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.getSize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getSpacing"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.getSpacing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.isAtlas"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.isAtlas()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.isCentroid"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.isCentroid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.isRegularStep"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.isRegularStep()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlStreamlines.isWhole"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines.isWhole()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume"><code class="docutils literal notranslate"><span class="pre">XmlVolume</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getComponents"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getComponents()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getDatatype"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getDatatype()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getDateOfBirthdayAsDate"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getDateOfBirthdayAsDate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getDateOfBirthdayAsString"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getDateOfBirthdayAsString()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getDateOfScanAsDate"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getDateOfScanAsDate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getDateOfScanAsString"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getDateOfScanAsString()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getDirections"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getDirections()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getFOV"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getFOV()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getFirstname"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getFirstname()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getFrame"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getFrame()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getGender"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getGender()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getID"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getID()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getIntercept"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getIntercept()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getLastname"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getLastname()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getModality"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getModality()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getNumberOfComponentsPerPixel"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getNumberOfComponentsPerPixel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getOrientation"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getOrientation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getOrigin"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getOrigin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getRange"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getRange()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getRangeMax"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getRangeMax()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getRangeMin"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getRangeMin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getRawName"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getRawName()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getSequence"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getSequence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getSize"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getSize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getSlope"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getSlope()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getSpacing"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getSpacing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getUnit"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getUnit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getWindow"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getWindow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getWindowMax"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getWindowMax()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheXml.XmlVolume.getWindowMin"><code class="docutils literal notranslate"><span class="pre">XmlVolume.getWindowMin()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API</a></li>
+      <li class="breadcrumb-item active">Sisyphe.core.sisypheXml</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/API/api_xml.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-Sisyphe.core.sisypheXml">
+<span id="sisyphe-core-sisyphexml"></span><h1>Sisyphe.core.sisypheXml<a class="headerlink" href="#module-Sisyphe.core.sisypheXml" title="Link to this heading"></a></h1>
+<section id="external-packages-modules">
+<h2>External packages/modules<a class="headerlink" href="#external-packages-modules" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>PyQt5, Qt GUI, <a class="reference external" href="https://www.riverbankcomputing.com/software/pyqt/">https://www.riverbankcomputing.com/software/pyqt/</a></p></li>
+<li><p>Numpy, scientific computing, <a class="reference external" href="https://numpy.org/">https://numpy.org/</a></p></li>
+</ul>
+</div></blockquote>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.AbstractXml">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheXml.</span></span><span class="sig-name descname"><span class="pre">AbstractXml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheXml.AbstractXml" title="Link to this definition"></a></dt>
+<dd><section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>Abstract ancestor class of XmlVolume, XmlRoi and XmlStreamlines classes. These classes provide direct access to
+the xml fields in PySisyphe Volume (.xvol), Roi (.xroi) and Streamlines (.xtracts) files.</p>
+</section>
+<section id="inheritance">
+<h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
+<p>object -&gt; AbstractXml</p>
+<p>Creation: 08/09/2022
+Last revision: 16/12/2023</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.AbstractXml.getFieldList">
+<span class="sig-name descname"><span class="pre">getFieldList</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.AbstractXml.getFieldList" title="Link to this definition"></a></dt>
+<dd><p>Get field list in the current AbstractXml instance.</p>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>list of field names</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.AbstractXml.getFieldNodes">
+<span class="sig-name descname"><span class="pre">getFieldNodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NodeList</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.AbstractXml.getFieldNodes" title="Link to this definition"></a></dt>
+<dd><p>Get field nodes in the current AbstractXml instance.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>field<span class="classifier">str</span></dt><dd><p>field name</p>
+</dd>
+</dl>
+</section>
+<section id="id1">
+<h3>Returns<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>xml.dom.minicompat.NodeList</dt><dd><p>list of nodes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.AbstractXml.getFieldValues">
+<span class="sig-name descname"><span class="pre">getFieldValues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.AbstractXml.getFieldValues" title="Link to this definition"></a></dt>
+<dd><p>Get field value(s) in the current AbstractXml instance.</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>field<span class="classifier">str</span></dt><dd><p>field name</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Returns<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str | list[str]</dt><dd><p>field value(s)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.AbstractXml.hasField">
+<span class="sig-name descname"><span class="pre">hasField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.AbstractXml.hasField" title="Link to this definition"></a></dt>
+<dd><p>Check whether a field is in the current AbstractXml instance.</p>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>field<span class="classifier">str</span></dt><dd><p>field name</p>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h3>Returns<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if field is defined</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlROI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheXml.</span></span><span class="sig-name descname"><span class="pre">XmlROI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlROI" title="Link to this definition"></a></dt>
+<dd><section id="id6">
+<h2>Description<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<p>Class for accessing the xml fields of the PySisyphe ROI (.xroi).</p>
+</section>
+<section id="id7">
+<h2>Inheritance<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<p>object -&gt; AbstractXml -&gt; XmlROI</p>
+<p>Creation: 08/09/2022
+Last revision: 16/12/2023</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlROI.getAlpha">
+<span class="sig-name descname"><span class="pre">getAlpha</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlROI.getAlpha" title="Link to this definition"></a></dt>
+<dd><p>Get int format opacity attribute of the current XmlROI instance.</p>
+<section id="id8">
+<h3>Returns<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>int</dt><dd><p>Roi opacity, between 0 and 255</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlROI.getColor">
+<span class="sig-name descname"><span class="pre">getColor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlROI.getColor" title="Link to this definition"></a></dt>
+<dd><p>Get int format color attribute of the current XmlROI instance.</p>
+<section id="id9">
+<h3>Returns<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[int]</dt><dd><p>Roi color, red, green, blue components between 0 and 255</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlROI.getFOV">
+<span class="sig-name descname"><span class="pre">getFOV</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlROI.getFOV" title="Link to this definition"></a></dt>
+<dd><p>Get field of view attribute of the current XmlROI instance.</p>
+<section id="id10">
+<h3>Returns<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[float]</dt><dd><p>Roi FOV in x, y and z axes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlROI.getFloatAlpha">
+<span class="sig-name descname"><span class="pre">getFloatAlpha</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlROI.getFloatAlpha" title="Link to this definition"></a></dt>
+<dd><p>Get float format opacity attribute of the current XmlROI instance.</p>
+<section id="id11">
+<h3>Returns<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>Roi opacity between 0.0 and 1.0</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlROI.getFloatColor">
+<span class="sig-name descname"><span class="pre">getFloatColor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlROI.getFloatColor" title="Link to this definition"></a></dt>
+<dd><p>Get float format color attribute of the current XmlROI instance.</p>
+<section id="id12">
+<h3>Returns<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[float]</dt><dd><p>Roi color, red, green, blue components between 0.0 and 1.0</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlROI.getID">
+<span class="sig-name descname"><span class="pre">getID</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlROI.getID" title="Link to this definition"></a></dt>
+<dd><p>Get reference ID attribute of the current XmlROI instance.</p>
+<section id="id13">
+<h3>Returns<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>Roi ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlROI.getName">
+<span class="sig-name descname"><span class="pre">getName</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlROI.getName" title="Link to this definition"></a></dt>
+<dd><p>Get name attribute of the current XmlROI instance.</p>
+<section id="id14">
+<h3>Returns<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>Roi name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlROI.getQColor">
+<span class="sig-name descname"><span class="pre">getQColor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QColor</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlROI.getQColor" title="Link to this definition"></a></dt>
+<dd><p>Get QColor attribute of the current XmlROI instance.</p>
+<section id="id15">
+<h3>Returns<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>PyQt5.QtGui.QColor</dt><dd><p>Roi color</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlROI.getSize">
+<span class="sig-name descname"><span class="pre">getSize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlROI.getSize" title="Link to this definition"></a></dt>
+<dd><p>Get image size attribute of the current XmlROI instance.</p>
+<section id="id16">
+<h3>Returns<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[int]</dt><dd><p>Roi size in x, y and z axes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlROI.getSpacing">
+<span class="sig-name descname"><span class="pre">getSpacing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlROI.getSpacing" title="Link to this definition"></a></dt>
+<dd><p>Get image spacing (i.e. voxel size in each dimension) attribute of the current XmlROI instance.</p>
+<section id="id17">
+<h3>Returns<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[float]</dt><dd><p>Roi spacing in x, y and z axes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheXml.</span></span><span class="sig-name descname"><span class="pre">XmlStreamlines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines" title="Link to this definition"></a></dt>
+<dd><section id="id18">
+<h2>Description<a class="headerlink" href="#id18" title="Link to this heading"></a></h2>
+<p>Class for accessing the xml fields of the PySisyphe Streamlines (.xtracts).</p>
+</section>
+<section id="id19">
+<h2>Inheritance<a class="headerlink" href="#id19" title="Link to this heading"></a></h2>
+<p>object -&gt; AbstractXml -&gt; XmlStreamlines</p>
+<p>Creation: 29/08/2024</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.getAffineTransform">
+<span class="sig-name descname"><span class="pre">getAffineTransform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getAffineTransform" title="Link to this definition"></a></dt>
+<dd><p>Get affine transform attribute of the current XmlStreamlines instance.</p>
+<section id="id20">
+<h3>Returns<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>numpy.ndarray</dt><dd><p>Affine transform</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.getAlpha">
+<span class="sig-name descname"><span class="pre">getAlpha</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getAlpha" title="Link to this definition"></a></dt>
+<dd><p>Get int format opacity attribute of the current XmlStreamlines instance.</p>
+<section id="id21">
+<h3>Returns<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>int</dt><dd><p>Streamlines opacity, between 0 and 255</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.getColor">
+<span class="sig-name descname"><span class="pre">getColor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getColor" title="Link to this definition"></a></dt>
+<dd><p>Get int format color attribute of the current XmlStreamlines instance.</p>
+<section id="id22">
+<h3>Returns<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[int]</dt><dd><p>Streamlines color, red, green, blue components between 0 and 255</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.getFOV">
+<span class="sig-name descname"><span class="pre">getFOV</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getFOV" title="Link to this definition"></a></dt>
+<dd><p>Get field of view attribute of the current XmlStreamlines instance.</p>
+<section id="id23">
+<h3>Returns<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[float]</dt><dd><p>Streamlines FOV in x, y and z axes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.getFloatAlpha">
+<span class="sig-name descname"><span class="pre">getFloatAlpha</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getFloatAlpha" title="Link to this definition"></a></dt>
+<dd><p>Get float format opacity attribute of the current XmlStreamlines instance.</p>
+<section id="id24">
+<h3>Returns<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>Streamlines opacity between 0.0 and 1.0</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.getFloatColor">
+<span class="sig-name descname"><span class="pre">getFloatColor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getFloatColor" title="Link to this definition"></a></dt>
+<dd><p>Get float format color attribute of the current XmlStreamlines instance.</p>
+<section id="id25">
+<h3>Returns<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[float]</dt><dd><p>Streamlines color, red, green, blue components between 0.0 and 1.0</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.getID">
+<span class="sig-name descname"><span class="pre">getID</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getID" title="Link to this definition"></a></dt>
+<dd><p>Get reference ID attribute of the current XmlStreamlines instance.</p>
+<section id="id26">
+<h3>Returns<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>Streamlines ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.getLineWidth">
+<span class="sig-name descname"><span class="pre">getLineWidth</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getLineWidth" title="Link to this definition"></a></dt>
+<dd><p>Get line width attribute of the current XmlStreamlines instance.</p>
+<section id="id27">
+<h3>Returns<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>Streamlines line width in mm</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.getLut">
+<span class="sig-name descname"><span class="pre">getLut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getLut" title="Link to this definition"></a></dt>
+<dd><p>Get lut name attribute of the current XmlStreamlines instance.</p>
+<section id="id28">
+<h3>Returns<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>Streamlines lut name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.getName">
+<span class="sig-name descname"><span class="pre">getName</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getName" title="Link to this definition"></a></dt>
+<dd><p>Get name attribute of the current XmlStreamlines instance.</p>
+<section id="id29">
+<h3>Returns<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>Streamlines name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.getQColor">
+<span class="sig-name descname"><span class="pre">getQColor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QColor</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getQColor" title="Link to this definition"></a></dt>
+<dd><p>Get QColor attribute of the current XmlStreamlines instance.</p>
+<section id="id30">
+<h3>Returns<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>PyQt5.QtGui.QColor</dt><dd><p>Streamlines color</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.getSize">
+<span class="sig-name descname"><span class="pre">getSize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getSize" title="Link to this definition"></a></dt>
+<dd><p>Get image size attribute of the current XmlStreamlines instance.</p>
+<section id="id31">
+<h3>Returns<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[int]</dt><dd><p>Streamlines size in x, y and z axes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.getSpacing">
+<span class="sig-name descname"><span class="pre">getSpacing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.getSpacing" title="Link to this definition"></a></dt>
+<dd><p>Get image spacing (i.e. voxel size in each dimension)
+attribute of the current XmlStreamlines instance.</p>
+<section id="id32">
+<h3>Returns<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[float]</dt><dd><p>Streamlines spacing in x, y and z axes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.isAtlas">
+<span class="sig-name descname"><span class="pre">isAtlas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.isAtlas" title="Link to this definition"></a></dt>
+<dd><p>Check whether streamlines of the current SisypheStreamlines instance are atlas streamlines.</p>
+<section id="id33">
+<h3>Returns<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if atlas streamlines</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.isCentroid">
+<span class="sig-name descname"><span class="pre">isCentroid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.isCentroid" title="Link to this definition"></a></dt>
+<dd><p>Check whether the current SisypheStreamlines instance is a centroid streamline.</p>
+<section id="id34">
+<h3>Returns<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if centroid streamline</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.isRegularStep">
+<span class="sig-name descname"><span class="pre">isRegularStep</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.isRegularStep" title="Link to this definition"></a></dt>
+<dd><p>Check whether the streamlines of the current SisypheStreamlines instance are compressed.</p>
+<p>By default, streamlines are uncompressed, with a regular step between points. Compression can be applied to
+streamlines i.e. a reduction in the number of points with non-uniform steps between points. The compression
+consists in merging consecutive segments that are nearly collinear. The merging is achieved by removing the
+point the two segments have in common. The linearization process ensures that every point being removed are
+within a certain margin of the resulting streamline.</p>
+<section id="id35">
+<h3>Returns<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True, if not compressed with regular step between points.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlStreamlines.isWhole">
+<span class="sig-name descname"><span class="pre">isWhole</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlStreamlines.isWhole" title="Link to this definition"></a></dt>
+<dd><p>Check whether streamlines of the current SisypheStreamlines instance have been generated from whole brain seeds.</p>
+<section id="id36">
+<h3>Returns<a class="headerlink" href="#id36" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if whole brain streamlines</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheXml.</span></span><span class="sig-name descname"><span class="pre">XmlVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume" title="Link to this definition"></a></dt>
+<dd><section id="id37">
+<h2>Description<a class="headerlink" href="#id37" title="Link to this heading"></a></h2>
+<p>Class for accessing the xml fields of the PySisyphe volume (.xvol).</p>
+</section>
+<section id="id38">
+<h2>Inheritance<a class="headerlink" href="#id38" title="Link to this heading"></a></h2>
+<p>object -&gt; AbstractXml -&gt; XmlVolume</p>
+<p>Creation: 08/09/2022
+Last revision: 16/12/2023</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getComponents">
+<span class="sig-name descname"><span class="pre">getComponents</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getComponents" title="Link to this definition"></a></dt>
+<dd><p>Get number of components attribute of the current XmlVolume instance.</p>
+<section id="id39">
+<h3>Returns<a class="headerlink" href="#id39" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>int</dt><dd><p>number of components (1 for 3D volume, &gt; 1 for 4D multi-components volume)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getDatatype">
+<span class="sig-name descname"><span class="pre">getDatatype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getDatatype" title="Link to this definition"></a></dt>
+<dd><p>Get datatype attribute of the current XmlVolume instance.</p>
+<section id="id40">
+<h3>Returns<a class="headerlink" href="#id40" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>numpy datatype format</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getDateOfBirthdayAsDate">
+<span class="sig-name descname"><span class="pre">getDateOfBirthdayAsDate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">date</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getDateOfBirthdayAsDate" title="Link to this definition"></a></dt>
+<dd><p>Get patient’s date of birth attribute of the current XmlVolume instance.</p>
+<section id="id41">
+<h3>Returns<a class="headerlink" href="#id41" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>datetime.date</dt><dd><p>patient’s birthdate</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getDateOfBirthdayAsString">
+<span class="sig-name descname"><span class="pre">getDateOfBirthdayAsString</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getDateOfBirthdayAsString" title="Link to this definition"></a></dt>
+<dd><p>Get patient’s date of birth attribute of the current XmlVolume instance.</p>
+<section id="id42">
+<h3>Returns<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>patient’s birthdate</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getDateOfScanAsDate">
+<span class="sig-name descname"><span class="pre">getDateOfScanAsDate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">date</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getDateOfScanAsDate" title="Link to this definition"></a></dt>
+<dd><p>Get date of scan attribute of the current XmlVolume instance.</p>
+<section id="id43">
+<h3>Returns<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>datetime.date</dt><dd><p>date of scan</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getDateOfScanAsString">
+<span class="sig-name descname"><span class="pre">getDateOfScanAsString</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getDateOfScanAsString" title="Link to this definition"></a></dt>
+<dd><p>Get date of scan attribute of the current XmlVolume instance.</p>
+<section id="id44">
+<h3>Returns<a class="headerlink" href="#id44" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>date of scan</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getDirections">
+<span class="sig-name descname"><span class="pre">getDirections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getDirections" title="Link to this definition"></a></dt>
+<dd><p>Get directions attribute of the current XmlVolume instance.
+Direction vectors of image axes in RAS+ coordinates system.</p>
+<p>PySisyphe uses RAS+ world coordinates system convention (as MNI, Nibabel, Dipy…) with origin to corner of the voxel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>x, direction [1.0, 0.0, 0.0]: left(-) to right(+)</p></li>
+<li><p>y, direction [0.0, 1.0, 0.0]: posterior(-) to anterior(+)</p></li>
+<li><p>z: direction [0.0, 0.0, 1.0]: inferior(-) to superior(+)</p></li>
+</ul>
+</div></blockquote>
+<p>Directions is a list of 9 float, 3 vectors of 3 floats</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>First vector, x-axis image direction, [1.0, 0.0, 0.0]</p></li>
+<li><p>Second vector, y-axis image direction, [0.0, 1.0, 0.0]</p></li>
+<li><p>Third vector, z-axis image direction, [0.0, 0.0, 1.0]</p></li>
+</ul>
+</div></blockquote>
+<section id="id45">
+<h3>Returns<a class="headerlink" href="#id45" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[float]</dt><dd><p>volume directions</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getFOV">
+<span class="sig-name descname"><span class="pre">getFOV</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getFOV" title="Link to this definition"></a></dt>
+<dd><p>Get field of view attribute of the current XmlVolume instance.</p>
+<section id="id46">
+<h3>Returns<a class="headerlink" href="#id46" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[float]</dt><dd><p>volume FOV in x, y and z axes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getFirstname">
+<span class="sig-name descname"><span class="pre">getFirstname</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getFirstname" title="Link to this definition"></a></dt>
+<dd><p>Get patient firstname of the current XmlVolume instance.</p>
+<section id="id47">
+<h3>Returns<a class="headerlink" href="#id47" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>patient firstname</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getFrame">
+<span class="sig-name descname"><span class="pre">getFrame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getFrame" title="Link to this definition"></a></dt>
+<dd><p>Get frame attribute of the current XmlVolume instance.</p>
+<section id="id48">
+<h3>Returns<a class="headerlink" href="#id48" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>frame (‘UNKNOWN’, ‘NO FRAME’, ‘LEKSELL’)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getGender">
+<span class="sig-name descname"><span class="pre">getGender</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getGender" title="Link to this definition"></a></dt>
+<dd><p>Get patient gender attribute of the current XmlVolume instance.</p>
+<section id="id49">
+<h3>Returns<a class="headerlink" href="#id49" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>patient gender (‘Male’, ‘Female’, ‘Unknown’)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getID">
+<span class="sig-name descname"><span class="pre">getID</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getID" title="Link to this definition"></a></dt>
+<dd><p>Get ID attribute of the current XmlVolume instance.</p>
+<section id="id50">
+<h3>Returns<a class="headerlink" href="#id50" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>Volume ID (space ID)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getIntercept">
+<span class="sig-name descname"><span class="pre">getIntercept</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getIntercept" title="Link to this definition"></a></dt>
+<dd><p>Get intercept attribute of the current XmlVolume instance. Used for linear transformation of scalar values
+displayed in the PySisyphe interface. displayed value = slope x scalar value + intercept</p>
+<section id="id51">
+<h3>Returns<a class="headerlink" href="#id51" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>intercept attribute</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getLastname">
+<span class="sig-name descname"><span class="pre">getLastname</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getLastname" title="Link to this definition"></a></dt>
+<dd><p>Get patient lastname attribute of the current XmlVolume instance.</p>
+<section id="id52">
+<h3>Returns<a class="headerlink" href="#id52" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>patient lastname</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getModality">
+<span class="sig-name descname"><span class="pre">getModality</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getModality" title="Link to this definition"></a></dt>
+<dd><p>Get modality attribute of the current XmlVolume instance.</p>
+<section id="id53">
+<h3>Returns<a class="headerlink" href="#id53" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>modality</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getNumberOfComponentsPerPixel">
+<span class="sig-name descname"><span class="pre">getNumberOfComponentsPerPixel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getNumberOfComponentsPerPixel" title="Link to this definition"></a></dt>
+<dd><p>Get number of components attribute of the current XmlVolume instance.</p>
+<section id="id54">
+<h3>Returns<a class="headerlink" href="#id54" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>int</dt><dd><p>number of components (1 for 3D volume, &gt; 1 for 4D multi-components volume)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getOrientation">
+<span class="sig-name descname"><span class="pre">getOrientation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getOrientation" title="Link to this definition"></a></dt>
+<dd><p>Get orientation attribute of the current XmlVolume instance.</p>
+<section id="id55">
+<h3>Returns<a class="headerlink" href="#id55" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>‘axial’, ‘coronal’, ‘sagittal’</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getOrigin">
+<span class="sig-name descname"><span class="pre">getOrigin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getOrigin" title="Link to this definition"></a></dt>
+<dd><p>Get origin coordinates (world reference) attribute of the current XmlVolume instance.</p>
+<section id="id56">
+<h3>Returns<a class="headerlink" href="#id56" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[float]</dt><dd><p>origin coordinates of the volume</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getRange">
+<span class="sig-name descname"><span class="pre">getRange</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getRange" title="Link to this definition"></a></dt>
+<dd><p>Get minimum and maximum scalar values in the image array of the current XmlVolume instance.</p>
+<section id="id57">
+<h3>Returns<a class="headerlink" href="#id57" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>tuple[float, float]</dt><dd><p>minimum and maximum scalar values in the image array</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getRangeMax">
+<span class="sig-name descname"><span class="pre">getRangeMax</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getRangeMax" title="Link to this definition"></a></dt>
+<dd><p>Get maximum scalar value in the image array of the current XmlVolume instance.</p>
+<section id="id58">
+<h3>Returns<a class="headerlink" href="#id58" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>maximum scalar value in the image array</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getRangeMin">
+<span class="sig-name descname"><span class="pre">getRangeMin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getRangeMin" title="Link to this definition"></a></dt>
+<dd><p>Get minimum scalar value in the image array of the current XmlVolume instance.</p>
+<section id="id59">
+<h3>Returns<a class="headerlink" href="#id59" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>minimum scalar value in the image array</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getRawName">
+<span class="sig-name descname"><span class="pre">getRawName</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getRawName" title="Link to this definition"></a></dt>
+<dd><p>Get array field value of the current XmlVolume instance.</p>
+<section id="id60">
+<h3>Returns<a class="headerlink" href="#id60" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>‘self’ if array image is saved in a binary part of the xvol file (single format) or file name with raw
+extension if image array is saved in a separate file</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getSequence">
+<span class="sig-name descname"><span class="pre">getSequence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getSequence" title="Link to this definition"></a></dt>
+<dd><p>Get sequence attribute of the current XmlVolume instance.</p>
+<section id="id61">
+<h3>Returns<a class="headerlink" href="#id61" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>sequence</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getSize">
+<span class="sig-name descname"><span class="pre">getSize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getSize" title="Link to this definition"></a></dt>
+<dd><p>Get image size attribute of the current XmlVolume instance.</p>
+<section id="id62">
+<h3>Returns<a class="headerlink" href="#id62" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[int]</dt><dd><p>volume size in x, y and z axes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getSlope">
+<span class="sig-name descname"><span class="pre">getSlope</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getSlope" title="Link to this definition"></a></dt>
+<dd><p>Get slope attribute of the current XmlVolume instance. Used for linear transformation of scalar values
+displayed in the PySisyphe interface. displayed value = slope x scalar value + intercept</p>
+<section id="id63">
+<h3>Returns<a class="headerlink" href="#id63" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>slope attribute</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getSpacing">
+<span class="sig-name descname"><span class="pre">getSpacing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getSpacing" title="Link to this definition"></a></dt>
+<dd><p>Get image spacing (i.e. voxel size in each dimension) attribute of the current XmlVolume instance.</p>
+<section id="id64">
+<h3>Returns<a class="headerlink" href="#id64" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[float]</dt><dd><p>volume spacing in x, y and z axes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getUnit">
+<span class="sig-name descname"><span class="pre">getUnit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getUnit" title="Link to this definition"></a></dt>
+<dd><p>Get unit attribute of the current XmlVolume instance.</p>
+<section id="id65">
+<h3>Returns<a class="headerlink" href="#id65" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>unit</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getWindow">
+<span class="sig-name descname"><span class="pre">getWindow</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getWindow" title="Link to this definition"></a></dt>
+<dd><p>Get minimum and maximum windowing values of the current XmlVolume instance.</p>
+<section id="id66">
+<h3>Returns<a class="headerlink" href="#id66" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>tuple[float, float]</dt><dd><p>minimum and maximum windowing values</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getWindowMax">
+<span class="sig-name descname"><span class="pre">getWindowMax</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getWindowMax" title="Link to this definition"></a></dt>
+<dd><p>Get maximum windowing value of the current XmlVolume instance.</p>
+<section id="id67">
+<h3>Returns<a class="headerlink" href="#id67" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>maximum windowing value</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheXml.XmlVolume.getWindowMin">
+<span class="sig-name descname"><span class="pre">getWindowMin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheXml.XmlVolume.getWindowMin" title="Link to this definition"></a></dt>
+<dd><p>Get minimum windowing value of the current XmlVolume instance.</p>
+<section id="id68">
+<h3>Returns<a class="headerlink" href="#id68" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>minimum windowing value</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api_volume.html" class="btn btn-neutral float-left" title="Sisyphe.core.sisypheVolume" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../PySisyphe_license.html" class="btn btn-neutral float-right" title="License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

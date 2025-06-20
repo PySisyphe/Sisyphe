@@ -1,0 +1,1334 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sisyphe.core.sisypheConstants &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=049aceee"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Sisyphe.core.sisypheDatabase" href="api_database.html" />
+    <link rel="prev" title="Packages" href="api_packages.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Sisyphe
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api_packages.html">Packages</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Sisyphe.core.sisypheConstants</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.addPrefixSuffixToFilename"><code class="docutils literal notranslate"><span class="pre">addPrefixSuffixToFilename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.addPrefixToFilename"><code class="docutils literal notranslate"><span class="pre">addPrefixToFilename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.addSuffixToFilename"><code class="docutils literal notranslate"><span class="pre">addSuffixToFilename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getATROPOSPath"><code class="docutils literal notranslate"><span class="pre">getATROPOSPath()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getBitmapExt"><code class="docutils literal notranslate"><span class="pre">getBitmapExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getBrainVoyagerVMRExt"><code class="docutils literal notranslate"><span class="pre">getBrainVoyagerVMRExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getBrainVoyagerVOIExt"><code class="docutils literal notranslate"><span class="pre">getBrainVoyagerVOIExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getDISTALPath"><code class="docutils literal notranslate"><span class="pre">getDISTALPath()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getDatatypes"><code class="docutils literal notranslate"><span class="pre">getDatatypes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getDicomExt"><code class="docutils literal notranslate"><span class="pre">getDicomExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getFloatStdDatatypes"><code class="docutils literal notranslate"><span class="pre">getFloatStdDatatypes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getFreeSurferExt"><code class="docutils literal notranslate"><span class="pre">getFreeSurferExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getICBM152Path"><code class="docutils literal notranslate"><span class="pre">getICBM152Path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getICBM452Path"><code class="docutils literal notranslate"><span class="pre">getICBM452Path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getID_ATROPOS"><code class="docutils literal notranslate"><span class="pre">getID_ATROPOS()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getID_DISTAL"><code class="docutils literal notranslate"><span class="pre">getID_DISTAL()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getID_ICBM152"><code class="docutils literal notranslate"><span class="pre">getID_ICBM152()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getID_ICBM452"><code class="docutils literal notranslate"><span class="pre">getID_ICBM452()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getID_NAC"><code class="docutils literal notranslate"><span class="pre">getID_NAC()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getID_SPL"><code class="docutils literal notranslate"><span class="pre">getID_SPL()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getID_SRI24"><code class="docutils literal notranslate"><span class="pre">getID_SRI24()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getImageExt"><code class="docutils literal notranslate"><span class="pre">getImageExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getIntStdDatatypes"><code class="docutils literal notranslate"><span class="pre">getIntStdDatatypes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getJsonExt"><code class="docutils literal notranslate"><span class="pre">getJsonExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getLibraryDataType"><code class="docutils literal notranslate"><span class="pre">getLibraryDataType()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getLutExt"><code class="docutils literal notranslate"><span class="pre">getLutExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getMincExt"><code class="docutils literal notranslate"><span class="pre">getMincExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getNACPath"><code class="docutils literal notranslate"><span class="pre">getNACPath()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getNiftiCompressedExt"><code class="docutils literal notranslate"><span class="pre">getNiftiCompressedExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getNiftiExt"><code class="docutils literal notranslate"><span class="pre">getNiftiExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getNrrdExt"><code class="docutils literal notranslate"><span class="pre">getNrrdExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getNumpyExt"><code class="docutils literal notranslate"><span class="pre">getNumpyExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getOrigin_ICBM152"><code class="docutils literal notranslate"><span class="pre">getOrigin_ICBM152()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getRegularDirections"><code class="docutils literal notranslate"><span class="pre">getRegularDirections()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getSPLPath"><code class="docutils literal notranslate"><span class="pre">getSPLPath()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getSRI24Path"><code class="docutils literal notranslate"><span class="pre">getSRI24Path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getShape_ICBM152"><code class="docutils literal notranslate"><span class="pre">getShape_ICBM152()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getSisypheDirections"><code class="docutils literal notranslate"><span class="pre">getSisypheDirections()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getSisypheExt"><code class="docutils literal notranslate"><span class="pre">getSisypheExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getSisypheROIExt"><code class="docutils literal notranslate"><span class="pre">getSisypheROIExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getSupportedITKDatatypes"><code class="docutils literal notranslate"><span class="pre">getSupportedITKDatatypes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getSupportedITKStdDatatypes"><code class="docutils literal notranslate"><span class="pre">getSupportedITKStdDatatypes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getTemplatePath"><code class="docutils literal notranslate"><span class="pre">getTemplatePath()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getTemplatesID"><code class="docutils literal notranslate"><span class="pre">getTemplatesID()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getTractsExt"><code class="docutils literal notranslate"><span class="pre">getTractsExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getVTKDirections"><code class="docutils literal notranslate"><span class="pre">getVTKDirections()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.getVtkExt"><code class="docutils literal notranslate"><span class="pre">getVtkExt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.isATROPOS"><code class="docutils literal notranslate"><span class="pre">isATROPOS()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.isDISTAL"><code class="docutils literal notranslate"><span class="pre">isDISTAL()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.isICBM152"><code class="docutils literal notranslate"><span class="pre">isICBM152()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.isICBM452"><code class="docutils literal notranslate"><span class="pre">isICBM452()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.isITKImageSupportedType"><code class="docutils literal notranslate"><span class="pre">isITKImageSupportedType()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.isITKSupportedStdType"><code class="docutils literal notranslate"><span class="pre">isITKSupportedStdType()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.isITKSupportedType"><code class="docutils literal notranslate"><span class="pre">isITKSupportedType()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.isNAC"><code class="docutils literal notranslate"><span class="pre">isNAC()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.isSPL"><code class="docutils literal notranslate"><span class="pre">isSPL()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.isSRI24"><code class="docutils literal notranslate"><span class="pre">isSRI24()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.isTemplateID"><code class="docutils literal notranslate"><span class="pre">isTemplateID()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.isUint8ITKImage"><code class="docutils literal notranslate"><span class="pre">isUint8ITKImage()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.isValidDatatype"><code class="docutils literal notranslate"><span class="pre">isValidDatatype()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.isValidLibraryName"><code class="docutils literal notranslate"><span class="pre">isValidLibraryName()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.listToStr"><code class="docutils literal notranslate"><span class="pre">listToStr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.removeAllPrefixesFromFilename"><code class="docutils literal notranslate"><span class="pre">removeAllPrefixesFromFilename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.removeAllSuffixesFromFilename"><code class="docutils literal notranslate"><span class="pre">removeAllSuffixesFromFilename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.removeSuffixNumberFromFilename"><code class="docutils literal notranslate"><span class="pre">removeSuffixNumberFromFilename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheConstants.replaceDirname"><code class="docutils literal notranslate"><span class="pre">replaceDirname()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api_database.html">Sisyphe.core.sisypheDatabase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html">Sisyphe.core.sisypheDicom</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_download.html">Sisyphe.core.sisypheDownload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_fiducial.html">Sisyphe.core.sisypheFiducialBox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_image.html">Sisyphe.core.sisypheImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageattributes.html">Sisyphe.core.sisypheImageAttributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html">Sisyphe.core.sisypheImageIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_lut.html">Sisyphe.core.sisypheLUT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_mesh.html">Sisyphe.core.sisypheMesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html">Sisyphe.core.sisypheMeshIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_recent.html">Sisyphe.core.sisypheRecent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_roi.html">Sisyphe.core.sisypheROI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html">Sisyphe.core.sisypheSettings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_sheet.html">Sisyphe.core.sisypheSheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html">Sisyphe.core.sisypheStatistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html">Sisyphe.core.sisypheTools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html">Sisyphe.core.sisypheTracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_transform.html">Sisyphe.core.sisypheTransform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_volume.html">Sisyphe.core.sisypheVolume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_xml.html">Sisyphe.core.sisypheXml</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API</a></li>
+      <li class="breadcrumb-item active">Sisyphe.core.sisypheConstants</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/API/api_constants.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-Sisyphe.core.sisypheConstants">
+<span id="sisyphe-core-sisypheconstants"></span><h1>Sisyphe.core.sisypheConstants<a class="headerlink" href="#module-Sisyphe.core.sisypheConstants" title="Link to this heading"></a></h1>
+<section id="external-packages-modules">
+<h2>External packages/modules<a class="headerlink" href="#external-packages-modules" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>ITK, medical image processing, <a class="reference external" href="https://itk.org/">https://itk.org/</a></p></li>
+<li><p>PyQt5, Qt GUI, <a class="reference external" href="https://www.riverbankcomputing.com/software/pyqt/">https://www.riverbankcomputing.com/software/pyqt/</a></p></li>
+<li><p>SimpleITK, medical image processing, <a class="reference external" href="https://simpleitk.org/">https://simpleitk.org/</a></p></li>
+<li><p>vtk, visualization engine/3D rendering, <a class="reference external" href="https://vtk.org/">https://vtk.org/</a></p></li>
+</ul>
+</div></blockquote>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.addPrefixSuffixToFilename">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">addPrefixSuffixToFilename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'_'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.addPrefixSuffixToFilename" title="Link to this definition"></a></dt>
+<dd><p>Add prefix and suffix to a file name.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>filename to be prefixed and suffixed</p>
+</dd>
+<dt>prefix<span class="classifier">str</span></dt><dd><p>prefix to add</p>
+</dd>
+<dt>suffix<span class="classifier">str</span></dt><dd><p>suffix to add</p>
+</dd>
+<dt>sep<span class="classifier">str</span></dt><dd><p>separator between prefix/suffix and file name (default ‘_’)</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>file name with prefix and suffix</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.addPrefixToFilename">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">addPrefixToFilename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'_'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.addPrefixToFilename" title="Link to this definition"></a></dt>
+<dd><p>Add a prefix to a file name.</p>
+<section id="id1">
+<h2>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>filename to be prefixed</p>
+</dd>
+<dt>prefix<span class="classifier">str</span></dt><dd><p>prefix to add</p>
+</dd>
+<dt>sep<span class="classifier">str</span></dt><dd><p>separator between prefix and file name (default ‘_’)</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h2>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>file name with prefix</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.addSuffixToFilename">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">addSuffixToFilename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'_'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.addSuffixToFilename" title="Link to this definition"></a></dt>
+<dd><p>Add a suffix to a file name.</p>
+<section id="id3">
+<h2>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>filename to be suffixed</p>
+</dd>
+<dt>suffix<span class="classifier">str</span></dt><dd><p>suffix to add</p>
+</dd>
+<dt>sep<span class="classifier">str</span></dt><dd><p>separator between file name and suffix (default ‘_’)</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h2>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>file name with suffix</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getATROPOSPath">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getATROPOSPath</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getATROPOSPath" title="Link to this definition"></a></dt>
+<dd><p>Get Atropos template path.</p>
+<section id="id5">
+<h2>Returns<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>PySisyphe Atropos template path</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getBitmapExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getBitmapExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getBitmapExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of bitmap image file extensions.</p>
+<section id="id6">
+<h2>Returns<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.bmp’, ‘.jpg’, ‘.jpeg’,’.png’,’.pbm’,’.pgm’, ‘.ppm’, ‘.xpm’,’.svg’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getBrainVoyagerVMRExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getBrainVoyagerVMRExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getBrainVoyagerVMRExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of BrainVoyager image file extension.</p>
+<section id="id7">
+<h2>Returns<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.vmr’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getBrainVoyagerVOIExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getBrainVoyagerVOIExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getBrainVoyagerVOIExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of BrainVoyager ROI file extension.</p>
+<section id="id8">
+<h2>Returns<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.voi’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getDISTALPath">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getDISTALPath</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getDISTALPath" title="Link to this definition"></a></dt>
+<dd><p>Get Distal template path.</p>
+<section id="id9">
+<h2>Returns<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>PySisyphe Distal template path</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getDatatypes">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getDatatypes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getDatatypes" title="Link to this definition"></a></dt>
+<dd><p>Get list of numpy datatypes in str format.</p>
+<section id="id10">
+<h2>Returns<a class="headerlink" href="#id10" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘uint8’, ‘int8’, ‘uint16’, ‘int16’, ‘uint32’, ‘int32’, ‘uint64’, ‘int64’, ‘float32’, ‘float64’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getDicomExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getDicomExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getDicomExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of DICOM file extensions.</p>
+<section id="id11">
+<h2>Returns<a class="headerlink" href="#id11" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.dcm’, ‘.dicom’, ‘.ima’, ‘.nema’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getFloatStdDatatypes">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getFloatStdDatatypes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getFloatStdDatatypes" title="Link to this definition"></a></dt>
+<dd><p>Get list of numpy float datatypes in str format.</p>
+<section id="id12">
+<h2>Returns<a class="headerlink" href="#id12" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘float32’, ‘float64’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getFreeSurferExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getFreeSurferExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getFreeSurferExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of FreeSurfer volume file extension.</p>
+<section id="id13">
+<h2>Returns<a class="headerlink" href="#id13" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.mgh’, ‘.mgz’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getICBM152Path">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getICBM152Path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getICBM152Path" title="Link to this definition"></a></dt>
+<dd><p>Get ICBM152 template path.</p>
+<section id="id14">
+<h2>Returns<a class="headerlink" href="#id14" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>PySisyphe ICBM152 template path</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getICBM452Path">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getICBM452Path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getICBM452Path" title="Link to this definition"></a></dt>
+<dd><p>Get ICBM452 template path.</p>
+<section id="id15">
+<h2>Returns<a class="headerlink" href="#id15" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>PySisyphe ICBM452 template path</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getID_ATROPOS">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getID_ATROPOS</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getID_ATROPOS" title="Link to this definition"></a></dt>
+<dd><p>Get ATROPOS template ID used by PySisyphe.</p>
+<section id="id16">
+<h2>Returns<a class="headerlink" href="#id16" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>ATROPOS template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getID_DISTAL">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getID_DISTAL</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getID_DISTAL" title="Link to this definition"></a></dt>
+<dd><p>Get DISTAL template ID used by PySisyphe.</p>
+<section id="id17">
+<h2>Returns<a class="headerlink" href="#id17" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>DISTAL template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getID_ICBM152">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getID_ICBM152</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getID_ICBM152" title="Link to this definition"></a></dt>
+<dd><p>Get ICBM152 template ID used by PySisyphe.</p>
+<section id="id18">
+<h2>Returns<a class="headerlink" href="#id18" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>ICBM152 template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getID_ICBM452">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getID_ICBM452</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getID_ICBM452" title="Link to this definition"></a></dt>
+<dd><p>Get ICBM452 template ID used by PySisyphe.</p>
+<section id="id19">
+<h2>Returns<a class="headerlink" href="#id19" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>ICBM452 template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getID_NAC">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getID_NAC</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getID_NAC" title="Link to this definition"></a></dt>
+<dd><p>Get NAC template ID used by PySisyphe.</p>
+<section id="id20">
+<h2>Returns<a class="headerlink" href="#id20" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>NAC template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getID_SPL">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getID_SPL</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getID_SPL" title="Link to this definition"></a></dt>
+<dd><p>Get SPL template ID used by PySisyphe.</p>
+<section id="id21">
+<h2>Returns<a class="headerlink" href="#id21" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>SPL template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getID_SRI24">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getID_SRI24</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getID_SRI24" title="Link to this definition"></a></dt>
+<dd><p>Get SRI24 template ID used by PySisyphe.</p>
+<section id="id22">
+<h2>Returns<a class="headerlink" href="#id22" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>SRI24 template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getImageExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getImageExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getImageExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of image file extensions supported by PySisyphe.</p>
+<section id="id23">
+<h2>Returns<a class="headerlink" href="#id23" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>list of image file extensions</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getIntStdDatatypes">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getIntStdDatatypes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getIntStdDatatypes" title="Link to this definition"></a></dt>
+<dd><p>Get list of numpy int datatypes in str format.</p>
+<section id="id24">
+<h2>Returns<a class="headerlink" href="#id24" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘uint8’, ‘int8’, ‘uint16’, ‘int16’, ‘uint32’, ‘int32’, ‘uint64’, ‘int64’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getJsonExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getJsonExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getJsonExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of JSON file extension.</p>
+<section id="id25">
+<h2>Returns<a class="headerlink" href="#id25" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.json’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getLibraryDataType">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getLibraryDataType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datatype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'uint8'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getLibraryDataType" title="Link to this definition"></a></dt>
+<dd><p>Get native library datatype from numpy datatype in str format.</p>
+<section id="id26">
+<h2>Parameters<a class="headerlink" href="#id26" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>datatype<span class="classifier">str</span></dt><dd><p>numpy datatype in str format (default ‘uint8’)</p>
+</dd>
+<dt>lib<span class="classifier">str | int</span></dt><dd><ul class="simple">
+<li><p>library name (i.e. ‘ants’, ‘itk’, ‘sitk’, ‘vtk’)</p></li>
+<li><p>library code (i.e. ants=0, itk=1, sitk=2, vtk=3)</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="id27">
+<h2>Returns<a class="headerlink" href="#id27" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str | int</dt><dd><p>native library datatype</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getLutExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getLutExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getLutExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of look-up table (LUT colormap) file extensions supported by PySisyphe.</p>
+<section id="id28">
+<h2>Returns<a class="headerlink" href="#id28" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.lut’, ‘.xlut’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getMincExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getMincExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getMincExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of Minc file extension.</p>
+<section id="id29">
+<h2>Returns<a class="headerlink" href="#id29" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.mnc’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getNACPath">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getNACPath</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getNACPath" title="Link to this definition"></a></dt>
+<dd><p>Get NAC template path.</p>
+<section id="id30">
+<h2>Returns<a class="headerlink" href="#id30" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>PySisyphe NAC template path</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getNiftiCompressedExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getNiftiCompressedExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getNiftiCompressedExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of nifti compressed file extensions.</p>
+<section id="id31">
+<h2>Returns<a class="headerlink" href="#id31" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.nii.gz’, ‘.img.gz’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getNiftiExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getNiftiExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getNiftiExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of nifti file extensions.</p>
+<section id="id32">
+<h2>Returns<a class="headerlink" href="#id32" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.nii’, ‘.hdr’, ‘.img’, ‘.nia’, ‘.nii.gz’, ‘.img.gz’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getNrrdExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getNrrdExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getNrrdExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of Nrrd file extensions.</p>
+<section id="id33">
+<h2>Returns<a class="headerlink" href="#id33" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.nrrd’, ‘.nhdr’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getNumpyExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getNumpyExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getNumpyExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of Numpy file extension.</p>
+<section id="id34">
+<h2>Returns<a class="headerlink" href="#id34" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.npy’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getOrigin_ICBM152">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getOrigin_ICBM152</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getOrigin_ICBM152" title="Link to this definition"></a></dt>
+<dd><p>Get origin (i.e. world coordinates in mm) of ICBM152 templates.</p>
+<section id="id35">
+<h2>Returns<a class="headerlink" href="#id35" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[float, float, float]</dt><dd><p>ICBM152 templates origin</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getRegularDirections">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getRegularDirections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getRegularDirections" title="Link to this definition"></a></dt>
+<dd><p>Get default direction vectors of SisypheVolume image axes in RAS+ coordinates system.</p>
+<p>PySisyphe uses RAS+ world coordinates system convention (as MNI, Nibabel, Dipy…) with origin to corner of the voxel:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>x, direction [1.0, 0.0, 0.0]: left(-) to right(+)</p></li>
+<li><p>y, direction [0.0, 1.0, 0.0]: posterior(-) to anterior(+)</p></li>
+<li><p>z, direction [0.0, 0.0, 1.0]: inferior(-) to superior(+)</p></li>
+</ul>
+</div></blockquote>
+<p>Directions is a list of 9 float, 3 vectors of 3 floats:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>First vector, x-axis image direction, [1.0, 0.0, 0.0]</p></li>
+<li><p>Second vector, y-axis image direction, [0.0, 1.0, 0.0]</p></li>
+<li><p>Third vector, z-axis image direction, [0.0, 0.0, 1.0]</p></li>
+</ul>
+</div></blockquote>
+<section id="id36">
+<h2>Returns<a class="headerlink" href="#id36" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[float]</dt><dd><p>default direction vectors</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getSPLPath">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getSPLPath</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getSPLPath" title="Link to this definition"></a></dt>
+<dd><p>Get SPL template path.</p>
+<section id="id37">
+<h2>Returns<a class="headerlink" href="#id37" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>PySisyphe SPL template path</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getSRI24Path">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getSRI24Path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getSRI24Path" title="Link to this definition"></a></dt>
+<dd><p>Get SRI24 template path.</p>
+<section id="id38">
+<h2>Returns<a class="headerlink" href="#id38" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>PySisyphe SRI24 template path</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getShape_ICBM152">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getShape_ICBM152</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getShape_ICBM152" title="Link to this definition"></a></dt>
+<dd><p>Get shape (i.e. number of voxels in x, y and z axes) of ICBM152 templates.</p>
+<section id="id39">
+<h2>Returns<a class="headerlink" href="#id39" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[int, int, int]</dt><dd><p>ICBM152 templates shape</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getSisypheDirections">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getSisypheDirections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getSisypheDirections" title="Link to this definition"></a></dt>
+<dd><p>Get direction vectors of old Sisyphe image axes in RAS+ coordinates system.</p>
+<p>PySisyphe uses RAS+ world coordinates system convention (as MNI, Nibabel, Dipy…) with origin to corner of the voxel:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>x, direction [1.0, 0.0, 0.0]: left(-) to right(+)</p></li>
+<li><p>y, direction [0.0, 1.0, 0.0]: posterior(-) to anterior(+)</p></li>
+<li><p>z, direction [0.0, 0.0, 1.0]: inferior(-) to superior(+)</p></li>
+</ul>
+</div></blockquote>
+<p>Directions is a list of 9 float, 3 vectors of 3 floats:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>First vector, x-axis image direction, [1.0, 0.0, 0.0]</p></li>
+<li><p>Second vector, y-axis image direction, [0.0, 1.0, 0.0]</p></li>
+<li><p>Third vector, z-axis image direction, [0.0, 0.0, -1.0]</p></li>
+</ul>
+</div></blockquote>
+<section id="id40">
+<h2>Returns<a class="headerlink" href="#id40" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[float]</dt><dd><p>Sisyphe direction vectors</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getSisypheExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getSisypheExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getSisypheExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of Sisyphe image file extension.</p>
+<section id="id41">
+<h2>Returns<a class="headerlink" href="#id41" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.vol’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getSisypheROIExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getSisypheROIExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getSisypheROIExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of Sisyphe ROI file extension.</p>
+<section id="id42">
+<h2>Returns<a class="headerlink" href="#id42" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.roi’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getSupportedITKDatatypes">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getSupportedITKDatatypes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">itkCType</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getSupportedITKDatatypes" title="Link to this definition"></a></dt>
+<dd><p>Get supported itk datatypes (wrapped in itk python package).</p>
+<section id="id43">
+<h2>Returns<a class="headerlink" href="#id43" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[itk.itkCType]</dt><dd><p>list of native itk datatype codes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getSupportedITKStdDatatypes">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getSupportedITKStdDatatypes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getSupportedITKStdDatatypes" title="Link to this definition"></a></dt>
+<dd><p>Get supported itk datatypes (wrapped in itk python package) in numpy str format.</p>
+<section id="id44">
+<h2>Returns<a class="headerlink" href="#id44" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>list of datatypes in numpy str format (i.e. ‘uint8’, ‘uint16’, ‘int16’, ‘uint64’, ‘float32’, ‘float64’)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getTemplatePath">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getTemplatePath</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getTemplatePath" title="Link to this definition"></a></dt>
+<dd><p>Get template path.</p>
+<section id="id45">
+<h2>Returns<a class="headerlink" href="#id45" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>PySisyphe template path</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getTemplatesID">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getTemplatesID</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getTemplatesID" title="Link to this definition"></a></dt>
+<dd><p>Get list of template ID used by PySisyphe.</p>
+<section id="id46">
+<h2>Returns<a class="headerlink" href="#id46" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>list of template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getTractsExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getTractsExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getTractsExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of tractogram file extensions supported by PySisyphe.</p>
+<section id="id47">
+<h2>Returns<a class="headerlink" href="#id47" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>list of tractogram file extensions</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getVTKDirections">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getVTKDirections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getVTKDirections" title="Link to this definition"></a></dt>
+<dd><p>Get direction vectors of VTK image axes in RAS+ coordinates system.</p>
+<p>PySisyphe uses RAS+ world coordinates system convention (as MNI, Nibabel, Dipy…) with origin to corner of the voxel:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>x, direction [1.0, 0.0, 0.0]: left(-) to right(+)</p></li>
+<li><p>y, direction [0.0, 1.0, 0.0]: posterior(-) to anterior(+)</p></li>
+<li><p>z, direction [0.0, 0.0, 1.0]: inferior(-) to superior(+)</p></li>
+</ul>
+</div></blockquote>
+<p>Directions is a list of 9 float, 3 vectors of 3 floats:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>First vector, x-axis image direction, [-1.0, 0.0, 0.0]</p></li>
+<li><p>Second vector, y-axis image direction, [0.0, -1.0, 0.0]</p></li>
+<li><p>Third vector, z-axis image direction, [0.0, 0.0, 1.0]</p></li>
+</ul>
+</div></blockquote>
+<section id="id48">
+<h2>Returns<a class="headerlink" href="#id48" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[float]</dt><dd><p>VTK direction vectors</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.getVtkExt">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">getVtkExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.getVtkExt" title="Link to this definition"></a></dt>
+<dd><p>Get list of VTK file extensions.</p>
+<section id="id49">
+<h2>Returns<a class="headerlink" href="#id49" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>[‘.vtk’, ‘.vti’]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.isATROPOS">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">isATROPOS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.isATROPOS" title="Link to this definition"></a></dt>
+<dd><p>Check whether ID parameter is an ATROPOS template ID.</p>
+<section id="id50">
+<h2>Parameters<a class="headerlink" href="#id50" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>ID<span class="classifier">str</span></dt><dd><p>ID to test</p>
+</dd>
+</dl>
+</section>
+<section id="id51">
+<h2>Returns<a class="headerlink" href="#id51" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if ATROPOS template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.isDISTAL">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">isDISTAL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.isDISTAL" title="Link to this definition"></a></dt>
+<dd><p>Check whether ID parameter is a DISTAL template ID.</p>
+<section id="id52">
+<h2>Parameters<a class="headerlink" href="#id52" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>ID<span class="classifier">str</span></dt><dd><p>ID to test</p>
+</dd>
+</dl>
+</section>
+<section id="id53">
+<h2>Returns<a class="headerlink" href="#id53" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if DISTAL template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.isICBM152">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">isICBM152</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.isICBM152" title="Link to this definition"></a></dt>
+<dd><p>Check whether ID parameter is an ICBM152 template ID.</p>
+<section id="id54">
+<h2>Parameters<a class="headerlink" href="#id54" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>ID<span class="classifier">str</span></dt><dd><p>ID to test</p>
+</dd>
+</dl>
+</section>
+<section id="id55">
+<h2>Returns<a class="headerlink" href="#id55" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if ICBM152 template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.isICBM452">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">isICBM452</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.isICBM452" title="Link to this definition"></a></dt>
+<dd><p>Check whether ID parameter is an ICBM452 template ID.</p>
+<section id="id56">
+<h2>Parameters<a class="headerlink" href="#id56" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>ID<span class="classifier">str</span></dt><dd><p>ID to test</p>
+</dd>
+</dl>
+</section>
+<section id="id57">
+<h2>Returns<a class="headerlink" href="#id57" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if ICBM452 template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.isITKImageSupportedType">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">isITKImageSupportedType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itkimage:</span> <span class="pre">&lt;itkTemplate</span> <span class="pre">itk::Image&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.isITKImageSupportedType" title="Link to this definition"></a></dt>
+<dd><p>Checks whether itk image datatype is supported.</p>
+<section id="id58">
+<h2>Parameters<a class="headerlink" href="#id58" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>itkimage<span class="classifier">itk.Image</span></dt><dd><p>itk image instance</p>
+</dd>
+</dl>
+</section>
+<section id="id59">
+<h2>Returns<a class="headerlink" href="#id59" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if itk image datatype is supported (i.e. ‘uint8’, ‘uint16’, ‘int16’, ‘uint64’, ‘float32’, ‘float64’)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.isITKSupportedStdType">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">isITKSupportedStdType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datatype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.isITKSupportedStdType" title="Link to this definition"></a></dt>
+<dd><p>Checks whether the parameter, in numpy str format, is a supported itk datatype (wrapped in python itk package).</p>
+<section id="id60">
+<h2>Parameters<a class="headerlink" href="#id60" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>datatype<span class="classifier">str</span></dt><dd><p>numpy datatype in str format</p>
+</dd>
+</dl>
+</section>
+<section id="id61">
+<h2>Returns<a class="headerlink" href="#id61" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if parameter is a supported itk datatype (i.e. ‘uint8’, ‘uint16’, ‘int16’, ‘uint64’, ‘float32’, ‘float64’)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.isITKSupportedType">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">isITKSupportedType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itkdatatype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">itkCType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.isITKSupportedType" title="Link to this definition"></a></dt>
+<dd><p>Checks whether the parameter is a supported itk datatype (wrapped in itk python package).</p>
+<section id="id62">
+<h2>Parameters<a class="headerlink" href="#id62" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>itkdatatype<span class="classifier">itk.itkCType</span></dt><dd><p>native itk datatype code</p>
+</dd>
+</dl>
+</section>
+<section id="id63">
+<h2>Returns<a class="headerlink" href="#id63" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if parameter is a supported itk datatype</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.isNAC">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">isNAC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.isNAC" title="Link to this definition"></a></dt>
+<dd><p>Check whether ID parameter is a NAC template ID.</p>
+<section id="id64">
+<h2>Parameters<a class="headerlink" href="#id64" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>ID<span class="classifier">str</span></dt><dd><p>ID to test</p>
+</dd>
+</dl>
+</section>
+<section id="id65">
+<h2>Returns<a class="headerlink" href="#id65" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if NAC template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.isSPL">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">isSPL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.isSPL" title="Link to this definition"></a></dt>
+<dd><p>Check whether ID parameter is an SPL template ID.</p>
+<section id="id66">
+<h2>Parameters<a class="headerlink" href="#id66" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>ID<span class="classifier">str</span></dt><dd><p>ID to test</p>
+</dd>
+</dl>
+</section>
+<section id="id67">
+<h2>Returns<a class="headerlink" href="#id67" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if SPL template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.isSRI24">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">isSRI24</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.isSRI24" title="Link to this definition"></a></dt>
+<dd><p>Check whether ID parameter is an SRI24 template ID.</p>
+<section id="id68">
+<h2>Parameters<a class="headerlink" href="#id68" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>ID<span class="classifier">str</span></dt><dd><p>ID to test</p>
+</dd>
+</dl>
+</section>
+<section id="id69">
+<h2>Returns<a class="headerlink" href="#id69" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if SRI24 template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.isTemplateID">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">isTemplateID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.isTemplateID" title="Link to this definition"></a></dt>
+<dd><p>Check whether ID parameter is a valid template ID used by PySisyphe.</p>
+<section id="id70">
+<h2>Parameters<a class="headerlink" href="#id70" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>ID<span class="classifier">str</span></dt><dd><p>ID to test</p>
+</dd>
+</dl>
+</section>
+<section id="id71">
+<h2>Returns<a class="headerlink" href="#id71" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if template ID</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.isUint8ITKImage">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">isUint8ITKImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itkimage:</span> <span class="pre">&lt;itkTemplate</span> <span class="pre">itk::Image&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.isUint8ITKImage" title="Link to this definition"></a></dt>
+<dd><p>Checks whether itk image datatype is ‘uint8’ (wrapped in itk python package).</p>
+<section id="id72">
+<h2>Parameters<a class="headerlink" href="#id72" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>itkimage<span class="classifier">itk.Image</span></dt><dd><p>itk image instance</p>
+</dd>
+</dl>
+</section>
+<section id="id73">
+<h2>Returns<a class="headerlink" href="#id73" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if itk image datatype is ‘unit8’</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.isValidDatatype">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">isValidDatatype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datatype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.isValidDatatype" title="Link to this definition"></a></dt>
+<dd><p>Checks whether the str parameter is a valid numpy datatype.</p>
+<section id="id74">
+<h2>Parameters<a class="headerlink" href="#id74" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>datatype<span class="classifier">str</span></dt><dd><p>numpy datatype in str format</p>
+</dd>
+</dl>
+</section>
+<section id="id75">
+<h2>Returns<a class="headerlink" href="#id75" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if datatype parameter is a valid numpy datatype</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.isValidLibraryName">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">isValidLibraryName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">libname</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.isValidLibraryName" title="Link to this definition"></a></dt>
+<dd><p>Checks whether the str parameter is a valid library name.</p>
+<section id="id76">
+<h2>Parameters<a class="headerlink" href="#id76" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>libname<span class="classifier">str</span></dt><dd><p>library name (‘ants’, ‘itk’, ‘sitk’, ‘vtk’)</p>
+</dd>
+</dl>
+</section>
+<section id="id77">
+<h2>Returns<a class="headerlink" href="#id77" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if parameter is a valid library name (i.e. ‘ants’, ‘itk’, ‘sitk’, ‘vtk’)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.listToStr">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">listToStr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.listToStr" title="Link to this definition"></a></dt>
+<dd><p>List to str conversion. Each item of the list is converted to str and concatenated in a new str with a space char
+as separator.</p>
+<section id="id78">
+<h2>Parameters<a class="headerlink" href="#id78" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>l<span class="classifier">list</span></dt><dd><p>list elements must be convertible to str</p>
+</dd>
+</dl>
+</section>
+<section id="id79">
+<h2>Returns<a class="headerlink" href="#id79" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>converted list</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.removeAllPrefixesFromFilename">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">removeAllPrefixesFromFilename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'_'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.removeAllPrefixesFromFilename" title="Link to this definition"></a></dt>
+<dd><p>Remove all prefixes from a file name.</p>
+<section id="id80">
+<h2>Parameters<a class="headerlink" href="#id80" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>file name with prefix to be removed</p>
+</dd>
+<dt>sep<span class="classifier">str</span></dt><dd><p>char between prefix(es) (default ‘_’)</p>
+</dd>
+</dl>
+</section>
+<section id="id81">
+<h2>Returns<a class="headerlink" href="#id81" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>file name without prefix</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.removeAllSuffixesFromFilename">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">removeAllSuffixesFromFilename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'_'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.removeAllSuffixesFromFilename" title="Link to this definition"></a></dt>
+<dd><p>Remove all suffixes from a file name.</p>
+<section id="id82">
+<h2>Parameters<a class="headerlink" href="#id82" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>file name with suffix to be removed</p>
+</dd>
+<dt>sep<span class="classifier">str</span></dt><dd><p>char between prefix(es) (default ‘_’)</p>
+</dd>
+</dl>
+</section>
+<section id="id83">
+<h2>Returns<a class="headerlink" href="#id83" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>file name without suffix</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.removeSuffixNumberFromFilename">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">removeSuffixNumberFromFilename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'_'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.removeSuffixNumberFromFilename" title="Link to this definition"></a></dt>
+<dd><p>Remove a suffix number (if any) from a file name.</p>
+<section id="id84">
+<h2>Parameters<a class="headerlink" href="#id84" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>file name with suffix to be removed</p>
+</dd>
+<dt>sep<span class="classifier">str</span></dt><dd><p>char between prefix(es) (default ‘_’)</p>
+</dd>
+</dl>
+</section>
+<section id="id85">
+<h2>Returns<a class="headerlink" href="#id85" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>file name without suffix number</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheConstants.replaceDirname">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheConstants.</span></span><span class="sig-name descname"><span class="pre">replaceDirname</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheConstants.replaceDirname" title="Link to this definition"></a></dt>
+<dd><p>Replace the dirname of a file name.</p>
+<section id="id86">
+<h2>Parameters<a class="headerlink" href="#id86" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>path that dirname will be replaced</p>
+</dd>
+<dt>newdir<span class="classifier">str</span></dt><dd><p>new dirname</p>
+</dd>
+</dl>
+</section>
+<section id="id87">
+<h2>Returns<a class="headerlink" href="#id87" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>new file name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api_packages.html" class="btn btn-neutral float-left" title="Packages" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_database.html" class="btn btn-neutral float-right" title="Sisyphe.core.sisypheDatabase" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1093 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sisyphe.core.sisypheSheet &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=049aceee"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Sisyphe.core.sisypheStatistics" href="api_statistics.html" />
+    <link rel="prev" title="Sisyphe.core.sisypheSettings" href="api_settings.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Sisyphe
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api_packages.html">Packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html">Sisyphe.core.sisypheConstants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_database.html">Sisyphe.core.sisypheDatabase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html">Sisyphe.core.sisypheDicom</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_download.html">Sisyphe.core.sisypheDownload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_fiducial.html">Sisyphe.core.sisypheFiducialBox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_image.html">Sisyphe.core.sisypheImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageattributes.html">Sisyphe.core.sisypheImageAttributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html">Sisyphe.core.sisypheImageIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_lut.html">Sisyphe.core.sisypheLUT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_mesh.html">Sisyphe.core.sisypheMesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html">Sisyphe.core.sisypheMeshIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_recent.html">Sisyphe.core.sisypheRecent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_roi.html">Sisyphe.core.sisypheROI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html">Sisyphe.core.sisypheSettings</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Sisyphe.core.sisypheSheet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet"><code class="docutils literal notranslate"><span class="pre">SisypheSheet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.createXML"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.createXML()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.getFileExt"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.getFileExt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.getFilterExt"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.getFilterExt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.load"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.load()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.loadCSV"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.loadCSV()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.loadJSON"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.loadJSON()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.loadTXT"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.loadTXT()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.loadXLSX"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.loadXLSX()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.parseXML"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.parseXML()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.parseXMLNode"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.parseXMLNode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.save"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveCSV"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.saveCSV()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveJSON"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.saveJSON()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveLATEX"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.saveLATEX()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveMATFILE"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.saveMATFILE()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveNPY"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.saveNPY()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveNPZ"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.saveNPZ()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveTXT"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.saveTXT()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveXLSX"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.saveXLSX()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet.toClipboard"><code class="docutils literal notranslate"><span class="pre">SisypheSheet.toClipboard()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html">Sisyphe.core.sisypheStatistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html">Sisyphe.core.sisypheTools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html">Sisyphe.core.sisypheTracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_transform.html">Sisyphe.core.sisypheTransform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_volume.html">Sisyphe.core.sisypheVolume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_xml.html">Sisyphe.core.sisypheXml</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API</a></li>
+      <li class="breadcrumb-item active">Sisyphe.core.sisypheSheet</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/API/api_sheet.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-Sisyphe.core.sisypheSheet">
+<span id="sisyphe-core-sisyphesheet"></span><h1>Sisyphe.core.sisypheSheet<a class="headerlink" href="#module-Sisyphe.core.sisypheSheet" title="Link to this heading"></a></h1>
+<section id="external-packages-modules">
+<h2>External packages/modules<a class="headerlink" href="#external-packages-modules" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>Numpy, Scientific computing, <a class="reference external" href="https://numpy.org/">https://numpy.org/</a></p></li>
+<li><p>pandas, data analysis and manipulation tool, <a class="reference external" href="https://pandas.pydata.org/">https://pandas.pydata.org/</a></p></li>
+<li><p>SciPy, fundamental algorithms for scientific computing, <a class="reference external" href="https://scipy.org/">https://scipy.org/</a></p></li>
+</ul>
+</div></blockquote>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheSheet.</span></span><span class="sig-name descname"><span class="pre">SisypheSheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet" title="Link to this definition"></a></dt>
+<dd><section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>Class derived from pandas DataFrame class. Adds IO methods (xml, matfile) to pandas DataFrame class.</p>
+</section>
+<section id="inheritance">
+<h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
+<p>DataFrame -&gt; SisypheSheet</p>
+<p>Creation: 10/04/2023
+Last revision: 13/12/2024</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.createXML">
+<span class="sig-name descname"><span class="pre">createXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">currentnode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Element</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.createXML" title="Link to this definition"></a></dt>
+<dd><p>Write the current SisypheSheet instance attributes to xml document instance.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+</dd>
+<dt>currentnode<span class="classifier">minidom.Element</span></dt><dd><p>xml root node</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.getFileExt">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getFileExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.getFileExt" title="Link to this definition"></a></dt>
+<dd><p>Get SisypheSheet file extension.</p>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>‘.xsheet’</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.getFilterExt">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getFilterExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.getFilterExt" title="Link to this definition"></a></dt>
+<dd><p>Get SisypheSheet filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().</p>
+<section id="id1">
+<h3>Returns<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>‘PySisyphe Sheet (.xsheet)’</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.load">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet" title="Sisyphe.core.sisypheSheet.SisypheSheet"><span class="pre">SisypheSheet</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.load" title="Link to this definition"></a></dt>
+<dd><p>Create a SisypheSheet instance from a PySisyphe Sheet file (.xsheet).</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>PySisyphe Sheet file name (.xsheet)</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Returns<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheSheet</dt><dd><p>loaded sheet</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.loadCSV">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loadCSV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet" title="Sisyphe.core.sisypheSheet.SisypheSheet"><span class="pre">SisypheSheet</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.loadCSV" title="Link to this definition"></a></dt>
+<dd><p>Create a SisypheSheet instance from a CSV file (.csv).</p>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>CSV file name (.csv)</p>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h3>Returns<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheSheet</dt><dd><p>loaded sheet</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.loadJSON">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loadJSON</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet" title="Sisyphe.core.sisypheSheet.SisypheSheet"><span class="pre">SisypheSheet</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.loadJSON" title="Link to this definition"></a></dt>
+<dd><p>Create a SisypheSheet instance from a Json file (.json).</p>
+<section id="id6">
+<h3>Parameters<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>Json file name (.json)</p>
+</dd>
+</dl>
+</section>
+<section id="id7">
+<h3>Returns<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheSheet</dt><dd><p>loaded sheet</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.loadTXT">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loadTXT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'|'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet" title="Sisyphe.core.sisypheSheet.SisypheSheet"><span class="pre">SisypheSheet</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.loadTXT" title="Link to this definition"></a></dt>
+<dd><p>Create a SisypheSheet instance from a text file (.txt).</p>
+<section id="id8">
+<h3>Parameters<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>text file name (.txt)</p>
+</dd>
+<dt>sep<span class="classifier">str</span></dt><dd><p>optional (default ‘|’), char separator between values</p>
+</dd>
+</dl>
+</section>
+<section id="id9">
+<h3>Returns<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheSheet</dt><dd><p>loaded sheet</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.loadXLSX">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loadXLSX</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet" title="Sisyphe.core.sisypheSheet.SisypheSheet"><span class="pre">SisypheSheet</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.loadXLSX" title="Link to this definition"></a></dt>
+<dd><p>Create a SisypheSheet instance from an Excel file (.xlsx).</p>
+<section id="id10">
+<h3>Parameters<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>Excel file name (.xlsx)</p>
+</dd>
+</dl>
+</section>
+<section id="id11">
+<h3>Returns<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheSheet</dt><dd><p>loaded sheet</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.parseXML">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet" title="Sisyphe.core.sisypheSheet.SisypheSheet"><span class="pre">SisypheSheet</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.parseXML" title="Link to this definition"></a></dt>
+<dd><p>Create a SisypheSheet instance from xml document.</p>
+<section id="id12">
+<h3>Parameters<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+</dd>
+</dl>
+</section>
+<section id="id13">
+<h3>Returns<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheSheet</dt><dd><p>new sheet</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.parseXMLNode">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parseXMLNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">currentnode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Element</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheSheet.SisypheSheet" title="Sisyphe.core.sisypheSheet.SisypheSheet"><span class="pre">SisypheSheet</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.parseXMLNode" title="Link to this definition"></a></dt>
+<dd><p>Create a SisypheSheet instance from xml node.</p>
+<section id="id14">
+<h3>Parameters<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>currentnode<span class="classifier">minidom.Element</span></dt><dd><p>xml node</p>
+</dd>
+</dl>
+</section>
+<section id="id15">
+<h3>Returns<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheSheet</dt><dd><p>new sheet</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.save" title="Link to this definition"></a></dt>
+<dd><p>Save the current SisypheSheet instance to a PySisyphe Sheet file (.xsheet).</p>
+<section id="id16">
+<h3>Parameters<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>PySisyphe Sheet file name (.xsheet)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.saveCSV">
+<span class="sig-name descname"><span class="pre">saveCSV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveCSV" title="Link to this definition"></a></dt>
+<dd><p>Save the current SisypheSheet instance to a CSV file (.csv).</p>
+<section id="id17">
+<h3>Parameters<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>CSV file name (.csv)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.saveJSON">
+<span class="sig-name descname"><span class="pre">saveJSON</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_or_buf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FilePath</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">WriteBuffer</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">WriteBuffer</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'split'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'records'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'index'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'table'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'columns'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'values'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">double_precision</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_ascii</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool_t</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TimeUnit</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ms'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">JSONSerializable</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool_t</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CompressionOptions</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'infer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool_t</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StorageOptions</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'a'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'w'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'w'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveJSON" title="Link to this definition"></a></dt>
+<dd><p>Convert the object to a JSON string.</p>
+<p>Note NaN’s and None will be converted to null and datetime objects
+will be converted to UNIX timestamps.</p>
+<section id="id18">
+<h3>Parameters<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<dl>
+<dt>path_or_buf<span class="classifier">str, path object, file-like object, or None, default None</span></dt><dd><p>String, path object (implementing os.PathLike[str]), or file-like
+object implementing a write() function. If None, the result is
+returned as a string.</p>
+</dd>
+<dt>orient<span class="classifier">str</span></dt><dd><p>Indication of expected JSON string format.</p>
+<ul>
+<li><p>Series:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>default is ‘index’</p></li>
+<li><p>allowed values are: {‘split’, ‘records’, ‘index’, ‘table’}.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>DataFrame:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>default is ‘columns’</p></li>
+<li><p>allowed values are: {‘split’, ‘records’, ‘index’, ‘columns’,
+‘values’, ‘table’}.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>The format of the JSON string:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘split’ : dict like {‘index’ -&gt; [index], ‘columns’ -&gt; [columns],
+‘data’ -&gt; [values]}</p></li>
+<li><p>‘records’ : list like [{column -&gt; value}, … , {column -&gt; value}]</p></li>
+<li><p>‘index’ : dict like {index -&gt; {column -&gt; value}}</p></li>
+<li><p>‘columns’ : dict like {column -&gt; {index -&gt; value}}</p></li>
+<li><p>‘values’ : just the values array</p></li>
+<li><p>‘table’ : dict like {‘schema’: {schema}, ‘data’: {data}}</p></li>
+</ul>
+<p>Describing the data, where data component is like <code class="docutils literal notranslate"><span class="pre">orient='records'</span></code>.</p>
+</div></blockquote>
+</li>
+</ul>
+</dd>
+<dt>date_format<span class="classifier">{None, ‘epoch’, ‘iso’}</span></dt><dd><p>Type of date conversion. ‘epoch’ = epoch milliseconds,
+‘iso’ = ISO8601. The default depends on the <cite>orient</cite>. For
+<code class="docutils literal notranslate"><span class="pre">orient='table'</span></code>, the default is ‘iso’. For all other orients,
+the default is ‘epoch’.</p>
+</dd>
+<dt>double_precision<span class="classifier">int, default 10</span></dt><dd><p>The number of decimal places to use when encoding
+floating point values. The possible maximal value is 15.
+Passing double_precision greater than 15 will raise a ValueError.</p>
+</dd>
+<dt>force_ascii<span class="classifier">bool, default True</span></dt><dd><p>Force encoded string to be ASCII.</p>
+</dd>
+<dt>date_unit<span class="classifier">str, default ‘ms’ (milliseconds)</span></dt><dd><p>The time unit to encode to, governs timestamp and ISO8601
+precision.  One of ‘s’, ‘ms’, ‘us’, ‘ns’ for second, millisecond,
+microsecond, and nanosecond respectively.</p>
+</dd>
+<dt>default_handler<span class="classifier">callable, default None</span></dt><dd><p>Handler to call if object cannot otherwise be converted to a
+suitable format for JSON. Should receive a single argument which is
+the object to convert and return a serialisable object.</p>
+</dd>
+<dt>lines<span class="classifier">bool, default False</span></dt><dd><p>If ‘orient’ is ‘records’ write out line-delimited json format. Will
+throw ValueError if incorrect ‘orient’ since others are not
+list-like.</p>
+</dd>
+<dt>compression<span class="classifier">str or dict, default ‘infer’</span></dt><dd><p>For on-the-fly compression of the output data. If ‘infer’ and ‘path_or_buf’ is
+path-like, then detect compression from the following extensions: ‘.gz’,
+‘.bz2’, ‘.zip’, ‘.xz’, ‘.zst’, ‘.tar’, ‘.tar.gz’, ‘.tar.xz’ or ‘.tar.bz2’
+(otherwise no compression).
+Set to <code class="docutils literal notranslate"><span class="pre">None</span></code> for no compression.
+Can also be a dict with key <code class="docutils literal notranslate"><span class="pre">'method'</span></code> set
+to one of {<code class="docutils literal notranslate"><span class="pre">'zip'</span></code>, <code class="docutils literal notranslate"><span class="pre">'gzip'</span></code>, <code class="docutils literal notranslate"><span class="pre">'bz2'</span></code>, <code class="docutils literal notranslate"><span class="pre">'zstd'</span></code>, <code class="docutils literal notranslate"><span class="pre">'xz'</span></code>, <code class="docutils literal notranslate"><span class="pre">'tar'</span></code>} and
+other key-value pairs are forwarded to
+<code class="docutils literal notranslate"><span class="pre">zipfile.ZipFile</span></code>, <code class="docutils literal notranslate"><span class="pre">gzip.GzipFile</span></code>,
+<code class="docutils literal notranslate"><span class="pre">bz2.BZ2File</span></code>, <code class="docutils literal notranslate"><span class="pre">zstandard.ZstdCompressor</span></code>, <code class="docutils literal notranslate"><span class="pre">lzma.LZMAFile</span></code> or
+<code class="docutils literal notranslate"><span class="pre">tarfile.TarFile</span></code>, respectively.
+As an example, the following could be passed for faster compression and to create
+a reproducible gzip archive:
+<code class="docutils literal notranslate"><span class="pre">compression={'method':</span> <span class="pre">'gzip',</span> <span class="pre">'compresslevel':</span> <span class="pre">1,</span> <span class="pre">'mtime':</span> <span class="pre">1}</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.5.0: </span>Added support for <cite>.tar</cite> files.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 1.4.0: </span>Zstandard support.</p>
+</div>
+</dd>
+<dt>index<span class="classifier">bool or None, default None</span></dt><dd><p>The index is only used when ‘orient’ is ‘split’, ‘index’, ‘column’,
+or ‘table’. Of these, ‘index’ and ‘column’ do not support
+<cite>index=False</cite>.</p>
+</dd>
+<dt>indent<span class="classifier">int, optional</span></dt><dd><p>Length of whitespace used to indent each record.</p>
+</dd>
+<dt>storage_options<span class="classifier">dict, optional</span></dt><dd><p>Extra options that make sense for a particular storage connection, e.g.
+host, port, username, password, etc. For HTTP(S) URLs the key-value pairs
+are forwarded to <code class="docutils literal notranslate"><span class="pre">urllib.request.Request</span></code> as header options. For other
+URLs (e.g. starting with “s3://”, and “gcs://”) the key-value pairs are
+forwarded to <code class="docutils literal notranslate"><span class="pre">fsspec.open</span></code>. Please see <code class="docutils literal notranslate"><span class="pre">fsspec</span></code> and <code class="docutils literal notranslate"><span class="pre">urllib</span></code> for more
+details, and for more examples on storage options refer <a class="reference external" href="https://pandas.pydata.org/docs/user_guide/io.html?highlight=storage_options#reading-writing-remote-files">here</a>.</p>
+</dd>
+<dt>mode<span class="classifier">str, default ‘w’ (writing)</span></dt><dd><p>Specify the IO mode for output when supplying a path_or_buf.
+Accepted args are ‘w’ (writing) and ‘a’ (append) only.
+mode=’a’ is only supported when lines is True and orient is ‘records’.</p>
+</dd>
+</dl>
+</section>
+<section id="id19">
+<h3>Returns<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None or str</dt><dd><p>If path_or_buf is None, returns the resulting json format as a
+string. Otherwise returns None.</p>
+</dd>
+</dl>
+</section>
+<section id="see-also">
+<h3>See Also<a class="headerlink" href="#see-also" title="Link to this heading"></a></h3>
+<p>read_json : Convert a JSON string to pandas object.</p>
+</section>
+<section id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Link to this heading"></a></h3>
+<p>The behavior of <code class="docutils literal notranslate"><span class="pre">indent=0</span></code> varies from the stdlib, which does not
+indent the output but does insert newlines. Currently, <code class="docutils literal notranslate"><span class="pre">indent=0</span></code>
+and the default <code class="docutils literal notranslate"><span class="pre">indent=None</span></code> are equivalent in pandas, though this
+may change in a future release.</p>
+<p><code class="docutils literal notranslate"><span class="pre">orient='table'</span></code> contains a ‘pandas_version’ field under ‘schema’.
+This stores the version of <cite>pandas</cite> used in the latest revision of the
+schema.</p>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">json</span><span class="w"> </span><span class="kn">import</span> <span class="n">loads</span><span class="p">,</span> <span class="n">dumps</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="p">[[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">]],</span>
+<span class="gp">... </span>    <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;row 1&quot;</span><span class="p">,</span> <span class="s2">&quot;row 2&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;col 1&quot;</span><span class="p">,</span> <span class="s2">&quot;col 2&quot;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;split&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span> <span class="o">=</span> <span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">(</span><span class="n">parsed</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>  
+<span class="go">{</span>
+<span class="go">    &quot;columns&quot;: [</span>
+<span class="go">        &quot;col 1&quot;,</span>
+<span class="go">        &quot;col 2&quot;</span>
+<span class="go">    ],</span>
+<span class="go">    &quot;index&quot;: [</span>
+<span class="go">        &quot;row 1&quot;,</span>
+<span class="go">        &quot;row 2&quot;</span>
+<span class="go">    ],</span>
+<span class="go">    &quot;data&quot;: [</span>
+<span class="go">        [</span>
+<span class="go">            &quot;a&quot;,</span>
+<span class="go">            &quot;b&quot;</span>
+<span class="go">        ],</span>
+<span class="go">        [</span>
+<span class="go">            &quot;c&quot;,</span>
+<span class="go">            &quot;d&quot;</span>
+<span class="go">        ]</span>
+<span class="go">    ]</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>Encoding/decoding a Dataframe using <code class="docutils literal notranslate"><span class="pre">'records'</span></code> formatted JSON.
+Note that index labels are not preserved with this encoding.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span> <span class="o">=</span> <span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">(</span><span class="n">parsed</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>  
+<span class="go">[</span>
+<span class="go">    {</span>
+<span class="go">        &quot;col 1&quot;: &quot;a&quot;,</span>
+<span class="go">        &quot;col 2&quot;: &quot;b&quot;</span>
+<span class="go">    },</span>
+<span class="go">    {</span>
+<span class="go">        &quot;col 1&quot;: &quot;c&quot;,</span>
+<span class="go">        &quot;col 2&quot;: &quot;d&quot;</span>
+<span class="go">    }</span>
+<span class="go">]</span>
+</pre></div>
+</div>
+<p>Encoding/decoding a Dataframe using <code class="docutils literal notranslate"><span class="pre">'index'</span></code> formatted JSON:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span> <span class="o">=</span> <span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">(</span><span class="n">parsed</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>  
+<span class="go">{</span>
+<span class="go">    &quot;row 1&quot;: {</span>
+<span class="go">        &quot;col 1&quot;: &quot;a&quot;,</span>
+<span class="go">        &quot;col 2&quot;: &quot;b&quot;</span>
+<span class="go">    },</span>
+<span class="go">    &quot;row 2&quot;: {</span>
+<span class="go">        &quot;col 1&quot;: &quot;c&quot;,</span>
+<span class="go">        &quot;col 2&quot;: &quot;d&quot;</span>
+<span class="go">    }</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>Encoding/decoding a Dataframe using <code class="docutils literal notranslate"><span class="pre">'columns'</span></code> formatted JSON:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;columns&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span> <span class="o">=</span> <span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">(</span><span class="n">parsed</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>  
+<span class="go">{</span>
+<span class="go">    &quot;col 1&quot;: {</span>
+<span class="go">        &quot;row 1&quot;: &quot;a&quot;,</span>
+<span class="go">        &quot;row 2&quot;: &quot;c&quot;</span>
+<span class="go">    },</span>
+<span class="go">    &quot;col 2&quot;: {</span>
+<span class="go">        &quot;row 1&quot;: &quot;b&quot;,</span>
+<span class="go">        &quot;row 2&quot;: &quot;d&quot;</span>
+<span class="go">    }</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>Encoding/decoding a Dataframe using <code class="docutils literal notranslate"><span class="pre">'values'</span></code> formatted JSON:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;values&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span> <span class="o">=</span> <span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">(</span><span class="n">parsed</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>  
+<span class="go">[</span>
+<span class="go">    [</span>
+<span class="go">        &quot;a&quot;,</span>
+<span class="go">        &quot;b&quot;</span>
+<span class="go">    ],</span>
+<span class="go">    [</span>
+<span class="go">        &quot;c&quot;,</span>
+<span class="go">        &quot;d&quot;</span>
+<span class="go">    ]</span>
+<span class="go">]</span>
+</pre></div>
+</div>
+<p>Encoding with Table Schema:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;table&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span> <span class="o">=</span> <span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">(</span><span class="n">parsed</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>  
+<span class="go">{</span>
+<span class="go">    &quot;schema&quot;: {</span>
+<span class="go">        &quot;fields&quot;: [</span>
+<span class="go">            {</span>
+<span class="go">                &quot;name&quot;: &quot;index&quot;,</span>
+<span class="go">                &quot;type&quot;: &quot;string&quot;</span>
+<span class="go">            },</span>
+<span class="go">            {</span>
+<span class="go">                &quot;name&quot;: &quot;col 1&quot;,</span>
+<span class="go">                &quot;type&quot;: &quot;string&quot;</span>
+<span class="go">            },</span>
+<span class="go">            {</span>
+<span class="go">                &quot;name&quot;: &quot;col 2&quot;,</span>
+<span class="go">                &quot;type&quot;: &quot;string&quot;</span>
+<span class="go">            }</span>
+<span class="go">        ],</span>
+<span class="go">        &quot;primaryKey&quot;: [</span>
+<span class="go">            &quot;index&quot;</span>
+<span class="go">        ],</span>
+<span class="go">        &quot;pandas_version&quot;: &quot;1.4.0&quot;</span>
+<span class="go">    },</span>
+<span class="go">    &quot;data&quot;: [</span>
+<span class="go">        {</span>
+<span class="go">            &quot;index&quot;: &quot;row 1&quot;,</span>
+<span class="go">            &quot;col 1&quot;: &quot;a&quot;,</span>
+<span class="go">            &quot;col 2&quot;: &quot;b&quot;</span>
+<span class="go">        },</span>
+<span class="go">        {</span>
+<span class="go">            &quot;index&quot;: &quot;row 2&quot;,</span>
+<span class="go">            &quot;col 1&quot;: &quot;c&quot;,</span>
+<span class="go">            &quot;col 2&quot;: &quot;d&quot;</span>
+<span class="go">        }</span>
+<span class="go">    ]</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.saveLATEX">
+<span class="sig-name descname"><span class="pre">saveLATEX</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FilePath</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">WriteBuffer</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool_t</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SequenceNotStr</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool_t</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">na_rep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'NaN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formatters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FormattersType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">float_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FloatFormatType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparsify</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool_t</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool_t</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bold_rows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool_t</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">longtable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool_t</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">escape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool_t</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multicolumn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool_t</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multicolumn_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multirow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool_t</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveLATEX" title="Link to this definition"></a></dt>
+<dd><p>Render object to a LaTeX tabular, longtable, or nested table.</p>
+<p>Requires <code class="docutils literal notranslate"><span class="pre">\usepackage{{booktabs}}</span></code>.  The output can be copy/pasted
+into a main LaTeX document or read from an external file
+with <code class="docutils literal notranslate"><span class="pre">\input{{table.tex}}</span></code>.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 2.0.0: </span>Refactored to use the Styler implementation via jinja2 templating.</p>
+</div>
+<section id="id20">
+<h3>Parameters<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<dl>
+<dt>buf<span class="classifier">str, Path or StringIO-like, optional, default None</span></dt><dd><p>Buffer to write to. If None, the output is returned as a string.</p>
+</dd>
+<dt>columns<span class="classifier">list of label, optional</span></dt><dd><p>The subset of columns to write. Writes all columns by default.</p>
+</dd>
+<dt>header<span class="classifier">bool or list of str, default True</span></dt><dd><p>Write out the column names. If a list of strings is given,
+it is assumed to be aliases for the column names.</p>
+</dd>
+<dt>index<span class="classifier">bool, default True</span></dt><dd><p>Write row names (index).</p>
+</dd>
+<dt>na_rep<span class="classifier">str, default ‘NaN’</span></dt><dd><p>Missing data representation.</p>
+</dd>
+<dt>formatters<span class="classifier">list of functions or dict of {{str: function}}, optional</span></dt><dd><p>Formatter functions to apply to columns’ elements by position or
+name. The result of each function must be a unicode string.
+List must be of length equal to the number of columns.</p>
+</dd>
+<dt>float_format<span class="classifier">one-parameter function or str, optional, default None</span></dt><dd><p>Formatter for floating point numbers. For example
+<code class="docutils literal notranslate"><span class="pre">float_format=&quot;%.2f&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">float_format=&quot;{{:0.2f}}&quot;.format</span></code> will
+both result in 0.1234 being formatted as 0.12.</p>
+</dd>
+<dt>sparsify<span class="classifier">bool, optional</span></dt><dd><p>Set to False for a DataFrame with a hierarchical index to print
+every multiindex key at each row. By default, the value will be
+read from the config module.</p>
+</dd>
+<dt>index_names<span class="classifier">bool, default True</span></dt><dd><p>Prints the names of the indexes.</p>
+</dd>
+<dt>bold_rows<span class="classifier">bool, default False</span></dt><dd><p>Make the row labels bold in the output.</p>
+</dd>
+<dt>column_format<span class="classifier">str, optional</span></dt><dd><p>The columns format as specified in <a class="reference external" href="https://en.wikibooks.org/wiki/LaTeX/Tables">LaTeX table format</a> e.g. ‘rcl’ for 3
+columns. By default, ‘l’ will be used for all columns except
+columns of numbers, which default to ‘r’.</p>
+</dd>
+<dt>longtable<span class="classifier">bool, optional</span></dt><dd><p>Use a longtable environment instead of tabular. Requires
+adding a usepackage{{longtable}} to your LaTeX preamble.
+By default, the value will be read from the pandas config
+module, and set to <cite>True</cite> if the option <code class="docutils literal notranslate"><span class="pre">styler.latex.environment</span></code> is
+<cite>“longtable”</cite>.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 2.0.0: </span>The pandas option affecting this argument has changed.</p>
+</div>
+</dd>
+<dt>escape<span class="classifier">bool, optional</span></dt><dd><p>By default, the value will be read from the pandas config
+module and set to <cite>True</cite> if the option <code class="docutils literal notranslate"><span class="pre">styler.format.escape</span></code> is
+<cite>“latex”</cite>. When set to False prevents from escaping latex special
+characters in column names.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 2.0.0: </span>The pandas option affecting this argument has changed, as has the
+default value to <cite>False</cite>.</p>
+</div>
+</dd>
+<dt>encoding<span class="classifier">str, optional</span></dt><dd><p>A string representing the encoding to use in the output file,
+defaults to ‘utf-8’.</p>
+</dd>
+<dt>decimal<span class="classifier">str, default ‘.’</span></dt><dd><p>Character recognized as decimal separator, e.g. ‘,’ in Europe.</p>
+</dd>
+<dt>multicolumn<span class="classifier">bool, default True</span></dt><dd><p>Use multicolumn to enhance MultiIndex columns.
+The default will be read from the config module, and is set
+as the option <code class="docutils literal notranslate"><span class="pre">styler.sparse.columns</span></code>.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 2.0.0: </span>The pandas option affecting this argument has changed.</p>
+</div>
+</dd>
+<dt>multicolumn_format<span class="classifier">str, default ‘r’</span></dt><dd><p>The alignment for multicolumns, similar to <cite>column_format</cite>
+The default will be read from the config module, and is set as the option
+<code class="docutils literal notranslate"><span class="pre">styler.latex.multicol_align</span></code>.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 2.0.0: </span>The pandas option affecting this argument has changed, as has the
+default value to “r”.</p>
+</div>
+</dd>
+<dt>multirow<span class="classifier">bool, default True</span></dt><dd><p>Use multirow to enhance MultiIndex rows. Requires adding a
+usepackage{{multirow}} to your LaTeX preamble. Will print
+centered labels (instead of top-aligned) across the contained
+rows, separating groups via clines. The default will be read
+from the pandas config module, and is set as the option
+<code class="docutils literal notranslate"><span class="pre">styler.sparse.index</span></code>.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 2.0.0: </span>The pandas option affecting this argument has changed, as has the
+default value to <cite>True</cite>.</p>
+</div>
+</dd>
+<dt>caption<span class="classifier">str or tuple, optional</span></dt><dd><p>Tuple (full_caption, short_caption),
+which results in <code class="docutils literal notranslate"><span class="pre">\caption[short_caption]{{full_caption}}</span></code>;
+if a single string is passed, no short caption will be set.</p>
+</dd>
+<dt>label<span class="classifier">str, optional</span></dt><dd><p>The LaTeX label to be placed inside <code class="docutils literal notranslate"><span class="pre">\label{{}}</span></code> in the output.
+This is used with <code class="docutils literal notranslate"><span class="pre">\ref{{}}</span></code> in the main <code class="docutils literal notranslate"><span class="pre">.tex</span></code> file.</p>
+</dd>
+<dt>position<span class="classifier">str, optional</span></dt><dd><p>The LaTeX positional argument for tables, to be placed after
+<code class="docutils literal notranslate"><span class="pre">\begin{{}}</span></code> in the output.</p>
+</dd>
+</dl>
+</section>
+<section id="id21">
+<h3>Returns<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str or None</dt><dd><p>If buf is None, returns the result as a string. Otherwise returns None.</p>
+</dd>
+</dl>
+</section>
+<section id="id22">
+<h3>See Also<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>io.formats.style.Styler.to_latex<span class="classifier">Render a DataFrame to LaTeX</span></dt><dd><p>with conditional formatting.</p>
+</dd>
+<dt>DataFrame.to_string<span class="classifier">Render a DataFrame to a console-friendly</span></dt><dd><p>tabular output.</p>
+</dd>
+</dl>
+<p>DataFrame.to_html : Render a DataFrame as an HTML table.</p>
+</section>
+<section id="id23">
+<h3>Notes<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<p>As of v2.0.0 this method has changed to use the Styler implementation as
+part of <code class="xref py py-meth docutils literal notranslate"><span class="pre">Styler.to_latex()</span></code> via <code class="docutils literal notranslate"><span class="pre">jinja2</span></code> templating. This means
+that <code class="docutils literal notranslate"><span class="pre">jinja2</span></code> is a requirement, and needs to be installed, for this method
+to function. It is advised that users switch to using Styler, since that
+implementation is more frequently updated and contains much more
+flexibility with the output.</p>
+</section>
+<section id="id24">
+<h3>Examples<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<p>Convert a general DataFrame to LaTeX with formatting:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Raphael&#39;</span><span class="p">,</span> <span class="s1">&#39;Donatello&#39;</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="n">age</span><span class="o">=</span><span class="p">[</span><span class="mi">26</span><span class="p">,</span> <span class="mi">45</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="n">height</span><span class="o">=</span><span class="p">[</span><span class="mf">181.23</span><span class="p">,</span> <span class="mf">177.65</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_latex</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">formatters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="o">.</span><span class="n">upper</span><span class="p">},</span>
+<span class="gp">... </span>                  <span class="n">float_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{:.1f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">))</span>  
+<span class="go">\begin{tabular}{lrr}</span>
+<span class="go">\toprule</span>
+<span class="go">name &amp; age &amp; height \\</span>
+<span class="go">\midrule</span>
+<span class="go">RAPHAEL &amp; 26 &amp; 181.2 \\</span>
+<span class="go">DONATELLO &amp; 45 &amp; 177.7 \\</span>
+<span class="go">\bottomrule</span>
+<span class="go">\end{tabular}</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.saveMATFILE">
+<span class="sig-name descname"><span class="pre">saveMATFILE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveMATFILE" title="Link to this definition"></a></dt>
+<dd><p>Save the current SisypheSheet instance to a Matlab file (.mat).</p>
+<section id="id25">
+<h3>Parameters<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>Matlab file name (.mat)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.saveNPY">
+<span class="sig-name descname"><span class="pre">saveNPY</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveNPY" title="Link to this definition"></a></dt>
+<dd><p>Save the current SisypheSheet instance to a Numpy binary file (.npy).</p>
+<section id="id26">
+<h3>Parameters<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>Numpy binary file name (.npy)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.saveNPZ">
+<span class="sig-name descname"><span class="pre">saveNPZ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveNPZ" title="Link to this definition"></a></dt>
+<dd><p>Save the current SisypheSheet instance to a Numpy binary compressed file (.npz).</p>
+<section id="id27">
+<h3>Parameters<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>Numpy binary compressed file name (.npz)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.saveTXT">
+<span class="sig-name descname"><span class="pre">saveTXT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'|'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveTXT" title="Link to this definition"></a></dt>
+<dd><p>Save the current SisypheSheet instance to a text file (.txt).</p>
+<section id="id28">
+<h3>Parameters<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>text file name (.txt)</p>
+</dd>
+<dt>sep<span class="classifier">str</span></dt><dd><p>optional (default ‘|’), char separator between values</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.saveXLSX">
+<span class="sig-name descname"><span class="pre">saveXLSX</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">excel_writer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FilePath</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">WriteExcelBuffer</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ExcelWriter</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Sheet1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">na_rep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">float_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_t</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool_t</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IndexLabel</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startrow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startcol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'openpyxl'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'xlsxwriter'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">merge_cells</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool_t</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inf_rep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'inf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freeze_panes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StorageOptions</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.saveXLSX" title="Link to this definition"></a></dt>
+<dd><p>Write object to an Excel sheet.</p>
+<p>To write a single object to an Excel .xlsx file it is only necessary to
+specify a target file name. To write to multiple sheets it is necessary to
+create an <cite>ExcelWriter</cite> object with a target file name, and specify a sheet
+in the file to write to.</p>
+<p>Multiple sheets may be written to by specifying unique <cite>sheet_name</cite>.
+With all data written to the file it is necessary to save the changes.
+Note that creating an <cite>ExcelWriter</cite> object with a file name that already
+exists will result in the contents of the existing file being erased.</p>
+<section id="id29">
+<h3>Parameters<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<dl>
+<dt>excel_writer<span class="classifier">path-like, file-like, or ExcelWriter object</span></dt><dd><p>File path or existing ExcelWriter.</p>
+</dd>
+<dt>sheet_name<span class="classifier">str, default ‘Sheet1’</span></dt><dd><p>Name of sheet which will contain DataFrame.</p>
+</dd>
+<dt>na_rep<span class="classifier">str, default ‘’</span></dt><dd><p>Missing data representation.</p>
+</dd>
+<dt>float_format<span class="classifier">str, optional</span></dt><dd><p>Format string for floating point numbers. For example
+<code class="docutils literal notranslate"><span class="pre">float_format=&quot;%.2f&quot;</span></code> will format 0.1234 to 0.12.</p>
+</dd>
+<dt>columns<span class="classifier">sequence or list of str, optional</span></dt><dd><p>Columns to write.</p>
+</dd>
+<dt>header<span class="classifier">bool or list of str, default True</span></dt><dd><p>Write out the column names. If a list of string is given it is
+assumed to be aliases for the column names.</p>
+</dd>
+<dt>index<span class="classifier">bool, default True</span></dt><dd><p>Write row names (index).</p>
+</dd>
+<dt>index_label<span class="classifier">str or sequence, optional</span></dt><dd><p>Column label for index column(s) if desired. If not specified, and
+<cite>header</cite> and <cite>index</cite> are True, then the index names are used. A
+sequence should be given if the DataFrame uses MultiIndex.</p>
+</dd>
+<dt>startrow<span class="classifier">int, default 0</span></dt><dd><p>Upper left cell row to dump data frame.</p>
+</dd>
+<dt>startcol<span class="classifier">int, default 0</span></dt><dd><p>Upper left cell column to dump data frame.</p>
+</dd>
+<dt>engine<span class="classifier">str, optional</span></dt><dd><p>Write engine to use, ‘openpyxl’ or ‘xlsxwriter’. You can also set this
+via the options <code class="docutils literal notranslate"><span class="pre">io.excel.xlsx.writer</span></code> or
+<code class="docutils literal notranslate"><span class="pre">io.excel.xlsm.writer</span></code>.</p>
+</dd>
+<dt>merge_cells<span class="classifier">bool, default True</span></dt><dd><p>Write MultiIndex and Hierarchical Rows as merged cells.</p>
+</dd>
+<dt>inf_rep<span class="classifier">str, default ‘inf’</span></dt><dd><p>Representation for infinity (there is no native representation for
+infinity in Excel).</p>
+</dd>
+<dt>freeze_panes<span class="classifier">tuple of int (length 2), optional</span></dt><dd><p>Specifies the one-based bottommost row and rightmost column that
+is to be frozen.</p>
+</dd>
+<dt>storage_options<span class="classifier">dict, optional</span></dt><dd><p>Extra options that make sense for a particular storage connection, e.g.
+host, port, username, password, etc. For HTTP(S) URLs the key-value pairs
+are forwarded to <code class="docutils literal notranslate"><span class="pre">urllib.request.Request</span></code> as header options. For other
+URLs (e.g. starting with “s3://”, and “gcs://”) the key-value pairs are
+forwarded to <code class="docutils literal notranslate"><span class="pre">fsspec.open</span></code>. Please see <code class="docutils literal notranslate"><span class="pre">fsspec</span></code> and <code class="docutils literal notranslate"><span class="pre">urllib</span></code> for more
+details, and for more examples on storage options refer <a class="reference external" href="https://pandas.pydata.org/docs/user_guide/io.html?highlight=storage_options#reading-writing-remote-files">here</a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.2.0.</span></p>
+</div>
+</dd>
+<dt>engine_kwargs<span class="classifier">dict, optional</span></dt><dd><p>Arbitrary keyword arguments passed to excel engine.</p>
+</dd>
+</dl>
+</section>
+<section id="id31">
+<h3>See Also<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<p>to_csv : Write DataFrame to a comma-separated values (csv) file.
+ExcelWriter : Class for writing DataFrame objects into excel sheets.
+read_excel : Read an Excel file into a pandas DataFrame.
+read_csv : Read a comma-separated values (csv) file into DataFrame.
+io.formats.style.Styler.to_excel : Add styles to Excel sheet.</p>
+</section>
+<section id="id32">
+<h3>Notes<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
+<p>For compatibility with <code class="xref py py-meth docutils literal notranslate"><span class="pre">to_csv()</span></code>,
+to_excel serializes lists and dicts to strings before writing.</p>
+<p>Once a workbook has been saved it is not possible to write further
+data without rewriting the whole workbook.</p>
+</section>
+<section id="id33">
+<h3>Examples<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
+<p>Create, write to and save a workbook:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">]],</span>
+<span class="gp">... </span>                   <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;row 1&#39;</span><span class="p">,</span> <span class="s1">&#39;row 2&#39;</span><span class="p">],</span>
+<span class="gp">... </span>                   <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;col 1&#39;</span><span class="p">,</span> <span class="s1">&#39;col 2&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df1</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="s2">&quot;output.xlsx&quot;</span><span class="p">)</span>  
+</pre></div>
+</div>
+<p>To specify the sheet name:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df1</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="s2">&quot;output.xlsx&quot;</span><span class="p">,</span>
+<span class="gp">... </span>             <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Sheet_name_1&#39;</span><span class="p">)</span>  
+</pre></div>
+</div>
+<p>If you wish to write to more than one sheet in the workbook, it is
+necessary to specify an ExcelWriter object:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df2</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="s1">&#39;output.xlsx&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>  
+<span class="gp">... </span>    <span class="n">df1</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Sheet_name_1&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">df2</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Sheet_name_2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>ExcelWriter can also be used to append to an existing Excel file:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="s1">&#39;output.xlsx&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>  
+<span class="gp">... </span>    <span class="n">df1</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Sheet_name_3&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To set the library that is used to write the Excel file,
+you can pass the <cite>engine</cite> keyword (the default engine is
+automatically chosen depending on the file extension):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df1</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="s1">&#39;output1.xlsx&#39;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;xlsxwriter&#39;</span><span class="p">)</span>  
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSheet.SisypheSheet.toClipboard">
+<span class="sig-name descname"><span class="pre">toClipboard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSheet.SisypheSheet.toClipboard" title="Link to this definition"></a></dt>
+<dd><p>Copy object to the system clipboard.</p>
+<p>Write a text representation of object to the system clipboard.
+This can be pasted into Excel, for example.</p>
+<section id="id34">
+<h3>Parameters<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
+<dl>
+<dt>excel<span class="classifier">bool, default True</span></dt><dd><p>Produce output in a csv format for easy pasting into excel.</p>
+<ul class="simple">
+<li><p>True, use the provided separator for csv pasting.</p></li>
+<li><p>False, write a string representation of the object to the clipboard.</p></li>
+</ul>
+</dd>
+<dt>sep<span class="classifier">str, default <code class="docutils literal notranslate"><span class="pre">'\t'</span></code></span></dt><dd><p>Field delimiter.</p>
+</dd>
+<dt><a href="#id35"><span class="problematic" id="id36">**</span></a>kwargs</dt><dd><p>These parameters will be passed to DataFrame.to_csv.</p>
+</dd>
+</dl>
+</section>
+<section id="id37">
+<h3>See Also<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>DataFrame.to_csv<span class="classifier">Write a DataFrame to a comma-separated values</span></dt><dd><p>(csv) file.</p>
+</dd>
+</dl>
+<p>read_clipboard : Read text from clipboard and pass to read_csv.</p>
+</section>
+<section id="id38">
+<h3>Notes<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
+<p>Requirements for your platform.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Linux : <cite>xclip</cite>, or <cite>xsel</cite> (with <cite>PyQt4</cite> modules)</p></li>
+<li><p>Windows : none</p></li>
+<li><p>macOS : none</p></li>
+</ul>
+</div></blockquote>
+<p>This method uses the processes developed for the package <cite>pyperclip</cite>. A
+solution to render any output string format is given in the examples.</p>
+</section>
+<section id="id39">
+<h3>Examples<a class="headerlink" href="#id39" title="Link to this heading"></a></h3>
+<p>Copy the contents of a DataFrame to the clipboard.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">to_clipboard</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>  
+<span class="gp">... </span><span class="c1"># Wrote the following to the system clipboard:</span>
+<span class="gp">... </span><span class="c1"># ,A,B,C</span>
+<span class="gp">... </span><span class="c1"># 0,1,2,3</span>
+<span class="gp">... </span><span class="c1"># 1,4,5,6</span>
+</pre></div>
+</div>
+<p>We can omit the index by passing the keyword <cite>index</cite> and setting
+it to false.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">to_clipboard</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  
+<span class="gp">... </span><span class="c1"># Wrote the following to the system clipboard:</span>
+<span class="gp">... </span><span class="c1"># A,B,C</span>
+<span class="gp">... </span><span class="c1"># 1,2,3</span>
+<span class="gp">... </span><span class="c1"># 4,5,6</span>
+</pre></div>
+</div>
+<p>Using the original <cite>pyperclip</cite> package for any string output format.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pyperclip</span>
+<span class="n">html</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">to_html</span><span class="p">()</span>
+<span class="n">pyperclip</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api_settings.html" class="btn btn-neutral float-left" title="Sisyphe.core.sisypheSettings" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_statistics.html" class="btn btn-neutral float-right" title="Sisyphe.core.sisypheStatistics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

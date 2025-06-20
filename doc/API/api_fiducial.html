@@ -1,0 +1,683 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sisyphe.core.sisypheFiducialBox &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=049aceee"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Sisyphe.core.sisypheImage" href="api_image.html" />
+    <link rel="prev" title="Sisyphe.core.sisypheDownload" href="api_download.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Sisyphe
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api_packages.html">Packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html">Sisyphe.core.sisypheConstants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_database.html">Sisyphe.core.sisypheDatabase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html">Sisyphe.core.sisypheDicom</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_download.html">Sisyphe.core.sisypheDownload</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Sisyphe.core.sisypheFiducialBox</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.ProgressTextChanged"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.ProgressTextChanged</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.addTransformToVolume"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.addTransformToVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.calcErrors"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.calcErrors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.calcTransform"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.calcTransform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.execute"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.execute()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getAllMarkers"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.getAllMarkers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getErrorStatistics"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.getErrorStatistics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getErrors"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.getErrors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getFileExt"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.getFileExt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getFilterExt"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.getFilterExt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getMarker"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.getMarker()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getMarkersCount"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.getMarkersCount()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getSliceMarkers"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.getSliceMarkers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getSliceNumbers"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.getSliceNumbers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getTransform"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.getTransform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getVolume"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.getVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasErrors"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.hasErrors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasSlice"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.hasSlice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasTransform"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.hasTransform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasVolume"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.hasVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasXML"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.hasXML()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.isEmpty"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.isEmpty()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.loadFromXML"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.loadFromXML()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.markersSearch"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.markersSearch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.removeFrontPlateMarkers"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.removeFrontPlateMarkers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.removeSliceMarkers"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.removeSliceMarkers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.saveToXML"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.saveToXML()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.setVolume"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox.setVolume()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api_image.html">Sisyphe.core.sisypheImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageattributes.html">Sisyphe.core.sisypheImageAttributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html">Sisyphe.core.sisypheImageIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_lut.html">Sisyphe.core.sisypheLUT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_mesh.html">Sisyphe.core.sisypheMesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html">Sisyphe.core.sisypheMeshIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_recent.html">Sisyphe.core.sisypheRecent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_roi.html">Sisyphe.core.sisypheROI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html">Sisyphe.core.sisypheSettings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_sheet.html">Sisyphe.core.sisypheSheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html">Sisyphe.core.sisypheStatistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html">Sisyphe.core.sisypheTools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html">Sisyphe.core.sisypheTracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_transform.html">Sisyphe.core.sisypheTransform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_volume.html">Sisyphe.core.sisypheVolume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_xml.html">Sisyphe.core.sisypheXml</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API</a></li>
+      <li class="breadcrumb-item active">Sisyphe.core.sisypheFiducialBox</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/API/api_fiducial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-Sisyphe.core.sisypheFiducialBox">
+<span id="sisyphe-core-sisyphefiducialbox"></span><h1>Sisyphe.core.sisypheFiducialBox<a class="headerlink" href="#module-Sisyphe.core.sisypheFiducialBox" title="Link to this heading"></a></h1>
+<section id="external-packages-modules">
+<h2>External packages/modules<a class="headerlink" href="#external-packages-modules" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>Numpy, scientific computing, <a class="reference external" href="https://numpy.org/">https://numpy.org/</a></p></li>
+<li><p>PyQt5, Qt GUI, <a class="reference external" href="https://www.riverbankcomputing.com/software/pyqt/">https://www.riverbankcomputing.com/software/pyqt/</a></p></li>
+<li><p>SimpleITK, medical image processing, <a class="reference external" href="https://simpleitk.org/">https://simpleitk.org/</a></p></li>
+<li><p>vtk, visualization engine/3D rendering, <a class="reference external" href="https://vtk.org/">https://vtk.org/</a></p></li>
+</ul>
+</div></blockquote>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheFiducialBox.</span></span><span class="sig-name descname"><span class="pre">SisypheFiducialBox</span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox" title="Link to this definition"></a></dt>
+<dd><section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>This class detects the Elekta Leksell frame’s fiducial markers. It computes a rigid transformation to calculate
+coordinates between the geometric Leksell reference and the image coordinates, and vice versa.</p>
+</section>
+<section id="inheritance">
+<h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
+<p>QObject -&gt; SisypheFiducialBox</p>
+<p>Creation: 26/07/2022
+Last revision: 11/12/2023</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.ProgressTextChanged">
+<span class="sig-name descname"><span class="pre">ProgressTextChanged</span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.ProgressTextChanged" title="Link to this definition"></a></dt>
+<dd><p>Private attributes</p>
+<p>_nbfid      int, fiducials count (6 or 9)
+_fidtol     float, distance tolerance of fiducial markers
+_fidlist    dict, fiducial markers coordinates
+_errorlist  dict, fiducial markers errors
+_errorstats dict, fiducial markers errors statistics
+_volume     SisypheVolume
+_trf        SisypheTransform</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.addTransformToVolume">
+<span class="sig-name descname"><span class="pre">addTransformToVolume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.addTransformToVolume" title="Link to this definition"></a></dt>
+<dd><p>Add the calculated geometric transformation to the Sisyphe.core.sisypheTransform.SisypheTransforms attribute
+of the processed volume.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.calcErrors">
+<span class="sig-name descname"><span class="pre">calcErrors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.calcErrors" title="Link to this definition"></a></dt>
+<dd><p>Calculate errors i.e. euclidean distances between coordinates of the detected fiducial markers and their
+theoretical coordinates in mm.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.calcTransform">
+<span class="sig-name descname"><span class="pre">calcTransform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.calcTransform" title="Link to this definition"></a></dt>
+<dd><p>Calculate rigid transformation between image and Leksell geometric reference.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.execute" title="Link to this definition"></a></dt>
+<dd><p>Execute Leksell fiducial markers detection to calculate rigid transformation between image and Leksell
+geometric reference.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>vol<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume</span></dt><dd><p>PySisyphe volume</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getAllMarkers">
+<span class="sig-name descname"><span class="pre">getAllMarkers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getAllMarkers" title="Link to this definition"></a></dt>
+<dd><p>Get all fiducial markers coordinates.</p>
+<dl class="simple">
+<dt>Marker indexes (axial slice):</dt><dd><ul class="simple">
+<li><p>Left markers: 0 posterior, 1 middle, 2 anterior</p></li>
+<li><p>right markers: 3 anterior, 4 middle, 5 posterior</p></li>
+<li><p>anterior markers: 6 right, 7 middle, 8 left</p></li>
+</ul>
+</dd>
+</dl>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dict[int, dict[int, list[float]]</dt><dd><ul class="simple">
+<li><p>key int, slice index</p></li>
+<li><dl class="simple">
+<dt>value dict[int, float]</dt><dd><ul>
+<li><p>key int, marker index (6 or 9 markers)</p></li>
+<li><p>value list[float, float, float], list of x, y, z fiducial marker coordinates</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getErrorStatistics">
+<span class="sig-name descname"><span class="pre">getErrorStatistics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getErrorStatistics" title="Link to this definition"></a></dt>
+<dd><p>Get errors statistics.</p>
+<section id="id1">
+<h3>Returns<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dict[str, float]</dt><dd><dl class="simple">
+<dt>str keys, float values</dt><dd><ul class="simple">
+<li><p>‘Mean’      mean error</p></li>
+<li><p>‘RMS’       root-mean-square error</p></li>
+<li><p>‘Median’    median error</p></li>
+<li><p>‘Std’       standard deviation error</p></li>
+<li><p>‘25th’      first quantile error</p></li>
+<li><p>‘75th’      third quantile error</p></li>
+<li><p>‘Min’       minimum error</p></li>
+<li><p>‘Max’       maximum error</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getErrors">
+<span class="sig-name descname"><span class="pre">getErrors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getErrors" title="Link to this definition"></a></dt>
+<dd><p>Get errors i.e. euclidean distances between coordinates of the detected fiducial markers and their theoretical
+coordinates in mm.</p>
+<dl class="simple">
+<dt>Marker indexes (axial slice):</dt><dd><ul class="simple">
+<li><p>Left markers: 0 posterior, 1 middle, 2 anterior</p></li>
+<li><p>right markers: 3 anterior, 4 middle, 5 posterior</p></li>
+<li><p>anterior markers: 6 right, 7 middle, 8 left</p></li>
+</ul>
+</dd>
+</dl>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dict[int, dict[int, float]],</dt><dd><ul class="simple">
+<li><p>key int, slice index</p></li>
+<li><dl class="simple">
+<dt>value dict[int, float]</dt><dd><ul>
+<li><p>key int, marker index (6 or 9 markers)</p></li>
+<li><p>value float, euclidean distance error in mm</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getFileExt">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getFileExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getFileExt" title="Link to this definition"></a></dt>
+<dd><p>Get SisypheFiducialBox file extension.</p>
+<section id="id3">
+<h3>Returns<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>‘.xfid’</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getFilterExt">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getFilterExt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getFilterExt" title="Link to this definition"></a></dt>
+<dd><p>Get SisypheFiducialBox filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().</p>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>‘PySisyphe Fiducial markers (.xfid)’</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getMarker">
+<span class="sig-name descname"><span class="pre">getMarker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getMarker" title="Link to this definition"></a></dt>
+<dd><p>Get coordinates of a fiducial marker.</p>
+<dl class="simple">
+<dt>Marker indexes (axial slice):</dt><dd><ul class="simple">
+<li><p>Left markers: 0 posterior, 1 middle, 2 anterior</p></li>
+<li><p>right markers: 3 anterior, 4 middle, 5 posterior</p></li>
+<li><p>anterior markers: 6 right, 7 middle, 8 left</p></li>
+</ul>
+</dd>
+</dl>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>n<span class="classifier">int</span></dt><dd><p>slice index</p>
+</dd>
+<dt>m<span class="classifier">int</span></dt><dd><p>marker index</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[float]</dt><dd><p>x, y, z fiducial marker coordinates</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getMarkersCount">
+<span class="sig-name descname"><span class="pre">getMarkersCount</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getMarkersCount" title="Link to this definition"></a></dt>
+<dd><p>Get fiducial markers count.</p>
+<p>Two possible configurations:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>6: 3 to the left and 3 to the right</p></li>
+<li><p>9: 3 to the left, 3 to the right, 3 to the front (front markers are optional)</p></li>
+</ul>
+</div></blockquote>
+<p>Marker indexes (axial slice):</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Left markers: 0 posterior, 1 middle, 2 anterior</p></li>
+<li><p>right markers: 3 anterior, 4 middle, 5 posterior</p></li>
+<li><p>anterior markers: 6 right, 7 middle, 8 left</p></li>
+</ul>
+</div></blockquote>
+<section id="id7">
+<h3>Returns<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if slice index is valid (i.e. less than slice count)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getSliceMarkers">
+<span class="sig-name descname"><span class="pre">getSliceMarkers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getSliceMarkers" title="Link to this definition"></a></dt>
+<dd><p>Get coordinates of fiducial markers in a slice.</p>
+<dl class="simple">
+<dt>Marker indexes (axial slice):</dt><dd><ul class="simple">
+<li><p>Left markers: 0 posterior, 1 middle, 2 anterior</p></li>
+<li><p>right markers: 3 anterior, 4 middle, 5 posterior</p></li>
+<li><p>anterior markers: 6 right, 7 middle, 8 left</p></li>
+</ul>
+</dd>
+</dl>
+<section id="id8">
+<h3>Parameters<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>n<span class="classifier">int</span></dt><dd><p>slice index</p>
+</dd>
+</dl>
+</section>
+<section id="id9">
+<h3>Returns<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dict[int, list[float]]</dt><dd><ul class="simple">
+<li><p>key int, marker index</p></li>
+<li><p>value list[float], x, y, z fiducial marker coordinates</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getSliceNumbers">
+<span class="sig-name descname"><span class="pre">getSliceNumbers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getSliceNumbers" title="Link to this definition"></a></dt>
+<dd><p>Get list of valid slice indexes (i.e. slices with at least 6 or 9 fiducial markers depending on configuration).</p>
+<section id="id10">
+<h3>Returns<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[int]</dt><dd><p>list of valid indexes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getTransform">
+<span class="sig-name descname"><span class="pre">getTransform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform" title="Sisyphe.core.sisypheTransform.SisypheTransform"><span class="pre">SisypheTransform</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getTransform" title="Link to this definition"></a></dt>
+<dd><p>Get rigid transformation between image and Leksell geometric reference.</p>
+<section id="id11">
+<h3>Returns<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Sisyphe.core.SisypheTransform.SisypheTransform</dt><dd><p>rigid transformation</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getVolume">
+<span class="sig-name descname"><span class="pre">getVolume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.getVolume" title="Link to this definition"></a></dt>
+<dd><p>Get PySisyphe volume</p>
+<section id="id12">
+<h3>Returns<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Sisyphe.core.sisypheVolume.SisypheVolume</dt><dd><p>volume to process</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasErrors">
+<span class="sig-name descname"><span class="pre">hasErrors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasErrors" title="Link to this definition"></a></dt>
+<dd><p>Checks whether errors are calculated.</p>
+<section id="id13">
+<h3>Returns<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if errors are calculated</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasSlice">
+<span class="sig-name descname"><span class="pre">hasSlice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasSlice" title="Link to this definition"></a></dt>
+<dd><p>Check whether slice index is valid (i.e. it contains at least 6 or 9 fiducial markers depending on
+configuration).</p>
+<section id="id14">
+<h3>Returns<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if slice index is valid</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasTransform">
+<span class="sig-name descname"><span class="pre">hasTransform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasTransform" title="Link to this definition"></a></dt>
+<dd><p>Checks whether rigid transformation between image and Leksell geometric reference is calculated.</p>
+<section id="id15">
+<h3>Returns<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if rigid transformation is calculated</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasVolume">
+<span class="sig-name descname"><span class="pre">hasVolume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasVolume" title="Link to this definition"></a></dt>
+<dd><p>Check whether PySisyphe volume to process is available.</p>
+<section id="id16">
+<h3>Returns<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if PySisyphe volume is defined</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasXML">
+<span class="sig-name descname"><span class="pre">hasXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.hasXML" title="Link to this definition"></a></dt>
+<dd><p>Check that fiducial markers coordinates file (.xfid) exists.</p>
+<section id="id17">
+<h3>Parameters<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>file name, file extension is replaced by .xfid if necessary</p>
+</dd>
+</dl>
+</section>
+<section id="id18">
+<h3>Returns<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if file name exists</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.isEmpty">
+<span class="sig-name descname"><span class="pre">isEmpty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.isEmpty" title="Link to this definition"></a></dt>
+<dd><p>Check that fiduciary marker coordinates are calculated.</p>
+<section id="id19">
+<h3>Returns<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if fiduciary marker coordinates are calculated</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.loadFromXML">
+<span class="sig-name descname"><span class="pre">loadFromXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.loadFromXML" title="Link to this definition"></a></dt>
+<dd><p>Load fiducial markers coordinates file (.xfid).</p>
+<section id="id20">
+<h3>Parameters<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>file name (.xfid)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.markersSearch">
+<span class="sig-name descname"><span class="pre">markersSearch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">slc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.markersSearch" title="Link to this definition"></a></dt>
+<dd><p>Leksell fiducial markers detection in a slice.</p>
+<section id="id21">
+<h3>Parameters<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>vol<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume</span></dt><dd><p>PySisyphe volume</p>
+</dd>
+<dt>slc<span class="classifier">int</span></dt><dd><p>slice index</p>
+</dd>
+</dl>
+</section>
+<section id="id22">
+<h3>Returns<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>False if no frame or frame detection failed</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.removeFrontPlateMarkers">
+<span class="sig-name descname"><span class="pre">removeFrontPlateMarkers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.removeFrontPlateMarkers" title="Link to this definition"></a></dt>
+<dd><p>Remove front fiducial markers. Six markers configuration, 3 on the left and 3 on the right.</p>
+<dl class="simple">
+<dt>Marker indexes (axial slice):</dt><dd><ul class="simple">
+<li><p>Left markers: 0 posterior, 1 middle, 2 anterior</p></li>
+<li><p>right markers: 3 anterior, 4 middle, 5 posterior</p></li>
+<li><p>anterior markers: 6 right, 7 middle, 8 left</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.removeSliceMarkers">
+<span class="sig-name descname"><span class="pre">removeSliceMarkers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.removeSliceMarkers" title="Link to this definition"></a></dt>
+<dd><p>Removes all fiduciary markers from a slice.</p>
+<section id="id23">
+<h3>Parameters<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>n<span class="classifier">int</span></dt><dd><p>slice index</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.saveToXML">
+<span class="sig-name descname"><span class="pre">saveToXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.saveToXML" title="Link to this definition"></a></dt>
+<dd><p>Save fiducial markers coordinates file (.xfid).</p>
+<section id="id24">
+<h3>Parameters<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>file name (.xfid)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.setVolume">
+<span class="sig-name descname"><span class="pre">setVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.setVolume" title="Link to this definition"></a></dt>
+<dd><p>Set PySisyphe volume to process.</p>
+<section id="id25">
+<h3>Parameters<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>v<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume</span></dt><dd><p>volume to process</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api_download.html" class="btn btn-neutral float-left" title="Sisyphe.core.sisypheDownload" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_image.html" class="btn btn-neutral float-right" title="Sisyphe.core.sisypheImage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

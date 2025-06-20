@@ -1,0 +1,481 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=049aceee"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Packages" href="api_packages.html" />
+    <link rel="prev" title="Menubar" href="../PySisyphe_menubar.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Sisyphe
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_packages.html">Packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html">Sisyphe.core.sisypheConstants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_database.html">Sisyphe.core.sisypheDatabase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html">Sisyphe.core.sisypheDicom</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_download.html">Sisyphe.core.sisypheDownload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_fiducial.html">Sisyphe.core.sisypheFiducialBox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_image.html">Sisyphe.core.sisypheImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageattributes.html">Sisyphe.core.sisypheImageAttributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html">Sisyphe.core.sisypheImageIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_lut.html">Sisyphe.core.sisypheLUT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_mesh.html">Sisyphe.core.sisypheMesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html">Sisyphe.core.sisypheMeshIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_recent.html">Sisyphe.core.sisypheRecent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_roi.html">Sisyphe.core.sisypheROI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html">Sisyphe.core.sisypheSettings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_sheet.html">Sisyphe.core.sisypheSheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html">Sisyphe.core.sisypheStatistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html">Sisyphe.core.sisypheTools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html">Sisyphe.core.sisypheTracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_transform.html">Sisyphe.core.sisypheTransform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_volume.html">Sisyphe.core.sisypheVolume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_xml.html">Sisyphe.core.sisypheXml</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/API/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api">
+<span id="page-api"></span><h1>API<a class="headerlink" href="#api" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api_packages.html">Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_constants.html">Sisyphe.core.sisypheConstants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.addPrefixSuffixToFilename"><code class="docutils literal notranslate"><span class="pre">addPrefixSuffixToFilename()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.addPrefixToFilename"><code class="docutils literal notranslate"><span class="pre">addPrefixToFilename()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.addSuffixToFilename"><code class="docutils literal notranslate"><span class="pre">addSuffixToFilename()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getATROPOSPath"><code class="docutils literal notranslate"><span class="pre">getATROPOSPath()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getBitmapExt"><code class="docutils literal notranslate"><span class="pre">getBitmapExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getBrainVoyagerVMRExt"><code class="docutils literal notranslate"><span class="pre">getBrainVoyagerVMRExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getBrainVoyagerVOIExt"><code class="docutils literal notranslate"><span class="pre">getBrainVoyagerVOIExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getDISTALPath"><code class="docutils literal notranslate"><span class="pre">getDISTALPath()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getDatatypes"><code class="docutils literal notranslate"><span class="pre">getDatatypes()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getDicomExt"><code class="docutils literal notranslate"><span class="pre">getDicomExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getFloatStdDatatypes"><code class="docutils literal notranslate"><span class="pre">getFloatStdDatatypes()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getFreeSurferExt"><code class="docutils literal notranslate"><span class="pre">getFreeSurferExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getICBM152Path"><code class="docutils literal notranslate"><span class="pre">getICBM152Path()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getICBM452Path"><code class="docutils literal notranslate"><span class="pre">getICBM452Path()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getID_ATROPOS"><code class="docutils literal notranslate"><span class="pre">getID_ATROPOS()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getID_DISTAL"><code class="docutils literal notranslate"><span class="pre">getID_DISTAL()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getID_ICBM152"><code class="docutils literal notranslate"><span class="pre">getID_ICBM152()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getID_ICBM452"><code class="docutils literal notranslate"><span class="pre">getID_ICBM452()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getID_NAC"><code class="docutils literal notranslate"><span class="pre">getID_NAC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getID_SPL"><code class="docutils literal notranslate"><span class="pre">getID_SPL()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getID_SRI24"><code class="docutils literal notranslate"><span class="pre">getID_SRI24()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getImageExt"><code class="docutils literal notranslate"><span class="pre">getImageExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getIntStdDatatypes"><code class="docutils literal notranslate"><span class="pre">getIntStdDatatypes()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getJsonExt"><code class="docutils literal notranslate"><span class="pre">getJsonExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getLibraryDataType"><code class="docutils literal notranslate"><span class="pre">getLibraryDataType()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getLutExt"><code class="docutils literal notranslate"><span class="pre">getLutExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getMincExt"><code class="docutils literal notranslate"><span class="pre">getMincExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getNACPath"><code class="docutils literal notranslate"><span class="pre">getNACPath()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getNiftiCompressedExt"><code class="docutils literal notranslate"><span class="pre">getNiftiCompressedExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getNiftiExt"><code class="docutils literal notranslate"><span class="pre">getNiftiExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getNrrdExt"><code class="docutils literal notranslate"><span class="pre">getNrrdExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getNumpyExt"><code class="docutils literal notranslate"><span class="pre">getNumpyExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getOrigin_ICBM152"><code class="docutils literal notranslate"><span class="pre">getOrigin_ICBM152()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getRegularDirections"><code class="docutils literal notranslate"><span class="pre">getRegularDirections()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getSPLPath"><code class="docutils literal notranslate"><span class="pre">getSPLPath()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getSRI24Path"><code class="docutils literal notranslate"><span class="pre">getSRI24Path()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getShape_ICBM152"><code class="docutils literal notranslate"><span class="pre">getShape_ICBM152()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getSisypheDirections"><code class="docutils literal notranslate"><span class="pre">getSisypheDirections()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getSisypheExt"><code class="docutils literal notranslate"><span class="pre">getSisypheExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getSisypheROIExt"><code class="docutils literal notranslate"><span class="pre">getSisypheROIExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getSupportedITKDatatypes"><code class="docutils literal notranslate"><span class="pre">getSupportedITKDatatypes()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getSupportedITKStdDatatypes"><code class="docutils literal notranslate"><span class="pre">getSupportedITKStdDatatypes()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getTemplatePath"><code class="docutils literal notranslate"><span class="pre">getTemplatePath()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getTemplatesID"><code class="docutils literal notranslate"><span class="pre">getTemplatesID()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getTractsExt"><code class="docutils literal notranslate"><span class="pre">getTractsExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getVTKDirections"><code class="docutils literal notranslate"><span class="pre">getVTKDirections()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.getVtkExt"><code class="docutils literal notranslate"><span class="pre">getVtkExt()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.isATROPOS"><code class="docutils literal notranslate"><span class="pre">isATROPOS()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.isDISTAL"><code class="docutils literal notranslate"><span class="pre">isDISTAL()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.isICBM152"><code class="docutils literal notranslate"><span class="pre">isICBM152()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.isICBM452"><code class="docutils literal notranslate"><span class="pre">isICBM452()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.isITKImageSupportedType"><code class="docutils literal notranslate"><span class="pre">isITKImageSupportedType()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.isITKSupportedStdType"><code class="docutils literal notranslate"><span class="pre">isITKSupportedStdType()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.isITKSupportedType"><code class="docutils literal notranslate"><span class="pre">isITKSupportedType()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.isNAC"><code class="docutils literal notranslate"><span class="pre">isNAC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.isSPL"><code class="docutils literal notranslate"><span class="pre">isSPL()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.isSRI24"><code class="docutils literal notranslate"><span class="pre">isSRI24()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.isTemplateID"><code class="docutils literal notranslate"><span class="pre">isTemplateID()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.isUint8ITKImage"><code class="docutils literal notranslate"><span class="pre">isUint8ITKImage()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.isValidDatatype"><code class="docutils literal notranslate"><span class="pre">isValidDatatype()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.isValidLibraryName"><code class="docutils literal notranslate"><span class="pre">isValidLibraryName()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.listToStr"><code class="docutils literal notranslate"><span class="pre">listToStr()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.removeAllPrefixesFromFilename"><code class="docutils literal notranslate"><span class="pre">removeAllPrefixesFromFilename()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.removeAllSuffixesFromFilename"><code class="docutils literal notranslate"><span class="pre">removeAllSuffixesFromFilename()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.removeSuffixNumberFromFilename"><code class="docutils literal notranslate"><span class="pre">removeSuffixNumberFromFilename()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html#Sisyphe.core.sisypheConstants.replaceDirname"><code class="docutils literal notranslate"><span class="pre">replaceDirname()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_database.html">Sisyphe.core.sisypheDatabase</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_database.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_database.html#Sisyphe.core.sisypheDatabase.SisypheDatabase"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_dicom.html">Sisyphe.core.sisypheDicom</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.DicomToXmlDicom"><code class="docutils literal notranslate"><span class="pre">DicomToXmlDicom</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.DicomUIDGenerator"><code class="docutils literal notranslate"><span class="pre">DicomUIDGenerator</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.ExportToDicom"><code class="docutils literal notranslate"><span class="pre">ExportToDicom</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.ExportToRTStruct"><code class="docutils literal notranslate"><span class="pre">ExportToRTStruct</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.ImportFromDicom"><code class="docutils literal notranslate"><span class="pre">ImportFromDicom</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.ImportFromRTDose"><code class="docutils literal notranslate"><span class="pre">ImportFromRTDose</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.ImportFromRTStruct"><code class="docutils literal notranslate"><span class="pre">ImportFromRTStruct</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.XmlDicom"><code class="docutils literal notranslate"><span class="pre">XmlDicom</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.getAcquisitionFromDicom"><code class="docutils literal notranslate"><span class="pre">getAcquisitionFromDicom()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.getDicomImageModalities"><code class="docutils literal notranslate"><span class="pre">getDicomImageModalities()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.getDicomModalities"><code class="docutils literal notranslate"><span class="pre">getDicomModalities()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.getDicomRTModalities"><code class="docutils literal notranslate"><span class="pre">getDicomRTModalities()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.getDiffusionParametersFromDicom"><code class="docutils literal notranslate"><span class="pre">getDiffusionParametersFromDicom()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.getIdentityFromDicom"><code class="docutils literal notranslate"><span class="pre">getIdentityFromDicom()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.loadBVal"><code class="docutils literal notranslate"><span class="pre">loadBVal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.loadBVec"><code class="docutils literal notranslate"><span class="pre">loadBVec()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.mosaicImageToVolume"><code class="docutils literal notranslate"><span class="pre">mosaicImageToVolume()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.removeSuffixNumberFromFilename"><code class="docutils literal notranslate"><span class="pre">removeSuffixNumberFromFilename()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.saveBVal"><code class="docutils literal notranslate"><span class="pre">saveBVal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html#Sisyphe.core.sisypheDicom.saveBVec"><code class="docutils literal notranslate"><span class="pre">saveBVec()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_download.html">Sisyphe.core.sisypheDownload</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_download.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_download.html#Sisyphe.core.sisypheDownload.downloadFromHost"><code class="docutils literal notranslate"><span class="pre">downloadFromHost()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_download.html#Sisyphe.core.sisypheDownload.installFromHost"><code class="docutils literal notranslate"><span class="pre">installFromHost()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_download.html#Sisyphe.core.sisypheDownload.updatePySisyphe"><code class="docutils literal notranslate"><span class="pre">updatePySisyphe()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_fiducial.html">Sisyphe.core.sisypheFiducialBox</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_fiducial.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_fiducial.html#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox"><code class="docutils literal notranslate"><span class="pre">SisypheFiducialBox</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_image.html">Sisyphe.core.sisypheImage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_image.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_image.html#Sisyphe.core.sisypheImage.SisypheBinaryImage"><code class="docutils literal notranslate"><span class="pre">SisypheBinaryImage</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_image.html#Sisyphe.core.sisypheImage.SisypheImage"><code class="docutils literal notranslate"><span class="pre">SisypheImage</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_image.html#Sisyphe.core.sisypheImage.numpyToVtkImageData"><code class="docutils literal notranslate"><span class="pre">numpyToVtkImageData()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_image.html#Sisyphe.core.sisypheImage.simpleITKToVTK"><code class="docutils literal notranslate"><span class="pre">simpleITKToVTK()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_imageattributes.html">Sisyphe.core.sisypheImageAttributes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_imageattributes.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheACPC"><code class="docutils literal notranslate"><span class="pre">SisypheACPC</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheAcquisition"><code class="docutils literal notranslate"><span class="pre">SisypheAcquisition</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheDisplay"><code class="docutils literal notranslate"><span class="pre">SisypheDisplay</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><code class="docutils literal notranslate"><span class="pre">SisypheIdentity</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_imageio.html">Sisyphe.core.sisypheImageIO</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.compareDataElementsBetweenDatasets"><code class="docutils literal notranslate"><span class="pre">compareDataElementsBetweenDatasets()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.convertImageToAxialOrientation"><code class="docutils literal notranslate"><span class="pre">convertImageToAxialOrientation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.convertSITKtoVTK"><code class="docutils literal notranslate"><span class="pre">convertSITKtoVTK()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.convertVTKtoSITK"><code class="docutils literal notranslate"><span class="pre">convertVTKtoSITK()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.extractDataElementValuesFromDatasets"><code class="docutils literal notranslate"><span class="pre">extractDataElementValuesFromDatasets()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.flipImageToVTKDirectionConvention"><code class="docutils literal notranslate"><span class="pre">flipImageToVTKDirectionConvention()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.isDicom"><code class="docutils literal notranslate"><span class="pre">isDicom()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.readFromBitmap"><code class="docutils literal notranslate"><span class="pre">readFromBitmap()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.readFromBrainVoyagerVMR"><code class="docutils literal notranslate"><span class="pre">readFromBrainVoyagerVMR()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.readFromDicomDirectory"><code class="docutils literal notranslate"><span class="pre">readFromDicomDirectory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.readFromDicomFilenames"><code class="docutils literal notranslate"><span class="pre">readFromDicomFilenames()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.readFromDicomSeries"><code class="docutils literal notranslate"><span class="pre">readFromDicomSeries()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.readFromFreeSurferMGH"><code class="docutils literal notranslate"><span class="pre">readFromFreeSurferMGH()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.readFromMINC"><code class="docutils literal notranslate"><span class="pre">readFromMINC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.readFromNIFTI"><code class="docutils literal notranslate"><span class="pre">readFromNIFTI()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.readFromNRRD"><code class="docutils literal notranslate"><span class="pre">readFromNRRD()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.readFromNumpy"><code class="docutils literal notranslate"><span class="pre">readFromNumpy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.readFromSisyphe"><code class="docutils literal notranslate"><span class="pre">readFromSisyphe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.readFromSisypheROI"><code class="docutils literal notranslate"><span class="pre">readFromSisypheROI()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.readFromVTK"><code class="docutils literal notranslate"><span class="pre">readFromVTK()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.readImage"><code class="docutils literal notranslate"><span class="pre">readImage()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.writeToJSON"><code class="docutils literal notranslate"><span class="pre">writeToJSON()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.writeToMINC"><code class="docutils literal notranslate"><span class="pre">writeToMINC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.writeToNIFTI"><code class="docutils literal notranslate"><span class="pre">writeToNIFTI()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.writeToNRRD"><code class="docutils literal notranslate"><span class="pre">writeToNRRD()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.writeToNumpy"><code class="docutils literal notranslate"><span class="pre">writeToNumpy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html#Sisyphe.core.sisypheImageIO.writeToVTK"><code class="docutils literal notranslate"><span class="pre">writeToVTK()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_lut.html">Sisyphe.core.sisypheLUT</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_lut.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_lut.html#Sisyphe.core.sisypheLUT.SisypheColorTransfer"><code class="docutils literal notranslate"><span class="pre">SisypheColorTransfer</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_lut.html#Sisyphe.core.sisypheLUT.SisypheLut"><code class="docutils literal notranslate"><span class="pre">SisypheLut</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_lut.html#Sisyphe.core.sisypheLUT.lutConversion"><code class="docutils literal notranslate"><span class="pre">lutConversion()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_lut.html#Sisyphe.core.sisypheLUT.saveColormapBitmapPreview"><code class="docutils literal notranslate"><span class="pre">saveColormapBitmapPreview()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_mesh.html">Sisyphe.core.sisypheMesh</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_mesh.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMesh"><code class="docutils literal notranslate"><span class="pre">SisypheMesh</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMeshCollection"><code class="docutils literal notranslate"><span class="pre">SisypheMeshCollection</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_meshio.html">Sisyphe.core.sisypheMeshIO</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html#Sisyphe.core.sisypheMeshIO.readMeshFromOBJ"><code class="docutils literal notranslate"><span class="pre">readMeshFromOBJ()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html#Sisyphe.core.sisypheMeshIO.readMeshFromSTL"><code class="docutils literal notranslate"><span class="pre">readMeshFromSTL()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html#Sisyphe.core.sisypheMeshIO.readMeshFromVTK"><code class="docutils literal notranslate"><span class="pre">readMeshFromVTK()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html#Sisyphe.core.sisypheMeshIO.readMeshFromXMLVTK"><code class="docutils literal notranslate"><span class="pre">readMeshFromXMLVTK()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html#Sisyphe.core.sisypheMeshIO.writeMeshToOBJ"><code class="docutils literal notranslate"><span class="pre">writeMeshToOBJ()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html#Sisyphe.core.sisypheMeshIO.writeMeshToSTL"><code class="docutils literal notranslate"><span class="pre">writeMeshToSTL()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html#Sisyphe.core.sisypheMeshIO.writeMeshToVTK"><code class="docutils literal notranslate"><span class="pre">writeMeshToVTK()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html#Sisyphe.core.sisypheMeshIO.writeMeshToXMLVTK"><code class="docutils literal notranslate"><span class="pre">writeMeshToXMLVTK()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_recent.html">Sisyphe.core.sisypheRecent</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_recent.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_recent.html#Sisyphe.core.sisypheRecent.SisypheRecent"><code class="docutils literal notranslate"><span class="pre">SisypheRecent</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_roi.html">Sisyphe.core.sisypheROI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_roi.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROI"><code class="docutils literal notranslate"><span class="pre">SisypheROI</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROICollection"><code class="docutils literal notranslate"><span class="pre">SisypheROICollection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROIDraw"><code class="docutils literal notranslate"><span class="pre">SisypheROIDraw</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROIFeatures"><code class="docutils literal notranslate"><span class="pre">SisypheROIFeatures</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROIHistogram"><code class="docutils literal notranslate"><span class="pre">SisypheROIHistogram</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_settings.html">Sisyphe.core.sisypheSettings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html#Sisyphe.core.sisypheSettings.SisypheDialogsSettings"><code class="docutils literal notranslate"><span class="pre">SisypheDialogsSettings</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html#Sisyphe.core.sisypheSettings.SisypheFunctionsSettings"><code class="docutils literal notranslate"><span class="pre">SisypheFunctionsSettings</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html#Sisyphe.core.sisypheSettings.SisypheSettings"><code class="docutils literal notranslate"><span class="pre">SisypheSettings</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html#Sisyphe.core.sisypheSettings.SisypheTooltips"><code class="docutils literal notranslate"><span class="pre">SisypheTooltips</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html#Sisyphe.core.sisypheSettings.getUserPath"><code class="docutils literal notranslate"><span class="pre">getUserPath()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html#Sisyphe.core.sisypheSettings.getUserPySisyphePath"><code class="docutils literal notranslate"><span class="pre">getUserPySisyphePath()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html#Sisyphe.core.sisypheSettings.getUsername"><code class="docutils literal notranslate"><span class="pre">getUsername()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html#Sisyphe.core.sisypheSettings.initPySisypheUserPath"><code class="docutils literal notranslate"><span class="pre">initPySisypheUserPath()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html#Sisyphe.core.sisypheSettings.setUserSettingsToDefault"><code class="docutils literal notranslate"><span class="pre">setUserSettingsToDefault()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_sheet.html">Sisyphe.core.sisypheSheet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_sheet.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_sheet.html#Sisyphe.core.sisypheSheet.SisypheSheet"><code class="docutils literal notranslate"><span class="pre">SisypheSheet</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_statistics.html">Sisyphe.core.sisypheStatistics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.SisypheDesign"><code class="docutils literal notranslate"><span class="pre">SisypheDesign</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.autocorrelationsEstimate"><code class="docutils literal notranslate"><span class="pre">autocorrelationsEstimate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.clusterCorrectedpvalueToExtent"><code class="docutils literal notranslate"><span class="pre">clusterCorrectedpvalueToExtent()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.clusterUncorrectedpvalueToExtent"><code class="docutils literal notranslate"><span class="pre">clusterUncorrectedpvalueToExtent()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.conjunctionFisher"><code class="docutils literal notranslate"><span class="pre">conjunctionFisher()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.conjunctionMudholkar"><code class="docutils literal notranslate"><span class="pre">conjunctionMudholkar()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.conjunctionStouffer"><code class="docutils literal notranslate"><span class="pre">conjunctionStouffer()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.conjunctionTippett"><code class="docutils literal notranslate"><span class="pre">conjunctionTippett()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.conjunctionWorsley"><code class="docutils literal notranslate"><span class="pre">conjunctionWorsley()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.convolveModelHRF"><code class="docutils literal notranslate"><span class="pre">convolveModelHRF()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.expectedVoxelsPerCluster"><code class="docutils literal notranslate"><span class="pre">expectedVoxelsPerCluster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.extentToClusterCorrectedpvalue"><code class="docutils literal notranslate"><span class="pre">extentToClusterCorrectedpvalue()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.extentToClusterUncorrectedpvalue"><code class="docutils literal notranslate"><span class="pre">extentToClusterUncorrectedpvalue()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.getBoxCarModel"><code class="docutils literal notranslate"><span class="pre">getBoxCarModel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.getDOF"><code class="docutils literal notranslate"><span class="pre">getDOF()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.getHRF"><code class="docutils literal notranslate"><span class="pre">getHRF()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.getHighPass"><code class="docutils literal notranslate"><span class="pre">getHighPass()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.isRankDeficient"><code class="docutils literal notranslate"><span class="pre">isRankDeficient()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.modelEstimate"><code class="docutils literal notranslate"><span class="pre">modelEstimate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.pCorrectedBonferroni"><code class="docutils literal notranslate"><span class="pre">pCorrectedBonferroni()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.pUncorrectedBonferroni"><code class="docutils literal notranslate"><span class="pre">pUncorrectedBonferroni()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.pvalueTot"><code class="docutils literal notranslate"><span class="pre">pvalueTot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.pvalueToz"><code class="docutils literal notranslate"><span class="pre">pvalueToz()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.qFDRTot"><code class="docutils literal notranslate"><span class="pre">qFDRTot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.qFDRToz"><code class="docutils literal notranslate"><span class="pre">qFDRToz()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.reselCount"><code class="docutils literal notranslate"><span class="pre">reselCount()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.tFieldEulerCharacteristic"><code class="docutils literal notranslate"><span class="pre">tFieldEulerCharacteristic()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.tFieldExpectedClusters"><code class="docutils literal notranslate"><span class="pre">tFieldExpectedClusters()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.tFieldExpectedVoxels"><code class="docutils literal notranslate"><span class="pre">tFieldExpectedVoxels()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.tToVoxelCorrectedpvalue"><code class="docutils literal notranslate"><span class="pre">tToVoxelCorrectedpvalue()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.tTopvalue"><code class="docutils literal notranslate"><span class="pre">tTopvalue()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.tToz"><code class="docutils literal notranslate"><span class="pre">tToz()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.tTozmap"><code class="docutils literal notranslate"><span class="pre">tTozmap()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.thresholdMap"><code class="docutils literal notranslate"><span class="pre">thresholdMap()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.tmapContrastEstimate"><code class="docutils literal notranslate"><span class="pre">tmapContrastEstimate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.voxelCorrectedpvalueTot"><code class="docutils literal notranslate"><span class="pre">voxelCorrectedpvalueTot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.voxelCorrectedpvalueToz"><code class="docutils literal notranslate"><span class="pre">voxelCorrectedpvalueToz()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.zFieldEulerCharacteristic"><code class="docutils literal notranslate"><span class="pre">zFieldEulerCharacteristic()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.zFieldExpectedClusters"><code class="docutils literal notranslate"><span class="pre">zFieldExpectedClusters()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.zFieldExpectedVoxels"><code class="docutils literal notranslate"><span class="pre">zFieldExpectedVoxels()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.zToVoxelCorrectedpvalue"><code class="docutils literal notranslate"><span class="pre">zToVoxelCorrectedpvalue()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.zTopvalue"><code class="docutils literal notranslate"><span class="pre">zTopvalue()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.zTot"><code class="docutils literal notranslate"><span class="pre">zTot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html#Sisyphe.core.sisypheStatistics.zmapContrastEstimate"><code class="docutils literal notranslate"><span class="pre">zmapContrastEstimate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_tools.html">Sisyphe.core.sisypheTools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html#Sisyphe.core.sisypheTools.AngleWidget"><code class="docutils literal notranslate"><span class="pre">AngleWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html#Sisyphe.core.sisypheTools.BoxWidget"><code class="docutils literal notranslate"><span class="pre">BoxWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html#Sisyphe.core.sisypheTools.DistanceWidget"><code class="docutils literal notranslate"><span class="pre">DistanceWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html#Sisyphe.core.sisypheTools.HandleWidget"><code class="docutils literal notranslate"><span class="pre">HandleWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html#Sisyphe.core.sisypheTools.LineWidget"><code class="docutils literal notranslate"><span class="pre">LineWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html#Sisyphe.core.sisypheTools.NamedWidget"><code class="docutils literal notranslate"><span class="pre">NamedWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html#Sisyphe.core.sisypheTools.OrthogonalDistanceWidget"><code class="docutils literal notranslate"><span class="pre">OrthogonalDistanceWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html#Sisyphe.core.sisypheTools.TextWidget"><code class="docutils literal notranslate"><span class="pre">TextWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html#Sisyphe.core.sisypheTools.ToolWidgetCollection"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_tracts.html">Sisyphe.core.sisypheTracts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html#Sisyphe.core.sisypheTracts.SisypheBundle"><code class="docutils literal notranslate"><span class="pre">SisypheBundle</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html#Sisyphe.core.sisypheTracts.SisypheBundleCollection"><code class="docutils literal notranslate"><span class="pre">SisypheBundleCollection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html#Sisyphe.core.sisypheTracts.SisypheDKIModel"><code class="docutils literal notranslate"><span class="pre">SisypheDKIModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html#Sisyphe.core.sisypheTracts.SisypheDSIDModel"><code class="docutils literal notranslate"><span class="pre">SisypheDSIDModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html#Sisyphe.core.sisypheTracts.SisypheDSIModel"><code class="docutils literal notranslate"><span class="pre">SisypheDSIModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html#Sisyphe.core.sisypheTracts.SisypheDTIModel"><code class="docutils literal notranslate"><span class="pre">SisypheDTIModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html#Sisyphe.core.sisypheTracts.SisypheDiffusionModel"><code class="docutils literal notranslate"><span class="pre">SisypheDiffusionModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html#Sisyphe.core.sisypheTracts.SisypheSHCSAModel"><code class="docutils literal notranslate"><span class="pre">SisypheSHCSAModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html#Sisyphe.core.sisypheTracts.SisypheSHCSDModel"><code class="docutils literal notranslate"><span class="pre">SisypheSHCSDModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines"><code class="docutils literal notranslate"><span class="pre">SisypheStreamlines</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html#Sisyphe.core.sisypheTracts.SisypheTracking"><code class="docutils literal notranslate"><span class="pre">SisypheTracking</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html#Sisyphe.core.sisypheTracts.SisypheTract"><code class="docutils literal notranslate"><span class="pre">SisypheTract</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html#Sisyphe.core.sisypheTracts.SisypheTractCollection"><code class="docutils literal notranslate"><span class="pre">SisypheTractCollection</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_transform.html">Sisyphe.core.sisypheTransform</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_transform.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_transform.html#Sisyphe.core.sisypheTransform.SisypheApplyTransform"><code class="docutils literal notranslate"><span class="pre">SisypheApplyTransform</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform"><code class="docutils literal notranslate"><span class="pre">SisypheTransform</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransformCollection"><code class="docutils literal notranslate"><span class="pre">SisypheTransformCollection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransforms"><code class="docutils literal notranslate"><span class="pre">SisypheTransforms</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_volume.html">Sisyphe.core.sisypheVolume</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_volume.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume"><code class="docutils literal notranslate"><span class="pre">SisypheVolume</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolumeCollection"><code class="docutils literal notranslate"><span class="pre">SisypheVolumeCollection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.multiComponentSisypheVolumeFromList"><code class="docutils literal notranslate"><span class="pre">multiComponentSisypheVolumeFromList()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_xml.html">Sisyphe.core.sisypheXml</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_xml.html#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_xml.html#Sisyphe.core.sisypheXml.AbstractXml"><code class="docutils literal notranslate"><span class="pre">AbstractXml</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_xml.html#Sisyphe.core.sisypheXml.XmlROI"><code class="docutils literal notranslate"><span class="pre">XmlROI</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_xml.html#Sisyphe.core.sisypheXml.XmlStreamlines"><code class="docutils literal notranslate"><span class="pre">XmlStreamlines</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_xml.html#Sisyphe.core.sisypheXml.XmlVolume"><code class="docutils literal notranslate"><span class="pre">XmlVolume</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../PySisyphe_menubar.html" class="btn btn-neutral float-left" title="Menubar" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_packages.html" class="btn btn-neutral float-right" title="Packages" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

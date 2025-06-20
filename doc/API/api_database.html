@@ -1,0 +1,1108 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sisyphe.core.sisypheDatabase &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=049aceee"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Sisyphe.core.sisypheDicom" href="api_dicom.html" />
+    <link rel="prev" title="Sisyphe.core.sisypheConstants" href="api_constants.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Sisyphe
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api_packages.html">Packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html">Sisyphe.core.sisypheConstants</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Sisyphe.core.sisypheDatabase</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.backupDatabase"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.backupDatabase()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.backupIdentity"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.backupIdentity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.backupPatient"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.backupPatient()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.clearDatabase"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.clearDatabase()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copyFileToPatient"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.copyFileToPatient()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copyFilesToPatient"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.copyFilesToPatient()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheMesh"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.copySisypheMesh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheMeshes"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.copySisypheMeshes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheROI"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.copySisypheROI()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheROIs"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.copySisypheROIs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheVolume"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.copySisypheVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheVolumes"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.copySisypheVolumes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.createPatient"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.createPatient()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.createPatients"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.createPatients()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.deleteFileFromPatient"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.deleteFileFromPatient()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.deleteFilesFromPatient"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.deleteFilesFromPatient()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getAbsFolderFromIdentity"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getAbsFolderFromIdentity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getCreationDate"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getCreationDate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getCreationDateCode"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getCreationDateCode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getDatabasePath"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getDatabasePath()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getFilesLastModifiedDate"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getFilesLastModifiedDate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getFolderFromIdentity"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getFolderFromIdentity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getIdentityFromFolder"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getIdentityFromFolder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getLastModifiedDate"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getLastModifiedDate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getLastModifiedDateCode"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getLastModifiedDateCode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientCount"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getPatientCount()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientList"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getPatientList()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientMeshes"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getPatientMeshes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientROIs"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getPatientROIs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientTools"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getPatientTools()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientVolumes"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.getPatientVolumes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasDatabasePath"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.hasDatabasePath()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasPatient"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.hasPatient()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheMesh"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.hasSisypheMesh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheROI"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.hasSisypheROI()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheVolume"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.hasSisypheVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.isEmpty"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.isEmpty()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.removePatient"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.removePatient()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.removePatients"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.removePatients()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.removeSisypheMesh"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.removeSisypheMesh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.removeSisypheROI"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.removeSisypheROI()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.removeSisypheVolume"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.removeSisypheVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.saveSisypheMeshtoDatabase"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.saveSisypheMeshtoDatabase()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.saveSisypheROItoDatabase"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.saveSisypheROItoDatabase()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.saveSisypheVolumeToDatabase"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.saveSisypheVolumeToDatabase()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.searchPatients"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.searchPatients()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.searchSisypheMeshFromID"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.searchSisypheMeshFromID()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.searchSisypheROIFromID"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.searchSisypheROIFromID()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.searchSisypheVolumeFromID"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.searchSisypheVolumeFromID()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.setDatabasePath"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.setDatabasePath()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.setDatabasePathFromSettings"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.setDatabasePathFromSettings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.setDefaultDatabasePath"><code class="docutils literal notranslate"><span class="pre">SisypheDatabase.setDefaultDatabasePath()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html">Sisyphe.core.sisypheDicom</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_download.html">Sisyphe.core.sisypheDownload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_fiducial.html">Sisyphe.core.sisypheFiducialBox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_image.html">Sisyphe.core.sisypheImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageattributes.html">Sisyphe.core.sisypheImageAttributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageio.html">Sisyphe.core.sisypheImageIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_lut.html">Sisyphe.core.sisypheLUT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_mesh.html">Sisyphe.core.sisypheMesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html">Sisyphe.core.sisypheMeshIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_recent.html">Sisyphe.core.sisypheRecent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_roi.html">Sisyphe.core.sisypheROI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html">Sisyphe.core.sisypheSettings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_sheet.html">Sisyphe.core.sisypheSheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html">Sisyphe.core.sisypheStatistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html">Sisyphe.core.sisypheTools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html">Sisyphe.core.sisypheTracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_transform.html">Sisyphe.core.sisypheTransform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_volume.html">Sisyphe.core.sisypheVolume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_xml.html">Sisyphe.core.sisypheXml</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API</a></li>
+      <li class="breadcrumb-item active">Sisyphe.core.sisypheDatabase</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/API/api_database.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-Sisyphe.core.sisypheDatabase">
+<span id="sisyphe-core-sisyphedatabase"></span><h1>Sisyphe.core.sisypheDatabase<a class="headerlink" href="#module-Sisyphe.core.sisypheDatabase" title="Link to this heading"></a></h1>
+<section id="external-packages-modules">
+<h2>External packages/modules<a class="headerlink" href="#external-packages-modules" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>PyQt5, Qt GUI, <a class="reference external" href="https://www.riverbankcomputing.com/software/pyqt/">https://www.riverbankcomputing.com/software/pyqt/</a></p></li>
+</ul>
+</div></blockquote>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDatabase.</span></span><span class="sig-name descname"><span class="pre">SisypheDatabase</span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase" title="Link to this definition"></a></dt>
+<dd><section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>Class used to manage a patient database.</p>
+<p>Scope of methods:</p>
+<ul class="simple">
+<li><p>container-like methods to access to patient folder</p></li>
+<li><p>Get/set/remove volumes/ROIs/meshes to patient folder</p></li>
+<li><p>search volume/ROI/mesh in database</p></li>
+<li><p>database backup</p></li>
+</ul>
+</section>
+<section id="inheritance">
+<h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
+<p>object -&gt; SisypheDatabaseItem</p>
+<p>Creation: 27/09/2022
+Last revision: 10/12/2023</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.backupDatabase">
+<span class="sig-name descname"><span class="pre">backupDatabase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backuppath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DialogWait</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.backupDatabase" title="Link to this definition"></a></dt>
+<dd><p>Copy database to a backup directory.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>backuppath<span class="classifier">str</span></dt><dd><p>backup folder name</p>
+</dd>
+<dt>wait<span class="classifier">Sisyphe.core.dialogWait.DialogWait</span></dt><dd><p>progress bar dialog</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.backupIdentity">
+<span class="sig-name descname"><span class="pre">backupIdentity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">backuppath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.backupIdentity" title="Link to this definition"></a></dt>
+<dd><p>Copy a patient folder to a backup directory.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+<dt>backuppath<span class="classifier">str</span></dt><dd><p>backup folder name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.backupPatient">
+<span class="sig-name descname"><span class="pre">backupPatient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backuppath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.backupPatient" title="Link to this definition"></a></dt>
+<dd><p>Copy a patient folder to a backup directory.</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>patient<span class="classifier">str</span></dt><dd><p>patient folder name</p>
+</dd>
+<dt>backuppath<span class="classifier">str</span></dt><dd><p>backup folder name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.clearDatabase">
+<span class="sig-name descname"><span class="pre">clearDatabase</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.clearDatabase" title="Link to this definition"></a></dt>
+<dd><p>Clear the patient database, deletes all sub-folders of the database directory.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.copyFileToPatient">
+<span class="sig-name descname"><span class="pre">copyFileToPatient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copyFileToPatient" title="Link to this definition"></a></dt>
+<dd><p>Copy a file to a patient folder.</p>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>file name to copy</p>
+</dd>
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.copyFilesToPatient">
+<span class="sig-name descname"><span class="pre">copyFilesToPatient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filenames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copyFilesToPatient" title="Link to this definition"></a></dt>
+<dd><p>Copy a list of files to a patient folder.</p>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filenames<span class="classifier">list[str]</span></dt><dd><p>list of file names to copy</p>
+</dd>
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheMesh">
+<span class="sig-name descname"><span class="pre">copySisypheMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMesh" title="Sisyphe.core.sisypheMesh.SisypheMesh"><span class="pre">SisypheMesh</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheMesh" title="Link to this definition"></a></dt>
+<dd><p>Copy a Sisyphe.core.sisypheROI.SisypheROI file (.xmesh) in its patient folder.</p>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>mesh<span class="classifier">Sisyphe.core.sisypheMesh.SisypheMesh</span></dt><dd><p>mesh to copy</p>
+</dd>
+<dt>identity<span class="classifier">Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheMeshes">
+<span class="sig-name descname"><span class="pre">copySisypheMeshes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meshes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMesh" title="Sisyphe.core.sisypheMesh.SisypheMesh"><span class="pre">SisypheMesh</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMeshCollection" title="Sisyphe.core.sisypheMesh.SisypheMeshCollection"><span class="pre">SisypheMeshCollection</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheMeshes" title="Link to this definition"></a></dt>
+<dd><p>Save a list of Sisyphe.core.sisypheMesh.SisypheMesh files (.xmesh) in the database.</p>
+<section id="id6">
+<h3>Parameters<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>meshes<span class="classifier">list[Sisyphe.core.sisypheMesh.SisypheMesh] | Sisyphe.core.sisypheMesh.SisypheMeshCollection</span></dt><dd><p>meshes to save</p>
+</dd>
+<dt>identity<span class="classifier">Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheROI">
+<span class="sig-name descname"><span class="pre">copySisypheROI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">roi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROI" title="Sisyphe.core.sisypheROI.SisypheROI"><span class="pre">SisypheROI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheROI" title="Link to this definition"></a></dt>
+<dd><p>Copy a Sisyphe.core.sisypheROI.SisypheROI file (.xroi) in its patient folder.</p>
+<section id="id7">
+<h3>Parameters<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>roi<span class="classifier">Sisyphe.core.sisypheROI.SisypheROI</span></dt><dd><p>ROI to copy</p>
+</dd>
+<dt>identity<span class="classifier">Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheROIs">
+<span class="sig-name descname"><span class="pre">copySisypheROIs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rois</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROI" title="Sisyphe.core.sisypheROI.SisypheROI"><span class="pre">SisypheROI</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROICollection" title="Sisyphe.core.sisypheROI.SisypheROICollection"><span class="pre">SisypheROICollection</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheROIs" title="Link to this definition"></a></dt>
+<dd><p>Copy a list of Sisyphe.core.sisypheROI.SisypheROI files (.xroi) in the database.</p>
+<section id="id8">
+<h3>Parameters<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>rois<span class="classifier">list[Sisyphe.core.sisypheROI.SisypheROI] | Sisyphe.core.sisypheROI.SisypheROICollection</span></dt><dd><p>ROIs to copy</p>
+</dd>
+<dt>identity<span class="classifier">Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheVolume">
+<span class="sig-name descname"><span class="pre">copySisypheVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheVolume" title="Link to this definition"></a></dt>
+<dd><p>Copy a Sisyphe.core.sisypheVolume.SisypheVolume file (.xvol) in its patient folder.</p>
+<section id="id9">
+<h3>Parameters<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>vol<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume</span></dt><dd><p>volume is saved in the patient folder with its file name attribute</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheVolumes">
+<span class="sig-name descname"><span class="pre">copySisypheVolumes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolumeCollection" title="Sisyphe.core.sisypheVolume.SisypheVolumeCollection"><span class="pre">SisypheVolumeCollection</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheVolumes" title="Link to this definition"></a></dt>
+<dd><p>Copy a list of Sisyphe.core.sisypheVolume.SisypheVolume file (.xvol) in the database.</p>
+<section id="id10">
+<h3>Parameters<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>vols<span class="classifier">list[Sisyphe.core.sisypheVolume.SisypheVolume] | Sisyphe.core.sisypheVolume.SisypheVolumeCollection</span></dt><dd><p>volumes are saved in the patient folders with their file name attributes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.createPatient">
+<span class="sig-name descname"><span class="pre">createPatient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.createPatient" title="Link to this definition"></a></dt>
+<dd><p>Add a patient in the database, creates patient sub-folder in the database directory.</p>
+<section id="id11">
+<h3>Parameters<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.createPatients">
+<span class="sig-name descname"><span class="pre">createPatients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.createPatients" title="Link to this definition"></a></dt>
+<dd><p>Add a list of patients in the database, creates patient sub-folders in the database directory.</p>
+<section id="id12">
+<h3>Parameters<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identities<span class="classifier">list[Sisyphe.core.sisypheVolume.SisypheVolume] | list[Sisyphe.core.SisypheImageAttributes.SisypheIdentity]</span></dt><dd><p>patient identities</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.deleteFileFromPatient">
+<span class="sig-name descname"><span class="pre">deleteFileFromPatient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.deleteFileFromPatient" title="Link to this definition"></a></dt>
+<dd><p>Remove a file from a patient folder.</p>
+<section id="id13">
+<h3>Parameters<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>file name to remove</p>
+</dd>
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.deleteFilesFromPatient">
+<span class="sig-name descname"><span class="pre">deleteFilesFromPatient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filenames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.deleteFilesFromPatient" title="Link to this definition"></a></dt>
+<dd><p>Remove a list of files from patient folder.</p>
+<section id="id14">
+<h3>Parameters<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filenames<span class="classifier">list[str]</span></dt><dd><p>list of file names to remove</p>
+</dd>
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getAbsFolderFromIdentity">
+<span class="sig-name descname"><span class="pre">getAbsFolderFromIdentity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getAbsFolderFromIdentity" title="Link to this definition"></a></dt>
+<dd><p>Get patient folder name from identity.</p>
+<section id="id15">
+<h3>Parameters<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>folder name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getCreationDate">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getCreationDate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'%Y-%m-%d</span> <span class="pre">%H:%M:%S'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getCreationDate" title="Link to this definition"></a></dt>
+<dd><p>Get file creation date as str.</p>
+<section id="id16">
+<h3>Parameters<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>file name</p>
+</dd>
+<dt>f<span class="classifier">str</span></dt><dd><p>date format (default ‘%Y-%m-%d %H:%M:%S’)</p>
+</dd>
+</dl>
+</section>
+<section id="id17">
+<h3>Returns<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>date</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getCreationDateCode">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getCreationDateCode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getCreationDateCode" title="Link to this definition"></a></dt>
+<dd><p>Get file creation date as operating system float code.</p>
+<section id="id18">
+<h3>Parameters<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>file name</p>
+</dd>
+</dl>
+</section>
+<section id="id19">
+<h3>Returns<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float | None</dt><dd><p>float code of the date</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getDatabasePath">
+<span class="sig-name descname"><span class="pre">getDatabasePath</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getDatabasePath" title="Link to this definition"></a></dt>
+<dd><p>Get the PySisyphe patient database folder (root folder).</p>
+<section id="id20">
+<h3>Returns<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>PySisyphe patient database folder</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getFilesLastModifiedDate">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getFilesLastModifiedDate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getFilesLastModifiedDate" title="Link to this definition"></a></dt>
+<dd><p>Get last modified date of files in a folder as list of operating system float code.</p>
+<section id="id21">
+<h3>Parameters<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>folder<span class="classifier">str</span></dt><dd><p>folder name</p>
+</dd>
+</dl>
+</section>
+<section id="id22">
+<h3>Returns<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dict[str, float]</dt><dd><p>keys are file names, values are float codes of last modified dates</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getFolderFromIdentity">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getFolderFromIdentity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getFolderFromIdentity" title="Link to this definition"></a></dt>
+<dd><p>Get patient folder name from identity (Sisyphe.core.sisypheImageAttributes.SisypheIdentity).</p>
+<section id="id23">
+<h3>Parameters<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<p>identity : Sisyphe.core.sisypheImageAttributes.SisypheIdentity</p>
+</section>
+<section id="id24">
+<h3>Returns<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>folder name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getIdentityFromFolder">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getIdentityFromFolder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getIdentityFromFolder" title="Link to this definition"></a></dt>
+<dd><p>Get patient identity (Sisyphe.core.sisypheImageAttributes.SisypheIdentity) from folder name.</p>
+<section id="id25">
+<h3>Parameters<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>folder<span class="classifier">str</span></dt><dd><p>folder name</p>
+</dd>
+</dl>
+</section>
+<section id="id26">
+<h3>Returns<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<p>Sisyphe.core.sisypheImageAttributes.SisypheIdentity</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getLastModifiedDate">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getLastModifiedDate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'%Y-%m-%d</span> <span class="pre">%H:%M:%S'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getLastModifiedDate" title="Link to this definition"></a></dt>
+<dd><p>Get file last modified date as str.</p>
+<section id="id27">
+<h3>Parameters<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>file name</p>
+</dd>
+<dt>f<span class="classifier">str</span></dt><dd><p>date format (default ‘%Y-%m-%d %H:%M:%S’)</p>
+</dd>
+</dl>
+</section>
+<section id="id28">
+<h3>Returns<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>last modified date</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getLastModifiedDateCode">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getLastModifiedDateCode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getLastModifiedDateCode" title="Link to this definition"></a></dt>
+<dd><p>Get file last modified date as operating system float code.</p>
+<section id="id29">
+<h3>Parameters<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>file name</p>
+</dd>
+</dl>
+</section>
+<section id="id30">
+<h3>Returns<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>float code of the last modified date</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientCount">
+<span class="sig-name descname"><span class="pre">getPatientCount</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientCount" title="Link to this definition"></a></dt>
+<dd><p>Get patient count in PySisyphe database.</p>
+<section id="id31">
+<h3>Returns<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>int</dt><dd><p>patient count</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientList">
+<span class="sig-name descname"><span class="pre">getPatientList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'*_*_*'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientList" title="Link to this definition"></a></dt>
+<dd><p>Get a list of patient folder names from a search filter string.</p>
+<section id="id32">
+<h3>Parameters<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>flt<span class="classifier">str</span></dt><dd><p>filter format is ‘{lastname}_{firstname}_{birthdate}’, lastname, firstname, birthdate could be
+replaced by ‘*’ wildcard char. default is ‘<em>_*_</em>’ to get all patient folder names</p>
+</dd>
+</dl>
+</section>
+<section id="id33">
+<h3>Returns<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>patient folder names</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientMeshes">
+<span class="sig-name descname"><span class="pre">getPatientMeshes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientMeshes" title="Link to this definition"></a></dt>
+<dd><p>Get the list of Sisyphe.core.sisypheMesh.SisypheMesh file names (.xmesh) in a patient folder.</p>
+<section id="id34">
+<h3>Parameters<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+<section id="id35">
+<h3>Returns<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>Sisyphe.core.sisypheMesh.SisypheMesh file names</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientROIs">
+<span class="sig-name descname"><span class="pre">getPatientROIs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientROIs" title="Link to this definition"></a></dt>
+<dd><p>Get the list of Sisyphe.core.sisypheROI.SisypheROI file names (.xroi) in a patient folder.</p>
+<section id="id36">
+<h3>Parameters<a class="headerlink" href="#id36" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+<section id="id37">
+<h3>Returns<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>Sisyphe.core.sisypheROI.SisypheROI file names</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientTools">
+<span class="sig-name descname"><span class="pre">getPatientTools</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientTools" title="Link to this definition"></a></dt>
+<dd><p>Get the list of Sisyphe.widget.toolWidgets.ToolWidgetCollection file names (.xtools) in a patient folder.</p>
+<section id="id38">
+<h3>Parameters<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+<section id="id39">
+<h3>Returns<a class="headerlink" href="#id39" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>Sisyphe.widget.toolWidgets.ToolWidgetCollection file names</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientVolumes">
+<span class="sig-name descname"><span class="pre">getPatientVolumes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.getPatientVolumes" title="Link to this definition"></a></dt>
+<dd><p>Get the list of Sisyphe.core.sisypheVolume.SisypheVolume file names (.xvol) in a patient folder.</p>
+<section id="id40">
+<h3>Parameters<a class="headerlink" href="#id40" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+<section id="id41">
+<h3>Returns<a class="headerlink" href="#id41" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>Sisyphe.core.sisypheVolume.SisypheVolume file names</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.hasDatabasePath">
+<span class="sig-name descname"><span class="pre">hasDatabasePath</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasDatabasePath" title="Link to this definition"></a></dt>
+<dd><p>Checks whether PySisyphe database folder exists.</p>
+<section id="id42">
+<h3>Returns<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if the PySisyphe database folder exists</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.hasPatient">
+<span class="sig-name descname"><span class="pre">hasPatient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasPatient" title="Link to this definition"></a></dt>
+<dd><p>Checks whether a patient is in SisypheDatabase instance.</p>
+<section id="id43">
+<h3>Parameters<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+<section id="id44">
+<h3>Returns<a class="headerlink" href="#id44" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if patient is in database</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheMesh">
+<span class="sig-name descname"><span class="pre">hasSisypheMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMesh" title="Sisyphe.core.sisypheMesh.SisypheMesh"><span class="pre">SisypheMesh</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheMesh" title="Link to this definition"></a></dt>
+<dd><p>Checks whether Sisyphe.core.sisypheMesh.SisypheMesh is in the database.</p>
+<section id="id45">
+<h3>Parameters<a class="headerlink" href="#id45" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>mesh<span class="classifier">Sisyphe.core.sisypheMesh.SisypheMesh</span></dt><dd><p>mesh to search in database</p>
+</dd>
+<dt>identity<span class="classifier">Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+<section id="id46">
+<h3>Returns<a class="headerlink" href="#id46" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if mesh is in database</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheROI">
+<span class="sig-name descname"><span class="pre">hasSisypheROI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">roi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROI" title="Sisyphe.core.sisypheROI.SisypheROI"><span class="pre">SisypheROI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheROI" title="Link to this definition"></a></dt>
+<dd><p>Checks whether Sisyphe.core.sisypheROI.SisypheROI is in the database.</p>
+<section id="id47">
+<h3>Parameters<a class="headerlink" href="#id47" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>roi<span class="classifier">Sisyphe.core.sisypheROI.SisypheROI</span></dt><dd><p>ROI to search in database</p>
+</dd>
+<dt>identity<span class="classifier">Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+<section id="id48">
+<h3>Returns<a class="headerlink" href="#id48" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if roi is in database</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheVolume">
+<span class="sig-name descname"><span class="pre">hasSisypheVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheVolume" title="Link to this definition"></a></dt>
+<dd><p>Checks whether Sisyphe.core.sisypheVolume.SisypheVolume is in the database.</p>
+<section id="id49">
+<h3>Parameters<a class="headerlink" href="#id49" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>vol<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume</span></dt><dd><p>volume to search in database</p>
+</dd>
+</dl>
+</section>
+<section id="id50">
+<h3>Returns<a class="headerlink" href="#id50" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if vol is in database</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.isEmpty">
+<span class="sig-name descname"><span class="pre">isEmpty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.isEmpty" title="Link to this definition"></a></dt>
+<dd><p>Checks whether patient database is empty.</p>
+<section id="id51">
+<h3>Returns<a class="headerlink" href="#id51" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if patient database is empty</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.removePatient">
+<span class="sig-name descname"><span class="pre">removePatient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.removePatient" title="Link to this definition"></a></dt>
+<dd><p>Remove a patient from the database, delete patient sub-folder of the database directory.</p>
+<section id="id52">
+<h3>Parameters<a class="headerlink" href="#id52" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.removePatients">
+<span class="sig-name descname"><span class="pre">removePatients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.removePatients" title="Link to this definition"></a></dt>
+<dd><p>Removes a list of patients from the database, deletes patient sub-folders of the database directory.</p>
+<section id="id53">
+<h3>Parameters<a class="headerlink" href="#id53" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identities<span class="classifier">list[Sisyphe.core.sisypheVolume.SisypheVolume] | list[Sisyphe.core.SisypheImageAttributes.SisypheIdentity]</span></dt><dd><p>patient identities</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.removeSisypheMesh">
+<span class="sig-name descname"><span class="pre">removeSisypheMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMesh" title="Sisyphe.core.sisypheMesh.SisypheMesh"><span class="pre">SisypheMesh</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.removeSisypheMesh" title="Link to this definition"></a></dt>
+<dd><p>Remove Sisyphe.core.sisypheMesh.SisypheMesh from the database.</p>
+<section id="id54">
+<h3>Parameters<a class="headerlink" href="#id54" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>mesh<span class="classifier">Sisyphe.core.sisypheMesh.SisypheMesh</span></dt><dd><p>mesh to remove</p>
+</dd>
+<dt>identity<span class="classifier">Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.removeSisypheROI">
+<span class="sig-name descname"><span class="pre">removeSisypheROI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">roi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROI" title="Sisyphe.core.sisypheROI.SisypheROI"><span class="pre">SisypheROI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.removeSisypheROI" title="Link to this definition"></a></dt>
+<dd><p>Remove Sisyphe.core.sisypheROI.SisypheROI from the database.</p>
+<section id="id55">
+<h3>Parameters<a class="headerlink" href="#id55" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>roi<span class="classifier">Sisyphe.core.sisypheROI.SisypheROI</span></dt><dd><p>ROI to remove</p>
+</dd>
+<dt>identity<span class="classifier">Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.removeSisypheVolume">
+<span class="sig-name descname"><span class="pre">removeSisypheVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.removeSisypheVolume" title="Link to this definition"></a></dt>
+<dd><p>Remove Sisyphe.core.sisypheVolume.SisypheVolume from the database.</p>
+<section id="id56">
+<h3>Parameters<a class="headerlink" href="#id56" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>vol<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume</span></dt><dd><p>volume to remove</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.saveSisypheMeshtoDatabase">
+<span class="sig-name descname"><span class="pre">saveSisypheMeshtoDatabase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMesh" title="Sisyphe.core.sisypheMesh.SisypheMesh"><span class="pre">SisypheMesh</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.saveSisypheMeshtoDatabase" title="Link to this definition"></a></dt>
+<dd><p>Save a Sisyphe.core.sisypheMesh.SisypheMesh file (.xmesh) in its patient folder.</p>
+<section id="id57">
+<h3>Parameters<a class="headerlink" href="#id57" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>mesh<span class="classifier">Sisyphe.core.sisypheMesh.SisypheMesh</span></dt><dd><p>mesh to save</p>
+</dd>
+<dt>identity<span class="classifier">Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+<dt>filename<span class="classifier">str</span></dt><dd><p>Sisyphe.core.sisypheMesh.SisypheMesh file name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.saveSisypheROItoDatabase">
+<span class="sig-name descname"><span class="pre">saveSisypheROItoDatabase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">roi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROI" title="Sisyphe.core.sisypheROI.SisypheROI"><span class="pre">SisypheROI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.saveSisypheROItoDatabase" title="Link to this definition"></a></dt>
+<dd><p>Save a Sisyphe.core.sisypheROI.SisypheROI file (.xroi) in its patient folder.</p>
+<section id="id58">
+<h3>Parameters<a class="headerlink" href="#id58" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>roi<span class="classifier">Sisyphe.core.sisypheROI.SisypheROI</span></dt><dd><p>ROI to save</p>
+</dd>
+<dt>identity<span class="classifier">Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+<dt>filename<span class="classifier">str</span></dt><dd><p>Sisyphe.core.sisypheROI.SisypheROI file name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.saveSisypheVolumeToDatabase">
+<span class="sig-name descname"><span class="pre">saveSisypheVolumeToDatabase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.saveSisypheVolumeToDatabase" title="Link to this definition"></a></dt>
+<dd><p>Save a Sisyphe.core.sisypheVolume.SisypheVolume file (.xvol) in its patient folder.</p>
+<section id="id59">
+<h3>Parameters<a class="headerlink" href="#id59" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>vol<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume</span></dt><dd><p>volume to save</p>
+</dd>
+<dt>filename<span class="classifier">str</span></dt><dd><p>Sisyphe.core.sisypheVolume.SisypheVolume file name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.searchPatients">
+<span class="sig-name descname"><span class="pre">searchPatients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fltlastname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fltfirstname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fltdate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'*'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.searchPatients" title="Link to this definition"></a></dt>
+<dd><p>Get a list of patient folder names from a search filter based on identity.</p>
+<section id="id60">
+<h3>Parameters<a class="headerlink" href="#id60" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>fltlastname<span class="classifier">str</span></dt><dd><p>lastname filter, default is ‘*’ wildcard char</p>
+</dd>
+<dt>fltfirstname<span class="classifier">str</span></dt><dd><p>firstname filter, default is ‘*’ wildcard char.</p>
+</dd>
+<dt>fltdate<span class="classifier">str</span></dt><dd><p>date filter, default is ‘*’ wildcard char.</p>
+</dd>
+</dl>
+</section>
+<section id="id61">
+<h3>Returns<a class="headerlink" href="#id61" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>patient folder names</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.searchSisypheMeshFromID">
+<span class="sig-name descname"><span class="pre">searchSisypheMeshFromID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROI" title="Sisyphe.core.sisypheROI.SisypheROI"><span class="pre">SisypheROI</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransforms" title="Sisyphe.core.sisypheTransform.SisypheTransforms"><span class="pre">SisypheTransforms</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_tools.html#Sisyphe.core.sisypheTools.ToolWidgetCollection" title="Sisyphe.core.sisypheTools.ToolWidgetCollection"><span class="pre">ToolWidgetCollection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.searchSisypheMeshFromID" title="Link to this definition"></a></dt>
+<dd><p>Search Sisyphe.core.sisypheMesh.SisypheMesh from ID (str or ID attributes) in patient folder.</p>
+<section id="id62">
+<h3>Parameters<a class="headerlink" href="#id62" title="Link to this heading"></a></h3>
+<p>ID : str | Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.sisypheROI.SisypheROI
+| Sisyphe.core.sisypheTransform.SisypheTransforms | Sisyphe.widget.toolWidgets.ToolWidgetCollection</p>
+<blockquote>
+<div><p>ID to search</p>
+</div></blockquote>
+<dl class="simple">
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+<section id="id63">
+<h3>Returns<a class="headerlink" href="#id63" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>list of mesh file names</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.searchSisypheROIFromID">
+<span class="sig-name descname"><span class="pre">searchSisypheROIFromID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMesh" title="Sisyphe.core.sisypheMesh.SisypheMesh"><span class="pre">SisypheMesh</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransforms" title="Sisyphe.core.sisypheTransform.SisypheTransforms"><span class="pre">SisypheTransforms</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_tools.html#Sisyphe.core.sisypheTools.ToolWidgetCollection" title="Sisyphe.core.sisypheTools.ToolWidgetCollection"><span class="pre">ToolWidgetCollection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.searchSisypheROIFromID" title="Link to this definition"></a></dt>
+<dd><p>Search Sisyphe.core.sisypheROI.SisypheROI from ID (str or ID attributes) in patient folder.</p>
+<section id="id64">
+<h3>Parameters<a class="headerlink" href="#id64" title="Link to this heading"></a></h3>
+<p>ID : str | Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.sisypheMesh.SisypheMesh
+| Sisyphe.core.sisypheTransform.SisypheTransforms | Sisyphe.widget.toolWidgets.ToolWidgetCollection</p>
+<blockquote>
+<div><p>ID to search</p>
+</div></blockquote>
+<dl class="simple">
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+<section id="id65">
+<h3>Returns<a class="headerlink" href="#id65" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list[str]</dt><dd><p>list of ROI file names</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.searchSisypheVolumeFromID">
+<span class="sig-name descname"><span class="pre">searchSisypheVolumeFromID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROI" title="Sisyphe.core.sisypheROI.SisypheROI"><span class="pre">SisypheROI</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMesh" title="Sisyphe.core.sisypheMesh.SisypheMesh"><span class="pre">SisypheMesh</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransforms" title="Sisyphe.core.sisypheTransform.SisypheTransforms"><span class="pre">SisypheTransforms</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_tools.html#Sisyphe.core.sisypheTools.ToolWidgetCollection" title="Sisyphe.core.sisypheTools.ToolWidgetCollection"><span class="pre">ToolWidgetCollection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.searchSisypheVolumeFromID" title="Link to this definition"></a></dt>
+<dd><p>Search Sisyphe.core.sisypheVolume.SisypheVolume from ID (str or ID attributes) in patient folder.</p>
+<section id="id66">
+<h3>Parameters<a class="headerlink" href="#id66" title="Link to this heading"></a></h3>
+<p>ID : str | Sisyphe.core.sisypheROI.SisypheROI | Sisyphe.core.sisypheMesh.SisypheMesh
+| Sisyphe.core.sisypheTransform.SisypheTransforms | Sisyphe.widget.toolWidgets.ToolWidgetCollection</p>
+<blockquote>
+<div><p>ID to search</p>
+</div></blockquote>
+<dl class="simple">
+<dt>identity<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.SisypheImageAttributes.SisypheIdentity</span></dt><dd><p>patient identity</p>
+</dd>
+</dl>
+</section>
+<section id="id67">
+<h3>Returns<a class="headerlink" href="#id67" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>volume file name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.setDatabasePath">
+<span class="sig-name descname"><span class="pre">setDatabasePath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.setDatabasePath" title="Link to this definition"></a></dt>
+<dd><p>Set the PySisyphe patient database folder (root folder).</p>
+<section id="id68">
+<h3>Parameters<a class="headerlink" href="#id68" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>path<span class="classifier">str</span></dt><dd><p>folder name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.setDatabasePathFromSettings">
+<span class="sig-name descname"><span class="pre">setDatabasePathFromSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.setDatabasePathFromSettings" title="Link to this definition"></a></dt>
+<dd><p>Set the default PySisyphe patient database folder from PySisyphe settings file (~/.PySisyphe/settings.xml in
+user folder).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.setDefaultDatabasePath">
+<span class="sig-name descname"><span class="pre">setDefaultDatabasePath</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.setDefaultDatabasePath" title="Link to this definition"></a></dt>
+<dd><p>Set the PySisyphe patient database folder to ~/.PySisyphe/Database (in user folder).</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api_constants.html" class="btn btn-neutral float-left" title="Sisyphe.core.sisypheConstants" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_dicom.html" class="btn btn-neutral float-right" title="Sisyphe.core.sisypheDicom" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

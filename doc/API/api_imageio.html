@@ -1,0 +1,779 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sisyphe.core.sisypheImageIO &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=049aceee"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Sisyphe.core.sisypheLUT" href="api_lut.html" />
+    <link rel="prev" title="Sisyphe.core.sisypheImageAttributes" href="api_imageattributes.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Sisyphe
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api_packages.html">Packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_constants.html">Sisyphe.core.sisypheConstants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_database.html">Sisyphe.core.sisypheDatabase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dicom.html">Sisyphe.core.sisypheDicom</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_download.html">Sisyphe.core.sisypheDownload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_fiducial.html">Sisyphe.core.sisypheFiducialBox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_image.html">Sisyphe.core.sisypheImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_imageattributes.html">Sisyphe.core.sisypheImageAttributes</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Sisyphe.core.sisypheImageIO</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.compareDataElementsBetweenDatasets"><code class="docutils literal notranslate"><span class="pre">compareDataElementsBetweenDatasets()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.convertImageToAxialOrientation"><code class="docutils literal notranslate"><span class="pre">convertImageToAxialOrientation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.convertSITKtoVTK"><code class="docutils literal notranslate"><span class="pre">convertSITKtoVTK()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.convertVTKtoSITK"><code class="docutils literal notranslate"><span class="pre">convertVTKtoSITK()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.extractDataElementValuesFromDatasets"><code class="docutils literal notranslate"><span class="pre">extractDataElementValuesFromDatasets()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.flipImageToVTKDirectionConvention"><code class="docutils literal notranslate"><span class="pre">flipImageToVTKDirectionConvention()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.isDicom"><code class="docutils literal notranslate"><span class="pre">isDicom()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.readFromBitmap"><code class="docutils literal notranslate"><span class="pre">readFromBitmap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.readFromBrainVoyagerVMR"><code class="docutils literal notranslate"><span class="pre">readFromBrainVoyagerVMR()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.readFromDicomDirectory"><code class="docutils literal notranslate"><span class="pre">readFromDicomDirectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.readFromDicomFilenames"><code class="docutils literal notranslate"><span class="pre">readFromDicomFilenames()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.readFromDicomSeries"><code class="docutils literal notranslate"><span class="pre">readFromDicomSeries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.readFromFreeSurferMGH"><code class="docutils literal notranslate"><span class="pre">readFromFreeSurferMGH()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.readFromMINC"><code class="docutils literal notranslate"><span class="pre">readFromMINC()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.readFromNIFTI"><code class="docutils literal notranslate"><span class="pre">readFromNIFTI()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.readFromNRRD"><code class="docutils literal notranslate"><span class="pre">readFromNRRD()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.readFromNumpy"><code class="docutils literal notranslate"><span class="pre">readFromNumpy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.readFromSisyphe"><code class="docutils literal notranslate"><span class="pre">readFromSisyphe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.readFromSisypheROI"><code class="docutils literal notranslate"><span class="pre">readFromSisypheROI()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.readFromVTK"><code class="docutils literal notranslate"><span class="pre">readFromVTK()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.readImage"><code class="docutils literal notranslate"><span class="pre">readImage()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.writeToJSON"><code class="docutils literal notranslate"><span class="pre">writeToJSON()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.writeToMINC"><code class="docutils literal notranslate"><span class="pre">writeToMINC()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.writeToNIFTI"><code class="docutils literal notranslate"><span class="pre">writeToNIFTI()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.writeToNRRD"><code class="docutils literal notranslate"><span class="pre">writeToNRRD()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.writeToNumpy"><code class="docutils literal notranslate"><span class="pre">writeToNumpy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheImageIO.writeToVTK"><code class="docutils literal notranslate"><span class="pre">writeToVTK()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api_lut.html">Sisyphe.core.sisypheLUT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_mesh.html">Sisyphe.core.sisypheMesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_meshio.html">Sisyphe.core.sisypheMeshIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_recent.html">Sisyphe.core.sisypheRecent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_roi.html">Sisyphe.core.sisypheROI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_settings.html">Sisyphe.core.sisypheSettings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_sheet.html">Sisyphe.core.sisypheSheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_statistics.html">Sisyphe.core.sisypheStatistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tools.html">Sisyphe.core.sisypheTools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_tracts.html">Sisyphe.core.sisypheTracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_transform.html">Sisyphe.core.sisypheTransform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_volume.html">Sisyphe.core.sisypheVolume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_xml.html">Sisyphe.core.sisypheXml</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API</a></li>
+      <li class="breadcrumb-item active">Sisyphe.core.sisypheImageIO</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/API/api_imageio.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-Sisyphe.core.sisypheImageIO">
+<span id="sisyphe-core-sisypheimageio"></span><h1>Sisyphe.core.sisypheImageIO<a class="headerlink" href="#module-Sisyphe.core.sisypheImageIO" title="Link to this heading"></a></h1>
+<section id="external-packages-modules">
+<h2>External packages/modules<a class="headerlink" href="#external-packages-modules" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>ANTs, image registration, <a class="reference external" href="http://stnava.github.io/ANTs/">http://stnava.github.io/ANTs/</a></p></li>
+<li><p>ITK, medical image processing, <a class="reference external" href="https://itk.org/">https://itk.org/</a></p></li>
+<li><p>Numpy, scientific computing, <a class="reference external" href="https://numpy.org/">https://numpy.org/</a></p></li>
+<li><p>pydicom, DICOM library, <a class="reference external" href="https://pydicom.github.io/pydicom/stable/">https://pydicom.github.io/pydicom/stable/</a></p></li>
+<li><p>PyQt5, Qt GUI, <a class="reference external" href="https://www.riverbankcomputing.com/software/pyqt/">https://www.riverbankcomputing.com/software/pyqt/</a></p></li>
+<li><p>SimpleITK, medical image processing, <a class="reference external" href="https://simpleitk.org/">https://simpleitk.org/</a></p></li>
+<li><p>vtk, visualization engine/3D rendering, <a class="reference external" href="https://vtk.org/">https://vtk.org/</a></p></li>
+</ul>
+</div></blockquote>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.compareDataElementsBetweenDatasets">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">compareDataElementsBetweenDatasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dataset</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.compareDataElementsBetweenDatasets" title="Link to this definition"></a></dt>
+<dd><p>Create a dataset with DICOM fields that have the same values as the two tested datasets (ds1, ds2 parameters).</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>ds1<span class="classifier">pydicom.Dataset</span></dt><dd><p>first dataset to compare</p>
+</dd>
+<dt>ds2<span class="classifier">pydicom.Dataset</span></dt><dd><p>second dataset to compare</p>
+</dd>
+<dt>equality<span class="classifier">bool</span></dt><dd><p>test equality if True, difference otherwise</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>pydicom.Dataset</dt><dd><p>dataset</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.convertImageToAxialOrientation">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">convertImageToAxialOrientation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Image</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Image</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.convertImageToAxialOrientation" title="Link to this definition"></a></dt>
+<dd><p>SimpleITK image reorientation to axial.
+ex. coronal to axial  -&gt; order = 0, 2, 1 (x, z, y)
+ex. sagittal to axial -&gt; order = 1, 2, 0 (y, z, x)</p>
+<section id="id1">
+<h2>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>img<span class="classifier">SimpleITK.Image</span></dt><dd><p>image to reorient</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h2>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>tuple[SimpleITK.Image, list[int]]</dt><dd><ul class="simple">
+<li><p>SimpleITK.Image, reoriented image</p></li>
+<li><p>list[int] order of dimensions</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.convertSITKtoVTK">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">convertSITKtoVTK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Image</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">vtkImageData</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.convertSITKtoVTK" title="Link to this definition"></a></dt>
+<dd><p>SimpleITK image to VTK image conversion.</p>
+<section id="id3">
+<h2>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>img<span class="classifier">SimpleITK.Image</span></dt><dd><p>image to copy</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h2>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>vtk.vtkImageData</dt><dd><p>image copy</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.convertVTKtoSITK">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">convertVTKtoSITK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">vtkImageData</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.convertVTKtoSITK" title="Link to this definition"></a></dt>
+<dd><p>VTK image to SimpleITK image conversion.</p>
+<section id="id5">
+<h2>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>img<span class="classifier">vtk.vtkImageData</span></dt><dd><p>image to copy</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h2>Returns<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>SimpleITK.Image</dt><dd><p>image copy</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.extractDataElementValuesFromDatasets">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">extractDataElementValuesFromDatasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dslist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">FileDataset</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dataset</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taglist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">BaseTag</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.extractDataElementValuesFromDatasets" title="Link to this definition"></a></dt>
+<dd><p>Extract all the values of multiple dicom Tag (taglist parameter) in multiple datasets (dslist parameter).</p>
+<section id="id7">
+<h2>Parameters<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>dslist<span class="classifier">list[pydicom.Dataset]</span></dt><dd><p>list of datasets</p>
+</dd>
+<dt>taglist<span class="classifier">list[pydicom.BaseTag]</span></dt><dd><p>list of tags</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h2>Returns<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>dict</dt><dd><ul class="simple">
+<li><p>key, pydicom.BaseTag</p></li>
+<li><p>value, list of values of each pydicom.Dataset in dslist</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.flipImageToVTKDirectionConvention">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">flipImageToVTKDirectionConvention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Image</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.flipImageToVTKDirectionConvention" title="Link to this definition"></a></dt>
+<dd><p>Flip sitkImage to VTK/SisypheVolume RAS+ orientation convention.</p>
+<p>SisypheVolume is in RAS+ world coordinates convention (as MNI, Nibabel, Dipy…)</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>x, direction[1.0, 0.0, 0.0]: left(-) to right(+)</p></li>
+<li><p>y, direction[0.0, 1.0, 0.0]: posterior(-) to anterior(+)</p></li>
+<li><p>z: direction[0.0, 0.0, 1.0]: inferior(-) to superior(+)</p></li>
+</ul>
+</div></blockquote>
+<p>SimpleITK/ITK is in LPS+ world coordinates convention</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>x right(-) to left(+), if sitkImage direction is [1.0, 0.0, 0.0] -&gt; Flip X</p></li>
+<li><p>y anterior (-) to posterior (+), if sitkImage direction is [0.0, 1.0, 0.0] -&gt; Flip Y</p></li>
+<li><p>z inferior (-) to superior (+), if sitkImage direction is [0.0, 0.0,-1.0] -&gt; Flip Z</p></li>
+</ul>
+</div></blockquote>
+<section id="id9">
+<h2>Parameters<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>img<span class="classifier">SimpleITK.Image</span></dt><dd><p>image to flip</p>
+</dd>
+</dl>
+</section>
+<section id="id10">
+<h2>Returns<a class="headerlink" href="#id10" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>SimpleITK.Image</dt><dd><p>flipped image</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.isDicom">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">isDicom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.isDicom" title="Link to this definition"></a></dt>
+<dd><p>Test if a file is in Dicom format</p>
+<section id="id11">
+<h2>Parameters<a class="headerlink" href="#id11" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>f<span class="classifier">str</span></dt><dd><p>filename</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h2>Returns<a class="headerlink" href="#id12" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if DICOM file</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readFromBitmap">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readFromBitmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sitk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readFromBitmap" title="Link to this definition"></a></dt>
+<dd><p>Read Bitmap file (.bmp, .jpg, .jpeg, .png, .tiff).</p>
+<section id="id13">
+<h2>Parameters<a class="headerlink" href="#id13" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>image file name</p>
+</dd>
+<dt>lib<span class="classifier">str</span></dt><dd><p>format of returned image ‘itk’, ‘vtk’, ‘ants’ or by default ‘sitk’</p>
+</dd>
+</dl>
+</section>
+<section id="id14">
+<h2>Returns<a class="headerlink" href="#id14" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>SimpleITK.Image | itk.Image | vtk.ImageData | ants.core.ANTsImage</dt><dd><p>image instance</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readFromBrainVoyagerVMR">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readFromBrainVoyagerVMR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sitk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Image</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readFromBrainVoyagerVMR" title="Link to this definition"></a></dt>
+<dd><p>Read BrainVoyager VMR file (.vmr).</p>
+<section id="id15">
+<h2>Parameters<a class="headerlink" href="#id15" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>image file name</p>
+</dd>
+<dt>lib<span class="classifier">str</span></dt><dd><p>format of returned image ‘itk’, ‘vtk’, ‘ants’ or by default ‘sitk’</p>
+</dd>
+</dl>
+</section>
+<section id="id16">
+<h2>Returns<a class="headerlink" href="#id16" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>tuple[SimpleITK.Image | itk.Image | vtk.ImageData | ants.core.ANTsImage, dict]</dt><dd><ul class="simple">
+<li><p>image instance</p></li>
+<li><p>dict, header of BrainVoyager VMR image format</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readFromDicomDirectory">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readFromDicomDirectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readFromDicomDirectory" title="Link to this definition"></a></dt>
+<dd><p>Read DICOM files in a directory.</p>
+<section id="id17">
+<h2>Parameters<a class="headerlink" href="#id17" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>directory<span class="classifier">str</span></dt><dd><p>directory of the dicom files to convert</p>
+</dd>
+</dl>
+</section>
+<section id="id18">
+<h2>Returns<a class="headerlink" href="#id18" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>SimpleITK.Image</dt><dd><p>image instance</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readFromDicomFilenames">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readFromDicomFilenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filenames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readFromDicomFilenames" title="Link to this definition"></a></dt>
+<dd><p>Read a list of DICOM files.</p>
+<section id="id19">
+<h2>Parameters<a class="headerlink" href="#id19" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filenames<span class="classifier">list[str]</span></dt><dd><p>dicom filenames to convert</p>
+</dd>
+</dl>
+</section>
+<section id="id20">
+<h2>Returns<a class="headerlink" href="#id20" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>SimpleITK.Image</dt><dd><p>image instance</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readFromDicomSeries">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readFromDicomSeries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readFromDicomSeries" title="Link to this definition"></a></dt>
+<dd><p>Read a list of DICOM files.</p>
+<section id="id21">
+<h2>Parameters<a class="headerlink" href="#id21" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>one dicom filename of the series to convert</p>
+</dd>
+</dl>
+</section>
+<section id="id22">
+<h2>Returns<a class="headerlink" href="#id22" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>SimpleITK.Image</dt><dd><p>image instance</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readFromFreeSurferMGH">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readFromFreeSurferMGH</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sitk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readFromFreeSurferMGH" title="Link to this definition"></a></dt>
+<dd><p>Read FreeSurfer MGH file (.mgh, .mgz).</p>
+<section id="id23">
+<h2>Parameters<a class="headerlink" href="#id23" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>image file name</p>
+</dd>
+<dt>lib<span class="classifier">str</span></dt><dd><p>format of returned image ‘itk’, ‘vtk’, ‘ants’ or by default ‘sitk’</p>
+</dd>
+</dl>
+</section>
+<section id="id24">
+<h2>Returns<a class="headerlink" href="#id24" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>SimpleITK.Image | itk.Image | vtk.ImageData | ants.core.ANTsImage</dt><dd><p>image instance</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readFromMINC">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readFromMINC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sitk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readFromMINC" title="Link to this definition"></a></dt>
+<dd><p>Read MINC file (.mnc).</p>
+<section id="id25">
+<h2>Parameters<a class="headerlink" href="#id25" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>image file name</p>
+</dd>
+<dt>lib<span class="classifier">str</span></dt><dd><p>format of returned image ‘itk’, ‘vtk’, ‘ants’ or by default ‘sitk’</p>
+</dd>
+</dl>
+</section>
+<section id="id26">
+<h2>Returns<a class="headerlink" href="#id26" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>SimpleITK.Image | itk.Image | vtk.ImageData | ants.core.ANTsImage</dt><dd><p>image instance</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readFromNIFTI">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readFromNIFTI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sitk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readFromNIFTI" title="Link to this definition"></a></dt>
+<dd><p>Read Nifti file (.nii, .hdr, .img, .nia, .nii.gz, .img.gz).</p>
+<section id="id27">
+<h2>Parameters<a class="headerlink" href="#id27" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>image file name</p>
+</dd>
+<dt>lib<span class="classifier">str</span></dt><dd><p>format of returned image ‘itk’, ‘vtk’, ‘ants’ or by default ‘sitk’</p>
+</dd>
+</dl>
+</section>
+<section id="id28">
+<h2>Returns<a class="headerlink" href="#id28" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>SimpleITK.Image | itk.Image | vtk.ImageData | ants.core.ANTsImage</dt><dd><p>image instance</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readFromNRRD">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readFromNRRD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sitk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readFromNRRD" title="Link to this definition"></a></dt>
+<dd><p>Read NRRD file (.nrrd, .nhdr).</p>
+<section id="id29">
+<h2>Parameters<a class="headerlink" href="#id29" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>image file name</p>
+</dd>
+<dt>lib<span class="classifier">str</span></dt><dd><p>format of returned image ‘itk’, ‘vtk’, ‘ants’ or by default ‘sitk’</p>
+</dd>
+</dl>
+</section>
+<section id="id30">
+<h2>Returns<a class="headerlink" href="#id30" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>SimpleITK.Image | itk.Image | vtk.ImageData | ants.core.ANTsImage</dt><dd><p>image instance</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readFromNumpy">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readFromNumpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaultshape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sitk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readFromNumpy" title="Link to this definition"></a></dt>
+<dd><p>Read Numpy file (.npy).</p>
+<section id="id31">
+<h2>Parameters<a class="headerlink" href="#id31" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>image file name</p>
+</dd>
+<dt>defaultshape<span class="classifier">bool</span></dt><dd><p>shape (z, y, x) if True, (x, y, z) if False</p>
+</dd>
+<dt>lib<span class="classifier">str</span></dt><dd><p>format of returned image ‘itk’, ‘vtk’, ‘ants’ or by default ‘sitk’</p>
+</dd>
+</dl>
+</section>
+<section id="id32">
+<h2>Returns<a class="headerlink" href="#id32" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>SimpleITK.Image | itk.Image | vtk.ImageData | ants.core.ANTsImage</dt><dd><p>image instance</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readFromSisyphe">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readFromSisyphe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sitk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Image</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readFromSisyphe" title="Link to this definition"></a></dt>
+<dd><p>Read Sisyphe file (.vol).</p>
+<section id="id33">
+<h2>Parameters<a class="headerlink" href="#id33" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>image file name</p>
+</dd>
+<dt>lib<span class="classifier">str</span></dt><dd><p>format of returned image ‘itk’, ‘vtk’, ‘ants’ or by default ‘sitk’</p>
+</dd>
+</dl>
+</section>
+<section id="id34">
+<h2>Returns<a class="headerlink" href="#id34" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>tuple[SimpleITK.Image | itk.Image | vtk.ImageData | ants.core.ANTsImage, dict]</dt><dd><ul class="simple">
+<li><p>image instance</p></li>
+<li><p>dict, header of Sisyphe image format</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readFromSisypheROI">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readFromSisypheROI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sitk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Image</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readFromSisypheROI" title="Link to this definition"></a></dt>
+<dd><p>Read sitkImage.</p>
+<section id="id35">
+<h2>Parameters<a class="headerlink" href="#id35" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>ROI file name</p>
+</dd>
+<dt>lib<span class="classifier">str</span></dt><dd><p>format of returned image ‘itk’, ‘vtk’, ‘ants’ or by default ‘sitk’</p>
+</dd>
+</dl>
+</section>
+<section id="id36">
+<h2>Returns<a class="headerlink" href="#id36" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>tuple[SimpleITK.Image, dict]</dt><dd><ul class="simple">
+<li><p>image instance</p></li>
+<li><p>dict, header of Sisyphe ROI image format, key = string of field, value of field</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readFromVTK">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readFromVTK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sitk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readFromVTK" title="Link to this definition"></a></dt>
+<dd><p>Read VTK file (.vtk, .vti).</p>
+<section id="id37">
+<h2>Parameters<a class="headerlink" href="#id37" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>image file name</p>
+</dd>
+<dt>lib<span class="classifier">str</span></dt><dd><p>format of returned image ‘itk’, ‘vtk’, ‘ants’ or by default ‘sitk’</p>
+</dd>
+</dl>
+</section>
+<section id="id38">
+<h2>Returns<a class="headerlink" href="#id38" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>SimpleITK.Image | itk.Image | vtk.ImageData | ants.core.ANTsImage</dt><dd><p>image instance</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readImage">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sitk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Image</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readImage" title="Link to this definition"></a></dt>
+<dd><p>Read image from Nifti, Nrrd, Minc, VTK, Numpy, old Sisyphe, or Bitmap format. Format is detectied from filename
+extension. Instance returned can be SimpleITK.Image | itk.Image | vtk.ImageData | ants.core.ANTsImage.</p>
+<section id="id39">
+<h2>Parameters<a class="headerlink" href="#id39" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>image file name</p>
+</dd>
+<dt>lib<span class="classifier">str</span></dt><dd><p>format of returned image ‘itk’, ‘vtk’, ‘ants’ or by default ‘sitk’</p>
+</dd>
+</dl>
+</section>
+<section id="id40">
+<h2>Returns<a class="headerlink" href="#id40" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>SimpleITK.Image | itk.Image | vtk.ImageData | ants.core.ANTsImage</dt><dd><p>image instance</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.writeToJSON">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">writeToJSON</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.writeToJSON" title="Link to this definition"></a></dt>
+<dd><p>Write SimpleITK image to disk with JSON format (.json)</p>
+<section id="id41">
+<h2>Parameters<a class="headerlink" href="#id41" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>img<span class="classifier">SimpleITK.Image</span></dt><dd><p>image to save</p>
+</dd>
+<dt>filename<span class="classifier">str</span></dt><dd><p>file save name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.writeToMINC">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">writeToMINC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.writeToMINC" title="Link to this definition"></a></dt>
+<dd><p>Write SimpleITK image to disk with MINC format (.mnc).</p>
+<section id="id42">
+<h2>Parameters<a class="headerlink" href="#id42" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>img<span class="classifier">SimpleITK.Image</span></dt><dd><p>image to save</p>
+</dd>
+<dt>filename<span class="classifier">str</span></dt><dd><p>file save name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.writeToNIFTI">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">writeToNIFTI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.writeToNIFTI" title="Link to this definition"></a></dt>
+<dd><p>Write SimpleITK image to disk with NIFTI format (.nii, .hdr, .img, .nia, .nii.gz, .img.gz).</p>
+<section id="id43">
+<h2>Parameters<a class="headerlink" href="#id43" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>img<span class="classifier">SimpleITK.Image</span></dt><dd><p>image to save</p>
+</dd>
+<dt>filename<span class="classifier">str</span></dt><dd><p>file save name</p>
+</dd>
+<dt>compression<span class="classifier">bool</span></dt><dd><p>write compressed format nii.gz if True, default is False</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.writeToNRRD">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">writeToNRRD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.writeToNRRD" title="Link to this definition"></a></dt>
+<dd><p>Write SimpleITK image to disk with NRRD format (.nrrd, .nhdr).</p>
+<section id="id44">
+<h2>Parameters<a class="headerlink" href="#id44" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>img<span class="classifier">SimpleITK.Image</span></dt><dd><p>image to save</p>
+</dd>
+<dt>filename<span class="classifier">str</span></dt><dd><p>file save name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.writeToNumpy">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">writeToNumpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.writeToNumpy" title="Link to this definition"></a></dt>
+<dd><p>Write SimpleITK image to disk with Numpy format (.npy)</p>
+<section id="id45">
+<h2>Parameters<a class="headerlink" href="#id45" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>img<span class="classifier">SimpleITK.Image</span></dt><dd><p>image to save</p>
+</dd>
+<dt>filename<span class="classifier">str</span></dt><dd><p>file save name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.writeToVTK">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">writeToVTK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.writeToVTK" title="Link to this definition"></a></dt>
+<dd><p>Write SimpleITK image to disk with VTK format (.vtk)</p>
+<section id="id46">
+<h2>Parameters<a class="headerlink" href="#id46" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>img<span class="classifier">SimpleITK.Image</span></dt><dd><p>image to save</p>
+</dd>
+<dt>filename<span class="classifier">str</span></dt><dd><p>file save name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api_imageattributes.html" class="btn btn-neutral float-left" title="Sisyphe.core.sisypheImageAttributes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_lut.html" class="btn btn-neutral float-right" title="Sisyphe.core.sisypheLUT" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
