@@ -1,0 +1,462 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ROI Tools tab of the dock &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=049aceee"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Mesh tab of the dock" href="PySisyphe_dockmesh.html" />
+    <link rel="prev" title="ROI tab of the dock" href="PySisyphe_dockroi.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sisyphe
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ROI Tools tab of the dock</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#brush">Brush</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#slice-tools">Slice tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#slice-blob-tools">Slice blob tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#volume-tools">Volume tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#volume-blob-tools">Volume blob tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#brush-settings">Brush settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#statistics-dialog-box">Statistics dialog box</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">ROI Tools tab of the dock</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PySisyphe_dockroitools.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="roi-tools-tab-of-the-dock">
+<span id="page-dockroitools"></span><h1>ROI Tools tab of the dock<a class="headerlink" href="#roi-tools-tab-of-the-dock" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="#tools-section-brush-box"><span class="std std-ref">Brush</span></a></p></li>
+<li><p><a class="reference internal" href="#tools-section-slice-box"><span class="std std-ref">Slice tools</span></a></p></li>
+<li><p><a class="reference internal" href="#tools-section-slice-blob-box"><span class="std std-ref">Slice blob tools</span></a></p></li>
+<li><p><a class="reference internal" href="#tools-section-volume-box"><span class="std std-ref">Volume tools</span></a></p></li>
+<li><p><a class="reference internal" href="#tools-section-volume-blob-box"><span class="std std-ref">Volume blob tools</span></a></p></li>
+<li><p><a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a></p></li>
+<li><p><a class="reference internal" href="#tools-section-dialog-statistics"><span class="std std-ref">Statistics dialog box</span></a></p></li>
+</ul>
+<section id="brush">
+<span id="tools-section-brush-box"></span><h2>Brush<a class="headerlink" href="#brush" title="Link to this heading"></a></h2>
+<img alt="_images/roi-brush.png" class="align-center" src="_images/roi-brush.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<dl class="simple">
+<dt><strong>Shape</strong></dt><dd><p>Select the brush shape for ROI drawing in the view widget.</p>
+<ul class="simple">
+<li><p>“Full disc” for drawing with a 2D full disc-shaped brush.</p></li>
+<li><p>“Thresholded disc” only pixels with a given signal range in the reference volume are drawn on the surface area of the 2D disc-shaped brush. The upper and lower thresholds are set by <a class="reference internal" href="_images/threshold.png"><img alt="threshold" src="_images/threshold.png" style="width: 32.0px; height: 32.0px;" /></a>.</p></li>
+<li><p>“Full ball” for drawing with a 3D full sphere-shaped brush.</p></li>
+<li><p>“Thresholded ball” only voxels with a given signal range in the refrence volume are drawn on the volume of the 3D sphere-shaped brush. The upper and lower thresholds are set by <a class="reference internal" href="_images/threshold.png"><img alt="threshold" src="_images/threshold.png" style="width: 32.0px; height: 32.0px;" /></a>.</p></li>
+</ul>
+</dd>
+<dt><strong>Radius</strong></dt><dd><p>Radius in pixels/voxels of the disc/ball-shaped brush.</p>
+</dd>
+<dt><a class="reference internal" href="_images/brush.png"><img alt="brush" src="_images/brush.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>The drawing mode in the view widget is activated when this button is selected (blue border). In this mode, the mouse cursor in the view widget is displayed as a circle with the radius of the brush and the color of the current ROI. Left-click to draw at the current mouse position, right-click to erase.</p>
+</dd>
+<dt><a class="reference internal" href="_images/threshold.png"><img alt="threshold" src="_images/threshold.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Shows a threshold widget (see <a class="reference internal" href="PySisyphe_widgets.html#page-widgets"><span class="std std-ref">widgets</span></a>) to define upper and lower thresholds used by various tools (threshold brushes, thresholding, region growing, active contour threshold variant).</p>
+</dd>
+<dt><a class="reference internal" href="_images/layer.png"><img alt="layer" src="_images/layer.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to interpolate empty slices between first and last displayed slices.</p>
+</dd>
+<dt><a class="reference internal" href="_images/undo.png"><img alt="undo" src="_images/undo.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Undo previous operations. The undo/redo stack is cleared when ROI is saved.</p>
+</dd>
+<dt><a class="reference internal" href="_images/redo.png"><img alt="redo" src="_images/redo.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Redo previous operations. The undo/redo stack is cleared when ROI is saved.</p>
+</dd>
+</dl>
+</section>
+<section id="slice-tools">
+<span id="tools-section-slice-box"></span><h2>Slice tools<a class="headerlink" href="#slice-tools" title="Link to this heading"></a></h2>
+<img alt="_images/roi-slice.png" class="align-center" src="_images/roi-slice.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>All tools in this section work in 2D and are applied to the selected slice displayed in the view widget (slice view or synchronized view in the central area), other slices are not affected. Left-click in the view widget to select a slice, the selected slice will be outlined in white. If no slice is selected, these tools will have no effect.</p>
+<dl class="simple">
+<dt><a class="reference internal" href="_images/dilate.png"><img alt="dilate" src="_images/dilate.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for morphological dilatation (see <a class="reference external" href="https://en.wikipedia.org/wiki/Dilation_(morphology)">Morphology dilatation in wikipedia</a>) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/erode.png"><img alt="erode" src="_images/erode.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for morphological erosion (see <a class="reference external" href="https://en.wikipedia.org/wiki/Erosion_(morphology)">Morphology erosion in wikipedia</a>) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/morphoopen.png"><img alt="morphoopen" src="_images/morphoopen.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for morphological opening (see <a class="reference external" href="https://en.wikipedia.org/wiki/Opening_(morphology)">Morphology opening in wikipedia</a>) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/morphoclose.png"><img alt="morphoclose" src="_images/morphoclose.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for morphological closing (see <a class="reference external" href="https://en.wikipedia.org/wiki/Closing_(morphology)">Morphology closing in wikipedia</a>) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/invert.png"><img alt="invert" src="_images/invert.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to invert ROI pixels (binary not operator) of the selected slice.</p>
+</dd>
+<dt><a class="reference internal" href="_images/bucket.png"><img alt="bucket" src="_images/bucket.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to automatically fill all detected holes of the selected slice.</p>
+</dd>
+<dt><a class="reference internal" href="_images/fill.png"><img alt="fill" src="_images/fill.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border), and fill hole left-clicked in the view widget (slice view or synchronized view in the central area).</p>
+</dd>
+<dt><a class="reference internal" href="_images/copy.png"><img alt="copy" src="_images/copy.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to copy the selected ROI slice to the clipboard.</p>
+</dd>
+<dt><a class="reference internal" href="_images/cut.png"><img alt="cut" src="_images/cut.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to cut the selected ROI slice to the clipboard.</p>
+</dd>
+<dt><a class="reference internal" href="_images/paste.png"><img alt="paste" src="_images/paste.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to paste the clipboard (if not empty) to the selected ROI slice.</p>
+</dd>
+<dt><a class="reference internal" href="_images/head.png"><img alt="head" src="_images/head.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for automatic object segmentation of the selected slice. The Algorithm used is defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/ihead.png"><img alt="ihead" src="_images/ihead.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for automatic background segmentation of the selected slice. The Algorithm used is defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/threshold2.png"><img alt="threshold2" src="_images/threshold2.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for thresholding the selected ROI slice. The upper and lower thresholds are set by <a class="reference internal" href="_images/threshold.png"><img alt="threshold" src="_images/threshold.png" style="width: 32.0px; height: 32.0px;" /></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/magic.png"><img alt="magic" src="_images/magic.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to display a menu with two segmentation algorithms:</p>
+<ul class="simple">
+<li><p><strong>Region growing</strong>, select and left-click in the view widget to calculate the region growing from the clicked seed pixel (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConnectedThresholdImageFilter.html">SimpleITK ConnectedThresholdImageFilter class</a>). The upper and lower thresholds used by this algorithm are set by <a class="reference internal" href="_images/threshold.png"><img alt="threshold" src="_images/threshold.png" style="width: 32.0px; height: 32.0px;" /></a>.</p></li>
+<li><p><strong>Confidence connected</strong>, select and left-click in the view widget to calculate the confidence connected region from the clicked seed pixel (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html">SimpleITK ConfidenceConnectedImageFilter class</a>). Parameters used by this algorithm are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p></li>
+</ul>
+</dd>
+<dt><a class="reference internal" href="_images/cross.png"><img alt="cross" src="_images/cross.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to clear the selected ROI slice.</p>
+</dd>
+<dt><a class="reference internal" href="_images/flipx.png"><img alt="flipx" src="_images/flipx.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to flip the selected ROI slice along the x-axis display (x-axis world if axial or coronal slice, z-axis world if sagittal slice).</p>
+</dd>
+<dt><a class="reference internal" href="_images/flipy.png"><img alt="flipy" src="_images/flipy.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to flip the selected ROI slice along the y-axis display (y-axis world if axial slice, z-axis world if coronal or sagittal slice).</p>
+</dd>
+<dt><a class="reference internal" href="_images/up.png"><img alt="up" src="_images/up.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for upward translation of the selected ROI slice (anterior translation if axial slice, cranial translation if coronal or sagittal slice).</p>
+</dd>
+<dt><a class="reference internal" href="_images/down.png"><img alt="down" src="_images/down.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for downward translation of the selected ROI slice (posterior translation if axial slice, caudal translation if coronal or sagittal slice).</p>
+</dd>
+<dt><a class="reference internal" href="_images/left.png"><img alt="left" src="_images/left.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to translate the selected ROI slice to the left (right translation if axial or coronal slice, anterior translation if sagittal slice).</p>
+</dd>
+<dt><a class="reference internal" href="_images/right.png"><img alt="right" src="_images/right.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to translate the selected ROI slice to the right (left translation if axial or coronal slice, posterior translation if sagittal slice).</p>
+</dd>
+</dl>
+</section>
+<section id="slice-blob-tools">
+<span id="tools-section-slice-blob-box"></span><h2>Slice blob tools<a class="headerlink" href="#slice-blob-tools" title="Link to this heading"></a></h2>
+<img alt="_images/roi-slice-blob.png" class="align-center" src="_images/roi-slice-blob.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>All tools in this section work on 2D blobs that are displayed in a slice of the view widget (see <a class="reference external" href="https://en.wikipedia.org/wiki/Connected_space#Connected_components">Connected component in wikipedia</a>). Other blobs in the selected slice and other slices are not affected. First, select a tool button (blue border), then left-click on a blob in the view widget.</p>
+<dl class="simple">
+<dt><a class="reference internal" href="_images/dilate.png"><img alt="dilate" src="_images/dilate.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget for morphological dilatation (see <a class="reference external" href="https://en.wikipedia.org/wiki/Dilation_(morphology)">Morphology dilatation in wikipedia</a>). Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/erode.png"><img alt="erode" src="_images/erode.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget for morphological erosion (see <a class="reference external" href="https://en.wikipedia.org/wiki/Erosion_(morphology)">Morphology erosion in wikipedia</a>). Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/morphoopen.png"><img alt="morphoopen" src="_images/morphoopen.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget for morphological opening (see <a class="reference external" href="https://en.wikipedia.org/wiki/Opening_(morphology)">Morphology opening in wikipedia</a>). Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/morphoclose.png"><img alt="morphoclose" src="_images/morphoclose.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget for morphological closing (see <a class="reference external" href="https://en.wikipedia.org/wiki/Closing_(morphology)">Morphology closing in wikipedia</a>). Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/copy.png"><img alt="copy" src="_images/copy.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget to copy it to the clipboard.</p>
+</dd>
+<dt><a class="reference internal" href="_images/cut.png"><img alt="cut" src="_images/cut.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget to cut it to the clipboard.</p>
+</dd>
+<dt><a class="reference internal" href="_images/paste.png"><img alt="paste" src="_images/paste.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click in the view widget to paste the clipboard (if not empty) to the selected ROI slice.</p>
+</dd>
+<dt><a class="reference internal" href="_images/select-keep.png"><img alt="select-keep" src="_images/select-keep.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget to select it, all other blobs in the selected slice will be removed.</p>
+</dd>
+<dt><a class="reference internal" href="_images/select-remove.png"><img alt="select-remove" src="_images/select-remove.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget to remove it.</p>
+</dd>
+<dt><a class="reference internal" href="_images/extent.png"><img alt="extent" src="_images/extent.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to remove blobs of the selected slice with a pixel count less than a threshold. The extent threshold is defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/threshold2.png"><img alt="threshold2" src="_images/threshold2.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button. Left-click on a blob in the view widget to threshold it. The upper and lower thresholds are defined in <a class="reference internal" href="_images/threshold.png"><img alt="threshold" src="_images/threshold.png" style="width: 32.0px; height: 32.0px;" /></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/magic.png"><img alt="magic" src="_images/magic.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to display a menu with two segmentation algorithms:</p>
+<ul class="simple">
+<li><p><strong>Region growing</strong>, select and left-click on a blob in the view widget to calculate the region growing from the clicked seed pixel (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConnectedThresholdImageFilter.html">SimpleITK ConnectedThresholdImageFilter class</a>). The upper and lower thresholds used by this algorithm are defined in <a class="reference internal" href="_images/threshold.png"><img alt="threshold" src="_images/threshold.png" style="width: 32.0px; height: 32.0px;" /></a>.</p></li>
+<li><p><strong>Confidence connected</strong>, select and left-click on a blob in the view widget to calculate the confidence connected region from the clicked seed pixel (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html">SimpleITK ConfidenceConnectedImageFilter class</a>). Parameters used by this algorithm are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="volume-tools">
+<span id="tools-section-volume-box"></span><h2>Volume tools<a class="headerlink" href="#volume-tools" title="Link to this heading"></a></h2>
+<img alt="_images/roi-volume.png" class="align-center" src="_images/roi-volume.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>All tools in this section work in 3D, in the full volume of the ROI.</p>
+<dl>
+<dt><a class="reference internal" href="_images/dilate.png"><img alt="dilate" src="_images/dilate.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for morphological dilatation (see <a class="reference external" href="https://en.wikipedia.org/wiki/Dilation_(morphology)">Morphology dilatation in wikipedia</a>). Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/erode.png"><img alt="erode" src="_images/erode.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for morphological erosion (see <a class="reference external" href="https://en.wikipedia.org/wiki/Erosion_(morphology)">Morphology erosion in wikipedia</a>). Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/morphoopen.png"><img alt="morphoopen" src="_images/morphoopen.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for morphological opening (see <a class="reference external" href="https://en.wikipedia.org/wiki/Opening_(morphology)">Morphology opening in wikipedia</a>). Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/morphoclose.png"><img alt="morphoclose" src="_images/morphoclose.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for morphological closing (see <a class="reference external" href="https://en.wikipedia.org/wiki/Closing_(morphology)">Morphology closing in wikipedia</a>). Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/invert.png"><img alt="invert" src="_images/invert.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to invert ROI pixels (binary not operator).</p>
+</dd>
+<dt><a class="reference internal" href="_images/bucket.png"><img alt="bucket" src="_images/bucket.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to automatically fill all detected 3D holes.</p>
+</dd>
+<dt><a class="reference internal" href="_images/fill.png"><img alt="fill" src="_images/fill.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border), and fill 3D hole left-clicked in the view widget (slice view or synchronized view in the central area).</p>
+</dd>
+<dt><a class="reference internal" href="_images/expand2.png"><img alt="expand2" src="_images/expand2.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to expand ROI with an isotropic margin in mm. Margin value is defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/shrink2.png"><img alt="shrink2" src="_images/shrink2.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to shrink ROI with an isotropic margin in mm. Margin value is defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/head.png"><img alt="head" src="_images/head.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for automatic object segmentation. The Algorithm used is defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/ihead.png"><img alt="ihead" src="_images/ihead.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for automatic background segmentation. The Algorithm used is defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/threshold2.png"><img alt="threshold2" src="_images/threshold2.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for thresholding. The upper and lower thresholds are defined in <a class="reference internal" href="_images/threshold.png"><img alt="threshold" src="_images/threshold.png" style="width: 32.0px; height: 32.0px;" /></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/magic.png"><img alt="magic" src="_images/magic.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to display a menu with two segmentation algorithms:</p>
+<ul>
+<li><p><strong>Region growing</strong>, select and left-click in the view widget to calculate the region growing from the clicked seed voxel (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConnectedThresholdImageFilter.html">SimpleITK ConnectedThresholdImageFilter class</a>). The upper and lower thresholds used by this algorithm are defined in <a class="reference internal" href="_images/threshold.png"><img alt="threshold" src="_images/threshold.png" style="width: 32.0px; height: 32.0px;" /></a>.</p></li>
+<li><p><strong>Confidence connected</strong>, select and left-click in the view widget to calculate the confidence connected region from the clicked seed voxel (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html">SimpleITK ConfidenceConnectedImageFilter class</a>). Parameters used by this algorithm are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p></li>
+<li><p><strong>Active contour</strong>, select and left-click in the view widget to calculate the active contour from the clicked seed voxel. Parameters used by this algorithm are defined in the next menu <strong>Active contour settings…</strong></p></li>
+<li><p><strong>Active Contour Settings…</strong>, select to display a settings dialog box. Active contour level set method (also known as snake) segments structures in images based on a user supplied edge potential map. An initial contour is itertively propagated outwards (or inwards) until it “sticks” to the shape boundaries. This is done by using a level set speed function based on a user supplied edge potential map. This map has values close to zero in regions near edges and values close to one in regions with relatively constant intensity. Typically, the edge potential map is a function of the gradient magnitude.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Level set algorithm</strong>, Three active contour algorithms are available: original geodesic active contour, shape detection and threshold variants (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1GeodesicActiveContourLevelSetImageFilter.html">SimpleITK GeodesicActiveContourLevelSetImageFilter class</a>, <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ShapeDetectionLevelSetImageFilter.html">ShapeDetectionLevelSetImageFilter class</a>, <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ThresholdSegmentationLevelSetImageFilter.html">ThresholdSegmentationLevelSetImageFilter class</a>). The threshold variant algorithm used thresholds defined in <a class="reference internal" href="_images/threshold.png"><img alt="threshold" src="_images/threshold.png" style="width: 32.0px; height: 32.0px;" /></a>.</p></li>
+<li><p><strong>Seed radius</strong>, radius en mm of the seed sphere centered used as initial contour (default 2.0 mm).</p></li>
+<li><p><strong>Curvature weight</strong>, curvature (default relative weight 1.0), controls the magnitude of the curvature values which are calculated on the evolving isophote. This is important in controlling the relative effect of curvature in the calculation. Higher values relative to the other level set equation terms (propagation and advection) will give a smoother result.</p></li>
+<li><p><strong>Propagation weight</strong>, propagation speed (default relative weight 1.0) controls the scaling of the scalar propagation (speed) term relative to other terms in the level set equation. Positive values propagate contour towards outside the seed, negative values inside.</p></li>
+<li><p><strong>Advection weight</strong>, advection (default relative weight 1.0) controls the scaling of the vector advection field term relative to other terms in the level set equation.</p></li>
+<li><p><strong>RMS convergence threshold</strong>, Convergence threshold (0.0 to 1.0, default 0.01) used to determine when the solution has converged. A lower value will result in a tighter-fitting solution, but will require more computations. Too low a value could put the solver into an infinite loop unless a reasonable number of iterations parameter is set.</p></li>
+<li><p><strong>Number of iterations</strong>, maximum number of iterations (default 1000) can be used to halt the solution after a specified number of iterations, overriding the rms halting criteria.</p></li>
+<li><p><strong>Gaussian kernel sigma</strong>, gaussian kernel sigma used to compute the magnitude of the gradient (default 1.0).</p></li>
+<li><p><strong>Threshold factor</strong>, Factor value x standard deviation of signal in seed sphere to estimate lower and upper thresholds used by threshold variant of the level set algorithm (default 3.0).</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</dd>
+<dt><a class="reference internal" href="_images/cross.png"><img alt="cross" src="_images/cross.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to clear ROI.</p>
+</dd>
+<dt><a class="reference internal" href="_images/statistics.png"><img alt="statistics" src="_images/statistics.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Display signal and shape statistics of ROI(s) in a dialog box (see <a class="reference internal" href="#tools-section-dialog-statistics"><span class="std std-ref">Statistics dialog box</span></a>).</p>
+</dd>
+<dt><a class="reference internal" href="_images/flipx.png"><img alt="flipx" src="_images/flipx.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to flip ROI along the x-axis display (x-axis world if axial or coronal display, z-axis world if sagittal display).</p>
+</dd>
+<dt><a class="reference internal" href="_images/flipy.png"><img alt="flipy" src="_images/flipy.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to flip ROI along the y-axis display (y-axis world if axial display, z-axis world if coronal or sagittal display).</p>
+</dd>
+<dt><a class="reference internal" href="_images/up.png"><img alt="up" src="_images/up.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for upward ROI translation (anterior translation if axial slice, cranial translation if coronal or sagittal slice).</p>
+</dd>
+<dt><a class="reference internal" href="_images/down.png"><img alt="down" src="_images/down.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click for downward ROI translation (posterior translation if axial display, caudal translation if coronal or sagittal dsiplay).</p>
+</dd>
+<dt><a class="reference internal" href="_images/left.png"><img alt="left" src="_images/left.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to translate ROI to the left (right translation if axial or coronal display, anterior translation if sagittal display).</p>
+</dd>
+<dt><a class="reference internal" href="_images/right.png"><img alt="right" src="_images/right.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to translate ROI to the right (left translation if axial or coronal slice, posterior translation if sagittal display).</p>
+</dd>
+</dl>
+</section>
+<section id="volume-blob-tools">
+<span id="tools-section-volume-blob-box"></span><h2>Volume blob tools<a class="headerlink" href="#volume-blob-tools" title="Link to this heading"></a></h2>
+<img alt="_images/roi-volume-blob.png" class="align-center" src="_images/roi-volume-blob.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>All tools in this section work in a selected 3D blob (see <a class="reference external" href="https://en.wikipedia.org/wiki/Connected_space#Connected_components">Connected component in wikipedia</a>). Other blobs are not affected. First, select a tool button (blue border), then left-click on a blob in the view widget.</p>
+<dl class="simple">
+<dt><a class="reference internal" href="_images/dilate.png"><img alt="dilate" src="_images/dilate.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget for morphological dilatation (see <a class="reference external" href="https://en.wikipedia.org/wiki/Dilation_(morphology)">Morphology dilatation in wikipedia</a>). Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/erode.png"><img alt="erode" src="_images/erode.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget for morphological erosion (see <a class="reference external" href="https://en.wikipedia.org/wiki/Erosion_(morphology)">Morphology erosion in wikipedia</a>). Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/morphoopen.png"><img alt="morphoopen" src="_images/morphoopen.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget for morphological opening (see <a class="reference external" href="https://en.wikipedia.org/wiki/Opening_(morphology)">Morphology opening in wikipedia</a>). Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/morphoclose.png"><img alt="morphoclose" src="_images/morphoclose.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget for morphological closing (see <a class="reference external" href="https://en.wikipedia.org/wiki/Closing_(morphology)">Morphology closing in wikipedia</a>). Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/copy.png"><img alt="copy" src="_images/copy.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget to copy it to the clipboard.</p>
+</dd>
+<dt><a class="reference internal" href="_images/cut.png"><img alt="cut" src="_images/cut.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget to cut it to the clipboard.</p>
+</dd>
+<dt><a class="reference internal" href="_images/paste.png"><img alt="paste" src="_images/paste.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click in the view widget to paste the clipboard (if not empty).</p>
+</dd>
+<dt><a class="reference internal" href="_images/expand2.png"><img alt="expand2" src="_images/expand2.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget to expand it with an isotropic margin in mm. Margin value is defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/shrink2.png"><img alt="shrink2" src="_images/shrink2.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget to shrink it with an isotropic margin in mm. Margin value is defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/select-keep.png"><img alt="select-keep" src="_images/select-keep.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget to select it, all other blobs will be removed.</p>
+</dd>
+<dt><a class="reference internal" href="_images/select-remove.png"><img alt="select-remove" src="_images/select-remove.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget to remove it.</p>
+</dd>
+<dt><a class="reference internal" href="_images/extent.png"><img alt="extent" src="_images/extent.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to remove blobs with a voxel count less than a threshold. The extent threshold is defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/threshold2.png"><img alt="threshold2" src="_images/threshold2.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to select this button (blue border). Left-click on a blob in the view widget to threshold it. The upper and lower thresholds are set by <a class="reference internal" href="_images/threshold.png"><img alt="threshold" src="_images/threshold.png" style="width: 32.0px; height: 32.0px;" /></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/magic.png"><img alt="magic" src="_images/magic.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Click to display a menu with two segmentation algorithms:</p>
+<ul class="simple">
+<li><p><strong>Region growing</strong>, select and left-click on a blob in the view widget to calculate the region growing from the clicked seed voxel (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConnectedThresholdImageFilter.html">SimpleITK ConnectedThresholdImageFilter class</a>). The upper and lower thresholds used by this algorithm are set by <a class="reference internal" href="_images/threshold.png"><img alt="threshold" src="_images/threshold.png" style="width: 32.0px; height: 32.0px;" /></a>.</p></li>
+<li><p><strong>Confidence connected</strong>, select and left-click on a blob in the view widget to calculate the confidence connected region from the clicked seed voxel (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html">SimpleITK ConfidenceConnectedImageFilter class</a>). Parameters used by this algorithm are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="brush-settings">
+<span id="tools-section-brush-settings"></span><h2>Brush settings<a class="headerlink" href="#brush-settings" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><strong>Fill holes</strong></dt><dd><p>If checked, holes are automatically filled during drawing.</p>
+</dd>
+<dt><strong>Structuring element size</strong></dt><dd><p>Size of the structuring element in pixels/voxels used by morphological operations (dilate/erode/opening/closing).</p>
+</dd>
+<dt><strong>Structuring element shape</strong></dt><dd><p>Shape of the structuring element used by morphological operations (dilate/erode/opening/closing). Proposed shapes are “Ball”, “Box”, “Cross” and Annulus”.</p>
+</dd>
+<dt><strong>Move step</strong></dt><dd><p>Step value in pixels/voxels used by moving tools.</p>
+</dd>
+<dt><strong>Blob extent threshold</strong></dt><dd><p>Threshold value in number of pixels/voxels used by blob selection tool (Keep/remove blob).</p>
+</dd>
+<dt><strong>Expand/Shrink thickness</strong></dt><dd><p>Expansion or shrinkage value in mm applied by Expand/shrink tools.</p>
+</dd>
+<dt><strong>Object/Background algorithm</strong></dt><dd><p>Algorithm used for automatic object/background segmentation.</p>
+</dd>
+<dt><strong>Cluster confidence sigma</strong></dt><dd><p>Sigma value used by the cluster confidence tools (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html">SimpleITK ConfidenceConnectedImageFilter class</a>).</p>
+</dd>
+<dt><strong>Cluster confidence iterations</strong></dt><dd><p>Number of iterations of the of the cluster confidence tools (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html">SimpleITK ConfidenceConnectedImageFilter class</a>).</p>
+</dd>
+</dl>
+</section>
+<section id="statistics-dialog-box">
+<span id="tools-section-dialog-statistics"></span><h2>Statistics dialog box<a class="headerlink" href="#statistics-dialog-box" title="Link to this heading"></a></h2>
+<a class="reference internal image-reference" href="_images/roi-statistics.png"><img alt="_images/roi-statistics.png" class="align-center" src="_images/roi-statistics.png" style="width: 646.5px; height: 826.5px;" />
+</a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><a class="reference internal" href="_images/statistics.png"><img alt="statistics" src="_images/statistics.png" style="width: 32.0px; height: 32.0px;" /></a> button in the Volume Tools box activates this dialog.</p>
+<p>The top of this dialog box is occupied by a tabbed stack widget of three charts:</p>
+<dl class="simple">
+<dt><strong>Histogram</strong> (3)</dt><dd><p>These are histogram(s) of the reference volume signal of voxels located in each ROI. The number of histogram bins i.e. intervals (default 100) can be changed in the <strong>bins</strong> combobox of the button bar. The line of each histogram has the color of the ROI associated with it.</p>
+</dd>
+<dt><strong>Cumulative histogram</strong> (4)</dt><dd><p>These are cumulative histogram(s) of the reference volume signal of voxels located in each ROI. The line of each histogram has the color of the ROI associated with it. This chart is interactive, the vertical dotted line (6) can be moved with the mouse (press left mouse button and drag). This line has the color of the selected ROI in the table and gives information (7) about it. Information to the right of the line includes: ROI name, signal value at line position, percentage of ROI volume with signal greater than current signal at line position, ROI volume (cc) with signal greater than current signal at line position.</p>
+</dd>
+<dt><strong>Box and Whisker plot</strong> (5)</dt><dd><p>This is a Box and Whisker plot (see <a class="reference external" href="https://en.wikipedia.org/wiki/Box_plot">Box and Whisker plot in wikipedia</a>) of the reference volume signal of voxels located in each ROI.</p>
+</dd>
+</dl>
+<p>There is another tabbed stack widget below with two tables:</p>
+<dl class="simple">
+<dt><strong>Grayscale statistics</strong> (1)</dt><dd><p>These tables gives descriptive statitics of the reference volume signal in each ROI. Table columns are: ROI name with check box, voxels (number of voxels), volume (cc), mean, median, minimum, maximum, range, 25th percentile, 75th percentile, variance, standard deviation, skewness and kurtosis.</p>
+</dd>
+<dt><strong>Shape features</strong> (2)</dt><dd><p>These tables gives shape features of each ROI (see <a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#module-radiomics.shape">pyradiomics shape features</a>). Table columns are: ROI name, volume (cc), surface, surface/volume ratio, sphericity, maximum diameter, maximum axial diameter, maximum coronal diameter, maximum sagittal diameter, major axis length, elongation, flatness.</p>
+</dd>
+</dl>
+<p>Finally, there is a button bar at the bottom:</p>
+<dl class="simple">
+<dt><strong>Bins</strong></dt><dd><p>Combobox to define histogram bins i.e. intervals (from 50 to 500).</p>
+</dd>
+<dt><strong>Save chart</strong></dt><dd><p>Left-click displays a menu to save bitmap capture (supported bitmap formats BMP, JPG, PNG, TIFF and SVG) of chart(s):</p>
+<ul class="simple">
+<li><p><strong>Save chart</strong>, save a bitmap capture of the displayed chart using a default name (name of the reference volume, suffixed with “Histogram”, Cumulative_Histogram” or “Box_Whisker”)</p></li>
+<li><p><strong>Save chart as…</strong>, show a dialog box to save a bitmap capture of the displayed chart.</p></li>
+<li><p><strong>Save all charts</strong>, save bitmap captures of all charts using default names.</p></li>
+<li><p><strong>Save all chart as…</strong>, show a dialog box to save a bitmap capture of all charts.</p></li>
+</ul>
+</dd>
+<dt><strong>Copy chart</strong></dt><dd><p>Copy a bitmap capture of the displayed chart to the clipboard.</p>
+</dd>
+<dt><strong>Save statistics</strong></dt><dd><p>Left-click displays a menu to save tables (supported formats CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET):</p>
+<ul class="simple">
+<li><p><strong>Save current statistics</strong>, save the displayed table using a default name (name of the reference volume, suffixed with “Shape” or “Statistics”)</p></li>
+<li><p><strong>Save current statistics as…</strong>, to show a dialog box to save the displayed table.</p></li>
+<li><p><strong>Save all statistics</strong>, save all tables using default names (name of the reference volume, suffixed with “Shape” or “Statistics”)</p></li>
+<li><p><strong>Save all statistics as..</strong>, to show a dialog box to save all tables.</p></li>
+<li><p><strong>Save histograms</strong>, save histograms using a default name (“histogram”)</p></li>
+<li><p><strong>Save histograms as…</strong>, to show a dialog box to save histograms.</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="PySisyphe_dockroi.html" class="btn btn-neutral float-left" title="ROI tab of the dock" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="PySisyphe_dockmesh.html" class="btn btn-neutral float-right" title="Mesh tab of the dock" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

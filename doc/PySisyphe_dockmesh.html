@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mesh tab of the dock &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=049aceee"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Target/Trajectory tab of the dock" href="PySisyphe_docktarget.html" />
+    <link rel="prev" title="ROI Tools tab of the dock" href="PySisyphe_dockroitools.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sisyphe
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Mesh tab of the dock</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mesh-list">Mesh list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mesh-item">Mesh item</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#icon-bar">Icon bar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mesh-tools">Mesh tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mesh-settings">Mesh settings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Mesh tab of the dock</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PySisyphe_dockmesh.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mesh-tab-of-the-dock">
+<span id="page-dockmesh"></span><h1>Mesh tab of the dock<a class="headerlink" href="#mesh-tab-of-the-dock" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="#mesh-section-mesh-list"><span class="std std-ref">Mesh list</span></a></p></li>
+<li><p><a class="reference internal" href="#mesh-section-mesh-item"><span class="std std-ref">Mesh item</span></a></p></li>
+<li><p><a class="reference internal" href="#mesh-section-icon-bar"><span class="std std-ref">Icon bar</span></a></p></li>
+<li><p><a class="reference internal" href="#mesh-section-mesh-tools"><span class="std std-ref">Mesh tools</span></a></p></li>
+<li><p><a class="reference internal" href="#mesh-section-mesh-settings"><span class="std std-ref">Mesh settings</span></a></p></li>
+</ul>
+<p>Meshes are displayed only in orthogonal view widget.</p>
+<section id="mesh-list">
+<span id="mesh-section-mesh-list"></span><h2>Mesh list<a class="headerlink" href="#mesh-list" title="Link to this heading"></a></h2>
+<p>Mesh list frame at the top. Left-click to select a mesh element in the list (blue outline in Windows platform, blue background in MasOS platform).</p>
+</section>
+<section id="mesh-item">
+<span id="mesh-section-mesh-item"></span><h2>Mesh item<a class="headerlink" href="#mesh-item" title="Link to this heading"></a></h2>
+<p>Mesh item widgets:</p>
+<dl class="simple">
+<dt><strong>Check box</strong></dt><dd><p>Some processes are performed on checked mesh(es) such as removing, export, duplicate, overlay, filtering, isotropic dilatation, isotropic shrinking, set operators, and features.</p>
+</dd>
+<dt><strong>Edit box</strong></dt><dd><p>To display and edit mesh name.</p>
+</dd>
+<dt><a class="reference internal" href="_images/view.png"><img alt="view" src="_images/view.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to toogle mesh visibility in the orthogonal view widget</p>
+</dd>
+<dt><a class="reference internal" href="_images/opacity.png"><img alt="opacity" src="_images/opacity.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to select mesh opacity in the orthogonal view widget (0.0 transparent, 1.0 opaque).</p>
+</dd>
+<dt><a class="reference internal" href="_images/palette.png"><img alt="palette" src="_images/palette.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a mesh color dialog and change the mesh color.</p>
+</dd>
+<dt><a class="reference internal" href="_images/meshsetting.png"><img alt="meshsetting" src="_images/meshsetting.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a mesh dialog to edit mesh properties (ambient factor, diffuse factor, specular factor, specular power, metallic factor, roughness factor, algorithm of rendering i.e. Flat/Gouraud/Phong/PBR, vertex visibility, edge visibility, point size, line width, vertex color, edge color, render point as sphere, render line as tube).</p>
+</dd>
+<dt><a class="reference internal" href="_images/rotate.png"><img alt="rotate" src="_images/rotate.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu for applying rigid geometric transformation to the mesh:</p>
+<ul class="simple">
+<li><p>edit box <strong>Tx</strong>: apply an x-axis translation in mm to the mesh, its position is updated in the orthogonal view widget.</p></li>
+<li><p>edit box <strong>Ty</strong>: apply an y-axis translation in mm to the mesh, its position is updated in the orthogonal view widget.</p></li>
+<li><p>edit box <strong>Tz</strong>: apply an z-axis translation in mm to the mesh, its position is updated in the orthogonal view widget.</p></li>
+<li><p>edit box <strong>Rx</strong>: apply a rotation in degrees around the x-axis to the mesh, its position is updated in the orthogonal view widget.</p></li>
+<li><p>edit box <strong>Ry</strong>: apply a rotation in degrees around the y-axis to the mesh, its position is updated in the orthogonal view widget.</p></li>
+<li><p>edit box <strong>Rz</strong>: apply a rotation in degrees around the z-axis to the mesh, its position is updated in the orthogonal view widget.</p></li>
+<li><p><strong>Clear</strong> button, clear translations and rotations (set to 0.0), mesh position is updated in the orthogonal view widget.</p></li>
+<li><p><strong>Align mesh center to cursor</strong>, move the mesh barycenter to the current cursor position in the orthogonal view widget.</p></li>
+<li><p><strong>Resample mesh</strong>, resample mesh vertices with current geometric transformation (edit boxes). Resampling is no longer reversible, it is therefore advisable to apply it to a copy of the original mesh.</p></li>
+</ul>
+</dd>
+<dt><a class="reference internal" href="_images/save.png"><img alt="save" src="_images/save.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to save mesh (PySisyphe XMESH file, xml format), mesh name is used as file name.</p>
+</dd>
+<dt><a class="reference internal" href="_images/cross.png"><img alt="cross" src="_images/cross.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to remove mesh from list and from orthogonal view widget.</p>
+</dd>
+</dl>
+</section>
+<section id="icon-bar">
+<span id="mesh-section-icon-bar"></span><h2>Icon bar<a class="headerlink" href="#icon-bar" title="Link to this heading"></a></h2>
+<p>Icon bar below mesh list:</p>
+<dl class="simple">
+<dt><a class="reference internal" href="_images/open.png"><img alt="open" src="_images/open.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to show mesh selection dialog (PySisyphe XMESH file, xml format), adds selected mesh(es) to the mesh list and displays them in the orthogonal view widget. <strong>This mesh must be in the same space as the reference volume displayed in the view widget i.e. same space ID</strong>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/head.png"><img alt="head" src="_images/head.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to add outer surface mesh to the list and displays it in the orthogonal view widget. The isosurface algorithm used to generate mesh is specified in <a class="reference internal" href="#mesh-section-mesh-settings"><span class="std std-ref">Mesh settings</span></a> (<strong>Contour</strong>, <strong>Marching Cube</strong> or <strong>Flying Edge</strong>).</p>
+</dd>
+<dt><a class="reference internal" href="_images/sphere.png"><img alt="sphere" src="_images/sphere.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to show a menu to add a sphere mesh to the list. Edit the sphere radius in mm (default 10 mm). Select menu <strong>Add sphere mesh</strong> to display it at the cursor position in the orthogonal view widget.</p>
+</dd>
+<dt><a class="reference internal" href="_images/cube.png"><img alt="cube" src="_images/cube.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to show a menu to add a cube mesh to the list. Edit sizes in each axis in mm (default 10 mm). Select menu <strong>Add parallelepiped mesh</strong> to display it at the cursor position in the orthogonal view widget.</p>
+</dd>
+<dt><a class="reference internal" href="_images/save.png"><img alt="save" src="_images/save.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to save all mesh(es) of the list.</p>
+</dd>
+<dt><a class="reference internal" href="_images/delete2.png"><img alt="delete" src="_images/delete2.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to remove all mesh(es) from the list and from the orthogonal view widget.</p>
+</dd>
+<dt><a class="reference internal" href="_images/cross.png"><img alt="cross" src="_images/cross.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to remove checked mesh(es) from the list and from the orthogonal view widget.</p>
+</dd>
+<dt><a class="reference internal" href="_images/export.png"><img alt="export" src="_images/export.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to export checked mesh(es) (supported formats OBJ, STL, VTK, XMLVTK).</p>
+</dd>
+<dt><a class="reference internal" href="_images/check.png"><img alt="check" src="_images/check.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to check all mesh(es) of the list.</p>
+</dd>
+<dt><a class="reference internal" href="_images/uncheck.png"><img alt="uncheck" src="_images/uncheck.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to uncheck all mesh(es) of the list.</p>
+</dd>
+<dt><a class="reference internal" href="_images/duplicate.png"><img alt="duplicate" src="_images/duplicate.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to add a copy of the selected mesh in the list.</p>
+</dd>
+<dt><a class="reference internal" href="_images/overlay.png"><img alt="overlay" src="_images/overlay.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu of available volume(s) in the <a class="reference internal" href="PySisyphe_thumbnailbar.html#page-thumbnailbar"><span class="std std-ref">Thumbnail bar</span></a> (reference and overlays) to paint mesh surface with scalars and LUT of this volume.</p>
+</dd>
+<dt><a class="reference internal" href="_images/vol2mesh.png"><img alt="vol2mesh" src="_images/vol2mesh.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a thresholding dialog box for selecting upper and lower thresholds used to generate an isosurface mesh (see <a class="reference internal" href="PySisyphe_widgets.html#page-widgets"><span class="std std-ref">widgets</span></a>). The isosurface calculation algorithm can be selected from <a class="reference internal" href="#mesh-section-mesh-tools"><span class="std std-ref">Mesh tools</span></a>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/roi2mesh.png"><img alt="roi2mesh" src="_images/roi2mesh.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to show a menu for selecting the ROI(s) to be converted to mesh(es). This menu displays available ROI(s) previously loaded in the ROI list dock, and “ROI from disk” to load ROI(s) from disk. New meshes are added to the mesh list dock.</p>
+</dd>
+<dt><a class="reference internal" href="_images/mesh2roi.png"><img alt="mesh2roi" src="_images/mesh2roi.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click for ROI conversion of the checked mesh(es).</p>
+</dd>
+</dl>
+</section>
+<section id="mesh-tools">
+<span id="mesh-section-mesh-tools"></span><h2>Mesh tools<a class="headerlink" href="#mesh-tools" title="Link to this heading"></a></h2>
+<p>Mesh tools below icon bar:</p>
+<dl class="simple">
+<dt><a class="reference internal" href="_images/filter.png"><img alt="filter" src="_images/filter.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to filter the checked mesh(es) of the list. New mesh(es) are added to the list and displayed in the orthogonal view widget. The filtering options are in <a class="reference internal" href="#mesh-section-mesh-settings"><span class="std std-ref">Mesh settings</span></a> (<strong>decimate</strong>, <strong>fill holes</strong>, <strong>clean</strong>, <strong>smooth</strong>, <strong>smooth algorithm</strong>, <strong>smooth iterations</strong>, <strong>smooth relaxation factor</strong> and <strong>smooth pass band</strong>).</p>
+</dd>
+<dt><a class="reference internal" href="_images/meshexpand.png"><img alt="meshexpand" src="_images/meshexpand.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to show a menu to expand the checked mesh(es) of the list. Edit the isotropic margin expansion in mm (default 1.0 mm). Left-click <strong>Dilate mesh</strong> menu to add new mesh(es) to the list and display them in the orthogonal view widget.</p>
+</dd>
+<dt><a class="reference internal" href="_images/meshshrink.png"><img alt="meshshrink" src="_images/meshshrink.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to show a menu to shrink the checked mesh(es) of the list. Edit the isotropic margin shrinking in mm (default 1.0 mm). Left-click <strong>Erode mesh</strong> menu to add new mesh(es) to the list and display them in the orthogonal view widget.</p>
+</dd>
+<dt><a class="reference internal" href="_images/union.png"><img alt="union" src="_images/union.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to process union of the checked ROI(s), adds result to the ROI list and displays it in the view widget(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/intersection.png"><img alt="intersection" src="_images/intersection.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to process intersection of the checked ROI(s), adds result to the ROI list and displays it in the view widget(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/difference.png"><img alt="difference" src="_images/difference.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to process difference betwenn selected ROI and checked ROI(s), adds result to the ROI list and displays it in the view widget(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/differencesym.png"><img alt="differencesym" src="_images/differencesym.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to process symmetric difference betwenn selected ROI and checked ROI(s), adds result to the ROI list and displays it in the view widget(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/cubefeature.png"><img alt="cubefeature" src="_images/cubefeature.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to calculate checked mesh(es) geometric features (volume, surface, bounds, center of mass coordinates, major axis vector, mid-axis vector, minor axis vector, sizes in each vector directions) and displays them in a dialog box. Features can be stored in various formats (CSV, JSON, latex TEX, TEXT, Word XLSX, PySisyphe XSHEET).</p>
+</dd>
+</dl>
+</section>
+<section id="mesh-settings">
+<span id="mesh-section-mesh-settings"></span><h2>Mesh settings<a class="headerlink" href="#mesh-settings" title="Link to this heading"></a></h2>
+<p>Settings used by mesh tools.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Segmentation algorithm</strong> combobox</dt><dd><p>Algorithm used for automatic object/background segmentation:</p>
+<ul>
+<li><p><strong>mean</strong>, threshold is the mean value of the volume.</p></li>
+<li><p><strong>otsu</strong>, see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html">SimpleITK OtsuThresholdImageFilter class</a>.</p></li>
+<li><p><strong>huang</strong>, see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html">SimpleITK HuangThresholdImageFilter class</a>.</p></li>
+<li><p><strong>renyi</strong>, see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html">SimpleITK RenyiEntropyThresholdImageFilter class</a>.</p></li>
+<li><p><strong>yen</strong>, see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1YenThresholdImageFilter.html">SimpleITK YenThresholdImageFilter class</a>.</p></li>
+<li><p><strong>li</strong>, see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1LiThresholdImageFilter.html">SimpleITK LiThresholdImageFilter class</a>.</p></li>
+<li><p><strong>shanbhag</strong>, see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html">SimpleITK ShanbhagThresholdImageFilter class</a>.</p></li>
+<li><p><strong>triangle</strong>, see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1TriangleThresholdImageFilter.html">SimpleITK TriangleThresholdImageFilter class</a>.</p></li>
+<li><p><strong>intermodes</strong>, see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html">SimpleITK IntermodesThresholdImageFilter class</a>.</p></li>
+<li><p><strong>maximumentropy</strong>, see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html">SimpleITK MaximumEntropyThresholdImageFilter class</a>.</p></li>
+<li><p><strong>kittler</strong>, see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html">SimpleITK KittlerIllingworthThresholdImageFilter class</a>.</p></li>
+<li><p><strong>isodata</strong>, see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html">SimpleITK IsoDataThresholdImageFilter class</a>.</p></li>
+<li><p><strong>moments</strong>, see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html">SimpleITK MomentsThresholdImageFilter class</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Isosurface algorithm</strong> combobox</dt><dd><p>Algorithm used to generate isosurface:</p>
+<ul>
+<li><p><strong>contour</strong>, see <a class="reference external" href="https://vtk.org/doc/nightly/html/classvtkContourFilter.html">vtkContourFilter class</a>.</p></li>
+<li><p><strong>marching</strong>, see <a class="reference external" href="https://vtk.org/doc/nightly/html/classvtkMarchingCubes.html">vtkMarchingCubes class</a>.</p></li>
+<li><p><strong>flying</strong>, see <a class="reference external" href="https://vtk.org/doc/nightly/html/classvtkFlyingEdges3D.html">vtkFlyingEdges3D class</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Decimate</strong> checkbox</dt><dd><p>Reduce the number of triangles in the mesh. See <a class="reference external" href="https://vtk.org/doc/nightly/html/classvtkDecimatePro.html">vtkDecimatePro class</a>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Fill holes</strong> checkbox</dt><dd><p>Identify and fill mesh holes of the mesh. See <a class="reference external" href="https://vtk.org/doc/nightly/html/classvtkFillHolesFilter.html">vtkFillHolesFilter class</a>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Clean</strong> checkbox</dt><dd><p>Merge duplicate points, remove unused points and remove degenerate cells in the mesh. See <a class="reference external" href="https://vtk.org/doc/nightly/html/classvtkCleanPolyData.html">vtkCleanPolyData class</a>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Smooth</strong> checkbox</dt><dd><p>Adjust mesh point positions to “smooth” the mesh, making the cells better shaped and the vertices more evenly distributed.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Decimate percent</strong> slidebar</dt><dd><p>Reduction ratio (between 0.0 and 1.0), ex. 0.2, -20% of triangles.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Fill holes size</strong> editbox</dt><dd><p>Size threshold of the hole that can be filled, radius to the bounding circumsphere containing the hole (default 1000.0).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Smooth algorithm</strong> combobox</dt><dd><p>Choose mesh smoothing algorithm:</p>
+<ul>
+<li><p><strong>Sinc</strong> windowed sinc, see <a class="reference external" href="https://vtk.org/doc/nightly/html/classvtkWindowedSincPolyDataFilter.html">vtkWindowedSincPolyDataFilter class</a>.</p></li>
+<li><p><strong>Laplacian</strong>, see <a class="reference external" href="https://vtk.org/doc/nightly/html/classvtkSmoothPolyDataFilter.html">vtkSmoothPolyDataFilter class</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Smooth iterations</strong> editbox</dt><dd><p>Determines the maximum number of smoothing iterations (between 10 and 20, default 10).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Smooth relaxation factor</strong> editbox</dt><dd><p>Relaxation factor of the laplacian smoothing, lower values produce more smoothing. Small relaxation factors and large numbers of iterations are more stable than larger relaxation factors and smaller numbers of iterations (between 0.0 and 1.0, default 0.1).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Smooth pass band</strong> editbox</dt><dd><p>Pass band factor of the Sinc smoothing, lower values produce more smoothing (between 0.0 and 2.0, default 0.1).</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="PySisyphe_dockroitools.html" class="btn btn-neutral float-left" title="ROI Tools tab of the dock" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="PySisyphe_docktarget.html" class="btn btn-neutral float-right" title="Target/Trajectory tab of the dock" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

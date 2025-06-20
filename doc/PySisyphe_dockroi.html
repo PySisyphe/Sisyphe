@@ -1,0 +1,213 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ROI tab of the dock &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=049aceee"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ROI Tools tab of the dock" href="PySisyphe_dockroitools.html" />
+    <link rel="prev" title="IPython console" href="PySisyphe_ipython.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sisyphe
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ROI tab of the dock</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#roi-list">ROI list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#roi-item">ROI item</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#icon-bar">Icon bar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#set-operators">Set Operators</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">ROI tab of the dock</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PySisyphe_dockroi.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="roi-tab-of-the-dock">
+<span id="page-dockroi"></span><h1>ROI tab of the dock<a class="headerlink" href="#roi-tab-of-the-dock" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="#roi-section-roi-list"><span class="std std-ref">ROI list</span></a></p></li>
+<li><p><a class="reference internal" href="#roi-section-roi-item"><span class="std std-ref">ROI item</span></a></p></li>
+<li><p><a class="reference internal" href="#roi-section-icon-bar"><span class="std std-ref">Icon bar</span></a></p></li>
+<li><p><a class="reference internal" href="#roi-section-set-operators"><span class="std std-ref">Set Operators</span></a></p></li>
+</ul>
+<p>ROIs are editable in slice view and synchronized view widgets.</p>
+<section id="roi-list">
+<span id="roi-section-roi-list"></span><h2>ROI list<a class="headerlink" href="#roi-list" title="Link to this heading"></a></h2>
+<p>ROI list frame at the top. Left-click to select a ROI element in the list (blue outline in Windows platform, blue background in MasOS platform).</p>
+</section>
+<section id="roi-item">
+<span id="roi-section-roi-item"></span><h2>ROI item<a class="headerlink" href="#roi-item" title="Link to this heading"></a></h2>
+<p>ROI item widgets:</p>
+<dl class="simple">
+<dt><strong>Check box</strong></dt><dd><p>Some processes are performed on checked ROI(s) such as export, duplicate, distance map, mesh conversion and set operators.</p>
+</dd>
+<dt><strong>Edit box</strong></dt><dd><p>To display and edit ROI name.</p>
+</dd>
+<dt><a class="reference internal" href="_images/view.png"><img alt="view" src="_images/view.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to toogle ROI visibility in the view widget(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/opacity.png"><img alt="opacity" src="_images/opacity.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to select ROI opacity in the view widget(s) (0.0 transparent, 1.0 opaque).</p>
+</dd>
+<dt><a class="reference internal" href="_images/palette.png"><img alt="palette" src="_images/palette.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a ROI color dialog.</p>
+</dd>
+<dt><a class="reference internal" href="_images/save.png"><img alt="save" src="_images/save.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to save ROI (PySisyphe XROI file, xml format), ROI name is used as file name.</p>
+</dd>
+<dt><a class="reference internal" href="_images/cross.png"><img alt="cross" src="_images/cross.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to remove ROI from list and from view widget(s).</p>
+</dd>
+</dl>
+</section>
+<section id="icon-bar">
+<span id="roi-section-icon-bar"></span><h2>Icon bar<a class="headerlink" href="#icon-bar" title="Link to this heading"></a></h2>
+<p>Icon bar below ROI list:</p>
+<dl class="simple">
+<dt><a class="reference internal" href="_images/open.png"><img alt="open" src="_images/open.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to show ROI selection dialog (PySisyphe XROI file, xml format), adds selected ROI(s) to the list and displays them in the view widget(s). <strong>This ROI must be in the same space as the reference volume displayed in the view widget i.e. same space ID</strong>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/add.png"><img alt="add" src="_images/add.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to add a new empty ROI to the list.</p>
+</dd>
+<dt><a class="reference internal" href="_images/save.png"><img alt="save" src="_images/save.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to save all ROI(s) of the list.</p>
+</dd>
+<dt><a class="reference internal" href="_images/delete2.png"><img alt="delete" src="_images/delete2.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to remove all ROI(s) from the list and from the view widget(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/cross.png"><img alt="cross" src="_images/cross.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to remove checked ROI(s) from the list and from the view widget(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/export.png"><img alt="export" src="_images/export.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to export checked ROI(s), supported formats are: PySisysphe volume (.xvol), Nifti, Nrrd, Minc, Numpy, vtk or DICOM RTSTRUCT.</p>
+</dd>
+<dt><a class="reference internal" href="_images/duplicate.png"><img alt="duplicate" src="_images/duplicate.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to add a copy of the selected ROI in the list.</p>
+</dd>
+<dt><a class="reference internal" href="_images/check.png"><img alt="check" src="_images/check.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to check all ROI(s) of the list.</p>
+</dd>
+<dt><a class="reference internal" href="_images/uncheck.png"><img alt="uncheck" src="_images/uncheck.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to uncheck all ROI(s) of the list.</p>
+</dd>
+<dt><a class="reference internal" href="_images/map.png"><img alt="map" src="_images/map.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to calculate and save distance map(s) of checked ROI(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/roi2mesh.png"><img alt="roi2mesh" src="_images/roi2mesh.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to convert checked ROI(s) to mesh(es) and save.</p>
+</dd>
+</dl>
+</section>
+<section id="set-operators">
+<span id="roi-section-set-operators"></span><h2>Set Operators<a class="headerlink" href="#set-operators" title="Link to this heading"></a></h2>
+<p>Set operators icons at the bottom:</p>
+<dl class="simple">
+<dt><a class="reference internal" href="_images/union.png"><img alt="union" src="_images/union.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to process union of the checked ROI(s), adds result to the ROI list and displays it in the view widget(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/intersection.png"><img alt="intersection" src="_images/intersection.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to process intersection of the checked ROI(s), adds result to the ROI list and displays it in the view widget(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/difference.png"><img alt="difference" src="_images/difference.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to process difference betwenn selected ROI and checked ROI(s), adds result to the ROI list and displays it in the view widget(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/differencesym.png"><img alt="differencesym" src="_images/differencesym.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to process symmetric difference betwenn selected ROI and checked ROI(s), adds result to the ROI list and displays it in the view widget(s).</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="PySisyphe_ipython.html" class="btn btn-neutral float-left" title="IPython console" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="PySisyphe_dockroitools.html" class="btn btn-neutral float-right" title="ROI Tools tab of the dock" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

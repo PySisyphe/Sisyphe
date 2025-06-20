@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tracking tab of the dock &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=049aceee"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Documentation tab of the dock" href="PySisyphe_dockhelp.html" />
+    <link rel="prev" title="Target/Trajectory tab of the dock" href="PySisyphe_docktarget.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sisyphe
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tracking tab of the dock</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#whole-tractogram-virtual-dissection-tools">Whole tractogram virtual dissection tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bundle-list">Bundle list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bundle-item">Bundle item</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Tracking tab of the dock</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PySisyphe_docktracking.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tracking-tab-of-the-dock">
+<span id="page-docktracking"></span><h1>Tracking tab of the dock<a class="headerlink" href="#tracking-tab-of-the-dock" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="#tracking-section-tractogram"><span class="std std-ref">Whole tractogram virtual dissection tools</span></a></p></li>
+<li><p><a class="reference internal" href="#tracking-section-bundle-list"><span class="std std-ref">Bundle list</span></a></p></li>
+<li><p><a class="reference internal" href="#tracking-section-bundle-item"><span class="std std-ref">Bundle item</span></a></p></li>
+</ul>
+<p>Streamlines/bundle are only displayed in orthogonal view widget.</p>
+<p>This dock contains <a class="reference internal" href="#tracking-section-tractogram"><span class="std std-ref">Whole tractogram virtual dissection tools</span></a> at the top and a <a class="reference internal" href="#tracking-section-bundle-list"><span class="std std-ref">Bundle list</span></a> frame below.</p>
+<section id="whole-tractogram-virtual-dissection-tools">
+<span id="tracking-section-tractogram"></span><h2>Whole tractogram virtual dissection tools<a class="headerlink" href="#whole-tractogram-virtual-dissection-tools" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><strong>Whole brain tractogram</strong></dt><dd><p>This file selection widget is used to load a tractogram (PySisyphe XTRACTS file, xml format), usually previously processed via the menu “<strong>Diffusion</strong> -&gt; Tractogram generation…”. <strong>This tractogram must be in the same space as the reference volume displayed in the view widget i.e. same space ID</strong>.</p>
+</dd>
+</dl>
+<a class="reference internal image-reference" href="_images/tracking-roi-selection.png"><img alt="_images/tracking-roi-selection.png" class="align-center" src="_images/tracking-roi-selection.png" style="width: 633.5px; height: 366.5px;" />
+</a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<dl>
+<dt><a class="reference internal" href="_images/tracking.png"><img alt="tracking" src="_images/tracking.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to show a dialog box for virtual dissection with inclusion and exlusion ROI(s).</p>
+<p>The list box on the left (1) shows avalaible ROI(s) i.e. ROI(s) loaded in <a class="reference internal" href="PySisyphe_dockroi.html#page-dockroi"><span class="std std-ref">ROI dock</span></a>. It is possible to load ROI(s) from disk into this box provided they have the same space ID or, failing that, the same field of view. Left click on <strong>Add ROI(s)..</strong> to display a ROI selection dialog. There are two list boxes on the right, the top box lists the inclusion ROI(s) and the bottom box lists the exclusion ROI(s). The <a class="reference internal" href="_images/left1.png"><img alt="left" src="_images/left1.png" style="width: 32.0px; height: 32.0px;" /></a> buttons moves a selected ROI from the box of available ROI(s) to the box of inclusion or exclusion. The <a class="reference internal" href="_images/right1.png"><img alt="right" src="_images/right1.png" style="width: 32.0px; height: 32.0px;" /></a> buttons to remove a selected ROI from the include or exclude box and return it to the box of available ROI(s).</p>
+<p>Settings fields are at the bottom of the dialog box:</p>
+<ul>
+<li><p><strong>Bundle name</strong>, to edit the name of the new bundle.</p></li>
+<li><p><strong>Minimal length</strong>, to set a length criterion for selecting streamlines of the bundle (in mm). No length selection by default (0.0).</p></li>
+<li><p><strong>Selection mode</strong> combobox:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>any</strong>, a streamline is included (or excluded, according to ROI type) if one of its points is inside ROI (Default).</p></li>
+<li><p><strong>all</strong>, a streamline is included (or excluded, according to ROI type) if all of its points are inside the ROI.</p></li>
+<li><p><strong>end</strong>, a streamline is included (or excluded, according to ROI type) if one of the endpoints is inside the ROI.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</dd>
+</dl>
+<a class="reference internal image-reference" href="_images/tracking-atlas-selection.png"><img alt="_images/tracking-atlas-selection.png" class="align-center" src="_images/tracking-atlas-selection.png" style="width: 633.5px; height: 487.0px;" />
+</a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<dl>
+<dt><a class="reference internal" href="_images/tracking-atlas.png"><img alt="tracking-atlas" src="_images/tracking-atlas.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to show a dialog box for virtual dissection using atlas bundle templates (see <a class="reference external" href="https://brain.labsolver.org/hcp_trk_atlas.html">HCP842 tractography atlas</a>). This function recognizes white matter bundles using local and global streamline-based registration to an atlas tractogram, and clustering method based on similarity of streamlines with bundles of this atlas (see <a class="reference external" href="https://docs.dipy.org/dev/reference/dipy.segment.html#dipy.segment.bundles.RecoBundles">Dipy RecoBundles class</a>).</p>
+<p>This dialog box displays a list box of atlas bundles at the top. The bundles to be detected in this list must be checked. Settings fields are at the bottom of the dialog box:</p>
+<ul>
+<li><p><strong>Minimal length</strong>, to set a length criterion for selecting streamlines of the bundle (in mm). No length selection by default (0.0).</p></li>
+<li><p><strong>Clustering threshold</strong>, to set a distance threshold (mdf, Minimum average Direct-Flip distance) for model bundle clustering (default 15.0 mm). Get the centroids of the model bundle and work with centroids instead of all streamlines. This helps speed up processing. The larger the value of the threshold, the fewer centroids will be, and smaller the threshold value, the more centroids will be. If you prefer to use all the streamlines of the model bundle, you can set this threshold to 0.1 mm.</p></li>
+<li><p><strong>Reduction metric</strong> combobox, to choose the reduction distance metric.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>mdf</strong>, minimum average Direct-Flip distance.</p></li>
+<li><p><strong>mam</strong>, mean average minimum distance.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Reduction threshold</strong>, to edit the threshold for the reduction metric. This threshold will be used to reduce the search space for finding the streamlines that match atlas bundle streamlines in shape. Instead of looking at the entire tractogram, now we will be looking at neighboring region of a model bundle in the tractogram. Increase the threshold to increase the search space. Recommended range is 15 - 30 mm.</p></li>
+<li><p><strong>Pruning metric</strong> combobox, to choose the pruning distance metric (same options as <strong>Reduction metric</strong>).</p></li>
+<li><p><strong>Pruning threshold</strong>, to edit the threshold for the pruning metric. This threshold will filter the streamlines for which the distance to the atlas bundle is greater. This is used to filter the neighborhood area i.e. search space, to get streamlines that are like the atlas bundle. Recommended range is 8 - 12 mm.</p></li>
+<li><p><strong>Refine</strong> check box, two stage algorithm (recognize and refine) if checked, otherwise recognize only.</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="bundle-list">
+<span id="tracking-section-bundle-list"></span><h2>Bundle list<a class="headerlink" href="#bundle-list" title="Link to this heading"></a></h2>
+<p>Left-click to select a bundle element in the list (blue outline in Windows platform, blue background in MasOS platform).</p>
+<dl>
+<dt><a class="reference internal" href="_images/open.png"><img alt="open" src="_images/open.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to show a Bundle selection dialog (PySisyphe XTRACTS file, xml format), adds selected Bundle(s) to the list and displays them in the view widget. <strong>This (These) Bundle(s) must be in the same space as the reference volume displayed in the view widget i.e. same space ID</strong>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/save.png"><img alt="save" src="_images/save.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to save all Bundle(s) of the list.</p>
+</dd>
+<dt><a class="reference internal" href="_images/delete2.png"><img alt="delete" src="_images/delete2.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to remove all Bundle(s) from the list and from the view widget.</p>
+</dd>
+<dt><a class="reference internal" href="_images/cross.png"><img alt="cross" src="_images/cross.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to remove checked Bundle(s) from list and from view widget(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/attach.png"><img alt="attach" src="_images/attach.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to process union of the checked Bundles, adds result to the Bundle list and displays it in the view widget.</p>
+</dd>
+<dt><a class="reference internal" href="_images/duplicate.png"><img alt="duplicate" src="_images/duplicate.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to add a copy of the selected Bundle in the list.</p>
+</dd>
+<dt><a class="reference internal" href="_images/map.png"><img alt="map" src="_images/map.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to calculate density map(s) of the checked bundle(s). The scalar values of the density map voxels are the number of fibers crossing them. Displays a save dialog box after processing to choose a density map file name (bundle name by default).</p>
+</dd>
+<dt><a class="reference internal" href="_images/roi.png"><img alt="roi" src="_images/roi.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to convert checked bundles(s) to ROI(s). Displays a menu: <strong>Count threshold</strong>, value used to threshold density map to produce the binary ROI. Select <strong>Convert to ROI(s)</strong> to calculate ROI. Displays a save dialog box after processing to choose a ROI file name (bundle name by default).</p>
+</dd>
+<dt><a class="reference internal" href="_images/mesh.png"><img alt="mesh" src="_images/mesh.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to convert checked bundles(s) to Mesh(es). Displays a menu: <strong>Count threshold</strong>, value used to threshold density map to produce the mesh. Select <strong>Convert to Mesh(es)</strong> to calculate Mesh. Displays a save dialog box after processing to choose a mesh file name (bundle name by default).</p>
+</dd>
+<dt><a class="reference internal" href="_images/check.png"><img alt="check" src="_images/check.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to check all Bundle(s) of the list.</p>
+</dd>
+<dt><a class="reference internal" href="_images/uncheck.png"><img alt="uncheck" src="_images/uncheck.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to uncheck all Bundle(s) of the list.</p>
+</dd>
+<dt><a class="reference internal" href="_images/tracking.png"><img alt="tracking" src="_images/tracking.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a dialog box (see <a class="reference internal" href="#tracking-section-tractogram"><span class="std std-ref">Whole tractogram virtual dissection tools</span></a>) for virtual dissection with inclusion and exlusion ROI(s) of the checked bundles. New bundle(s) are added to the list with a default name (suffixed with a number).</p>
+</dd>
+<dt><a class="reference internal" href="_images/3daxis.png"><img alt="3daxis" src="_images/3daxis.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>This button provides interactive selection of the streamlines from the orthogonal view widget. Streamlines of the checked bundle(s) will be excluded if they cross (or not, depending on the menu type) the cursor sphere or slice planes of the 3D volume renderer in the orthogonal view widget. Left-click this button displays a menu:</p>
+<ul class="simple">
+<li><p><strong>Exclude streamlines that cross cursor sphere</strong></p></li>
+<li><p><strong>Exclude streamlines that do not cross cursor sphere</strong></p></li>
+<li><p><strong>Exclude streamlines that cross cursor axial slice</strong></p></li>
+<li><p><strong>Exclude streamlines that do not cross cursor axial slice</strong></p></li>
+<li><p><strong>Exclude streamlines that cross cursor coronal slice</strong></p></li>
+<li><p><strong>Exclude streamlines that do not cross cursor coronal slice</strong></p></li>
+<li><p><strong>Exclude streamlines that cross cursor sagittal slice</strong></p></li>
+<li><p><strong>Exclude streamlines that do not cross cursor sagittal slice</strong></p></li>
+</ul>
+<p>Left-click on a streamline in the orthogonal slice view to select it, and use the mouse wheel to move the cursor along its trajectory. To adjust the cursor sphere radius, left-click <a class="reference internal" href="_images/cursor.png"><img alt="cursor" src="_images/cursor.png" style="width: 32.0px; height: 32.0px;" /></a> in the icon bar.</p>
+<p>Left-click on a slice plane to select it, and use the mouse wheel to move it.</p>
+</dd>
+<dt><a class="reference internal" href="_images/filter.png"><img alt="filter" src="_images/filter.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to displays a settings dialog box to filter a bundle. Create a new bundle with streamlines of a bundle selected by a clustering confidence algorithm. Computes the cluster confidence index (cci), which is an estimation of the support a set of streamlines gives to a particular pathway. The cci provides a voting system where by each streamline (within a set tolerance) gets to vote on how much support it lends to. Outlier pathways score relatively low on cci, since they do not have many streamlines voting for them. These outliers are removed by thresholding on the cci metric (see <a class="reference external" href="https://docs.dipy.org/stable/reference/dipy.tracking.html#cluster-confidence">Dipy Cluster_Confidence function</a>).</p>
+<p>Dialog box options:</p>
+<ul class="simple">
+<li><p><strong>Minimal length</strong>, to set a length criterion for selecting streamlines of the bundle (in mm). No length selection by default (0.0).</p></li>
+<li><p><strong>Maximum MDF distance</strong>, maximum MDF distance (minimum average Direct-Flip distance in mm) that will be considered a “supporting” streamline and included in cci calculation (default 5 mm).</p></li>
+<li><p><strong>Cluster confidence threshold</strong></p></li>
+<li><p><strong>Power</strong>, power to which the MDF distance for each streamline will be raised to determine how much it contributes to the cci. High values of power make the contribution value degrade much faster. e.g., a streamline with 5 mm MDF similarity contributes 1/5 to the cci if power is 1, but only contributes 1/5^2 = 1/25 if power is 2 (default 1).</p></li>
+<li><p><strong>Streamline sampling</strong>, bundle streamlines are subsampled with a fixed number of points.</p></li>
+<li><p><strong>Replace current bundle</strong></p></li>
+</ul>
+<p>A new filtered bundle is added to the list after processing with a default name, or replaces the original bundle if the <strong>Replace current bundle</strong> is checked.</p>
+</dd>
+<dt><a class="reference internal" href="_images/cluster.png"><img alt="cluster" src="_images/cluster.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a bundle clustering settings dialog box with the following options (see <a class="reference external" href="https://docs.dipy.org/stable/reference/dipy.segment.html#dipy.segment.clustering.QuickBundles">Dipy QuickBundles class</a>):</p>
+<ul class="simple">
+<li><p><strong>Metric</strong>, metric used for clustering: <strong>Average pointwise euclidean distance</strong>, <strong>Center of mass euclidean distance</strong>, <strong>mid-point euclidean distance</strong>, <strong>Length</strong>, <strong>Angle between vector endpoints</strong></p></li>
+<li><p><strong>Metric threshold</strong>, metric threshold (in mm or degrees, according to the metric).</p></li>
+<li><p><strong>Streamline sampling</strong>, bundle streamlines are subsampled with a fixed number of points.</p></li>
+<li><p><strong>Get cluster centroids</strong>, adds centroid(s) of each cluster to the list if checked.</p></li>
+</ul>
+<p>New bundles (+/- centroids if <strong>Get cluster centroids</strong> option is checked) are added to the list after processing with default name(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/centroid.png"><img alt="centroid" src="_images/centroid.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>This option is used to calcule the centroid of the checked bundle(s). Left-click to display a bundle centroid settings dialog box with the following options:</p>
+<ul class="simple">
+<li><p><strong>Metric threshold</strong>, <strong>Average pointwise euclidean distance</strong> threshold (in mm).</p></li>
+<li><p><strong>Streamline sampling</strong>, bundle streamlines are subsampled with a fixed number of points.</p></li>
+</ul>
+<p>New centroid(s) is(are) added to the list after processing with default name(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/statistics.png"><img alt="statistics" src="_images/statistics.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>To get statistics about checked bundle(s). Left-click shows a menu:</p>
+<ul class="simple">
+<li><p><strong>Cluster confidence statistics…</strong></p></li>
+<li><p><strong>Length statistics…</strong></p></li>
+<li><p><strong>Mean curvature statistics…</strong></p></li>
+<li><p><strong>Cosine distance between end vectors statistics…</strong></p></li>
+<li><p><strong>Euclidean distance between end points statistics…</strong></p></li>
+</ul>
+<p>The statistics dialog box is occupied by a tabbed stack widget with two tabs:</p>
+<ul class="simple">
+<li><p><strong>Descriptive statistics</strong> tab: There is a Box and Whisker plot (see <a class="reference external" href="https://en.wikipedia.org/wiki/Box_plot">Box and Whisker plot in wikipedia</a>) at the top and a table at the bottom with the followings values for each bundle: <strong>minimum</strong>, <strong>5th percentile</strong>, <strong>25th percentile</strong>, <strong>median</strong>, <strong>75th percentile</strong>, <strong>95th percentile</strong>, <strong>maximum</strong>, <strong>standard deviation</strong>, <strong>mean</strong>, <strong>skewness</strong>, <strong>kurtosis</strong>.</p></li>
+<li><p><strong>Histogram</strong> tab: There is a histogram at the top and a table with all streamline values at the bottom.</p></li>
+</ul>
+<p>There is a button bar at the bottom:</p>
+<ul class="simple">
+<li><p><strong>Save bitamp</strong>, show a dialog box to save a bitmap of the displayed chart (supported bitmap formats BMP, JPG, PNG, TIFF and SVG)</p></li>
+<li><p><strong>Copy to clipboard</strong>, copy a bitmap capture of the displayed chart to the clipboard.</p></li>
+<li><p><strong>Copy to screenshots</strong>, copy a bitmap capture of the displayed chart to the <a class="reference internal" href="PySisyphe_screenshots.html#page-screenshots"><span class="std std-ref">Screenshots manager</span></a>.</p></li>
+<li><p><strong>Save Dataset</strong>, show a dialog box to save the displayed table (supported formats CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET).</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="bundle-item">
+<span id="tracking-section-bundle-item"></span><h2>Bundle item<a class="headerlink" href="#bundle-item" title="Link to this heading"></a></h2>
+<p>Bundle item widgets:</p>
+<dl class="simple">
+<dt><a class="reference internal" href="_images/view.png"><img alt="view" src="_images/view.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to toogle Bundle visibility in the view widget(s).</p>
+</dd>
+<dt><a class="reference internal" href="_images/opacity.png"><img alt="opacity" src="_images/opacity.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to select Bundle opacity in the view widget(s) (0.0 transparent, 1.0 opaque).</p>
+</dd>
+<dt><a class="reference internal" href="_images/palette.png"><img alt="palette" src="_images/palette.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a Bundle color dialog.</p>
+</dd>
+<dt><a class="reference internal" href="_images/width.png"><img alt="width" src="_images/width.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to select the streamlines width of the Bundle in mm.</p>
+</dd>
+<dt><a class="reference internal" href="_images/save.png"><img alt="save" src="_images/save.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to save the Bundle (PySisyphe XTRACTS file, xml format), Bundle name is used as file name.</p>
+</dd>
+<dt><a class="reference internal" href="_images/cross.png"><img alt="cross" src="_images/cross.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to remove Bundle from list and from view widget(s).</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="PySisyphe_docktarget.html" class="btn btn-neutral float-left" title="Target/Trajectory tab of the dock" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="PySisyphe_dockhelp.html" class="btn btn-neutral float-right" title="Documentation tab of the dock" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

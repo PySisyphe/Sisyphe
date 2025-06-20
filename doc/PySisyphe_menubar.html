@@ -1,0 +1,442 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menubar &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=049aceee"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API" href="API/index.html" />
+    <link rel="prev" title="Documentation tab of the dock" href="PySisyphe_dockhelp.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sisyphe
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Menubar</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#file">File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#registration">Registration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#segmentation">Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapping">Mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diffusion">Diffusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#views">Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#window">Window</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Menubar</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PySisyphe_menubar.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="menubar">
+<span id="page-menubar"></span><h1>Menubar<a class="headerlink" href="#menubar" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="#menu-section-file"><span class="std std-ref">File</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-functions"><span class="std std-ref">Functions</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-registration"><span class="std std-ref">Registration</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-segmentation"><span class="std std-ref">Segmentation</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-mapping"><span class="std std-ref">Mapping</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-diffusion"><span class="std std-ref">Diffusion</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-views"><span class="std std-ref">Views</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-window"><span class="std std-ref">Window</span></a></p></li>
+</ul>
+<section id="file">
+<span id="menu-section-file"></span><h2>File<a class="headerlink" href="#file" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul>
+<li><p>Open…</p></li>
+<li><p>Open template &gt;</p></li>
+<li><p>Open from format &gt;</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Open Nifti…</p></li>
+<li><p>Open Nrrd…</p></li>
+<li><p>Open Minc…</p></li>
+<li><p>Open FreeSurfer MGH…</p></li>
+<li><p>Open Sisyphe…</p></li>
+<li><p>Open BrainVoyager VMR…</p></li>
+<li><p>Open VTK…</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Recent files &gt;</p></li>
+<li><p>Save</p></li>
+<li><p>Save all</p></li>
+<li><p>Save as…</p></li>
+<li><p>Save to format &gt;</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Save Nifti…</p></li>
+<li><p>Save Numpy…</p></li>
+<li><p>Save Nrrd…</p></li>
+<li><p>Save Minc…</p></li>
+<li><p>Save VTK…</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Close</p></li>
+<li><p>Close all</p></li>
+<li><p>Preferences…</p></li>
+<li><p>Download manager…</p></li>
+<li><p>Check for update…</p></li>
+<li><p>Edit attributes…</p></li>
+<li><p>ID replacement…</p></li>
+<li><p>Anomynize…</p></li>
+<li><p>Edit volume labels…</p></li>
+<li><p>ROIs to label volume…</p></li>
+<li><p>Volumes to label volume…</p></li>
+<li><p>Label volume to ROIs…</p></li>
+<li><p>Import &gt;</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Import Nifti…</p></li>
+<li><p>Import Minc…</p></li>
+<li><p>Import Nrrd…</p></li>
+<li><p>Import Vtk…</p></li>
+<li><p>Import Sisyphe (<a href="#id1"><span class="problematic" id="id2">*</span></a>.vol)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Export &gt;</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Export Nifti…</p></li>
+<li><p>Export Minc…</p></li>
+<li><p>Export Nrrd..</p></li>
+<li><p>Export Vtk…</p></li>
+<li><p>Export Numpy…</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>DICOM &gt;</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>DICOM import…</p></li>
+<li><p>DICOM RT import…</p></li>
+<li><p>DICOM export…</p></li>
+<li><p>DICOM Dataset…</p></li>
+<li><p>Xml DICOM attributes…</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Edit LUT…</p></li>
+<li><p>Quit…</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="functions">
+<span id="menu-section-functions"></span><h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul>
+<li><p>Join single component volume(s)</p></li>
+<li><p>Split multi component volume (s)</p></li>
+<li><p>Flip axis…</p></li>
+<li><p>Permute axis…</p></li>
+<li><p>Remove neck slilces…</p></li>
+<li><p>Datatype conversion…</p></li>
+<li><p>Attributes conversion…</p></li>
+<li><p>Filters &gt;</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Mean…</p></li>
+<li><p>Median…</p></li>
+<li><p>Gaussian…</p></li>
+<li><p>Gradient magnitude…</p></li>
+<li><p>Laplacian…</p></li>
+<li><p>Anistropic diffusion…</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Intensity processing &gt;</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Histogram intensity matching…</p></li>
+<li><p>Regression intensity matching…</p></li>
+<li><p>Inensity normalization…</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Texture feature maps…</p></li>
+<li><p>Bias field correction…</p></li>
+<li><p>Voxel-by-voxel processing &gt;</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Mean volume…</p></li>
+<li><p>Median volume…</p></li>
+<li><p>Standard deviation volume…</p></li>
+<li><p>Minimum volume…</p></li>
+<li><p>Maximum volume…</p></li>
+<li><p>Algebra…</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Processing workflow…</p></li>
+<li><p>Workflows &gt;</p></li>
+<li><p>Install plugin…</p></li>
+<li><p>Remove plugin…</p></li>
+<li><p>Plugins &gt;</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="registration">
+<span id="menu-section-registration"></span><h2>Registration<a class="headerlink" href="#registration" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>Stereotactic frame detection…</p></li>
+<li><p>AC-PC selection…</p></li>
+<li><p>Volume reorientation…</p></li>
+<li><p>Manual registration…</p></li>
+<li><p>Rigid registration…</p></li>
+<li><p>Affine registration…</p></li>
+<li><p>Displacement field registration…</p></li>
+<li><p>ICBM normalization…</p></li>
+<li><p>Batch registration…</p></li>
+<li><p>Time series realignment…</p></li>
+<li><p>Eddy current correction…</p></li>
+<li><p>Resample…</p></li>
+<li><p>Asymmetry displacement field…</p></li>
+<li><p>Displacement field jacobian determinant…</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="segmentation">
+<span id="menu-section-segmentation"></span><h2>Segmentation<a class="headerlink" href="#segmentation" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul>
+<li><p>KMeans clustering…</p></li>
+<li><p>KMeans segmentation…</p></li>
+<li><p>Skull striping…</p></li>
+<li><p>Tissue segmentation…</p></li>
+<li><p>Cortical thickness…</p></li>
+<li><p>Registration based segmentation…</p></li>
+<li><p>Structs &gt;</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Labelling &gt;</p></li>
+<li><p>User &gt;</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Depp learning segmentation &gt;</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Hippocampus segmentation…</p></li>
+<li><p>Hypo-intensity lesion segmentation…</p></li>
+<li><p>Medial temporal clustering…</p></li>
+<li><p>TOF vessels segmentation…</p></li>
+<li><p>Tumor clustering…</p></li>
+<li><p>White matter hyper-intensities segmentation…</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</section>
+<section id="mapping">
+<span id="menu-section-mapping"></span><h2>Mapping<a class="headerlink" href="#mapping" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul>
+<li><p>Model &gt;</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>fMRI conditions…</p></li>
+<li><p>fMRI subjects/conditions…</p></li>
+<li><p>fMRI groups/subjects/conditions…</p></li>
+<li><p>One sample t-test…</p></li>
+<li><p>Two sample t-test…</p></li>
+<li><p>Paired t-test</p></li>
+<li><p>GLM subjects/conditions…</p></li>
+<li><p>GLM groups/subjects/conditions…</p></li>
+<li><p>GLM groups…</p></li>
+<li><p>GLM groups/subjects…</p></li>
+<li><p>Models &gt;</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Contrast…</p></li>
+<li><p>Result…</p></li>
+<li><p>Conjunction…</p></li>
+<li><p>t to z-map conversion…</p></li>
+<li><p>Clean time series…</p></li>
+<li><p>Seed-to-voxel time series correlation…</p></li>
+<li><p>Time series correlation matrix…</p></li>
+<li><p>Single-subject time series ICA…</p></li>
+<li><p>Multi-subject time series ICA…</p></li>
+<li><p>Dynamic suceptibility contrast…</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="diffusion">
+<span id="menu-section-diffusion"></span><h2>Diffusion<a class="headerlink" href="#diffusion" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul>
+<li><p>Gradients…</p></li>
+<li><p>Preprocessing…</p></li>
+<li><p>Diffusion model…</p></li>
+<li><p>Bundle &gt;</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>ROI based streamlines selection…</p></li>
+<li><p>Filter based streamlines selection…</p></li>
+<li><p>Template based streamlines selection…</p></li>
+<li><p>Density map…</p></li>
+<li><p>Path length map…</p></li>
+<li><p>Connectivity matrix…</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</section>
+<section id="views">
+<span id="menu-section-views"></span><h2>Views<a class="headerlink" href="#views" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>Slice view &gt;</p></li>
+<li><p>Orthogonal  &gt;</p></li>
+<li><p>Synchronize view &gt;</p></li>
+<li><p>Projection view &gt;</p></li>
+<li><p>Multi-component view &gt;</p></li>
+<li><p>Database &gt;</p></li>
+<li><p>Screenshots &gt;</p></li>
+<li><p>IPython &gt;</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="window">
+<span id="menu-section-window"></span><h2>Window<a class="headerlink" href="#window" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>About</p></li>
+<li><p>Minimize</p></li>
+<li><p>Maximize</p></li>
+<li><p>Full screen</p></li>
+<li><p>Show/Hide Toolbar</p></li>
+<li><p>Show/Hide Thumbnail</p></li>
+<li><p>Show/Hide Dock</p></li>
+<li><p>Show/Hide Status bar</p></li>
+<li><p>Next tab</p></li>
+<li><p>Previous tab</p></li>
+<li><p>Slice view</p></li>
+<li><p>Orthogonal view</p></li>
+<li><p>Synchornized view</p></li>
+<li><p>Projection view</p></li>
+<li><p>Multi-component view</p></li>
+<li><p>Database</p></li>
+<li><p>Screenshots</p></li>
+<li><p>IPython</p></li>
+</ul>
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="PySisyphe_dockhelp.html" class="btn btn-neutral float-left" title="Documentation tab of the dock" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="API/index.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

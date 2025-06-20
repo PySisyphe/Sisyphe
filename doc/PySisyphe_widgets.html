@@ -1,0 +1,198 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Widgets &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=049aceee"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Slice view widget" href="PySisyphe_sliceview.html" />
+    <link rel="prev" title="Thumbnail bar" href="PySisyphe_thumbnailbar.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sisyphe
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Widgets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#single-file-selection">Single file selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multiple-file-selection">Multiple file selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#thresholding">Thresholding</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Widgets</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PySisyphe_widgets.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="widgets">
+<span id="page-widgets"></span><h1>Widgets<a class="headerlink" href="#widgets" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a></p></li>
+<li><p><a class="reference internal" href="#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a></p></li>
+<li><p><a class="reference internal" href="#widgets-section-thresholding"><span class="std std-ref">Thresholding</span></a></p></li>
+</ul>
+<section id="single-file-selection">
+<span id="widgets-section-single-file"></span><h2>Single file selection<a class="headerlink" href="#single-file-selection" title="Link to this heading"></a></h2>
+<p>This widget has an edit box on the left and two or three buttons on the right.</p>
+<img alt="_images/file-widget.png" class="align-center" src="_images/file-widget.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<dl class="simple">
+<dt><strong>File name box</strong></dt><dd><p>This edit box displays the selected file name. A tooltip pops when mouse pointer remains over the text. It shows attributes of the object stored in the selected file.</p>
+</dd>
+<dt><a class="reference internal" href="_images/left.png"><img alt="left" src="_images/left.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu with a list of the volume(s) that are open in the <a class="reference internal" href="PySisyphe_thumbnailbar.html#page-thumbnailbar"><span class="std std-ref">Thumbnail bar</span></a>. This button is optional and will not always be visible.</p>
+</dd>
+<dt><a class="reference internal" href="_images/open.png"><img alt="open" src="_images/open.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to show a file selection dialog.</p>
+</dd>
+<dt><a class="reference internal" href="_images/cross.png"><img alt="cross" src="_images/cross.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to clear the selected file name field.</p>
+</dd>
+</dl>
+</section>
+<section id="multiple-file-selection">
+<span id="widgets-section-multi-file"></span><h2>Multiple file selection<a class="headerlink" href="#multiple-file-selection" title="Link to this heading"></a></h2>
+<p>This widget has a list box of selected files at the top, and three or four buttons at th bottom.</p>
+<dl class="simple">
+<dt><strong>Add</strong> button</dt><dd><p>Left-click to show a file selection dialog and add files in the list box.</p>
+</dd>
+<dt><strong>Remove</strong> button</dt><dd><p>Left-click to remove selected files in the list box.</p>
+</dd>
+<dt><strong>Remove all</strong> button</dt><dd><p>Left-click to remove all files from the list box.</p>
+</dd>
+<dt><a class="reference internal" href="_images/left.png"><img alt="left" src="_images/left.png" style="width: 32.0px; height: 32.0px;" /></a> button</dt><dd><p>Left-click to display a menu with a list of the volume(s) that are open in the <a class="reference internal" href="PySisyphe_thumbnailbar.html#page-thumbnailbar"><span class="std std-ref">Thumbnail bar</span></a>. This button is optional and will not always be visible.</p>
+</dd>
+</dl>
+</section>
+<section id="thresholding">
+<span id="widgets-section-thresholding"></span><h2>Thresholding<a class="headerlink" href="#thresholding" title="Link to this heading"></a></h2>
+<img alt="_images/threshold-widget.png" class="align-center" src="_images/threshold-widget.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>This widget has a <strong>view box</strong> on the left, a <strong>threshold selection box</strong> on the right and a <strong>button bar</strong> at the bottom.</p>
+<dl class="simple">
+<dt><strong>view box</strong></dt><dd><p>Shows volume with overlaid ROI in red. Voxels of this ROI have a volume signal in the range of the thresholds defined in the threshold selection box, i.e. ROI is the result of volume thresholding. This view is updated in real time as thresholds change.</p>
+</dd>
+<dt><strong>threshold selection box</strong></dt><dd><p>This box shows the extent of thresholds as a yellow frame overlaid on the volume histogram. The left edge of the frame represents the lower threshold, the right edge the upper threshold. Threshold values are written vertically in the center of each edge. The frame can be moved by pressing the left mouse button and dragging. Press the left mouse button and drag to move the left or right border (click inner part inside the frame).</p>
+</dd>
+</dl>
+<p><strong>button bar</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Left edit box to display and edit lower threshold.</p></li>
+<li><p>Right edit box to display and edit upper threshold.</p></li>
+<li><p>Middle button to set automatic thresholds based on the volume histogram.</p></li>
+</ul>
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="PySisyphe_thumbnailbar.html" class="btn btn-neutral float-left" title="Thumbnail bar" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="PySisyphe_sliceview.html" class="btn btn-neutral float-right" title="Slice view widget" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

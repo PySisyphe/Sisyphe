@@ -1,0 +1,303 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projection view widget &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=049aceee"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Multi-component view widget" href="PySisyphe_multicomponentview.html" />
+    <link rel="prev" title="Synchronized view widget" href="PySisyphe_synchronizedview.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sisyphe
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Projection view widget</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#controls">Controls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#icon-bar">Icon bar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#popup-menu">Popup menu</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Projection view widget</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PySisyphe_projectionview.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="projection-view-widget">
+<span id="page-projectionview"></span><h1>Projection view widget<a class="headerlink" href="#projection-view-widget" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="#proj-section-controls"><span class="std std-ref">Controls</span></a></p></li>
+<li><p><a class="reference internal" href="#proj-section-iconbar"><span class="std std-ref">Icon bar</span></a></p></li>
+<li><p><a class="reference internal" href="#proj-section-popup"><span class="std std-ref">Popup menu</span></a></p></li>
+</ul>
+<img alt="_images/proj-view.png" class="align-center" src="_images/proj-view.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>This widget, placed in the central area, displays a reference volume in a grid of fixed (non-interactive) 3D projections in left, right, mid-left, mid-right, cranial, caudal, anterior and posterior orientations.</p>
+<p>If the reference volume is in ICBM152 space, it is overlaid on pre-calculated 3D projections of the asymmetric ICBM152 3D T1 template.</p>
+<p>Left-click to select the slice in a grid cell. Some controls can be applied only to a selected cell. This cell is outlined in white.</p>
+<section id="controls">
+<span id="proj-section-controls"></span><h2>Controls<a class="headerlink" href="#controls" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>MouseWheel + <strong>CTRL</strong> key (CMD key MacOS platform) to change zoom,</p></li>
+<li><p><strong>Up or Left + CTRL</strong> key (CMD key MacOS platform) to zoom out,</p></li>
+<li><p><strong>Down or Right + CTRL</strong> key (CMD key MacOS platform) to zoom in,</p></li>
+<li><p>Left-click + <strong>CTRL</strong> key (CMD key MacOS platform) and drag to change zoom,</p></li>
+<li><p>Left-click + <strong>ALT</strong> key and drag to pan,</p></li>
+<li><p>Left-click + <strong>SHIFT</strong> key and drag to change window/level,</p></li>
+<li><p>Right-click + <strong>CTRL</strong> key (CMD key MacOS platform) or middle-click to display popup menu.</p></li>
+</ul>
+</section>
+<section id="icon-bar">
+<span id="proj-section-iconbar"></span><h2>Icon bar<a class="headerlink" href="#icon-bar" title="Link to this heading"></a></h2>
+<p>Projection view widget includes a vertical icon bar to the left:</p>
+<dl class="simple">
+<dt><a class="reference internal" href="_images/pin.png"><img alt="pin" src="_images/pin.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to select/unselect. When this button is unselected, the icon bar is hidden when the mouse cursor leaves it. The icon bar is displayed when the mouse cursor is moved to the left border of the grid. If this button is selected, the icon bar is always visible.</p>
+</dd>
+<dt><a class="reference internal" href="_images/fullscreen.png"><img alt="fullscreen" src="_images/fullscreen.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to select/unselect. Toggle between full-screen and normal display modes. In full-screen mode, the slice view widget is extended to the full screen. Press <strong>F11</strong> or <strong>ESC</strong> key to exit full-screen mode.</p>
+</dd>
+<dt><a class="reference internal" href="_images/expand.png"><img alt="expand" src="_images/expand.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to select/unselect. Expand the selected cell to the whole widget surface (<strong>+</strong> shortkey).</p>
+</dd>
+<dt><a class="reference internal" href="_images/integral.png"><img alt="integral" src="_images/integral.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu and select the method used to accumulate signal in the thickness of the projection (depth in mm below the outer surface): <strong>maximum</strong>, <strong>mean</strong>, <strong>median</strong>, <strong>standard deviation</strong>.</p>
+</dd>
+<dt><a class="reference internal" href="_images/depth.png"><img alt="depth" src="_images/depth.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu and edit the depth in mm below the outer surface used to calculate projection.</p>
+</dd>
+<dt><a class="reference internal" href="_images/opacity1.png"><img alt="opacity" src="_images/opacity1.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu and edit the opacity of the reference volume (0.0 transparent, 1.0 opaque).</p>
+</dd>
+<dt><a class="reference internal" href="_images/zoomin.png"><img alt="zoomin" src="_images/zoomin.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to zoom in (<strong>CTRL Up</strong> shortkey or <strong>CTRL</strong> MouseWheel).</p>
+</dd>
+<dt><a class="reference internal" href="_images/zoomout.png"><img alt="zoomout" src="_images/zoomout.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to zoom out (<strong>CTRL Down</strong> shortkey or <strong>CTRL</strong> MouseWheel).</p>
+</dd>
+<dt><a class="reference internal" href="_images/zoom1.png"><img alt="zoom1" src="_images/zoom1.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to apply default zoom (<strong>0</strong> shortkey).</p>
+</dd>
+</dl>
+<dl class="simple" id="proj-section-action">
+<dt><a class="reference internal" href="_images/hand.png"><img alt="hand" src="_images/hand.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu and choose an action mode:</p>
+<ul class="simple">
+<li><p><strong>Move</strong>, move the slice viewpoint by pressing the left mouse button and dragging.</p></li>
+<li><p><strong>Zoom</strong>, change the zoom factor by pressing the left mouse button and dragging.</p></li>
+<li><p><strong>Level/window</strong>, change the window thresholds by pressing the left mouse button and dragging.</p></li>
+<li><p><strong>Centered cursor</strong>, in this mode, slice viewpoint is moved and centered on the point clicked with the left mouse button.</p></li>
+<li><p><strong>No action</strong>, exit previous action mode.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple" id="proj-section-show">
+<dt><a class="reference internal" href="_images/show.png"><img alt="show" src="_images/show.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu and set widget visibility.</p>
+<ul class="simple">
+<li><p><strong>Information</strong> (<strong>i</strong> shortkey), information visibility. Various information can be displayed in each corner of the cell (type of information is selected with <a class="reference internal" href="_images/info.png"><img alt="info" src="_images/info.png" style="width: 32.0px; height: 32.0px;" /></a> button).</p></li>
+<li><p><strong>Orientation labels</strong> (<strong>l</strong> shortkey), orientation labels visibility: <strong>L</strong> (left), <strong>R</strong> (right), <strong>S</strong> (superior), <strong>I</strong> (inferior), <strong>A</strong> (anterior), <strong>P</strong> (posterior).</p></li>
+<li><p><strong>Colorbar</strong> (<strong>b</strong> shortkey), colorbar visibility (select colorbar position with <a class="reference internal" href="_images/lut.png"><img alt="lut" src="_images/lut.png" style="width: 32.0px; height: 32.0px;" /></a> button).</p></li>
+<li><p><strong>Tooltip</strong> (<strong>t</strong> shortkey), tooltip visibility.</p></li>
+<li><p><strong>Show all</strong>, show all widgets.</p></li>
+<li><p><strong>Hide all</strong>, hide all widgets.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple" id="proj-section-info">
+<dt><a class="reference internal" href="_images/info.png"><img alt="info" src="_images/info.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu and select the type of information displayed, if <a class="reference internal" href="_images/show.png"><img alt="show" src="_images/show.png" style="width: 32.0px; height: 32.0px;" /></a> <strong>information</strong> is checked.</p>
+<ul class="simple">
+<li><p><strong>Identity</strong>, patient identity (firstname, lastname, birthdate) at top-left corner.</p></li>
+<li><p><strong>Image attributes</strong>, image attributes (ID, matrix size, field-of-view, voxel spacing, datatype) at top-right corner.</p></li>
+<li><p><strong>Acquisition attributes</strong>, acquisition attributes (orientation, modality, sequence, date of scan) at bottom-left.</p></li>
+<li><p><strong>Anatomy label at cursor position</strong>, gyrus name and brodman area under the mouse position.</p></li>
+</ul>
+</dd>
+<dt><a class="reference internal" href="_images/lut.png"><img alt="lut" src="_images/lut.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu and select the colorbar position: <strong>left</strong>, <strong>right</strong>, <strong>top</strong> or <strong>bottom</strong> border.</p>
+</dd>
+</dl>
+<dl class="simple" id="proj-section-ruler">
+<dt><a class="reference internal" href="_images/ruler.png"><img alt="ruler" src="_images/ruler.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu to add an interactive tool.</p>
+<ul class="simple">
+<li><p><strong>Distance</strong>, used to measure the distance in mm between two points. Left-click in the view widget to position the two endpoints. Left-press and drag to move the endpoints. Right-click on distance label to display popup menu to select color or delete tool.</p></li>
+<li><p><strong>Orthogonal distances</strong>, used to measure two orthogonal distances in mm. Left-click in the view widget to position the four endpoints. Left-press and drag to move the endpoints. Right-click on distance label to display popup menu to select color or delete tool.</p></li>
+<li><p><strong>Angle</strong>, used to measure angle in degrees between two lines. Left-click in the view widget to position the three endpoints. Left-press and drag to move the endpoints. Right-click on angle label to display popup menu to select color or delete tool.</p></li>
+<li><p><strong>Remove all</strong>, remove all tools.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple" id="proj-section-photo">
+<dt><a class="reference internal" href="_images/photo.png"><img alt="photo" src="_images/photo.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a screenshots management menu:</p>
+<ul class="simple">
+<li><p><strong>Save grid capture…</strong>, take a screenshot of the slice view.</p></li>
+<li><p><strong>Save selected view capture</strong>, take a screenshot of the selected cell (outlined in white, <strong>SPACE</strong> shortkey)</p></li>
+<li><p><strong>Send selected view capture to screenshots preview</strong> or shortcut key <strong>SPACE</strong>, take a screenshot of the selected cell and copy it to the screenshot manager.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple" id="proj-section-clipboard">
+<dt><a class="reference internal" href="_images/clipboard.png"><img alt="clipboard" src="_images/clipboard.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu to take screenshot and copy it to the clipboard.</p>
+<ul class="simple">
+<li><p><strong>Copy grid capture to clipboard</strong>, take a screenshot of the slice view and copy it to the clipboard.</p></li>
+<li><p><strong>Copy selected view capture to clipboard</strong>, take a screenshot of the selected cell and copy it to the clipboard.</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="popup-menu">
+<span id="proj-section-popup"></span><h2>Popup menu<a class="headerlink" href="#popup-menu" title="Link to this heading"></a></h2>
+<p>Right-click in view area to open a popup menu:</p>
+<ul class="simple">
+<li><p><strong>Expand display</strong></p></li>
+<li><dl class="simple">
+<dt><strong>Zoom</strong> &gt;</dt><dd><p>Zoom in, Zoom out, Default zoom</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#proj-section-action"><span class="std std-ref">Actions</span></a> &gt;</dt><dd><p>No action, Move, Zoom, Level/Window, Cenetred cursor</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#proj-section-show"><span class="std std-ref">Visibility</span></a> &gt;</dt><dd><p>Show information, Show orientation labels, Show colorbar, Show ruler, Show tooltip, Show all, Hide all</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#proj-section-info"><span class="std std-ref">Information</span></a> &gt;</dt><dd><p>Identity, Image attributes, Acquisition attributes, Anatomy label at cursor position</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Colorbar position</strong> &gt;</dt><dd><p>Left, Right, Top, “Bottom</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Ruler position</strong> &gt;</dt><dd><p>Left, Right, Top, Bottom</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#proj-section-ruler"><span class="std std-ref">Tools</span></a> &gt;</dt><dd><p>Distance, Orthogonal distance, Angle, Remove all</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#proj-section-photo"><span class="std std-ref">Save view capture</span></a> &gt;</dt><dd><p>Save grid capture…, Save current view capture…</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#proj-section-clipboard"><span class="std std-ref">Copy view capture to clipboard</span></a> &gt;</dt><dd><p>Copy grid capture to clipboard, Copy current view capture to clipboard</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>The same menu is available via the menu bar (“Views” -&gt; “Projection view”).</p>
+<p>Right-click in view area to open a popup menu:</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="PySisyphe_synchronizedview.html" class="btn btn-neutral float-left" title="Synchronized view widget" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="PySisyphe_multicomponentview.html" class="btn btn-neutral float-right" title="Multi-component view widget" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

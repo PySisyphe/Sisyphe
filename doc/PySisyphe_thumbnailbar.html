@@ -1,0 +1,229 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thumbnail bar &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=049aceee"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Widgets" href="PySisyphe_widgets.html" />
+    <link rel="prev" title="Toolbar" href="PySisyphe_toolbar.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sisyphe
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Thumbnail bar</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#thumbnails">Thumbnails</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#popup-menu">Popup menu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lut-widget">LUT widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overlay-widget">Overlay widget</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Thumbnail bar</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PySisyphe_thumbnailbar.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="thumbnail-bar">
+<span id="page-thumbnailbar"></span><h1>Thumbnail bar<a class="headerlink" href="#thumbnail-bar" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="#thumb-section-thumbnail"><span class="std std-ref">Thumbnails</span></a></p></li>
+<li><p><a class="reference internal" href="#thumb-section-popup"><span class="std std-ref">Popup menu</span></a></p></li>
+<li><p><a class="reference internal" href="#thumb-section-lut"><span class="std std-ref">LUT widget</span></a></p></li>
+<li><p><a class="reference internal" href="#thumb-section-overlay"><span class="std std-ref">Overlay widget</span></a></p></li>
+</ul>
+<p>The thumbnail bar is displayed below toolbar. Volumes opened in PySisyphe are displayed as thumbnails in this bar.</p>
+<p>To open a volume, double-click on an empty space in the thumbnail bar.</p>
+<p>Right-click on an empty space in the thumbnail bar to display a popup menu:</p>
+<ul class="simple">
+<li><p><strong>Open volume</strong>, to open a volume in the thumbnail bar.</p></li>
+<li><p><strong>Save all volume(s)</strong>, to save all volumes opened in the thumbnail bar.</p></li>
+<li><p><strong>Close all volume(s)</strong>, to close all volumes opened in the thumbnail bar.</p></li>
+</ul>
+<section id="thumbnails">
+<span id="thumb-section-thumbnail"></span><h2>Thumbnails<a class="headerlink" href="#thumbnails" title="Link to this heading"></a></h2>
+<a class="reference internal image-reference" href="_images/thumbnails.png"><img alt="_images/thumbnails.png" class="align-center" src="_images/thumbnails.png" style="width: 408.0px; height: 138.75px;" />
+</a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Thumbnail volume has three possible states:</p>
+<ul class="simple">
+<li><p><strong>No color border</strong>: volume of the current thumbnail is neither displayed as a reference nor as an overlay in the central viewing area (slice view, orthogonal view, synchronized view, projection vien or multi-component view)</p></li>
+<li><p><strong>Blue border</strong>: volume of the current thumbnail is displayed as reference in the central viewing area (slice view, orthogonal view, synchronized view, projection vien or multi-component view)</p></li>
+<li><p><strong>White border</strong>: volume of the current thumbnail is displayed as overlay in the central viewing area (slice view, orthogonal view, synchronized view, projection vien or multi-component view)</p></li>
+</ul>
+<p>A tooltip pops when mouse pointer remains over a thumbnail. It shows all the thumbnail’s volume attributes.</p>
+</section>
+<section id="popup-menu">
+<span id="thumb-section-popup"></span><h2>Popup menu<a class="headerlink" href="#popup-menu" title="Link to this heading"></a></h2>
+<p>Left-Click on the lower right of the thumbnail (on the three dots “…”), or right-click on any part of the thumbnail to show a popup menu:</p>
+<ul>
+<li><p><strong>Display in slice view</strong>, display the thumbnail volume as reference in the slice view. Select the thumbnail volume (blue border) if it is not.</p></li>
+<li><p><strong>Display in orthogonal view</strong>, display the thumbnail volume as reference in the orthogonal view. Select the thumbnail volume (blue border) if it is not.</p></li>
+<li><p><strong>Display in synchronized view</strong>, display the thumbnail volume as reference in the synchronized view. Select the thumbnail volume (blue border) if it is not.</p></li>
+<li><p><strong>Display in projection view</strong>, display the thumbnail volume as reference in the projection view. Select the thumbnail volume (blue border) if it is not.</p></li>
+<li><p><strong>Display in multi-component view</strong>, display the thumbnail volume as reference in the multi-component view. Select the thumbnail volume (blue border) if it is not.</p></li>
+<li><p><strong>Display in all views</strong>, display the thumbnail volume as reference in all views (slice view, orthogonal view, synchronized view, projection view, multi-component view). Select the thumbnail volume (blue border) if it is not.</p></li>
+<li><p><strong>Display as overlay</strong>, display the thumbnail volume as overlay in views.</p></li>
+<li><p><strong>Save</strong>, save the thumbnail volume.</p></li>
+<li><p><strong>Save as…</strong>, display a dialog box to save volume with a new file name.</p></li>
+<li><p><strong>Close</strong>, close the thumbnail volume.</p></li>
+<li><p><strong>Windowing &gt;</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Automatic window…</strong>, automatic windowing of the Look-Up-Table colormap.</p></li>
+<li><p><strong>Default window…</strong>, set windowing of the Look-Up-Table colormap to default (lower window = minimum array value and upper window = maximum array value)</p></li>
+<li><p><strong>Brain window</strong>, reserved to CT modality. Set windowing to enhance brain contrast.</p></li>
+<li><p><strong>Bone window</strong>, reserved to CT modality. Set windowing to enhance bone contrast.</p></li>
+<li><p><strong>Metallic window</strong>, reserved to CT modality. Set windowing to enhance metallic contrast.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Anonymize</strong>, Anonymize the thumbnail volume.</p></li>
+<li><p><strong>Edit attributes…</strong>, display a dialog box to edit attributes (identity, acquisition, image) of the thumbnail volume.</p></li>
+<li><p><strong>Set Origin to default</strong>, set origin attribute of the thumbnail volume to default i.e. (0.0, 0.0, 0.0)</p></li>
+<li><p><strong>Set Directions to default</strong>, Set directions attribute of the thumbnail volume to default i.e. (0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0)</p></li>
+<li><p><strong>Set Modality</strong>, change modality attribute of the thumbnail volume (<strong>CT</strong> computed tomography, <strong>LB</strong> label volume, <strong>MR</strong> magnetic Resonance, <strong>NM</strong> single photon emission tomography, <strong>PT</strong> positon emission tomography, <strong>TP</strong> template)</p></li>
+<li><p><strong>Datatype conversion</strong>, change array value datatype of the thumbnail volume (<strong>int8</strong>, <strong>int16</strong>, <strong>int32</strong>, <strong>int64</strong>, <strong>unit8</strong>, <strong>uint16</strong>, <strong>uint32</strong>, <strong>uint64</strong>, <strong>float32</strong>, <strong>float64</strong>)</p></li>
+<li><p><strong>Descriptive statistics</strong>, display a dialog box giving descriptive statistics of the thumbnail volume (minimum, 5th percentile, 25th percentile, median, 75th percentile, 95th percentile, std, mean, skewness, kurtosis).</p></li>
+<li><p><strong>Add to database</strong>, add the thumbnail volume to the patient database.</p></li>
+<li><p><strong>AC-PC selection…</strong>, display a dialog box to select anterior and posterior commissure of a the thumbnail volume.</p></li>
+<li><p><strong>Reorientation…</strong>, display a dialog box to reorient a the thumbnail volume and/or change the field-of-view.</p></li>
+<li><p><strong>Stereotactic frame detection…</strong>, display a dialog box for detecting fiducial markers of a Leksell stereotaxic frame of the thumbnail volume.</p></li>
+<li><p><strong>Flip</strong>, flip axes of the thumbnail volume (left/right axis, anterior/posterior axis, or cranial/caudal axis).</p></li>
+<li><p><strong>Swap axis</strong>, permute volume axes (swap axis order to <strong>y-z-x</strong>, <strong>z-x-y</strong>, <strong>x-z-y</strong>, <strong>y-z-x</strong>, or <strong>z-y-x</strong>).</p></li>
+<li><p><strong>Remove neck slices</strong>, Remove the lowest slices of the neck, typically in a 3D sagittal scan.</p></li>
+</ul>
+</section>
+<section id="lut-widget">
+<span id="thumb-section-lut"></span><h2>LUT widget<a class="headerlink" href="#lut-widget" title="Link to this heading"></a></h2>
+<a class="reference internal image-reference" href="_images/lut1.png"><img alt="_images/lut1.png" class="align-center" src="_images/lut1.png" style="width: 382.5px; height: 395.25px;" />
+</a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>A Look-Up-Table (LUT) colormap widget is displayed last in the popup menu.</p>
+<p>The upper part of the widget shows the extent of the windowing as a yellow frame (1) overlaid on the volume histogram. The left edge of the frame represents the lower threshold, the right edge the upper threshold. Threshold values are written vertically in the center of each edge. The frame can be moved by pressing the left mouse button and dragging. Press the left mouse button and drag to move the left or right border (2, click inner part inside the frame).</p>
+<p>At the bottom of the widget, there are two boxes to the left and right (4, 5). They display and modify the range of volume values, from minimum (left box) to maximum (right box). The combobox in the middle (3) allows you to change the LUT colormap. The order of colors in the colormap can be reversed with the “Reverse” check box.</p>
+</section>
+<section id="overlay-widget">
+<span id="thumb-section-overlay"></span><h2>Overlay widget<a class="headerlink" href="#overlay-widget" title="Link to this heading"></a></h2>
+<p>When the thumbnail volume is displayed as overlay, new widgets are displayed above the LUT widget:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_images/view.png"><img alt="view" src="_images/view.png" style="width: 32.0px; height: 32.0px;" /></a> show/hide overlay.</p></li>
+<li><p>horizontal slide bar to change overlay opacity (from 0 to 100%).</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="PySisyphe_toolbar.html" class="btn btn-neutral float-left" title="Toolbar" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="PySisyphe_widgets.html" class="btn btn-neutral float-right" title="Widgets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

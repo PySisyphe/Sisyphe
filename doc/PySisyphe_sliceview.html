@@ -1,0 +1,346 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Slice view widget &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=049aceee"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Orthogonal view widget" href="PySisyphe_orthogonalview.html" />
+    <link rel="prev" title="Widgets" href="PySisyphe_widgets.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sisyphe
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Slice view widget</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#controls">Controls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#icon-bar">Icon bar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#popup-menu">Popup menu</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Slice view widget</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PySisyphe_sliceview.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="slice-view-widget">
+<span id="page-sliceview"></span><h1>Slice view widget<a class="headerlink" href="#slice-view-widget" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="#slice-section-controls"><span class="std std-ref">Controls</span></a></p></li>
+<li><p><a class="reference internal" href="#slice-section-iconbar"><span class="std std-ref">Icon bar</span></a></p></li>
+<li><p><a class="reference internal" href="#slice-section-popup"><span class="std std-ref">Popup menu</span></a></p></li>
+</ul>
+<img alt="_images/slice-view.png" class="align-center" src="_images/slice-view.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>This widget, placed in the central area, displays a series of adjacent slices of a reference volume in a grid.
+Other volume(s) can overlay the reference (popup menu “Display as overlay” of one or more thumbnail volumes).
+This widget can be used to display and edit ROI (<a class="reference internal" href="PySisyphe_dockroi.html#page-dockroi"><span class="std std-ref">ROI</span></a>, <a class="reference internal" href="PySisyphe_dockroitools.html#page-dockroitools"><span class="std std-ref">ROI Tools</span></a>). However, it does not display mesh, trajectory/target tools and streamlines (<a class="reference internal" href="PySisyphe_dockmesh.html#page-dockmesh"><span class="std std-ref">Mesh</span></a>, <a class="reference internal" href="PySisyphe_docktarget.html#page-docktarget"><span class="std std-ref">Target/Trajectory</span></a>, <a class="reference internal" href="PySisyphe_docktracking.html#page-docktracking"><span class="std std-ref">Tracking</span></a>).</p>
+<p>Left-click to select the slice in a grid cell. Some controls can be applied only to a selected cell. This cell is outlined in white.</p>
+<section id="controls">
+<span id="slice-section-controls"></span><h2>Controls<a class="headerlink" href="#controls" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>MouseWheel slices through image,</p></li>
+<li><p><strong>Up or Left</strong> key to display previous slice,</p></li>
+<li><p><strong>Down or Right</strong> key to display next slice,</p></li>
+<li><p>MouseWheel + <strong>CTRL</strong> key (CMD key MacOs platform) to change zoom,</p></li>
+<li><p><strong>Up or Left + CTRL</strong> key (CMD key MacOs platform) to zoom out,</p></li>
+<li><p><strong>Down or Right + CTRL</strong> key (CMD key MacOs platform) to zoom in,</p></li>
+<li><p><strong>A</strong> or <strong>a</strong> key to set axial orientation,</p></li>
+<li><p><strong>C</strong> or <strong>c</strong> key to set coronal orientation,</p></li>
+<li><p><strong>S</strong> or <strong>s</strong> key to set sagitall orientation,</p></li>
+<li><p>Left-click to move cursor position,</p></li>
+<li><p>Left-click + <strong>CTRL</strong> key (CMD key MacOs platform) and drag to change zoom,</p></li>
+<li><p>Left-click + <strong>ALT</strong> key and drag to move the viewpoint,</p></li>
+<li><p>Left-click + <strong>SHIFT</strong> key and drag to change window/level,</p></li>
+<li><p>Right-click + <strong>CTRL</strong> Key (CMD key MacOs platform) to show a popup menu.</p></li>
+</ul>
+<p>Brush controls (if a ROI is displayed):</p>
+<ul class="simple">
+<li><p>Left-click to brush, right-click to erase in draw mode (<a class="reference internal" href="PySisyphe_dockroitools.html#page-dockroitools"><span class="std std-ref">ROI Tools</span></a>),</p></li>
+<li><p>MouseWheel + <strong>ALT</strong> Key to change brush size.</p></li>
+</ul>
+</section>
+<section id="icon-bar">
+<span id="slice-section-iconbar"></span><h2>Icon bar<a class="headerlink" href="#icon-bar" title="Link to this heading"></a></h2>
+<p>Slice view widget includes a vertical icon bar to the left:</p>
+<dl class="simple">
+<dt><a class="reference internal" href="_images/pin.png"><img alt="pin" src="_images/pin.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to select/unselect. When this button is unselected, the icon bar is hidden when the mouse cursor leaves it. The icon bar is displayed when the mouse cursor is moved to the left border of the grid. If this button is selected, the icon bar is always visible.</p>
+</dd>
+<dt><a class="reference internal" href="_images/fullscreen.png"><img alt="fullscreen" src="_images/fullscreen.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to select/unselect. Toggle between full-screen and normal display modes. In full-screen mode, the slice view widget is extended to the full screen. Press <strong>F11</strong> or <strong>ESC</strong> key to exit full-screen mode.</p>
+</dd>
+<dt><a class="reference internal" href="_images/grid.png"><img alt="grid" src="_images/grid.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Change the number of grid cells (slices). Proposed number of rows/columns: <strong>1x1</strong> (<strong>1</strong> shortkey), <strong>1x2</strong> (<strong>2</strong> shortkey), <strong>1x3</strong> (<strong>3</strong> shortkey)), <strong>2x2</strong> (<strong>4</strong> shortkey), <strong>2x3</strong> (<strong>6</strong> shortkey), <strong>3x3</strong> (<strong>9</strong> shortkey).</p>
+</dd>
+<dt><a class="reference internal" href="_images/dimx.png"><img alt="dimx" src="_images/dimx.png" style="width: 32.0px; height: 32.0px;" /></a> <a class="reference internal" href="_images/dimy.png"><img alt="dimy" src="_images/dimy.png" style="width: 32.0px; height: 32.0px;" /></a> <a class="reference internal" href="_images/dimz.png"><img alt="dimz" src="_images/dimz.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Change orientation of slices (<strong>A</strong>, <strong>C</strong>, <strong>S</strong> shortkeys).</p>
+</dd>
+<dt><a class="reference internal" href="_images/minus.png"><img alt="minus" src="_images/minus.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display previous slice (<strong>Up</strong> or <strong>Left</strong> shortkeys).</p>
+</dd>
+<dt><a class="reference internal" href="_images/plus.png"><img alt="plus" src="_images/plus.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display next slice (<strong>Down</strong> or <strong>Right</strong> shortkeys).</p>
+</dd>
+<dt><a class="reference internal" href="_images/expand.png"><img alt="expand" src="_images/expand.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to select/unselect. Expand the selected cell to the whole widget surface (<strong>+</strong> shortkey).</p>
+</dd>
+<dt><a class="reference internal" href="_images/zoomin.png"><img alt="zoomin" src="_images/zoomin.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to zoom in (<strong>CTRL Up</strong> shortkey or <strong>CTRL</strong> MouseWheel).</p>
+</dd>
+<dt><a class="reference internal" href="_images/zoomout.png"><img alt="zoomout" src="_images/zoomout.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to zoom out (<strong>CTRL Down</strong> shortkey or <strong>CTRL</strong> MouseWheel).</p>
+</dd>
+<dt><a class="reference internal" href="_images/zoom1.png"><img alt="zoom1" src="_images/zoom1.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to apply default zoom (<strong>0</strong> shortkey).</p>
+</dd>
+</dl>
+<dl class="simple" id="slice-section-action">
+<dt><a class="reference internal" href="_images/hand.png"><img alt="hand" src="_images/hand.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu and choose an action mode:</p>
+<ul class="simple">
+<li><p><strong>Move</strong>, move the slice viewpoint by pressing the left mouse button and dragging.</p></li>
+<li><p><strong>Zoom</strong>, change the zoom factor by pressing the left mouse button and dragging.</p></li>
+<li><p><strong>Level/window</strong>, change the window thresholds by pressing the left mouse button and dragging.</p></li>
+<li><p><strong>Cursor follows mouse</strong>, in this mode, the cursor position follows the mouse without clicking.</p></li>
+<li><p><strong>Centered cursor</strong>, in this mode, slice viewpoint is moved and centered on the point clicked with the left mouse button.</p></li>
+<li><p><strong>No action</strong>, exit previous action mode.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple" id="slice-section-show">
+<dt><a class="reference internal" href="_images/show.png"><img alt="show" src="_images/show.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu and set widget visibility.</p>
+<ul class="simple">
+<li><p><strong>cursor</strong> (<strong>x</strong> shortkey), cursor visbility (horizontal and vertical white lines intersect).</p></li>
+<li><p><strong>Information</strong> (<strong>i</strong> shortkey), information visibility. Various information can be displayed in each corner of each cell (type of information is selected with <a class="reference internal" href="_images/info.png"><img alt="info" src="_images/info.png" style="width: 32.0px; height: 32.0px;" /></a> button).</p></li>
+<li><p><strong>Orientation labels</strong> (<strong>l</strong> shortkey), orientation labels visibility: <strong>L</strong> (left), <strong>R</strong> (right), <strong>S</strong> (superior), <strong>I</strong> (inferior), <strong>A</strong> (anterior), <strong>P</strong> (posterior).</p></li>
+<li><p><strong>Orientation marker</strong> (<strong>m</strong> shortkey), orientation marker visibility, 3D marker can be displayed at bottom-right (type of marker is selected with <a class="reference internal" href="_images/info.png"><img alt="info" src="_images/info.png" style="width: 32.0px; height: 32.0px;" /></a> button).</p></li>
+<li><p><strong>ROI</strong>, ROI visibility.</p></li>
+<li><p><strong>Colorbar</strong> (<strong>b</strong> shortkey), colorbar visibility (select colorbar position with <a class="reference internal" href="_images/lut.png"><img alt="lut" src="_images/lut.png" style="width: 32.0px; height: 32.0px;" /></a> button).</p></li>
+<li><p><strong>Ruler</strong> (<strong>r</strong> shortkey), ruler visibility (select ruler position with <a class="reference internal" href="_images/axis.png"><img alt="axis" src="_images/axis.png" style="width: 32.0px; height: 32.0px;" /></a> button).</p></li>
+<li><p><strong>Tooltip</strong> (<strong>t</strong> shortkey), tooltip visibility.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple" id="slice-section-info">
+<dt><a class="reference internal" href="_images/info.png"><img alt="info" src="_images/info.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu and select the type of information displayed, if <a class="reference internal" href="_images/show.png"><img alt="show" src="_images/show.png" style="width: 32.0px; height: 32.0px;" /></a> <strong>information</strong> is checked.</p>
+<ul class="simple">
+<li><p><strong>Identity</strong>, patient identity (firstname, lastname, birthdate) at top-left corner.</p></li>
+<li><p><strong>Image attributes</strong>, image attributes (ID, matrix size, field-of-view, voxel spacing, datatype) at top-right corner.</p></li>
+<li><p><strong>Acquisition attributes</strong>, acquisition attributes (orientation, modality, sequence, date of scan) at bottom-left.</p></li>
+<li><p><strong>Cursor world coordinates</strong>, world coordinates in mm at mouse position.</p></li>
+<li><p><strong>Leksell coordinate</strong>, Leksell space coordinates at mouse position (if fiducial markers of a Leksell stereotaxic frame are detected).</p></li>
+<li><p><strong>AC-PC</strong>, relative AC-PC world coordinates in mm at mouse position (if anterior and posterior commissures are defined).</p></li>
+<li><p><strong>Voxel value at mouse position</strong>, scalar value of voxel at mouse position.</p></li>
+<li><p><strong>Voxel overlay value at mouse position</strong>, overlay scalar value of voxel at mouse position.</p></li>
+<li><p><strong>Orientation marker shape</strong>, Cube with <strong>L</strong>-<strong>R</strong>-<strong>S</strong>-<strong>I</strong>-<strong>A</strong>-<strong>P</strong> labels on its faces, 3D brain, 3D head, 3D bust, 3D body or 3D axes.</p></li>
+</ul>
+</dd>
+<dt><a class="reference internal" href="_images/iso.png"><img alt="iso" src="_images/iso.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu to display iso-value lines as overlay.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_images/palette.png"><img alt="palette" src="_images/palette.png" style="width: 32.0px; height: 32.0px;" /></a> to chose line color.</p></li>
+<li><p><a class="reference internal" href="_images/opacity.png"><img alt="opacity2" src="_images/opacity.png" style="width: 32.0px; height: 32.0px;" /></a> to chose line opacity.</p></li>
+<li><p><strong>Isoline value</strong> box to edit one or more iso-value splits using a space character.</p></li>
+<li><p>Check volume name (reference volume or overlays) used to perform iso-value lines.</p></li>
+</ul>
+</dd>
+<dt><a class="reference internal" href="_images/lut.png"><img alt="lut" src="_images/lut.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu and select colorbar position: <strong>left</strong>, <strong>right</strong>, <strong>top</strong> or <strong>bottom</strong> border.</p>
+</dd>
+<dt><a class="reference internal" href="_images/axis.png"><img alt="axis" src="_images/axis.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu and select ruler position: <strong>left</strong>, <strong>right</strong>, <strong>top</strong> or <strong>bottom</strong> border.</p>
+</dd>
+</dl>
+<dl class="simple" id="slice-section-ruler">
+<dt><a class="reference internal" href="_images/ruler.png"><img alt="ruler" src="_images/ruler.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu to add an interactive tool.</p>
+<ul class="simple">
+<li><p><strong>Distance</strong>, used to measure the distance in mm between two points. Left-click in the view widget to position the two endpoints. Left-press and drag to move the endpoints. Right-click on distance label to display popup menu to select color or delete tool.</p></li>
+<li><p><strong>Orthogonal distances</strong>, used to measure two orthogonal distances in mm. Left-click in the view widget to position the four endpoints. Left-press and drag to move the endpoints. Right-click on distance label to display popup menu to select color or delete tool.</p></li>
+<li><p><strong>Angle</strong>, used to measure angle in degrees between two lines. Left-click in the view widget to position the three endpoints. Left-press and drag to move the endpoints. Right-click on angle label to display popup menu to select color or delete tool.</p></li>
+<li><p><strong>Remove all</strong>, remove all tools.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple" id="slice-section-photo">
+<dt><a class="reference internal" href="_images/photo.png"><img alt="photo" src="_images/photo.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a screenshots management menu:</p>
+<ul class="simple">
+<li><p><strong>Save grid capture…</strong>, take a screenshot of the slice view.</p></li>
+<li><p><strong>Save selected view capture</strong>, take a screenshot of the selected cell (outlined in white, <strong>SPACE</strong> shortkey)</p></li>
+<li><p><strong>Save capture from slice series</strong>, take a series of screenshots of each slice, in the current orientation.</p></li>
+<li><p><strong>Send selected view capture to screenshots preview</strong> or shortcut key <strong>SPACE</strong>, take a screenshot of the selected cell and copy it to the screenshot manager.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple" id="slice-section-clipboard">
+<dt><a class="reference internal" href="_images/clipboard.png"><img alt="clipboard" src="_images/clipboard.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu to take screenshot and copy it to the clipboard.</p>
+<ul class="simple">
+<li><p><strong>Copy grid capture to clipboard</strong>, take a screenshot of the slice view and copy it to the clipboard.</p></li>
+<li><p><strong>Copy selected view capture to clipboard</strong>, take a screenshot of the selected cell and copy it to the clipboard.</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="popup-menu">
+<span id="slice-section-popup"></span><h2>Popup menu<a class="headerlink" href="#popup-menu" title="Link to this heading"></a></h2>
+<p>Right-click in view area to open a popup menu:</p>
+<ul class="simple">
+<li><p><strong>Expand display</strong></p></li>
+<li><dl class="simple">
+<dt><strong>Number of views</strong> &gt;</dt><dd><p>1x1, 1x2, 1x3, 2x2, 2x3, 3x3</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Orientation</strong> &gt;</dt><dd><p>Axial, Coronal, Sagitall</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Zoom</strong> &gt;</dt><dd><p>Zoom in, Zoom out, Default zoom</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#slice-section-action"><span class="std std-ref">Actions</span></a> &gt;</dt><dd><p>No action, Move, Zoom, Level/Window, Cursor follows mouse, Cenetred cursor</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#slice-section-show"><span class="std std-ref">Visibility</span></a> &gt;</dt><dd><p>Show cursor, Show information, Show orientation labels, Show orientation marker, Show ROI, Show colorbar, Show ruler, Show tooltip, Show all, Hide all</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#slice-section-info"><span class="std std-ref">Information</span></a> &gt;</dt><dd><p>Identity, Image attributes, Acquisition attributes, Cursor world coordinates, Voxel value at mouse position, Orientationmarker shape &gt; Cube, Brain, Head, Bust, Body, Axes</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Colorbar position</strong> &gt;</dt><dd><p>Left, Right, Top, “Bottom</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Ruler position</strong> &gt;</dt><dd><p>Left, Right, Top, Bottom</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#slice-section-ruler"><span class="std std-ref">Tools</span></a> &gt;</dt><dd><p>Distance, Orthogonal distance, Angle, Remove all</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#slice-section-photo"><span class="std std-ref">Save view capture</span></a> &gt;</dt><dd><p>Save grid capture…, Save current view capture, Save capture from slice series</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#slice-section-clipboard"><span class="std std-ref">Copy view capture to clipboard</span></a> &gt;</dt><dd><p>Copy grid capture to clipboard, Copy current view capture to clipboard</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>The same menu is available via the menu bar (“Views” -&gt; “Slice view”).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="PySisyphe_widgets.html" class="btn btn-neutral float-left" title="Widgets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="PySisyphe_orthogonalview.html" class="btn btn-neutral float-right" title="Orthogonal view widget" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
