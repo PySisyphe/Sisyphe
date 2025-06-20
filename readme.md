@@ -1,4 +1,4 @@
-[](https://github.com/PySisyphe/Sisyphe/blob/main/gui/darkicons/Logo%20Original.png)
+[](https://github.com/PySisyphe/Sisyphe/tree/main/gui/darkicons/Logo%20Original.png)
 
 Overview
 ========
