@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<xdcm version="1.0">
+	<SpecificCharacterSet VM="1" VR="CS">ISO_IR 100</SpecificCharacterSet>
+	<InstanceCreationDate VM="1" VR="DA">20000101</InstanceCreationDate>
+	<InstanceCreationTime VM="1" VR="TM">000000.000000</InstanceCreationTime>
+	<SOPClassUID VM="1" VR="UI">1.2.840.10008.5.1.4.1.1.481.3</SOPClassUID>
+	<SOPInstanceUID VM="1" VR="UI">1.2.840</SOPInstanceUID>
+	<StudyDate VM="1" VR="DA">20000101</StudyDate>
+	<SeriesDate VM="1" VR="DA">20000101</SeriesDate>
+	<StudyTime VM="1" VR="TM">000000.000000</StudyTime>
+	<SeriesTime VM="1" VR="TM">000000.000000</SeriesTime>
+	<AccessionNumber VM="1" VR="SH">A</AccessionNumber>
+	<Modality VM="1" VR="CS">RTSTRUCT</Modality>
+	<Manufacturer VM="1" VR="LO">PySisyphe</Manufacturer>
+	<StationName VM="1" VR="SH">PySisyphe</StationName>
+	<StudyDescription VM="1" VR="LO">None</StudyDescription>
+	<SeriesDescription VM="1" VR="LO">None</SeriesDescription>
+	<ManufacturerModelName VM="1" VR="LO">PySisyphe</ManufacturerModelName>
+	<SoftwareVersions VM="3" VR="LO">0.1</SoftwareVersions>
+	<PatientName VM="1" VR="PN">None^None</PatientName>
+	<PatientBirthDate VM="1" VR="DA">20000101</PatientBirthDate>
+	<PatientSex VM="1" VR="CS">O</PatientSex>
+	<PatientAge VM="1" VR="AS">040Y</PatientAge>
+	<StudyInstanceUID VM="1" VR="UI">1.2.840</StudyInstanceUID>
+	<SeriesInstanceUID VM="1" VR="UI">1.2.840</SeriesInstanceUID>
+	<StudyID VM="1" VR="SH">A</StudyID>
+	<SeriesNumber VM="1" VR="IS">1</SeriesNumber>
+	<InstanceNumber VM="1" VR="IS">1</InstanceNumber>
+	<StructureSetLabel VM="1" VR="SH">1</StructureSetLabel>
+	<StructureSetName VM="1" VR="LO">PySisyphe ROI</StructureSetName>
+	<StructureSetDescription VM="0" VR="ST">None</StructureSetDescription>
+	<StructureSetDate VM="0" VR="DA">None</StructureSetDate>
+	<StructureSetTime VM="0" VR="TM">None</StructureSetTime>
+</xdcm>
