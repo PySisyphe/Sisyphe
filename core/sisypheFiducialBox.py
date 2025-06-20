@@ -1,14 +1,14 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        Numpy           https://numpy.org/                                          Scientific computing
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
-        SimpleITK       https://simpleitk.org/                                      Medical image processing
-        vtk             https://vtk.org/                                            Visualization
+    - Numpy, scientific computing, https://numpy.org/
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - SimpleITK, medical image processing, https://simpleitk.org/
+    - vtk, visualization engine/3D rendering, https://vtk.org/
 """
 
+from os import remove
 from os.path import exists
 from os.path import splitext
 
@@ -39,81 +39,42 @@ from Sisyphe.core.sisypheTransform import SisypheTransform
 __all__ = ['SisypheFiducialBox']
 
 """
-    Class hierarchy
+Class hierarchy
+~~~~~~~~~~~~~~~
 
-        QObject -> SisypheFiducialBox
+    - PyQt5.QtCore.QObject -> SisypheFiducialBox
 """
-
 
 class SisypheFiducialBox(QObject):
     """
-        SisypheFiducialBox class
+    Description
+    ~~~~~~~~~~~
 
-        Description
+    This class detects the Elekta Leksell frame's fiducial markers. It computes a rigid transformation to calculate
+    coordinates between the geometric Leksell reference and the image coordinates, and vice versa.
 
-            Class to detect fiducial markers of Elekta Leksell frame.
-            Gives rigid transformation to calculate coordinates in the
-            geometric Leksell reference from the image coordinates and
-            vice versa.
+    Elekta Leksell frame space, LAI+ convention:
 
-        Inheritance
+        - right (0.0) to left (+)
+        - posterior (0.0) to anterior (+)
+        - superior (0.0) to inferior (+)
+        - origin right, posterior, superior
 
-            QObject -> SisypheFiducialBox
+    Fiducial coordinates:
 
-        Private attributes
+        - Fiducial              x       y       z
+        - anterior right  ->    5.0     160.0   40.0 cranial to 160.0 caudal
+        - anterior left   ->    195.0   160.0   40.0 cranial to 160.0 caudal
+        - posterior right ->    5.0     40.0    40.0 cranial to 160.0 caudal
+        - posterior left  ->    195.0   40.0    40.0 cranial to 160.0 caudal
 
-            _nbfid      int, fiducials count (6 or 9)
-            _fidtol     float, distance tolerance of fiducial markers
-            _fidlist    dict, fiducial markers coordinates
-            _errorlist  dict, fiducial markers errors
-            _errorstats dict, fiducial markers errors statistics
-            _volume     SisypheVolume
-            _trf        SisypheTransform
+    Inheritance
+    ~~~~~~~~~~~
 
-        Custom Qt Signal
+    QObject -> SisypheFiducialBox
 
-            ProgressValueChanged.emit(int)
-            ProgressRangeChanged(int, int)
-            ProgressTextChanged.emit(str)
-
-        Class method
-
-            def getFileExt() -> str
-
-        Public methods
-
-            execute(vol: SisypheVolume)
-            markersSearch(vol: SisypheVolume, slc: int | None = None)
-            calcTransform()
-            calcErrors()
-            getErrors() -> dict[int, dict[int, float]]
-            hasErrors() -> bool
-            getErrorStatistics() -> dict[str, float]
-            addTransformToVolume()
-            hasTransform() -> bool
-            getTransform() -> SisypheTransform
-            getMarker(n: int, m: int) -> list[float, float, float]
-            getSliceMarkers(n: int) -> dict[int, list[float, float, float]]
-            getAllMarkers() -> dict[int, dict[int, list[float, float, float]]]
-            removeSliceMarkers(self, n: int)
-            removeFrontPlateMarkers()
-            getSliceNumbers() -> list[int]
-            getMarkersCount() -> int
-            hasSlice(n: int) -> bool
-            isEmpty() -> bool
-            hasVolume() -> bool
-            setVolume(v: SisypheVolume)
-            getVolume() -> SisypheVolume
-            saveToXML(filename: str)
-            loadFromXML(filename: str)
-            hasXML(filename: str) -> bool
-
-            inherited QObject methods
-
-        Creation: 26/07/2022
-        Revisions:
-
-            16/11/2023  docstrings
+    Creation: 26/07/2022
+    Last revision: 21/05/2025
     """
     # Class constant
 
@@ -123,7 +84,27 @@ class SisypheFiducialBox(QObject):
 
     @classmethod
     def getFileExt(cls) -> str:
+        """
+        Get SisypheFiducialBox file extension.
+
+        Returns
+        -------
+        str
+            '.xfid'
+        """
         return cls._FILEEXT
+
+    @classmethod
+    def getFilterExt(cls) -> str:
+        """
+        Get SisypheFiducialBox filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().
+
+        Returns
+        -------
+        str
+            'PySisyphe Fiducial markers (.xfid)'
+        """
+        return 'PySisyphe Fiducial markers (*{})'.format(cls._FILEEXT)
 
     # Custom Qt Signal
 
@@ -133,64 +114,77 @@ class SisypheFiducialBox(QObject):
 
     # Special methods
 
+    """
+    Private attributes
+
+    _nbfid      int, fiducials count (6 or 9)
+    _fidtol     float, distance tolerance of fiducial markers
+    _fidlist    dict, fiducial markers coordinates
+    _errorlist  dict, fiducial markers errors
+    _errorstats dict, fiducial markers errors statistics
+    _volume     SisypheVolume
+    _trf        SisypheTransform
+    """
+
     def __init__(self) -> None:
         """
-            SisypheFiducialBox instance constructor
+        SisypheFiducialBox instance constructor.
         """
         super().__init__()
+        self._trf = None
         self._volume = None
         self._nbfid = 0
         self._fidtol = 0
         """
-            _fidlist = dict[key1: int, value1: dict[key2: int, value2: list[float, float, float]]]
-                            key1 int, slice number
-                            key2 int, marker number (see _firstSliceSearch() method for marker code)
-                            value2 list(float, float, float), marker coordinates x, y, z
+        _fidlist = dict[key1: int, value1: dict[key2: int, value2: list[float, float, float]]]
+                        key1 int, slice number
+                        key2 int, marker number (see _firstSliceSearch() method for marker code)
+                        value2 list(float, float, float), marker coordinates x, y, z
         """
         self._fidlist = dict()
         """
-            _errorlist = dict[key1: int, value1: dict[key2: int, value2: float]]
-                              key1 int, slice number
-                              key2 int, marker number (see _firstSliceSearch() method for marker code)
-                              value2 float, error in millimeters
+        _errorlist = dict[key1: int, value1: dict[key2: int, value2: float]]
+                          key1 int, slice number
+                          key2 int, marker number (see _firstSliceSearch() method for marker code)
+                          value2 float, error in millimeters
         """
         self._errorlist = dict()
         """
-            _errorstats = dict[key: str, value: float]
-                               key in ('Mean', 'RMS', 'Median', 'Std', '25th', '75th', 'Min', 'Max')
+        _errorstats = dict[key: str, value: float]
+                           key in ('Mean', 'RMS', 'Median', 'Std', '25th', '75th', 'Min', 'Max')
         """
         self._errorstats = dict()
-        self._trf = None
 
     # Container Public methods
 
-    def __getitem__(self, index) -> list[float, float, float]:
+    def __getitem__(self, index) -> list[float]:
         """
-            Special overloaded container getter method.
-            Get a fiducial marker coordinates
+        Special overloaded container getter method. Get a fiducial marker coordinates.
 
-            Parameter
+        Parameters
+        ----------
+        index : tuple[int, int]
+            - first int, slice index
+            - second int, fiducial marker index
 
-                index key   tuple[slc, mrk]
-                            slc int, slice index
-                            mrk int, fiducial marker index
-
-            return  list[float, float, float], x, y, z fiducial marker coordinates
+        Returns
+        -------
+        list[float]
+            x, y, z fiducial marker coordinates
         """
         return self.getMarker(index[0], index[1])
 
     def __setitem__(self, index, value) -> None:
         """
-            Special overloaded container setter method.
-            Set a fiducial marker.
+        Special overloaded container setter method. Set a fiducial marker.
 
-            Parameter
-
-                index key   tuple[slc, mrk]
-                            slc int, slice index
-                            mrk int, fiducial marker index
-
-                value       tuple[float, float, float],  x, y, z fiducial marker coordinates
+        Parameters
+        ----------
+        index : tuple[int, int]
+            - first int, slice index
+            - second int, fiducial marker index
+        value : tuple[float, float, float]
+            x, y, z fiducial marker coordinates
         """
         if isinstance(value, tuple):
             if len(value) == 2:
@@ -201,39 +195,44 @@ class SisypheFiducialBox(QObject):
 
     def __delitem__(self, index) -> None:
         """
-            Special overloaded container delete method called by the built-in del() python function.
-            Remove a fiducial marker.
+        Special overloaded container delete method called by the built-in del() python function. Remove a fiducial
+        marker.
 
-            Parameter
-
-                index key   tuple[slc, mrk]
-                            slc int, slice index
-                            mrk int, fiducial marker index
+        Parameters
+        ----------
+        index : tuple[int, int]
+            - first int, slice index
+            - second int, fiducial marker index
         """
         if index in self._fidlist:
             del self._fidlist[index]
 
     def __contains__(self, value) -> bool:
         """
-            Special overloaded container method called by the built-in 'in' python operator.
-            Checks whether a slice index is valid (i.e. it contains at least 6 or 9 fiducial
-            markers depending on configuration)
+        Special overloaded container method called by the built-in 'in' python operator. Checks whether a slice index
+        is valid (i.e. it contains at least 6 or 9 fiducial markers depending on configuration)
 
-            Parameter
+        Parameters
+        ----------
+        value : int
+            slice index
 
-                value key   int, slice index
-
-            return  bool, True if slice index is valid
+        Returns
+        -------
+        bool
+            True if slice index is valid
         """
         return self.hasSlice(value)
 
     def __len__(self) -> int:
         """
-            Special overloaded container method called by the built-in len() python function..
-            Get list of valid slice indexes.
-            (i.e. slices with at least 6 or 9 fiducial markers depending on configuration)
+        Special overloaded container method called by the built-in len() python function. Get list of valid slice
+        indexes (i.e. slices with at least 6 or 9 fiducial markers depending on configuration).
 
-            return  list[int], list of valid indexes
+        Returns
+        -------
+        list[int]
+            list of valid indexes
         """
         return len(self._fidlist)
 
@@ -292,33 +291,51 @@ class SisypheFiducialBox(QObject):
         f.ComputeOrientedBoundingBoxOff()
         f.Execute(cc)
         labels = list(f.GetLabels())
-        # Search and removal non-fiducial components
-        vox = self._volume.getVoxelVolume()
+        n = f.GetNumberOfLabels()
+        # < Revision 21/05/2025
+        # Search for major component (head)
         buff = list()
-        for i in range(len(labels)):
-            if vox * f.GetNumberOfPixels(labels[i]) > 100: buff.append(i)
-        if len(buff) > 0:
-            for i in range(len(buff) - 1, -1, -1): del labels[buff[i]]
+        for i in range(1, n+1):
+            buff.append(f.GetNumberOfPixels(i))
+        h = labels[buff.index(max(buff))]
+        labels.remove(h)
+        buff.remove(max(buff))
+        # Search and removal non-fiducial components
+        n = len(buff)
+        if n not in (6, 9) and n > 5:
+            m = int(np.median(np.array(buff)))
+            minf = m // 2
+            msup = m * 2
+            for i in range(n - 1, -1, -1):
+                if minf < buff[i] or buff[i] > msup:
+                    del labels[i]
+        # vox = self._volume.getVoxelVolume()
+        # buff = list()
+        # for i in range(len(labels)):
+        #     if vox * f.GetNumberOfPixels(labels[i]) > 100: buff.append(i)
+        # if len(buff) > 0:
+        #     for i in range(len(buff) - 1, -1, -1): del labels[buff[i]]
+        # Revision 21/05/2025 >
         self._nbfid = len(labels)
         if self._nbfid in (6, 9):
             """
-                Marker codes
+            Marker codes
+            
+                            Ant    
+                     6   7           8
+                     o - o --------- o
+               3 o                       o 2
+            R    |                       |       
+            i    |                       |    L
+            g    |                       |    e
+            h  4 o                       o 1  f
+            t    |                       |    t
+               5 o                       o 0
+                            Post
                 
-                                Ant    
-                         6   7           8
-                         o   o           o
-                   3 o                       o 2
-                R                                   
-                i                                 L
-                g                                 e
-                h  4 o                       o 1  f
-                t                                 t
-                   5 o                       o 0
-                                Post
-                    
-                Search for most posterior left and anterior right markers
-                markers 0 and 3, if 6 markers box
-                markers 0 and 6, if 9 markers box
+            Search for most posterior left and anterior right markers
+            markers 0 and 3, if 6 markers box
+            markers 0 and 6, if 9 markers box
             """
             coor = list()
             buff = list()
@@ -343,22 +360,37 @@ class SisypheFiducialBox(QObject):
                 for i in range(len(coor)):
                     v1 = sqrt((coor[i][0] - fid1[0]) ** 2 + (coor[i][1] - fid1[1]) ** 2)
                     v2 = sqrt((coor[i][0] - fid2[0]) ** 2 + (coor[i][1] - fid2[1]) ** 2)
+                    # left markers, closest to marker 0
                     if v1 < 170: buff1.append([v1, coor[i]])
+                    # right markers, closest to marker 3
                     if v2 < 170: buff2.append([v2, coor[i]])
                 if len(buff1) != 2 or len(buff2) != 2: raise ValueError('Wrong fiducial markers geometry.')
                 else:
-                    if buff1[0][0] > buff1[1][0]: buff1[0], buff1[1] = buff1[1], buff1[0]
-                    if buff2[0][0] > buff2[1][0]: buff2[0], buff2[1] = buff2[1], buff2[0]
-                    if 119 < buff1[1][0] < 126:  # 120 + 5%
+                    if buff1[0][0] > buff1[1][0]:
+                        # noinspection PyUnresolvedReferences
+                        buff1[0], buff1[1] = buff1[1], buff1[0]
+                    if buff2[0][0] > buff2[1][0]:
+                        # noinspection PyUnresolvedReferences
+                        buff2[0], buff2[1] = buff2[1], buff2[0]
+                    # < Revision 21/05/2025
+                    # if 119 < buff1[1][0] < 126:  # 120 + 5%
+                    if 116 < buff1[1][0] < 126:  # 120 + 5%
                         self._fidlist[idx][1] = buff1[0][1]
                         self._fidlist[idx][2] = buff1[1][1]
+                    # Revision 21/05/2025 >
                     else: raise ValueError('Wrong fiducial markers geometry.')
-                    if 119 < buff2[1][0] < 126:  # 120 + 5%
+                    # < Revision 21/05/2025
+                    # if 119 < buff2[1][0] < 126:  # 120 + 5%
+                    if 116 < buff2[1][0] < 126:  # 120 + 5%
                         self._fidlist[idx][4] = buff2[0][1]
                         self._fidlist[idx][5] = buff2[1][1]
+                    # Revision 21/05/2025 >
                     else: raise ValueError('Wrong fiducial markers geometry.')
                     d = self._calcDistBetweenFiducials(idx, 0, 5)
-                    if not(189 < d < 200): raise ValueError('Wrong fiducial markers geometry.')
+                    # < Revision 21/05/2025
+                    # if not (189 < d < 200): raise ValueError('Wrong fiducial markers geometry.')
+                    if not (186 < d < 200): raise ValueError('Wrong fiducial markers geometry.')
+                    # Revision 21/05/2025 >
             # Nine fiducial box
             elif self._nbfid == 9:
                 self._fidlist[idx][0] = fid1
@@ -370,20 +402,28 @@ class SisypheFiducialBox(QObject):
                 for i in range(len(coor)):
                     v1 = sqrt((coor[i][0] - fid1[0]) ** 2 + (coor[i][1] - fid1[1]) ** 2)
                     v2 = sqrt((coor[i][0] - fid2[0]) ** 2 + (coor[i][1] - fid2[1]) ** 2)
-                    if 223 < v1 < 235 and 64 < v2 < 70:
+                    # < Revision 21/05/2025
+                    # if 223 < v1 < 235 and 64 < v2 < 70:
+                    if 220 < v1 < 235 and 61 < v2 < 70:
                         fid3 = coor[i]
                         self._fidlist[idx][3] = fid3
                         coor.remove(fid3)
                         break
+                    # Revision 21/05/2025 >
                 if fid3 is None: raise ValueError('Wrong fiducial markers geometry.')
                 # Search for markers 2, 5, 8
                 for i in range(len(coor)):
                     v1 = sqrt((coor[i][0] - fid1[0]) ** 2 + (coor[i][1] - fid1[1]) ** 2)
                     v2 = sqrt((coor[i][0] - fid2[0]) ** 2 + (coor[i][1] - fid2[1]) ** 2)
                     v3 = sqrt((coor[i][0] - fid3[0]) ** 2 + (coor[i][1] - fid3[1]) ** 2)
-                    if 119 < v1 < 126: self._fidlist[idx][2] = coor[i]
-                    elif 119 < v2 < 126: self._fidlist[idx][8] = coor[i]
-                    elif 119 < v3 < 126: self._fidlist[idx][5] = coor[i]
+                    # < Revision 21/05/2025
+                    # if 119 < v1 < 126: self._fidlist[idx][2] = coor[i]
+                    # elif 119 < v2 < 126: self._fidlist[idx][8] = coor[i]
+                    # elif 119 < v3 < 126: self._fidlist[idx][5] = coor[i]
+                    if 116 < v1 < 126: self._fidlist[idx][2] = coor[i]
+                    elif 116 < v2 < 126: self._fidlist[idx][8] = coor[i]
+                    elif 116 < v3 < 126: self._fidlist[idx][5] = coor[i]
+                    # Revision 21/05/2025 >
                 if 2 in self._fidlist[idx]: coor.remove(self._fidlist[idx][2])
                 if 8 in self._fidlist[idx]: coor.remove(self._fidlist[idx][8])
                 if 5 in self._fidlist[idx]: coor.remove(self._fidlist[idx][5])
@@ -401,8 +441,11 @@ class SisypheFiducialBox(QObject):
                     else: self._fidlist[idx][4] = coor[i]
 
     def _markersSearch(self, slc: int | None = None) -> None:
+        # noinspection PyUnresolvedReferences
         self.ProgressTextChanged.emit('Fiducial markers detection...')
+        # noinspection PyUnresolvedReferences
         self.ProgressRangeChanged.emit(0, self._volume.getDepth())
+        # noinspection PyUnresolvedReferences
         self.ProgressValueChanged.emit(0)
         self._fidtol = self._volume.getSpacing()[2] * 2
         if self._volume.acquisition.isCT():
@@ -419,62 +462,81 @@ class SisypheFiducialBox(QObject):
         if self._nbfid not in (6, 9): raise ValueError('No fiducial box or wrong number of fiducial markers, '
                                                        '{} detected, must be 6 or 9.')
         c = 1
+        # noinspection PyUnresolvedReferences
         self.ProgressValueChanged.emit(c)
         # Next slices
         idx0 = n
         for i in range(n + 1, self._volume.getDepth()):
             c += 1
+            # noinspection PyUnresolvedReferences
             self.ProgressValueChanged.emit(c)
             nb = self._sliceSearch(img, i, idx0)
             if nb == self._nbfid: idx0 = i
             elif nb == 0: break
-        self.ProgressValueChanged.emit(self._volume.getDepth() - n + 1)
+        c = n
+        # noinspection PyUnresolvedReferences
+        self.ProgressValueChanged.emit(n)
         # Previous slices
         idx0 = n
         for i in range(n - 1, -1, -1):
             c += 1
+            # noinspection PyUnresolvedReferences
             self.ProgressValueChanged.emit(c)
             nb = self._sliceSearch(img, i, idx0)
             if nb == self._nbfid: idx0 = i
             elif nb == 0: break
+        # noinspection PyUnresolvedReferences
         self.ProgressValueChanged.emit(self._volume.getDepth())
 
     # Public methods
 
     def execute(self, vol: SisypheVolume) -> None:
         """
-            Execute Leksell fiducial markers detection to calculate rigid
-            transformation between image and Leksell geometric references.
+        Execute Leksell fiducial markers detection to calculate rigid transformation between image and Leksell
+        geometric reference.
 
-            Parameter
-
-                vol     Sisyphe.core.sisypheVolume.SisypheVolume, PySisyphe volume
+        Parameters
+        ----------
+        vol : Sisyphe.core.sisypheVolume.SisypheVolume
+            PySisyphe volume
         """
         if isinstance(vol, SisypheVolume):
             self.markersSearch(vol)
             self.calcTransform()
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
-    def markersSearch(self, vol: SisypheVolume, slc: int | None = None):
+    def markersSearch(self, vol: SisypheVolume, slc: int | None = None) -> bool:
         """
-            Leksell fiducial markers detection in a slice.
+        Leksell fiducial markers detection in a slice.
 
-            Parameter
+        Parameters
+        ----------
+        vol : Sisyphe.core.sisypheVolume.SisypheVolume
+            PySisyphe volume
+        slc : int
+            slice index
 
-                vol     Sisyphe.core.sisypheVolume.SisypheVolume, PySisyphe volume
-                slc     int, slice index
+        Returns
+        -------
+        bool
+            False if no frame or frame detection failed
         """
         if isinstance(vol, SisypheVolume):
             self._trf = None
             self._volume = vol
             self._fidlist.clear()
-            self._markersSearch(slc)
-            self._volume.getAcquisition().setFrameToLeksell()
+            try:
+                self._markersSearch(slc)
+                self._volume.getAcquisition().setFrameToLeksell()
+                return True
+            except:
+                self._volume.getAcquisition().setFrameToNo()
+                return False
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
     def calcTransform(self) -> None:
         """
-            Calculate rigid transformation between image and Leksell geometric references
+        Calculate rigid transformation between image and Leksell geometric reference.
         """
         if not self.isEmpty():
             sz = self._volume.getSpacing()[2]
@@ -488,17 +550,23 @@ class SisypheFiducialBox(QObject):
             mov.SetNumberOfPoints(nb)
             idx = 0
             for fid in self._fidlist:
+                # left middle fiducial
+                # Leksell coordinate, 195,0 z z
                 c = self._fidlist[fid][1]
                 d = self._calcDistBetweenFiducials(fid, 0, 1) + 40
                 ref.SetPoint(idx, 195, d, d)
                 mov.SetPoint(idx, c[0], c[1], fid * sz)
                 idx += 1
+                # right middle fiducial
+                # Leksell coordinate, 5,0 z z
                 c = self._fidlist[fid][4]
                 d = self._calcDistBetweenFiducials(fid, 4, 5) + 40
                 ref.SetPoint(idx, 5, d, d)
                 mov.SetPoint(idx, c[0], c[1], fid * sz)
                 idx += 1
                 if self._nbfid == 9:
+                    # anterior middle fiducial
+                    # Leksell coordinate, z 215.0 z
                     c = self._fidlist[fid][7]
                     d = self._calcDistBetweenFiducials(fid, 6, 7) + 40
                     ref.SetPoint(idx, d, 215, d)
@@ -510,13 +578,14 @@ class SisypheFiducialBox(QObject):
             self._trf = SisypheTransform()
             self._trf.setID('LEKSELL')
             self._trf.setSpacing([1.0, 1.0, 1.0])
-            self._trf.setSize([200, 200, 200])
+            self._trf.setSize([220, 220, 220])
             self._trf.setVTKMatrix4x4(f.GetMatrix())
 
+    # noinspection PyArgumentList
     def calcErrors(self) -> None:
         """
-            Calculate errors i.e. euclidean distances between coordinates of
-            the detected fiducial markers and their theoretical coordinates in mm.
+        Calculate errors i.e. euclidean distances between coordinates of the detected fiducial markers and their
+        theoretical coordinates in mm.
         """
         if not self.isEmpty() and self.hasTransform():
             sz = self._volume.getSpacing()[2]
@@ -526,59 +595,68 @@ class SisypheFiducialBox(QObject):
             for fid in self._fidlist:
                 self._errorlist[fid] = dict()
                 d = 40 + self._calcDistBetweenFiducials(fid, 0, 1)
-                p = self._fidlist[fid][0]
-                c = self._trf.applyToPoint(p[0], p[1], fid * sz)
+                p = list(self._fidlist[fid][0])
+                p.append(fid * sz)
+                c = self._trf.applyToPoint(p)
                 e = sqrt((c[0] - 195) ** 2 + (c[1] - 40) ** 2)
                 self._errorlist[fid][0] = e
                 err[idx] = e
                 idx += 1
-                p = self._fidlist[fid][1]
-                c = self._trf.applyToPoint(p[0], p[1], fid * sz)
+                p = list(self._fidlist[fid][1])
+                p.append(fid * sz)
+                c = self._trf.applyToPoint(p)
                 e = sqrt((c[0] - 195) ** 2 + (c[1] - d) ** 2)
                 self._errorlist[fid][1] = e
                 err[idx] = e
                 idx += 1
-                p = self._fidlist[fid][2]
-                c = self._trf.applyToPoint(p[0], p[1], fid * sz)
+                p = list(self._fidlist[fid][2])
+                p.append(fid * sz)
+                c = self._trf.applyToPoint(p)
                 e = sqrt((c[0] - 195) ** 2 + (c[1] - 160) ** 2)
                 self._errorlist[fid][2] = e
                 err[idx] = e
                 idx += 1
                 d = 40 + self._calcDistBetweenFiducials(fid, 4, 5)
-                p = self._fidlist[fid][3]
-                c = self._trf.applyToPoint(p[0], p[1], fid * sz)
+                p = list(self._fidlist[fid][3])
+                p.append(fid * sz)
+                c = self._trf.applyToPoint(p)
                 e = sqrt((c[0] - 5) ** 2 + (c[1] - 160) ** 2)
                 self._errorlist[fid][3] = e
                 err[idx] = e
                 idx += 1
-                p = self._fidlist[fid][4]
-                c = self._trf.applyToPoint(p[0], p[1], fid * sz)
+                p = list(self._fidlist[fid][4])
+                p.append(fid * sz)
+                c = self._trf.applyToPoint(p)
                 e = sqrt((c[0] - 5) ** 2 + (c[1] - d) ** 2)
                 self._errorlist[fid][4] = e
                 err[idx] = e
                 idx += 1
-                p = self._fidlist[fid][5]
-                c = self._trf.applyToPoint(p[0], p[1], fid * sz)
+                p = list(self._fidlist[fid][5])
+                p.append(fid * sz)
+                c = self._trf.applyToPoint(p)
                 e = sqrt((c[0] - 5) ** 2 + (c[1] - 40) ** 2)
                 self._errorlist[fid][5] = e
                 err[idx] = e
                 idx += 1
                 if self._nbfid == 9:
                     d = 40 + self._calcDistBetweenFiducials(fid, 6, 7)
-                    p = self._fidlist[fid][6]
-                    c = self._trf.applyToPoint(p[0], p[1], fid * sz)
+                    p = list(self._fidlist[fid][6])
+                    p.append(fid * sz)
+                    c = self._trf.applyToPoint(p)
                     e = sqrt((c[0] - 40) ** 2 + (c[1] - 215) ** 2)
                     self._errorlist[fid][6] = e
                     err[idx] = e
                     idx += 1
-                    p = self._fidlist[fid][7]
-                    c = self._trf.applyToPoint(p[0], p[1], fid * sz)
+                    p = list(self._fidlist[fid][7])
+                    p.append(fid * sz)
+                    c = self._trf.applyToPoint(p)
                     e = sqrt((c[0] - d) ** 2 + (c[1] - 215) ** 2)
                     self._errorlist[fid][7] = e
                     err[idx] = e
                     idx += 1
-                    p = self._fidlist[fid][8]
-                    c = self._trf.applyToPoint(p[0], p[1], fid * sz)
+                    p = list(self._fidlist[fid][8])
+                    p.append(fid * sz)
+                    c = self._trf.applyToPoint(p)
                     e = sqrt((c[0] - 160) ** 2 + (c[1] - 215) ** 2)
                     self._errorlist[fid][8] = e
                     err[idx] = e
@@ -595,27 +673,21 @@ class SisypheFiducialBox(QObject):
 
     def getErrors(self) -> dict[int, dict[int, float]] | None:
         """
-            Get errors i.e. euclidean distances between coordinates of the
-            detected fiducial markers and their theoretical coordinates in mm.
+        Get errors i.e. euclidean distances between coordinates of the detected fiducial markers and their theoretical
+        coordinates in mm.
 
-            return  dict[slc, dict[marker, error]],
-                    slc key:        int, slice index
-                    marker key:     int, marker index (6 or 9 markers)
-                    error value:    float, euclidean distance error in mm
+        Marker indexes (axial slice):
+            - Left markers: 0 posterior, 1 middle, 2 anterior
+            - right markers: 3 anterior, 4 middle, 5 posterior
+            - anterior markers: 6 right, 7 middle, 8 left
 
-            Marker indexes
-
-                                Ant
-                         6   7           8
-                         o   o           o
-                   3 o                       o 2
-                R
-                i                                 L
-                g                                 e
-                h  4 o                       o 1  f
-                t                                 t
-                   5 o                       o 0
-                                Post
+        Returns
+        -------
+        dict[int, dict[int, float]],
+            - key int, slice index
+            - value dict[int, float]
+                - key int, marker index (6 or 9 markers)
+                - value float, euclidean distance error in mm
         """
         if not self.isEmpty() and self.hasTransform():
             if len(self._errorlist) == 0: self.calcErrors()
@@ -624,32 +696,42 @@ class SisypheFiducialBox(QObject):
 
     def hasErrors(self) -> bool:
         """
-            Checks whether errors are calculated.
+        Checks whether errors are calculated.
 
-            return  bool, True if errors are calculated
+        Returns
+        -------
+        bool
+            True if errors are calculated
         """
         return len(self._errorlist) > 0
 
     def getErrorStatistics(self) -> dict[str, float]:
         """
-            Get errors statistics
+        Get errors statistics.
 
-            return  dict[str, float]
-                    str keys    float values
-                    'Mean'      mean error
-                    'RMS'       root mean square error
-                    'Median'    median error
-                    'Std'       standard deviation error
-                    '25th'      first quantile error
-                    '75th'      third quantile error
-                    'Min'       minimum error
-                    'Max'       maximum error
+        Returns
+        -------
+        dict[str, float]
+            str keys, float values
+                - 'Mean'      mean error
+                - 'RMS'       root-mean-square error
+                - 'Median'    median error
+                - 'Std'       standard deviation error
+                - '25th'      first quantile error
+                - '75th'      third quantile error
+                - 'Min'       minimum error
+                - 'Max'       maximum error
         """
         if not self.isEmpty() and self.hasTransform():
             if len(self._errorlist) == 0: self.calcErrors()
             return self._errorstats
+        else: raise AttributeError('Error attribute is empty.')
 
     def addTransformToVolume(self) -> None:
+        """
+        Add the calculated geometric transformation to the Sisyphe.core.sisypheTransform.SisypheTransforms attribute
+        of the processed volume.
+        """
         if self.hasVolume():
             if self.hasTransform():
                 trfs = self._volume.getTransforms()
@@ -659,49 +741,62 @@ class SisypheFiducialBox(QObject):
             else: raise ValueError('Geometric transformation attribute is empty.')
         else: raise ValueError('Volume attribute is empty.')
 
+    def removeTransformFromVolume(self) -> None:
+        """
+        remove the calculated geometric transformation from the Sisyphe.core.sisypheTransform.SisypheTransforms
+        attribute of the processed volume.
+        """
+        if self.hasVolume():
+            if self.hasTransform():
+                trfs = self._volume.getTransforms()
+                if 'LEKSELL' in trfs:
+                    trfs.remove('LEKSELL')
+                    self._volume.saveTransforms()
+                self.removeXML(self._volume.getFilename())
+
     def hasTransform(self) -> bool:
         """
-            Checks whether rigid transformation between image
-            and Leksell geometric references is calculated.
+        Checks whether rigid transformation between image and Leksell geometric reference is calculated.
 
-            return  bool, True if rigid transformation is calculated
+        Returns
+        -------
+        bool
+            True if rigid transformation is calculated
         """
         return self._trf is not None
 
     def getTransform(self) -> SisypheTransform:
         """
-            Get rigid transformation between image and
-            Leksell geometric references.
+        Get rigid transformation between image and Leksell geometric reference.
 
-            return Sisyphe.core.SisypheTransform.SisypheTransform
+        Returns
+        -------
+        Sisyphe.core.SisypheTransform.SisypheTransform
+            rigid transformation
         """
         if self.hasTransform(): return self._trf
         else: raise ValueError('Geometric transformation is not calculated.')
 
-    def getMarker(self, n: int, m: int) -> list[float, float, float]:
+    def getMarker(self, n: int, m: int) -> list[float]:
         """
-            Get coordinates of a fiducial marker.
+        Get coordinates of a fiducial marker.
 
-            Parameters
+        Marker indexes (axial slice):
+            - Left markers: 0 posterior, 1 middle, 2 anterior
+            - right markers: 3 anterior, 4 middle, 5 posterior
+            - anterior markers: 6 right, 7 middle, 8 left
 
-                n   int, slice index
-                m   int, marker index
+        Parameters
+        ----------
+        n : int
+            slice index
+        m : int
+            marker index
 
-            Marker indexes
-
-                                Ant
-                         6   7           8
-                         o   o           o
-                   3 o                       o 2
-                R
-                i                                 L
-                g                                 e
-                h  4 o                       o 1  f
-                t                                 t
-                   5 o                       o 0
-                                Post
-
-            return  list[float, float, float], x, y, z fiducial marker coordinates
+        Returns
+        -------
+        list[float]
+            x, y, z fiducial marker coordinates
         """
         if isinstance(n, int) and isinstance(m, int):
             if n in self._fidlist:
@@ -710,93 +805,72 @@ class SisypheFiducialBox(QObject):
             else: raise IndexError('Wrong slice number, no marker in slice {}.'.format(n))
         else: raise TypeError('parameter type {}/{} is not int.'.format(type(n), type(m)))
 
-    def getSliceMarkers(self, n: int) -> dict[int, list[float, float, float]]:
+    def getSliceMarkers(self, n: int) -> dict[int, list[float]]:
         """
-            Get coordinates of fiducial markers in a slice.
+        Get coordinates of fiducial markers in a slice.
 
-            Parameters
+        Marker indexes (axial slice):
+            - Left markers: 0 posterior, 1 middle, 2 anterior
+            - right markers: 3 anterior, 4 middle, 5 posterior
+            - anterior markers: 6 right, 7 middle, 8 left
 
-                n   int, slice index
+        Parameters
+        ----------
+        n : int
+            slice index
 
-            return  dict[mrk, coor]
-                    mrk key     int, marker index
-                    coor value  list[float, float, float], x, y, z fiducial marker coordinates
-
-            Marker indexes
-
-                                Ant
-                         6   7           8
-                         o   o           o
-                   3 o                       o 2
-                R
-                i                                 L
-                g                                 e
-                h  4 o                       o 1  f
-                t                                 t
-                   5 o                       o 0
-                                Post
+        Returns
+        -------
+        dict[int, list[float]]
+            - key int, marker index
+            - value list[float], x, y, z fiducial marker coordinates
         """
         if not self.isEmpty():
             if isinstance(n, int):
                 if n in self._fidlist: return self._fidlist[n]
                 else: raise IndexError('Wrong slice number, no marker in slice {}.'.format(n))
             else: raise TypeError('parameter type {} is not int.'.format(type(n)))
+        else: raise AttributeError('Fiduciary marker coordinates are not calculated.')
 
-    def getAllMarkers(self) -> dict[int, dict[int, list[float, float, float]]]:
+    def getAllMarkers(self) -> dict[int, dict[int, list[float]]]:
         """
-            Get all fiducial markers coordinates.
+        Get all fiducial markers coordinates.
 
-            return  dict[slc, dict[mrk, coor]
-                    slc key     int, slice index
-                    mrk key     int, marker index
-                    coor value  list[float, float, float], list of x, y, z fiducial marker coordinates
-                                index of the list is the marker index
+        Marker indexes (axial slice):
+            - Left markers: 0 posterior, 1 middle, 2 anterior
+            - right markers: 3 anterior, 4 middle, 5 posterior
+            - anterior markers: 6 right, 7 middle, 8 left
 
-            Marker indexes
-
-                                Ant
-                         6   7           8
-                         o   o           o
-                   3 o                       o 2
-                R
-                i                                 L
-                g                                 e
-                h  4 o                       o 1  f
-                t                                 t
-                   5 o                       o 0
-                                Post
+        Returns
+        -------
+        dict[int, dict[int, list[float]]
+            - key int, slice index
+            - value dict[int, float]
+                - key int, marker index (6 or 9 markers)
+                - value list[float, float, float], list of x, y, z fiducial marker coordinates
         """
         return self._fidlist
 
     def removeSliceMarkers(self, n: int) -> None:
         """
-            Removes all fiduciary markers from a slice.
+        Removes all fiduciary markers from a slice.
 
-            Parameter
-
-                n   int, slice index
+        Parameters
+        ----------
+        n : int
+            slice index
         """
         if n in self._fidlist:
             del self._fidlist[n]
 
     def removeFrontPlateMarkers(self) -> None:
         """
-            Remove front fiducial markers.
-            Six markers configuration, 3 on the left and 3 on the right.
+        Remove front fiducial markers. Six markers configuration, 3 on the left and 3 on the right.
 
-            Marker indexes
-
-                                Ant
-                         6   7           8
-                         o   o           o
-                   3 o                       o 2
-                R
-                i                                 L
-                g                                 e
-                h  4 o                       o 1  f
-                t                                 t
-                   5 o                       o 0
-                                Post
+        Marker indexes (axial slice):
+            - Left markers: 0 posterior, 1 middle, 2 anterior
+            - right markers: 3 anterior, 4 middle, 5 posterior
+            - anterior markers: 6 right, 7 middle, 8 left
         """
         if self._nbfid == 9:
             for z in self._fidlist:
@@ -807,92 +881,103 @@ class SisypheFiducialBox(QObject):
 
     def getSliceNumbers(self) -> list[int]:
         """
-            Get list of valid slice indexes.
-            (i.e. slices with at least 6 or 9 fiducial markers depending on configuration)
+        Get list of valid slice indexes (i.e. slices with at least 6 or 9 fiducial markers depending on configuration).
 
-            return  list[int], list of valid indexes
+        Returns
+        -------
+        list[int]
+            list of valid indexes
         """
         return list(self._fidlist.keys())
 
     def getMarkersCount(self) -> int:
         """
-            Get fiducial markers count.
-            Two possible configurations:
-                - 6: 3 to the left and 3 to the right
-                - 9: 3 to the left, 3 to the right, 3 to the front
-                  Front markers are optional
+        Get fiducial markers count.
 
-            Marker indexes
+        Two possible configurations:
 
-                                Ant
-                         6   7           8
-                         o   o           o
-                   3 o                       o 2
-                R
-                i                                 L
-                g                                 e
-                h  4 o                       o 1  f
-                t                                 t
-                   5 o                       o 0
-                                Post
+            - 6: 3 to the left and 3 to the right
+            - 9: 3 to the left, 3 to the right, 3 to the front (front markers are optional)
 
-            return  bool, True if slice index is valid (i.e. less than slice count)
+        Marker indexes (axial slice):
+
+            - Left markers: 0 posterior, 1 middle, 2 anterior
+            - right markers: 3 anterior, 4 middle, 5 posterior
+            - anterior markers: 6 right, 7 middle, 8 left
+
+        Returns
+        -------
+        bool
+            True if slice index is valid (i.e. less than slice count)
         """
         return self._nbfid
 
     def hasSlice(self, n: int) -> bool:
         """
-            Check whether slice index is valid.
-            (i.e. it contains at least 6 or 9 fiducial markers depending on configuration)
+        Check whether slice index is valid (i.e. it contains at least 6 or 9 fiducial markers depending on
+        configuration).
 
-            return  bool, True if slice index is valid
+        Returns
+        -------
+        bool
+            True if slice index is valid
         """
-
         if isinstance(n, int): return n in self._fidlist
         else: raise TypeError('parameter type {} is not int.'.format(type(n)))
 
     def isEmpty(self) -> bool:
         """
-            Check that fiduciary markers coordinates are calculated.
+        Check that fiduciary marker coordinates are calculated.
 
-            return  bool, True if fiduciary markers coordinates are calculated
+        Returns
+        -------
+        bool
+            True if fiduciary marker coordinates are calculated
         """
         return len(self._fidlist) == 0
 
     def hasVolume(self) -> bool:
         """
-            Check whether PySisyphe volume to process is available.
+        Check whether PySisyphe volume to process is available.
 
-            return  bool, True if PySisyphe volume is defined
+        Returns
+        -------
+        bool
+            True if PySisyphe volume is defined
         """
         return self._volume is not None
 
     def setVolume(self, v: SisypheVolume) -> None:
         """
-            Set PySisyphe volume to process.
+        Set PySisyphe volume to process.
 
-            Parameter
-
-                v   Sisyphe.core.sisypheVolume.SisypheVolume
+        Parameters
+        ----------
+        v : Sisyphe.core.sisypheVolume.SisypheVolume
+            volume to process
         """
         if isinstance(v, SisypheVolume): self._volume = v
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(v)))
 
     def getVolume(self) -> SisypheVolume:
         """
-            Get PySisyphe volume
+        Get PySisyphe volume
 
-            return  Sisyphe.core.sisypheVolume.SisypheVolume
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            volume to process
         """
         return self._volume
 
     def saveToXML(self, filename: str) -> None:
         """
-            Save fiducial markers coordinates file (*.xfid)
+        Save fiducial markers coordinates file (.xfid).
 
-            Parameter
-
-                filename    str, file name (*.xfid)
+        Parameters
+        ----------
+        filename : str
+            file name (.xfid)
         """
         if not self.isEmpty():
             if isinstance(filename, str):
@@ -925,11 +1010,12 @@ class SisypheFiducialBox(QObject):
 
     def loadFromXML(self, filename: str) -> None:
         """
-            Load fiducial markers coordinates file (*.xfid)
+        Load fiducial markers coordinates file (.xfid).
 
-            Parameter
-
-                filename    str, file name (*.xfid)
+        Parameters
+        ----------
+        filename : str
+            file name (.xfid)
         """
         if isinstance(filename, str):
             path, ext = splitext(filename)
@@ -955,14 +1041,30 @@ class SisypheFiducialBox(QObject):
 
     def hasXML(self, filename: str) -> bool:
         """
-            Check that fiducial markers coordinates file (*.xfid) exists.
+        Check that fiducial markers coordinates file (.xfid) exists.
 
-            Parameter
+        Parameters
+        ----------
+        filename : str
+            file name, file extension is replaced by .xfid if necessary
 
-                filename    str, file name, file extension is replaced by .xfid if necessary
-
-            return bool, True if file name exists
+        Returns
+        -------
+        bool
+            True if file name exists
         """
         path, ext = splitext(filename)
         return exists(path + self._FILEEXT)
 
+    def removeXML(self, filename: str) -> None:
+        """
+        Remove fiducial markers coordinates file (.xfid).
+
+        Parameters
+        ----------
+        filename : str
+            file name, file extension is replaced by .xfid if necessary
+        """
+        path, ext = splitext(filename)
+        filename = path + self._FILEEXT
+        if exists(filename): remove(filename)

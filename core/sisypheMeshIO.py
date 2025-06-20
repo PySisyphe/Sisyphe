@@ -1,9 +1,8 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Homepage link                                               Usage
-
-        vtk             https://vtk.org/                                            Visualization
+    - vtk, visualization engine/3D rendering, https://vtk.org/
 """
 
 from os.path import exists
@@ -23,6 +22,7 @@ from vtk import vtkPolyData
 from vtk import vtkPolyDataMapper
 from vtk import vtkActor
 
+
 __all__ = ['readMeshFromOBJ',
            'writeMeshToOBJ',
            'readMeshFromSTL',
@@ -32,27 +32,35 @@ __all__ = ['readMeshFromOBJ',
            'writeMeshToXMLVTK',
            'writeMeshToVTK']
 
-"""
-    Functions
-    
-        readMeshFromOBJ
-        readMeshFromSTL
-        readMeshFromVTK
-        readMeshFromXMLVTK
-        readMeshFromJSON
-        writeMeshToOBJ
-        writeMeshToSTL
-        writeMeshToXMLVTK
-        writeMeshToVTK
 
-    Creation: 02/11/2022      
-    Revisions:
-    
-        01/09/2023  type hinting
 """
+Functions
+~~~~~~~~~
 
+    - readMeshFromOBJ(filename: str) -> vtkActor
+    - readMeshFromSTL(filename: str) -> vtkActor
+    - readMeshFromVTK(filename: str) -> vtkActor
+    - readMeshFromXMLVTK(filename: str) -> vtkActor
+    - writeMeshToSTL(data: vtkPolyData | vtkPolyDataMapper | vtkActor, filename: str)
+    - writeMeshToSTL(data: vtkPolyData | vtkPolyDataMapper | vtkActor, filename: str)
+    - writeMeshToXMLVTK(data: vtkPolyData | vtkPolyDataMapper | vtkActor, filename: str)
+    - writeMeshToVTK(data: vtkPolyData | vtkPolyDataMapper | vtkActor, filename: str)
+"""
 
 def readMeshFromOBJ(filename: str) -> vtkActor:
+    """
+    Read mesh from OBJ file (.obj).
+
+    Parameters
+    ----------
+    filename : str
+        OBJ file name (.obj)
+
+    Returns
+    -------
+    vtk.vtkActor
+        loaded vtkActor
+    """
     if exists(filename):
         path, ext = splitext(filename)
         ext = ext.lower()
@@ -61,6 +69,7 @@ def readMeshFromOBJ(filename: str) -> vtkActor:
             r.SetFileName(filename)
             r.Update()
             mapper = vtkPolyDataMapper()
+            # noinspection PyArgumentList
             mapper.SetInputConnection(r.GetOutputPort())
             actor = vtkActor()
             actor.SetMapper(mapper)
@@ -70,6 +79,19 @@ def readMeshFromOBJ(filename: str) -> vtkActor:
 
 
 def readMeshFromSTL(filename: str) -> vtkActor:
+    """
+    Read mesh from STL file (.stl).
+
+    Parameters
+    ----------
+    filename : str
+        STL file name (.stl)
+
+    Returns
+    -------
+    vtk.vtkActor
+        loaded vtkActor
+    """
     if exists(filename):
         path, ext = splitext(filename)
         ext = ext.lower()
@@ -78,6 +100,7 @@ def readMeshFromSTL(filename: str) -> vtkActor:
             r.SetFileName(filename)
             r.Update()
             mapper = vtkPolyDataMapper()
+            # noinspection PyArgumentList
             mapper.SetInputConnection(r.GetOutputPort())
             actor = vtkActor()
             actor.SetMapper(mapper)
@@ -88,6 +111,19 @@ def readMeshFromSTL(filename: str) -> vtkActor:
 
 
 def readMeshFromVTK(filename: str) -> vtkActor:
+    """
+    Read mesh from VTK file (.vtk).
+
+    Parameters
+    ----------
+    filename : str
+        VTK file name (.vtk)
+
+    Returns
+    -------
+    vtk.vtkActor
+        loaded vtkActor
+    """
     if exists(filename):
         path, ext = splitext(filename)
         ext = ext.lower()
@@ -96,6 +132,7 @@ def readMeshFromVTK(filename: str) -> vtkActor:
             r.SetFileName(filename)
             r.Update()
             mapper = vtkPolyDataMapper()
+            # noinspection PyArgumentList
             mapper.SetInputConnection(r.GetOutputPort())
             actor = vtkActor()
             actor.SetMapper(mapper)
@@ -106,6 +143,19 @@ def readMeshFromVTK(filename: str) -> vtkActor:
 
 
 def readMeshFromXMLVTK(filename: str) -> vtkActor:
+    """
+    Read mesh from PySisyphe mesh or VTP file (.xmesh or .vtp).
+
+    Parameters
+    ----------
+    filename : str
+        PySisyphe mesh or VTP file name (.xmesh or .vtp)
+
+    Returns
+    -------
+    vtk.vtkActor
+        loaded vtkActor
+    """
     if exists(filename):
         path, ext = splitext(filename)
         ext = ext.lower()
@@ -114,6 +164,7 @@ def readMeshFromXMLVTK(filename: str) -> vtkActor:
             r.SetFileName(filename)
             r.Update()
             mapper = vtkPolyDataMapper()
+            # noinspection PyArgumentList
             mapper.SetInputConnection(r.GetOutputPort())
             actor = vtkActor()
             actor.SetMapper(mapper)
@@ -124,6 +175,16 @@ def readMeshFromXMLVTK(filename: str) -> vtkActor:
 
 
 def writeMeshToOBJ(data: vtkPolyData | vtkPolyDataMapper | vtkActor, filename: str) -> None:
+    """
+    Write mesh to OBJ file (.obj).
+
+    Parameters
+    ----------
+    data : vtkPolyData | vtkPolyDataMapper | vtkActor
+        mesh instance to save
+    filename : str
+        OBJ file name (.obj)
+    """
     if isinstance(data, vtkActor):
         data = data.GetMapper().GetInput()
     elif isinstance(data, vtkPolyDataMapper):
@@ -144,6 +205,16 @@ def writeMeshToOBJ(data: vtkPolyData | vtkPolyDataMapper | vtkActor, filename: s
 
 
 def writeMeshToSTL(data: vtkPolyData | vtkPolyDataMapper | vtkActor, filename: str) -> None:
+    """
+    Write mesh to STL file (.stl).
+
+    Parameters
+    ----------
+    data : vtkPolyData | vtkPolyDataMapper | vtkActor
+        mesh instance to save
+    filename : str
+        STL file name (.stl)
+    """
     if isinstance(data, vtkActor):
         data = data.GetMapper().GetInput()
     elif isinstance(data, vtkPolyDataMapper):
@@ -162,6 +233,16 @@ def writeMeshToSTL(data: vtkPolyData | vtkPolyDataMapper | vtkActor, filename: s
 
 
 def writeMeshToXMLVTK(data: vtkPolyData | vtkPolyDataMapper | vtkActor, filename: str) -> None:
+    """
+    Write mesh to XMLVTK file (.vtp).
+
+    Parameters
+    ----------
+    data : vtkPolyData | vtkPolyDataMapper | vtkActor
+        mesh instance to save
+    filename : str
+        XMLVTK file name (.vtp)
+    """
     if isinstance(data, vtkActor):
         data = data.GetMapper().GetInput()
     elif isinstance(data, vtkPolyDataMapper):
@@ -180,6 +261,16 @@ def writeMeshToXMLVTK(data: vtkPolyData | vtkPolyDataMapper | vtkActor, filename
 
 
 def writeMeshToVTK(data: vtkPolyData | vtkPolyDataMapper | vtkActor, filename: str) -> None:
+    """
+    Write mesh to VTK file (.vtk).
+
+    Parameters
+    ----------
+    data : vtkPolyData | vtkPolyDataMapper | vtkActor
+        mesh instance to save
+    filename : str
+        VTK file name (.vtk)
+    """
     if isinstance(data, vtkActor):
         data = data.GetMapper().GetInput()
     elif isinstance(data, vtkPolyDataMapper):

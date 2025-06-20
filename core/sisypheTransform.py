@@ -1,18 +1,19 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        ANTs            http://stnava.github.io/ANTs/                               Image registration
-        DIPY            https://www.dipy.org/                                       MR diffusion image processing
-        Numpy           https://numpy.org/                                          Scientific computing
-        PyQt5           https://www.riverbankcomputing.com/software/pyqt/           Qt GUI
-        Scipy           https://docs.scipy.org/doc/scipy/index.html                 Scientific computing
-        SimpleITK       https://simpleitk.org/                                      Medical image processing
-        vtk             https://vtk.org/                                            Visualization
+    - ANTs, image registration, http://stnava.github.io/ANTs/
+    - DIPY, MR diffusion image processing, https://www.dipy.org/
+    - NiBabel, Euler angle conversions, https://nipy.org/nibabel
+    - Numpy, scientific computing, https://numpy.org/
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - Scipy, scientific computing, https://docs.scipy.org/doc/scipy/index.html
+    - SimpleITK, medical image processing, https://simpleitk.org/
+    - vtk, visualization engine/3D rendering, https://vtk.org/
 """
 
 from __future__ import annotations
+from typing import TYPE_CHECKING
 
 from os.path import exists
 from os.path import basename
@@ -23,20 +24,21 @@ from os.path import join
 
 from math import radians
 from math import degrees
-from math import cos
-from math import asin
-from math import atan2
-from math import pi
 
 from xml.dom import minidom
 
-from dipy.align.streamlinear import decompose_matrix44
-
-from numpy import array as nparray
-from numpy import ndarray as npndarray
+from numpy import array
+from numpy import ndarray
+from numpy import identity
 from numpy import matmul
 from numpy import diag
-from numpy import degrees as npdegrees
+from numpy import allclose
+from numpy.linalg import inv
+
+from nibabel.quaternions import quat2angle_axis
+from nibabel.quaternions import angle_axis2quat
+from nibabel.quaternions import quat2mat
+from nibabel.quaternions import mat2quat
 
 from scipy.linalg import det
 from scipy.linalg import cholesky
@@ -63,9 +65,8 @@ from SimpleITK import sitkBlackmanWindowedSinc
 from SimpleITK import sitkNearestNeighbor
 from SimpleITK import Transform as sitkTransform
 from SimpleITK import AffineTransform as sitkAffineTransform
-from SimpleITK import Euler3DTransform as sitkEuler3DTransform
 from SimpleITK import VersorTransform as sitkVersorTransform
-from SimpleITK import ScaleSkewVersor3DTransform as sitkScaleSkewVersor3DTransform
+from SimpleITK import Euler3DTransform as sitkEuler3DTransform
 from SimpleITK import DisplacementFieldTransform as sitkDisplacementFieldTransform
 from SimpleITK import ReadTransform as sitkReadTransform
 from SimpleITK import TransformToDisplacementFieldFilter as sitkTransformToDisplacementFieldFilter
@@ -74,185 +75,80 @@ from SimpleITK import ResampleImageFilter as sitkResampleImageFilter
 from ants.core.ants_transform import ANTsTransform
 from ants.core.ants_transform_io import read_transform
 from ants.core.ants_transform_io import write_transform
+from ants.core.ants_transform_io import transform_from_displacement_field
 
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QApplication
 
-import Sisyphe.core as sc
 from Sisyphe.lib.bv.trf import read_trf
 from Sisyphe.core.sisypheImage import SisypheImage
 from Sisyphe.core.sisypheImage import SisypheBinaryImage
+from Sisyphe.core.sisypheVolume import SisypheVolume
+from Sisyphe.core.sisypheVolume import multiComponentSisypheVolumeFromList
+from Sisyphe.core.sisypheROI import SisypheROI
+from Sisyphe.core.sisypheMesh import SisypheMesh
+from Sisyphe.core.sisypheTracts import SisypheStreamlines
 from Sisyphe.core.sisypheSettings import SisypheFunctionsSettings
 from Sisyphe.gui.dialogWait import DialogWait
+
+# to avoid ImportError due to circular imports
+if TYPE_CHECKING:
+    pass
+
 
 __all__ = ['SisypheTransform',
            'SisypheApplyTransform',
            'SisypheTransformCollection',
-           'SisypheTransforms',
-           'getVersorFromRotations',
-           'getRotationsFromVersor']
-
-vectorFloat3 = list[float, float, float] | tuple[float, float, float]
-vectorFloat4 = list[float, float, float, float] | tuple[float, float, float, float]
-vectorInt3 = list[int, int, int] | tuple[int, int, int]
+           'SisypheTransforms']
 
 """
-    Functions
-    
-        getVersorFromRotations
-        getRotationsFromVersor
-        
-    Revisions:
-    
-        01/09/2023  type hinting
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    - object -> SisypheTransform
+             -> SisypheApplyTransform
+             -> SisypheTransformCollection
+             -> SisypheTransformCollection -> SisypheTransforms
 """
 
-
-def getVersorFromRotations(r: vectorFloat3) -> vectorFloat4:
-    # return vector x, y, z and rotation
-    euler = sitkEuler3DTransform()
-    versor = sitkVersorTransform()
-    euler.SetRotation(r[0], r[1], r[2])
-    versor.SetMatrix(euler.GetMatrix())
-    return versor.GetVersor()
-
-def getRotationsFromVersor(v: vectorFloat4) -> vectorFloat3:
-    # parameter v: vector x, y, z and rotation
-    euler = sitkEuler3DTransform()
-    versor = sitkVersorTransform(v)
-    euler.SetMatrix(versor.GetMatrix())
-    return euler.GetAngleX(), euler.GetAngleY(), euler.GetAngleZ()
-
-
-"""
-    Class hierarchy
-
-        object -> SisypheTransform
-               -> SisypheApplyTransform
-               -> SisypheTransformCollection -> SisypheTransforms
-"""
+listFloat = list[float]
+tupleFloat3 = tuple[float, float, float]
+vectorFloat3 = listFloat | tupleFloat3
+tupleFloat4 = tuple[float, float, float, float]
+vectorFloat4 = listFloat | tupleFloat4
+listInt = list[int]
+tupleInt3 = tuple[int, int, int]
+vectorInt3 = listInt | tupleInt3
 
 
 class SisypheTransform(object):
     """
-        SisypheTransform class
+    Description
+    ~~~~~~~~~~~
 
-        Description
+    PySisyphe geometric centered transformation class.
 
-            Geometric centered transformation class.
-            Uses forward convention, transformation of fixed to floating volume coordinates.
-            To resample floating volume, apply the inverse i.e. backward transformation.
-            Privates attributes ID, spacing and size were those of the fixed image (resampling space)
+    Uses forward convention, i.e. transformation of fixed to floating volume coordinates. To resample floating volume,
+    apply the inverse i.e. backward transformation. Private attributes ID, spacing and size are those of the fixed
+    image (resampling space)
 
-        Inheritance
+    Fixed and floating volumes are associated with instance attributes:
 
-            object -> SisypheTransform
+        - Parent attribute = fixed volume.
+        - ID attribute = ID of the floating volume
 
-        Private attributes
+    Methods to copy to/from ANTs, SimpleITK and VTK geometric transformation classes.
+    IO methods for common neuroimaging geometric transformation file formats.
 
-            _ID         str, ID of floating image,  fixed volume ID
-            _name       str
-            _size       [int, int, int],            fixed volume size
-            _spacing    [float, float, float],      fixed volume spacing
-            _transform  sitkAffineTransform         backward transformation, fixed coordinates to moving coordinates
-            _field      sitkDisplacementFieldTransform
-            _fieldname  str
+    Inheritance
+    ~~~~~~~~~~~
 
-        Class methods
+    object -> SisypheTransform
 
-            str = getFileExt()
-            str = getFilterExt()
-            numpy array = getSITKtoNumpy(sitkAffineTransform or sitkEuler3DTransform)
-            numpy array = getVTKtoNumpy(sitkAffineTransform or sitkEuler3DTransform)
-
-        Public methods
-
-            __str__()
-            __repr__()
-            setIdentity()
-            bool = isIdentity(self)
-            SisypheTransform = getInverseTransform()
-            setTranslations([float, float, float])
-            addTranslations([float, float, float])
-            setRotations([float, float, float], deg=bool)
-            setVersor([float, float, float], float)
-            setScales([float, float, float])
-            setSkews([float, float, float float float float])
-            [float, float, float] = getRotations(deb=bool)
-            setCenter([float, float, float])
-            SisypheTransform = getEquivalentTransformWithNewCenterOfRotation([float, float, float])
-            setCenterFromSisypheVolume(SisypheVolume)
-            [float, float, float] = getCenter()
-            bool = hasCenter()
-            SisypheTransform = copy()
-            SisypheTransform = copyEquivalentVolumeCenteredTransform()
-            copyTo(SisypheTransform)
-            SisypheTransform = copy()
-            setSITKTransform(sitkTransform)
-            sitkTransform = getSITKTransform(self)
-            sitkDisplacementFieldTransform = getSITKDisplacementFieldTransform(self)
-            sitkImage = getSITKDisplacementFieldSITKImage(self)
-            sitkTransform = getInverseSITKTransform()
-            setSITKDisplacementFieldTransform(sitkDisplacementFieldTransform)
-            setSITKDisplacementFieldImage(SisypheVolume | SisypheImage | sitkImage)
-            removeDisplacementField()
-            setVTKTransform(VTKTransform)
-            VTKTransform = getVTKTransform()
-            setVTKMatrix3x3(VTKMatrix3x3)
-            setVTKMatrix4x4(VTKMatrix4x4)
-            VTKMatrix4x4 = getVTKMatrix4x4()
-            VTKMatrix3x3 = getVTKMatrix3x3()
-            VTKTransform = getInverseVTKTransform()
-            NDArray = getNumpyArray(homogeneous=bool)
-            setNumpyArray(NDArray)
-            setANTSTransform(ANTSTranform)
-            ANTSTranform = getANTSTransform()
-            list of float = getMatrixColumn()
-            list of float = getFlattenMatrix(self, homogeneous=False)
-            setFlattenMatrix(list of float)
-            applyToPoint([float, float, float])
-            preMultiply(vtkTransform | vtkMatrix4x4 | SisypheTransform | sitkEuler3DTransform or NDArray, homogeneous=bool)
-            postMultiply(vtkTransform | vtkMatrix4x4 | SisypheTransform | sitkEuler3DTransform or NDArray, homogeneous=bool)
-            bool = isDisplacementFieldTransform()
-            bool = isAffineTransform()
-            AffineToDisplacementField()
-            bool = hasID()
-            str = getID()
-            setID(str)
-            [float, float, float] = getSpacing()
-            setSpacing([float, float, float])
-            bool = hasSpacing()
-            [int, int, int] = getSize(self)
-            setSize([int, int, int])
-            bool = hasSize()
-            setAttributesFromFixedVolume(SisypheVolume)
-            copyAttributesTo(SisypheTransform)
-            copyAttributesFrom(SisypheTransform)
-            bool = hasFixedVolumeAttributes()
-            bool = hasSameFixedVolumeAttributes(SisypheVolume)
-            saveAs(str)
-            load(str)
-            saveToXfmTransform(str)
-            saveToTfmTransform(str)
-            saveToMatfileTransform(str)
-            saveToTxtTransform(str)
-            saveToANTSTransform(str)
-            loadFromXfmTransform(str)
-            loadFromTfmTransform(str)
-            loadFromMatfileTransform(str)
-            loadFromTxtTransform(str)
-            loadFromANTSTransform(str)
-            loadFromBrainVoyagerTransform(str)
-
-        Creation: 05/10/2021
-        Revision:
-
-            24/04/2023  displacement field IO methods debugged (sitkVectorFloat32 and sitkVectorFloat64 conversion)
-            20/07/2023  added loadFromBrainVoyagerTransform IO method, open brainvoyager *.trf transform
-            01/09/2023  type hinting
-            31/10/2023  add openTransform() class method
+    Creation: 05/10/2021
+    Last revision: 19/03/2025
     """
-    __slots__ = ['_parent', '_name', '_ID', '_size', '_spacing', '_transform', '_affine', '_field', '_fieldname']
+    __slots__ = ['_parent', '_name', '_ID', '_size', '_spacing', '_transform', '_field', '_fieldname']
 
     # Class constant
 
@@ -262,33 +158,91 @@ class SisypheTransform(object):
 
     @classmethod
     def getFileExt(cls) -> str:
+        """
+        Get SisypheTransform file extension.
+
+        Returns
+        -------
+        str
+            '.xtrf'
+        """
         return cls._FILEEXT
 
     @classmethod
     def getFilterExt(cls) -> str:
+        """
+        Get SisypheTransform filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().
+
+        Returns
+        -------
+        str
+            'PySisyphe Geometric transformation (.xtrf)'
+        """
         return 'PySisyphe Geometric transformation (*{})'.format(cls._FILEEXT)
 
     @classmethod
-    def getSITKtoNumpy(cls, trf: sitkAffineTransform | sitkEuler3DTransform) -> npndarray:
+    def getSITKtoNumpy(cls, trf: sitkAffineTransform | sitkEuler3DTransform) -> ndarray:
+        """
+        Convert SimpleITK.AffineTransform or SimpleITK.Euler3DTransform o a numpy.ndarray.
+
+        Parameters
+        ----------
+        trf : SimpleITK.AffineTransform | SimpleITK.Euler3DTransform
+
+        Returns
+        -------
+        numpy.ndarray
+            homogeneous affine matrix
+        """
         if isinstance(trf, (sitkAffineTransform, sitkEuler3DTransform)):
             m = list(trf.GetMatrix())
             t = list(trf.GetTranslation())
             m = m[:3] + [t[0]] + m[3:6] + [t[1]] + m[-3:] + [t[2], 0.0, 0.0, 0.0, 1.0]
-            return nparray(m).reshape(4, 4)
+            return array(m).reshape(4, 4)
         else: raise TypeError('parameter type {} is not sitkAffineTransform or sitkEuler3DTransform.'.format(type(trf)))
 
     @classmethod
-    def getVTKtoNumpy(cls, trf: vtkMatrix4x4) -> npndarray:
+    def getVTKtoNumpy(cls, trf: vtkMatrix4x4) -> ndarray:
+        """
+        Convert a vtk.vtkMatrix4x4 to a numpy.ndarray.
+
+        Parameters
+        ----------
+        trf : vtk.vtkMatrix4x4
+
+        Returns
+        -------
+        numpy.ndarray
+            homogeneous affine matrix
+        """
         if isinstance(trf, vtkMatrix4x4):
-            m = npndarray((4, 4))
-            for r in range(3):
-                for c in range(3):
+            m = ndarray((4, 4))
+            # < Revision 21/07/2024
+            # for r in range(3):
+            #     for c in range(3):
+            # bugfix, replace range(3) by range(4)
+            for r in range(4):
+                for c in range(4):
                     m[r, c] = trf.GetElement(r, c)
+            # Revision 21/07/2024 >
             return m
         else: raise TypeError('parameter type {} is not vtkMatrix4x4.'.format(type(trf)))
 
     @classmethod
     def openTransform(cls, filename: str) -> SisypheTransform:
+        """
+        create a SisypheTransform instance from PySisyphe geometric transformation file (.xtrf).
+
+        Parameters
+        ----------
+        filename : str
+            geometric transformation file name
+
+        Returns
+        -------
+        SisypheTransform
+            loaded geometric transform
+        """
         filename = basename(filename) + cls.getFileExt()
         trf = SisypheTransform()
         trf.load(filename)
@@ -296,19 +250,40 @@ class SisypheTransform(object):
 
     # Special methods
 
-    def __init__(self, parent: sc.sisypheVolume.SisypheVolume | None = None) -> None:
+    """
+    Private attributes
+
+    _parent     SisypheVolume, reference volume
+    _ID         str, ID of floating image,  fixed volume ID
+    _name       str
+    _size       tuple[int, int, int], fixed volume size
+    _spacing    tuple[float, float, float], fixed volume spacing
+    _transform  sitkAffineTransform, backward transformation, fixed coordinates to moving coordinates
+    _affine     sitkScaleSkewVersor3DTransform
+    _field      sitkDisplacementFieldTransform
+    _fieldname  str    
+    """
+
+    def __init__(self, parent: SisypheVolume | None = None) -> None:
+        """
+        SisypheTransform instance constructor
+
+        Parameters
+        ----------
+        parent : Sisyphe.core.sisypheVolume.SisypheVolume | None
+            reference volume (default None)
+        """
         self._transform = sitkAffineTransform(3)
-        self._affine = sitkScaleSkewVersor3DTransform()
         self._field = None
         self._fieldname = ''
-        if parent and isinstance(parent, sc.sisypheVolume.SisypheVolume):
+        if parent and isinstance(parent, SisypheVolume):
             self._ID = parent.getID()
             self._name = parent.getName()
             self._size = parent.getSize()
             self._spacing = parent.getSpacing()
             self._transform.SetCenter(parent.getCenter())
         else:
-            self._ID = ''  # floating SisypheVolume ID
+            self._ID = ''  # moving SisypheVolume ID
             self._name = ''
             self._size = (0, 0, 0)
             self._spacing = (0.0, 0.0, 0.0)
@@ -316,34 +291,62 @@ class SisypheTransform(object):
         self._parent = parent
 
     def __str__(self) -> str:
+        """
+        Special overloaded method called by the built-in str() python function.
+
+        Returns
+        -------
+        str
+            conversion of SisypheTransform instance to str
+        """
         buff = 'ID: {}\n'.format(self.getID())
         buff += 'Name: {}\n'.format(self.getName())
         buff += 'Size: {}\n'.format(self.getSize())
         p = self.getSpacing()
-        buff += 'Spacing: [{[0]:.2f} {[1]:.2f} {[2]:.2f}]\n'.format(p, p, p)
+        buff += 'Spacing: [{p[0]:.2f} {p[1]:.2f} {p[2]:.2f}]\n'.format(p=p)
         p = self.getCenter()
-        buff += 'Center: [{[0]:.2f} {[1]:.2f} {[2]:.2f}]\n'.format(p, p, p)
+        buff += 'Center: [{p[0]:.2f} {p[1]:.2f} {p[2]:.2f}]\n'.format(p=p)
         if self._field is None:
-            buff += 'Affine transform\n'
+            r = self.isRigid()
+            if r: buff += 'Rigid transform\n'
+            else: buff += 'Affine transform\n'
             p = self.getTranslations()
-            buff += '  Translations: [{[0]:.1f} {[1]:.1f} {[2]:.1f}]\n'.format(p, p, p)
-            p = self.getRotations(deg=True)
-            if p is not None:
+            buff += '  Translations: [{p[0]:.1f} {p[1]:.1f} {p[2]:.1f}]\n'.format(p=p)
+            # < Revision 07/09/2024
+            if self.hasCenter():
+                buff += '  Offsets: [{p[0]:.1f} {p[1]:.1f} {p[2]:.1f}]\n'.format(p=self.getOffsets())
+            # Revision 07/09/2024 >
+            if r:
+                p = self.getRotations()
                 buff += '  Rotations: \n'
-                buff += '    degrees [{[0]:.1f} {[1]:.1f} {[2]:.1f}]\n'.format(p, p, p)
-                p = self.getRotations(deg=False)
-                buff += '    radians [{[0]:.3f} {[1]:.3f} {[2]:.3f}]\n'.format(p, p, p)
+                buff += '    radians [{p[0]:.3f} {p[1]:.3f} {p[2]:.3f}]\n'.format(p=p)
+                p = [degrees(i) for i in p]
+                buff += '    degrees [{p[0]:.1f} {p[1]:.1f} {p[2]:.1f}]\n'.format(p=p)
                 p = self.getVersor()
-                buff += '    versor [{[0]:.3f} {[1]:.3f} {[2]:.3f} {[3]:.3f}]\n'.format(p, p, p, p)
-            else: buff += '  Rotations: Non-orthogonal affine matrix\n'
+                buff += '    versor [{p[0]:.3f} {p[1]:.3f} {p[2]:.3f} {p[3]:.3f}]\n'.format(p=p)
+                a, p = self.getAngleVector()
+                buff += '    vector [{p[0]:.3f} {p[1]:.3f} {p[2]:.3f}] angle {a:.3f}\n'.format(p=p, a=a)
+            else:
+                try:
+                    p = self.getAffineParametersFromMatrix()
+                    pr = p[1]
+                    pz = p[2]
+                    ps = p[3]
+                    buff += '  Rotations: \n'
+                    buff += '    radians [{p[0]:.3f} {p[1]:.3f} {p[2]:.3f}]\n'.format(p=pr)
+                    pr = [degrees(i) for i in pr]
+                    buff += '    degrees [{p[0]:.1f} {p[1]:.1f} {p[2]:.1f}]\n'.format(p=pr)
+                    buff += '  Zooms: [{p[0]:.2f} {p[1]:.2f} {p[2]:.2f}]\n'.format(p=pz)
+                    buff += '  Shears: [{p[0]:.2f} {p[1]:.2f} {p[2]:.2f}]\n'.format(p=ps)
+                except: buff += 'Non-orthogonal transform\n'
             buff += '  Matrix:\n'
             m = self._transform.GetMatrix()
             p = m[:3]
-            buff += '    [{[0]:7.4f} {[1]:7.4f} {[2]:7.4f} ]\n'.format(p, p, p)
+            buff += '    [{p[0]:7.4f} {p[1]:7.4f} {p[2]:7.4f} ]\n'.format(p=p)
             p = m[3:6]
-            buff += '    [{[0]:7.4f} {[1]:7.4f} {[2]:7.4f} ]\n'.format(p, p, p)
+            buff += '    [{p[0]:7.4f} {p[1]:7.4f} {p[2]:7.4f} ]\n'.format(p=p)
             p = m[-3:]
-            buff += '    [{[0]:7.4f} {[1]:7.4f} {[2]:7.4f} ]\n'.format(p, p, p)
+            buff += '    [{p[0]:7.4f} {p[1]:7.4f} {p[2]:7.4f} ]\n'.format(p=p)
         else:
             buff += 'Displacement Field transform\n'
             if self._fieldname == '': name = 'Not yet saved'
@@ -353,17 +356,49 @@ class SisypheTransform(object):
         return buff
 
     def __repr__(self) -> str:
+        """
+        Special overloaded method called by the built-in repr() python function.
+
+        Returns
+        -------
+        str
+            SisypheTransform instance representation
+        """
         return 'SisypheTransform instance at <{}>\n'.format(str(id(self))) + self.__str__()
 
     # Public methods
 
     def hasParent(self) -> bool:
+        """
+        Check if the parent attribute of the current SisypheTransform instance is defined (not None).
+
+        Returns
+        -------
+        bool
+            True if parent attribute is defined
+        """
         return self._parent is not None
 
-    def getParent(self) -> sc.sisypheVolume.SisypheVolume | None:
+    def getParent(self) -> SisypheVolume | None:
+        """
+        Get the parent attribute of the current SisypheTransform instance.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            parent
+        """
         return self._parent
 
-    def setParent(self, parent: sc.sisypheVolume.SisypheVolume) -> None:
+    def setParent(self, parent: SisypheVolume) -> None:
+        """
+        Set the parent attribute of the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        parent : Sisyphe.core.sisypheVolume.SisypheVolume
+            parent volume
+        """
         from Sisyphe.core.sisypheVolume import SisypheVolume
         if parent and isinstance(parent, SisypheVolume):
             self.setID(parent)
@@ -372,30 +407,72 @@ class SisypheTransform(object):
             self._transform.SetCenter(parent.getCenter())
 
     def setName(self, name: str) -> None:
+        """
+        Set the name attribute of the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        name : str
+            transform name
+        """
         self._name = splitext(basename(name))[0]
 
     def getName(self) -> str:
+        """
+        Get the name attribute of the current SisypheTransform instance.
+
+        Returns
+        -------
+        str
+            transform name
+        """
         return self._name
 
     def hasName(self) -> bool:
+        """
+        Check if the name attribute of the current SisypheTransform instance is defined (not '').
+
+        Returns
+        -------
+        bool
+            True if name attribute is defined
+        """
         return self._name != ''
 
     def setIdentity(self) -> None:
+        """
+        Clear the current SisypheTransform instance (set geometric transformation to identity).
+        """
         # Copy center
         c = self._transform.GetCenter()
         # SetIdentity clear center
-        self._affine.SetIdentity()
         self._transform.SetIdentity()
         # Set center
         self._transform.SetCenter(c)
 
     def isIdentity(self) -> bool:
+        """
+        Check if the current SisypheTransform instance is an identity geometric transformation.
+
+        Returns
+        -------
+        bool
+            True if identity geometric transformation
+        """
         if self._field is None:
             return self._transform.GetMatrix() == (1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0) and \
                    self._transform.GetTranslation() == (0.0, 0.0, 0.0)
         else: raise TypeError('Displacement field transform.')
 
     def getInverseTransform(self) -> SisypheTransform:
+        """
+        Get the inverse geometric transformation of the current SisypheTransform instance.
+
+        Returns
+        -------
+        SisypheTransform
+            inverse geometric transformation
+        """
         if self._field is None:
             trf = SisypheTransform()
             trf.setSITKTransform(sitkAffineTransform(self._transform.GetInverse()))
@@ -403,130 +480,361 @@ class SisypheTransform(object):
             trf.setSize(self.getSize())
             trf.setSpacing(self.getSpacing())
             return trf
-        else: raise TypeError('Displacement field transform.')
+        else: raise TypeError('Displacement field transform has no affine attribute.')
 
     def setTranslations(self, t: vectorFloat3) -> None:
+        """
+        Set translation attributes of the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        t : tuple[float, float, float] | list[float]
+            x-axis, y-axis and z-axis translations in mm
+        """
         if self._field is None: self._transform.SetTranslation(t)
-        else: raise TypeError('Displacement field transform has no translation parameter.')
+        else: raise TypeError('Displacement field transform has no affine attribute.')
 
     def setRotations(self, r: vectorFloat3, deg: bool = False) -> None:
+        """
+        Set rotation attributes of the current SisypheTransform instance. The order in which rotations are applied is
+        x-axis, then y-axis and finally z-axis.
+
+        Parameters
+        ----------
+        r : tuple[float, float, float] | list[float]
+            rotations around x-axis, y-axis and z-axis
+        deg : bool
+            rotations in degrees if True, in radians otherwise (default False)
+        """
         if self._field is None:
             r = list(r)
             if deg:
                 r[0] = radians(r[0])
                 r[1] = radians(r[1])
                 r[2] = radians(r[2])
-            self._affine.SetRotation(getVersorFromRotations(r))
-            self._transform.SetMatrix(self._affine.GetMatrix())
-        else: raise TypeError('Displacement field transform has no rotation parameter.')
+            t = sitkEuler3DTransform()
+            t.SetRotation(r[0], r[1], r[2])
+            self._transform.SetMatrix(t.GetMatrix())
+        else: raise TypeError('Displacement field transform has no affine attribute.')
+
+    def setVersor(self, v: vectorFloat4) -> None:
+        """
+        Set rotation attributes of the current SisypheTransform instance from a versor i.e. quaternion in w, x, y, z
+        (i.e. real, then unit vector in 3D).
+
+        Parameters
+        ----------
+        v : tuple[float, float, float, float] | list[float]
+            versor
+        """
+        if self._field is None:
+            t = sitkVersorTransform()
+            t.SetRotation(v)
+            self._transform.SetMatrix(t.GetMatrix())
+        else: raise TypeError('Displacement field transform has no affine attribute.')
+
+    def setAngleVector(self, a: float, v: vectorFloat3, deg: bool = False) -> None:
+        """
+        Set rotation attributes of the current SisypheTransform instance from a vector of rotation axis and an angle.
+        Rotation matrix is processed from the Rodrigues’ formula.
+
+        Parameters
+        ----------
+        a : float
+            angle of rotation
+        v : tuple[float, float, float] | list[float]
+            vector of rotation axis
+        deg : bool
+            angle in radians if False, in degrees otherwise
+        """
+        if self._field is None:
+            if deg: a = radians(a)
+            q = angle_axis2quat(a, v)
+            R = quat2mat(q)
+            self._transform.SetMatrix(R.flatten())
+        else: raise TypeError('Displacement field transform has no affine attribute.')
+
+    def setAffineParameters(self,
+                            t: vectorFloat3 | None = None,
+                            r: vectorFloat3 | None = None,
+                            z: vectorFloat3 | None = None,
+                            s: vectorFloat3 | None = None,
+                            deg: bool = False) -> None:
+        """
+        Set affine parameters i.e. translations, rotations, zooms and shears of the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        t : tuple[float, float, float] | list[float]
+            translations in x-axis, y-axis and z-axis
+        r : tuple[float, float, float] | list[float]
+            rotations around x-axis, y-axis and z-axis
+        z : tuple[float, float, float] | list[float]
+            zoom factors applied to x-axis, y-axis and z-axis
+        s : tuple[float, float, float] | list[float]
+            shear factors for x-y, x-z, y-z axes
+        deg : bool
+            angle in radians if False, in degrees otherwise
+        """
+        if self._field is None:
+            self.setIdentity()
+            if t is not None: self.setTranslations(t)
+            if r is not None: self.setRotations(r, deg)
+            if s is not None:
+                M = identity(3)
+                M[0, 1] = s[0]
+                M[0, 2] = s[1]
+                M[1, 2] = s[2]
+                M = matmul(self.getNumpyArray(), M)
+                self._transform.SetMatrix(M.flatten())
+            if z is not None:
+                M = identity(3)
+                M[0, 0] = z[0]
+                M[1, 1] = z[1]
+                M[2, 2] = z[2]
+                M = matmul(self.getNumpyArray(), M)
+                self._transform.SetMatrix(M.flatten())
+        else: raise TypeError('Displacement field transform has no affine attribute.')
 
     def addTranslations(self, t: vectorFloat3) -> None:
+        """
+        Add translations to the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        t : tuple[float, float, float] | list[float]
+            x-axis, y-axis and z-axis translations in mm
+        """
         if self._field is None:
             t2 = list(self.getTranslations())
             t2[0] += t[0]
             t2[1] += t[1]
             t2[2] += t[2]
             self.setTranslations(t2)
-        else: raise TypeError('Displacement field transform has no translation parameter.')
+        else: raise TypeError('Displacement field transform has no affine attribute.')
 
     def composeRotations(self, r: vectorFloat3, deg: bool = False) -> None:
+        """
+        Compose rotations to the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        r : tuple[float, float, float] | list[float]
+            rotations around x-axis, y-axis and z-axis
+        deg : bool
+            rotations in degrees if True, in radians otherwise (default False)
+        """
         if self._field is None:
             trf = SisypheTransform()
             trf.setRotations(r, deg)
             self.preMultiply(trf, homogeneous=True)
-        else: raise TypeError('Displacement field transform has no rotation parameter.')
+        else: raise TypeError('Displacement field transform has no affine attribute.')
 
     def composeTransform(self, trf: SisypheTransform) -> None:
+        """
+        Compose a geometric transformation (SisypheTransform) to the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        trf : SisypheTransform
+            geometric transformation to compose
+        """
         if self._field is None:
             if isinstance(trf, SisypheTransform):
                 self.preMultiply(trf, homogeneous=True)
             else: raise TypeError('parameter type {} is not SisypheTransform'.format(trf))
         else: raise TypeError('Displacement field transform has no affine matrix parameter.')
 
-    def setVersor(self, v: vectorFloat4) -> None:
+    def getTranslations(self) -> listFloat:
+        """
+        Get translation attributes of the current SisypheTransform instance.
+
+        Returns
+        -------
+        tuple[float, float, float] | list[float]
+            x-axis, y-axis and z-axis translations in mm
+        """
+        return list(self._transform.GetTranslation())
+
+    # < Revision 07/09/2024
+    # add getOffsets method
+    def getOffsets(self) -> listFloat:
+        """
+        Get offsets of the current SisypheTransform instance. if center of rotation is default (0.0, 0.0, 0.0),
+        offsets are equal to translations. However, if center of rotation is not default, offsets are translations
+        of an equivalent geometric transformation with a default center of rotation.
+
+        Returns
+        -------
+        tuple[float, float, float] | list[float]
+            x-axis, y-axis and z-axis translations in mm
+        """
+        if self.hasCenter():
+            trf = self.getEquivalentTransformWithNewCenterOfRotation([0.0, 0.0, 0.0])
+            return trf.getTranslations()
+        else: return self.getTranslations()
+    # Revision 07/09/2024 >
+
+    def getRotations(self, deg: bool = False) -> listFloat | None:
+        """
+        Get rotation attributes of the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        deg : bool, rotations in degrees if True, in radians otherwise (default False)
+
+        Returns
+        -------
+        list[float]
+            rotations around x-axis, y-axis and z-axis
+        """
         if self._field is None:
-            self._affine.SetRotation(v)
-            self._transform.SetMatrix(self._affine.GetMatrix())
-        else: raise TypeError('Displacement field transform has no versor parameter.')
+            t = sitkEuler3DTransform()
+            try: t.SetMatrix(self._transform.GetMatrix())
+            except: return self.getRotationsFromMatrix(deg)
+            if deg: return [degrees(t.GetAngleX()), degrees(t.GetAngleY()), degrees(t.GetAngleZ())]
+            else: return [t.GetAngleX(), t.GetAngleY(), t.GetAngleZ()]
+        else: raise TypeError('Displacement field transform has no affine attribute.')
 
-    def setScales(self, sc: vectorFloat3) -> None:
+    def getRotationsFromMatrix(self, deg: bool = False) -> listFloat:
+        """
+        Get rotations from the affine matrix attribute of the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        deg : bool
+            rotations in degrees if True, in radians otherwise (default False)
+
+        Returns
+        -------
+        list[float]
+            rotations around x-axis, y-axis and z-axis
+        """
         if self._field is None:
-            self._affine.SetScale(sc)
-            self._transform.SetMatrix(self._affine.GetMatrix())
-        else: raise TypeError('Displacement field transform has no scale parameter.')
+            # < Revision 08/09/2024
+            # return self.getAffineParametersFromMatrix(deg)[2]
+            return self.getAffineParametersFromMatrix(deg)[1]
+            # Revision 08/09/2024 >
+        else: raise TypeError('Displacement field transform has no affine attribute.')
 
-    def setSkews(self, sk: vectorFloat3) -> None:
+    def getVersor(self) -> listFloat:
+        """
+        Get versor i.e. quaternion in w, x, y, z (real, then unit vector in 3D) from the rotation attributes of the
+        current SisypheTransform instance.
+
+        Returns
+        -------
+        tuple[float, float, float, float] | list[float]
+            versor
+        """
         if self._field is None:
-            self._affine.SetSkew(sk)
-            self._transform.SetMatrix(self._affine.GetMatrix())
-        else: raise TypeError('Displacement field transform has no skew parameter.')
+            t = sitkVersorTransform()
+            t.SetMatrix(self._transform.GetMatrix())
+            return list(t.GetVersor())
+        else: raise TypeError('Displacement field transform has no affine attribute.')
 
-    def getTranslations(self) -> vectorFloat3:
-        return tuple(self._transform.GetTranslation())
+    def getAngleVector(self, deg: bool = False) -> tuple[float, listFloat]:
+        """
+        Get angle and vector of rotation axis from the rotations of the current SisypheTransform instance.
 
-    def getRotations(self, deg: bool = False) -> vectorFloat3 | None:
-        t = sitkEuler3DTransform()
-        try: t.SetMatrix(self._transform.GetMatrix())
-        except: return None
-        if deg: return degrees(t.GetAngleX()), degrees(t.GetAngleY()), degrees(t.GetAngleZ())
-        else: return t.GetAngleX(), t.GetAngleY(), t.GetAngleZ()
+        Parameters
+        ----------
+        deg : bool
+            angle in radians if False, in degrees otherwise
 
-    def getRotationsFromMatrix(self, deg: bool = False, algo: str = 'dipy') -> vectorFloat3:
-        if algo == 'dipy':
-            r = decompose_matrix44(self.getNumpyArray(homogeneous=True), size=12)
-            if deg: r = npdegrees(r[3:6])
-            else: r = r[3:6]
-            return tuple(r)
-        else:
-            def rang(v):
-                return min(max(v, -1), 1)
-            """
-                from matlab code spm_imatrix, John Ashburner & Stefan Kiebel
-            """
+        Returns
+        -------
+        float, tuple[float, float, float] | list[float]
+            angle of rotation and vector of rotation axis
+        """
+        if self._field is None:
+            M = self.getNumpyArray()
+            q = mat2quat(M)
+            a, v = quat2angle_axis(q)
+            if deg: a = degrees(a)
+            return a, list(v)
+        else: raise TypeError('Displacement field transform has no affine attribute.')
+
+    def getAffineParametersFromMatrix(self, deg: bool = False) -> tuple[listFloat, listFloat, listFloat, listFloat]:
+        """
+        Get affine parameters from the affine matrix attribute of the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        deg : bool
+            rotations in degrees if True, in radians otherwise (default False)
+
+        Returns
+        -------
+        tuple[list[float], list[float], list[float], list[float]]
+            - translations in x-axis, y-axis and z-axis
+            - rotations around x-axis, y-axis and z-axis
+            - zoom factors applied to x-axis, y-axis and z-axis
+            - shear factors for x-y, x-z, y-z axes
+        """
+        if self._field is None:
             # retrieve zooms
             r = self.getNumpyArray()
             C = cholesky(r.T @ r)
-            z = diag(C)  # zooms
+            z = diag(C)
             if det(r) < 0: z[0] = -z[0]
             Z = diag(z)
             # retrieve shears
             C = solve(diag(diag(C)), C)
-            s = [C[1, 0], C[2, 0], C[2, 1]]  # shears
-            S = nparray([[1, C[1, 0], C[2, 0]],
-                         [0, 1,       C[2, 1]],
-                         [0, 0,       1]])
             # finally, retrieve rotations
-            R0 = Z @ S
+            R0 = Z @ C
             R1 = solve(r.T, R0.T)
-            R1 = R1.T
-            r2 = -asin(rang(R1[0, 2]))
-            if (abs(r2) - pi/2) ** 2 < 1e-9:
-                r1 = 0
-                r3 = atan2(-rang(R1[1, 0]), rang(-R1[2, 0] / R1[0, 2]))
-            else:
-                c = cos(r2)
-                r1 = atan2(rang(R1[1, 2] / c), rang(R1[2, 2] / c))
-                r3 = atan2(rang(R1[0, 1] / c), rang(R1[0, 0] / c))
+            t = sitkEuler3DTransform()
+            t.SetMatrix(R1.flatten())
+            r1 = t.GetAngleX()
+            r2 = t.GetAngleY()
+            r3 = t.GetAngleZ()
             if deg:
                 r1 = degrees(r1)
                 r2 = degrees(r2)
                 r3 = degrees(r3)
-            return r1, r2, r3
-
-    def getVersor(self) -> vectorFloat4:
-        r = self.getRotations()
-        return list(getVersorFromRotations(r))
+            return self.getTranslations(), [r1, r2, r3], list(diag(Z)), [C[0, 1], C[0, 2], C[1, 2]]
+        else: raise TypeError('Displacement field transform has no affine attribute.')
 
     def setCenter(self, c: vectorFloat3) -> None:
+        """
+        Set the center of rotation of the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        c : tuple[float, float, float] | list[float]
+            center of rotation coordinates
+        """
         self._transform.SetCenter(c)
+
+    # < Revision 03/09/2024
+    # add removeCenter method
+    def removeCenter(self) -> None:
+        """
+        Set the center of rotation of the current SisypheTransform instance to [0.0, 0.0, 0.0]
+        """
+        self._transform.SetCenter([0.0, 0.0, 0.0])
+    # Revision 03/09/2024 >
 
     def getEquivalentTransformWithNewCenterOfRotation(self, c: vectorFloat3) -> SisypheTransform:
         """
-            1. Apply forward translation, mid CA-CP to volume center (translation = volume center - mid CA-CP)
-            2. Apply rotation, after forward translation, center of rotation is volume center
-            3. Apply backward translation, volume center to mid CA-CP
+        Calculate a geometric transformation equivalent to the current SisypheTransform instance, with a new center
+        of rotation
+
+        1. Apply forward translation, old center to new center (translation = volume center - old center)
+        2. Apply rotation, after forward translation, center of rotation is new center
+        3. Apply backward translation, new center to old center
+
+        Parameters
+        ----------
+        c : tuple[float, float, float] | list[float]
+            new center of rotation coordinates
+
+        Returns
+        -------
+        SisypheTransform
         """
-        if self.hasCenter():
+        if self.getCenter() != list(c):
             newc = list(c)
             oldc = self.getCenter()
             newc[0] -= oldc[0]
@@ -534,19 +842,23 @@ class SisypheTransform(object):
             newc[2] -= oldc[2]
             """
                 t1 = forward translation transformation matrix
-                forward translation of the center of rotation from mid CA-CP to volume center
-                translation = volume center (c) - mid CA-CP (m)
+                forward translation of the center of rotation from old center to new center
+                translation = new center (c) - old center (m)
             """
             t1 = SisypheTransform()
             t1.setTranslations(newc)
             """
                 rt2 = roto-translation matrix = backward translation transformation x rotation transformation
-                backward translation from volume center to mid CA-CP
+                backward translation from new center to old center
                 backward translation = - forward translation
                 Order of transformations is 1. rotation -> 2. backward translation
             """
             rt2 = SisypheTransform()
-            rt2.setRotations(self.getRotations())
+            # < Revision 08/09/2024
+            # copy matrix instead of rotations
+            # rt2.setRotations(self.getRotations())
+            rt2.setNumpyArray(self.getNumpyArray())
+            # Revision 08/09/2024 >
             oldtrans = list(self.getTranslations())
             # Keep previous translations (oldtrans),
             # integrated in roto-translation matrix (added to backward translation)
@@ -565,42 +877,100 @@ class SisypheTransform(object):
             t1.setID(self.getID())
             t1.setSize(self.getSize())
             t1.setSpacing(self.getSpacing())
+            t1.setName(self.getName())
             return t1
         else:
             t = self.copy()
-            t.setCenter(c)
             return t
 
-    def setCenterFromSisypheVolume(self, vol: sc.sisypheVolume.SisypheVolume) -> None:
-        if isinstance(vol, sc.sisypheVolume.SisypheVolume): self._transform.SetCenter(vol.getCenter())
+    def setCenterFromSisypheVolume(self, vol: SisypheVolume) -> None:
+        """
+        Set the center of rotation of the current SisypheTransform instance to the center of a SisypheVolume image.
+
+        Parameters
+        ----------
+        vol : Sisyphe.core.sisypheVolume.SisypheVolume
+            center of rotation = volume center
+        """
+        if isinstance(vol, SisypheVolume): self._transform.SetCenter(vol.getCenter())
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
-    def isCenteredToSisypheVolume(self, vol: sc.sisypheVolume.SisypheVolume) -> bool:
-        if isinstance(vol, sc.sisypheVolume.SisypheVolume):
+    def isCenteredToSisypheVolume(self, vol: SisypheVolume) -> bool:
+        """
+        Check whether the center of rotation of the current SisypheTransform instance is the center of a SisypheVolume
+        image.
+
+        Parameters
+        ----------
+        vol : Sisyphe.core.sisypheVolume.SisypheVolume
+            volume center used as center of rotation
+
+        Returns
+        -------
+        bool
+            True if center of rotation = volume center
+        """
+        if isinstance(vol, SisypheVolume):
             c1 = self.getCenter()
             c2 = list(vol.getCenter())
             return c1 == c2
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
     def setCenterFromParent(self) -> None:
+        """
+        Set the center of rotation of the current SisypheTransform instance to the center of the SisypheVolume parent
+        attribute.
+        """
         if self.hasParent():
             self.setCenterFromSisypheVolume(self._parent)
 
     def isCenteredFromParent(self) -> bool:
+        """
+        Check whether the center of rotation of the current SisypheTransform instance is the center of the
+        SisypheVolume parent attribute.
+
+        Returns
+        -------
+        bool
+            True if center of rotation = parent volume center
+        """
         if self.hasParent():
             return self.isCenteredToSisypheVolume(self._parent)
+        else: raise AttributeError('SisypheVolume parent attribute is None.')
 
-    def getCenter(self) -> vectorFloat3:
+    def getCenter(self) -> listFloat:
+        """
+        Get the center of rotation of the current SisypheTransform instance.
+
+        Returns
+        -------
+        list[float]
+            center of rotation coordinates
+        """
         return list(self._transform.GetCenter())
 
     def hasCenter(self) -> bool:
+        """
+        Check whether the center of rotation of the current SisypheTransform instance is defined (not 0.0, 0.0, 0.0).
+
+        Returns
+        -------
+        bool
+            True if center is defined (not 0.0, 0.0, 0.0)
+        """
         return self._transform.GetCenter() != (0.0, 0.0, 0.0)
 
-    def copyFrom(self, t: sc.sisypheVolume.SisypheVolume | SisypheTransform) -> None:
-        if isinstance(t, sc.sisypheVolume.SisypheVolume):
-            t = t.getTransforms()
+    def copyFrom(self, t: SisypheTransform) -> None:
+        """
+        Copy a SisypheTransform instance to the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        t : SisypheTransform
+            geometric transform
+        """
         if isinstance(t, SisypheTransform):
-            if t.isDisplacementFieldTransform():
+            if t.isDisplacementField():
                 self._field = sitkDisplacementFieldTransform()
                 self._field.SetInterpolator(sitkLinear)
                 self._field.SetDisplacementField(t.getSITKDisplacementFieldSITKImage())
@@ -617,6 +987,14 @@ class SisypheTransform(object):
         else: raise TypeError('parameter type {} is not SisypheTransform or SisypheVolume.'.format(type(t)))
 
     def copyTo(self, t: SisypheTransform) -> None:
+        """
+        Copy the current SisypheTransform instance to a SisypheTransform instance.
+
+        Parameters
+        ----------
+        t : SisypheTransform
+            transform copy
+        """
         if isinstance(t, SisypheTransform):
             if self._field is None:
                 t.removeDisplacementField()
@@ -636,33 +1014,70 @@ class SisypheTransform(object):
         else: raise TypeError('parameter type {} is not SisypheTransform.'.format(type(t)))
 
     def copy(self) -> SisypheTransform:
+        """
+        Copy the current SisypheTransform instance.
+
+        Returns
+        -------
+        SisypheTransform
+            transform copy
+        """
         t = SisypheTransform()
         self.copyTo(t)
         return t
 
     def setSITKTransform(self, trf):
+        """
+        Copy a SimpleITK.Transform instance to the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        trf : SimpleITK.TranslationTransform | SimpleITK.VersorTransform | SimpleITK.ScaleTransform | SimpleITK.VersorRigid3DTransform | SimpleITK.Euler3DTransform | SimpleITK.Similarity3DTransform | SimpleITK.ScaleVersor3DTransform | SimpleITK.ScaleSkewVersor3DTransform | SimpleITK.AffineTransform | SimpleITK.DisplacementFieldTransform
+            SimpleITK geometric transform
+        """
         name = trf.GetName()
         if name != 'DisplacementFieldTransform':
             self.setIdentity()
             if name == 'TranslationTransform':
                 self._transform.SetTranslation(trf.GetOffset())
             elif name == 'VersorTransform':
+                # < Revision 06/09/2024
+                self._transform.SetCenter(trf.GetCenter())
+                # Revision 06/09/2024 >
                 self._transform.SetMatrix(trf.GetMatrix())
             elif name == 'ScaleTransform':
+                # < Revision 06/09/2024
+                self._transform.SetCenter(trf.GetCenter())
+                # Revision 06/09/2024 >
                 self._transform.SetMatrix(trf.GetMatrix())
             elif name == 'VersorRigid3DTransform':
+                # < Revision 06/09/2024
+                self._transform.SetCenter(trf.GetCenter())
+                # Revision 06/09/2024 >
                 self._transform.SetTranslation(trf.GetTranslation())
                 self._transform.SetMatrix(trf.GetMatrix())
             elif name == 'Euler3DTransform':
+                # < Revision 06/09/2024
+                self._transform.SetCenter(trf.GetCenter())
+                # Revision 06/09/2024 >
                 self._transform.SetTranslation(trf.GetTranslation())
                 self._transform.SetMatrix(trf.GetMatrix())
             elif name == 'Similarity3DTransform':
+                # < Revision 06/09/2024
+                self._transform.SetCenter(trf.GetCenter())
+                # Revision 06/09/2024 >
                 self._transform.SetTranslation(trf.GetTranslation())
                 self._transform.SetMatrix(trf.GetMatrix())
             elif name == 'ScaleVersor3DTransform':
+                # < Revision 06/09/2024
+                self._transform.SetCenter(trf.GetCenter())
+                # Revision 06/09/2024 >
                 self._transform.SetTranslation(trf.GetTranslation())
                 self._transform.SetMatrix(trf.GetMatrix())
             elif name == 'ScaleSkewVersor3DTransform':
+                # < Revision 06/09/2024
+                self._transform.SetCenter(trf.GetCenter())
+                # Revision 06/09/2024 >
                 self._transform.SetTranslation(trf.GetTranslation())
                 self._transform.SetMatrix(trf.GetMatrix())
             elif name == 'AffineTransform':
@@ -671,32 +1086,100 @@ class SisypheTransform(object):
         else: self.setSITKDisplacementFieldTransform(trf)
 
     def getSITKTransform(self) -> sitkAffineTransform | sitkDisplacementFieldTransform:
+        """
+        Get a SimpleITK.Transform instance from the current SisypheTransform instance.
+
+        Returns
+        -------
+        SimpleITK.AffineTransform | SimpleITK.DisplacementFieldTransform
+            transform copy
+        """
         if self._field is None: return self._transform
         else: return self._field
 
     def getSITKDisplacementFieldTransform(self) -> sitkDisplacementFieldTransform:
+        """
+        Get a SimpleITK.DisplacementFieldTransform instance from the current SisypheTransform instance.
+
+        Returns
+        -------
+        SimpleITK.DisplacementFieldTransform
+            displacement field transform copy
+        """
         if self._field is not None: return self._field
         else: raise ValueError('No displacement field transform.')
 
     def getSITKDisplacementFieldSITKImage(self) -> sitkImage:
+        """
+        Get a SimpleITK.Image instance from the displacement field of the current SisypheTransform instance.
+
+        Returns
+        -------
+        SimpleITK.Image
+            displacement field image
+        """
         if self._field is not None: return self._field.GetDisplacementField()
+        else: raise AttributeError('Displacement field attribute is None.')
+
+    def getDisplacementField(self) -> SisypheVolume:
+        """
+        Get the displacement field of the current SisypheTransform instance as SisypheVolume.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            displacement field image
+        """
+        if self._field is not None:
+            field = SisypheVolume()
+            field.setSITKImage(self._field.GetDisplacementField())
+            field.getAcquisition().setSequenceToDisplacementField()
+            return field
+        else: raise AttributeError('Displacement field attribute is None.')
 
     def getInverseSITKTransform(self) -> sitkAffineTransform:
+        """
+        Get inverse of the current SisypheTransform instance as a SimpleITK.Transform instance.
+
+        Returns
+        -------
+        SimpleITK.AffineTransform
+            inverse transform
+        """
         if self._field is None: return self._transform.GetInverse()
         else: raise TypeError('No affine transform.')
 
     def setSITKDisplacementFieldTransform(self, trf: sitkDisplacementFieldTransform) -> None:
+        """
+        Set a SimpleITK.DisplacementFieldTransform instance to the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        trf : SimpleITK.DisplacementFieldTransform
+            displacement field transform
+        """
         if isinstance(trf, sitkDisplacementFieldTransform):
             self._field = trf
             self.setIdentity()
         else: raise TypeError('parameter type {} is not sitkDisplacementFieldTransform.'.format(type(trf)))
 
     def setSITKDisplacementFieldImage(self, img: SisypheImage | sitkImage) -> None:
+        """
+        Set a displacement field as SimpleITK.Image or Sisyphe.core.sisypheImage.SisypheImage instance to the current
+        SisypheTransform instance.
+
+        Parameters
+        ----------
+        img : Sisyphe.core.sisypheImage.SisypheImage | SimpleITK.Image
+            displacement field image
+        """
         if isinstance(img, SisypheImage):
             img = img.getSITKImage()
         if isinstance(img, sitkImage):
             if img.GetNumberOfComponentsPerPixel() == 3 and img.GetPixelIDValue() in (sitkVectorFloat32,
                                                                                       sitkVectorFloat64):
+                self.setIdentity()
+                self.removeCenter()
                 if self._field is not None: del self._field
                 # Displacement field img type must be sitkVectorFloat64 (not sitkVectorFloat32)
                 self._field = sitkDisplacementFieldTransform(Cast(img, sitkVectorFloat64))
@@ -706,46 +1189,144 @@ class SisypheTransform(object):
             else: raise ValueError('image parameter is not a displacement field.')
         else: raise TypeError('parameter type {} is not sitkImage or SisypheImage.'.format(type(img)))
 
+    def copyFromDisplacementFieldImage(self, img: SisypheImage | sitkImage) -> None:
+        """
+        Copy a displacement field as SimpleITK.Image or Sisyphe.core.sisypheImage.SisypheImage instance to the current
+        SisypheTransform instance.
+
+        Parameters
+        ----------
+        img : Sisyphe.core.sisypheImage.SisypheImage | SimpleITK.Image
+            displacement field image
+        """
+        if isinstance(img, SisypheImage):
+            img = img.copyToSITKImage()
+            if img.GetNumberOfComponentsPerPixel() == 3 and img.GetPixelIDValue() in (sitkVectorFloat32,
+                                                                                      sitkVectorFloat64):
+                self.setIdentity()
+                self.removeCenter()
+                if self._field is not None: del self._field
+                # Displacement field img type must be sitkVectorFloat64 (not sitkVectorFloat32)
+                self._field = sitkDisplacementFieldTransform(Cast(img, sitkVectorFloat64))
+                self.setIdentity()
+                self.setSize(img.GetSize())
+                self.setSpacing(img.GetSpacing())
+            else: raise ValueError('image parameter is not a displacement field.')
+        else: raise TypeError('parameter type {} is not SisypheImage.'.format(type(img)))
+
     def removeDisplacementField(self) -> None:
-        if self.isDisplacementFieldTransform():
+        """
+        Remove the displacement field of the current SisypheTransform instance.
+        """
+        if self.isDisplacementField():
             del self._field
             self._field = None
             self._fieldname = ''
 
-    def setVTKTransform(self, trf: vtkTransform) -> None:
+    def setVTKTransform(self, trf: vtkTransform, center_reset: bool = False) -> None:
+        """
+        Copy a vtk.vtkTransform instance to the current SisypheTransform instance.
+        The center of rotation of the current SisypheTransform instance is set to default (0.0, 0.0, 0.0).
+
+        Parameters
+        ----------
+        trf : vtk.vtkTransform
+            VTK transform to copy
+        center_reset : bool
+            set center of rotation to default (0.0, 0.0, 0.0) if True
+        """
         if self._field is None:
             if isinstance(trf, vtkTransform):
                 mat = trf.GetMatrix()
                 self.setVTKMatrix4x4(mat)
+                # < Revision 07/09/2024
+                if center_reset:
+                    self.setCenter([0.0, 0.0, 0.0])
+                # Revision 07/09/2024 >
             else: raise TypeError('parameter type {} is not vtkTransform.'.format(type(trf)))
         else: raise TypeError('No affine transform.')
 
-    def getVTKTransform(self) -> vtkTransform:
+    def getVTKTransform(self, center_correction: bool = False) -> vtkTransform:
+        """
+        Get a vtk.vtkTransform instance from the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        center_correction : bool
+            if True, replace translations by offset if center of rotation is not default (0.0,0.0,0.0),
+
+        Returns
+        -------
+        vtk.vtkTransform
+            VTK transform copy
+        """
         if self._field is None:
-            trf = vtkTransform()
-            vtkmat = trf.GetMatrix()
             sitkmat = self._transform.GetMatrix()
-            sitktrans = self._transform.GetTranslation()
+            # < Revision 07/09/2024
+            # center correction management
+            if center_correction and self.hasCenter():
+                ctrf = self.getEquivalentTransformWithNewCenterOfRotation([0.0, 0.0, 0.0])
+                sitktrans = ctrf.getTranslations()
+            else: sitktrans = self._transform.GetTranslation()
+            # Revision 07/09/2024 >
+            # < Revision 19/03/2024
+            # to avoid vtk warning, do not edit the vtkMatrix3x3 attribute of a vtkTransform instance
+            trf = vtkTransform()
+            # vtkmat = trf.GetMatrix()
+            vtkmat = vtkMatrix4x4()
             for r in range(3):
                 vtkmat.SetElement(r, 3, sitktrans[r])
                 for c in range(3):
                     vtkmat.SetElement(r, c, sitkmat[r * 3 + c])
+            trf.SetMatrix(vtkmat)
+            # Revision 19/03/2024 >
             return trf
         else: raise TypeError('No affine transform.')
 
-    def setVTKMatrix3x3(self, mat: vtkMatrix3x3) -> None:
+    def setVTKMatrix3x3(self, mat: vtkMatrix3x3, center_reset: bool = False) -> None:
+        """
+        Copy an affine matrix as vtk.vtkMatrix3x3 instance to the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        mat : vtk.vtkMatrix3x3
+            VTK affine matrix to copy
+        center_reset : bool
+            set center of rotation to default (0.0, 0.0, 0.0) if True
+        """
         if self._field is None:
             if isinstance(mat,  vtkMatrix3x3):
-                m = mat.GetGetData()
-                self._affine.SetIdentity()
+                # < Revision 19/03/2025
+                # bugfix, error in method name: m = mat.GetGetData()
+                m = mat.GetData()
+                # Revision 19/03/2025 >
                 self._transform.SetMatrix(m)
+                # < Revision 07/09/2024
+                if center_reset:
+                    self.setCenter([0.0, 0.0, 0.0])
+                # Revision 07/09/2024 >
             else: raise TypeError('parameter type {} is not vtkMatrix3x3.'.format(type(mat)))
         else: raise TypeError('No affine transform.')
 
-    def setVTKMatrix4x4(self, mat: vtkMatrix4x4) -> None:
+    def setVTKMatrix4x4(self, mat: vtkMatrix4x4, center_reset: bool = False) -> None:
+        """
+        Copy an affine matrix as vtk.vtkMatrix4x4 instance to the current SisypheTransform instance.
+        The center of rotation of the current SisypheTransform instance is set to default (0.0, 0.0, 0.0).
+
+        Parameters
+        ----------
+        mat : vtk.vtkMatrix4x4
+            VTK affine homogeneous affine matrix to copy
+        center_reset : bool
+            set center of rotation to default (0.0, 0.0, 0.0) if True
+        """
         if self._field is None:
             if isinstance(mat,  vtkMatrix4x4):
                 self.setIdentity()
+                # < Revision 07/09/2024
+                if center_reset:
+                    self.setCenter([0.0, 0.0, 0.0])
+                # Revision 07/09/2024 >
                 sitkmat = list()
                 sitktrans = list()
                 for r in range(3):
@@ -757,11 +1338,33 @@ class SisypheTransform(object):
             else: raise TypeError('parameter type {} is not tkMatrix4x4.'.format(type(mat)))
         else: raise TypeError('No affine transform.')
 
-    def getVTKMatrix4x4(self) -> vtkMatrix4x4:
-        if self._field is None: return self.getVTKTransform().GetMatrix()
+    def getVTKMatrix4x4(self, center_correction: bool = False) -> vtkMatrix4x4:
+        """
+        Get the affine matrix as vtk.vtkMatrix4x4 instance of the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        center_correction : bool
+            if True, replace translations by offset if center of rotation is not default (0.0,0.0,0.0),
+
+        Returns
+        -------
+        vtk.vtkMatrix4x4
+            VTK homogeneous affine matrix copy
+        """
+        if self._field is None: return self.getVTKTransform(center_correction).GetMatrix()
         else: raise TypeError('No affine transform.')
 
     def getVTKMatrix3x3(self) -> vtkMatrix3x3:
+        """
+        Get the affine matrix as vtk.vtkMatrix3x3 instance
+        of the current SisypheTransform instance.
+
+        Returns
+        -------
+        vtk.vtkMatrix4x4
+            VTK affine matrix copy
+        """
         if self._field is None:
             m4 = self.getVTKTransform().GetMatrix()
             m3 = vtkMatrix3x3()
@@ -771,27 +1374,62 @@ class SisypheTransform(object):
             return m3
         else: raise TypeError('No affine transform.')
 
-    def getInverseVTKTransform(self) -> vtkTransform:
+    def getInverseVTKTransform(self, center_correction: bool = False) -> vtkTransform:
+        """
+        Get the inverse affine matrix as vtk.vtkMatrix3x3 instance of the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        center_correction : bool
+            if True, take into account center of rotation and replace translations by offset if center of rotation
+            is not default (0.0,0.0,0.0),
+
+        Returns
+        -------
+        vtk.vtkMatrix4x4
+            inverse transform as VTK homogeneous affine matrix
+        """
         if self._field is None:
-            trf = self.getVTKTransform()
+            trf = self.getVTKTransform(center_correction)
+            # noinspection PyTypeChecker
             return trf.Inverse()
         else: raise TypeError('No affine transform.')
 
-    def getNumpyArray(self, homogeneous: bool = False) -> npndarray:
+    def getNumpyArray(self, homogeneous: bool = False) -> ndarray:
+        """
+        Get the affine matrix as numpy.ndarray instance of the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        homogeneous : boolean
+            homogeneous 4x4 affine matrix if True, 3x3 affine matrix otherwise
+
+        Returns
+        -------
+        numpy.ndarray
+            homogeneous affine matrix as numpy ndarray
+        """
         if self._field is None:
             if homogeneous:
-                np = nparray(self.getFlattenMatrix(homogeneous))
+                np = array(self.getFlattenMatrix(homogeneous))
                 return np.reshape(4, 4)
             else:
-                np = nparray(self._transform.GetMatrix())
+                np = array(self._transform.GetMatrix())
                 return np.reshape(3, 3)
         else: raise TypeError('No affine transform.')
 
-    def setNumpyArray(self, np: npndarray) -> None:
+    def setNumpyArray(self, np: ndarray) -> None:
+        """
+        Copy an affine matrix as numpy.ndarray instance to the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        np : numpy.ndarray
+            homogeneous affine matrix
+        """
         if self._field is None:
-            if isinstance(np, npndarray):
+            if isinstance(np, ndarray):
                 if np.shape == (3, 3):
-                    self._affine.SetIdentity()
                     self._transform.SetMatrix(np.flatten())
                 elif np.shape == (4, 4):
                     self.setIdentity()
@@ -804,25 +1442,71 @@ class SisypheTransform(object):
         else: raise TypeError('No affine transform.')
 
     def setANTSTransform(self, trf: ANTsTransform) -> None:
+        """
+        Copy an ants.core.ants_transform.ANTsTransform instance to the current SisypheTransform instance.
+        The only ANTsTransform supported type is AffineTransform.
+
+        Parameters
+        ----------
+        trf : ants.core.ants_transform.ANTsTransform
+            ANTs transform to copy
+        """
         if self._field is None:
             if isinstance(trf, ANTsTransform):
                 if trf.type == 'AffineTransform':
                     self.setIdentity()
                     self._transform.SetMatrix(trf.parameters[0:9])
                     self._transform.SetTranslation(trf.parameters[-3:])
+                    # < Revision 07/09/2024
+                    # copy ANTsTransform center of rotation
+                    self._transform.SetCenter(list(trf.fixed_parameters))
+                    # Revision 07/09/2024 >
                 else: raise TypeError('ANTsTransform type {} is not AffineTransform.'.format(trf.type))
             else: raise TypeError('parameter type {} is not ANTsTransform.'.format(type(trf)))
         else: raise TypeError('No affine transform.')
 
     def getANTSTransform(self) -> ANTsTransform:
+        """
+        Get an ants.core.ants_transform.ANTsTransform instance from the current SisypheTransform instance.
+
+        Returns
+        -------
+        ants.core.ants_transform.ANTsTransform
+            ANTs transform copy
+        """
         if self._field is None:
+            # Affine transform
             p = self._transform.GetMatrix() + self._transform.GetTranslation()
             trf = ANTsTransform()
             trf.set_parameters(p)
-            return trf
-        else: raise TypeError('No affine transform.')
+            # < Revision 07/09/2024
+            # copy center of rotation to ANTsTransform
+            if self.hasCenter():
+                trf.set_fixed_parameters(self.getCenter())
+            # Revision 07/09/2024 >
+        else:
+            # Displacement field transform
+            # < Revision 26/10/2024
+            # adds displacement field conversion
+            field = self.getDisplacementField().copyToANTSImage()
+            trf = transform_from_displacement_field(field)
+            # Revision 26/10/2024 >
+        return trf
 
     def getMatrixColumn(self, c: int) -> vectorFloat3:
+        """
+        Get a column from the affine matrix of the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        c : int
+            column number (0 <= c < 3)
+
+        Returns
+        -------
+        list[float]
+            column vector of affine matrix
+        """
         if self._field is None:
             if isinstance(c, int):
                 if 0 <= c < 3:
@@ -833,10 +1517,31 @@ class SisypheTransform(object):
         else: raise TypeError('No affine transform.')
 
     def getMatrixDiagonal(self) -> vectorFloat3:
+        """
+        Get the diagonal of the affine matrix of the current SisypheTransform instance.
+
+        Returns
+        -------
+        list[float]
+            diagonal vector of affine matrix
+        """
         r = self.getFlattenMatrix()
         return [r[0], r[4], r[8]]
 
     def getFlattenMatrix(self, homogeneous: bool = False) -> list[float]:
+        """
+        Get the affine matrix of the current SisypheTransform instance as a list.
+
+        Parameters
+        ----------
+        homogeneous : bool
+            homogeneous 4x4 affine matrix if True, 3x3 affine matrix otherwise
+
+        Returns
+        -------
+        list[float]
+            16 elements (4x4 matrix) if homogeneous is True, 9 elements (3x3 matrix) otherwise
+        """
         if self._field is None:
             if homogeneous:
                 m = list(self._transform.GetMatrix())
@@ -847,10 +1552,19 @@ class SisypheTransform(object):
         else: raise TypeError('No affine transform.')
 
     def setFlattenMatrix(self, m: list[float], bycolumn: bool = False) -> None:
+        """
+        Set the affine matrix of the current SisypheTransform instance from a list.
+
+        Parameters
+        ----------
+        m : list[float]
+            9 (3x3 affine matrix) or 16 elements (4x4 homogeneous affine matrix)
+        bycolumn : bool
+            elements in column order if True, row order otherwise
+        """
         if self._field is None:
             if len(m) == 9:
-                if bycolumn: m = list(nparray(m).reshape(3, 3).T.flatten())
-                self._affine.SetIdentity()
+                if bycolumn: m = list(array(m).reshape(3, 3).T.flatten())
                 self._transform.SetMatrix(m)
             elif len(m) == 16:
                 self.setIdentity()
@@ -862,18 +1576,57 @@ class SisypheTransform(object):
         else: raise TypeError('No affine transform.')
 
     def applyToPoint(self, coor: vectorFloat3) -> vectorFloat3:
+        """
+        Apply the geometric transformation of the current SisypheTransform instance to a point.
+
+        Parameters
+        ----------
+        coor : tuple[float, float, float] | list[float]
+            x-axis, y-axis and z-axis point coordinates
+
+        Returns
+        -------
+        tuple[float, float, float] | list[float]
+            x-axis, y-axis and z-axis point coordinates
+        """
         if self._field is None:
             return self._transform.TransformPoint(tuple(coor))
         else: return self._field.TransformPoint(coor)
 
+    # noinspection PyTypeChecker
     def applyInverseToPoint(self, coor: vectorFloat3) -> vectorFloat3:
+        """
+        Apply the inverse geometric transformation of the current SisypheTransform instance to a point.
+
+        Parameters
+        ----------
+        coor : tuple[float, float, float] | list[float]
+            x-axis, y-axis and z-axis point coordinates
+
+        Returns
+        -------
+        tuple[float, float, float] | list[float]
+            x-axis, y-axis and z-axis point coordinates
+        """
         if self._field is None:
-            t = self._transform.GetInverse()
+            t: sitkTransform = self._transform.GetInverse()
             return t.TransformPoint(tuple(coor))
+        else: raise AttributeError('_field attribute is None.')
 
     def preMultiply(self,
-                    trf: vtkTransform | vtkMatrix4x4 | SisypheTransform | sitkAffineTransform | sitkEuler3DTransform | npndarray,
+                    trf: vtkTransform | vtkMatrix4x4 | SisypheTransform | sitkAffineTransform | sitkEuler3DTransform | ndarray,
                     homogeneous: bool = False) -> None:
+        """
+        Compose a geometric transformation with the geometric transformation of the current SisypheTransform instance.
+        Order of transformations 1. current 2. parameter (Pre-multiply current by parameter)
+
+        Parameters
+        ----------
+        trf : vtk.vtkTransform | vtk.vtkMatrix4x4 | SimpleITK.AffineTransform | SimpleITK.Euler3DTransform | ndarray | SisypheTransform
+            affine transform used to pre-multiply
+        homogeneous : bool
+            used for ndarray trf, 4x4 affine matrix if True, 3x3 affine matrix otherwise
+        """
         if self._field is None:
             # Apply new transformation after current
             if isinstance(trf, vtkTransform):
@@ -884,8 +1637,7 @@ class SisypheTransform(object):
                 trf = trf.getNumpyArray(homogeneous)
             elif isinstance(trf, (sitkAffineTransform, sitkEuler3DTransform)):
                 trf = self.getSITKtoNumpy(trf)
-            if isinstance(trf, npndarray):
-                self._affine.SetIdentity()
+            if isinstance(trf, ndarray):
                 if homogeneous: r = matmul(trf, self.getNumpyArray(homogeneous=True))
                 else: r = matmul(trf[:3, :3], self.getNumpyArray())
                 self.setNumpyArray(r)
@@ -894,8 +1646,19 @@ class SisypheTransform(object):
         else: raise TypeError('No affine transform.')
 
     def postMultiply(self,
-                     trf: vtkTransform | vtkMatrix4x4 | SisypheTransform | sitkAffineTransform | sitkEuler3DTransform | npndarray,
+                     trf: vtkTransform | vtkMatrix4x4 | SisypheTransform | sitkAffineTransform | sitkEuler3DTransform | ndarray,
                      homogeneous: bool = False) -> None:
+        """
+        Compose a geometric transformation with the geometric transformation of the current SisypheTransform instance.
+        Order of transformations 1. parameter 2. current (Post-multiply current by parameter)
+
+        Parameters
+        ----------
+        trf : vtk.vtkTransform | vtk.vtkMatrix4x4 | SimpleITK.AffineTransform | SimpleITK.Euler3DTransform | ndarray | SisypheTransform
+            affine transform used to post-multiply
+        homogeneous : bool
+            used for ndarray trf, 4x4 affine matrix if True, 3x3 affine matrix otherwise
+        """
         if self._field is None:
             # Apply new transformation before current
             if isinstance(trf, vtkTransform):
@@ -906,8 +1669,7 @@ class SisypheTransform(object):
                 trf = trf.getNumpyArray(homogeneous)
             elif isinstance(trf, (sitkAffineTransform, sitkEuler3DTransform)):
                 trf = self.getSITKtoNumpy(trf)
-            if isinstance(trf, npndarray):
-                self._affine.SetIdentity()
+            if isinstance(trf, ndarray):
                 if homogeneous: r = matmul(self.getNumpyArray(homogeneous=True), trf)
                 else: r = matmul(self.getNumpyArray(), trf[:3, :3])
                 self.setNumpyArray(r)
@@ -916,13 +1678,54 @@ class SisypheTransform(object):
                                 'vtkMatrix4x4, sitkTransform or SisypheTransform. '.format(type(trf)))
         else: raise TypeError('No affine transform.')
 
-    def isDisplacementFieldTransform(self) -> bool:
+    def isDisplacementField(self) -> bool:
+        """
+        Check whether the current SisypheTransform instance is a displacement field geometric transformation.
+
+        Returns
+        -------
+        bool
+            True if displacement field transform
+        """
         return self._field is not None
 
-    def isAffineTransform(self) -> bool:
+    def isRigid(self) -> bool:
+        """
+        Check whether the current SisypheTransform instance is rigid geometric transformation. True if matrix is
+        orthogonal i.e. M-1 Mt = I
+
+        Returns
+        -------
+        bool
+            True if rigid transform
+        """
+        r = False
+        if self._field is None:
+            m1 = self.getNumpyArray(homogeneous=True).T
+            m2 = inv(self.getNumpyArray(homogeneous=True))
+            r = allclose(m1, m2)
+        return r
+
+    def isAffine(self) -> bool:
+        """
+        Check whether the current SisypheTransform instance is an affine geometric transformation.
+
+        Returns
+        -------
+        bool
+            True if affine transform
+        """
         return self._field is None
 
-    def AffineToDisplacementField(self, inverse: bool = False) -> None:
+    def affineToDisplacementField(self, inverse: bool = True) -> None:
+        """
+        Convert the affine geometric transformation of the current SisypheTransform instance to a displacement field.
+
+        Parameters
+        ----------
+        inverse : bool
+            inverse affine geometric transformation if True (default)
+        """
         if self._field is None:
             if not self.isIdentity():
                 f = sitkTransformToDisplacementFieldFilter()
@@ -930,49 +1733,135 @@ class SisypheTransform(object):
                 f.SetOutputSpacing(self.getSpacing())
                 f.SetOutputOrigin([0.0, 0.0, 0.0])
                 f.SetOutputPixelType(sitkVectorFloat64)
-                self._transform.SetCenter([0.0, 0.0, 0.0])
-                if inverse: field = f.Execute(self._transform.GetInverse())
-                else: field = f.Execute(self._transform)
+                if self.hasCenter(): trf = self.getEquivalentTransformWithNewCenterOfRotation([0.0, 0.0, 0.0])
+                else: trf = self
+                if inverse: trf = trf.getInverseTransform()
+                field = f.Execute(trf.getSITKTransform())
                 self._field = sitkDisplacementFieldTransform(3)
                 self._field.SetInterpolator(sitkLinear)
                 self._field.SetDisplacementField(field)
                 self.setIdentity()
+                self.setCenter([0.0, 0.0, 0.0])
         else: raise TypeError('No affine transform.')
 
     def hasID(self) -> bool:
+        """
+        Check whether the ID attribute of the current SisypheTransform instance is defined (not '')
+
+        Returns
+        -------
+        bool
+            True if ID is defined
+        """
         return self._ID != ''
 
     def getID(self) -> str:
+        """
+        Get the ID attribute of the current SisypheTransform instance.
+
+        Returns
+        -------
+        str
+            transform ID
+        """
         return self._ID
 
-    def setID(self, ID: str | sc.sisypheVolume.SisypheVolume) -> None:
+    def setID(self, ID: str | SisypheVolume) -> None:
+        """
+        Set the ID attribute of the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        ID : str | Sisyphe.core.sisypheVolume.SisypheVolume
+            transform ID
+        """
         if isinstance(ID, str): self._ID = ID
-        elif isinstance(ID, sc.sisypheVolume.SisypheVolume): self._ID = ID.getID()
+        elif isinstance(ID, SisypheVolume): self._ID = ID.getID()
         else: raise TypeError('parameter is not str, SisypheImage or SisypheVolume.')
 
     def getSpacing(self) -> vectorFloat3:
+        """
+        Get the spacing attribute of the current SisypheTransform instance. Voxel size in the x, y and z axes of the
+        floating volume in mm.
+
+        Returns
+        -------
+        list[float]
+            Voxel size in the x, y and z axes of the floating volume in mm
+        """
         return self._spacing
 
     def setSpacing(self, spacing: vectorFloat3) -> None:
+        """
+        Set the spacing attribute of the current SisypheTransform instance. Voxel size in the x, y and z axes of the
+        floating volume in mm.
+
+        Parameters
+        ----------
+        spacing : list[float]
+            Voxel size in the x, y and z axes of the floating volume in mm
+        """
         from Sisyphe.core.sisypheVolume import SisypheVolume
         if isinstance(spacing, (SisypheImage, SisypheVolume)): self._spacing = list(spacing.getSpacing())
         else:  self._spacing = list(spacing)
 
     def hasSpacing(self) -> bool:
+        """
+        Check whether the spacing attribute of the current SisypheTransform instance is defined (not 0.0, 0.0, 0.0)
+
+        Returns
+        -------
+        bool
+            True if spacing is defined
+        """
         return self._spacing != (0.0, 0.0, 0.0)
 
     def getSize(self) -> vectorInt3:
+        """
+        Get the size attribute of the current SisypheTransform instance. Image size in the x, y and z axes of the
+        floating volume (in voxels).
+
+        Returns
+        -------
+        list[int]
+            image size in the x, y and z axes of the floating volume (in voxels)
+        """
         return self._size
 
     def setSize(self, size: vectorInt3):
+        """
+        Set the size attribute of the current SisypheTransform instance. Image size in the x, y and z axes of the
+        floating volume (in voxels).
+
+        Parameters
+        ----------
+        size : list[int]
+            image size in the x, y and z axes of the floating volume (in voxels)
+        """
         from Sisyphe.core.sisypheVolume import SisypheVolume
         if isinstance(size, (SisypheImage, SisypheVolume)): self._size = list(size.getSize())
         else: self._size = list(size)
 
     def hasSize(self) -> bool:
+        """
+        Check whether the size attribute of the current SisypheTransform instance is defined (not 0, 0, 0)
+
+        Returns
+        -------
+        bool
+            True if size is defined
+        """
         return self._size != (0, 0, 0)
 
     def copyAttributesTo(self, t: SisypheTransform) -> None:
+        """
+        Copy attributes of the current SisypheTransform instance to a SisypheTransform instance.
+
+        Parameters
+        ----------
+        t : SisypheTransform
+            copy attributes to this transform
+        """
         t.setSize(self.getSize())
         t.setSpacing(self.getSpacing())
         t.setCenter(self.getCenter())
@@ -980,30 +1869,100 @@ class SisypheTransform(object):
         t.setName(self.getName())
 
     def copyAttributesFrom(self, t: SisypheTransform) -> None:
+        """
+        Copy attributes of a SisypheTransform instance to the current SisypheTransform instance.
+
+        Parameters
+        ----------
+        t : SisypheTransform
+            copy attributes from this transform
+        """
         self.setSize(t.getSize())
         self.setSpacing(t.getSpacing())
         self.setCenter(t.getCenter())
         self.setID(t.getID())
         self.setName(t.getName())
 
-    def setAttributesFromFixedVolume(self, vol: sc.sisypheVolume.SisypheVolume) -> None:
-        if isinstance(vol, sc.sisypheVolume.SisypheVolume):
+    def setAttributesFromFixedVolume(self, vol: SisypheVolume) -> None:
+        """
+        Set the attributes relating to fixed volume (ID, size, spacing) of the current SisypheTransform instance
+        from a SisypheVolume instance.
+
+        Parameters
+        ----------
+        vol : Sisyphe.core.sisypheVolume.SisypheVolume
+            copy ID, size and spacing attributes from this volume
+        """
+        if isinstance(vol, SisypheVolume):
             self.setID(vol)
             self.setName(vol.getFilename())
             self._size = vol.getSize()
             self._spacing = vol.getSpacing()
-            self._transform.SetCenter(vol.getCenter())
 
     def hasFixedVolumeAttributes(self) -> bool:
-        return self.hasSize() and self.hasSpacing() and self.hasCenter()
+        """
+        Check whether the attributes relating to fixed volume (size, spacing) of the current SisypheTransform instance
+        are defined.
 
-    def hasSameFixedVolumeAttributes(self, vol: sc.sisypheVolume.SisypheVolume) -> bool:
-        if isinstance(vol, sc.sisypheVolume.SisypheVolume):
+        Returns
+        -------
+        bool
+            True if ID, size and spacing attributes are defined
+        """
+        return self.hasSize() and self.hasSpacing()
+
+    def hasSameFixedVolumeAttributes(self, vol: SisypheVolume) -> bool:
+        """
+        Check whether the attributes of the current SisypheTransform instance relating to fixed volume (size, spacing)
+        are those of a SisypheVolume instance.
+
+        Parameters
+        ----------
+        vol : Sisyphe.core.sisypheVolume.SisypheVolume
+            volume attributes to test
+
+        Returns
+        -------
+        bool
+            True if the parameter volume has the same size and spacing attributes
+        """
+        if isinstance(vol, SisypheVolume):
             return self._size == vol.getSize() and \
                    self._spacing == vol.getSpacing()
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
+    def saveDisplacementField(self, filename: str) -> None:
+        """
+        Save the displacement field of the current SisypheTransform instance as SisypheVolume.
+        Adds 'field_' prefix to the filename parameter.
+
+        Parameters
+        ----------
+        filename : str
+            displacement field file name
+        """
+        if self._field is not None:
+            field = SisypheVolume()
+            field.setSITKImage(Cast(self._field.GetDisplacementField(), sitkVectorFloat32))
+            field.getAcquisition().setSequenceToDisplacementField()
+            field.setID(self.getID())
+            path = split(filename)
+            if path[1][:6] != 'field_': self._fieldname = join(path[0], 'field_' + path[1])
+            else: self._fieldname = filename
+            field.save(self._fieldname)
+
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
+        """
+        Write the current SisypheTransform instance attributes to xml document instance. Use of this method is not
+        recommended (called internally by saveAs method).
+
+        Parameters
+        ----------
+        doc : minidom.Document
+            xml document
+        currentnode : minidom.Element
+            xml root node
+        """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):
                 transform = doc.createElement('transform')
@@ -1060,9 +2019,8 @@ class SisypheTransform(object):
                     from Sisyphe.core.sisypheVolume import SisypheVolume
                     field = SisypheVolume()
                     """
-                        Displacement field image type is sitkFloat64 
-                        in SimpleITK DisplacementFieldTransform class.
-                        Space saving conversion to sitkFloat32. 
+                        Displacement field image type is sitkFloat64 in SimpleITK DisplacementFieldTransform class.
+                        Convert to sitkFloat32. 
                     """
                     field.setSITKImage(Cast(self._field.GetDisplacementField(), sitkVectorFloat32))
                     field.getAcquisition().setSequenceToDisplacementField()
@@ -1075,6 +2033,15 @@ class SisypheTransform(object):
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
     def parseXMLNode(self, currentnode: minidom.Element) -> None:
+        """
+        Read the current SisypheTransform instance attributes from xml document instance. The use of this method is
+        not recommended (called internally by parseXML method).
+
+        Parameters
+        ----------
+        currentnode : minidom.Element
+            xml document
+        """
         if currentnode.nodeName == 'transform':
             buffmat = [0] * 9
             for node in currentnode.childNodes:
@@ -1136,6 +2103,15 @@ class SisypheTransform(object):
         else: raise ValueError('Node name {} is not \'transform\'.'.format(currentnode.nodeName))
 
     def parseXML(self, doc: minidom.Document) -> None:
+        """
+        Read the current SisypheTransform instance attributes from xml document instance. The use of this method is
+        not recommended (called internally by load method).
+
+        Parameters
+        ----------
+        doc : minidom.Document
+            xml document
+        """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
             if root.nodeName == self._FILEEXT[1:] and root.getAttribute('version') == '1.0':
@@ -1145,6 +2121,14 @@ class SisypheTransform(object):
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
     def saveAs(self, filename: str) -> None:
+        """
+        Save the current SisypheTransform instance to a PySisyphe Transform (.xtrf) file.
+
+        Parameters
+        ----------
+        filename : str
+            PySisyphe Transform file name
+        """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
             filename = path + self._FILEEXT
@@ -1170,36 +2154,53 @@ class SisypheTransform(object):
         finally: f.close()
 
     def load(self, filename: str) -> None:
+        """
+        Load the current SisypheTransform instance from PySisyphe Transform (.xtrf) file.
+
+        Parameters
+        ----------
+        filename : str
+            PySisyphe Transform file name
+        """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
             filename = path + self._FILEEXT
         if exists(filename):
             doc = minidom.parse(filename)
             self.parseXML(doc)
-        if self._fieldname != '':
-            self._fieldname = join(dirname(filename), self._fieldname)
-            if exists(self._fieldname):
-                self._field = sitkDisplacementFieldTransform(3)
-                self._field.SetInterpolator(sitkLinear)
-                from Sisyphe.core.sisypheVolume import SisypheVolume
-                field = SisypheVolume()
-                field.load(self._fieldname)
-                if (field.getNumberOfComponentsPerPixel() == 3 and
-                        field.isFloatDatatype() and
-                        field.getAcquisition().isDisplacementField()):
-                    """
-                        Displacement field image type is stored on disk with sitkVectorFloat32 datatype, 
-                        but in SimpleITK DisplacementFieldTransform class, datatype must be sitkVectorFloat64.
-                        Cast datatype to sitkVectorFloat64.
-                    """
-                    self._field.SetDisplacementField(Cast(field.getSITKImage(), sitkVectorFloat64))
-                    self.setIdentity()
-                    self._fieldname = field.getBasename()
+            if self._fieldname != '':
+                self._fieldname = join(dirname(filename), self._fieldname)
+                if exists(self._fieldname):
+                    self._field = sitkDisplacementFieldTransform(3)
+                    self._field.SetInterpolator(sitkLinear)
+                    from Sisyphe.core.sisypheVolume import SisypheVolume
+                    field = SisypheVolume()
+                    field.load(self._fieldname)
+                    if (field.getNumberOfComponentsPerPixel() == 3 and
+                            field.isFloatDatatype() and
+                            field.getAcquisition().isDisplacementField()):
+                        """
+                            Displacement field image type is stored on disk with sitkVectorFloat32 datatype, 
+                            but with SimpleITK DisplacementFieldTransform class, datatype must be sitkVectorFloat64.
+                            Cast datatype to sitkVectorFloat64.
+                        """
+                        self._field.SetDisplacementField(Cast(field.getSITKImage(), sitkVectorFloat64))
+                        self.setIdentity()
+                        self._fieldname = field.getBasename()
+                else: raise IOError('no such file : {}'.format(self._fieldname))
         else: raise IOError('no such file : {}'.format(filename))
 
     # IO public methods
 
     def saveToXfmTransform(self, filename: str) -> None:
+        """
+        Save the current SisypheTransform instance to a XFM (.xfm) file.
+
+        Parameters
+        ----------
+        filename : str
+            XFM file name
+        """
         if self._field is None:
             path, ext = splitext(filename)
             filename = path + '.xfm'
@@ -1210,6 +2211,14 @@ class SisypheTransform(object):
         else: raise TypeError('Displacement field transform can not be saved to Xfm format.')
 
     def saveToTfmTransform(self, filename: str) -> None:
+        """
+        Save the current SisypheTransform instance to a TFM (.tfm) file.
+
+        Parameters
+        ----------
+        filename : str
+            TFM file name
+        """
         if self._field is None:
             path, ext = splitext(filename)
             filename = path + '.tfm'
@@ -1217,6 +2226,14 @@ class SisypheTransform(object):
         else: raise TypeError('Displacement field transform can not be saved to Tfm format.')
 
     def saveToMatfileTransform(self, filename: str) -> None:
+        """
+        Save the current SisypheTransform instance to a Matlab (.mat) file.
+
+        Parameters
+        ----------
+        filename : str
+            Matlab file name
+        """
         if self._field is None:
             path, ext = splitext(filename)
             filename = path + '.mat'
@@ -1224,6 +2241,14 @@ class SisypheTransform(object):
         else: raise TypeError('Displacement field transform can not be saved to Matfile format.')
 
     def saveToTxtTransform(self, filename: str) -> None:
+        """
+        Save the current SisypheTransform instance to a text (.txt) file.
+
+        Parameters
+        ----------
+        filename : str
+            text file name
+        """
         if self._field is None:
             path, ext = splitext(filename)
             filename = path + '.txt'
@@ -1231,6 +2256,14 @@ class SisypheTransform(object):
         else: raise TypeError('Displacement field transform can not be saved to txt format.')
 
     def saveToANTSTransform(self, filename: str) -> None:
+        """
+        Save the current SisypheTransform instance to a ANTs transform (.mat) file.
+
+        Parameters
+        ----------
+        filename : str
+            ANTs transform file name
+        """
         if self._field is None:
             path, ext = splitext(filename)
             filename = path + '.mat'
@@ -1239,6 +2272,14 @@ class SisypheTransform(object):
         else: raise TypeError('Displacement field transform can not be saved to ANTs format.')
 
     def loadFromXfmTransform(self, filename: str) -> None:
+        """
+        Load the current SisypheTransform instance from a XFM (.xfm) file.
+
+        Parameters
+        ----------
+        filename : str
+            XFM file name
+        """
         path, ext = splitext(filename)
         if ext.lower() != '.xfm':
             filename = path + '.xfm'
@@ -1254,6 +2295,14 @@ class SisypheTransform(object):
         else: raise FileNotFoundError('No such file {}.'.format(filename))
 
     def loadFromTfmTransform(self, filename: str) -> None:
+        """
+        Load the current SisypheTransform instance from a TFM (.tfm) file.
+
+        Parameters
+        ----------
+        filename : str
+            TFM file name
+        """
         path, ext = splitext(filename)
         if ext.lower() != '.tfm':
             filename = path + '.tfm'
@@ -1266,6 +2315,14 @@ class SisypheTransform(object):
         else: raise FileNotFoundError('No such file {}.'.format(filename))
 
     def loadFromMatfileTransform(self, filename: str) -> None:
+        """
+        Load the current SisypheTransform instance from a Matlab (.mat) file.
+
+        Parameters
+        ----------
+        filename : str
+            Matlab file name
+        """
         path, ext = splitext(filename)
         if ext.lower() != '.mat':
             filename = path + '.mat'
@@ -1278,6 +2335,14 @@ class SisypheTransform(object):
         else: raise FileNotFoundError('No such file {}.'.format(filename))
 
     def loadFromTxtTransform(self, filename: str) -> None:
+        """
+        Load the current SisypheTransform instance from a text (.txt) file.
+
+        Parameters
+        ----------
+        filename : str
+            text file name
+        """
         path, ext = splitext(filename)
         if ext.lower() != '.txt':
             filename = path + '.txt'
@@ -1290,6 +2355,14 @@ class SisypheTransform(object):
         else: raise FileNotFoundError('No such file {}.'.format(filename))
 
     def loadFromANTSTransform(self, filename: str) -> None:
+        """
+        Load the current SisypheTransform instance from a ANTs transform (.mat) file.
+
+        Parameters
+        ----------
+        filename : str
+            ANTs transform file name
+        """
         path, ext = splitext(filename)
         if ext.lower() != '.mat': filename = path + '.mat'
         if exists(filename):
@@ -1300,6 +2373,14 @@ class SisypheTransform(object):
         else: raise FileNotFoundError('No such file {}.'.format(filename))
 
     def loadFromBrainVoyagerTransform(self, filename: str) -> None:
+        """
+        Load the current SisypheTransform instance from a BrainVoyager transform (.trf) file.
+
+        Parameters
+        ----------
+        filename : str
+            BrainVoyager transform file name
+        """
         path, ext = splitext(filename)
         if ext.lower() != '.trf': filename = path + '.trf'
         if exists(filename):
@@ -1312,75 +2393,25 @@ class SisypheTransform(object):
 
 class SisypheApplyTransform(object):
     """
-        SisypheApplyTransform class
+    Description
+    ~~~~~~~~~~~
 
-        Description
+    SisypheVolume resampling class.
 
-            SisypheVolume resampling class.
-            Applies SisypheTransform geometric transformation
-            to resample a moving image, roi, mesh or streamlines
-            into the space of a fixed image.
+    Applies SisypheTransform geometric transformation to resample a moving image, ROI, mesh or streamlines into
+    the space of a fixed image. Affine geometric transformation is in forward convention (apply inverse transformation
+    to resample). Displacement field geometric transformation is in backward convention.
 
-        Inheritance
+    This class automatically updates the SisypheTransforms instances associated to the fixed, moving and
+    resliced volumes.
 
-            object -> SisypheApplyTransform
+    Inheritance
+    ~~~~~~~~~~~
 
-        Private attributes
+    object -> SisypheApplyTransform
 
-            _moving     SisypheVolume to resample
-            _transform  SisypheTransform to apply
-            _resample   sitkResampleImageFilter
-
-        Class methods
-
-            int = getInterpolatorCodeFromName(str)
-            str = getInterpolatorNameFromCode(int)
-
-        Public methods
-
-            __str__()
-            __repr__()
-            setInterpolator(str | int)
-            str = getInterpolator()
-            int = getInterpolatorSITKCode()
-            setTransform(SisypheTransform)                      forward transform moving -> fixed
-            setFromTransforms(SisypheTransforms, str)
-            setFromVolumes(SisypheVolume, SisypheVolume)
-            SisypheTransform = getTransform()                   return forward transform, moving -> fixed
-            SisypheTransform = getResampleTransform()           return backward tranform, fixed -> moving
-            setFromTransforms(SisypheTransform | str | int)     int = index or str = ID key
-            sitkTransform = getSITKTransform()                  return forward transform moving -> fixed
-            sitkTransform = getSITKResampleTransform()          return backward tranform, fixed -> moving
-            bool = hasTransform()
-            bool = hasAffineTransform()
-            bool = hasDisplacementFieldTransform()
-            updateTransforms(SisypheVolume, SisypheVolume)      SisypheVolumes = resampled and fixed volumes
-            updateVolumeTransformsFromMoving(SisypheVolume)
-            setMoving(SisypheVolume)
-            SisypheVolume = getMoving()
-            bool = hasMoving()
-            setMovingROI(SisypheROI)
-            SisypheROI = getMovingROI()
-            bool = hasMovingROI()
-            setMovingMesh(SisypheMesh)
-            SisypheMesh = getMovingMesh()
-            bool = hasMovingMesh()
-            setMovingStreamlines(SisypheStreamlines)
-            SisypheStreamlines = getMovingStreamlines()
-            bool = hasMovingStreamlines()
-            resampleMoving()
-            resampleROI()
-            resampleMesh()
-            resampleStreamlines()
-            execute()
-
-        Creation: 05/10/2021
-        Revisions:
-
-            15/04/2023  add ROI and mesh resampling
-            21/04/2023  updateTransforms() method bugfix
-            01/09/2023  type hinting
-            13/11/2023  add streamlines resampling
+    Creation: 05/10/2021
+    Last revision: 22/05/2025
     """
     __slots__ = ['_moving', '_roi', '_mesh', '_sl', '_transform', '_resample']
 
@@ -1412,15 +2443,57 @@ class SisypheApplyTransform(object):
 
     @classmethod
     def getInterpolatorCodeFromName(cls, name: str) -> int:
+        """
+        Get SimpleITK’s interpolation int code from a name.
+
+        Parameters
+        ----------
+        name : str
+            interpolation name. Methods of interpolation are: 'nearest', 'linear', 'bspline', 'gaussian',
+            'hammingsinc', 'cosinesinc', 'welchsinc', 'lanczossinc', 'blackmansinc'
+
+        Returns
+        -------
+        int
+            SimpleITK’s interpolation int code
+        """
         return cls._TOCODE[name]
 
     @classmethod
     def getInterpolatorNameFromCode(cls, code: int) -> str:
+        """
+        Get interpolation name from a SimpleITK’s int code.
+
+        Parameters
+        ----------
+        code : int
+            SimpleITK’s interpolation int code
+
+        Returns
+        -------
+        str
+            interpolation name. Methods of interpolation are : 'nearest', 'linear', 'bspline', 'gaussian',
+            'hammingsinc', 'cosinesinc', 'welchsinc', 'lanczossinc', 'blackmansinc'
+        """
         return cls._FROMCODE[code]
 
     # Special methods
 
+    """
+    Private attributes
+
+    _moving     SisypheVolume to resample
+    _roi        SisypheROI to resample
+    _mesh       SisypheMesh to resample
+    _sl         SisypheStreamlines to resample
+    _transform  SisypheTransform, geometric transformation to apply
+    _resample   sitkResampleImageFilter    
+    """
+
     def __init__(self) -> None:
+        """
+        SisypheApplyTransform instance constructor.
+        """
         self._moving = None
         self._roi = None
         self._mesh = None
@@ -1430,17 +2503,43 @@ class SisypheApplyTransform(object):
         self._resample.SetInterpolator(sitkLinear)
 
     def __str__(self) -> str:
+        """
+        Special overloaded method called by the built-in str() python function.
+
+        Returns
+        -------
+        str
+            conversion of SisypheApplyTransform instance to str
+        """
         buff = '\nTransform:\n{}\n'.format(str(self._transform))
         buff += 'Resample volume:\n{}\n'.format(str(self._moving))
         buff += 'Interpolator: {}\n'.format(self.getInterpolator())
         return buff
 
     def __repr__(self) -> str:
+        """
+        Special overloaded method called by the built-in repr() python function.
+
+        Returns
+        -------
+        str
+            SisypheApplyTransform instance representation
+        """
         return 'SisypheApplyTransform instance at <{}>\n'.format(str(id(self))) + self.__str__()
 
     # Public methods
 
-    def setInterpolator(self, v: str | int) -> None:
+    def setInterpolator(self, v: int | str) -> None:
+        """
+        Set the interpolator attribute of the current SisypheApplyTransform instance. This attribute defines the method
+        of interpolation used to reslice the "moving" volume.
+
+        Parameters
+        ----------
+        v : int | str
+            SimpleITK’s interpolation int code or interpolation name. Methods of interpolation are : 'nearest',
+            'linear', 'bspline', 'gaussian','hammingsinc', 'cosinesinc', 'welchsinc', 'lanczossinc', 'blackmansinc'
+        """
         if self.hasMoving() and isinstance(self._moving, SisypheBinaryImage): self._resample.SetInterpolator(0)
         elif self.hasMoving() and self._moving.getAcquisition().isLB(): self._resample.SetInterpolator(0)
         else:
@@ -1453,35 +2552,95 @@ class SisypheApplyTransform(object):
             else: raise TypeError('parameter type {} is not str or int'.format(type(v)))
 
     def getInterpolator(self) -> str:
+        """
+        Get the interpolator attribute of the current SisypheApplyTransform instance. This attribute defines the method
+        of interpolation used to reslice the "moving" volume.
+
+        Returns
+        -------
+        str
+            interpolation name. Methods of interpolation are : 'nearest', 'linear', 'bspline', 'gaussian',
+            'hammingsinc', 'cosinesinc', 'welchsinc', 'lanczossinc', 'blackmansinc'
+        """
         return self._FROMCODE[self._resample.GetInterpolator()]
 
     def getInterpolatorSITKCode(self) -> int:
+        """
+        Get the interpolator attribute of the current SisypheApplyTransform instance. This attribute defines the method
+        of interpolation used to reslice the "moving" volume.
+
+        Returns
+        -------
+        int
+            SimpleITK’s interpolation int code
+        """
         return self._resample.GetInterpolator()
 
-    def setTransform(self, trf: SisypheTransform, center: bool = False) -> None:
+    def setTransform(self, trf: SisypheTransform, center: bool = True) -> None:
+        # < Revision 03/09/2024
+        # setTransform(self, trf: SisypheTransform, center: bool = False) -> None:
+        # change center default to True
+        # Revision 03/09/2024 >
+        """
+        Set the transform attribute of the current SisypheApplyTransform instance. This attribute defines the geometric
+        transformation used to reslice the "moving" volume.
+
+        Parameters
+        ----------
+        trf : SisypheTransform
+            transform to copy
+        center : bool
+            set center to 0.0, 0.0, 0.0 if False (default True)
+        """
         if isinstance(trf, SisypheTransform):
             if not center: trf.setCenter([0.0, 0.0, 0.0])
             self._transform = trf
             self._resample.SetSize(self._transform.getSize())
             self._resample.SetOutputSpacing(self._transform.getSpacing())
-            if trf.isAffineTransform():
-                # Affine trf is forward transform
-                # inverse trf = backward transform to resample
+            if trf.isAffine():
+                # Affine trf is by default a forward transform
+                # inverse trf = backward transform used to resample
                 self._resample.SetTransform(trf.getInverseSITKTransform())
             else:
-                # Displacement field trf is backward transform
+                # Displacement field trf is already backward transform
                 self._resample.SetTransform(trf.getSITKTransform())
         else: raise TypeError('parameter type {} is not SisypheTransform'.format(type(trf)))
 
-    def setFromTransforms(self, trfs: SisypheTransforms, ID: str | sc.sisypheVolume.SisypheVolume) -> None:
+    def setFromTransforms(self, trfs: SisypheTransforms, ID: str | SisypheVolume) -> None:
+        """
+        Set the transform attribute of the current SisypheApplyTransform instance  from a SisypheTransforms instance
+        and an ID key.
+
+        Parameters
+        ----------
+        trfs : SisypheTransforms
+            trasnform to copy
+        ID : str | Sisyphe.core.sisypheVolume.SisypheVolume
+            - ID key of the SisypheTransforms container, SisypheTransform = SisypheTransforms[ID] or
+            - ID key is the ID attribute of the SisypheVolume
+        """
         if isinstance(trfs, SisypheTransforms):
             if ID in trfs: self.setTransform(trfs[ID])
         else: raise TypeError('parameter type {} is not SisypheTransforms'.format(type(trfs)))
 
     def setFromVolumes(self,
-                       fixed: sc.sisypheVolume.SisypheVolume,
-                       moving: sc.sisypheVolume.SisypheVolume) -> None:
-        if isinstance(fixed, sc.sisypheVolume.SisypheVolume) and isinstance(moving, sc.sisypheVolume.SisypheVolume):
+                       fixed: SisypheVolume,
+                       moving: SisypheVolume) -> None:
+        """
+        Set attributes (size, spacing, moving volume and transform) of the current SisypheApplyTransform instance from
+        fixed and moving SisypheVolume instances.
+
+        size and spacing: size and spacing attributes of the fixed SisypheVolume instance.
+        transform: SisypheTransforms instance associated to the moving volume with ID attribute of the fixed volume as key.
+
+        Parameters
+        ----------
+        fixed : Sisyphe.core.sisypheVolume.SisypheVolume
+            fixed volume
+        moving : Sisyphe.core.sisypheVolume.SisypheVolume
+            moving volume
+        """
+        if isinstance(fixed, SisypheVolume) and isinstance(moving, SisypheVolume):
             transform = moving.getTransformFromID(fixed.getID())
             if transform is not None:
                 self.setMoving(moving)
@@ -1494,88 +2653,264 @@ class SisypheApplyTransform(object):
         else: raise TypeError('Image parameters type is not SisypheVolume.')
 
     def getTransform(self) -> SisypheTransform:
+        """
+        Get the forward transform attribute of the current SisypheApplyTransform instance.
+
+        Returns
+        -------
+        SisypheTransform
+            forward transfrom copy
+        """
         return self._transform
 
     def getResampleTransform(self) -> SisypheTransform:
+        """
+        Get the backward transform attribute of the current SisypheApplyTransform instance.
+
+        Returns
+        -------
+        SisypheTransform
+            backward transform copy
+        """
         return self._transform.getInverseTransform()
 
     def getSITKTransform(self) -> sitkAffineTransform | sitkDisplacementFieldTransform:
+        """
+        Get forward transform attribute of the current SisypheApplyTransform instance as SimpleITK.Transform.
+
+        Returns
+        -------
+        SimpleITK.AffineTransform | SimpleITK.DisplacementFieldTransform
+            SimpleITK forward transform copy
+        """
         return self._transform.getSITKTransform()
 
     def getSITKResampleTransform(self) -> sitkTransform:
+        """
+        Get backward transform attribute of the current SisypheApplyTransform instance as SimpleITK.Transform.
+
+        Returns
+        -------
+        SimpleITK.Transform
+            SimpleITK backward transform copy
+        """
         return self._resample.GetTransform()
 
     def hasTransform(self) -> bool:
+        """
+        Check whether the transform attribute of the current SisypheApplyTransform instance is defined (not None).
+
+        Returns
+        -------
+        bool
+            True if geometric transform is defined
+        """
         return self._transform is not None
 
     def hasAffineTransform(self) -> bool:
-        return self._transform is not None and self._transform.isAffineTransform()
+        """
+        Check whether the transform attribute of the current SisypheApplyTransform instance is an affine geometric
+        transformation.
+
+        Returns
+        -------
+        bool
+            True if geometric transform is defined and is an affine transformation
+        """
+        return self._transform is not None and self._transform.isAffine()
 
     def hasDisplacementFieldTransform(self) -> bool:
-        return self._transform is not None and self._transform.isDisplacementFieldTransform()
+        """
+        Check whether the transform attribute of the current SisypheApplyTransform instance is a displacement field
+        transformation.
 
-    def setMoving(self, img: sc.sisypheVolume.SisypheVolume) -> None:
+        Returns
+        -------
+        bool
+            True if geometric transform is defined and is a displacement field transform
+        """
+        return self._transform is not None and self._transform.isDisplacementField()
+
+    def setMoving(self, img: SisypheVolume) -> None:
+        """
+        Set the moving volume attribute of the current SisypheApplyTransform instance.
+
+        Parameters
+        ----------
+        img : Sisyphe.core.sisypheVolume.SisypheVolume
+            moving volume
+        """
         if isinstance(img, SisypheImage):
             self._moving = img
             if isinstance(self._moving, SisypheBinaryImage):
                 # Nearest Neighbor for binary image
                 self._resample.SetInterpolator(sitkNearestNeighbor)
-            if isinstance(self._moving, sc.sisypheVolume.SisypheVolume):
+            if isinstance(self._moving, SisypheVolume):
                 # Nearest Neighbor for label volume
                 if self._moving.getAcquisition().isLB(): self._resample.SetInterpolator(sitkNearestNeighbor)
         else: raise TypeError('parameter type {} is not SisypheImage'.format(type(img)))
 
-    def getMoving(self) -> sc.sisypheVolume.SisypheVolume:
+    def getMoving(self) -> SisypheVolume:
+        """
+        Get the moving volume attribute of the current SisypheApplyTransform instance.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            moving volume
+        """
         return self._moving
 
     def hasMoving(self) -> bool:
+        """
+        Check whether the moving volume attribute of the current SisypheApplyTransform instance is defined (not None).
+
+        Returns
+        -------
+        bool
+            True if moving volume is defined
+        """
         return self._moving is not None
 
     def clearMoving(self) -> None:
+        """
+        Clear the moving volume attribute of the current SisypheApplyTransform instance (set to none)
+        """
         self._moving = None
 
-    def setMovingROI(self, roi: sc.sisypheROI.SisypheROI) -> None:
-        if isinstance(roi, sc.sisypheROI.SisypheROI): self._roi = roi
+    def setMovingROI(self, roi: SisypheROI) -> None:
+        """
+        Set the moving ROI attribute of the current SisypheApplyTransform instance.
+
+        Parameters
+        ----------
+        roi : Sisyphe.core.sisypheROI.SisypheROI
+            moving roi
+        """
+        if isinstance(roi, SisypheROI): self._roi = roi
         else: raise TypeError('parameter type {} is not SisypheROI.'.format(type(roi)))
 
-    def getMovingROI(self) -> sc.sisypheROI.SisypheROI:
+    def getMovingROI(self) -> SisypheROI:
+        """
+        Get the moving ROI attribute of the current SisypheApplyTransform instance.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheROI.SisypheROI
+            moving roi
+        """
         return self._roi
 
     def hasMovingROI(self) -> bool:
+        """
+        Check whether the moving ROI attribute of the current SisypheApplyTransform instance is defined (not None).
+
+        Returns
+        -------
+        bool
+            True if moving roi is defined
+        """
         return self._roi is not None
 
     def clearMovingROI(self) -> None:
+        """
+        Clear the moving ROI attribute of the current SisypheApplyTransform instance (set to none)
+        """
         self._roi = None
 
-    def setMovingMesh(self, mesh: sc.sisypheMesh.SisypheMesh) -> None:
-        if isinstance(mesh, sc.sisypheMesh.SisypheMesh): self._mesh = mesh
+    def setMovingMesh(self, mesh: SisypheMesh) -> None:
+        """
+        Set the moving mesh attribute of the current SisypheApplyTransform instance.
+
+        Parameters
+        ----------
+        mesh : Sisyphe.core.sisypheMesh.SisypheMesh
+            moving mesh
+        """
+        if isinstance(mesh, SisypheMesh): self._mesh = mesh
         else: raise TypeError('parameter type {} is not SisypheMesh.'.format(type(mesh)))
 
-    def getMovingMesh(self) -> sc.sisypheMesh.SisypheMesh:
+    def getMovingMesh(self) -> SisypheMesh:
+        """
+        Get the moving mesh attribute of the current SisypheApplyTransform instance.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheMesh.SisypheMesh
+            moving mesh
+        """
         return self._mesh
 
     def hasMovingMesh(self) -> bool:
+        """
+        Check whether the moving mesh attribute of the current SisypheApplyTransform instance is defined (not None).
+
+        Returns
+        -------
+        bool
+            True if moving mes his defined
+        """
         return self._mesh is not None
 
     def clearMesh(self) -> None:
+        """
+        Clear the moving mesh attribute of the current SisypheApplyTransform instance (set to none)
+        """
         self._mesh = None
 
-    def setMovingStreamlines(self, sl: sc.sisypheTracts.SisypheStreamlines) -> None:
-        if isinstance(sl, sc.sisypheTracts.SisypheStreamlines): self._sl = sl
+    def setMovingStreamlines(self, sl: SisypheStreamlines) -> None:
+        """
+        Set the moving streamlines attribute of the current SisypheApplyTransform instance.
+
+        Parameters
+        ----------
+        sl : Sisyphe.core.sisypheTracts.SisypheStreamlines
+            moving streamlines
+        """
+        if isinstance(sl, SisypheStreamlines): self._sl = sl
         else: raise TypeError('parameter type {} is not SisypheStreamlines.'.format(type(sl)))
 
-    def getMovingStreamlines(self) -> sc.sisypheTracts.SisypheStreamlines:
+    def getMovingStreamlines(self) -> SisypheStreamlines:
+        """
+        Get the moving streamlines attribute of the current SisypheApplyTransform instance.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheTracts.SisypheStreamlines
+            moving streamlines
+        """
         return self._sl
 
     def hasMovingStreamlines(self) -> bool:
+        """
+        Check whether the moving streamlines attribute of the current SisypheApplyTransform instance is defined
+        (not None).
+
+        Returns
+        -------
+        bool
+            True if moving streamlines are defined
+        """
         return self._sl is not None
 
-    def clearStreamlines(self) -> None:
+    def clearMovingStreamlines(self) -> None:
+        """
+        Clear the moving streamlines attribute of the current SisypheApplyTransform instance (set to none)
+        """
         self._sl = None
 
-    def updateVolumeTransformsFromMoving(self, vol: sc.sisypheVolume.SisypheVolume) -> None:
+    def updateVolumeTransformsFromMoving(self, vol: SisypheVolume) -> None:
+        """
+        Copy the SisypheTransforms instance associated to the SisypheVolume moving volume to another SisypheVolume
+        instance with the same ID (same space as moving volume)
+
+        Parameters
+        ----------
+        vol : Sisyphe.core.sisypheVolume.SisypheVolume
+            volume SisypheTransforms is to be updated.
+        """
         if self.hasAffineTransform() and self.hasMoving():
-            if not isinstance(vol, sc.sisypheVolume.SisypheVolume):
+            if not isinstance(vol, SisypheVolume):
                 raise TypeError('resampled parameter type {} is not SisypheVolume.'.format(type(vol)))
             # Template fixed volume is not updated
             if not vol.acquisition.isTP():
@@ -1583,21 +2918,52 @@ class SisypheApplyTransform(object):
                     vtrfs = vol.getTransforms()
                     for trf in self._moving.getTransforms():
                         if trf.getID() not in vtrfs:
-                            if trf.isAffineTransform():
+                            if trf.isAffine():
                                 vtrfs.append(trf)
                 # Save moving volume SisypheTransforms
-                if vol.hasFilename():
-                    vol.saveTransforms()
+                if vol.hasFilename(): vol.saveTransforms()
             else: raise ValueError('Incorrect ID of the parameter volume.')
 
     def updateTransforms(self,
-                         resampled: sc.sisypheVolume.SisypheVolume,
-                         fixed: sc.sisypheVolume.SisypheVolume | None = None) -> None:
+                         resampled: SisypheVolume,
+                         fixed: SisypheVolume | None) -> None:
+        """
+        Update the SisypheTransforms instance associated to fixed, moving and resliced volumes. Do not call this
+        method, called by resampleMoving() method.
+
+        - Add forward transform (moving -> fixed/resampled) to moving volume SisypheTransforms (mtrfs)
+        - Add backward transform (resampled -> moving) to resampled volume SisypheTransforms (rtrfs)
+        - Add backward transform (fixed -> moving) to fixed volume SisypheTransforms (ftrfs)
+        - Update moving volume SisypheTransforms
+
+            - Copy transforms from fixed volume to moving volume (mtrfs)
+            - forward transform (moving -> fixed) pre multiplied by each fixed transforms
+
+        - Update fixed volume SisypheTransforms
+
+            - Copy transforms from moving volume to fixed volume (ftrfs)
+            - backward transform (fixed -> moving) pre multiplied by each moving transforms
+
+        - Update resampled volume SisypheTransforms
+
+            - Copy transforms from fixed volume to resampled volume (rtrfs)
+            - simple copy (fixed and resampled are registered and share same space)
+
+        Parameters
+        ----------
+        resampled : Sisyphe.core.sisypheVolume.SisypheVolume
+            resampled volume
+        fixed : Sisyphe.core.sisypheVolume.SisypheVolume | None
+            fixed volume (optional)
+        """
         if self.hasAffineTransform() and self.hasMoving():
-            if not isinstance(resampled, sc.sisypheVolume.SisypheVolume):
+            if not isinstance(resampled, SisypheVolume):
                 raise TypeError('resampled parameter type {} is not SisypheVolume.'.format(type(resampled)))
             forwardtrf = self._transform
-            forwardtrf.setAttributesFromFixedVolume(fixed)
+            # < Revision 03/09/2024
+            # add fixed attributes to forward transform
+            if fixed is not None: forwardtrf.setAttributesFromFixedVolume(fixed)
+            # Revision 03/09/2024 >
             backwardtrf = self._transform.getInverseTransform()
             backwardtrf.setAttributesFromFixedVolume(self._moving)
             """
@@ -1615,8 +2981,8 @@ class SisypheApplyTransform(object):
             rtrfs.append(backwardtrf)
             # Add backward transform (fixed -> moving) to fixed volume
             ftrfs = None
+            # Template fixed volume is not updated
             if fixed is not None:
-                # Template fixed volume is not updated
                 if not fixed.acquisition.isTP():
                     ftrfs = fixed.getTransforms()
                     ftrfs.append(backwardtrf)
@@ -1633,7 +2999,7 @@ class SisypheApplyTransform(object):
                         for trf in ftrfs:
                             if trf.getID() != self._moving.getID():
                                 if trf.getID() not in mtrfs:
-                                    if trf.isAffineTransform():
+                                    if trf.isAffine():
                                         ftrf = trf.copy()
                                         ftrf.postMultiply(forwardtrf, homogeneous=True)
                                         mtrfs.append(ftrf)
@@ -1650,7 +3016,7 @@ class SisypheApplyTransform(object):
                         for trf in mtrfs:
                             if trf.getID() != fixed.getID():
                                 if trf.getID() not in ftrfs:
-                                    if trf.isAffineTransform():
+                                    if trf.isAffine():
                                         mtrf = trf.copy()
                                         mtrf.postMultiply(backwardtrf, homogeneous=True)
                                         ftrfs.append(mtrf)
@@ -1663,7 +3029,7 @@ class SisypheApplyTransform(object):
                 if ftrfs.count() > 0:
                     for trf in ftrfs:
                         if trf.getID() not in rtrfs:
-                            if trf.isAffineTransform():
+                            if trf.isAffine():
                                 rtrfs.append(trf)
             """
                 Save moving volume SisypheTransforms
@@ -1672,59 +3038,114 @@ class SisypheApplyTransform(object):
                 self._moving.saveTransforms()
             # Save fixed volume SisypheTransforms
             if fixed is not None:
-                if fixed.hasFilename(): fixed.saveTransforms()
+                # < Revision 03/09/2024
+                # add the TP modality condition below
+                if not fixed.acquisition.isTP():
+                    if fixed.hasFilename(): fixed.saveTransforms()
+                # Revision 03/09/2024 >
         else: raise AttributeError('No SisypheTransform or moving SisypheVolume.')
 
     def resampleMoving(self,
-                       fixed: sc.sisypheVolume.SisypheVolume | None = None,
+                       fixed: SisypheVolume | None = None,
                        save: bool = True,
                        dialog: bool = False,
                        prefix: str | None = None,
                        suffix: str | None = None,
-                       wait: DialogWait | None = None) -> sc.sisypheVolume.SisypheVolume:
+                       wait: DialogWait | None = None) -> SisypheVolume | None:
         """
-            Origin management in resampling function:
-            Origin is not used during registration, origin must therefore be ignored at the resampling stage
-                1. moving volume origin is stored before resampling
-                2. set moving volume origin to (0.0, 0.0, 0.0)
-                3. moving volume resampling
-                4. moving volume origin is restored
-                5. copy moving volume attributes to resampled volume (identity, display, acquisition, acpc)
-                6. copy fixed volume ID to resampled volume (same brain space)
-                7. copy fixed volume origin to resampled volume
+        Reslice the moving volume attribute with the geometric transformation attribute of the current
+        SisypheApplyTransform instance.
+
+        Origin is not used during registration, origin must therefore be ignored at the resampling stage
+
+        Origin management:
+
+            - 1. moving volume origin is stored before resampling
+            - 2. set moving volume origin to (0.0, 0.0, 0.0)
+            - 3. moving volume resampling
+            - 4. moving volume origin is restored
+            - 5. copy moving volume attributes to resampled volume (identity, display, acquisition, acpc)
+            - 6. copy fixed volume ID to resampled volume (same brain space)
+            - 7. copy fixed volume origin to resampled volume
+
+        Parameters
+        ----------
+        fixed : Sisyphe.core.sisypheVolume.SisypheVolume | None
+            fixed volume (default None)
+        save : bool
+            save resliced moving volume if True (default)
+        dialog : bool
+            - dialog to choice the resliced moving volume file name, if True
+            - addBundle suffix/prefix to the moving volume file name, if False (default)
+        prefix : str | None
+            file name prefix of the resliced moving volume (default None)
+        suffix : str | None
+            file name suffix of the resliced moving volume (default None)
+        wait : Sisyphe.gui.dialogWait.DialogWait | None
+            progress bar dialog (optional)
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            resliced moving volume
         """
         if self.hasTransform():
             if self.hasMoving():
                 if wait is not None:
+                    wait.open()
                     wait.setSimpleITKFilter(self._resample)
                     wait.addSimpleITKFilterProcessCommand()
                     wait.buttonVisibilityOff()
                     wait.setInformationText('Resample {}...'.format(self._moving.getBasename()))
-                    wait.open()
                 if isinstance(self._moving, SisypheBinaryImage): self._resample.SetInterpolator(sitkNearestNeighbor)
                 elif self._moving.getAcquisition().isLB(): self._resample.SetInterpolator(sitkNearestNeighbor)
-                resampled = sc.sisypheVolume.SisypheVolume()
+                resampled = SisypheVolume()
                 # 1. Store moving volume origin
                 origin = self._moving.getOrigin()
-                # 2. Set moving volume origin tp (0.0, 0.0, 0.0)
+                # 2. Set moving volume origin to (0.0, 0.0, 0.0)
                 self._moving.setDefaultOrigin()
+                # < Revision 27/09/2024
+                # set directions to default
+                self._moving.setDefaultDirections()
+                # Revision 27/09/2024 >
                 # 3. moving volume resampling -> resampled volume
-                resampled.setSITKImage(self._resample.Execute(self._moving.getSITKImage()))
+                if self._moving.getNumberOfComponentsPerPixel() == 1:
+                    resampled.setSITKImage(self._resample.Execute(self._moving.getSITKImage()))
+                else:
+                    # < Revision 11/02/2025
+                    # multicomponent resampling
+                    series = list()
+                    for i in range(self._moving.getNumberOfComponentsPerPixel()):
+                        if wait is not None:
+                            wait.setInformationText('Component {} resampling...'.format(i))
+                        moving = self._moving.copyComponent(i)
+                        r = SisypheVolume()
+                        r.setSITKImage(self._resample.Execute(moving.getSITKImage()))
+                        series.append(r)
+                    resampled = multiComponentSisypheVolumeFromList(series)
+                    # Revision 11/02/2025 >
                 # 4. Restore moving volume origin
                 self._moving.setOrigin(origin)
-                # 5. copy moving volume attributes to resampled volume
+                # < Revision 05/09/2024
+                if not self._moving.isDefaultOrigin():
+                    if self._transform.isAffine():
+                        resampled.setOrigin(self._transform.applyToPoint(self._moving.getOrigin()))
+                # Revision 05/09/2024 >
+                # 5. copy moving volume identity, acquisition, display, slope to resampled volume
                 resampled.copyPropertiesFrom(self._moving, acpc=False)
                 # if moving is a template, resampled is no longer a template, set its modality to OT
-                if self._moving.acquisition.isTP(): resampled.acquisition.setModalityToOT()
+                if self._moving.acquisition.isTP():
+                    resampled.acquisition.setModalityToOT()
                 if fixed is not None:
                     # 6. copy fixed volume ID to resampled volume
                     resampled.setID(fixed.getID())
                     # 7. Copy fixed volume origin to resampled volume
                     resampled.setOrigin(fixed.getOrigin())
+                    # 8. Copy fixed volume ACPC to resampled volume
                     if fixed.getACPC().hasACPC():
                         # copy fixed volume  SisypheACPC image attribute to resampled volume
                         acpc = fixed.getACPC().copy()
-                        resampled.setACPC(acpc)
+                        resampled.acpc = acpc
                 """
                     Update geometric transformations of moving, fixed and resampled volumes:
 
@@ -1737,7 +3158,12 @@ class SisypheApplyTransform(object):
                     4. Copy all transformations of fixed volume to resample volume
                     simple copy (fixed and resampled share same space)
                 """
-                if self._transform.isAffineTransform():
+                if self._transform.isAffine():
+                    # < Revision 05/09/2024
+                    # if fixed is None:
+                    #    if not self._transform.hasID():
+                    #        self._transform.setID(resampled)
+                    # Revision 05/09/2024 >
                     self.updateTransforms(resampled, fixed)
                 """
                     Save resampled volume
@@ -1746,13 +3172,18 @@ class SisypheApplyTransform(object):
                     settings = SisypheFunctionsSettings()
                     if prefix is None: prefix = settings.getFieldValue('Resample', 'Prefix')
                     if suffix is None: suffix = settings.getFieldValue('Resample', 'Suffix')
+                    # < Revision 22/05/2025
+                    # add always an underscore char after prefix and before suffix
+                    if len(prefix) > 0 and prefix[-1] != '_': prefix = prefix + '_'
+                    if len(suffix) > 0 and suffix[0] != '_': suffix = '_' + suffix
+                    # Revision 22/05/2025 >
                     path = dirname(self._moving.getFilename())
                     base, ext = splitext(self._moving.getFilename())
                     filename = join(path, prefix + basename(base) + suffix + ext)
                     if dialog:
                         filename = QFileDialog.getSaveFileName(None, 'Save resampled volume', filename,
                                                                filter=resampled.getFilterExt())[0]
-                        QApplication.processEvents()
+                        if QApplication.instance() is not None: QApplication.processEvents()
                     if filename:
                         if wait is not None:
                             wait.progressVisibilityOff()
@@ -1768,18 +3199,41 @@ class SisypheApplyTransform(object):
                     dialog: bool = False,
                     prefix: str | None = None,
                     suffix: str | None = None,
-                    wait: DialogWait | None = None) -> sc.sisypheROI.SisypheROI:
+                    wait: DialogWait | None = None) -> SisypheROI | None:
+        """
+        Reslice the moving ROI attribute with the geometric transformation attribute of the current
+        SisypheApplyTransform instance.
+
+        Parameters
+        ----------
+        save : bool
+            save resliced moving ROI if True (default)
+        dialog : bool
+            - dialog to choice the resliced moving ROI file name, if True
+            - addBundle suffix/prefix to the moving ROI file name, if False (default)
+        prefix : str | None
+            file name prefix of the resliced moving ROI (default None)
+        suffix : str | None
+            file name suffix of the resliced moving ROI (default None)
+        wait : Sisyphe.gui.dialogWait.DialogWait | None
+            progress bar dialog (optional)
+
+        Returns
+        -------
+        Sisyphe.core.sisypheROI.SisypheROI
+            resliced moving ROI
+        """
         if self.hasTransform():
             if self.hasMovingROI():
                 if wait is not None:
+                    wait.open()
                     wait.setSimpleITKFilter(self._resample)
                     wait.addSimpleITKFilterProcessCommand()
                     wait.buttonVisibilityOff()
                     wait.setInformationText('Resample {}...'.format(self._roi.getBasename()))
-                    wait.open()
                 interpolator = self.getInterpolator()
                 self._resample.SetInterpolator(sitkNearestNeighbor)
-                resampled = sc.sisypheROI.SisypheROI()
+                resampled = SisypheROI()
                 resampled.setSITKImage(self._resample.Execute(self._roi.getSITKImage()))
                 resampled.setReferenceID(self._transform.getID())
                 resampled.setName(self._roi.getName())
@@ -1791,13 +3245,18 @@ class SisypheApplyTransform(object):
                     settings = SisypheFunctionsSettings()
                     if prefix is None: prefix = settings.getFieldValue('Resample', 'Prefix')
                     if suffix is None: suffix = settings.getFieldValue('Resample', 'Suffix')
+                    # < Revision 22/05/2025
+                    # add always an underscore char after prefix and before suffix
+                    if len(prefix) > 0 and prefix[-1] != '_': prefix = prefix + '_'
+                    if len(suffix) > 0 and suffix[0] != '_': suffix = '_' + suffix
+                    # Revision 22/05/2025 >
                     path = dirname(self._roi.getFilename())
                     base, ext = splitext(self._roi.getFilename())
                     filename = join(path, prefix + basename(base) + suffix + ext)
                     if dialog:
                         filename = QFileDialog.getSaveFileName(None, 'Save resampled ROI', filename,
                                                                filter=resampled.getFilterExt())[0]
-                        QApplication.processEvents()
+                        if QApplication.instance() is not None: QApplication.processEvents()
                     if filename:
                         if wait is not None:
                             wait.progressVisibilityOff()
@@ -1813,16 +3272,39 @@ class SisypheApplyTransform(object):
                      dialog: bool = False,
                      prefix: str | None = None,
                      suffix: str | None = None,
-                     wait: DialogWait | None = None) -> sc.sisypheMesh.SisypheMesh:
+                     wait: DialogWait | None = None) -> SisypheMesh | None:
+        """
+        Reslice the moving mesh attribute with the geometric transformation attribute of the current
+        SisypheApplyTransform instance.
+
+        Parameters
+        ----------
+        save : bool
+            save resliced moving mesh if True (default)
+        dialog : bool
+            - dialog to choice the resliced moving mesh file name, if True
+            - addBundle suffix/prefix to the moving mesh file name, if False (default)
+        prefix : str | None
+            file name prefix of the resliced moving mesh (default None)
+        suffix : str | None
+            file name suffix of the resliced moving mesh (default None)
+        wait : Sisyphe.gui.dialogWait.DialogWait | None
+            progress bar dialog (optional)
+
+        Returns
+        -------
+        Sisyphe.core.sisypheMesh.SisypheMesh
+            resliced moving mesh
+        """
         if self.hasTransform():
             if self.hasMovingMesh():
                 n = self._mesh.getNumberOfPoints()
                 if wait is not None:
+                    wait.open()
                     wait.setProgressRange(0, n)
                     wait.buttonVisibilityOn()
                     wait.setInformationText('Resample {}...'.format(self._mesh.getBasename()))
-                    wait.open()
-                resampled = sc.sisypheMesh.SisypheMesh()
+                resampled = SisypheMesh()
                 resampled.copyFrom(self._mesh)
                 points = self._mesh.getPoints()
                 # Use forward transform to resample mesh vertices
@@ -1830,24 +3312,30 @@ class SisypheApplyTransform(object):
                 for i in range(n):
                     p = points.GetPoint(i)
                     points.SetPoint(i, trf.applyToPoint(p))
-                    wait.incCurrentProgressValue()
-                    if wait.getStopped(): return None
+                    if wait is not None:
+                        wait.incCurrentProgressValue()
+                        if wait.getStopped(): return None
                 self._mesh.setPoints(points)
                 resampled.setReferenceID(self._transform.getID())
-                resampled.setName(self._roi.getName())
+                resampled.setName(self._mesh.getName())
                 resampled.copyPropertiesFromMesh(self._mesh)
                 # Save resampled mesh
                 if save:
                     settings = SisypheFunctionsSettings()
                     if prefix is None: prefix = settings.getFieldValue('Resample', 'Prefix')
                     if suffix is None: suffix = settings.getFieldValue('Resample', 'Suffix')
+                    # < Revision 22/05/2025
+                    # add always an underscore char after prefix and before suffix
+                    if len(prefix) > 0 and prefix[-1] != '_': prefix = prefix + '_'
+                    if len(suffix) > 0 and suffix[0] != '_': suffix = '_' + suffix
+                    # Revision 22/05/2025 >
                     path = dirname(self._mesh.getFilename())
                     base, ext = splitext(self._mesh.getFilename())
                     filename = join(path, prefix + basename(base) + suffix + ext)
                     if dialog:
                         filename = QFileDialog.getSaveFileName(None, 'Save resampled Mesh', filename,
                                                                filter=resampled.getFilterExt())[0]
-                        QApplication.processEvents()
+                        if QApplication.instance() is not None: QApplication.processEvents()
                     if filename:
                         if wait is not None:
                             wait.progressVisibilityOff()
@@ -1863,13 +3351,36 @@ class SisypheApplyTransform(object):
                             dialog: bool = False,
                             prefix: str | None = None,
                             suffix: str | None = None,
-                            wait: DialogWait | None = None) -> sc.sisypheTracts.SisypheStreamlines:
+                            wait: DialogWait | None = None) -> SisypheStreamlines | None:
+        """
+        Reslice the moving streamlines attribute with the geometric transformation
+        attribute of the current SisypheApplyTransform instance.
+
+        Parameters
+        ----------
+        save : bool
+            save resliced moving streamlines if True (default)
+        dialog : bool
+            - dialog to choice the resliced moving streamlines file name, if True
+            - addBundle suffix/prefix to the moving streamlines file name, if False (default)
+        prefix : str | None
+            file name prefix of the resliced moving streamlines (default None)
+        suffix : str | None
+            file name suffix of the resliced moving streamlines (default None)
+        wait : Sisyphe.gui.dialogWait.DialogWait | None
+            progress bar dialog (default None)
+
+        Returns
+        -------
+        Sisyphe.core.sisypheTracts.SisypheStreamlines
+            resliced moving streamlines
+        """
         if self.hasTransform():
             if self.hasMovingStreamlines():
                 if wait is not None:
                     wait.buttonVisibilityOff()
-                    wait.setInformationText('Resample {}...'.format(basename(self._sl.getFilename())))
                     wait.open()
+                    wait.setInformationText('Resample {}...'.format(basename(self._sl.getFilename())))
                 # Use forward transform to resample mesh vertices
                 trf = self._transform.getInverseTransform()
                 resampled = self._sl.applyTransformToStreamlines(trf, inplace=False)
@@ -1878,12 +3389,18 @@ class SisypheApplyTransform(object):
                     settings = SisypheFunctionsSettings()
                     if prefix is None: prefix = settings.getFieldValue('Resample', 'Prefix')
                     if suffix is None: suffix = settings.getFieldValue('Resample', 'Suffix')
+                    # < Revision 22/05/2025
+                    # add always an underscore char after prefix and before suffix
+                    if len(prefix) > 0 and prefix[-1] != '_': prefix = prefix + '_'
+                    if len(suffix) > 0 and suffix[0] != '_': suffix = '_' + suffix
+                    # Revision 22/05/2025 >
                     base, ext = splitext(self._sl.getFilename())
-                    filename = join(self._sl.getDirname(), prefix + basename(base) + suffix + ext)
+                    # noinspection PyTypeChecker
+                    filename: str = join(self._sl.getDirname(), prefix + basename(base) + suffix + ext)
                     if dialog:
                         filename = QFileDialog.getSaveFileName(None, 'Save resampled streamlines', filename,
                                                                filter=resampled.getFilterExt())[0]
-                        QApplication.processEvents()
+                        if QApplication.instance() is not None: QApplication.processEvents()
                     if filename:
                         if wait is not None:
                             wait.progressVisibilityOff()
@@ -1895,14 +3412,37 @@ class SisypheApplyTransform(object):
         else: raise AttributeError('No SisypheTransform.')
 
     def execute(self,
-                fixed: sc.sisypheVolume.SisypheVolume | None = None,
+                fixed: SisypheVolume | None = None,
                 save: bool = True,
                 dialog: bool = False,
                 prefix: str | None = None,
                 suffix: str | None = None,
-                wait: DialogWait | None = None) \
-            -> sc.sisypheVolume.SisypheVolume | sc.sisypheROI.SisypheROI | \
-               sc.sisypheMesh.SisypheMesh | sc.sisypheTracts.SisypheStreamlines:
+                wait: DialogWait | None = None) -> SisypheVolume | SisypheROI | SisypheMesh | SisypheStreamlines | None:
+        """
+        Reslice the moving volume, ROI, mesh and streamlines attributes ith the geometric transformation attribute of
+        the current SisypheApplyTransform instance.
+
+        Parameters
+        ----------
+        fixed : Sisyphe.core.sisypheVolume.SisypheVolume | None
+            fixed volume (default None)
+        save : bool
+            save resliced moving volume if True (default)
+        dialog : bool
+            - dialog to choice the resliced moving volume file name, if True
+            - addBundle suffix/prefix to the moving volume file name, if False (default)
+        prefix : str | None
+            file name prefix of the resliced moving volume (default None)
+        suffix : str | None
+            file name suffix of the resliced moving volume (default None)
+        wait : Sisyphe.gui.dialogWait.DialogWait | None
+            progress bar dialog (optional)
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume | Sisyphe.core.sisypheROI.SisypheROI | Sisyphe.core.sisypheMesh.SisypheMesh | Sisyphe.core.sisypheTracts.SisypheStreamlines
+            resliced moving attributes
+        """
         if self.hasTransform():
             if self.hasMoving(): r = self.resampleMoving(fixed, save, dialog, prefix, suffix, wait)
             elif self.hasMovingROI(): r = self.resampleROI(save, dialog, prefix, suffix, wait)
@@ -1915,70 +3455,52 @@ class SisypheApplyTransform(object):
 
 class SisypheTransformCollection(object):
     """
-        SisypheTransformCollection
+    Description
+    ~~~~~~~~~~~
 
-        Description
+    Named list container of SisypheTransform instances. Container key to address elements can be an int index, a
+    transform ID str, a SisypheTransform instance (its ID attribute is used as str key) or a SisypheVolume instance
+    (its ID attribute is used as str key).
 
-            Container of SisypheTransform instances.
-            List-like methods and access with int indexes.
-            Dict-like access with str (SisypheVolume ID) as key, no duplication.
-            Setter and getter methods of SisypheTransform, to get or set attributes of all SisypheTransform.
-            Getter methods returns a list.
-            Setter methods parameter is a single attribute value or a list of the same size as the container.
+    Getter methods of the SisypheTransform class are added to the SisypheTransformCollection class, returning a list
+    of values returned by each SisypheTransform element in the container.
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            object -> SisypheTransformCollection
+    object -> SisypheTransformCollection
 
-        Private attributes
-
-            _trfs       list of SisypheTransform
-            _index      index for Iterator
-
-        Public methods
-
-            __getitem__(str | int)
-            __setitem__(int, SisypheTransform)
-            __delitem__(SisypheVolume | SisypheTransform | str | int)
-            __len__()
-            __contains__(str | SisypheTransform | SisypheVolume)
-            __iter__()
-            __next__()
-            __str__()
-            __repr__()
-            bool = isEmpty()
-            int = count()
-            remove(SisypheVolume | SisypheTransform | str | int)
-            SisypheTransform = pop(SisypheVolume | SisypheTransform | str | int)
-            list = keys()
-            int = index(SisypheVolume | SisypheTransform | str)
-            reverse()
-            append(SisypheTransform)
-            insert(SisypheVolume | SisypheTransform | str | int, SisypheTransform)
-            clear()
-            sort()
-            SisypheTransformCollection = copy()
-            list = copyToList()
-            list = getList()
-
-        Creation: 05/10/2021
-        Revisions
-
-            16/03/2023  change items type in _trfs list, tuple(Str ID, SisypheTransform) replaced by SisypheTransform
-            16/03/2023  add pop method, removes SisypheTransform from list and returns it
-            16/03/2023  add __getattr__ method, gives access to setter and getter methods of SisypheTransform
-            01/09/2023  type hinting
+    Creation: 05/10/2021
+    Last revision: 18/04/05/2025
     """
 
     __slots__ = ['_trfs', '_index']
 
     # Special methods
 
+    """
+    Private attributes
+
+    _trfs       list[SisypheTransform]
+    _index      int, index for Iterator   
+    """
+
     def __init__(self) -> None:
+        """
+        SisypheTransformCollection instance constructor.
+        """
         self._trfs = list()
         self._index = 0
 
     def __str__(self) -> str:
+        """
+        Special overloaded method called by the built-in str() python function.
+
+        Returns
+        -------
+        str
+            conversion ofSisypheTransformCollection instance to str
+        """
         index = 0
         n = len(self._trfs)
         buff = 'Transform count #{}\n'.format(n)
@@ -1990,22 +3512,64 @@ class SisypheTransformCollection(object):
         return buff
 
     def __repr__(self) -> str:
+        """
+        Special overloaded method called by the built-in repr() python function.
+
+        Returns
+        -------
+        str
+            SisypheTransformCollection instance representation
+        """
         return 'SisypheTransformCollection instance at <{}>\n'.format(str(id(self))) + self.__str__()
 
     # Container Public methods
 
-    def __getitem__(self, key: int | str | sc.sisypheVolume.SisypheVolume):
+    def __getitem__(self, key: int | str | SisypheVolume | slice | list[str]) -> SisypheTransform | SisypheTransforms:
+        """
+        Special overloaded container getter method. Get a SisypheTransform element from container, key which can be int
+        index, ID, SisypheVolume (ID attribute), slicing indexes (start:stop:step) or list of ID.
+
+        Parameters
+        ----------
+        key : int | str | Sisyphe.core.sisypheVolume.SisypheVolume | slice | list[str]
+            index, ID, SisypheVolume (ID attribute), slicing indexes (start:stop:step) or list of ID
+
+        Returns
+        -------
+        SisypheTransform | SisypheTransforms
+            SisypheTransforms if key is slice or list[str]
+        """
         # key is ID str
-        if isinstance(key, (str, sc.sisypheVolume.SisypheVolume)):
+        if isinstance(key, (str, SisypheVolume)):
             key = self.index(key)
         # key is int index
         if isinstance(key, int):
-            if 0 <= key < len(self._trfs):
-                return self._trfs[key]
-            else: raise IndexError('parameter is out of range.')
-        else: raise TypeError('parameter type {} is not int or str.'.format(type(key)))
+            if 0 <= key < len(self._trfs): return self._trfs[key]
+            else: raise IndexError('key parameter is out of range.')
+        elif isinstance(key, slice):
+            trfs = SisypheTransforms()
+            for i in range(key.start, key.stop, key.step):
+                trfs.append(self._trfs[i])
+            return trfs
+        elif isinstance(key, list):
+            trfs = SisypheTransforms()
+            for i in range(len(self._trfs)):
+                if self._trfs[i].getID() in key:
+                    trfs.append(self._trfs[i])
+            return trfs
+        else: raise TypeError('parameter type {} is not int, str, slice or list[str].'.format(type(key)))
 
     def __setitem__(self, key: int, value: SisypheTransform):
+        """
+        Special overloaded container setter method. Set a SisypheTransform element in the container.
+
+        Parameters
+        ----------
+        key : int
+            index
+        value : SisypheTransform
+            geometric transformation to be placed at key position
+        """
         if isinstance(value, SisypheTransform):
             # key is int index
             if isinstance(key, int):
@@ -2016,9 +3580,18 @@ class SisypheTransformCollection(object):
             else: raise TypeError('parameter type {} is not int or str.'.format(type(key)))
         else: raise TypeError('parameter type {} is not SisypheTransform.'.format(type(value)))
 
-    def __delitem__(self, key: int | str | SisypheTransform | sc.sisypheVolume.SisypheVolume):
+    def __delitem__(self, key: int | str | SisypheTransform | SisypheVolume):
+        """
+        Special overloaded method called by the built-in del() python function. Delete a SisypheTransform element in
+        the container.
+
+        Parameters
+        ----------
+        key : int | str | SisypheTransform | Sisyphe.core.sisypheVolume.SisypheVolume
+            index, ID, SisypheTransform ID attribute or SisypheVolume ID attribute
+        """
         # key is ID str, SisypheVolume or SisypheTransform
-        if isinstance(key, (str, sc.sisypheVolume.SisypheVolume, SisypheTransform)):
+        if isinstance(key, (str, SisypheVolume, SisypheTransform)):
             key = self.index(key)
         # int index
         if isinstance(key, int):
@@ -2028,12 +3601,35 @@ class SisypheTransformCollection(object):
         else: raise TypeError('parameter type {} is not int or str.'.format(type(key)))
 
     def __len__(self) -> int:
+        """
+        Special overloaded method called by the built-in len() python function. Returns the number of SisypheTransform
+        elements in the container.
+
+        Returns
+        -------
+        int
+            number of SisypheTransform elements
+        """
         return len(self._trfs)
 
-    def __contains__(self, value: SisypheTransform | sc.sisypheVolume.SisypheVolume | str) -> bool:
+    def __contains__(self, value: str | SisypheTransform | SisypheVolume) -> bool:
+        """
+        Special overloaded container method called by the built-in 'in' python operator. Checks whether a
+        SisypheTransform is in the container.
+
+        Parameters
+        ----------
+        value : str | SisypheTransform | Sisyphe.core.sisypheVolume.SisypheVolume
+            ID, SisypheTransform ID attribute or SisypheVolume ID attribute
+
+        Returns
+        -------
+        bool
+            True if value is in the container.
+        """
         keys = [k.getID() for k in self._trfs]
         # value is SisypheTransform or SisypheVolume
-        if isinstance(value, (SisypheTransform, sc.sisypheVolume.SisypheVolume)):
+        if isinstance(value, (SisypheTransform, SisypheVolume)):
             value = value.getID()
         # value is ID str
         if isinstance(value, str):
@@ -2041,10 +3637,18 @@ class SisypheTransformCollection(object):
         else: raise TypeError('parameter type {} is not str or SisypheTransform.'.format(type(value)))
 
     def __iter__(self):
+        """
+        Special overloaded container called by the built-in 'iter()' python iterator method. This method initializes a
+        Python iterator object.
+        """
         self._index = 0
         return self
 
     def __next__(self) -> SisypheTransform:
+        """
+        Special overloaded container called by the built-in 'next()' python iterator method. Returns the next value for
+        the iterable.
+        """
         if self._index < len(self._trfs):
             n = self._index
             self._index += 1
@@ -2054,9 +3658,14 @@ class SisypheTransformCollection(object):
 
     def __getattr__(self, name: str):
         """
-            When attribute does not exist in the class,
-            try calling the setter or getter method of sisypheTransform instances in collection.
-            Getter methods return a list of the same size as the collection.
+        Special overloaded method called when attribute does not exist in the class.
+        Try iteratively calling the setter or getter methods of the sisypheTransform instances in the container.
+        Getter methods return a list of the same size as the container.
+
+        Parameters
+        ----------
+        name : str
+            attribute name of the SisypheTransform class (container element)
         """
         prefix = name[:3]
         if prefix in ('set', 'get'):
@@ -2069,6 +3678,7 @@ class SisypheTransformCollection(object):
                             else:
                                 for trf in self: trf.__getattribute__(name)()
                         else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
+                    else: raise AttributeError('Not get/set method')
                 # SisypheVolume set methods with argument
                 elif prefix == 'set':
                     p = args[0]
@@ -2093,38 +3703,98 @@ class SisypheTransformCollection(object):
     # Public methods
 
     def isEmpty(self) -> bool:
+        """
+        Checks if SisypheTransformCollection instance container is empty.
+
+        Returns
+        -------
+        bool
+            True if container is empty
+        """
         return len(self._trfs) == 0
 
     def count(self) -> int:
+        """
+        Get the number of SisypheTransform elements in the current SisypheTransformCollection instance container.
+
+        Returns
+        -------
+        int
+            number of SisypheTransform elements
+        """
         return len(self._trfs)
 
     def keys(self) -> list[str]:
+        """
+        Get the list of keys in the current SisypheTransformCollection instance container.
+
+        Returns
+        -------
+        list[str]
+            list of keys in the container
+        """
         return [k.getID() for k in self._trfs]
 
-    def remove(self, value: SisypheTransform | int | str | sc.sisypheVolume.SisypheVolume) -> None:
+    def remove(self, value: int | str | SisypheTransform | SisypheVolume) -> None:
+        """
+         Remove a SisypheTransform element from the current SisypheTransformCollection instance container.
+
+        Parameters
+        ----------
+        value : int | str | SisypheTransform | Sisyphe.core.sisypheVolume.SisypheVolume
+            index, ID, SisypheTransform ID attribute or SisypheVolume ID attribute
+        """
         # value is SisypheTransform
-        if isinstance(value, SisypheTransform):
-            self._trfs.remove(value)
+        if isinstance(value, SisypheTransform): self._trfs.remove(value)
+        # < Revision 18/04/2025
         # value is SisypheVolume, ID str or int index
-        elif isinstance(value, (sc.sisypheVolume.SisypheVolume, str, int)):
-            self.pop(value)
+        elif isinstance(value, (SisypheVolume, str)): value = self.index(value)
+        if isinstance(value, int): self.pop(value)
+        # Revision 18/04/2025 >
         else: raise TypeError('parameter type {} is not int, str or SisypheTransform.'.format(type(value)))
 
-    def pop(self,
-            key: str | int | SisypheTransform | sc.sisypheVolume.SisypheVolume | None = None) -> SisypheTransform:
+    def pop(self, key: int | str | SisypheTransform | SisypheVolume | None = None) -> SisypheTransform:
+        """
+         Remove a SisypheTransform element from the current SisypheTransformCollection instance container and return it.
+         If key is None, removes and returns the last element.
+
+        Parameters
+        ----------
+        key : int | str | SisypheTransform | Sisyphe.core.sisypheVolume.SisypheVolume | None
+            - index, ID, SisypheTransform ID attribute or SisypheVolume ID attribute
+            - if None, remove the last element
+
+        Returns
+        -------
+        SisypheTransform
+            element removed from the container
+        """
         if key is None: return self._trfs.pop()
         # key is ID str, SisypheVolume or SisypheTransform
-        if isinstance(key, (str, SisypheTransform, sc.sisypheVolume.SisypheVolume)):
+        if isinstance(key, (str, SisypheTransform, SisypheVolume)):
             key = self.index(key)
         # key is int index
         if isinstance(key, int):
             return self._trfs.pop(key)
         else: raise TypeError('parameter type {} is not int or str.'.format(type(key)))
 
-    def index(self, value: str | sc.sisypheVolume.SisypheVolume | SisypheTransform) -> int:
+    def index(self, value: str | SisypheVolume | SisypheTransform) -> int:
+        """
+        Index of a SisypheTransform element in the current SisypheTransformCollection instance container.
+
+        Parameters
+        ----------
+        value : str | SisypheTransform | Sisyphe.core.sisypheVolume.SisypheVolume
+            ID, SisypheTransform ID attribute or SisypheVolume ID attribute
+
+        Returns
+        -------
+        int
+            index
+        """
         keys = [k.getID() for k in self._trfs]
         # value is SisypheTransform or SisypheVolume
-        if isinstance(value, (SisypheTransform, sc.sisypheVolume.SisypheVolume)):
+        if isinstance(value, (SisypheTransform, SisypheVolume)):
             value = value.getID()
         # value is ID str
         if isinstance(value, str):
@@ -2132,20 +3802,44 @@ class SisypheTransformCollection(object):
         else: raise TypeError('parameter type {} is not str or SisypheTransform.'.format(type(value)))
 
     def reverse(self) -> None:
+        """
+        Reverses the order of the elements in the current SisypheTransformCollection instance container.
+        """
         self._trfs.reverse()
 
     def append(self, value: SisypheTransform, replace: bool = True) -> None:
+        """
+        Append a SisypheTransform element in the current SisypheTransformCollection instance container.
+
+        Parameters
+        ----------
+        value : SisypheTransform
+            geometric transformation to append
+        replace: bool
+            if value is already in the current container, replace it (default True)
+        """
         if isinstance(value, SisypheTransform):
             if value.getID() not in self: self._trfs.append(value)
             elif replace: self._trfs[self.index(value)] = value
         else: raise TypeError('parameter type {} is not SisypheTransform.'.format(type(value)))
 
     def insert(self,
-               key: str | int | SisypheTransform | sc.sisypheVolume.SisypheVolume,
+               key: int | str | SisypheTransform | SisypheVolume,
                value: SisypheTransform) -> None:
+        """
+        Insert a SisypheTransform element at the position given by the key in the current SisypheTransformCollection
+        instance container.
+
+        Parameters
+        ----------
+        key : int | str | SisypheTransform | Sisyphe.core.sisypheVolume.SisypheVolume | None
+            index, ID, SisypheTransform ID attribute or SisypheVolume ID attribute
+        value : SisypheTransform
+            geometric transformation to insert
+        """
         if isinstance(value, SisypheTransform):
             # value is ID str, SisypheTransform or SisypheVolume
-            if isinstance(key, (str, SisypheTransform, sc.sisypheVolume.SisypheVolume)):
+            if isinstance(key, (str, SisypheTransform, SisypheVolume)):
                 key = self.index(key)
             if isinstance(key, int):
                 if 0 <= key < len(self._trfs):
@@ -2156,76 +3850,92 @@ class SisypheTransformCollection(object):
         else: raise TypeError('parameter type {} is not SisypheTransform.'.format(type(value)))
 
     def clear(self) -> None:
+        """
+        Remove all elements from the current SisypheTransformCollection instance container (empty).
+        """
         self._trfs.clear()
 
     def sort(self, reverse: bool = False) -> None:
+        """
+        Sort elements of the current SisypheTransformCollection instance container. Sorting is based on the ID
+        attribute of the SisypheTransform elements, in the ascending order.
+
+        Parameters
+        ----------
+        reverse : bool
+            sorting in reverse order
+        """
         def _getID(item):
             return item.getID()
 
         self._trfs.sort(reverse=reverse, key=_getID)
 
     def copy(self) -> SisypheTransformCollection:
+        """
+        Copy the current SisypheTransformCollection instance container (Shallow copy of elements).
+
+        Returns
+        -------
+        SisypheTransformCollection
+            Shallow copy of container
+        """
         trfs = SisypheTransformCollection()
         for trf in self._trfs:
             trfs.append(trf)
         return trfs
 
     def copyToList(self) -> list[SisypheTransform]:
+        """
+        Copy the current SisypheTransformCollection instance container to a list (Shallow copy of elements).
+
+        Returns
+        -------
+        list[SisypheTransform]
+            shallow copy to list of container elements
+        """
         trfs = self._trfs.copy()
         return trfs
 
     def getList(self) -> list[SisypheTransform]:
+        """
+        Get the list attribute of the current SisypheTransformCollection instance container (Shallow copy)
+
+        Returns
+        -------
+        list[SisypheTransform]
+            shallow copy of container list
+        """
         return self._trfs
 
 
 class SisypheTransforms(SisypheTransformCollection):
     """
-        SisypheTransformDict class
+    Description
+    ~~~~~~~~~~~
 
-        Description
+    Each SisypheVolume is associated with a SisypheTransforms instance, which stores all the geometric transformations
+    calculated from co-registrations with other SisypheVolume instances.
 
-            SisypheTransformCollection wih :
-            - XML format IO methods to SisypheTransformCollection ancestor.
-            - ID attribute of the reference SisypheVolume instance.
-            Geometric transformations are in forward convention
-            (apply inverse transformation to resample)
+    This class works as a named list (key/value) container of SisypheTransform instances.
 
-        Inheritance
+    - Key: ID attribute of a SisypheVolume that is co-registered with the reference SisypheVolume.
+    - Value: the geometric transformation (SisypheTransform instance) used to co-register the SisypheVolume with the
+    reference SisypheVolume.
 
-            object -> SisypheTransformCollection -> SisypheTransforms
+    Inherits from SisypheTransformCollection class and adds
 
-        Private attributes
+    - ID attribute of the associated (or reference) SisypheVolume instance,
+    - IO methods.
 
-            _ID         str, ID of the SisypheVolume parent instance
-            _filename   str, filename to save instance
+    Geometric transformations are in forward convention (apply inverse transformation to resample)
 
-        Class method
+    Inheritance
+    ~~~~~~~~~~~
 
-            str = getFileExt()
-            str = getFilterExt()
+    object -> SisypheTransformCollection -> SisypheTransforms
 
-        Public methods
-
-            __str__()
-            __repr__()
-            str = getReferenceID()
-            setReferenceID(str | SisypheVolume)
-            bool = hasReferenceID()
-            bool = hasFilename()
-            str = getFilename()
-            setFilenameFromVolume(SisypheVolume)
-            appendIdentityTransformWithVolume(SisypheVolume)
-            createXML(minidom.Document)
-            parseXML(minidom.Document)
-            saveAs()
-            save()
-            load()
-
-        Creation: 05/10/2021
-        Revisions:
-
-            01/09/2023  type hinting
-            31/10/2023  add openTransforms() class method
+    Creation: 05/10/2021
+    Last revision: 23/05/2024
     """
     __slots__ = ['_referenceID', '_filename', '_parent']
 
@@ -2237,67 +3947,202 @@ class SisypheTransforms(SisypheTransformCollection):
 
     @classmethod
     def getFileExt(cls) -> str:
+        """
+        Get SisypheTransforms file extension.
+
+        Returns
+        -------
+        str
+            '.xtrfs'
+        """
         return cls._FILEEXT
 
     @classmethod
     def getFilterExt(cls) -> str:
+        """
+        Get SisypheTransforms filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().
+
+        Returns
+        -------
+        str
+            'PySisyphe Geometric transformation collection (.xtrfs)'
+        """
         return 'PySisyphe Geometric transformation collection (*{})'.format(cls._FILEEXT)
 
     @classmethod
     def openTransforms(cls, filename) -> SisypheTransforms:
+        """
+        create a SisypheTransforms instance from PySisyphe
+        geometric transformation collection file (.xtrfs).
+
+        Parameters
+        ----------
+        filename : str
+            geometric transformation collection file name
+
+        Returns
+        -------
+        SisypheTransforms
+            loaded geometric transformation collection
+        """
         if exists(filename):
             filename = basename(filename) + cls.getFileExt()
             trfs = SisypheTransforms()
             trfs.load(filename)
             return trfs
+        else: raise FileExistsError('No such file {}'.format(filename))
 
     # Special methods
 
-    def __init__(self, parent: sc.sisypheVolume.SisypheVolume | None = None) -> None:
+    """
+    Private attributes
+
+    _ID         str, ID of the SisypheVolume parent instance
+    _filename   str, filename to save instance    
+    """
+
+    def __init__(self, parent: SisypheVolume | None = None) -> None:
+        """
+        SisypheTransforms instance constructor.
+
+        Parameters
+        ----------
+        parent : Sisyphe.core.sisypheVolume.SisypheVolume | None
+            Associated SisypheVolume instance (default None)
+        """
         super().__init__()
         self._referenceID = None  # reference SisypheVolume ID
         self._filename = ''
-        if not isinstance(parent, sc.sisypheVolume.SisypheVolume): parent = None
+        if not isinstance(parent, SisypheVolume): parent = None
         if parent is not None: self.setReferenceID(parent)
 
     def __str__(self) -> str:
+        """
+        Special overloaded method called by the built-in str() python function.
+
+        Returns
+        -------
+        str
+            conversion of SisypheTransforms instance to str
+        """
         buff = 'Reference ID: {}\n'.format(self.getReferenceID())
         buff += 'Filename: {}\n'.format(basename(self.getFilename()))
         buff += super().__str__()
         return buff
 
     def __repr__(self) -> str:
+        """
+        Special overloaded method called by the built-in repr() python function.
+
+        Returns
+        -------
+        str
+            SisypheTransforms instance representation
+        """
         return 'SisypheTransforms instance at <{}>\n'.format(str(id(self))) + self.__str__()
+
+    # Container Public methods
+
+    def __getitem__(self, key: int | str | SisypheVolume | slice | list[str]) -> SisypheTransform | SisypheTransforms:
+        """
+        Special overloaded container getter method. Get a SisypheTransform element from container, Key which can be int
+        index, ID, SisypheVolume (ID attribute), slicing indexes (start:stop:step) or list of ID.
+
+        Parameters
+        ----------
+        key : int | str | Sisyphe.core.sisypheVolume.SisypheVolume | slice | list[str]
+            index, ID, SisypheVolume ID attribute, slicing indexes (start:stop:step) or list of ID
+
+        Returns
+        -------
+        SisypheTransform | SisypheTransforms
+            SisypheTransforms if key is slice or list[str]
+        """
+        r = super().__getitem__(key)
+        if isinstance(r, SisypheTransforms):
+            r.setReferenceID(self.getReferenceID())
+        return r
 
     # Public methods
 
     def getReferenceID(self) -> str:
+        """
+        Get reference ID attribute of the current SisypheTransforms instance. The reference ID is the ID of the
+        associated SisypheVolume.
+
+        Returns
+        -------
+        str
+            reference ID
+        """
         return self._referenceID
 
-    def setReferenceID(self, ID: str | sc.sisypheVolume.SisypheVolume) -> None:
+    def setReferenceID(self, ID: str | SisypheVolume) -> None:
+        """
+        Set the reference ID attribute of the current SisypheTransforms instance. The reference ID is the ID of the
+        associated SisypheVolume.
+
+        Parameters
+        ----------
+        ID : str | Sisyphe.core.sisypheVolume.SisypheVolume
+            ID or SisypheVolume's ID attribute
+        """
         if isinstance(ID, str):
             self._referenceID = ID
-        elif isinstance(ID, sc.sisypheVolume.SisypheVolume):
+        elif isinstance(ID, SisypheVolume):
             self._referenceID = ID.getID()
+            self.setFilenameFromVolume(ID)
         else:
             self._referenceID = None
 
     def hasReferenceID(self) -> bool:
+        """
+        Check if the reference ID of the current SisypheTransforms instance is defined (not ''). The reference ID is
+        the ID of the associated SisypheVolume.
+
+        Returns
+        -------
+        bool
+            True if reference ID is defined
+        """
         return self._referenceID is not None
 
     def hasFilename(self) -> bool:
+        """
+        Check whether the file name attribute of the current SisypheTransforms instance is defined.
+
+        Returns
+        -------
+        bool
+            True if file name attribute is defined
+        """
         if self._filename != '':
-            if exists(self._filename):
-                return True
-            else:
-                self._filename = ''
+            if exists(self._filename): return True
+            else: self._filename = ''
         return False
 
     def getFilename(self) -> str:
+        """
+        Get the file name attribute of the current SisypheTransforms instance is defined.
+
+        Returns
+        -------
+        str
+            file name attribute
+        """
         return self._filename
 
-    def setFilenameFromVolume(self, img: sc.sisypheVolume.SisypheVolume) -> None:
-        if isinstance(img, sc.sisypheVolume.SisypheVolume):
+    def setFilenameFromVolume(self, img: SisypheVolume) -> None:
+        """
+        Copy the file name attribute of the current SisypheTransforms instance from the file name attribute of a
+        SisypheVolume instance.
+
+        Parameters
+        ----------
+        img : Sisyphe.core.sisypheVolume.SisypheVolume
+            volume filename to copy
+        """
+        if isinstance(img, SisypheVolume):
             if img.hasFilename():
                 path, ext = splitext(img.getFilename())
                 path += self._FILEEXT
@@ -2306,8 +4151,17 @@ class SisypheTransforms(SisypheTransformCollection):
                 self._filename = ''
         else: raise TypeError('parameter type {} is not SisypheVolume'.format(img))
 
-    def appendIdentityTransformWithVolume(self, vol: sc.sisypheVolume.SisypheVolume) -> None:
-        if isinstance(vol, sc.sisypheVolume.SisypheVolume):
+    def appendIdentityTransformWithVolume(self, vol: SisypheVolume) -> None:
+        """
+        Add an identity geometric transformation with a SisypheVolume (parameter) in the current SisypheTransforms
+        instance.
+
+        Parameters
+        ----------
+        vol : Sisyphe.core.sisypheVolume.SisypheVolume
+            volume (volume ID key) to associate with an identity tranform
+        """
+        if isinstance(vol, SisypheVolume):
             trf = SisypheTransform()
             trf.setIdentity()
             trf.setAttributesFromFixedVolume(vol)
@@ -2315,6 +4169,14 @@ class SisypheTransforms(SisypheTransformCollection):
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
     def copy(self) -> SisypheTransforms:
+        """
+        Copy the current SisypheTransforms instance container (Shallow copy of elements).
+
+        Returns
+        -------
+        SisypheTransforms
+            container shallow copy
+        """
         trfs = SisypheTransforms()
         for trf in self._trfs:
             trfs.append(trf)
@@ -2323,6 +4185,14 @@ class SisypheTransforms(SisypheTransformCollection):
     # IO public methods
 
     def createXML(self, doc: minidom.Document) -> None:
+        """
+        Write the current SisypheTransforms instance attributes to xml document instance.
+
+        Parameters
+        ----------
+        doc : minidom.Document
+            xml document
+        """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
             # ID
@@ -2333,11 +4203,19 @@ class SisypheTransforms(SisypheTransformCollection):
             # SisypheTransform nodes
             for trf in self._trfs:
                 # Save only affine transformations, not displacement field
-                if trf.isAffineTransform():
+                if trf.isAffine():
                     trf.createXML(doc, root)
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
     def parseXML(self, doc: minidom.Document) -> None:
+        """
+        Read the current SisypheTransforms instance attributes from xml document instance.
+
+        Parameters
+        ----------
+        doc : minidom.Document
+            xml document
+        """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
             if root.nodeName == self._FILEEXT[1:] and root.getAttribute('version') == '1.0':
@@ -2355,6 +4233,15 @@ class SisypheTransforms(SisypheTransformCollection):
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
     def saveAs(self, filename: str) -> None:
+        """
+        Save the current SisypheTransforms instance to a PySisyphe geometric transformation collection file (.xtrfs).
+
+        Parameters
+        ----------
+        filename : str
+            - PySisyphe geometric transformation collection file name
+            - The file name attribute of the current SisypheTransforms instance is replaced by this parameter
+        """
         if not self.isEmpty():
             path, ext = splitext(filename)
             if ext.lower() != self._FILEEXT:
@@ -2373,6 +4260,16 @@ class SisypheTransforms(SisypheTransformCollection):
         else: raise AttributeError('SisypheTransform instance is empty.')
 
     def save(self, filename: str = '') -> None:
+        """
+        Save the current SisypheTransforms instance to a PySisyphe geometric
+        transformation collection file (.xtrfs).
+
+        Parameters
+        ----------
+        filename : str
+            PySisyphe geometric transformation collection file name (optional)
+            if filename is empty ('', default), the file name attribute of the current SisypheTransforms instance is used
+        """
         if not self.isEmpty():
             if self.hasFilename():
                 filename = self._filename
@@ -2382,6 +4279,15 @@ class SisypheTransforms(SisypheTransformCollection):
         else: raise AttributeError('SisypheTransform instance is empty.')
 
     def load(self, filename: str = '') -> None:
+        """
+        Load the current SisypheTransforms instance from a PySisyphe geometric transformation collection file (.xtrfs).
+
+        Parameters
+        ----------
+        filename : str
+            - PySisyphe geometric transformation collection file name (optional)
+            - if filename is empty ('', default), the file name attribute of the current SisypheTransforms instance is used
+        """
         if self.hasFilename() and exists(self._filename):
             filename = self._filename
         path, ext = splitext(filename)

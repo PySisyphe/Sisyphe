@@ -1,10 +1,10 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                        Usage
-
-        pandas          https://pandas.pydata.org/                  Data analysis and manipulation tool
-        SciPy           https://scipy.org/                          Fundamental algorithms for scientific computing
+    - Numpy, Scientific computing, https://numpy.org/
+    - pandas, data analysis and manipulation tool, https://pandas.pydata.org/
+    - SciPy, fundamental algorithms for scientific computing, https://scipy.org/
 """
 
 from __future__ import annotations
@@ -13,6 +13,9 @@ from os.path import exists
 from os.path import splitext
 
 from xml.dom import minidom
+
+from numpy import save as npsave
+from numpy import savez as npsavez
 
 from pandas import DataFrame
 from pandas import read_csv
@@ -25,56 +28,26 @@ from scipy.io import savemat
 __all__ = ['SisypheSheet']
 
 """
-    Class hierarchy
+Class hierarchy
+~~~~~~~~~~~~~~~
 
-        DataFrame -> SisypheDataFrame
+    - pandas.DataFrame -> SisypheDataFrame
 """
 
 class SisypheSheet(DataFrame):
     """
-        SisypheSheet class
+    Description
+    ~~~~~~~~~~~
 
-        Description
+    Class derived from pandas DataFrame class. Adds IO methods (xml, matfile) to pandas DataFrame class.
 
-            Adds save methods (xml, matfile) to pandas DataFrame class.
+    Inheritance
+    ~~~~~~~~~~~
 
-        Inheritance
+    DataFrame -> SisypheSheet
 
-            DataFrame -> SisypheSheet
-
-        Private attributes
-
-        Class methods
-
-            str = getFileExt()
-            str = getFilterExt()
-            SisypheSheet = parseXMLNode()
-            SisypheSheet = parseXML()
-            SisypheSheet = load(str)
-            SisypheSheet = loadCSV(str)
-            SisypheSheet = loadJSON(str)
-            SisypheSheet = loadTXT(str, str)
-            SisypheSheet = loadXLSX(str)
-
-        Public methods
-
-            createXML()
-            save(str)
-            saveCSV(str)
-            saveJSON(str)
-            saveLATEX(str)
-            saveMATFILE(str)
-            saveTXT(str)
-            saveXLSX(str)
-            toClipboard()
-
-            inherited DataFrame class
-
-        Creation: 10/04/2023
-        Revision:
-
-            26/07/2023  createXML() bugfix, int to str conversion of DataFrame.index
-            29/08/2023  type hinting
+    Creation: 10/04/2023
+    Last revision: 13/12/2024
     """
 
     # Class constants
@@ -83,14 +56,43 @@ class SisypheSheet(DataFrame):
 
     @classmethod
     def getFileExt(cls) -> str:
+        """
+        Get SisypheSheet file extension.
+
+        Returns
+        -------
+        str
+            '.xsheet'
+        """
         return cls._FILEEXT
 
     @classmethod
     def getFilterExt(cls) -> str:
-        return 'PySisyphe sheet (*.{})'.format(cls._FILEEXT)
+        """
+        Get SisypheSheet filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().
+
+        Returns
+        -------
+        str
+            'PySisyphe Sheet (.xsheet)'
+        """
+        return 'PySisyphe Sheet (*.{})'.format(cls._FILEEXT)
 
     @classmethod
     def parseXMLNode(cls, currentnode: minidom.Element) -> SisypheSheet:
+        """
+        Create a SisypheSheet instance from xml node.
+
+        Parameters
+        ----------
+        currentnode : minidom.Element
+            xml node
+
+        Returns
+        -------
+        SisypheSheet
+            new sheet
+        """
         def isFloat(txt):
             try: float(txt)
             except: return False
@@ -103,14 +105,17 @@ class SisypheSheet(DataFrame):
             while node:
                 # Column names
                 if node.nodeName == 'columnlabels':
+                    # noinspection PyUnresolvedReferences
                     data = node.firstChild.data
                     r['columns'] = data.split('|')
                 # Row names
                 if node.nodeName == 'rowlabels':
+                    # noinspection PyUnresolvedReferences
                     data = node.firstChild.data
                     r['index'] = data.split('|')
                 # Row values
                 if node.nodeName == 'row':
+                    # noinspection PyUnresolvedReferences
                     data = node.firstChild.data
                     data = data.split('|')
                     if isFloat(data[0]): data = [float(v) for v in data]
@@ -123,6 +128,19 @@ class SisypheSheet(DataFrame):
 
     @classmethod
     def parseXML(cls, doc: minidom.Document) -> SisypheSheet:
+        """
+        Create a SisypheSheet instance from xml document.
+
+        Parameters
+        ----------
+        doc : minidom.Document
+            xml document
+
+        Returns
+        -------
+        SisypheSheet
+            new sheet
+        """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
             if root.nodeName == cls._FILEEXT[1:] and root.getAttribute('version') == '1.0':
@@ -133,6 +151,19 @@ class SisypheSheet(DataFrame):
 
     @classmethod
     def load(cls, filename: str) -> SisypheSheet:
+        """
+        Create a SisypheSheet instance from a PySisyphe Sheet file (.xsheet).
+
+        Parameters
+        ----------
+        filename : str
+            PySisyphe Sheet file name (.xsheet)
+
+        Returns
+        -------
+        SisypheSheet
+            loaded sheet
+        """
         path, ext = splitext(filename)
         if ext.lower() != cls._FILEEXT:
             filename = path + cls._FILEEXT
@@ -143,6 +174,19 @@ class SisypheSheet(DataFrame):
 
     @classmethod
     def loadCSV(cls, filename: str) -> SisypheSheet:
+        """
+        Create a SisypheSheet instance from a CSV file (.csv).
+
+        Parameters
+        ----------
+        filename : str
+            CSV file name (.csv)
+
+        Returns
+        -------
+        SisypheSheet
+            loaded sheet
+        """
         if isinstance(filename, str):
             path, ext = splitext(filename)
             if ext.lower() != '.csv':
@@ -155,6 +199,21 @@ class SisypheSheet(DataFrame):
 
     @classmethod
     def loadTXT(cls, filename: str, sep: str = '|') -> SisypheSheet:
+        """
+        Create a SisypheSheet instance from a text file (.txt).
+
+        Parameters
+        ----------
+        filename : str
+            text file name (.txt)
+        sep : str
+            optional (default '|'), char separator between values
+
+        Returns
+        -------
+        SisypheSheet
+            loaded sheet
+        """
         if isinstance(filename, str):
             if exists(filename):
                 d = read_table(filename, sep=sep).to_dict(orient='tight')
@@ -164,6 +223,19 @@ class SisypheSheet(DataFrame):
 
     @classmethod
     def loadXLSX(cls, filename: str) -> SisypheSheet:
+        """
+        Create a SisypheSheet instance from an Excel file (.xlsx).
+
+        Parameters
+        ----------
+        filename : str
+            Excel file name (.xlsx)
+
+        Returns
+        -------
+        SisypheSheet
+            loaded sheet
+        """
         if isinstance(filename, str):
             if exists(filename):
                 d = read_excel(filename).to_dict(orient='tight')
@@ -173,6 +245,19 @@ class SisypheSheet(DataFrame):
 
     @classmethod
     def loadJSON(cls, filename: str) -> SisypheSheet:
+        """
+        Create a SisypheSheet instance from a Json file (.json).
+
+        Parameters
+        ----------
+        filename : str
+            Json file name (.json)
+
+        Returns
+        -------
+        SisypheSheet
+            loaded sheet
+        """
         if isinstance(filename, str):
             if exists(filename):
                 d = read_json(filename).to_dict(orient='tight')
@@ -183,11 +268,31 @@ class SisypheSheet(DataFrame):
     # Special methods
 
     def __init__(self, *args, **kwargs):
+        """
+        SisypheSheet instance constructor.
+
+        Parameters
+        ----------
+        *args
+            inherited DataFrame constructor parameters
+        **kwargs
+            inherited DataFrame constructor parameters
+        """
         super().__init__(*args, **kwargs)
 
     # Public methods
 
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
+        """
+        Write the current SisypheSheet instance attributes to xml document instance.
+
+        Parameters
+        ----------
+        doc : minidom.Document
+            xml document
+        currentnode : minidom.Element
+            xml root node
+        """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):
                 # Column names
@@ -212,6 +317,14 @@ class SisypheSheet(DataFrame):
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
     def save(self, filename: str) -> None:
+        """
+        Save the current SisypheSheet instance to a PySisyphe Sheet file (.xsheet).
+
+        Parameters
+        ----------
+        filename : str
+            PySisyphe Sheet file name (.xsheet)
+        """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
             filename = path + self._FILEEXT
@@ -232,6 +345,14 @@ class SisypheSheet(DataFrame):
         finally: f.close()
 
     def saveCSV(self, filename: str) -> None:
+        """
+        Save the current SisypheSheet instance to a CSV file (.csv).
+
+        Parameters
+        ----------
+        filename : str
+            CSV file name (.csv)
+        """
         if isinstance(filename, str):
             path, ext = splitext(filename)
             if ext.lower() != '.csv': filename = path + '.csv'
@@ -239,6 +360,16 @@ class SisypheSheet(DataFrame):
         else: raise TypeError('parameter type {} is not str'.format(type(filename)))
 
     def saveTXT(self, filename: str, sep: str = '|') -> None:
+        """
+        Save the current SisypheSheet instance to a text file (.txt).
+
+        Parameters
+        ----------
+        filename : str
+            text file name (.txt)
+        sep : str
+            optional (default '|'), char separator between values
+        """
         if isinstance(filename, str):
             path, ext = splitext(filename)
             if ext.lower() != '.txt': filename = path + '.txt'
@@ -246,12 +377,56 @@ class SisypheSheet(DataFrame):
         else: raise TypeError('parameter type {} is not str'.format(type(filename)))
 
     def saveMATFILE(self, filename: str) -> None:
+        """
+        Save the current SisypheSheet instance to a Matlab file (.mat).
+
+        Parameters
+        ----------
+        filename : str
+            Matlab file name (.mat)
+        """
         if isinstance(filename, str):
             path, ext = splitext(filename)
             if ext.lower() != '.mat': filename = path + '.mat'
             d = self.to_dict()
             savemat(filename, d)
         else: raise TypeError('parameter type {} is not str'.format(type(filename)))
+
+    # < Revision 13/12/2024
+    def saveNPY(self, filename: str) -> None:
+        """
+        Save the current SisypheSheet instance to a Numpy binary file (.npy).
+
+        Parameters
+        ----------
+        filename : str
+            Numpy binary file name (.npy)
+        """
+        if isinstance(filename, str):
+            path, ext = splitext(filename)
+            if ext.lower() != '.mat': filename = path + '.npy'
+            np = self.values
+            npsave(filename, np)
+        else: raise TypeError('parameter type {} is not str'.format(type(filename)))
+    # Revision 13/12/2024 >
+
+    # < Revision 13/12/2024
+    def saveNPZ(self, filename: str) -> None:
+        """
+        Save the current SisypheSheet instance to a Numpy binary compressed file (.npz).
+
+        Parameters
+        ----------
+        filename : str
+            Numpy binary compressed file name (.npz)
+        """
+        if isinstance(filename, str):
+            path, ext = splitext(filename)
+            if ext.lower() != '.mat': filename = path + '.npz'
+            np = self.values
+            npsavez(filename, np)
+        else: raise TypeError('parameter type {} is not str'.format(type(filename)))
+    # Revision 13/12/2024 >
 
     # Aliases
 

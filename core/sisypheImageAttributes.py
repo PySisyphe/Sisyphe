@@ -1,12 +1,13 @@
 """
-    External packages/modules
+External packages/modules
+-------------------------
 
-        Name            Link                                                        Usage
-
-        vtk             https://vtk.org/                                            Visualization
+    - Numpy, scientific computing, https://numpy.org/
+    - vtk, visualization engine/3D rendering, https://vtk.org/
 """
 
 from __future__ import annotations
+from typing import TYPE_CHECKING
 
 from os.path import join
 from os.path import exists
@@ -17,8 +18,11 @@ from math import sqrt
 from math import atan2
 from math import degrees
 
+from numpy import ndarray
+
 from datetime import date
 from datetime import datetime
+from datetime import timedelta
 
 from xml.dom import minidom
 
@@ -26,9 +30,13 @@ from copy import deepcopy
 
 from vtk import vtkLookupTable
 
-import Sisyphe.core as sc
 from Sisyphe.core.sisypheLUT import SisypheLut
-from Sisyphe.core.sisypheTransform import SisypheTransform
+
+# to avoid ImportError due to circular imports
+if TYPE_CHECKING:
+    from Sisyphe.core.sisypheVolume import SisypheVolume
+    from Sisyphe.core.sisypheTransform import SisypheTransform
+
 
 __all__ = ['SisypheIdentity',
            'SisypheAcquisition',
@@ -36,96 +44,35 @@ __all__ = ['SisypheIdentity',
            'SisypheACPC']
 
 """
-    Classes hierarchy
-    
-        object -> SisypheIdentity
-                  SisypheAcquisition
-                  SisypheDisplay
-                  SisypheACPC  
+Class hierarchy
+~~~~~~~~~~~~~~~
+
+    - object -> SisypheIdentity
+             -> SisypheAcquisition
+             -> SisypheDisplay
+             -> SisypheACPC
 """
 
-listFloat3 = list[float, float, float]
 tupleFloat3 = tuple[float, float, float]
 
 
 class SisypheIdentity(object):
     """
-        SisypheIdentity class
+    Description
+    ~~~~~~~~~~~
 
-            Class to manage patient identity attributes.
+    Class to manage patient identity attributes: lastname, firstname, gender and date of Birth.
 
-        Inheritance
+    This class is usually an attribute of the Sisyphe.core.sisypheVolume.SisypheVolume class (identity property or
+    getIdentity() method).
 
-            object -> SisypheIdentity
+    Inheritance
+    ~~~~~~~~~~~
 
-        Private attributes
+    object -> SisypheIdentity
 
-            _lastname           str
-            _firstname          str
-            _gender             int
-            _dateofbirthday     date
-            _parent             parent instance
-
-        Class method
-
-            getFileExt() -> str
-            getFilterExt() -> str
-            getDefaultDate() -> datetime.date
-
-        Public methods
-
-            __init__(firstname: str = '',
-                     lastname: str = '',
-                     gender: int = 0,
-                     dob: date,
-                     parent: Sisyphe.sisypheVolume.SisypheVolume | None = None)
-            __repr__() -> str
-            __str__() -> str
-            __contains__(buff: str | int | date) -> bool
-            __lt__(other: SisypheIdentity) -> bool
-            __le__(other: SisypheIdentity) -> bool
-            __eq__(other: SisypheIdentity) -> bool
-            __ne__(other: SisypheIdentity) -> bool
-            __gt__(other: SisypheIdentity) -> bool
-            __ge__(other: SisypheIdentity) -> bool
-            hasParent() -> bool
-            setParent(parent: Sisyphe.sisypheVolume.SisypheVolume)
-            getParent() -> Sisyphe.sisypheVolume.SisypheVolume
-            getFirstname() -> str
-            setFirstname(buff: str)
-            getLastname() -> str
-            getLastname(buff: str)
-            getDateOfBirthday(string: bool = True, f: str = '%Y-%m-%d') -> str | datetime.date
-            setDateOfBirthday(buff: str | datetime.date | None = None, f: str = '%Y-%m-%d')
-            getGender(string: bool = True) -> int | str
-            setGender(v: int | str)
-            setGenderToMale()
-            setGenderToFemale()
-            setGenderToUnknown()
-            anonymize()
-            isAnonymized() -> bool
-            isEqual(buff: SisypheIdentity) -> bool
-            isNotEqual(buff: SisypheIdentity) -> bool
-            copyFrom(buff: SisypheIdentity | Sisyphe.sisypheVolume.SisypheVolume)
-            copy() -> SisypheIdentity
-            getAge() -> int
-            getAgeOn(d: date) -> int
-            isYounger(buff: SisypheIdentity | date | int | float) -> bool
-            isOlder(buff: SisypheIdentity | date | int | float) -> bool
-            isMale() -> bool
-            isFemale() -> bool
-            saveToTxt(filename: str)
-            loadFromTxt(filename: str)
-            parseXML(minidom.Document)
-            createXML(doc: minidom.Document, currentnode: minidom.Element)
-            saveToXML(filename: str)
-            loadFromXML(filename: str)
-
-        Creation: 17/01/2020
-        Revision:
-
-            29/08/2023  type hinting
-            17/11/2023  docstrings
+    Creation: 17/01/2020
+    Last revision: 05/11/2024
     """
     __slots__ = ['_firstname', '_lastname', '_gender', '_dateofbirthday', '_parent']
 
@@ -141,48 +88,72 @@ class SisypheIdentity(object):
     @classmethod
     def getFileExt(cls) -> str:
         """
-            Get SisypheIdentity file extension.
+        Get SisypheIdentity file extension.
 
-            return  str, '.xidentity'
+        Returns
+        -------
+        str
+            '.xidentity'
         """
         return cls._FILEEXT
 
     @classmethod
     def getFilterExt(cls) -> str:
         """
-            Get SisypheIdentity filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().
+        Get SisypheIdentity filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().
 
-            return  str, 'PySisyphe Identity (*.xidentity)'
+        Returns
+        -------
+        str
+            'PySisyphe Identity (.xidentity)'
         """
         return 'PySisyphe Identity (*{})'.format(cls._FILEEXT)
 
     @classmethod
     def getDefaultDate(cls) -> date:
         """
-            Get default date 01/01/2000
+        Get default date 01/01/2000.
 
-            return  datetime.date, datetime.date(1, 1, 2000)
+        Returns
+        -------
+        datetime.date
+            datetime.date(1, 1, 2000)
         """
         return cls._DEFAULTDATE
 
     # Special methods
+
+    """
+    Private attributes
+
+    _lastname           str
+    _firstname          str
+    _gender             int
+    _dateofbirthday     date
+    _parent             parent instance
+    """
 
     def __init__(self,
                  firstname: str = '',
                  lastname: str = '',
                  gender: int = 0,
                  dob: date = _DEFAULTDATE,
-                 parent: sc.sisypheVolume.SisypheVolume | None = None) -> None:
+                 parent: SisypheVolume | None = None) -> None:
         """
-            SisypheIdentity instance constructor
+        SisypheIdentity instance constructor
 
-            Parameters
-
-                firstname   str, patient firstname
-                lastname    str, patient lastname
-                gender      int, patient gender code (0 unknown, 1 male, 2 female)
-                dob         datetime.date, patient birthdate
-                parent      Sisyphe.sisypheVolume.SisypheVolume | None
+        Parameters
+        ----------
+        firstname : str
+            patient firstname
+        lastname : str
+            patient lastname
+        gender : int
+            patient gender code (0 unknown, 1 male, 2 female)
+        dob : datetime.date
+            patient birthdate
+        parent : Sisyphe.core.sisypheVolume.SisypheVolume | None
+            default None
         """
         self._firstname = firstname.title()
         self._lastname = lastname.title()
@@ -192,10 +163,13 @@ class SisypheIdentity(object):
 
     def __str__(self) -> str:
         """
-             Special overloaded method called by the built-in str() python function.
+        Special overloaded method called by the built-in str() python function.
 
-             return  str, conversion of SisypheIdentity instance to str
-         """
+        Returns
+        -------
+        str
+            conversion of SisypheIdentity instance to str
+        """
         return 'Identity:\n' \
                '\tLastname: {}\n' \
                '\tFirstname: {}\n' \
@@ -205,25 +179,32 @@ class SisypheIdentity(object):
 
     def __repr__(self) -> str:
         """
-            Special overloaded method called by the built-in repr() python function.
+        Special overloaded method called by the built-in repr() python function.
 
-            return  str, SisypheIdentity instance representation
+        Returns
+        -------
+        str
+            SisypheIdentity instance representation
         """
         return '{} class instance at <{}>\n'.format(self.__class__.__name__,
                                                     str(id(self)))
 
     def __contains__(self, buff: str | int | date) -> bool:
         """
-            Special overloaded container method called by the built-in 'in' python operator.
-            Checks whether buff parameter is in SisypheIdentity instance.
+        Special overloaded container method called by the built-in 'in' python operator. Checks whether buff parameter
+        is in SisypheIdentity instance.
 
-            Parameter
+        Parameters
+        ----------
+        buff : str | int | date
+            - if str, test firstname, lastname
+            - if int, test gender (0 unknown, 1 male, 2 female)
+            - if date, test birthdate
 
-                key     str,    firstname, lastname
-                        | int,  gender
-                        | date, birthdate
-
-            return  bool, True if buff parameter is in SisypheIdentity instance
+        Returns
+        -------
+        bool
+            True if buff parameter is in SisypheIdentity instance
         """
         return self._firstname == buff or self._lastname == buff or \
                self._gender == buff or self._dateofbirthday == buff
@@ -232,15 +213,18 @@ class SisypheIdentity(object):
 
     def __lt__(self, other: SisypheIdentity) -> bool:
         """
-            Special overloaded relational operator <.
-            Attribute comparison order: lastname, firstname, birthdate, gender
-            self < other -> bool
+        Special overloaded relational operator <. Attribute comparison order: lastname, firstname, birthdate, gender.
+        self < other -> bool
 
-            Parameter
+        Parameters
+        ----------
+        other : SisypheIdentity
+            second operand of < operator
 
-                other   SisypheIdentity
-
-            return  bool
+        Returns
+        -------
+        bool
+            result = self < other
         """
         if isinstance(other, SisypheIdentity):
             strself = self._lastname + self._firstname + str(self._dateofbirthday) + self.getGender(True)
@@ -250,15 +234,18 @@ class SisypheIdentity(object):
 
     def __le__(self, other: SisypheIdentity) -> bool:
         """
-            Special overloaded relational operator <=.
-            Attribute comparison order: lastname, firstname, birthdate, gender
-            self <= other -> bool
+        Special overloaded relational operator <=. Attribute comparison order: lastname, firstname, birthdate, gender.
+        self <= other -> bool
 
-            Parameter
+        Parameters
+        ----------
+        other : SisypheIdentity
+            second operand of <= operator
 
-                other   SisypheIdentity
-
-            return  bool
+        Returns
+        -------
+        bool
+            result = self <= other
         """
         if isinstance(other, SisypheIdentity):
             strself = self._lastname + self._firstname + str(self._dateofbirthday) + self.getGender(True)
@@ -268,43 +255,52 @@ class SisypheIdentity(object):
 
     def __eq__(self, other: SisypheIdentity) -> bool:
         """
-            Special overloaded relational operator ==.
-            Attribute comparison order: lastname, firstname, birthdate, gender
-            self == other -> bool
+        Special overloaded relational operator ==. Attribute comparison order: lastname, firstname, birthdate, gender.
+        self == other -> bool
 
-            Parameter
+        Parameters
+        ----------
+        other : SisypheIdentity
+            second operand of == operator
 
-                other   SisypheIdentity
-
-            return  bool
+        Returns
+        -------
+        bool
+            result = self == other
         """
         return self.isEqual(other)
 
     def __ne__(self, other: SisypheIdentity) -> bool:
         """
-            Special overloaded relational operator !=.
-            Attribute comparison order: lastname, firstname, birthdate, gender
-            self != other -> bool
+        Special overloaded relational operator !=. Attribute comparison order: lastname, firstname, birthdate, gender.
+        self != other -> bool
 
-            Parameter
+        Parameters
+        ----------
+        other : SisypheIdentity
+            second operand of != operator
 
-                other   SisypheIdentity
-
-            return  bool
+        Returns
+        -------
+        bool
+            result = self != other
         """
         return not self.isEqual(other)
 
     def __gt__(self, other: SisypheIdentity) -> bool:
         """
-            Special overloaded relational operator >.
-            Attribute comparison order: lastname, firstname, birthdate, gender
-            self > other -> bool
+        Special overloaded relational operator >. Attribute comparison order: lastname, firstname, birthdate, gender.
+        self > other -> bool
 
-            Parameter
+        Parameters
+        ----------
+        other : SisypheIdentity
+            second operand of > operator
 
-                other   SisypheIdentity
-
-            return  bool
+        Returns
+        -------
+        bool
+            result = self > other
         """
         if isinstance(other, SisypheIdentity):
             strself = self._lastname + self._firstname + str(self._dateofbirthday) + self.getGender(True)
@@ -314,15 +310,18 @@ class SisypheIdentity(object):
 
     def __ge__(self, other: SisypheIdentity) -> bool:
         """
-            Special overloaded relational operator >=.
-            Attribute comparison order: lastname, firstname, birthdate, gender
-            self >=other -> bool
+        Special overloaded relational operator >=. Attribute comparison order: lastname, firstname, birthdate, gender.
+        self >=other -> bool
 
-            Parameter
+        Parameters
+        ----------
+        other : SisypheIdentity
+            second operand of >= operator
 
-                other   SisypheIdentity
-
-            return  bool
+        Returns
+        -------
+        bool
+            result = self >= other
         """
         if isinstance(other, SisypheIdentity):
             strself = self._lastname + self._firstname + str(self._dateofbirthday) + self.getGender(True)
@@ -334,93 +333,114 @@ class SisypheIdentity(object):
 
     def hasParent(self) -> bool:
         """
-            Check whether current SisypheIdentity instance has a parent,
-            i.e. parent attribute is not None.
+        Check whether current SisypheIdentity instance has a parent (Sisyphe.core.sisypheVolume.SisypheVolume instance),
+        i.e. parent attribute is not None.
 
-            return  bool, True if current SisypheIdentity is defined (not None)
+        Returns
+        -------
+        bool
+            True if current SisypheIdentity has parent
         """
         return self._parent is not None
 
-    def setParent(self, parent: sc.sisypheVolume.SisypheVolume) -> None:
+    def setParent(self, parent: SisypheVolume) -> None:
         """
-            Set parent of the current SisypheIdentity instance.
+        Set parent of the current SisypheIdentity instance.
 
-            Parameter
-
-                parent  Sisyphe.sisypheVolume.SisypheVolume
+        Parameters
+        ----------
+        parent : Sisyphe.core.sisypheVolume.SisypheVolume
+            Sisyphe.core.sisypheVolume.SisypheVolume parent
         """
-        if isinstance(parent, sc.sisypheVolume.SisypheVolume): self._parent = parent
+        from Sisyphe.core.sisypheVolume import SisypheVolume
+        if isinstance(parent, SisypheVolume): self._parent = parent
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(parent)))
 
-    def getParent(self) -> sc.sisypheVolume.SisypheVolume:
+    def getParent(self) -> SisypheVolume:
         """
-            Get parent of the current SisypheIdentity instance.
+        Get parent of the current SisypheIdentity instance.
 
-            return  Sisyphe.sisypheVolume.SisypheVolume
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            Sisyphe.core.sisypheVolume.SisypheVolume parent
         """
         return self._parent
 
     def getFirstname(self) -> str:
         """
-            Get firstname attribute of the current SisypheIdentity instance.
+        Get firstname attribute of the current SisypheIdentity instance.
 
-            return  str, patient firstname
+        Returns
+        -------
+        str
+            patient firstname
         """
         return self._firstname
 
     def setFirstname(self, buff: str) -> None:
         """
-            Set firstname attribute of the current SisypheIdentity instance.
+        Set firstname attribute of the current SisypheIdentity instance.
 
-            parameter
-
-                buff    str, patient firstname
+        Parameters
+        ----------
+        buff : str
+            patient firstname
         """
         self._firstname = buff.title()
 
     def getLastname(self) -> str:
         """
-            Get lastname attribute of the current SisypheIdentity instance.
+        Get lastname attribute of the current SisypheIdentity instance.
 
-            return  str, patient lastname
+        Returns
+        -------
+        str
+            patient lastname
         """
         return self._lastname
 
     def setLastname(self, buff: str) -> None:
         """
-            Set lastname attribute of the current SisypheIdentity instance.
+        Set lastname attribute of the current SisypheIdentity instance.
 
-            parameter
-
-                buff    str, patient lastname
+        Parameters
+        ----------
+        buff : str
+            patient lastname
         """
         self._lastname = buff.title()
 
     def getDateOfBirthday(self, string: bool = True, f: str = '%Y-%m-%d') -> str | date:
         """
-            Get birthdate attribute of the current SisypheIdentity instance.
+        Get birthdate attribute of the current SisypheIdentity instance.
 
-            parameters
+        Parameters
+        ----------
+        string : bool
+            - if True return patient birthdate as str
+            - if False return patient birthdate as datetime.date
+        f : str
+            format used to convert date to str (default '%Y-%m-%d')
 
-                string  bool, if True return patient birthdate as str
-                              if False return patient birthdate as datetime.date
-                f       str, format used to convert date to str (default '%Y-%m-%d')
-
-            return  str,                patient birthdate as str
-                    | datetime.date,    patient birthdate as datetime.date
+        Returns
+        -------
+        str | datetime.date
+            patient birthdate as str or datetime.date
         """
         if string: return self._dateofbirthday.strftime(f)
         else: return self._dateofbirthday
 
     def setDateOfBirthday(self, buff: str | date | None = None, f: str = '%Y-%m-%d') -> None:
         """
-            Set birthdate attribute of the current SisypheIdentity instance.
+        Set birthdate attribute of the current SisypheIdentity instance.
 
-            parameters
-
-                buff  str,                patient birthdate as str
-                      | datetime.date,    patient birthdate as datetime.date
-                f     str, format used to convert date to str (default '%Y-%m-%d')
+        Parameters
+        ----------
+        buff : str | datetime.date | None
+            patient birthdate as str or datetime.date, if None set default date
+        f : str
+            format used to convert date to str (default '%Y-%m-%d')
         """
         if isinstance(buff, str): self._dateofbirthday = datetime.strptime(buff, f).date()
         elif isinstance(buff, date): self._dateofbirthday = buff
@@ -428,27 +448,30 @@ class SisypheIdentity(object):
 
     def getGender(self, string: bool = True) -> int | str:
         """
-            Get gender attribute of the current SisypheIdentity instance.
+        Get gender attribute of the current SisypheIdentity instance.
 
-            parameter
+        Parameters
+        ----------
+        string : bool
+            - if True return gender as str ('Unknown', 'Male', 'Female')
+            - if False return gender as int code (0 Unknown, 1 Male, 2 Female)
 
-                string  bool, if True return gender as str ('Unknown', 'Male', 'Female')
-                              if False return gender as int code (0 Unknown, 1 Male, 2 Female)
-
-            return  str,    patient gender ('Unknown', 'Male', 'Female')
-                    | int,  patient gender code (0 Unknown, 1 Male, 2 Female)
+        Returns
+        -------
+        str | int
+            patient gender as str ('Unknown', 'Male', 'Female') or int code (0 Unknown, 1 Male, 2 Female)
         """
         if string: return SisypheIdentity._CODETOGENDER[self._gender]
         else: return self._gender
 
     def setGender(self, v: int | str) -> None:
         """
-            Set gender attribute of the current SisypheIdentity instance.
+        Set gender attribute of the current SisypheIdentity instance.
 
-            parameter
-
-                v  str,    patient gender str ('Unknown', 'Male', 'Female')
-                   | int,  patient gender code (0 Unknown, 1 Male, 2 Female)
+        Parameters
+        ----------
+        v : str | int
+            patient gender as str ('Unknown', 'Male', 'Female') or int code (0 Unknown, 1 Male, 2 Female)
         """
         if isinstance(v, str):
             if v in self._GENDERTOCODE:
@@ -462,28 +485,29 @@ class SisypheIdentity(object):
 
     def setGenderToMale(self) -> None:
         """
-            Set gender attribute of the current SisypheIdentity instance to male.
+        Set gender attribute of the current SisypheIdentity instance to male.
         """
         self._gender = self._GENDERTOCODE['Male']
 
     def setGenderToFemale(self) -> None:
         """
-            Set gender attribute of the current SisypheIdentity instance to female.
+        Set gender attribute of the current SisypheIdentity instance to female.
         """
         self._gender = self._GENDERTOCODE['Female']
 
     def setGenderToUnknown(self) -> None:
         """
-            Set gender attribute of the current SisypheIdentity instance to unknown.
+        Set gender attribute of the current SisypheIdentity instance to unknown.
         """
         self._gender = self._GENDERTOCODE['Unknown']
 
     def anonymize(self) -> None:
         """
-            Anonymize identity attributes of the current SisypheIdentity instance.
-            Set lastname and firstname to empty str ('')
-            Set gender code to 0
-            Set birthdate to default date i.e. datetime.date(1, 1, 2000)
+        Anonymize identity attributes of the current SisypheIdentity instance.
+
+            - Set lastname and firstname to empty str ('')
+            - Set gender code to 0
+            - Set birthdate to default date i.e. datetime.date(1, 1, 2000)
         """
         self._firstname = ''
         self._lastname = ''
@@ -492,25 +516,30 @@ class SisypheIdentity(object):
 
     def isAnonymized(self) -> bool:
         """
-            Check whether identity attributes of the
-            current SisypheIdentity instance are anonymized.
+        Check whether identity attributes of the current SisypheIdentity instance are anonymized.
 
-            return  bool, True if identity attributes are anonymized
+        Returns
+        -------
+        bool
+            True if identity attributes are anonymized
         """
         return self._firstname == '' and self._lastname == '' and \
                self._gender == 0 and self._dateofbirthday == SisypheIdentity._DEFAULTDATE
 
     def isEqual(self, buff: SisypheIdentity) -> bool:
         """
-            Check that the attributes of the SisypheIdentity parameter are equal
-            to those of the current SisypheIdentity instance.
-            Attribute comparison order: lastname, firstname, birthdate, gender
+        Check that the attributes of the SisypheIdentity parameter are equal to those of the current SisypheIdentity
+        instance. Attribute comparison order: lastname, firstname, birthdate, gender
 
-            Parameter
+        Parameters
+        ----------
+        buff : SisypheIdentity
+            identity to compare
 
-                buff    SisypheIdentity
-
-            return  bool
+        Returns
+        -------
+        bool
+            True if same identity
         """
         if isinstance(buff, SisypheIdentity):
             return self._firstname == buff._firstname and self._lastname == buff._lastname and \
@@ -519,26 +548,29 @@ class SisypheIdentity(object):
 
     def isNotEqual(self, buff: SisypheIdentity) -> bool:
         """
-            Check that the attributes of the SisypheIdentity parameter are not equal
-            to those of the current SisypheIdentity instance.
-            Attribute comparison order: lastname, firstname, birthdate, gender
+        Check that the attributes of the SisypheIdentity parameter are not equal to those of the current
+        SisypheIdentity instance. Attribute comparison order: lastname, firstname, birthdate, gender
 
-            Parameter
+        Parameters
+        ----------
+        buff : SisypheIdentity
+            identity to compare
 
-                buff    SisypheIdentity
-
-            return  bool
+        Returns
+        -------
+        bool
+            True if different identity
         """
         return not self.isEqual(buff)
 
-    def copyFrom(self, buff: SisypheIdentity | sc.sisypheVolume.SisypheVolume) -> None:
+    def copyFrom(self, buff: SisypheIdentity | SisypheVolume) -> None:
         """
-            Copy attributes of the identity parameter to
-            the current SisypheIdentity instance (deep copy).
+        Copy attributes of the identity parameter to the current SisypheIdentity instance (deep copy).
 
-            Parameter
-
-                buff    SisypheIdentity | Sisyphe.sisypheVolume.SisypheVolume
+        Parameters
+        ----------
+        buff : SisypheIdentity | Sisyphe.core.sisypheVolume.SisypheVolume
+            identity to copy
         """
         from Sisyphe.core.sisypheVolume import SisypheVolume
         if isinstance(buff, SisypheVolume):
@@ -552,48 +584,83 @@ class SisypheIdentity(object):
 
     def copy(self) -> SisypheIdentity:
         """
-            Copy the current SisypheIdentity instance (deep copy).
+        Copy the current SisypheIdentity instance (deep copy).
 
-            return   SisypheIdentity
+        Returns
+        -------
+        SisypheIdentity
+            identity copy
         """
         return deepcopy(self)
 
     def getAge(self) -> int:
         """
-            Get age as of today's date
+        Get age as of today's date.
 
-            return  int, patient age
+        Returns
+        -------
+        int
+            patient age
         """
         delta = date.today() - self._dateofbirthday
         return int(delta.days / 365)
 
-    def getAgeOn(self, d: date) -> int:
+    def getAgeAt(self, d: date) -> int:
         """
-            Get age on a given date.
+        Get age at a given date.
 
-            Parameter
+        Parameters
+        ----------
+        d : datetime.date
 
-                d   datetime.date
-
-            return  int, patient age
+        Returns
+        -------
+        int
+            patient age
         """
         delta = d - self._dateofbirthday
         return int(delta.days / 365)
 
+    # < Revision 05/11/2024
+    # add setAge method
+    def setAge(self, age: int, acqdate: date | str | None = None, f: str = '%Y-%m-%d') -> None:
+        """
+        Set birthdate of the current SisypheIdentity instance using an age parameter (in years).
+
+        Parameters
+        ----------
+        age : int
+            age to be set
+        acqdate : datetime.date | str | None
+           acquisition date, today by default if None
+        f : str
+            date format used for acquisition date conversion if given as str (default 'YYYY-MM-DD')
+        """
+        if self.hasParent():
+            if acqdate is None: self.getParent().acquisition.setDateOfScan()
+            else:
+                if isinstance(acqdate, str):
+                    acqdate = datetime.strptime(acqdate, f).date()
+                if isinstance(acqdate, date):
+                    self.getParent().acquisition.setDateOfScan(acqdate)
+                else: raise TypeError('Type of acquisition date parameter {} is not date or str.'.format(type(acqdate)))
+            self.setDateOfBirthday(date.today() - timedelta(days=365 * age))
+    # Revision 05/11/2024 >
+
     def isYounger(self, buff: SisypheIdentity | date | int | float) -> bool:
         """
-            Check whether current SisypheIdentity instance
-            age calculated from birthdate attribute is younger
-            than age calculated from parameter.
+        Check whether current SisypheIdentity instance age calculated from birthdate attribute is younger than age
+        calculated from parameter.
 
-            Parameter
+        Parameters
+        ----------
+        buff : SisypheIdentity | datetime.date | int | float
+            birthdate
 
-                buff    SisypheIdentity
-                        | datetime.date, birthdate
-                        | int, age in years
-                        | float, age in years
-
-            return  bool, True if younger
+        Returns
+        -------
+        bool
+            True if younger
         """
         if isinstance(buff, SisypheIdentity): return self._dateofbirthday > buff._dateofbirthday
         elif isinstance(buff, date): return self._dateofbirthday > buff
@@ -602,18 +669,18 @@ class SisypheIdentity(object):
 
     def isOlder(self, buff: SisypheIdentity | date | int | float) -> bool:
         """
-            Check whether current SisypheIdentity instance
-            age calculated from birthdate attribute is older
-            than age calculated from parameter.
+        Check whether current SisypheIdentity instance age calculated from birthdate attribute is younger than age
+        calculated from parameter.
 
-            Parameter
+        Parameters
+        ----------
+        buff : SisypheIdentity | datetime.date | int | float
+            birthdate
 
-                buff    SisypheIdentity
-                        | datetime.date, birthdate
-                        | int, age in years
-                        | float, age in years
-
-            return  bool, True if older
+        Returns
+        -------
+        bool
+            True if older
         """
         if isinstance(buff, SisypheIdentity): return self._dateofbirthday < buff._dateofbirthday
         elif isinstance(buff, date): return self._dateofbirthday < buff
@@ -622,27 +689,34 @@ class SisypheIdentity(object):
 
     def isMale(self) -> bool:
         """
-            Check whether current SisypheIdentity instance gender attribute is male.
+        Check whether current SisypheIdentity instance gender attribute is male.
 
-            return  bool, True if patient is male
+        Returns
+        -------
+        bool
+            True if patient is male
         """
         return self._gender == SisypheIdentity._GENDERTOCODE['Male']
 
     def isFemale(self) -> bool:
         """
-            Check whether current SisypheIdentity instance gender attribute is female.
+        Check whether current SisypheIdentity instance gender attribute is female.
 
-            return  bool, True if patient is female
+        Returns
+        -------
+        bool
+            True if patient is female
         """
         return self._gender == SisypheIdentity._GENDERTOCODE['Female']
 
     def saveToTxt(self, filename: str) -> None:
         """
-            Save current SisypheIdentity instance to text file (*.txt).
+        Save current SisypheIdentity instance to text file (.txt).
 
-            Parameter
-
-                filename    str, text file name
+        Parameters
+        ----------
+        filename : str
+            text file name
         """
         path, ext = splitext(filename)
         if ext.lower() != '.txt':
@@ -657,11 +731,12 @@ class SisypheIdentity(object):
 
     def loadFromTxt(self, filename: str) -> None:
         """
-            Load current SisypheIdentity instance attributes from text file (*.txt).
+        Load current SisypheIdentity instance attributes from text file (.txt).
 
-            Parameter
-
-                filename    str, text file name
+        Parameters
+        ----------
+        filename : str
+            text file name
         """
         path, ext = splitext(filename)
         if ext.lower() != '.txt':
@@ -683,12 +758,14 @@ class SisypheIdentity(object):
 
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
-            Write current SisypheIdentity instance attributes to xml instance.
+        Write current SisypheIdentity instance attributes to xml instance.
 
-            Parameter
-
-                doc             minidom.Document, xml document
-                currentnode     minidom.Element, xml root node
+        Parameters
+        ----------
+        doc : minidom.Document
+            xml document
+        currentnode : minidom.Element
+            xml root node
         """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):
@@ -719,11 +796,12 @@ class SisypheIdentity(object):
 
     def parseXML(self, doc: minidom.Document) -> None:
         """
-            Read current SisypheIdentity instance attributes from xml instance.
+        Read current SisypheIdentity instance attributes from xml instance.
 
-            Parameter
-
-                doc             minidom.Document, xml document
+        Parameters
+        ----------
+        doc : minidom.Document
+            xml document
         """
         if isinstance(doc, minidom.Document):
             ident = doc.getElementsByTagName('identity')
@@ -744,11 +822,12 @@ class SisypheIdentity(object):
 
     def saveToXML(self, filename: str) -> None:
         """
-            Save current SisypheIdentity instance attributes to xml file (*.xidentity).
+        Save current SisypheIdentity instance attributes to xml file (.xidentity).
 
-            Parameter
-
-                filename    str, xml file name (*.xidentity)
+        Parameters
+        ----------
+        filename : str
+            xml file name (.xidentity)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -769,11 +848,12 @@ class SisypheIdentity(object):
 
     def loadFromXML(self, filename: str) -> None:
         """
-            Load current SisypheIdentity instance attributes from xml file (*.xidentity).
+        Load current SisypheIdentity instance attributes from xml file (.xidentity).
 
-            Parameter
-
-                filename    str, xml file name (*.xidentity)
+        Parameters
+        ----------
+        filename : str
+            xml file name (.xidentity)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -789,243 +869,75 @@ class SisypheIdentity(object):
 
 class SisypheAcquisition(object):
     """
-        SisypheAcquisition class
+    Description
+    ~~~~~~~~~~~
 
-        Description
+    Class to manage acquisition attributes of images: modality, sequence, date of scan, frame, scalar value unit,
+    labels for LB modality, degrees of freedom and autocorrelation for statistical map sequences.
 
-            Class to manage acquisition attributes of images : modality, sequence, date of scan, frame,
-            units of scalar values, labels for LB modality, degrees of freedom and autocorrelation for
-            statistical map sequences.
+    This class is usually an attribute of the Sisyphe.core.sisypheVolume.SisypheVolume class (acquisition property or
+    getAcquisition() method).
 
-        Inheritance
+    Inheritance
+    ~~~~~~~~~~~
 
-            object -> SisypheIdentity
+    object -> SisypheIdentity
 
-        Private attributes
-
-            _modality       int, modality code
-            _sequence       str, sequence description
-            _dateofscan     date, acquisition date
-            _frame          int, stereotactic frame code
-            _unit           str, signal unit
-            _labels         dict(), dict of labels for LB modality
-            _df             int, degrees of freedom (tmap and zmap)
-            _autocorrx      float, spatial autocorrelations, x-axis (mm)
-            _autocorry      float, spatial autocorrelations, y-axis (mm)
-            _autocorrz      float, spatial autocorrelations, z-axis (mm)
-            _parent         parent instance
-
-        Class method
-
-            sgetFileExt() -> str
-            getFilterExt() -> str
-            getLabelsFileExt() -> str
-            getLabelsFilterExt() -> str
-            getCodeToModalityDict() -> dict
-            getModalityToCode() -> dict
-            getOTModalityTag() -> str
-            getMRModalityTag() -> str
-            getCTModalityTag() -> str
-            getPTModalityTag() -> str
-            getNMModalityTag() -> str
-            getLBModalityTag() -> str
-            getTPModalityTag() -> str
-            getOTSequences() -> tuple[str, ...]
-            getPTSequences() -> tuple[str, ...]
-            getMRSequences() -> tuple[str, ...]
-            getCTSequences() -> tuple[str, ...]
-            getNMSequences() -> tuple[str, ...]
-            getFrameList() -> tuple[str, ...]
-            getUnitList() -> tuple[str, ...]
-            getTemplatesList() -> tuple[str, ...]
-
-        Public methods
-
-            __init__(modality: int = 0,
-                     sequence: str = '',
-                     d: date = date.today(),
-                     unit: str = 'No',
-                     parent: Sisyphe.sisypheVolume.SisypheVolume | None = None)
-            __repr__() -> str
-            __str__() -> str
-            __contains__(buff: str) -> bool
-            __eq__(other: SisypheAcquisition) -> bool
-            __ne__(other: SisypheAcquisition) -> bool
-            hasParent() -> bool
-            setParent(Sisyphe.sisypheVolume.SisypheVolume)
-            getParent() -> Sisyphe.sisypheVolume.SisypheVolume
-            is3D() -> bool
-            is2D() -> bool
-            set2D()
-            set3D()
-            setType(v: str)
-            getType() -> str
-            getModality(string: bool = True) -> str | int
-            setModality(buff: int | str)
-            setModalityToMR()
-            setModalityToCT()
-            setModalityToPT()
-            setModalityToNM()
-            setModalityToOT()
-            setModalityToLB()
-            selLabel(index: int, value: str)
-            getLabel(index: float | int) -> str
-            hasLabels() -> bool
-            getLabels() -> dict[int, str]
-            loadLabels()
-            saveLabels()
-            isMR() -> bool
-            isCT() -> bool
-            isPT() -> bool
-            isNM() -> bool
-            isOT() -> bool
-            isLB() -> bool
-            isTP() -> bool
-            setDegreesOfFreedom(v: int)
-            getDegreesOfFreedom() -> int
-            setAutoCorrelations(v: listFloat3 | tupleFloat3)
-            getAutoCorrelations() -> tupleFloat3
-            setSequenceToTMap()
-            setSequenceToZMap()
-            setSequenceToGrayMatterMap()
-            setSequenceToWhiteMatterMap()
-            setSequenceToCerebroSpinalFluidMap()
-            setSequenceToCorticalThicknessMap()
-            setSequenceToCerebralBloodFlowMap()
-            setSequenceToCerebralBloodVolumeMap()
-            setSequenceToMeanTransitTimeMap()
-            setSequenceToTimeToPicMap()
-            setSequenceToDoseMap()
-            setSequenceToFractionalAnisotropyMap()
-            setSequenceToApparentDiffusionMap()
-            setSequenceToDensityMap()
-            setSequenceToBiasFieldMap()
-            setSequenceToMeanMap()
-            setSequenceToMedianMap()
-            setSequenceToMinimumMap()
-            setSequenceToMaximumMap()
-            setSequenceToStandardDeviationMap()
-            setSequenceToAlgebraMap()
-            setSequenceToMask()
-            setSequenceToDisplacementField()
-            setSequenceToLabels()
-            setSequenceToProbabilityMap()
-            setSequenceToT1Weighted()
-            setSequenceToT2Weighted()
-            setSequenceToT2Star()
-            setSequenceToProtonDensityWeighted()
-            setSequenceToFLAIR()
-            setSequenceToContrastEnhancedT1()
-            setSequenceToContrastEnhancedT2()
-            setSequenceToContrastEnhancedFLAIR()
-            setSequenceToEchoPlanar()
-            setSequenceToDiffusionWeighted()
-            setSequenceToPerfusionWeighted()
-            setSequenceToSusceptibilityWeighted()
-            setSequenceToTimeOfFlight()
-            setSequenceToContrastEnhancedCT()
-            setSequenceToFDG()
-            setSequenceToHMPAO()
-            setSequenceToECD()
-            setSequenceToFPCIT()
-            isStandardSequence() -> bool
-            isCustomSequence() -> bool
-            isDisplacementField() -> bool
-            isContrastEnhanced() -> bool
-            isTMap() -> bool
-            isZMap() -> bool
-            isStatisticalMap() -> bool
-            getSequence() -> str
-            setSequence(buff: str)
-            setNoUnit()
-            setUnitToPercent()
-            setUnitToRatio()
-            setUnitToSecond()
-            setUnitToMillimeter()
-            setUnitToCount()
-            setUnitToBq()
-            setUnitToBqMl()
-            setUnitToSUV()
-            setUnitToADCunit()
-            setUnitToHounsfield()
-            setUnitToGy()
-            setUnitToTValue()
-            setUnitToZScore()
-            setUnitToPValue()
-            setUnit(unit: str)
-            getUnit(self) -> str
-            hasUnit() -> bool
-            isStandardUnit() -> bool
-            isCustomUnit() -> bool
-            getDateOfScan(string: bool = True, f: str = '%Y-%m-%d') -> str | date
-            setDateOfScan(buff: str | date = datetime.today(), f: str = '%Y-%m-%d')
-            getFrame() -> int
-            getFrameAsString() -> str
-            setFrame(v: int)
-            setFrameAsString(v: str)
-            setFrameToUnknown()
-            setFrameToNo()
-            setFrameToLeksell()
-            isCustomSequence() -> bool
-            copyFrom(buff: SisypheAcquisition | sc.sisypheVolume.SisypheVolume)
-            copy() -> SisypheAcquisition
-            isICBM152() -> bool
-            isICBM452() -> bool
-            isATROPOS() -> bool
-            isSRI24() -> bool
-            isEqual(buff: SisypheAcquisition) -> bool
-            isNotEqual(buff: SisypheAcquisition) -> bool
-            getAgeAtScanDate(dateofbirthday: str | SisypheIdentity | date, f: str = '%Y-%m-%d') -> int
-            parseXML(doc: minidom.Document)
-            createXML(doc:  minidom.Document, currentnode: minidom.Element)
-            saveToXML(filename: str)
-            loadFromXML(filename: str)
-
-        Creation: 16/03/2021
-        Revisions:
-
-            02/10/2022  add LB (i.e. label) modality and methods
-            16/04/2023  add TP (i.e. template) modality and methods
-            29/08/2023  type hinting
-            19/10/2023  add type attribute ('2D' or '3D')
-            20/10/2023  add sequence and unit class constants
-            18/11/2023  docstrings
+    Creation: 16/03/2021
+    Last revision: 21/02/2025
     """
-    __slots__ = ['_modality', '_sequence', '_type', '_dateofscan', '_frame', '_unit',
-                 '_labels', '_df', '_autocorrx', '_autocorry', '_autocorrz', '_parent']
+    __slots__ = ['_modality', '_sequence', '_type', '_dateofscan', '_frame', '_unit', '_labels',
+                 '_df', '_autocorrx', '_autocorry', '_autocorrz', '_contrast', '_parent']
 
     # Class constants
 
     UK = 'UNKNOWN'
-    CECT = 'CE'
+    CT, CECT = 'CT', 'CE CT'
     FDG = 'FDG'
     HMPAO, ECD, FPCIT = 'HMPAO', 'ECD', 'FPCIT'
-    PMAP, TMAP, ZMAP, GM, WM, CSF, = 'P MAP', 'T MAP', 'Z MAP', 'GM', 'WM', 'CSF'
+    PMAP, TMAP, ZMAP, CMAP = 'P MAP', 'T MAP', 'Z MAP', 'CC MAP',
+    GM, SCGM, WM = 'GREY MATTER', 'SUBCORTICAL GREY MATTER', 'WHITE MATTER'
+    CSF, BSTEM, CRBL = 'CEREBRO-SPINAL FLUID', 'BRAINSTEM', 'CEREBELLUM'
     CBF, CBV, MTT, TTP, DOSE, THICK = 'CBF', 'CBV', 'MTT', 'TTP', 'DOSE', 'CORTICAL THICKNESS'
-    FA, ADC, DENSITY, BIAS = 'FA', 'MD', 'DENSITY', 'BIAS FIELD'
+    FA, ADC, DENSITY, BIAS, DIST = 'FA', 'ADC', 'DENSITY', 'BIAS FIELD', 'DISTANCE MAP'
     MEDIAN, MEAN, MIN, MAX, STD, ALGEBRA = 'MEDIAN', 'MEAN', 'MIN', 'MAX', 'STD', 'ALGEBRA'
-    MASK, FIELD, JAC, LABELS, = 'MASK', 'DISPLACEMENT FIELD', 'JACOBIAN', 'LABELS'
-    T1, T2, T2S, PD, FLAIR, CET1, CET2 = 'T1', 'T2', 'T2*', 'PD', 'FLAIR', 'CE T1', 'CE T2'
-    CEFLAIR, EPI, DWI, PWI, ASL, SWI, TOF = 'CE FLAIR', 'EPI', 'DWI', 'PWI', 'ASL', 'SWI', 'TOF'
+    MASK, STRUCT, FIELD, JAC, LABELS, = 'MASK', 'STRUCT', 'DISPLACEMENT FIELD', 'JACOBIAN', 'LABELS'
+    T1, T2, T2S, PD, FLAIR, CET1, CET2, CETOF = 'T1', 'T2', 'T2*', 'PD', 'FLAIR', 'CE T1', 'CE T2', 'CE TOF',
+    CEFLAIR, EPI, B0, DWI, PWI, ASL, SWI, TOF = 'CE FLAIR', 'EPI', 'B0', 'DWI', 'PWI', 'ASL', 'SWI', 'TOF'
     NOFRAME, LEKSELL = 'NO FRAME', 'LEKSELL'
-    NOUNIT, PERC, RATIO, SEC, MM = 'No unit', '%', 'ratio', 's', 'mm'
+    NOUNIT, PERC, RATIO, SEC, MM = 'None', '%', 'ratio', 's', 'mm'
     COUNT, BQ, BQML, SUV, MM2S, HU, GY = 'Count', 'Bq', 'Bq/ml', 'SUV', 'mm2/s', 'HU', 'Gy'
-    TVAL, ZSCORE, PVAL = 't-value', 'z-score', 'p-value'
+    TVAL, ZSCORE, PVAL, CCVAL = 't-value', 'z-score', 'p-value', 'cc'
 
-    _MODALITYTOCODE = {'OT': 0, 'MR': 1, 'CT': 2, 'PT': 3, 'NM': 4, 'LB': 5, 'TP': 6}
-    _CODETOMODALITY = {0: 'OT', 1: 'MR', 2: 'CT', 3: 'PT', 4: 'NM', 5: 'LB', 6: 'TP'}
-    _OTSEQUENCE = (UK, PMAP, TMAP, ZMAP, GM, WM, CSF, THICK, CBF, CBV,
-                   MTT, TTP, DOSE, FA, ADC, DENSITY, BIAS, MEDIAN, MEAN,
-                   MIN, MAX, STD, ALGEBRA, MASK, LABELS)
-    _MRSEQUENCE = (UK, T1, T2, T2S, PD, FLAIR, CET1, CET2, CEFLAIR, EPI,
-                   DWI, PWI, ASL, SWI, TOF)
-    _CTSEQUENCE = (UK, CECT)
+    """
+    PySisyphe modalities:
+    
+    OT Other modality
+    MR Magnetic Resonance Imaging
+    CT Computed Tomography
+    PT Positron Emission Tomography
+    NM Conventional Nuclear Medicine, Single Photon Emission Computed Tomography
+    LB Label volume
+    TP Template volume (ATROPOS, ICBM152, ICBM425, SRI24)
+    PJ Projection (2D image)
+    """
+
+    _MODALITYTOCODE = {'OT': 0, 'MR': 1, 'CT': 2, 'PT': 3, 'NM': 4, 'LB': 5, 'TP': 6, 'PJ': 7}
+    _CODETOMODALITY = {0: 'OT', 1: 'MR', 2: 'CT', 3: 'PT', 4: 'NM', 5: 'LB', 6: 'TP', 7: 'PJ'}
+    _OTSEQUENCE = (UK, PMAP, TMAP, ZMAP, GM, SCGM, WM, CSF, BSTEM, CRBL, THICK, CBF, CBV,
+                   MTT, TTP, DOSE, FA, ADC, DENSITY, BIAS, DIST, MEDIAN, MEAN, MIN, MAX,
+                   STD, ALGEBRA, MASK, STRUCT, FIELD, JAC, LABELS)
+    _MRSEQUENCE = (UK, T1, T2, T2S, PD, FLAIR, CET1, CET2, CEFLAIR, CETOF, EPI,
+                   B0, DWI, PWI, ASL, SWI, TOF)
+    _CTSEQUENCE = (UK, CT, CECT)
     _PTSEQUENCE = (UK, FDG)
     _NMSEQUENCE = (UK, HMPAO, ECD, FPCIT)
+    _TPSEQUENCE = _OTSEQUENCE + _MRSEQUENCE + _CTSEQUENCE + _PTSEQUENCE + _NMSEQUENCE
+    _PJSEQUENCE = _OTSEQUENCE + _MRSEQUENCE + _CTSEQUENCE + _PTSEQUENCE + _NMSEQUENCE
+    _LBSEQUENCE = LABELS
     _TYPE = ('2D', '3D')
     _FRAME = (UK, NOFRAME, LEKSELL)
-    _UNIT = (NOUNIT, PERC, RATIO, SEC, MM, COUNT, BQ, BQML, SUV, MM2S, HU,
-             GY, TVAL, ZSCORE, PVAL)
+    _UNIT = (NOUNIT, PERC, RATIO, SEC, MM, COUNT, BQ, BQML, SUV, MM2S, HU, GY, TVAL, ZSCORE, PVAL, CCVAL)
     _TEMPLATES = ('ICBM152', 'ICBM452', 'ATROPOS', 'SRI24')
     _FILEEXT = '.xacq'
     _LABELSEXT = '.xlabels'
@@ -1035,210 +947,403 @@ class SisypheAcquisition(object):
     @classmethod
     def getFileExt(cls) -> str:
         """
-            Get SisypheAcquisition file extension.
+        Get SisypheAcquisition file extension.
 
-            return  str, '.xacq'
+        Returns
+        -------
+        str
+            '.xacq'
         """
         return cls._FILEEXT
 
     @classmethod
     def getFilterExt(cls) -> str:
         """
-            Get SisypheAcquisition filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().
+        Get SisypheAcquisition filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().
 
-            return  str, 'PySisyphe Acquisition (*.xacq)'
+        Returns
+        -------
+        str
+            'PySisyphe Acquisition (.xacq)'
         """
         return 'PySisyphe Acquisition (*{})'.format(cls._FILEEXT)
 
     @classmethod
     def getLabelsFileExt(cls) -> str:
         """
-            Get XML labels file extension.
+        Get XML labels file extension.
 
-            return  str, '.xlabels'
+        Returns
+        -------
+        str
+            '.xlabels'
         """
         return cls._LABELSEXT
 
     @classmethod
     def getLabelsFilterExt(cls) -> str:
         """
-            Get XML labels filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().
+        Get XML labels filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().
 
-            return  str, 'PySisyphe Labels (*.xlabels)'
+        Returns
+        -------
+        str
+            'PySisyphe Labels (.xlabels)'
         """
         return 'PySisyphe Labels (*{})'.format(cls._LABELSEXT)
 
     @classmethod
     def getCodeToModalityDict(cls) -> dict[int, str]:
         """
-            Get dict with modality code as key and modality name as value.
+        Get dict with modality code as key and modality name as value.
 
-            return  dict[int, str], {0: 'OT', 1: 'MR', 2: 'CT', 3: 'PT', 4: 'NM', 5: 'LB', 6: 'TP'}
+        Returns
+        -------
+        dict[int, str]
+            {0: 'OT', 1: 'MR', 2: 'CT', 3: 'PT', 4: 'NM', 5: 'LB', 6: 'TP'}
         """
         return cls._CODETOMODALITY
 
     @classmethod
     def getModalityToCodeDict(cls) -> dict[str, int]:
         """
-            Get dict with modality name as key and modality code as value.
+        Get dict with modality name as key and modality code as value.
 
-            return  dict[str, int], {'OT': 0, 'MR': 1, 'CT': 2, 'PT': 3, 'NM': 4, 'LB': 5, 'TP': 6}
+        Returns
+        -------
+        dict[str, int]
+            {'OT': 0, 'MR': 1, 'CT': 2, 'PT': 3, 'NM': 4, 'LB': 5, 'TP': 6}
         """
         return cls._MODALITYTOCODE
 
     @classmethod
     def getOTModalityTag(cls) -> str:
         """
-            Get OT modality str
+        Get OT modality str.
 
-            return  str, OT modality str
+        Returns
+        -------
+        str
+            OT modality str
         """
         return cls._CODETOMODALITY[0]
 
     @classmethod
     def getMRModalityTag(cls) -> str:
         """
-            Get MRI modality str
+        Get MRI modality str.
 
-            return  str, MRI modality str
+        Returns
+        -------
+        str
+            MRI modality str
         """
         return cls._CODETOMODALITY[1]
 
     @classmethod
     def getCTModalityTag(cls) -> str:
         """
-            Get CT-scan modality str
+        Get CT-scan modality str.
 
-            return  str, CT-scan modality str
+        Returns
+        -------
+        str
+            CT-scan modality str
         """
         return cls._CODETOMODALITY[2]
 
     @classmethod
     def getPTModalityTag(cls) -> str:
         """
-            Get PET-scan modality str
+        Get PET-scan modality str.
 
-            return  str, PET-scan modality str
+        Returns
+        -------
+        str
+            PET-scan modality str
         """
         return cls._CODETOMODALITY[3]
 
     @classmethod
     def getNMModalityTag(cls) -> str:
         """
-            Get Nuclear Medicine modality str
+        Get Nuclear Medicine modality str.
 
-            return  str, Nuclear Medicine modality str
+        Returns
+        -------
+        str
+            Nuclear Medicine modality str
         """
         return cls._CODETOMODALITY[4]
 
     @classmethod
     def getLBModalityTag(cls) -> str:
         """
-            Get Label modality str
+        Get Label modality str.
 
-            return  str, Label modality str
+        Returns
+        -------
+        str
+            Label modality str
         """
         return cls._CODETOMODALITY[5]
 
     @classmethod
     def getTPModalityTag(cls) -> str:
         """
-            Get Template modality str
+        Get Template modality str.
 
-            return  str, Template modality str
+        Returns
+        -------
+        str
+            Template modality str
         """
         return cls._CODETOMODALITY[6]
 
     @classmethod
+    def getPJModalityTag(cls) -> str:
+        """
+        Get Template modality str.
+
+        Returns
+        -------
+        str
+            Projection modality str
+        """
+        return cls._CODETOMODALITY[7]
+
+    @classmethod
     def getOTSequences(cls) -> tuple[str, ...]:
         """
-            Get tuple of OT sequence names
+        Get tuple of OT sequence names.
 
-            return  tuple[str, ...], tuple of OT sequence names
+        Returns
+        -------
+        tuple[str, ...]
+            tuple of OT sequence names
         """
         return cls._OTSEQUENCE
 
     @classmethod
     def getMRSequences(cls) -> tuple[str, ...]:
         """
-            Get tuple of MRI sequence names
+        Get tuple of MRI sequence names.
 
-            return  tuple[str, ...], tuple of OT sequence names
+        Returns
+        -------
+        tuple[str, ...]
+            tuple of OT sequence names
         """
         return cls._MRSEQUENCE
 
     @classmethod
     def getCTSequences(cls) -> tuple[str, ...]:
         """
-            Get tuple of CT-scan sequence names
+        Get tuple of CT-scan sequence names.
 
-            return  tuple[str, ...], tuple of CT-scan sequence names
+        Returns
+        -------
+        tuple[str, ...]
+            tuple of CT-scan sequence names
         """
         return cls._CTSEQUENCE
 
     @classmethod
     def getPTSequences(cls) -> tuple[str, ...]:
         """
-            Get tuple of PET radiopharmaceutical names
+        Get tuple of PET radiopharmaceutical names.
 
-            return  tuple[str, ...], tuple of PET radiopharmaceutical names
+        Returns
+        -------
+        tuple[str, ...]
+            tuple of PET radiopharmaceutical names
         """
         return cls._PTSEQUENCE
 
     @classmethod
     def getNMSequences(cls) -> tuple[str, ...]:
         """
-            Get tuple of Nuclear Medicine radiopharmaceutical names
+        Get tuple of Nuclear Medicine radiopharmaceutical names.
 
-            return  tuple[str, ...], tuple of Nuclear Medicine radiopharmaceutical names
+        Returns
+        -------
+        tuple[str, ...]
+            tuple of Nuclear Medicine radiopharmaceutical names
         """
         return cls._NMSEQUENCE
 
     @classmethod
+    def getTPSequences(cls) -> tuple[str, ...]:
+        """
+        Get tuple of template sequence names.
+
+        Returns
+        -------
+        tuple[str, ...]
+            tuple of template sequence names
+        """
+        return cls._TPSEQUENCE
+
+    @classmethod
+    def getLBSequences(cls) -> tuple[str, ...]:
+        """
+        Get tuple of label sequence names.
+
+        Returns
+        -------
+        tuple[str, ...]
+            tuple of label sequence names
+        """
+        return tuple(cls._LBSEQUENCE)
+
+    @classmethod
+    def getPJSequences(cls) -> tuple[str, ...]:
+        """
+        Get tuple of projection sequence names.
+
+        Returns
+        -------
+        tuple[str, ...]
+            tuple of projection sequence names
+        """
+        return cls._PJSEQUENCE
+
+    @classmethod
     def getFrameList(cls) -> tuple[str, ...]:
         """
-            Get tuple of frame names
+        Get tuple of frame names.
 
-            return  tuple[str, ...], tuple frame names
+        Returns
+        -------
+        tuple[str, ...]
+            tuple frame names
         """
         return cls._FRAME
 
     @classmethod
     def getUnitList(cls) -> tuple[str, ...]:
         """
-            Get tuple of units names
+        Get tuple of units names.
 
-            return  tuple[str, ...], tuple units names
+        Returns
+        -------
+        tuple[str, ...]
+            tuple units names
         """
         return cls._UNIT
 
     @classmethod
     def getTemplatesList(cls) -> tuple[str, ...]:
         """
-            Get tuple of template names
+        Get tuple of template names.
 
-            return  tuple[str, ...], tuple template names
+        Returns
+        -------
+        tuple[str, ...]
+            tuple template names
         """
         return cls._TEMPLATES
 
+    # < Revision 21/02/2025
+    # add getICBM152TemplateTag method
+    @classmethod
+    def getICBM152TemplateTag(cls) -> str:
+        """
+        Get ICBM152 template str.
+
+        Returns
+        -------
+        str
+            ICBM152 template str
+        """
+        return cls._TEMPLATES[0]
+    # Revision 21/02/2025 >
+
+    # < Revision 21/02/2025
+    # add getICBM452TemplateTag method
+    @classmethod
+    def getICBM452TemplateTag(cls) -> str:
+        """
+        Get ICBM452 template str.
+
+        Returns
+        -------
+        str
+            ICBM452 template str
+        """
+        return cls._TEMPLATES[1]
+    # Revision 21/02/2025 >
+
+    # < Revision 21/02/2025
+    # add getATROPOSTemplateTag method
+    @classmethod
+    def getATROPOSTemplateTag(cls) -> str:
+        """
+        Get ATROPOS template str.
+
+        Returns
+        -------
+        str
+            ATROPOS template str
+        """
+        return cls._TEMPLATES[2]
+    # Revision 21/02/2025 >
+
+    # < Revision 21/02/2025
+    # add getSRI24TemplateTag method
+    @classmethod
+    def getSRI24TemplateTag(cls) -> str:
+        """
+        Get SRI24 template str.
+
+        Returns
+        -------
+        str
+            SRI24 template str
+        """
+        return cls._TEMPLATES[3]
+    # Revision 21/02/2025 >
+
     # Special methods
+
+    """
+    Private attributes
+
+    _modality       int, modality code
+    _sequence       str, sequence description
+    _dateofscan     date, acquisition date
+    _frame          int, stereotactic frame code
+    _unit           str, signal unit
+    _labels         dict[int, str], dict of labels for LB modality
+    _df             int, degrees of freedom (tmap and zmap)
+    _autocorrx      float, spatial autocorrelations, x-axis (mm)
+    _autocorry      float, spatial autocorrelations, y-axis (mm)
+    _autocorrz      float, spatial autocorrelations, z-axis (mm)
+    _contrast       list[float]
+    _parent         parent instance 
+    """
 
     def __init__(self,
                  modality: int = 0,
                  sequence: str = '',
                  d: date = date.today(),
-                 unit: str = 'No',
-                 parent: sc.sisypheVolume.SisypheVolume | None = None) -> None:
+                 unit: str = NOUNIT,
+                 parent: SisypheVolume | None = None) -> None:
         """
-            SisypheAcquisition instance constructor
+        SisypheAcquisition instance constructor.
 
-            Parameters
-
-                modality    int, modality code (0 'OT', 1 'MR', 2 'CT', 3 'PT', 4 'NM', 5 'LB', 6 'TP')
-                sequence    str, sequence name (default '')
-                d           datetime.date, acquisition date (default datetime.today())
-                unit        str, unit name (default 'No')
-                parent      Sisyphe.sisypheVolume.SisypheVolume | None (default None)
+        Parameters
+        ----------
+        modality : int
+            modality code (0 'OT', 1 'MR', 2 'CT', 3 'PT', 4 'NM', 5 'LB', 6 'TP')
+        sequence : str
+            sequence name (default '')
+        d : datetime.date
+            acquisition date (default datetime.today())
+        unit : str
+            unit name (default 'No')
+        parent : Sisyphe.core.sisypheVolume.SisypheVolume | None
+            (default None)
         """
         self._modality = modality
         self._type = '2D'
@@ -1251,13 +1356,20 @@ class SisypheAcquisition(object):
         self._autocorrx = 0.0
         self._autocorry = 0.0
         self._autocorrz = 0.0
+        # < Revision 22/11/2024
+        # add contrast attribute
+        self._contrast = list()
+        # Revision 22/11/2024 >
         self._parent = parent
 
     def __str__(self) -> str:
         """
-             Special overloaded method called by the built-in str() python function.
+         Special overloaded method called by the built-in str() python function.
 
-             return  str, conversion of SisypheAcquisition instance to str
+        Returns
+        -------
+        str
+            conversion of SisypheAcquisition instance to str
          """
         txt = 'Acquisition:\n' \
               '\tModality: {}\n' \
@@ -1278,53 +1390,65 @@ class SisypheAcquisition(object):
 
     def __repr__(self) -> str:
         """
-            Special overloaded method called by the built-in repr() python function.
+        Special overloaded method called by the built-in repr() python function.
 
-            return  str, SisypheAcquisition instance representation
+        Returns
+        -------
+        str
+            SisypheAcquisition instance representation
         """
         return '{} class instance at <{}>\n'.format(self.__class__.__name__, str(id(self)))
 
     def __contains__(self, buff: str) -> bool:
         """
-            Special overloaded container method called by the built-in 'in' python operator.
-            Check whether buff parameter is the modality or the sequence attribute of the
-            current SisypheAcquisition instance
+        Special overloaded container method called by the built-in 'in' python operator. Check whether buff parameter
+        is the modality or the sequence attribute of the current SisypheAcquisition instance.
 
-            Parameter
+        Parameters
+        ----------
+        buff : str
+            modality or sequence
 
-                buff    str
-
-            return  bool, True if buff parameter is in SisypheAcquisition instance
+        Returns
+        -------
+        bool
+            True if buff parameter is in SisypheAcquisition instance
         """
         return self.getModality(True) == buff or self._sequence == buff
 
     def __eq__(self, other: SisypheAcquisition) -> bool:
         """
-            Special overloaded relational operator ==.
-            Check whether parameter instance and current SisypheAcquisition instance
-            have the same modality, sequence and date of scan attributes
-            self == other -> bool
+        Special overloaded relational operator ==. Check whether parameter instance and current SisypheAcquisition
+        instance have the same modality, sequence and date of scan attributes.
+        self == other -> bool
 
-            Parameter
+        Parameters
+        ----------
+        other : SisypheAcquisition
+            second operand of == operator
 
-                other   SisypheAcquisition
-
-            return  bool
+        Returns
+        -------
+        bool
+            result = self == other
         """
         return self.isEqual(other)
 
     def __ne__(self, other: SisypheAcquisition) -> bool:
         """
-            Special overloaded relational operator !=.
-            Check whether parameter instance and current SisypheAcquisition instance
-            have not the same modality, sequence or date of scan attributes
-            self != other -> bool
+        Special overloaded relational operator !=. Check whether parameter instance and current SisypheAcquisition
+        instance have not the same modality, sequence or date of scan attributes.
+        self != other -> bool
 
-            Parameter
+        Parameters
+        ----------
+        other : SisypheAcquisition
+            second operand of != operator
 
-                other   SisypheAcquisition
-
-            return  bool
+        Returns
+        -------
+        bool
+            result = self != other
         """
         return not self.isNotEqual(other)
 
@@ -1332,111 +1456,122 @@ class SisypheAcquisition(object):
 
     def hasParent(self) -> bool:
         """
-            Check whether current SisypheAcquisition instance has a parent,
-            i.e. parent attribute is not None.
+        Check whether current SisypheAcquisition instance has a parent (Sisyphe.core.sisypheVolume.SisypheVolume
+        instance), i.e. parent attribute is not None.
 
-            return  bool, True if current SisypheAcquisition is defined (not None)
+        Returns
+        -------
+        bool
+            True if current SisypheAcquisition is defined (not None)
         """
         return self._parent is not None
 
-    def setParent(self, parent: sc.sisypheVolume.SisypheVolume):
+    def setParent(self, parent: SisypheVolume):
         """
-            Set parent of the current SisypheAcquisition instance.
+        Set parent (Sisyphe.core.sisypheVolume.SisypheVolume instance) of the current SisypheAcquisition instance.
 
-            Parameter
-
-                parent  Sisyphe.sisypheVolume.SisypheVolume
+        Parameters
+        ----------
+        parent : Sisyphe.core.sisypheVolume.SisypheVolume
+            Sisyphe.core.sisypheVolume.SisypheVolume parent
         """
-        if isinstance(parent, sc.sisypheVolume.SisypheVolume):
-            self._parent = parent
+        from Sisyphe.core.sisypheVolume import SisypheVolume
+        if isinstance(parent, SisypheVolume): self._parent = parent
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(parent)))
 
-    def getParent(self) -> sc.sisypheVolume.SisypheVolume:
+    def getParent(self) -> SisypheVolume:
         """
-            Get parent of the current SisypheAcquisition instance.
+        Get parent (Sisyphe.core.sisypheVolume.SisypheVolume instance) of the current SisypheAcquisition instance.
 
-            return  Sisyphe.sisypheVolume.SisypheVolume
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            Sisyphe.core.sisypheVolume.SisypheVolume parent
         """
         return self._parent
 
     def is2D(self) -> bool:
         """
-            Check whether type attribute of the current
-            SisypheAcquisition instance is 2D
+        Check whether type attribute of the current SisypheAcquisition instance is 2D.
 
-            return  bool, True if 2D acquisition
+        Returns
+        -------
+        bool
+            True if 2D acquisition
         """
         return self._type == self._TYPE[0]
 
     def is3D(self) -> bool:
         """
-            Check whether type attribute of the current
-            SisypheAcquisition instance is 3D
+        Check whether type attribute of the current SisypheAcquisition instance is 3D.
 
-            return  bool, True if 3D acquisition
+        Returns
+        -------
+        bool
+            True if 3D acquisition
         """
         return self._type == self._TYPE[1]
 
     def set2D(self) -> None:
         """
-            Set type attribute of the current
-            SisypheAcquisition instance to 2D
+        Set type attribute of the current SisypheAcquisition instance to 2D.
         """
         self._type = self._TYPE[0]
 
     def set3D(self) -> None:
         """
-            Set type attribute of the current
-            SisypheAcquisition instance to 3D
+        Set type attribute of the current SisypheAcquisition instance to 3D.
         """
         self._type = self._TYPE[1]
 
     def setType(self, v: str) -> None:
         """
-            Set type attribute ('2D', '3D') of the current
-            SisypheAcquisition instance
+        Set type attribute ('2D', '3D') of the current SisypheAcquisition instance.
 
-            Parameter
-
-                v   str, acquisition type ('2D', '3D')
+        Parameters
+        ----------
+        v : str
+            acquisition type ('2D', '3D')
         """
         if v in self._TYPE: self._type = v
         else: self._type = '2D'
 
     def getType(self) -> str:
         """
-            Get type attribute ('2D', '3D') of the current
-            SisypheAcquisition instance
+        Get type attribute ('2D', '3D') of the current SisypheAcquisition instance.
 
-            return  str, acquisition type ('2D', '3D')
+        Returns
+        -------
+        str
+            acquisition type ('2D', '3D')
         """
         return self._type
 
     def getModality(self, string: bool = True) -> str | int:
         """
-            Get modality attribute of the current
-            SisypheAcquisition instance
+        Get modality attribute of the current SisypheAcquisition instance.
 
-            Parameter
+        Parameters
+        ----------
+        string : bool
+            returns modality str if True, otherwise int code (default True)
 
-                string  bool,   return modality str if True
-                                return modality int code if False
-
-            return  str,    modality str
-                    | int,  modality int code
+        Returns
+        -------
+        str | int
+            modality str or int code
         """
         if string: return SisypheAcquisition._CODETOMODALITY[self._modality]
         else: return self._modality
 
     def setModality(self, buff: int | str) -> None:
         """
-            Set modality attribute of the current
-            SisypheAcquisition instance
+        Set modality attribute of the current SisypheAcquisition instance.
 
-            Parameter
-
-                buff  str,    modality str
-                      | int,  modality int code
+        Parameters
+        ----------
+        buff : str | int
+            modality str or int code
         """
         if isinstance(buff, int):
             if buff in range(7): self._modality = buff
@@ -1448,45 +1583,39 @@ class SisypheAcquisition(object):
 
     def setModalityToMR(self) -> None:
         """
-            Set modality attribute of the current
-            SisypheAcquisition instance to MRI.
+        Set modality attribute of the current SisypheAcquisition instance to MRI.
         """
         self._modality = SisypheAcquisition._MODALITYTOCODE['MR']
 
     def setModalityToCT(self) -> None:
         """
-            Set modality attribute of the current
-            SisypheAcquisition instance to CT-scan.
+        Set modality attribute of the current SisypheAcquisition instance to CT-scan.
         """
         self._modality = SisypheAcquisition._MODALITYTOCODE['CT']
         self.setUnitToHounsfield()
 
     def setModalityToPT(self) -> None:
         """
-            Set modality attribute of the current
-            SisypheAcquisition instance to PET.
+        Set modality attribute of the current SisypheAcquisition instance to PET.
         """
         self._modality = SisypheAcquisition._MODALITYTOCODE['PT']
 
     def setModalityToNM(self) -> None:
         """
-            Set modality attribute of the current
-            SisypheAcquisition instance to Nuclear Medicine.
+        Set modality attribute of the current SisypheAcquisition instance to Nuclear Medicine.
         """
         self._modality = SisypheAcquisition._MODALITYTOCODE['NM']
         self.setUnitToCount()
 
     def setModalityToOT(self) -> None:
         """
-            Set modality attribute of the current
-            SisypheAcquisition instance to OT.
+        Set modality attribute of the current SisypheAcquisition instance to OT.
         """
         self._modality = SisypheAcquisition._MODALITYTOCODE['OT']
 
     def setModalityToLB(self) -> None:
         """
-            Set modality attribute of the current
-            SisypheAcquisition instance to Label.
+        Set modality attribute of the current SisypheAcquisition instance to Label.
         """
         if self._parent is not None:
             from Sisyphe.core.sisypheVolume import SisypheVolume
@@ -1501,20 +1630,30 @@ class SisypheAcquisition(object):
 
     def setModalityToTP(self) -> None:
         """
-            Set modality attribute of the current
-            SisypheAcquisition instance to Template.
+        Set modality attribute of the current SisypheAcquisition instance to Template.
         """
         self._modality = SisypheAcquisition._MODALITYTOCODE['TP']
 
+    def setModalityToPJ(self) -> None:
+        """
+        Set modality attribute of the current SisypheAcquisition instance to Projection.
+        """
+        self._modality = SisypheAcquisition._MODALITYTOCODE['PJ']
+
+    # noinspection PyTypeChecker
     def getLabel(self, index: float | int) -> str:
         """
-            Get label name from index value.
+        Get label name from index value, only defined for label modality.
 
-            Parameter
+        Parameters
+        ----------
+        index : float | int
+            index
 
-                index   float | int, index
-
-            return  str, label name
+        Returns
+        -------
+        str
+            label name
         """
         if self.isLB():
             if isinstance(index, float): index = int(index)
@@ -1522,17 +1661,20 @@ class SisypheAcquisition(object):
                 if 0 <= index < 256:
                     if index in self._labels: return self._labels[index]
                     else: return ''
+                else: raise ValueError('index parameter {} is out of range [1..256].'.format(index))
             else: raise TypeError('parameter type {} is not int.'.format(type(index)))
         else: raise ValueError('modality {} is not LB.'.format(self.getModality(True)))
 
     def setLabel(self, index: int, value: str) -> None:
         """
-            Set label name for an index value.
+        Set label name for an index value, image modality must be label.
 
-            Parameter
-
-                index   float | int,    index
-                value   str,            label name
+        Parameters
+        ----------
+        index : float | int
+            index
+        value : str
+            label name
         """
         if self.isLB():
             if isinstance(index, int):
@@ -1545,26 +1687,49 @@ class SisypheAcquisition(object):
 
     def hasLabels(self) -> bool:
         """
-            Check that label table is not empty.
+        Check that label table is not empty, only defined for label modality.
 
-            return  bool, True if label table is not empty
+        Returns
+        -------
+        bool
+            True if label table is not empty
         """
         return len(self._labels) > 0
 
-    def getLabels(self) -> dict:
+    def getLabels(self) -> dict[int, str]:
         """
-            Get label table
+        Get label table, only defined for label modality.
 
-            return  dict[key, value]
-                    key     int, index
-                    value   str, label name
+        Returns
+        -------
+        dict[int, str]
+            - int key, index
+            - str value, label name
         """
         if self.isLB(): return self._labels
         else: raise ValueError('modality {} is not LB.'.format(self.getModality(True)))
 
+    # < Revision 06/11/2024
+    # add setLabels method
+    def setLabels(self, v: SisypheAcquisition | SisypheVolume | dict[int, str]) -> None:
+        """
+        Set label name for an index value, image modality must be of the label type.
+
+        Parameters
+        ----------
+        v : SisypheAcquisition | Sisyphe.core.sisypheVolume.SisypheVolume | dict[int, str]
+            Label dict from SisypheAcquisition or Sisyphe.core.sisypheVolume.SisypheVolume
+        """
+        from Sisyphe.core.sisypheVolume import SisypheVolume
+        if isinstance(v, SisypheAcquisition): v = v.getLabels()
+        elif isinstance(v, SisypheVolume): v = v.acquisition.getLabels()
+        if isinstance(v, dict): self._labels = v
+        else: raise TypeError('parameter type {} is not dict, SisypheAcquisition or SisypheVolume.'.format(type(v)))
+    # Revision 06/11/2024 >
+
     def loadLabels(self) -> None:
         """
-            Load label table from XML file (*.xlabels).
+        Load label table from XML file (.xlabels), image modality must be label.
         """
         if self.isLB() and self.hasParent():
             path, ext = splitext(self._parent.getFilename())
@@ -1578,11 +1743,12 @@ class SisypheAcquisition(object):
                         index = int(node.getAttribute('value'))
                         if node.nodeName == 'label':
                             if node.firstChild:
+                                # noinspection PyUnresolvedReferences
                                 self._labels[index] = node.firstChild.data
 
     def saveLabels(self) -> None:
         """
-            Save label table from XML file (*.xlabels).
+        Save label table from XML file (.xlabels), only defined for label modality.
         """
         if self.isLB() and self.hasLabels() and self.hasParent():
             doc = minidom.Document()
@@ -1603,35 +1769,44 @@ class SisypheAcquisition(object):
 
     def setDegreesOfFreedom(self, v) -> None:
         """
-            Set degrees of freedom attribute of the current SisypheAcquisition instance.
-            This attribute is only defined for some statistical maps (i.e. 't-value', 'p-value').
+        Set degrees of freedom attribute of the current SisypheAcquisition instance. This attribute is only defined for
+        some statistical maps (i.e. 't-value', 'p-value').
 
-            Parameter
-
-                v   int, degrees of freedom
+        Parameters
+        ----------
+        v : int
+            degrees of freedom
         """
         if isinstance(v, int): self._df = v
         else: raise TypeError('parameter type {} is not int.'.format(type(v)))
 
     def getDegreesOfFreedom(self) -> int:
         """
-            Get degrees of freedom attribute of the current SisypheAcquisition instance.
-            This attribute is only defined for some statistical maps (i.e. 't-value', 'p-value').
+        Get degrees of freedom attribute of the current SisypheAcquisition instance. This attribute is only defined for
+        some statistical maps (i.e. 't-value', 'p-value').
 
-            return   int, degrees of freedom
+        Returns
+        -------
+        int
+            degrees of freedom
         """
         return self._df
 
-    def setAutoCorrelations(self, v: listFloat3 | tupleFloat3) -> None:
+    def setAutoCorrelations(self, v: list[float] | tupleFloat3 | ndarray) -> None:
         """
-            Set autocorrelations attribute of the current SisypheAcquisition instance.
-            This attribute is only defined for statistical maps.
+        Set autocorrelations attribute of the current SisypheAcquisition instance. This attribute is only defined for
+        statistical maps.
 
-            Parameter
-
-                v   listFloat3 | tupleFloat3, autocorrelations
+        Parameters
+        ----------
+        v  : tuple[float, float, float] | list[float, float, float] | ndarray
+            autocorrelations
         """
-        if isinstance(v, list):
+        # < Revision 06/12/2024
+        # ndarray management
+        if isinstance(v, ndarray): v = list(v)
+        # Revision 06/12/2024 >
+        if isinstance(v, (tuple, list)):
             if len(v) == 3:
                 if all([isinstance(i, float) for i in v]):
                     self._autocorrx = v[0]
@@ -1639,20 +1814,68 @@ class SisypheAcquisition(object):
                     self._autocorrz = v[2]
                 else: raise TypeError('type of elements in the list {} is not float.'.format(type(v[0])))
             else: raise ValueError('list parameter does not have 3 elements ({}).'.format(len(v)))
-        else: raise TypeError('parameter type {} is not list.'.format(type(v)))
+        else: raise TypeError('parameter type {} is not list or tuple.'.format(type(v)))
 
     def getAutoCorrelations(self) -> tupleFloat3:
         """
-            Get autocorrelations attribute of the current SisypheAcquisition instance.
-            This attribute is only defined for statistical maps.
+        Get autocorrelations attribute of the current SisypheAcquisition instance. This attribute is only defined for
+        statistical maps.
 
-            return  tupleFloat3, autocorrelations
+        Returns
+        -------
+        tuple[float, float, float] | list[float, float, float]
+            autocorrelations
         """
         return self._autocorrx, self._autocorry, self._autocorrz
 
+    # < Revision 22/11/2024
+    # add getContrast method
+    def getContrast(self) -> list[float]:
+        """
+        Get contrast attribute of the current SisypheAcquisition instance. This attribute is only defined for
+        statistical maps.
+
+        Returns
+        -------
+        list[float]
+            contrast used to calculate statistical map
+        """
+        return self._contrast
+    # Revision 22/11/2024 >
+
+    # < Revision 22/11/2024
+    # add setContrast method
+    def setContrast(self, c: ndarray | list[float]) -> None:
+        """
+        Set contrast attribute of the current SisypheAcquisition instance. This attribute is only defined for
+        statistical maps.
+
+        Parameters
+        ----------
+        c : ndarray | list[float]
+            contrast used to calculate statistical map
+        """
+        if isinstance(c, ndarray): c = list(c)
+        self._contrast = c
+    # Revision 22/11/2024 >
+
+    # < Revision 22/11/2024
+    # add hasContrast method
+    def hasContrast(self) -> bool:
+        """
+        Check that contrast attribute is not empty, only defined for statistical map.
+
+        Returns
+        -------
+        bool
+            True if contrast attribute is not empty
+        """
+        return len(self._contrast) > 0
+    # Revision 22/11/2024 >
+
     def setSequenceToTMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance to t map.
+        Set sequence attribute of the current SisypheAcquisition instance to t map.
         """
         self.setModalityToOT()
         self._sequence = self.TMAP
@@ -1660,201 +1883,247 @@ class SisypheAcquisition(object):
 
     def setSequenceToZMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance to Z map.
+        Set sequence attribute of the current SisypheAcquisition instance to Z map.
         """
         self.setModalityToOT()
         self._sequence = self.ZMAP
         self.setUnitToZScore()
 
-    def setSequenceToGrayMatterMap(self) -> None:
+    # < Revision 03/02/2025
+    # add setSequenceToCMap method
+    def setSequenceToCMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to gray matter map.
+        Set sequence attribute of the current SisypheAcquisition instance to correlation coeff. map.
         """
         self.setModalityToOT()
+        self._sequence = self.CMAP
+        self.setUnitToCC()
+    # Revision 03/02/2025 >
+
+    def setSequenceToPMap(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to probability map.
+        """
+        self.setModalityToOT()
+        self._sequence = self.PMAP
+        self._unit = self.PVAL
+
+    def setSequenceToGreyMatterMap(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to gray matter map.
+        """
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
         self._sequence = self.GM
-        self.setUnitToRatio()
+        self.setUnitToPercent()
+
+    def setSequenceToSubCorticalGreyMatterMap(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to subcortical gray matter map.
+        """
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
+        self._sequence = self.SCGM
+        self.setUnitToPercent()
 
     def setSequenceToWhiteMatterMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to white matter map.
+        Set sequence attribute of the current SisypheAcquisition instance to white matter map.
         """
-        self.setModalityToOT()
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
         self._sequence = self.WM
-        self.setUnitToRatio()
+        self.setUnitToPercent()
 
     def setSequenceToCerebroSpinalFluidMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to cerebro-spinal fluid map.
+        Set sequence attribute of the current SisypheAcquisition instance to cerebro-spinal fluid map.
         """
-        self.setModalityToOT()
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
         self._sequence = self.CSF
-        self.setUnitToRatio()
+        self.setUnitToPercent()
+
+    def setSequenceToBrainstemMap(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to brainstem map.
+        """
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
+        self._sequence = self.BSTEM
+        self.setUnitToPercent()
+
+    def setSequenceToCerebellumMap(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to cerebellum map.
+        """
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
+        self._sequence = self.CRBL
+        self.setUnitToPercent()
 
     def setSequenceToCorticalThicknessMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to cortical thickness map.
+        Set sequence attribute of the current SisypheAcquisition instance to cortical thickness map.
         """
-        self.setModalityToOT()
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
         self._sequence = self.THICK
         self.setUnitToMillimeter()
 
     def setSequenceToCerebralBloodFlowMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to cerebral blood flow map.
+        Set sequence attribute of the current SisypheAcquisition instance to cerebral blood flow map.
         """
-        self.setModalityToOT()
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
         self._sequence = self.CBF
         self.setNoUnit()
 
     def setSequenceToCerebralBloodVolumeMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to cerebral blood volume map.
+        Set sequence attribute of the current SisypheAcquisition instance to cerebral blood volume map.
         """
-        self.setModalityToOT()
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
         self._sequence = self.CBV
         self.setNoUnit()
 
     def setSequenceToMeanTransitTimeMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to mean transit time map.
+        Set sequence attribute of the current SisypheAcquisition instance to mean transit time map.
         """
-        self.setModalityToOT()
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
         self._sequence = self.MTT
         self.setUnitToSecond()
 
     def setSequenceToTimeToPicMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to time to pic map.
+        Set sequence attribute of the current SisypheAcquisition instance to time to pic map.
         """
-        self.setModalityToOT()
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
         self._sequence = self.TTP
         self.setUnitToSecond()
 
     def setSequenceToDoseMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to dose map.
+        Set sequence attribute of the current SisypheAcquisition instance to dose map.
         """
-        self.setModalityToOT()
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
         self._sequence = self.DOSE
         self.setUnitToGy()
 
     def setSequenceToFractionalAnisotropyMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to fractional anisotropy map.
+        Set sequence attribute of the current SisypheAcquisition instance to fractional anisotropy map.
         """
-        self.setModalityToOT()
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
         self._sequence = self.FA
         self.setUnitToRatio()
 
     def setSequenceToApparentDiffusionMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to apparent diffusion map.
+        Set sequence attribute of the current SisypheAcquisition instance to apparent diffusion map.
         """
-        self.setModalityToOT()
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
         self._sequence = self.ADC
         self.setUnitToADCunit()
 
     def setSequenceToDensityMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to density map.
+        Set sequence attribute of the current SisypheAcquisition instance to density map.
         """
-        self.setModalityToOT()
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
         self._sequence = self.DENSITY
-        self.setNoUnit()
+        self.setUnitToCount()
 
     def setSequenceToBiasFieldMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to bias field map.
+        Set sequence attribute of the current SisypheAcquisition instance to bias field map.
         """
-        self.setModalityToOT()
+        if not self.isOT(): self.setModalityToOT()
         self._sequence = self.BIAS
         self.setNoUnit()
 
+    def setSequenceToDistanceMap(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to euclidean distance map.
+        """
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
+        self._sequence = self.DIST
+        self.setUnitToMillimeter()
+
     def setSequenceToMeanMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to mean map.
+        Set sequence attribute of the current SisypheAcquisition instance to mean map.
         """
-        self.setModalityToOT()
+        if not self.isOT(): self.setModalityToOT()
         self._sequence = self.MEAN
         self.setNoUnit()
 
     def setSequenceToMedianMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to median map.
+        Set sequence attribute of the current SisypheAcquisition instance to median map.
         """
-        self.setModalityToOT()
+        if not self.isOT(): self.setModalityToOT()
         self._sequence = self.MEDIAN
         self.setNoUnit()
 
     def setSequenceToMinimumMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to minimum map.
+        Set sequence attribute of the current SisypheAcquisition instance to minimum map.
         """
-        self.setModalityToOT()
+        if not self.isOT(): self.setModalityToOT()
         self._sequence = self.MIN
         self.setNoUnit()
 
     def setSequenceToMaximumMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to maximum map.
+        Set sequence attribute of the current SisypheAcquisition instance to maximum map.
         """
-        self.setModalityToOT()
+        if not self.isOT(): self.setModalityToOT()
         self._sequence = self.MAX
         self.setNoUnit()
 
     def setSequenceToStandardDeviationMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to standard deviation map.
+        Set sequence attribute of the current SisypheAcquisition instance to standard deviation map.
         """
-        self.setModalityToOT()
+        if not self.isOT(): self.setModalityToOT()
         self._sequence = self.STD
         self.setNoUnit()
 
     def setSequenceToAlgebraMap(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to algebra map.
+        Set sequence attribute of the current SisypheAcquisition instance to algebra map.
         """
-        self.setModalityToOT()
+        if not self.isOT(): self.setModalityToOT()
         self._sequence = self.ALGEBRA
         self.setNoUnit()
 
     def setSequenceToMask(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance to mask.
+        Set sequence attribute of the current SisypheAcquisition instance to mask.
         """
-        self.setModalityToOT()
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
         self._sequence = self.MASK
         self.setNoUnit()
 
+    def setSequenceToStructMap(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to struct.
+        """
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
+        self._sequence = self.STRUCT
+        self._unit = self.PERC
+
+    def setSequenceToLabels(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to labels.
+        """
+        self._sequence = self.LABELS
+        self._modality = SisypheAcquisition._MODALITYTOCODE['LB']
+
     def setSequenceToDisplacementField(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to displacement field.
+        Set sequence attribute of the current SisypheAcquisition instance to displacement field.
         """
         if self.hasParent():
             parent = self.getParent()
             if parent.isFloatDatatype():
                 if parent.getNumberOfComponentsPerPixel() == 3:
-                    self.setModalityToOT()
+                    if not self.isOT(): self.setModalityToOT()
                     self._sequence = self.FIELD
                     self.setUnitToMillimeter()
                 else: raise ValueError('Volume has {} components,\n3 components required '
@@ -1863,176 +2132,174 @@ class SisypheAcquisition(object):
                                   'displacement field.'.format(parent.isFloat64Datatype()))
         else: raise ValueError('No SisypheVolume parent.')
 
-    def setSequenceToLabels(self) -> None:
-        """
-            Set sequence attribute of the current SisypheAcquisition instance to labels.
-        """
-        self.setModalityToLB()
-        self._sequence = self.LABELS
-
-    def setSequenceToProbabilityMap(self) -> None:
-        """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to probability map.
-        """
-        self.setModalityToOT()
-        self._sequence = self.PMAP
-
     def setSequenceToT1Weighted(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance to T1 weighted.
+        Set sequence attribute of the current SisypheAcquisition instance to T1 weighted.
         """
-        self.setModalityToMR()
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
         self._sequence = self.T1
         self.setNoUnit()
 
     def setSequenceToT2Weighted(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance to T2 weighted.
+        Set sequence attribute of the current SisypheAcquisition instance to T2 weighted.
         """
-        self.setModalityToMR()
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
         self._sequence = self.T2
         self.setNoUnit()
 
     def setSequenceToT2Star(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance to T2 star.
+        Set sequence attribute of the current SisypheAcquisition instance to T2*.
         """
-        self.setModalityToMR()
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
         self._sequence = self.T2S
         self.setNoUnit()
 
     def setSequenceToProtonDensityWeighted(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to proton density weighted.
+        Set sequence attribute of the current SisypheAcquisition instance to proton density weighted.
         """
-        self.setModalityToMR()
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
         self._sequence = self.PD
         self.setNoUnit()
 
     def setSequenceToFLAIR(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance to FLAIR.
+        Set sequence attribute of the current SisypheAcquisition instance to FLAIR.
         """
-        self.setModalityToMR()
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
         self._sequence = self.FLAIR
         self.setNoUnit()
 
     def setSequenceToContrastEnhancedT1(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to contrast enhanced T1 weighted.
+        Set sequence attribute of the current SisypheAcquisition instance to contrast enhanced T1 weighted.
         """
-        self.setModalityToMR()
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
         self._sequence = self.CET1
         self.setNoUnit()
 
     def setSequenceToContrastEnhancedT2(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to contrast enhanced T2 weighted.
+        Set sequence attribute of the current SisypheAcquisition instance to contrast enhanced T2 weighted.
         """
-        self.setModalityToMR()
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
         self._sequence = self.CET2
         self.setNoUnit()
 
     def setSequenceToContrastEnhancedFLAIR(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to contrast enhanced FLAIR.
+        Set sequence attribute of the current SisypheAcquisition instance to contrast enhanced FLAIR.
         """
-        self.setModalityToMR()
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
         self._sequence = self.CEFLAIR
+        self.setNoUnit()
+
+    def setSequenceToContrastEnhancedTOF(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to contrast enhanced TOF.
+        """
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
+        self._sequence = self.CETOF
         self.setNoUnit()
 
     def setSequenceToEchoPlanar(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to echo-planar.
+        Set sequence attribute of the current SisypheAcquisition instance to echo-planar.
         """
-        self.setModalityToMR()
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
         self._sequence = self.EPI
+        self.setNoUnit()
+
+    def setSequenceToB0(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to B0.
+        """
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
+        self._sequence = self.B0
         self.setNoUnit()
 
     def setSequenceToDiffusionWeighted(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to diffusion weighted.
+        Set sequence attribute of the current SisypheAcquisition instance to diffusion weighted.
         """
-        self.setModalityToMR()
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
         self._sequence = self.DWI
         self.setNoUnit()
 
     def setSequenceToPerfusionWeighted(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to perfusion weighted.
+        Set sequence attribute of the current SisypheAcquisition instance to perfusion weighted.
         """
-        self.setModalityToMR()
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
         self._sequence = self.PWI
         self.setNoUnit()
 
     def setSequenceToSusceptibilityWeighted(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to susceptibility weighted.
+        Set sequence attribute of the current SisypheAcquisition instance to susceptibility weighted.
         """
-        self.setModalityToMR()
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
         self._sequence = self.SWI
         self.setNoUnit()
 
     def setSequenceToTimeOfFlight(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to time of flight.
+        Set sequence attribute of the current SisypheAcquisition instance to time of flight.
         """
-        self.setModalityToMR()
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
         self._sequence = self.TOF
         self.setNoUnit()
 
     def setSequenceToContrastEnhancedCT(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance
-            to contrast enhanced CT-scan.
+        Set sequence attribute of the current SisypheAcquisition instance to contrast enhanced CT-scan.
         """
-        self.setModalityToCT()
+        if not (self.isCT() or self.isTP()): self.setModalityToCT()
         self._sequence = self.CECT
 
     def setSequenceToFDG(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance to FDG.
+        Set sequence attribute of the current SisypheAcquisition instance to FDG.
         """
-        self.setModalityToPT()
+        if not (self.isPT() or self.isTP()): self.setModalityToPT()
         self._sequence = self.FDG
+        self.setNoUnit()
 
     def setSequenceToHMPAO(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance to HMPAO.
+        Set sequence attribute of the current SisypheAcquisition instance to HMPAO.
         """
-        self.setModalityToNM()
+        if not (self.isNM() or self.isTP()): self.setModalityToNM()
         self._sequence = self.HMPAO
+        self.setUnitToCount()
 
     def setSequenceToECD(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance to ECD.
+        Set sequence attribute of the current SisypheAcquisition instance to ECD.
         """
-        self.setModalityToNM()
+        if not (self.isNM() or self.isTP()): self.setModalityToNM()
         self._sequence = self.ECD
+        self.setUnitToCount()
 
     def setSequenceToFPCIT(self) -> None:
         """
-            Set sequence attribute of the current SisypheAcquisition instance to FPCIT.
+        Set sequence attribute of the current SisypheAcquisition instance to FPCIT.
         """
-        self.setModalityToNM()
+        if not (self.isNM() or self.isTP()): self.setModalityToNM()
         self._sequence = self.FPCIT
+        self.setUnitToCount()
 
     def isStandardSequence(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance sequence attribute is standard.
-            A standard sequence has a predefined str value in SisypheAcquisition instance.
+        Check whether the current SisypheAcquisition instance sequence attribute is standard. A standard sequence has a
+        standardized str value in SisypheAcquisition instance.
 
-            return  bool, True if sequence is standard
+        Returns
+        -------
+        bool
+            True if sequence is standard
         """
         if self.isOT(): return self._sequence in self._OTSEQUENCE
         elif self.isMR(): return self._sequence in self._MRSEQUENCE
@@ -2043,188 +2310,354 @@ class SisypheAcquisition(object):
 
     def isDisplacementField(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance sequence attribute is a displacement field.
+        Check whether the current SisypheAcquisition instance sequence attribute is a displacement field.
 
-            return  bool, True if sequence is a displacement field
+        Returns
+        -------
+        bool
+            True if sequence is a displacement field
         """
         return self.getSequence() == self.FIELD
 
     def setNoUnit(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to no unit.
+        Set the unit attribute of the current SisypheAcquisition instance to no unit.
         """
         self._unit = self.NOUNIT
 
     def setUnitToPercent(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to percent.
+        Set the unit attribute of the current SisypheAcquisition instance to percent.
         """
         self._unit = self.PERC
 
     def setUnitToRatio(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to ratio.
+        Set the unit attribute of the current SisypheAcquisition instance to ratio.
         """
         self._unit = self.RATIO
 
     def setUnitToSecond(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to second.
+        Set the unit attribute of the current SisypheAcquisition instance to second.
         """
         self._unit = self.SEC
 
     def setUnitToMillimeter(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to millimeter.
+        Set the unit attribute of the current SisypheAcquisition instance to millimeter.
         """
         self._unit = self.MM
 
     def setUnitToCount(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to count.
+        Set the unit attribute of the current SisypheAcquisition instance to count.
         """
         self._unit = self.COUNT
 
     def setUnitToBq(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to Bq.
+        Set the unit attribute of the current SisypheAcquisition instance to Bq.
         """
         self._unit = self.BQ
 
     def setUnitToBqMl(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to Bq/ml.
+        Set the unit attribute of the current SisypheAcquisition instance to Bq/ml.
         """
         self._unit = self.BQML
 
     def setUnitToSUV(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to SUV.
+        Set the unit attribute of the current SisypheAcquisition instance to SUV.
         """
         self._unit = self.SUV
 
     def setUnitToADCunit(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to mm2/s.
+        Set the unit attribute of the current SisypheAcquisition instance to mm2/s.
         """
         self._unit = self.MM2S
 
     def setUnitToHounsfield(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to Hounsfield.
+        Set the unit attribute of the current SisypheAcquisition instance to Hounsfield.
         """
         self._unit = self.HU
 
     def setUnitToGy(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to Gy.
+        Set the unit attribute of the current SisypheAcquisition instance to Gy.
         """
         self._unit = self.GY
 
     def setUnitToTValue(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to t-value.
+        Set the unit attribute of the current SisypheAcquisition instance to t-value.
         """
         self._unit = self.TVAL
 
     def setUnitToZScore(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to Z-score.
+        Set the unit attribute of the current SisypheAcquisition instance to Z-score.
         """
         self._unit = self.ZSCORE
 
     def setUnitToPValue(self) -> None:
         """
-            Set the unit attribute of the current SisypheAcquisition instance to p-value.
+        Set the unit attribute of the current SisypheAcquisition instance to p-value.
         """
         self._unit = self.PVAL
 
+    # < Revision 03/02/2025
+    # add setUnitToCC method
+    def setUnitToCC(self) -> None:
+        """
+        Set the unit attribute of the current SisypheAcquisition instance to correlation coeff.
+        """
+        self._unit = self.CCVAL
+    # Revision 03/02/2025 >
+
     def isStandardUnit(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance unit attribute is standard.
-            A standard unit has a predefined str value in SisypheAcquisition instance.
+        Check whether the current SisypheAcquisition instance unit attribute is standard. A standard unit has a
+        standardized str value in SisypheAcquisition instance.
 
-            return  bool, True if unit is standard
+        Returns
+        -------
+        bool
+            True if unit is standard
         """
         return self._unit in self._UNIT
 
     def isContrastEnhanced(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance sequence attribute is contrast enhanced.
+        Check whether the current SisypheAcquisition instance sequence attribute is contrast enhanced.
 
-            return  bool, True if sequence is contrast enhanced
+        Returns
+        -------
+        bool
+            True if sequence is contrast enhanced
         """
         return self._sequence[:2] == 'CE'
 
     def isTMap(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance sequence attribute is a t-map.
+        Check whether the current SisypheAcquisition instance sequence attribute is a t-map.
 
-            return  bool, True if sequence is a t-map
+        Returns
+        -------
+        bool
+            True if sequence is a t-map
         """
         return self._sequence == self.TMAP
 
     def isZMap(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance sequence attribute is a z-map.
+        Check whether the current SisypheAcquisition instance sequence attribute is a z-map.
 
-            return  bool, True if sequence is a z-map
+        Returns
+        -------
+        bool, True if sequence is a z-map
         """
         return self._sequence == self.ZMAP
 
+    # < Revision 03/02/2025
+    # add isCMAP method
+    def isCMAP(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a correlation coeff. map.
+
+        Returns
+        -------
+        bool, True if sequence is a correlation coeff. map
+        """
+        return self._sequence == self.CMAP
+    # Revision 03/02/2025 >
+
     def isStatisticalMap(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance sequence attribute
-            is a t-map or a z-map.
+        Check whether the current SisypheAcquisition instance sequence attribute is a t-map, a z-map or a correlation
+        coeff. map.
 
-            return  bool, True if sequence is a t-map or a z-map
+        Returns
+        -------
+        bool
+            True if sequence is a t-map, a z-map or a correlation coeff. map
         """
-        return self.isTMap() or self.isZMap()
+        # < Revision 03/02/2025
+        # add isCMAP()
+        return self.isTMap() or self.isZMap() or self.isCMAP()
+        # Revision 03/02/2025 >
+
+    def isGreyMatterMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a gray matter map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a grey matter map
+        """
+        return self._sequence == self.GM
+
+    def isSubCorticalGreyMatterMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a subcortical gray matter map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a grey matter map
+        """
+        return self._sequence == self.SCGM
+
+    def isWhiteMatterMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a white matter map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a white matter map
+        """
+        return self._sequence == self.WM
+
+    def isCerebroSpinalFluidMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a cerebro-spinal fluid map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a cerebro-spinal fluid map
+        """
+        return self._sequence == self.CSF
+
+    def isBrainstemMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a brainstem map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a brainstem map
+        """
+        return self._sequence == self.BSTEM
+
+    def isCerebellumMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a cerebellum map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a cerebellum map
+        """
+        return self._sequence == self.CRBL
 
     def getSequence(self) -> str:
         """
-            Get current SisypheAcquisition instance sequence attribute.
+        Get current SisypheAcquisition instance sequence attribute.
 
-            return  str, sequence attribute
+        Returns
+        -------
+        str
+            sequence attribute
         """
         return self._sequence
 
     def setSequence(self, buff: str) -> None:
         """
-            Set the current SisypheAcquisition instance sequence attribute.
+        Set the current SisypheAcquisition instance sequence attribute.
 
-            Parameter
-
-                buff    str, sequence attribute
+        Parameters
+        ----------
+        buff : str
+            sequence attribute
         """
-        self._sequence = buff
+        # < Revision 24/10/2024
+        # self._sequence = buff
+        if buff == self.TMAP: self.setSequenceToTMap()
+        elif buff == self.ZMAP: self.setSequenceToZMap()
+        elif buff == self.GM: self.setSequenceToGreyMatterMap()
+        elif buff == self.SCGM: self.setSequenceToSubCorticalGreyMatterMap()
+        elif buff == self.WM: self.setSequenceToWhiteMatterMap()
+        elif buff == self.CSF: self.setSequenceToCerebroSpinalFluidMap()
+        elif buff == self.BSTEM: self.setSequenceToBrainstemMap()
+        elif buff == self.CRBL: self.setSequenceToCerebellumMap()
+        elif buff == self.THICK: self.setSequenceToCorticalThicknessMap()
+        elif buff == self.CBF: self.setSequenceToCerebralBloodFlowMap()
+        elif buff == self.CBV: self.setSequenceToCerebralBloodVolumeMap()
+        elif buff == self.MTT: self.setSequenceToMeanTransitTimeMap()
+        elif buff == self.TTP: self.setSequenceToTimeToPicMap()
+        elif buff == self.DOSE: self.setSequenceToDoseMap()
+        elif buff == self.FA: self.setSequenceToFractionalAnisotropyMap()
+        elif buff == self.ADC: self.setSequenceToApparentDiffusionMap()
+        elif buff == self.DENSITY: self.setSequenceToDensityMap()
+        elif buff == self.BIAS: self.setSequenceToBiasFieldMap()
+        elif buff == self.DIST: self.setSequenceToDistanceMap()
+        elif buff == self.MEAN: self.setSequenceToMeanMap()
+        elif buff == self.MEDIAN: self.setSequenceToMedianMap()
+        elif buff == self.MIN: self.setSequenceToMinimumMap()
+        elif buff == self.MAX: self.setSequenceToMaximumMap()
+        elif buff == self.ALGEBRA: self.setSequenceToAlgebraMap()
+        elif buff == self.MASK: self.setSequenceToMask()
+        elif buff == self.STRUCT: self.setSequenceToStructMap()
+        # elif buff == self.FIELD: self.setSequenceToDisplacementField()
+        # elif buff == self.LABELS: self.setSequenceToLabels()
+        elif buff == self.PMAP: self.setSequenceToPMap()
+        elif buff == self.T1: self.setSequenceToT1Weighted()
+        elif buff == self.T2: self.setSequenceToT2Weighted()
+        elif buff == self.T2S: self.setSequenceToT2Star()
+        elif buff == self.PD: self.setSequenceToProtonDensityWeighted()
+        elif buff == self.FLAIR: self.setSequenceToFLAIR()
+        elif buff == self.TOF:  self.setSequenceToTimeOfFlight()
+        elif buff == self.EPI: self.setSequenceToEchoPlanar()
+        elif buff == self.B0: self.setSequenceToB0()
+        elif buff == self.DWI: self.setSequenceToDiffusionWeighted()
+        elif buff == self.PWI: self.setSequenceToPerfusionWeighted()
+        elif buff == self.SWI: self.setSequenceToSusceptibilityWeighted()
+        elif buff == self.CET1: self.setSequenceToContrastEnhancedT1()
+        elif buff == self.CET2: self.setSequenceToContrastEnhancedT2()
+        elif buff == self.CEFLAIR: self.setSequenceToContrastEnhancedFLAIR()
+        elif buff == self.CETOF: self.setSequenceToContrastEnhancedTOF()
+        elif buff == self.FDG: self.setSequenceToFDG()
+        elif buff == self.HMPAO: self.setSequenceToHMPAO()
+        elif buff == self.FPCIT: self.setSequenceToFPCIT()
+        else: self._sequence = buff
+        # Revision 24/10/2024 >
 
     def getDateOfScan(self, string: bool = True, f: str = '%Y-%m-%d') -> str | date:
         """
-            Get date of scan attribute of the current SisypheAcquisition instance.
+        Get date of scan attribute of the current SisypheAcquisition instance.
 
-            parameters
+        Parameters
+        ----------
+        string : bool
+            - if True return date of scan as str
+            - if False return date of scan as datetime.date
+        f : str
+            format used to convert date to str (default '%Y-%m-%d')
 
-                string  bool, if True return date of scan as str
-                              if False return date of scan as datetime.date
-                f       str, format used to convert date to str (default '%Y-%m-%d')
-
-            return  str,                date of scan as str
-                    | datetime.date,    date of scan as datetime.date
+        Returns
+        -------
+        str | datetime.date
+            date of scan as str or datetime.date
         """
         if string: return self._dateofscan.strftime(f)
         else: return self._dateofscan
 
     def setDateOfScan(self, buff: str | date = datetime.today(), f: str = '%Y-%m-%d') -> None:
         """
-            Set the date of scan attribute of the current SisypheAcquisition instance.
+        Set the date of scan attribute of the current SisypheAcquisition instance.
 
-            parameters
-
-                buff    str,                date of scan as str
-                        | datetime.date,    date of scan as datetime.date
-                        (default datetime.today())
-                f       str, format used to convert date to str (default '%Y-%m-%d')
+        Parameters
+        ----------
+        buff : str | datetime.date
+            date of scan as str or datetime.date (default datetime.today())
+        f : str
+            format used to convert date to str (default '%Y-%m-%d')
         """
         if isinstance(buff, str):
             self._dateofscan = datetime.strptime(buff, f).date()
@@ -2235,30 +2668,34 @@ class SisypheAcquisition(object):
 
     def getFrame(self) -> int:
         """
-            Get current SisypheAcquisition instance frame code attribute.
-            (0 unknown, 1 no frame, 2 Leksell frame)
+        Get frame code attribute of the current SisypheAcquisition instance (0 unknown, 1 no frame, 2 Leksell frame).
 
-            return  str, frame code attribute
+        Returns
+        -------
+        int
+            frame code attribute
         """
         return self._frame
 
     def getFrameAsString(self) -> str:
         """
-            Get current SisypheAcquisition instance frame str attribute.
-            ('UNKNOWN', 'NO FRAME', 'LEKSELL')
+        Get frame str attribute of the current SisypheAcquisition instance  ('UNKNOWN', 'NO FRAME', 'LEKSELL').
 
-            return  str, frame str attribute
+        Returns
+        -------
+        str
+            frame str attribute
         """
         return self._FRAME[self._frame]
 
     def setFrame(self, v: int) -> None:
         """
-            Set the current SisypheAcquisition instance frame code attribute.
-            (0 unknown, 1 no frame, 2 Leksell frame)
+        Set frame code attribute of the current SisypheAcquisition instance (0 unknown, 1 no frame, 2 Leksell frame).
 
-            Parameter
-
-                v   str, frame code attribute
+        Parameters
+        ----------
+        v : int
+            frame code attribute
         """
         if isinstance(v, int):
             if 0 <= v < 3:
@@ -2268,12 +2705,12 @@ class SisypheAcquisition(object):
 
     def setFrameAsString(self, v: str) -> None:
         """
-            Set the current SisypheAcquisition instance frame str attribute.
-            ('UNKNOWN', 'NO FRAME', 'LEKSELL')
+        Set frame str attribute of the current SisypheAcquisition instance ('UNKNOWN', 'NO FRAME', 'LEKSELL').
 
-            Parameter
-
-                v   str, frame str attribute
+        Parameters
+        ----------
+        v : str
+            frame str attribute
         """
         if isinstance(v, str):
             if v in self._FRAME:
@@ -2283,78 +2720,91 @@ class SisypheAcquisition(object):
 
     def setFrameToUnknown(self) -> None:
         """
-            Set the current SisypheAcquisition instance frame attribute to unknown.
+        Set the current SisypheAcquisition instance frame attribute to unknown.
         """
         self._frame = 0
 
     def setFrameToNo(self) -> None:
         """
-            Set the current SisypheAcquisition instance frame attribute to no frame.
+        Set the current SisypheAcquisition instance frame attribute to no frame.
         """
         self._frame = 1
 
     def setFrameToLeksell(self) -> None:
         """
-            Set the current SisypheAcquisition instance frame attribute to Leksell.
+        Set the current SisypheAcquisition instance frame attribute to Leksell.
         """
         self._frame = 2
 
     def setUnit(self, unit: str) -> None:
         """
-            Set the current SisypheAcquisition instance unit attribute.
+        Set unit attribute of the current SisypheAcquisition instance.
 
-            Parameter
-
-                v   str, unit attribute
+        Parameters
+        ----------
+        unit : str
+            unit attribute
         """
         if isinstance(unit, str): self._unit = unit
         else: raise TypeError('parameter type {} is not str'.format(type(unit)))
 
     def getUnit(self) -> str:
         """
-            Get current SisypheAcquisition instance unit attribute.
+        Get unit attribute of the current SisypheAcquisition instance.
 
-            return  str, unit attribute
+        Returns
+        -------
+        str
+            unit attribute
         """
         return self._unit
 
     def hasUnit(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance unit attribute is defined.
+        Check whether the current SisypheAcquisition instance unit attribute is defined.
 
-            return  bool, True if the unit attribute is defined
+        Returns
+        -------
+        bool
+            True if the unit attribute is defined
         """
-        return self._unit != self.NOUNIT
+        return self._unit not in ('', 'No', 'No unit', 'None', self.NOUNIT)
 
     def isCustomSequence(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance sequence attribute is not standard.
-            A standard sequence has a predefined str value in SisypheAcquisition instance.
+        Check whether the current SisypheAcquisition instance sequence attribute is not standard. A standard sequence
+        has a standardized str value in SisypheAcquisition instance.
 
-            return  bool, True if sequence is not standard
+        Returns
+        -------
+        bool
+            True if sequence is not standard
         """
         return not self.isStandardSequence()
 
     def isCustomUnit(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance unit attribute is not standard.
-            A standard unit has a predefined str value in SisypheAcquisition instance.
+        Check whether the current SisypheAcquisition instance unit attribute is not standard. A standard unit has a
+        standardized str value in SisypheAcquisition instance.
 
-            return  bool, True if unit is not standard
+        Returns
+        -------
+        bool
+            True if unit is not standard
         """
         return not self.isStandardUnit()
 
-    def copyFrom(self, buff: SisypheAcquisition | sc.sisypheVolume.SisypheVolume) -> None:
+    def copyFrom(self, buff: SisypheAcquisition | SisypheVolume) -> None:
         """
-            Copy attributes of the acquisition parameter to
-            the current SisypheAcquisition instance (deep copy).
+        Copy attributes of the acquisition parameter to the current SisypheAcquisition instance (deep copy).
 
-            Parameter
-
-                buff    SisypheAcquisition | Sisyphe.sisypheVolume.SisypheVolume
+        Parameters
+        ----------
+        buff : SisypheAcquisition | Sisyphe.core.sisypheVolume.SisypheVolume
+            acquisition to copy
         """
         from Sisyphe.core.sisypheVolume import SisypheVolume
-        if isinstance(buff, sc.sisypheVolume.SisypheVolume):
+        if isinstance(buff, SisypheVolume):
             buff = buff.acquisition
         if isinstance(buff, SisypheAcquisition):
             self._modality = buff._modality
@@ -2371,115 +2821,196 @@ class SisypheAcquisition(object):
 
     def copy(self) -> SisypheAcquisition:
         """
-            Copy the current SisypheAcquisition instance (deep copy).
+        Copy the current SisypheAcquisition instance (deep copy).
 
-            return   SisypheAcquisition
+        Returns
+        -------
+        SisypheAcquisition
+            acquisition copy
         """
-        return deepcopy(self)
+        # < Revision 06/11/2024
+        # return deepcopy(self)
+        buff = SisypheAcquisition()
+        buff._modality = self._modality
+        buff._sequence = self._sequence
+        buff._dateofscan = self._dateofscan
+        buff._frame = self._frame
+        buff._unit = self._unit
+        buff._labels = self._labels
+        buff._df = self._df
+        buff._autocorrx = self._autocorrx
+        buff._autocorry = self._autocorry
+        buff._autocorrz = self._autocorrz
+        return buff
+        # Revision 06/11/2024 >
 
     def isMR(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance modality attribute is MRI.
+        Check whether the current SisypheAcquisition instance modality attribute is MRI.
 
-            return  bool, True if MRI modality
+        Returns
+        -------
+        bool
+            True if MRI modality
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['MR']
 
     def isCT(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance modality attribute is CT-scan.
+        Check whether the current SisypheAcquisition instance modality attribute is CT-scan.
 
-            return  bool, True if CT-scan modality
+        Returns
+        -------
+        bool
+            True if CT-scan modality
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['CT']
 
     def isPT(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance modality attribute is TEP.
+        Check whether the current SisypheAcquisition instance modality attribute is PET.
 
-            return  bool, True if TEP modality
+        Returns
+        -------
+        bool
+            True if TEP modality
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['PT']
 
     def isNM(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance modality attribute is Nuclear Medicine.
+        Check whether the current SisypheAcquisition instance modality attribute is Nuclear Medicine.
 
-            return  bool, True if Nuclear Medicine modality
+        Returns
+        -------
+        bool
+            True if Nuclear Medicine modality
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['NM']
 
     def isOT(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance modality attribute is OT.
+        Check whether the current SisypheAcquisition instance modality attribute is OT.
 
-            return  bool, True if OT modality
+        Returns
+        -------
+        bool
+            True if OT modality
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['OT']
 
     def isLB(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance modality attribute is Label.
+        Check whether the current SisypheAcquisition instance modality attribute is Label.
 
-            return  bool, True if Label modality
+        Returns
+        -------
+        bool
+            True if Label modality
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['LB']
 
     def isTP(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance modality attribute is Template.
+        Check whether the current SisypheAcquisition instance modality attribute is Template.
 
-            return  bool, True if Template modality
+        Returns
+        -------
+        bool
+            True if Template modality
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['TP']
 
+    def isPJ(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance modality attribute is Projection.
+
+        Returns
+        -------
+        bool
+            True if Projection modality
+        """
+        return self._modality == SisypheAcquisition._MODALITYTOCODE['PJ']
+
     def isICBM152(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance attributes
-            are Template modality and ICBM152 sequence.
+        Check whether the current SisypheAcquisition instance attributes are Template modality and ICBM152 sequence.
 
-            return  bool, True if Template modality and ICBM152 sequence
+        Returns
+        -------
+        bool
+            True if Template modality and ICBM152 sequence
         """
-        return self.isTP() and self._sequence == self._TEMPLATES[0]
+        if self._parent is not None: ID = self._parent.getID()
+        else: ID = ''
+        # < Revision 21/02/2025
+        # return self.isTP() and ID == self._TEMPLATES[0]
+        return ID == self._TEMPLATES[0]
+        # Revision 21/02/2025 >
 
     def isICBM452(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance attributes
-            are Template modality and ICBM452 sequence.
+        Check whether the current SisypheAcquisition instance attributes are Template modality and ICBM452 sequence.
 
-            return  bool, True if Template modality and ICBM452 sequence
+        Returns
+        -------
+        bool
+            True if Template modality and ICBM452 sequence
         """
-        return self.isTP() and self._sequence == self._TEMPLATES[1]
+        if self._parent is not None: ID = self._parent.getID()
+        else: ID = ''
+        # < Revision 21/02/2025
+        # return self.isTP() and ID == self._TEMPLATES[1]
+        return ID == self._TEMPLATES[1]
+        # Revision 21/02/2025 >
 
     def isATROPOS(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance attributes
-            are Template modality and ATROPOS sequence.
+        Check whether the current SisypheAcquisition instance attributes are Template modality and ATROPOS sequence.
 
-            return  bool, True if Template modality and ATROPOS sequence
+        Returns
+        -------
+        bool
+            True if Template modality and ATROPOS sequence
         """
-        return self.isTP() and self._sequence == self._TEMPLATES[2]
+        if self._parent is not None: ID = self._parent.getID()
+        else: ID = ''
+        # < Revision 21/02/2025
+        # return self.isTP() and ID == self._TEMPLATES[2]
+        return ID == self._TEMPLATES[2]
+        # Revision 21/02/2025 >
 
     def isSRI24(self) -> bool:
         """
-            Check whether the current SisypheAcquisition instance attributes
-            are Template modality and SRI24 sequence.
+        Check whether the current SisypheAcquisition instance attributes are Template modality and SRI24 sequence.
 
-            return  bool, True if Template modality and SRI24 sequence
+        Returns
+        -------
+        bool
+            True if Template modality and SRI24 sequence
         """
-        return self.isTP() and self._sequence == self._TEMPLATES[3]
+        if self._parent is not None: ID = self._parent.getID()
+        else: ID = ''
+        # < Revision 21/02/2025
+        # return self.isTP() and ID == self._TEMPLATES[3]
+        return ID == self._TEMPLATES[3]
+        # Revision 21/02/2025 >
 
     def isEqual(self, buff: SisypheAcquisition) -> bool:
         """
-            Check whether parameter instance and current SisypheAcquisition instance
-            have the same modality, sequence and date of scan attributes
-            self == other -> bool
+        Check whether parameter instance and current SisypheAcquisition instance have the same modality, sequence and
+        date of scan attributes.
+        self == other -> bool
 
-            Parameter
+        Parameters
+        ----------
+        buff : SisypheAcquisition
+            acquisition to compare
 
-                other   SisypheAcquisition
-
-            return  bool
+        Returns
+        -------
+        bool
+            True if same acquisition
         """
         if isinstance(buff, SisypheAcquisition):
             return buff._modality == self._modality and \
@@ -2489,30 +3020,37 @@ class SisypheAcquisition(object):
 
     def isNotEqual(self, buff: SisypheAcquisition) -> bool:
         """
-            Check whether parameter instance and current SisypheAcquisition instance
-            have not the same modality, sequence or date of scan attributes
-            self != other -> bool
+        Check whether parameter instance and current SisypheAcquisition instance have not the same modality, sequence
+        or date of scan attributes.
+        self != other -> bool
 
-            Parameter
+        Parameters
+        ----------
+        buff : SisypheAcquisition
+            acquisition to compare
 
-                other   SisypheAcquisition
-
-            return  bool
+        Returns
+        -------
+        bool
+            True if acquistions are different
         """
         return not self.isEqual(buff)
 
     def getAgeAtScanDate(self, dateofbirthday: str | SisypheIdentity | date, f: str = '%Y-%m-%d') -> int:
         """
-            Get the patient's age supplied as parameter on the scan date.
+        Get the patient's age supplied as parameter on the scan date.
 
-            Parameters
+        Parameters
+        ----------
+        dateofbirthday : str | SisypheIdentity | datetime.date
+            birthdate as str, birthdate attribute of the SisypheIdentity instance or datetime.date
+        f : str
+            format used to convert date to str (default '%Y-%m-%d')
 
-                dateofbirthday  str,                birthdate as str
-                                | SisypheIdentity   birthdate attribute of the SisypheIdentity instance
-                                | datetime.date     birthdate as datetime.date
-                f               str, format used to convert date to str (default '%Y-%m-%d')
-
-            return  int, patient age
+        Returns
+        -------
+        int
+            patient age
         """
         if isinstance(dateofbirthday, str):
             dateofbirthday = datetime.strptime(dateofbirthday, f).date()
@@ -2523,17 +3061,18 @@ class SisypheAcquisition(object):
         if isinstance(dateofbirthday, date):
             delta = self._dateofscan - dateofbirthday
             return int(delta.days / 365)
-        else:
-            raise TypeError('parameter functype is not str, date, SisypheIdentity or SisypheVolume.')
+        else: raise TypeError('parameter functype is not str, date, SisypheIdentity.')
 
     def createXML(self, doc:  minidom.Document, currentnode: minidom.Element) -> None:
         """
-            Write current SisypheAcquisition instance attributes to xml instance.
+        Write current SisypheAcquisition instance attributes to xml instance.
 
-            Parameter
-
-                doc             minidom.Document, xml document
-                currentnode     minidom.Element, xml root node
+        Parameters
+        ----------
+        doc : minidom.Document
+            xml document
+        currentnode : minidom.Element
+            xml root node
         """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):
@@ -2581,16 +3120,27 @@ class SisypheAcquisition(object):
                 buff = ' '.join([str(i) for i in buff])
                 txt = doc.createTextNode(buff)
                 node.appendChild(txt)
+                # < Revision 22/11/2024
+                # add contrast attribute
+                buff = self.getContrast()
+                if len(buff) > 0:
+                    node = doc.createElement('contrast')
+                    attr.appendChild(node)
+                    buff = ' '.join([str(i) for i in buff])
+                    txt = doc.createTextNode(buff)
+                    node.appendChild(txt)
+                # Revision 22/11/2024 >
             else: raise TypeError('parameter functype is not xml.dom.minidom.Element.')
         else: raise TypeError('parameter functype is not xml.dom.minidom.Document.')
 
     def parseXML(self, doc: minidom.Document) -> None:
         """
-            Read current SisypheAcquisition instance attributes from xml instance.
+        Read current SisypheAcquisition instance attributes from xml instance.
 
-            Parameter
-
-                doc             minidom.Document, xml document
+        Parameters
+        ----------
+        doc : minidom.Document
+            xml document
         """
         if isinstance(doc, minidom.Document):
             attr = doc.getElementsByTagName('acquisition')
@@ -2620,15 +3170,25 @@ class SisypheAcquisition(object):
                         buff = node.firstChild.data
                         buff = buff.split(' ')
                         self.setAutoCorrelations([float(buff[0]), float(buff[1]), float(buff[2])])
+                elif node.nodeName == 'contrast':
+                    # < Revision 22/11/2024
+                    # add contrast attribute
+                    if node.firstChild:
+                        buff = node.firstChild.data
+                        buff = buff.split(' ')
+                        buff = [float(i) for i in buff]
+                        self.setContrast(buff)
+                    # Revision 22/11/2024 >
         else: raise TypeError('parameter functype is not xml.dom.minidom.Document.')
 
     def saveToXML(self, filename: str) -> None:
         """
-            Save current SisypheAcquisition instance attributes to xml file (*.xacq).
+        Save current SisypheAcquisition instance attributes to xml file (.xacq).
 
-            Parameter
-
-                filename    str, xml file name (*.xacq)
+        Parameters
+        ----------
+        filename : str
+            xml file name (.xacq)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -2647,11 +3207,12 @@ class SisypheAcquisition(object):
 
     def loadFromXML(self, filename: str) -> None:
         """
-            Load current SisypheAcquisition instance attributes from xml file (*.xacq).
+        Load current SisypheAcquisition instance attributes from xml file (.xacq).
 
-            Parameter
-
-                filename    str, xml file name (*.xacq)
+        Parameters
+        ----------
+        filename : str
+            xml file name (.xacq)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -2670,81 +3231,19 @@ class SisypheAcquisition(object):
 
 class SisypheDisplay(object):
     """
-        SisypheDisplay class
+    Description
+    ~~~~~~~~~~~
 
-        Description
+    Class to manage display attributes of images (Look-up table colormap, windowing). This class is usually an
+    attribute of the Sisyphe.core.sisypheVolume.SisypheVolume class (display property or getDisplay() method).
 
-            Class to manage LUT attribute of images.
+    Inheritance
+    ~~~~~~~~~~~
 
-        Inheritance
+    object -> SisypheIdentity
 
-            object -> SisypheIdentity
-
-        Private attributes
-
-            _rangemin   float
-            _rangemax   float
-            _windowmin  float
-            _windowmax  float
-            _lut        SisypheLut instance
-            _parent     parent instance
-
-        Class method
-
-            getFileExt() -> str
-            getFilterExt() -> str
-
-        Public methods
-
-            __init__(rangemin: float = 0.0,
-                     rangemax: float = 0.0,
-                     windowmin: float | None = None,
-                     windowmax: float | None = None,
-                     lut: Sisyphe.sisypheLUT.SisypheLut | None = None,
-                     parent: Sisyphe.sisypheVolume.SisypheVolume | None = None)
-            __str__() -> str
-            __repr__() -> str
-            hasParent() -> str
-            setParent(self, parent: Sisyphe.sisypheVolume.SisypheVolume)
-            getParent() -> Sisyphe.sisypheVolume.SisypheVolume
-            copyFrom(self, buff: SisypheDisplay | Sisyphe.sisypheVolume.SisypheVolume)
-            copy() -> SisypheDisplay
-            updateVTKLUT()
-            getLUT() -> Sisyphe.sisypheLUT.SisypheLut
-            getVTKLUT() -> vtk.vtkLookupTable
-            setLUT(lut: SisypheLut)
-            getWindow() -> Tuple[float, float]
-            getWindowMin() -> float
-            getWindowMax() -> float
-            getRange() -> Tuple[float, float]
-            getRangeMin() -> float
-            getRangeMax() -> float
-            setDefaultWindowMin()
-            setDefaultWindowMax()
-            setWindow(vmin: float, vmax: float)
-            setWindowMin(v: float)
-            setWindowMax(v: float)
-            setRangeMin(v: float)
-            setRangeMax(v: float)
-            setRange(vmin: float, vmax: float)
-            setDefaultLut()
-            hasZeroOneRange() -> bool
-            hasNegativeValues() -> bool
-            convertRangeWindowToInt()
-            setDefaultWindow()
-            isDefaultWindow() -> bool
-            setDefaultLut()
-            parseXML(doc: minidom.Document)
-            createXML(doc: minidom.Document, currentnode: minidom.Element)
-            saveToXML(filename: str)
-            loadFromXML(filename: str)
-
-        Creation: 18/03/2021
-        Revisions:
-
-            24/08/2023  copy() and copyFrom() methods bugfix
-            29/08/2023  type hinting
-            18/11/2023  docstrings
+    Creation: 18/03/2021
+    Last revision: 13/12/2024
     """
     __slots__ = ['_rangemin', '_rangemax', '_windowmin', '_windowmax', '_lut', '_parent']
 
@@ -2757,22 +3256,39 @@ class SisypheDisplay(object):
     @classmethod
     def getFileExt(cls) -> str:
         """
-            Get SisypheDisplay file extension.
+        Get SisypheDisplay file extension.
 
-            return  str, '.xdisplay'
+        Returns
+        -------
+        str
+            '.xdisplay'
         """
         return cls._FILEEXT
 
     @classmethod
     def getFilterExt(cls) -> str:
         """
-            Get SisypheAcquisition filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().
+        Get SisypheAcquisition filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().
 
-            return  str, 'PySisyphe Display (*.xdisplay)'
+        Returns
+        -------
+        str
+            'PySisyphe Display (.xdisplay)'
         """
         return 'PySisyphe Display (*{})'.format(cls._FILEEXT)
 
     # Special methods
+
+    """
+    Private attributes
+
+    _rangemin   float
+    _rangemax   float
+    _windowmin  float
+    _windowmax  float
+    _lut        SisypheLut instance
+    _parent     parent instance
+    """
 
     def __init__(self,
                  rangemin: float = 0.0,
@@ -2780,18 +3296,24 @@ class SisypheDisplay(object):
                  windowmin: float | None = None,
                  windowmax: float | None = None,
                  lut: SisypheLut | None = None,
-                 parent: sc.sisypheVolume.SisypheVolume | None = None) -> None:
+                 parent: SisypheVolume | None = None) -> None:
         """
-            SisypheDisplay instance constructor
+        SisypheDisplay instance constructor.
 
-            Parameters
-
-                rangemin    float, minimum scalar value in the image (default 0.0)
-                rangemax    float, maximum scalar value in the image (default 0.0)
-                windowmin   float | None, minimum value of the lut windowing (default None)
-                windowmax   float | None, maximum value of the lut windowing (default None)
-                lut         sisyphe.sisypheLUT.SisypheLut | None = None, look-up table colormap (default None)
-                parent      Sisyphe.sisypheVolume.SisypheVolume | None (default None)
+        Parameters
+        ----------
+        rangemin : float
+            minimum scalar value in the image (default 0.0)
+        rangemax : float
+            maximum scalar value in the image (default 0.0)
+        windowmin : float | None
+            minimum value of the lut windowing (default None)
+        windowmax : float | None
+            maximum value of the lut windowing (default None)
+        lut : sisyphe.sisypheLUT.SisypheLut | None
+            look-up table colormap (default None)
+        parent : Sisyphe.core.sisypheVolume.SisypheVolume | None
+            Sisyphe.core.sisypheVolume.SisypheVolume parent (default None)
         """
         # Init range and window
         self._rangemin = rangemin
@@ -2809,9 +3331,12 @@ class SisypheDisplay(object):
 
     def __str__(self) -> str:
         """
-             Special overloaded method called by the built-in str() python function.
+         Special overloaded method called by the built-in str() python function.
 
-             return  str, conversion of SisypheDisplay instance to str
+        Returns
+        -------
+        str
+            conversion of SisypheDisplay instance to str
          """
         if self.hasParent():
             v = self.getParent()
@@ -2829,7 +3354,10 @@ class SisypheDisplay(object):
         """
             Special overloaded method called by the built-in repr() python function.
 
-            return  str, SisypheDisplay instance representation
+        Returns
+        -------
+        str
+            SisypheDisplay instance representation
         """
         return '{} class instance at <{}>\n{}'.format(self.__class__.__name__,
                                                       str(id(self)),
@@ -2839,43 +3367,51 @@ class SisypheDisplay(object):
 
     def hasParent(self) -> bool:
         """
-            Check whether current SisypheDisplay instance has a parent,
-            i.e. parent attribute is not None.
+        Check whether current SisypheDisplay instance has a parent (Sisyphe.core.sisypheVolume.SisypheVolume instance),
+        i.e. parent attribute is not None.
 
-            return  bool, True if current SisypheDisplay is defined (not None)
+        Returns
+        -------
+        bool
+            True if current SisypheDisplay is defined (not None)
         """
         return self._parent is not None
 
-    def setParent(self, parent: sc.sisypheVolume.SisypheVolume) -> None:
+    def setParent(self, parent: SisypheVolume) -> None:
         """
-            Set parent of the current SisypheDisplay instance.
+        Set parent (Sisyphe.core.sisypheVolume.SisypheVolume instance) of the current SisypheDisplay instance.
 
-            Parameter
-
-                parent  Sisyphe.sisypheVolume.SisypheVolume
+        Parameters
+        ----------
+        parent : Sisyphe.core.sisypheVolume.SisypheVolume
+            Sisyphe.core.sisypheVolume.SisypheVolume parent
         """
-        if isinstance(parent, sc.sisypheVolume.SisypheVolume):
-            self._parent = parent
+        from Sisyphe.core.sisypheVolume import SisypheVolume
+        if isinstance(parent, SisypheVolume): self._parent = parent
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(parent)))
 
-    def getParent(self) -> sc.sisypheVolume.SisypheVolume:
+    def getParent(self) -> SisypheVolume:
         """
-            Get parent of the current SisypheDisplay instance.
+        Get parent (Sisyphe.core.sisypheVolume.SisypheVolume instance) of the current SisypheDisplay instance.
 
-            return  Sisyphe.sisypheVolume.SisypheVolume
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            Sisyphe.core.sisypheVolume.SisypheVolume parent
         """
         return self._parent
 
-    def copyFrom(self, buff: SisypheDisplay | sc.sisypheVolume.SisypheVolume) -> None:
+    def copyFrom(self, buff: SisypheDisplay | SisypheVolume) -> None:
         """
-            Copy attributes of the display parameter to
-            the current SisypheDisplay instance (deep copy).
+        Copy attributes of the display parameter to the current SisypheDisplay instance (deep copy).
 
-            Parameter
-
-                buff    SisypheDisplay | Sisyphe.sisypheVolume.SisypheVolume
+        Parameters
+        ----------
+        buff : SisypheDisplay | Sisyphe.core.sisypheVolume.SisypheVolume
+            display to copy
         """
-        if isinstance(buff, sc.sisypheVolume.SisypheVolume):
+        from Sisyphe.core.sisypheVolume import SisypheVolume
+        if isinstance(buff, SisypheVolume):
             buff = buff.display
         if isinstance(buff, SisypheDisplay):
             self._rangemin = buff._rangemin
@@ -2887,9 +3423,12 @@ class SisypheDisplay(object):
 
     def copy(self) -> SisypheDisplay:
         """
-            Copy the current SisypheDisplay instance (deep copy).
+        Copy the current SisypheDisplay instance (deep copy).
 
-            return   SisypheDisplay
+        Returns
+        -------
+        SisypheDisplay
+            display copy
         """
         buff = SisypheDisplay()
         buff._rangemin = self._rangemin
@@ -2901,100 +3440,132 @@ class SisypheDisplay(object):
 
     def updateVTKLUT(self) -> None:
         """
-            Apply windowing attributes to current SisypheDisplay instance.
+        Apply windowing attributes to current SisypheDisplay instance.
         """
         self._lut.setWindowRange(self._windowmin, self._windowmax)
 
     def getLUT(self) -> SisypheLut:
         """
-            Get Lut attribute of the current SisypheDisplay instance.
+        Get Lut attribute of the current SisypheDisplay instance.
 
-            return  Sisyphe.sisypheLUT.SisypheLut, PySisyphe Look-up-table colormap instance
+        Returns
+        -------
+        Sisyphe.core.sisypheLUT.SisypheLut
+            PySisyphe Look-up-table colormap instance
         """
         return self._lut
 
     def getVTKLUT(self) -> vtkLookupTable:
         """
-            Get Lut attribute of the current SisypheDisplay instance.
+        Get Lut attribute of the current SisypheDisplay instance.
 
-            return  vtk.vtkLookupTable, VTK Look-up-table colormap instance
+        Returns
+        -------
+        vtk.vtkLookupTable
+            VTK Look-up-table colormap instance
         """
         return self._lut.getvtkLookupTable()
 
-    def setLUT(self, lut: SisypheLut) -> None:
+    def setLUT(self, lut: str | SisypheLut) -> None:
         """
-            Set Lut attribute of the current SisypheDisplay instance.
+        Set Lut attribute of the current SisypheDisplay instance.
 
-            Parameter
-
-                lut     Sisyphe.sisypheLUT.SisypheLut, PySisyphe Look-up-table colormap instance
+        Parameters
+        ----------
+        lut : str | Sisyphe.core.sisypheLUT.SisypheLut
+            Look-up-table colormap name or PySisyphe Look-up-table colormap instance
         """
-        if isinstance(lut, SisypheLut): self._lut = lut
-        else: raise TypeError('parameter type {} is not SisypheLut.'.format(type(lut)))
+        if isinstance(lut, str):
+            self._lut = SisypheLut()
+            self._lut.setLut(lut)
+        elif isinstance(lut, SisypheLut): self._lut = lut
+        else: raise TypeError('parameter type {} is not str or SisypheLut.'.format(type(lut)))
+        # < Revision 13/12/2024
+        # bugfix, update window attributes from lut instance
+        self._windowmin, self._windowmax = self._lut.getWindowRange()
+        # Revision 13/12/2024 >
 
     def getWindow(self) -> tuple[float, float] | tuple[int, int]:
         """
-            Get lut windowing attributes of the current SisypheDisplay instance.
+        Get lut windowing attributes of the current SisypheDisplay instance.
 
-            return  tuple[float, float] | tuple[int, int], minimum and maximum windowing values
+        Returns
+        -------
+        tuple[float, float] | tuple[int, int]
+            minimum and maximum windowing values
         """
         return self._windowmin, self._windowmax
 
     def getWindowMin(self) -> float | int:
         """
-            Get minimum lut windowing attribute of the current SisypheDisplay instance.
+        Get minimum lut windowing attribute of the current SisypheDisplay instance.
 
-            return  float | int, minimum windowing value
+        Returns
+        -------
+        float | int
+            minimum windowing value
         """
         return self._windowmin
 
     def getWindowMax(self) -> float | int:
         """
-            Get maximum lut windowing attribute of the current SisypheDisplay instance.
+        Get maximum lut windowing attribute of the current SisypheDisplay instance.
 
-            return  float | int, maximum windowing value
+        Returns
+        -------
+        float | int
+            maximum windowing value
         """
         return self._windowmax
 
     def getRange(self) -> tuple[float, float] | tuple[int, int]:
         """
-            Get scalar values range attributes of the current SisypheDisplay instance.
+        Get scalar values range attributes of the current SisypheDisplay instance.
 
-            return  tuple[float, float] | tuple[int, int], minimum and maximum scalar values
+        Returns
+        -------
+        tuple[float, float] | tuple[int, int]
+            minimum and maximum scalar values
         """
         return self._rangemin, self._rangemax
 
     def getRangeMin(self) -> float | int:
         """
-            Get minimum scalar value attribute of the current SisypheDisplay instance.
+        Get minimum scalar value attribute of the current SisypheDisplay instance.
 
-            return  float | int, minimum scalar value
+        Returns
+        -------
+        float | int
+            minimum scalar value
         """
         return self._rangemin
 
     def getRangeMax(self) -> float | int:
         """
-            Get maximum scalar value attribute of the current SisypheDisplay instance.
+        Get maximum scalar value attribute of the current SisypheDisplay instance.
 
-            return  float | int, maximum scalar value
+        Returns
+        -------
+        float | int
+            maximum scalar value
         """
         return self._rangemax
 
     def setDefaultWindowMin(self) -> None:
         """
-            Set minimum windowing value of the current SisypheDisplay instance to
-            minimum scalar value of the image array.
+        Set minimum windowing value of the current SisypheDisplay instance to minimum scalar value of the image array.
         """
         self._windowmin = self._rangemin
         self.updateVTKLUT()
 
     def setWindowMin(self, v: float) -> None:
         """
-            Set minimum windowing value of the current SisypheDisplay instance.
+        Set minimum windowing value of the current SisypheDisplay instance.
 
-            Parameter
-
-                v   float, minimum windowing value
+        Parameters
+        ----------
+        v : float
+            minimum windowing value
         """
         if v < self._rangemin: self._windowmin = self._rangemin
         else: self._windowmin = v
@@ -3002,19 +3573,19 @@ class SisypheDisplay(object):
 
     def setDefaultWindowMax(self) -> None:
         """
-            Set maximum windowing value of the current SisypheDisplay instance to
-            maximum scalar value of the image array.
+        Set maximum windowing value of the current SisypheDisplay instance to maximum scalar value of the image array.
         """
         self._windowmax = self._rangemax
         self.updateVTKLUT()
 
     def setWindowMax(self, v: float) -> None:
         """
-            Set maximum windowing value of the current SisypheDisplay instance.
+        Set maximum windowing value of the current SisypheDisplay instance.
 
-            Parameter
-
-                v   float, maximum windowing value
+        Parameters
+        ----------
+        v : float
+            maximum windowing value
         """
         if v > self._rangemax: self._windowmax = self._rangemax
         else: self._windowmax = v
@@ -3022,11 +3593,12 @@ class SisypheDisplay(object):
 
     def setRangeMin(self, v: float) -> None:
         """
-            Set minimum scalar value of the current SisypheDisplay instance.
+        Set minimum scalar value of the current SisypheDisplay instance.
 
-            Parameter
-
-                v   float, minimum scalar value
+        Parameters
+        ----------
+        v : float
+            minimum scalar value
         """
         self._rangemin = v
         if self._windowmin < v: self._windowmin = v
@@ -3034,11 +3606,12 @@ class SisypheDisplay(object):
 
     def setRangeMax(self, v: float) -> None:
         """
-            Set maximum scalar value of the current SisypheDisplay instance.
+        Set maximum scalar value of the current SisypheDisplay instance.
 
-            Parameter
-
-                v   float, maximum scalar value
+        Parameters
+        ----------
+        v : float
+            maximum scalar value
         """
         self._rangemax = v
         if self._windowmax > v: self._windowmax = v
@@ -3046,12 +3619,14 @@ class SisypheDisplay(object):
 
     def setWindow(self, vmin: float, vmax: float) -> None:
         """
-            Set windowing lut attributes of the current SisypheDisplay instance.
+        Set windowing lut attributes of the current SisypheDisplay instance.
 
-            Parameters
-
-                vmin    float, minimum windowing value
-                vmax    float, maximum windowing value
+        Parameters
+        ----------
+        vmin : float
+            minimum windowing value
+        vmax : float
+            maximum windowing value
         """
         if vmax >= vmin:
             if vmin < self._rangemin: vmin = self._rangemin
@@ -3061,14 +3636,97 @@ class SisypheDisplay(object):
             self.updateVTKLUT()
         else: raise ValueError('second parameter {} is not greater than first parameter {}.'.format(vmax, vmin))
 
+    def setCenterWidthWindow(self, center: float, width: float) -> None:
+        """
+        Set windowing lut attributes of the current SisypheDisplay instance.
+
+            - minimum windowing value = center - (width // 2)
+            - maximum windowing value = center + (width // 2)
+
+        Parameters
+        ----------
+        center : float
+            center windowing value
+        width : float
+            width windowing value
+        """
+        width = width // 2
+        vmin = center - width
+        vmax = center + width
+        self.setWindow(vmin, vmax)
+
+    # < Revision 12/06/2025
+    # add setSymmetricWindow method
+    def setSymmetricWindow(self):
+        """
+        Set symmetric values to the windowing lut attributes of the current SisypheDisplay instance. Take the lowest
+        absolute value between the upper and lower window thresholds, set it as the upper window, and minus this value
+        as the lower threshold.
+
+        This method only works on signed images.
+        """
+        if self._windowmin < 0.0:
+            v = min(abs(self._windowmin), abs(self._windowmax))
+            self.setWindow(-v, v)
+    # Revision 12/06/2025 >
+
+    def autoWindow(self, cmin: int = 1, cmax: int = 99) -> None:
+        """
+        Set windowing lut attributes of the current SisypheDisplay instance.
+
+            - minimum windowing value = cmin centile
+            - maximum windowing value = cmax centile
+
+        Parameters
+        ----------
+        cmin : float
+            centile used for minimum windowing value
+        cmax : float
+            centile used for maximum windowing value
+        """
+        if self.hasParent():
+            parent = self.getParent()
+            vmin = parent.getPercentile(cmin)
+            vmax = parent.getPercentile(cmax)
+            self.setWindow(vmin, vmax)
+
+    def setCTBrainWindow(self) -> None:
+        """
+        Set windowing lut attributes of the current SisypheDisplay instance to improve brain display.
+        """
+        if self.hasParent():
+            parent = self.getParent()
+            if parent.acquisition.isCT():
+                self.setCenterWidthWindow(40.0, 80.0)
+
+    def setCTBoneWindow(self) -> None:
+        """
+        Set windowing lut attributes of the current SisypheDisplay instance to improve bone display.
+        """
+        if self.hasParent():
+            parent = self.getParent()
+            if parent.acquisition.isCT():
+                self.setCenterWidthWindow(600.0, 2800.0)
+
+    def setCTMetallicWindow(self) -> None:
+        """
+        Set windowing lut attributes of the current SisypheDisplay instance to improve metallic material display.
+        """
+        if self.hasParent():
+            parent = self.getParent()
+            if parent.acquisition.isCT():
+                self.setCenterWidthWindow(2600.0, 600.0)
+
     def setRange(self, vmin: float, vmax: float) -> None:
         """
-            Set scalar range attributes of the current SisypheDisplay instance.
+        Set scalar range attributes of the current SisypheDisplay instance.
 
-            Parameters
-
-                vmin    float, minimum scalar value
-                vmax    float, maximum scalar value
+        Parameters
+        ----------
+        vmin : float
+            minimum scalar value
+        vmax : float
+            maximum scalar value
         """
         if vmax >= vmin:
             self._rangemin = vmin
@@ -3080,23 +3738,29 @@ class SisypheDisplay(object):
 
     def hasZeroOneRange(self) -> bool:
         """
-            Check whether scalar values range of the current SisypheDisplay instance is (0.0, 1.0).
+        Check whether scalar values range of the current SisypheDisplay instance is normalized (0.0, 1.0).
 
-            return  bool, True if scalar values range is (0.0, 1.0)
+        Returns
+        -------
+        bool
+            True if scalar values range is (0.0, 1.0)
         """
         return self._rangemin >= 0.0 and self._rangemax <= 1.0
 
     def hasNegativeValues(self) -> bool:
         """
-            Check whether minimum scalar value of the current SisypheDisplay instance is negative.
+        Check whether scalar value minimum of the current SisypheDisplay instance is negative.
 
-            return  bool, True if minimum scalar value is negative
+        Returns
+        -------
+        bool
+            True if scalar value minimum is negative
         """
         return self._rangemin < 0.0
 
     def convertRangeWindowToInt(self) -> None:
         """
-            Conversion of windowing and scalar values attributes of the current SisypheDisplay instance to integers.
+        Conversion of windowing and scalar values attributes of the current SisypheDisplay instance to integers.
         """
         self._rangemin = int(self._rangemin)
         self._rangemax = int(self._rangemax)
@@ -3105,8 +3769,8 @@ class SisypheDisplay(object):
 
     def setDefaultWindow(self) -> None:
         """
-            Set minimum windowing value to minimum scalar value of the image array.
-            Set maximum windowing value to maximum scalar value of the image array.
+        Set minimum windowing value to minimum scalar value of the image array.
+        Set maximum windowing value to maximum scalar value of the image array.
         """
         self._windowmin = self._rangemin
         self._windowmax = self._rangemax
@@ -3114,29 +3778,33 @@ class SisypheDisplay(object):
 
     def isDefaultWindow(self) -> bool:
         """
-            Check whether minimum windowing value = minimum scalar value and
-            maximum windowing value = maximum scalar value (no lut windowing)
+        Check whether minimum windowing value = minimum scalar value and maximum windowing value = maximum scalar value
+        (no lut windowing).
 
-            return  bool, True if no lut windowing
+        Returns
+        -------
+        bool
+            True if no lut windowing
         """
         return self._windowmin == self._rangemin and \
                self._windowmax == self._rangemax
 
     def setDefaultLut(self) -> None:
         """
-            Set Lut attribute of the current SisypheDisplay instance
-            to default (grayscale colormap).
+        Set Lut attribute of the current SisypheDisplay instance to default (grayscale colormap).
         """
         self._lut.setDefaultLut()
 
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
-            Write current SisypheDisplay instance attributes to xml instance.
+        Write current SisypheDisplay instance attributes to xml instance.
 
-            Parameter
-
-                doc             minidom.Document, xml document
-                currentnode     minidom.Element, xml root node
+        Parameters
+        ----------
+        doc : minidom.Document
+            xml document
+        currentnode : minidom.Element
+            xml root node
         """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):
@@ -3177,11 +3845,12 @@ class SisypheDisplay(object):
 
     def parseXML(self, doc: minidom.Document) -> None:
         """
-            Read current SisypheDisplay instance attributes from xml instance.
+        Read current SisypheDisplay instance attributes from xml instance.
 
-            Parameter
-
-                doc             minidom.Document, xml document
+        Parameters
+        ----------
+        doc : minidom.Document
+            xml document
         """
         if isinstance(doc, minidom.Document):
             display = doc.getElementsByTagName('display')
@@ -3208,11 +3877,12 @@ class SisypheDisplay(object):
 
     def saveToXML(self, filename: str) -> None:
         """
-            Save current SisypheDislpay instance attributes to xml file (*.xdisplay).
+        Save current SisypheDislpay instance attributes to xml file (.xdisplay).
 
-            Parameter
-
-                filename    str, xml file name (*.xdisplay)
+        Parameters
+        ----------
+        filename : str
+            xml file name (.xdisplay)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -3233,11 +3903,12 @@ class SisypheDisplay(object):
 
     def loadFromXML(self, filename: str) -> None:
         """
-            Load current SisypheDisplay instance attributes from xml file (*.xdisplay).
+        Load current SisypheDisplay instance attributes from xml file (.xdisplay).
 
-            Parameter
-
-                filename    str, xml file name (*.xdisplay)
+        Parameters
+        ----------
+        filename : str
+            xml file name (.xdisplay)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -3253,76 +3924,23 @@ class SisypheDisplay(object):
 
 class SisypheACPC(object):
     """
-        SisypheACPC class
+    Description
+    ~~~~~~~~~~~
 
-            Class to manage anterior (AC) and posterior (PC) commissure attributes of images.
-            Generate rigid geometric transformation, x and z rotations calculated from AC-PC,
-            i.e. geometric transformation to reference with axes aligned on the AC-PC line,
-            with midACPC point as center of rotation.
+    Class to manage anterior (AC) and posterior (PC) commissure attributes of images. Generate rigid geometric
+    transformation, x and z rotations calculated from AC-PC, i.e. geometric transformation to reference with axes
+    aligned on the AC-PC line, with midACPC point as center of rotation.
 
-        Inheritance
+    This class is usually an attribute of the Sisyphe.core.sisypheVolume.SisypheVolume class (acpc property or
+    getACPC() method).
 
-            object -> SisypheACPC
+    Inheritance
+    ~~~~~~~~~~~
 
-        Private attributes
+    object -> SisypheACPC
 
-            _ac     (float, float, float)
-            _pc     (float, float, float)
-            _trf    SisypheTransform
-            _parent object
-
-        Class methods
-
-            getFileExt() -> str
-            getFilterExt() -> str
-
-        Public methods
-
-            __init__(parent: Sisyphe.sisypheVolume.SisypheVolume | None = None)
-            _str__() -> str
-            __repr__() -> str
-            getAC() -> tupleFloat3
-            getPC() -> tupleFloat3
-            getMidACPC() -> tupleFloat3
-            setAC(v: tupleFloat3 | listFloat3)
-            setPC(v: tupleFloat3 | listFloat3)
-            hasAC() -> bool
-            hasPC() -> bool
-            hasACPC() -> bool
-            hasTransform() -> bool
-            setTransform(trf: Sisyphe.sisypheTransform.SisypheTransform)
-            getTransform() -> Sisyphe.sisypheTransform.SisypheTransform
-            getEquivalentVolumeCenteredTransform() -> Sisyphe.sisypheTransform.SisypheTransform
-            setYRotation(r: float, deg: bool = False)
-            getRotations(deg: bool = False) -> tupleFloat3
-            getACPCDistance() -> float
-            getEuclideanDistanceFromAC(p: tupleFloat3 | listFloat3) -> float
-            getEuclideanDistanceFromPC(p: tupleFloat3 | listFloat3) -> float
-            getEuclideanDistanceFromMidACPC(p: tupleFloat3 | listFloat3) -> float
-            getRelativeDistanceFromAC(p: tupleFloat3 | listFloat3) -> tupleFloat3
-            getRelativeDistanceFromPC(p: tupleFloat3 | listFloat3) -> tupleFloat3
-            getRelativeDistanceFromMidACPC(p: tupleFloat3 | listFloat3) -> tupleFloat3
-            getRelativeDistanceFromReferencePoint(p: tupleFloat3 | listFloat3,
-                                                  ref: tupleFloat3 | listFloat3) -> tupleFloat3
-            getPointFromRelativeDistanceToAC(r: tupleFloat3 | listFloat3) -> tupleFloat3
-            getPointFromRelativeDistanceToPC(r: tupleFloat3 | listFloat3) -> tupleFloat3
-            getPointFromRelativeDistanceToMidACPC(r: tupleFloat3 | listFloat3) -> tupleFloat3
-            getPointFromRelativeDistanceToReferencePoint(r: tupleFloat3 | listFloat3,
-                                                         ref: tupleFloat3 | listFloat3) -> tupleFloat3
-            copyFrom(buff: SisypheACPC | Sisyphe.sisypheVolume.SisypheVolume)
-            copy() -> SisypheACPC
-            parseXML(doc: minidom.Document)
-            createXML(doc: minidom.Document, currentnode: minidom.Element)
-            saveToXML(str)
-            loadFromXML(str)
-
-        Creation: 12/04/2023
-        Revisions:
-
-            24/08/2023  copy() and copyFrom() methods bugfix
-            29/08/2023  type hinting
-            12/10/2023  add getEquivalentVolumeCenteredTransform2() method
-            19/11/2023  docstrings
+    Creation: 12/04/2023
+    Last revision: 12/12/2023
     """
     __slots__ = ['_ac', '_pc', '_trf', '_parent']
 
@@ -3335,31 +3953,48 @@ class SisypheACPC(object):
     @classmethod
     def getFileExt(cls) -> str:
         """
-            Get SisypheACPC file extension.
+        Get SisypheACPC file extension.
 
-            return  str, '.xacpc'
+        Returns
+        -------
+        str
+            '.xacpc'
         """
         return cls._FILEEXT
 
     @classmethod
     def getFilterExt(cls) -> str:
         """
-            Get SisypheACPC filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().
+        Get SisypheACPC filter used by QFileDialog.getOpenFileName() and QFileDialog.getSaveFileName().
 
-            return  str, 'PySisyphe ACPC (*.xacpc)'
+        Returns
+        -------
+        str
+            'PySisyphe ACPC (.xacpc)'
         """
         return 'PySisyphe ACPC (*{})'.format(cls._FILEEXT)
 
     # Special methods
 
-    def __init__(self, parent: sc.sisypheVolume.SisypheVolume | None = None) -> None:
-        """
-            SisypheACPC instance constructor
+    """
+    Private attributes
 
-            Parameter
+    _ac     (float, float, float)
+    _pc     (float, float, float)
+    _trf    SisypheTransform
+    _parent object
+    """
 
-                parent      Sisyphe.sisypheVolume.SisypheVolume | None (default None)
+    def __init__(self, parent: SisypheVolume | None = None) -> None:
         """
+        SisypheACPC instance constructor.
+
+        Parameters
+        ----------
+        parent : Sisyphe.core.sisypheVolume.SisypheVolume | None
+            Sisyphe.core.sisypheVolume.SisypheVolume parent (default None)
+        """
+        from Sisyphe.core.sisypheTransform import SisypheTransform
         self._ac = (0.0, 0.0, 0.0)
         self._pc = (0.0, 0.0, 0.0)
         self._trf = SisypheTransform()
@@ -3369,9 +4004,12 @@ class SisypheACPC(object):
 
     def __str__(self) -> str:
         """
-             Special overloaded method called by the built-in str() python function.
+         Special overloaded method called by the built-in str() python function.
 
-             return  str, conversion of SisypheACPC instance to str
+        Returns
+        -------
+        str
+            conversion of SisypheACPC instance to str
          """
         r = 'ACPC:\n' \
             '\tAC: {ac[0]:.1f} {ac[1]:.1f} {ac[2]:.1f}\n' \
@@ -3382,9 +4020,12 @@ class SisypheACPC(object):
 
     def __repr__(self) -> str:
         """
-            Special overloaded method called by the built-in repr() python function.
+        Special overloaded method called by the built-in repr() python function.
 
-            return  str, SisypheACPC instance representation
+        Returns
+        -------
+        str
+            SisypheACPC instance representation
         """
         return '{} class instance at <{}>\n{}'.format(self.__class__.__name__,
                                                       str(id(self)),
@@ -3409,54 +4050,70 @@ class SisypheACPC(object):
 
     def hasParent(self) -> bool:
         """
-            Check whether current SisypheACPC instance has a parent,
-            i.e. parent attribute is not None.
+        Check whether current SisypheACPC instance has a parent (Sisyphe.core.sisypheVolume.SisypheVolume instance),
+        i.e. parent attribute is not None.
 
-            return  bool, True if current SisypheACPC is defined (not None)
+        Returns
+        -------
+        bool
+            True if current SisypheACPC is defined (not None)
         """
         return self._parent is not None
 
-    def setParent(self, parent: sc.sisypheVolume.SisypheVolume) -> None:
+    def setParent(self, parent: SisypheVolume) -> None:
         """
-            Set parent of the current SisypheACPC instance.
+        Set parent (Sisyphe.core.sisypheVolume.SisypheVolume instance) of the current SisypheACPC instance.
 
-            Parameter
-
-                parent  Sisyphe.sisypheVolume.SisypheVolume
+        Parameters
+        ----------
+        parent : Sisyphe.core.sisypheVolume.SisypheVolume
+            Sisyphe.core.sisypheVolume.SisypheVolume parent
         """
-        if isinstance(parent, sc.sisypheVolume.SisypheVolume):
-            self._parent = parent
+        from Sisyphe.core.sisypheVolume import SisypheVolume
+        if isinstance(parent, SisypheVolume): self._parent = parent
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(parent)))
 
-    def getParent(self) -> sc.sisypheVolume.SisypheVolume:
+    def getParent(self) -> SisypheVolume:
         """
-            Get parent of the current SisypheACPC instance.
+        Get parent (Sisyphe.core.sisypheVolume.SisypheVolume instance) of the current SisypheACPC instance.
 
-            return  Sisyphe.sisypheVolume.SisypheVolume
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            Sisyphe.core.sisypheVolume.SisypheVolume parent
         """
         return self._parent
 
     def getAC(self) -> tupleFloat3:
         """
-            Get AC coordinates attribute of the current SisypheACPC instance.
+        Get AC coordinates attribute of the current SisypheACPC instance.
 
-            return   tupleFloat3, AC coordinates
+        Returns
+        -------
+        tuple[float, float, float]
+            AC coordinates
         """
         return self._ac
 
     def getPC(self) -> tupleFloat3:
         """
-            Get PC coordinates attribute of the current SisypheACPC instance.
+        Get PC coordinates attribute of the current SisypheACPC instance.
 
-            return   tupleFloat3, PC coordinates
+        Returns
+        -------
+        tuple[float, float, float]
+            PC coordinates
         """
         return self._pc
 
     def getMidACPC(self) -> tupleFloat3:
         """
-            Get midACPC coordinates of the current SisypheACPC instance.
+        Get midACPC coordinates of the current SisypheACPC instance.
 
-            return   tupleFloat3, midACPC coordinates
+        Returns
+        -------
+        tuple[float, float, float]
+            midACPC coordinates
         """
         if self.hasPC() and not self.hasAC(): return self._pc
         else:
@@ -3464,13 +4121,14 @@ class SisypheACPC(object):
                     self._ac[1] + (self._pc[1] - self._ac[1]) / 2,
                     self._ac[2] + (self._pc[2] - self._ac[2]) / 2)
 
-    def setAC(self, v: tupleFloat3 | listFloat3) -> None:
+    def setAC(self, v: tupleFloat3 | list[float]) -> None:
         """
-            Set AC coordinates attribute of the current SisypheACPC instance.
+        Set AC coordinates attribute of the current SisypheACPC instance.
 
-            Parameter
-
-                v   tupleFloat3, AC coordinates
+        Parameters
+        ----------
+        v : tuple[float, float, float]
+            AC coordinates
         """
         if isinstance(v, (tuple, list)) and len(v) == 3:
             if all([isinstance(i, (float, int)) for i in v]):
@@ -3479,13 +4137,14 @@ class SisypheACPC(object):
             else: raise TypeError('parameter element type of the list/tuple is not int or float.')
         else: raise TypeError('parameter type is not tuple/list of 3 elements.')
 
-    def setPC(self, v: tupleFloat3 | listFloat3) -> None:
+    def setPC(self, v: tupleFloat3 | list[float]) -> None:
         """
-            Set PC coordinates attribute of the current SisypheACPC instance.
+        Set PC coordinates attribute of the current SisypheACPC instance.
 
-            Parameter
-
-                v   tupleFloat3, PC coordinates
+        Parameters
+        ----------
+        v : tuple[float, float, float]
+            PC coordinates
         """
         if isinstance(v, (tuple, list)) and len(v) == 3:
             if all([isinstance(i, (float, int)) for i in v]):
@@ -3496,77 +4155,91 @@ class SisypheACPC(object):
 
     def hasAC(self) -> bool:
         """
-            Check whether AC attribute of the current SisypheACPC instance is defined
-            (not coordinates 0.0, 0.0 0.0).
+        Check whether AC attribute of the current SisypheACPC instance is defined (not 0.0, 0.0 0.0).
 
-            return  bool, True if AC is defined (not coordinates 0.0, 0.0 0.0)
+        Returns
+        -------
+        bool
+            True if AC is defined (not 0.0, 0.0 0.0)
         """
         return self._ac != (0.0, 0.0, 0.0)
 
     def hasPC(self) -> bool:
         """
-            Check whether PC attribute of the current SisypheACPC instance is defined
-            (not coordinates 0.0, 0.0 0.0).
+        Check whether PC attribute of the current SisypheACPC instance is defined (not 0.0, 0.0 0.0).
 
-            return  bool, True if AC is defined (not coordinates 0.0, 0.0 0.0)
+        Returns
+        -------
+        bool
+            True if AC is defined (not 0.0, 0.0 0.0)
         """
         return self._pc != (0.0, 0.0, 0.0)
 
     def hasACPC(self) -> bool:
         """
-            Check whether AC and PC attributes of the current SisypheACPC instance is defined
-            (not coordinates 0.0, 0.0 0.0).
+        Check whether AC and PC attributes of the current SisypheACPC instance is defined (not 0.0, 0.0 0.0).
 
-            return  bool, True if AC is defined (not coordinates 0.0, 0.0 0.0)
+        Returns
+        -------
+        bool
+            True if AC is defined (not 0.0, 0.0 0.0)
         """
         return self._ac != (0.0, 0.0, 0.0) and \
                self._pc != (0.0, 0.0, 0.0)
 
     def hasTransform(self) -> bool:
         """
-            Check whether geometric transformation attribute of the
-            current SisypheAPC instance is not identity.
+        Check whether geometric transformation attribute of the current SisypheAPC instance is not identity.
 
-            return  bool, True if geometric transformation is not identity
+        Returns
+        -------
+        bool
+            True if geometric transformation is not identity
         """
         return not self._trf.isIdentity()
 
     def setTransform(self, trf: SisypheTransform) -> None:
         """
-            Set geometric transformation attribute of the current SisypheACPC instance.
-            Geometric transformation to reference frame with axes aligned on the AC-PC line,
-            with midACPC point as center of rotation.
+        Set geometric transformation attribute of the current SisypheACPC instance. Geometric transformation to
+        reference frame with axes aligned on the AC-PC line, and midACPC point as center of rotation.
 
-            Parameter
-
-                trf   Sisyphe.sisypheTransform.SisypheTransform, geometric transformation
+        Parameters
+        ----------
+        trf : Sisyphe.core.sisypheTransform.SisypheTransform
+            geometric transformation
         """
+        from Sisyphe.core.sisypheTransform import SisypheTransform
         if isinstance(trf, SisypheTransform):
             self._trf = trf
 
     def getTransform(self) -> SisypheTransform:
         """
-            Get geometric transformation attribute of the current SisypheACPC instance.
-            Geometric transformation to reference frame with axes aligned on the AC-PC line,
-            with midACPC point as center of rotation.
+        Get geometric transformation attribute of the current SisypheACPC instance. Geometric transformation to
+        reference frame with axes aligned on the AC-PC line, and midACPC point as center of rotation.
 
-            return  Sisyphe.sisypheTransform.SisypheTransform, geometric transformation
+        Returns
+        -------
+        Sisyphe.core.sisypheTransform.SisypheTransform
+            geometric transformation
         """
         return self._trf
 
     def getEquivalentVolumeCenteredTransform(self) -> SisypheTransform:
         """
-            Get geometric transformation attribute of the current SisypheACPC instance.
-            Conversion of the geometric transformation, changing the center of rotation
-            from midACPC to the center of the volume.
+        Get geometric transformation attribute of the current SisypheACPC instance. Conversion of the geometric
+        transformation, changing the center of rotation from midACPC to the center of the volume.
 
-            1. Apply forward translation, mid CA-CP to volume center (translation = volume center - mid CA-CP)
-            2. Apply rotation, after forward translation, center of rotation is volume center
-            3. Apply backward translation, volume center to mid CA-CP
+        - 1. Apply forward translation, mid CA-CP to volume center (translation = volume center - mid CA-CP)
+        - 2. Apply rotation, after forward translation, center of rotation is volume center
+        - 3. Apply backward translation, volume center to mid CA-CP
 
-            return Sisyphe.sisypheTransform.SisypheTransform, geometric transformation
+        Returns
+        -------
+        Sisyphe.core.sisypheTransform.SisypheTransform
+            geometric transformation
         """
         if self.hasParent() and self.hasACPC():
+            from Sisyphe.core.sisypheTransform import SisypheTransform
             c = list(self._parent.getCenter())
             m = list(self.getMidACPC())
             c[0] -= m[0]
@@ -3600,22 +4273,28 @@ class SisypheACPC(object):
                 t1.setSize(self._parent.getSize())
                 t1.setSpacing(self._parent.getSpacing())
             return t1
+        else: raise AttributeError('No parent or AC PC attributes are not defined.')
 
     def getEquivalentVolumeCenteredTransform2(self) -> SisypheTransform:
         """
-            Get geometric transformation attribute of the current SisypheACPC instance.
-            Conversion of the geometric transformation, changing the center of rotation
-            from midACPC to the center of the volume.
+        Get geometric transformation attribute of the current SisypheACPC instance. Conversion of the geometric
+        transformation, changing the center of rotation from midACPC to the center of the volume.
 
-            Forward centered transform (center of rotation = volume center)
-            Widget center of rotation is at the cursor position, not always in the volume center
-            1. apply translations to move center of rotation (cursor position -> volume center) before rotation
-            2. apply rotations
-            It's not classic roto-translation matrix that has an inverse order (1. rotations 2. translations)
-            Correct transformation is pre-multiply of the translation matrix by the rotation matrix
+        Forward centered transform (center of rotation = volume center). Widget center of rotation is at the cursor
+        position, not always in the volume center.
 
-            return Sisyphe.sisypheTransform.SisypheTransform, geometric transformation
+            - 1. apply translations to move center of rotation (cursor position -> volume center) before rotation
+            - 2. apply rotations
+
+        It's not classic roto-translation matrix that has an inverse order (1. rotations 2. translations). Correct
+        transformation is pre-multiply of the translation matrix by the rotation matrix.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheTransform.SisypheTransform
+            geometric transformation
         """
+        from Sisyphe.core.sisypheTransform import SisypheTransform
         t = self.getMidACPC()
         trf = SisypheTransform()
         trf.setID('ACPC')
@@ -3628,13 +4307,15 @@ class SisypheACPC(object):
 
     def setYRotation(self, r: float, deg: bool = False) -> None:
         """
-            Set rotation around Y axis with update of geometric transformation attribute
-            of the current SisypheACPC instance.
+        Set rotation around Y-axis with update of geometric transformation attribute of the current SisypheACPC
+        instance.
 
-            Parameter
-
-                r       float, Y rotation
-                deg     bool, degrees if True, radians otherwise
+        Parameters
+        ----------
+        r : float
+            Y rotation
+        deg : bool
+            rotation in degrees if True, radians otherwise (default False)
         """
         if isinstance(r, float):
             rot = list(self._trf.getRotations(deg=deg))
@@ -3642,23 +4323,31 @@ class SisypheACPC(object):
             self._trf.setRotations(rot, deg=deg)
         else: raise TypeError('parameter type {} is not float.'.format(type(r)))
 
-    def getRotations(self, deg: bool = False) -> tupleFloat3:
+    def getRotations(self, deg: bool = False) -> list[float]:
         """
-            Get rotation around Y axis with update of geometric transformation attribute
-            of the current SisypheACPC instance.
+        Get rotation around Y-axis with update of geometric transformation attribute of the current SisypheACPC
+        instance.
 
-            Parameter
+        Parameters
+        ----------
+        deg : bool
+            degrees if True, radians otherwise (default False)
 
-                r       tupleFloat3, rotations around x, y and z axes
-                deg     bool, degrees if True, radians otherwise
+        Returns
+        -------
+        list[float]
+            rotations around x-axis, y-axis and z-axis
         """
         return self._trf.getRotations(deg=deg)
 
     def getACPCDistance(self) -> float:
         """
-            Get euclidean distance between AC and PC points.
+        Get euclidean distance between AC and PC points.
 
-            return  float, euclidean distance in mm between AC and PC
+        Returns
+        -------
+        float
+            euclidean distance in mm between AC and PC
         """
         if self.hasACPC():
             return sqrt((self._ac[0] - self._pc[0]) ** 2 +
@@ -3666,15 +4355,19 @@ class SisypheACPC(object):
                         (self._ac[2] - self._pc[2]) ** 2)
         else: return 0.0
 
-    def getEuclideanDistanceFromAC(self, p: tupleFloat3 | listFloat3) -> float:
+    def getEuclideanDistanceFromAC(self, p: tupleFloat3 | list[float]) -> float:
         """
-            Get euclidean distance between AC and parameter point.
+        Get euclidean distance between AC and parameter point.
 
-            Parameter
+        Parameters
+        ----------
+        p : tuple[float, float, float] | list[float, float, float]
+            point coordinates
 
-                p   tupleFloat3 | listFloat3, point coordinates
-
-            return  float, euclidean distance in mm between AC and p
+        Returns
+        -------
+        float
+            euclidean distance in mm between AC and p
         """
         if self.hasAC():
             return sqrt((self._ac[0] - p[0]) ** 2 +
@@ -3682,15 +4375,19 @@ class SisypheACPC(object):
                         (self._ac[2] - p[2]) ** 2)
         else: return 0.0
 
-    def getEuclideanDistanceFromPC(self, p: tupleFloat3 | listFloat3) -> float:
+    def getEuclideanDistanceFromPC(self, p: tupleFloat3 | list[float]) -> float:
         """
-            Get euclidean distance between PC and parameter point.
+        Get euclidean distance between PC and parameter point.
 
-            Parameter
+        Parameters
+        ----------
+        p : tuple[float, float, float] | list[float, float, float]
+            point coordinates
 
-                p   tupleFloat3 | listFloat3, point coordinates
-
-            return  float, euclidean distance in mm between PC and p
+        Returns
+        -------
+        float
+            euclidean distance in mm between PC and p
         """
         if self.hasAC():
             return sqrt((self._pc[0] - p[0]) ** 2 +
@@ -3698,15 +4395,19 @@ class SisypheACPC(object):
                         (self._pc[2] - p[2]) ** 2)
         else: return 0.0
 
-    def getEuclideanDistanceFromMidACPC(self, p: tupleFloat3 | listFloat3) -> float:
+    def getEuclideanDistanceFromMidACPC(self, p: tupleFloat3 | list[float]) -> float:
         """
-            Get euclidean distance between midACPC and parameter point.
+        Get euclidean distance between midACPC and parameter point.
 
-            Parameter
+        Parameters
+        ----------
+        p : tuple[float, float, float] | list[float, float, float]
+            point coordinates
 
-                p   tupleFloat3 | listFloat3, point coordinates
-
-            return  float, euclidean distance in mm between midACPC and p
+        Returns
+        -------
+        float
+            euclidean distance in mm between midACPC and p
         """
         if self.hasAC():
             p0 = self.getMidACPC()
@@ -3715,21 +4416,25 @@ class SisypheACPC(object):
                         (p0[2] - p[2]) ** 2)
         else: return 0.0
 
-    def getRelativeDistanceFromAC(self, p: tupleFloat3 | listFloat3) -> tupleFloat3:
+    def getRelativeDistanceFromAC(self, p: tupleFloat3 | list[float]) -> tupleFloat3:
         """
-            Get relative distance between a point and AC in each axis x (lat), y (ap) and z (h)
-            in the geometric reference frame with axes aligned on the AC-PC line.
+        Get relative distance between a point and AC in each axis x (lat), y (ap) and z (h) in the geometric reference
+        frame with axes aligned on the AC-PC line.
 
-            Apply inverse transformation to AC -> AC in AC-PC space (AC-PC line aligned to axes in this space)
-            Apply inverse transformation to p point -> p point in AC-PC space
-            Return relative distance between AC and p point in AC-PC space
+            - Apply inverse transformation to AC -> AC in AC-PC space (AC-PC line aligned to axes in this space)
+            - Apply inverse transformation to p point -> p point in AC-PC space
+            - Return relative distance between AC and p point in AC-PC space
 
-            Parameter
+        Parameters
+        ----------
+        p : tuple[float, float, float] | list[float, float, float]
+            point coordinates
 
-                p   tupleFloat3 | listFloat3, point coordinates
-
-            return  tupleFloat3, lat, ap and h, relative distance in mm between p and AC
-                                 in the reference frame with axes aligned on the AC-PC line
+        Returns
+        -------
+        tuple[float, float, float]
+            lat, ap and h, relative distance in mm between p and AC in the reference frame with axes aligned on the
+            AC-PC line
         """
         if self.hasAC():
             p = self._trf.applyInverseToPoint(p)
@@ -3737,21 +4442,25 @@ class SisypheACPC(object):
             return p[0] - ref[0], p[1] - ref[1], p[2] - ref[2]
         else: return 0.0, 0.0, 0.0
 
-    def getRelativeDistanceFromPC(self, p: tupleFloat3 | listFloat3) -> tupleFloat3:
+    def getRelativeDistanceFromPC(self, p: tupleFloat3 | list[float]) -> tupleFloat3:
         """
-            Get relative distance between a point and PC in each axis x (lat), y (ap) and z (h)
-            in the geometric reference frame with axes aligned on the AC-PC line.
+        Get relative distance between a point and PC in each axis x (lat), y (ap) and z (h) in the geometric reference
+        frame with axes aligned on the AC-PC line.
 
-            Apply inverse transformation to PC -> PC in AC-PC space (AC-PC line aligned to axes in this space)
-            Apply inverse transformation to p point -> p point in AC-PC space
-            Return relative distance between PC and p point in AC-PC space
+            - Apply inverse transformation to PC -> PC in AC-PC space (AC-PC line aligned to axes in this space)
+            - Apply inverse transformation to p point -> p point in AC-PC space
+            - Return relative distance between PC and p point in AC-PC space
 
-            Parameter
+        Parameters
+        ----------
+        p : tuple[float, float, float] | list[float, float, float]
+            point coordinates
 
-                p   tupleFloat3 | listFloat3, point coordinates
-
-            return  tupleFloat3, lat, ap and h, relative distance in mm between p and PC
-                                 in the reference frame with axes aligned on the AC-PC line
+        Returns
+        -------
+        tuple[float, float, float]
+            lat, ap and h, relative distance in mm between p and PC in the reference frame with axes aligned on the
+            AC-PC line
         """
         if self.hasPC():
             p = self._trf.applyInverseToPoint(p)
@@ -3759,21 +4468,25 @@ class SisypheACPC(object):
             return p[0] - ref[0], p[1] - ref[1], p[2] - ref[2]
         else: return 0.0, 0.0, 0.0
 
-    def getRelativeDistanceFromMidACPC(self, p: tupleFloat3 | listFloat3) -> tupleFloat3:
+    def getRelativeDistanceFromMidACPC(self, p: tupleFloat3 | list[float]) -> tupleFloat3:
         """
-            Get relative distance between a point and midACPC in each axis x (lat), y (ap) and z (h)
-            in the geometric reference frame with axes aligned on the AC-PC line.
+        Get relative distance between a point and midACPC in each axis x (lat), y (ap) and z (h) in the geometric
+        reference frame with axes aligned on the AC-PC line.
 
-            Apply inverse transformation to p point -> p point in AC-PC space
-            Mid AC-PC is already in AC-PC space (Mid AC-PC is the center of rotation, invariant to transformation)
-            Return relative distance between mid AC-PC and p point in AC-PC space
+            - Apply inverse transformation to p point -> p point in AC-PC space
+            - Mid AC-PC is already in AC-PC space (Mid AC-PC is the center of rotation, invariant to transformation)
+            - Return relative distance between mid AC-PC and p point in AC-PC space
 
-            Parameter
+        Parameters
+        ----------
+        p : tuple[float, float, float] | list[float, float, float]
+            point coordinates
 
-                p   tupleFloat3 | listFloat3, point coordinates
-
-            return  tupleFloat3, lat, ap and h, relative distance in mm between p and midACPC
-                                 in the reference frame with axes aligned on the AC-PC line
+        Returns
+        -------
+        tuple[float, float, float]
+            lat, ap and h, relative distance in mm between p and midACPC in the reference frame with axes aligned on
+            the AC-PC line
         """
         if self.hasACPC():
             p = self._trf.applyInverseToPoint(p)
@@ -3782,24 +4495,28 @@ class SisypheACPC(object):
         else: return 0.0, 0.0, 0.0
 
     def getRelativeDistanceFromReferencePoint(self,
-                                              p: tupleFloat3 | listFloat3,
-                                              ref: tupleFloat3 | listFloat3) -> tupleFloat3:
+                                              p: tupleFloat3 | list[float],
+                                              ref: tupleFloat3 | list[float]) -> tupleFloat3:
         """
-            Get relative distance between a point and a second reference point
-            in each axis x (lat), y (ap) and z (h) in the geometric reference
-            frame with axes aligned on the AC-PC line.
+        Get relative distance between a point and a second reference point in each axis x (lat), y (ap) and z (h) in
+        the geometric reference frame with axes aligned on the AC-PC line.
 
-            Apply inverse transformation to ref point -> ref point in AC-PC space (AC-PC line aligned to axes in this space)
-            Apply inverse transformation to p point -> p point in AC-PC space
-            Return relative distance between ref point and p point in AC-PC space
+            - Apply inverse transformation to ref point -> ref point in AC-PC space (AC-PC line aligned to axes in this space)
+            - Apply inverse transformation to p point -> p point in AC-PC space
+            - Return relative distance between ref point and p point in AC-PC space
 
-            Parameter
+        Parameters
+        ----------
+        p : tuple[float, float, float] | list[float, float, float]
+            point coordinates
+        ref : tuple[float, float, float] | list[float, float, float]
+            reference point coordinates
 
-                p   tupleFloat3 | listFloat3, point coordinates
-                ref tupleFloat3 | listFloat3, reference point coordinates
-
-            return  tupleFloat3, lat, ap and h, relative distance in mm between p and ref
-                                 in the reference frame with axes aligned on the AC-PC line
+        Returns
+        -------
+        tuple[float, float, float]
+            lat, ap and h, relative distance in mm between p and ref in the reference frame with axes aligned on the
+            AC-PC line
         """
         if self.hasACPC():
             p = self._trf.applyInverseToPoint(p)
@@ -3807,21 +4524,24 @@ class SisypheACPC(object):
             return p[0] - ref[0], p[1] - ref[1], p[2] - ref[2]
         else: return 0.0, 0.0, 0.0
 
-    def getPointFromRelativeDistanceToAC(self, r: tupleFloat3 | listFloat3) -> tupleFloat3:
+    def getPointFromRelativeDistanceToAC(self, r: tupleFloat3 | list[float]) -> tupleFloat3:
         """
-            Get coordinates of a point giving relative distances from AC point
-            in each axis x (lat), y (ap) and z (h), in the geometric reference
-            frame with axes aligned on the AC-PC line.
+        Get coordinates of a point giving relative distances from AC point in each axis x (lat), y (ap) and z (h), in
+        the geometric reference frame with axes aligned on the AC-PC line.
 
-            Apply inverse transformation to AC -> AC in AC-PC space (AC-PC line aligned to axes in this space)
-            New point = add relative distances r to AC in AC-PC space
-            Apply transformation to new point -> new point in native space
+            - Apply inverse transformation to AC -> AC in AC-PC space (AC-PC line aligned to axes in this space)
+            - New point = addBundle relative distances r to AC in AC-PC space
+            - Apply transformation to new point -> new point in native space
 
-            Parameter
+        Parameters
+        ----------
+        r : tuple[float, float, float] | list[float, float, float]
+            relative distances in each axis x (lat), y (ap) and z (h)
 
-                r   tupleFloat3 | listFloat3, relative distances in each axis x (lat), y (ap) and z (h)
-
-            return  tupleFloat3, point coordinates
+        Returns
+        -------
+        tuple[float, float, float]
+            point coordinates
         """
         if self.hasACPC():
             p = list(self._trf.applyInverseToPoint(self.getAC()))
@@ -3831,21 +4551,24 @@ class SisypheACPC(object):
             return self._trf.applyToPoint(p)
         else: return 0.0, 0.0, 0.0
 
-    def getPointFromRelativeDistanceToPC(self, r: tupleFloat3 | listFloat3) -> tupleFloat3:
+    def getPointFromRelativeDistanceToPC(self, r: tupleFloat3 | list[float]) -> tupleFloat3:
         """
-            Get coordinates of a point giving relative distances from PC point
-            in each axis x (lat), y (ap) and z (h), in the geometric reference
-            frame with axes aligned on the AC-PC line.
+        Get coordinates of a point giving relative distances from PC point in each axis x (lat), y (ap) and z (h), in
+        the geometric reference frame with axes aligned on the AC-PC line.
 
-            Apply inverse transformation to PC -> PC in AC-PC space (AC-PC line aligned to axes in this space)
-            New point = add relative distances r to PC in AC-PC space
-            Apply transformation to new point -> new point in native space
+            - Apply inverse transformation to PC -> PC in AC-PC space (AC-PC line aligned to axes in this space)
+            - New point = addBundle relative distances r to PC in AC-PC space
+            - Apply transformation to new point -> new point in native space
 
-            Parameter
+        Parameters
+        ----------
+        r : tuple[float, float, float] | list[float, float, float]
+            relative distances in each axis x (lat), y (ap) and z (h)
 
-                r   tupleFloat3 | listFloat3, relative distances in each axis x (lat), y (ap) and z (h)
-
-            return  tupleFloat3, point coordinates
+        Returns
+        -------
+        tuple[float, float, float]
+            point coordinates
         """
         if self.hasACPC():
             p = list(self._trf.applyInverseToPoint(self.getPC()))
@@ -3855,21 +4578,24 @@ class SisypheACPC(object):
             return self._trf.applyToPoint(p)
         else: return 0.0, 0.0, 0.0
 
-    def getPointFromRelativeDistanceToMidACPC(self, r: tupleFloat3 | listFloat3) -> tupleFloat3:
+    def getPointFromRelativeDistanceToMidACPC(self, r: tupleFloat3 | list[float]) -> tupleFloat3:
         """
-            Get coordinates of a point giving relative distances from midACPC point
-            in each axis x (lat), y (ap) and z (h), in the geometric reference
-            frame with axes aligned on the AC-PC line.
+        Get coordinates of a point giving relative distances from midACPC point in each axis x (lat), y (ap) and z (h),
+        in the geometric reference frame with axes aligned on the AC-PC line.
 
-            midACPC is already in AC-PC space (midACPC is the center of rotation, invariant to transformation)
-            New point = add relative distances r to midACPC
-            Apply transformation to new point -> new point in native space
+            - midACPC is already in AC-PC space (midACPC is the center of rotation, invariant to transformation)
+            - New point = addBundle relative distances r to midACPC
+            - Apply transformation to new point -> new point in native space
 
-            Parameter
+        Parameters
+        ----------
+        r : tuple[float, float, float] | list[float, float, float]
+            relative distances in each axis x (lat), y (ap) and z (h)
 
-                r   tupleFloat3 | listFloat3, relative distances in each axis x (lat), y (ap) and z (h)
-
-            return  tupleFloat3, point coordinates
+        Returns
+        -------
+        tuple[float, float, float]
+            point coordinates
         """
         if self.hasACPC():
             p = list(self.getMidACPC())
@@ -3880,23 +4606,27 @@ class SisypheACPC(object):
         else: return 0.0, 0.0, 0.0
 
     def getPointFromRelativeDistanceToReferencePoint(self,
-                                                     r: tupleFloat3 | listFloat3,
-                                                     ref: tupleFloat3 | listFloat3) -> tupleFloat3:
+                                                     r: tupleFloat3 | list[float],
+                                                     ref: tupleFloat3 | list[float]) -> tupleFloat3:
         """
-            Get coordinates of a point giving relative distances from a second
-            reference point in each axis x (lat), y (ap) and z (h), in the geometric
-            reference frame with axes aligned on the AC-PC line.
+        Get coordinates of a point giving relative distances from a second reference point in each axis x (lat), y (ap)
+        and z (h), in the geometric reference frame with axes aligned on the AC-PC line.
 
-            Apply inverse transformation to ref point -> ref point in AC-PC space (AC-PC line aligned to axes)
-            New point = add relative distances r to ref point in AC-PC space
-            Apply transformation to new point -> new point in native space
+            - Apply inverse transformation to ref point -> ref point in AC-PC space (AC-PC line aligned to axes)
+            - New point = addBundle relative distances r to ref point in AC-PC space
+            - Apply transformation to new point -> new point in native space
 
-            Parameter
+        Parameters
+        ----------
+        r : tuple[float, float, float] | list[float, float, float]
+            relative distances in each axis x (lat), y (ap) and z (h)
+        ref : tuple[float, float, float] | list[float, float, float]
+            reference point coordinates
 
-                r   tupleFloat3 | listFloat3, relative distances in each axis x (lat), y (ap) and z (h)
-                ref tupleFloat3 | listFloat3, reference point coordinates
-
-            return  tupleFloat3, point coordinates
+        Returns
+        -------
+        tuple[float, float, float]
+            point coordinates
         """
         if self.hasACPC():
             p = list(self._trf.applyInverseToPoint(ref))
@@ -3906,16 +4636,17 @@ class SisypheACPC(object):
             return self._trf.applyToPoint(p)
         else: return 0.0, 0.0, 0.0
 
-    def copyFrom(self, buff: SisypheACPC | sc.sisypheVolume.SisypheVolume) -> None:
+    def copyFrom(self, buff: SisypheACPC | SisypheVolume) -> None:
         """
-            Copy attributes of the ACPC parameter to
-            the current SisypheACPC instance (deep copy).
+        Copy attributes of the ACPC parameter to the current SisypheACPC instance (deep copy).
 
-            Parameter
-
-                buff    SisypheACPC | Sisyphe.sisypheVolume.SisypheVolume
+        Parameters
+        ----------
+        buff : SisypheACPC | Sisyphe.core.sisypheVolume.SisypheVolume
+            acpc to copy
         """
-        if isinstance(buff, sc.sisypheVolume.SisypheVolume):
+        from Sisyphe.core.sisypheVolume import SisypheVolume
+        if isinstance(buff, SisypheVolume):
             buff = buff.acpc
         if isinstance(buff, SisypheACPC):
             self._ac = buff._ac
@@ -3925,9 +4656,12 @@ class SisypheACPC(object):
 
     def copy(self) -> SisypheACPC:
         """
-            Copy the current SisypheACPC instance (deep copy).
+        Copy the current SisypheACPC instance (deep copy).
 
-            return   SisypheACPC
+        Returns
+        -------
+        SisypheACPC
+            acpc copy
         """
         buff = SisypheACPC()
         buff._ac = self._ac
@@ -3937,12 +4671,14 @@ class SisypheACPC(object):
 
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
-            Write current SisypheACPC instance attributes to xml instance.
+        Write current SisypheACPC instance attributes to xml instance.
 
-            Parameter
-
-                doc             minidom.Document, xml document
-                currentnode     minidom.Element, xml root node
+        Parameters
+        ----------
+        doc : minidom.Document
+            xml document
+        currentnode : minidom.Element
+            xml root node
         """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):
@@ -3971,11 +4707,12 @@ class SisypheACPC(object):
 
     def parseXML(self, doc: minidom.Document) -> None:
         """
-            Read current SisypheACPC instance attributes from xml instance.
+        Read current SisypheACPC instance attributes from xml instance.
 
-            Parameter
-
-                doc             minidom.Document, xml document
+        Parameters
+        ----------
+        doc : minidom.Document
+            xml document
         """
         if isinstance(doc, minidom.Document):
             item = doc.getElementsByTagName('ACPC')
@@ -3999,11 +4736,12 @@ class SisypheACPC(object):
 
     def saveToXML(self, filename: str) -> None:
         """
-            Save current SisypheACPC instance attributes to xml file (*.xacpc).
+        Save current SisypheACPC instance attributes to xml file (.xacpc).
 
-            Parameter
-
-                filename    str, xml file name (*.xacpc)
+        Parameters
+        ----------
+        filename : str
+            xml file name (.xacpc)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -4021,11 +4759,12 @@ class SisypheACPC(object):
 
     def loadFromXML(self, filename: str) -> None:
         """
-            Load current SisypheACPC instance attributes from xml file (*.xacpc).
+        Load current SisypheACPC instance attributes from xml file (.xacpc).
 
-            Parameter
-
-                filename    str, xml file name (*.xacpc)
+        Parameters
+        ----------
+        filename : str
+            xml file name (.xacpc)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -4037,4 +4776,3 @@ class SisypheACPC(object):
                 self.parseXML(doc)
             else: raise IOError('XML file format is not supported.')
         else: raise IOError('No such file : {}'.format(filename))
-
