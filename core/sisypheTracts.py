@@ -25,11 +25,16 @@ from os.path import splitext
 
 import cython
 
+from datetime import datetime
+
+from hashlib import md5
+
 from math import sqrt
 from math import cos
 from math import radians
 
-from hashlib import md5
+# noinspection PyProtectedMember
+from multiprocessing.managers import DictProxy
 
 from xml.dom import minidom
 
@@ -3869,6 +3874,10 @@ class SisypheStreamlines(object):
         buff += 'DWI shape: {}\n'.format(self._shape)
         buff += 'DWI spacing: {}\n'.format(self._spacing)
         buff += 'Regular step: {}\n'.format(str(self._regstep))
+        # < Revision 03/07/2025
+        if self._regstep:
+            buff += 'Step size: {}\n'.format(str(round(self.getStepSize(self)[1], 2)))
+        # Revision 03/07/2025 >
         if self._whole: buff += 'Whole brain tractogram\n'
         # < Revision 20/02/2025
         # add centroid attribute
@@ -6563,7 +6572,6 @@ class SisypheStreamlines(object):
             # < Revision 19/06/2025
             # bug fix
             # if vmax <= iinfo('int16')
-            print(vmax)
             if vmax <= iinfo('int16').max:
                 # img = img.astype('int16', 'same_kind')
                 # noinspection PyUnresolvedReferences
@@ -7924,7 +7932,7 @@ class SisypheDiffusionModel(object):
     object -> SisypheDiffusionModel
 
     Creation: 27/10/2023
-    Last revisions: 08/04/2025
+    Last revisions: 11/07/2025
     """
 
     __slots__ = ['_bvals', '_bvecs', '_gtable', '_dwi', '_mask', '_mean', '_b0', '_ID', '_model', '_fmodel', '_spacing']
@@ -7992,7 +8000,7 @@ class SisypheDiffusionModel(object):
                   filename: str,
                   fit: bool = False,
                   binary: bool = True,
-                  wait: DialogWait | None = None) -> SisypheDiffusionModel:
+                  wait: DialogWait | DictProxy | None = None) -> SisypheDiffusionModel:
 
         """
         Create a SisypheDiffusionModel instance from a PySisyphe Diffusion model (.xdmodel) file.
@@ -8006,8 +8014,8 @@ class SisypheDiffusionModel(object):
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
             - if False, only xml part is loaded
-        wait: Sisyphe.gui.dialogWait.DialogWait | None
-            progress bar dialog (optional)
+        wait : DialogWait | multiprocessing.managers.DictProxy | None
+            optional progress dialog or multiprocessing shared dict (DictProxy)
 
         Returns
         -------
@@ -8315,14 +8323,20 @@ class SisypheDiffusionModel(object):
                 v = SisypheVolumeCollection()
                 for i in range(len(self._bvals)):
                     if self._bvals[i] == 0: v.append(vols[i])
-                if v.count() == 1: self._b0 = v[0]
+                # < Revision 04/07/2025
+                # bug fix, if v.count() == 1: self._b0 = v[0]
+                if v.count() == 1: self._b0 = v[0].copyToNumpyArray(defaultshape=False)
                 elif v.count() > 1: self._b0 = v.getMeanVolume().copyToNumpyArray(defaultshape=False)
+                # Revision 04/07/2025 >
                 # DWI mean
                 v = SisypheVolumeCollection()
                 for i in range(len(self._bvals)):
                     if self._bvals[i] > 0: v.append(vols[i])
-                if v.count() == 1: self._mean = v[0]
+                # < Revision 04/07/2025
+                # bug fix, if v.count() == 1: self._b0 = v[0]
+                if v.count() == 1: self._mean = v[0].copyToNumpyArray(defaultshape=False)
                 elif v.count() > 1: self._mean = v.getMeanVolume().copyToNumpyArray(defaultshape=False)
+                # Revision 04/07/2025 >
                 self._calcID()
                 self._spacing = vols[0].getSpacing()
             else: raise ValueError('Mismatch between bvals/bvecs element count and DWI image count.')
@@ -8628,7 +8642,7 @@ class SisypheDiffusionModel(object):
 
     def saveModel(self,
                   filename: str,
-                  wait: DialogWait | None = None) -> None:
+                  wait: DialogWait | DictProxy | None = None) -> None:
         """
         Save the current SisypheDiffusionModel instance to a PySisyphe diffusion model (.xdmodel) file.
 
@@ -8636,8 +8650,8 @@ class SisypheDiffusionModel(object):
         ----------
         filename : str
             PySisyphe diffusion model file name
-        wait: Sisyphe.gui.dialogWait.DialogWait | None
-            progress bar dialog (optional)
+        wait : DialogWait | multiprocessing.managers.DictProxy | None
+            optional progress dialog or multiprocessing shared dict (DictProxy)
         """
         if self._dwi is not None and self._gtable is not None:
             filename = splitext(filename)[0] + self._FILEEXT
@@ -8658,17 +8672,23 @@ class SisypheDiffusionModel(object):
                 n = total // block
                 if wait is None or n < 2: f.write(buffdwi)
                 else:
-                    wait.setInformationText('Save {}'.format(basename(filename)))
-                    wait.setProgressRange(0, n)
-                    wait.progressVisibilityOn()
+                    if isinstance(wait, DialogWait):
+                        wait.setInformationText('Save {}'.format(basename(filename)))
+                        wait.setProgressRange(0, n)
+                        wait.progressVisibilityOn()
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = 'Save {}'.format(basename(filename))
+                        wait['max'] = n
                     for i in range(n):
                         start = i * block
                         end = start + block
                         f.write(buffdwi[start:end])
-                        wait.setCurrentProgressValue(i + 1)
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
                     if end < total:
                         f.write(buffdwi[end:])
-                    wait.progressVisibilityOff()
+                    if isinstance(wait, DialogWait): wait.progressVisibilityOff()
+                    elif isinstance(wait, DictProxy): wait['max'] = 0
             filename = splitext(filename)[0] + SisypheVolume.getFileExt()
             # Save DWI mean
             if self._mean is not None:
@@ -8677,7 +8697,8 @@ class SisypheDiffusionModel(object):
                 v.setFilenameSuffix('mean')
                 v.acquisition.setSequenceToMeanMap()
                 v.setID(self._ID)
-                wait.setInformationText('Save {}'.format(v.getBasename()))
+                if isinstance(wait, DialogWait): wait.setInformationText('Save {}'.format(v.getBasename()))
+                elif isinstance(wait, DictProxy): wait['msg'] = 'Save {}'.format(v.getBasename())
                 v.save()
             # Save B0 mean
             if self._b0 is not None:
@@ -8686,7 +8707,8 @@ class SisypheDiffusionModel(object):
                 v.setFilenameSuffix('B0')
                 v.acquisition.setSequenceToB0()
                 v.setID(self._ID)
-                wait.setInformationText('Save {}'.format(v.getBasename()))
+                if isinstance(wait, DialogWait): wait.setInformationText('Save {}'.format(v.getBasename()))
+                elif isinstance(wait, DictProxy): wait['msg'] = 'Save {}'.format(v.getBasename())
                 v.save()
             # Save mask
             if self._mask is not None:
@@ -8695,7 +8717,8 @@ class SisypheDiffusionModel(object):
                 v.setFilenameSuffix('mask')
                 v.acquisition.setSequenceToMask()
                 v.setID(self._ID)
-                wait.setInformationText('Save {}'.format(v.getBasename()))
+                if isinstance(wait, DialogWait): wait.setInformationText('Save {}'.format(v.getBasename()))
+                elif isinstance(wait, DictProxy): wait['msg'] = 'Save {}'.format(v.getBasename())
                 v.save()
 
     def parseXML(self, doc: minidom.Document) -> dict:
@@ -8756,7 +8779,7 @@ class SisypheDiffusionModel(object):
     def loadModel(self,
                   filename: str,
                   binary: bool = True,
-                  wait: DialogWait | None = None) -> None:
+                  wait: DialogWait | DictProxy | None = None) -> None:
         """
         Load the current SisypheDiffusionModel instance from a PySisyphe diffusion model (.xdmodel) file.
 
@@ -8767,8 +8790,8 @@ class SisypheDiffusionModel(object):
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
             - if False, only xml part is loaded
-        wait: Sisyphe.gui.dialogWait.DialogWait | None
-            progress bar dialog (optional)
+        wait : DialogWait | multiprocessing.managers.DictProxy | None
+            optional progress dialog or multiprocessing shared dict (DictProxy)
         """
         filename = splitext(filename)[0] + self._FILEEXT
         if exists(filename):
@@ -8789,15 +8812,24 @@ class SisypheDiffusionModel(object):
                     f.seek(start, os.SEEK_SET)
                     if wait is None or n < 2: buffarray = f.read()
                     else:
-                        wait.setInformationText('Load {}'.format(basename(filename)))
-                        wait.setProgressRange(0, n)
-                        wait.progressVisibilityOn()
+                        if isinstance(wait, DialogWait):
+                            wait.setInformationText('Load {}'.format(basename(filename)))
+                            wait.setProgressRange(0, n)
+                            wait.progressVisibilityOn()
+                        elif isinstance(wait, DictProxy):
+                            wait['msg'] = 'Load {}'.format(basename(filename))
+                            wait['max'] = n
                         buffarray = bytearray()
                         while f.tell() < end:
                             r = f.read(block)
                             buffarray += r
-                            wait.incCurrentProgressValue()
-                        wait.progressVisibilityOff()
+                            # < Revision 11/07/2025
+                            if isinstance(wait, DialogWait): wait.incCurrentProgressValue()
+                            elif isinstance(wait, DictProxy): wait['inc'] = 1
+                            # elif isinstance(wait, DictProxy): wait['value'] += 1
+                            # Revision 11/07/2025 >
+                        if isinstance(wait, DialogWait): wait.progressVisibilityOff()
+                        elif isinstance(wait, DictProxy): wait['max'] = 0
             doc = minidom.parseString(strdoc)
             attr = self.parseXML(doc)
             if binary:
@@ -8810,9 +8842,19 @@ class SisypheDiffusionModel(object):
                 v.setFilename(filename)
                 v.setFilenameSuffix('mean')
                 if exists(v.getFilename()):
+                    # < Revision 11/07/2025
+                    if wait is not None:
+                        if isinstance(wait, DialogWait): wait.addInformationText('Open {}...'.format(v.getBasename()))
+                        elif isinstance(wait, DictProxy): wait['amsg'] = 'Open {}...'.format(v.getBasename())
+                    # Revision 11/07/2025 >
                     v.load()
                     self._mean = v.copyToNumpyArray(defaultshape=False)
                 else:
+                    # < Revision 11/07/2025
+                    if wait is not None:
+                        if isinstance(wait, DialogWait): wait.addInformationText('Mean DWI processing...')
+                        elif isinstance(wait, DictProxy): wait['amsg'] = 'Mean DWI processing...'
+                    # Revision 11/07/2025 >
                     v = list()
                     for i in range(len(self._bvals)):
                         if self._bvals[i] > 0: v.append(self._dwi[:, :, :, i])
@@ -8823,11 +8865,25 @@ class SisypheDiffusionModel(object):
                 # Open mask
                 v = SisypheVolume()
                 v.setFilename(filename)
-                v.setFilenamePrefix('mask')
+                # < Revision 11/07/2025
+                # v.setFilenamePrefix('mask')
+                v.setFilenameSuffix('mask')
+                # Revision 11/07/2025 >
                 if exists(v.getFilename()):
+                    # < Revision 11/07/2025
+                    if wait is not None:
+                        if isinstance(wait, DialogWait): wait.addInformationText('Open {}...'.format(v.getBasename()))
+                        elif isinstance(wait, DictProxy): wait['amsg'] = 'Open {}...'.format(v.getBasename())
+                    # Revision 11/07/2025 >
                     v.load()
                     self._mask = v.copyToNumpyArray(defaultshape=False)
-                else: self.calcMask()
+                else:
+                    # < Revision 11/07/2025
+                    if wait is not None:
+                        if isinstance(wait, DialogWait): wait.addInformationText('Mask processing...')
+                        elif isinstance(wait, DictProxy): wait['amsg'] = 'Mask processing...'
+                    # Revision 11/07/2025 >
+                    self.calcMask()
             else:
                 self._dwi = None
                 self._mask = None
@@ -8850,7 +8906,7 @@ class SisypheDTIModel(SisypheDiffusionModel):
     object -> SisypheDiffusionModel -> SisypheDTIModel
 
     Creation: 27/10/2023
-    Last revision: 21/03/2024
+    Last revision: 09/07/2025
     """
 
     __slots__ = ['_algfit']
@@ -8867,7 +8923,7 @@ class SisypheDTIModel(SisypheDiffusionModel):
                   filename: str,
                   fit: bool = False,
                   binary: bool = True,
-                  wait: DialogWait | None = None) -> SisypheDTIModel:
+                  wait: DialogWait | DictProxy | None = None) -> SisypheDTIModel:
         """
         Create a SisypheDTIModel instance from a PySisyphe Diffusion model (.xdmodel) file.
 
@@ -8880,8 +8936,8 @@ class SisypheDTIModel(SisypheDiffusionModel):
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
             - if False, only xml part is loaded
-        wait: Sisyphe.gui.dialogWait.DialogWait | None
-            progress bar dialog (optional)
+        wait : DialogWait | multiprocessing.managers.DictProxy | None
+            optional progress dialog or multiprocessing shared dict (DictProxy)
 
         Returns
         -------
@@ -8893,7 +8949,9 @@ class SisypheDTIModel(SisypheDiffusionModel):
             r = SisypheDTIModel()
             r.loadModel(filename, binary, wait)
             if fit and binary:
-                if wait is not None: wait.setInformationText('DTI model fitting...')
+                if wait is not None:
+                    if isinstance(wait, DialogWait): wait.setInformationText('DTI model fitting...')
+                    elif isinstance(wait, DictProxy): wait['msg'] = 'DTI model fitting...'
                 r.computeFitting()
             return r
         else: raise IOError('No such file {}.'.format(basename(filename)))
@@ -9291,7 +9349,7 @@ class SisypheDKIModel(SisypheDiffusionModel):
     object -> SisypheDiffusionModel -> SisypheDkIDModel
 
     Creation: 29/10/2023
-    Last revision: 21/03/2024
+    Last revision: 09/07/2025
     """
 
     __slots__ = ['_algfit']
@@ -9308,7 +9366,7 @@ class SisypheDKIModel(SisypheDiffusionModel):
                   filename: str,
                   fit: bool = False,
                   binary: bool = True,
-                  wait: DialogWait | None = None) -> SisypheDKIModel:
+                  wait: DialogWait | DictProxy | None = None) -> SisypheDKIModel:
         """
         Create a SisypheDKIModel instance from a PySisyphe Diffusion model (.xdmodel) file.
 
@@ -9321,8 +9379,8 @@ class SisypheDKIModel(SisypheDiffusionModel):
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
             - if False, only xml part is loaded
-        wait: Sisyphe.gui.dialogWait.DialogWait | None
-            progress bar dialog (optional)
+        wait : DialogWait | multiprocessing.managers.DictProxy | None
+            optional progress dialog or multiprocessing shared dict (DictProxy)
 
         Returns
         -------
@@ -9334,7 +9392,9 @@ class SisypheDKIModel(SisypheDiffusionModel):
             r = SisypheDKIModel()
             r.loadModel(filename, binary, wait)
             if fit and binary:
-                if wait is not None: wait.setInformationText('DKI model fitting...')
+                if wait is not None:
+                    if isinstance(wait, DialogWait): wait.setInformationText('DKI model fitting...')
+                    elif isinstance(wait, DictProxy): wait['msg'] = 'DKI model fitting...'
                 r.computeFitting()
             return r
         else: raise IOError('No such file {}.'.format(basename(filename)))
@@ -9665,7 +9725,7 @@ class SisypheSHCSAModel(SisypheDiffusionModel):
     object -> SisypheDiffusionModel -> SisypheSHCSAModel
 
     Creation: 29/10/2023
-    Last revision: 21/03/2024
+    Last revision: 09/07/2025
     """
 
     __slots__ = ['_order']
@@ -9677,7 +9737,7 @@ class SisypheSHCSAModel(SisypheDiffusionModel):
                   filename: str,
                   fit: bool = False,
                   binary: bool = True,
-                  wait: DialogWait | None = None) -> SisypheSHCSAModel:
+                  wait: DialogWait | DictProxy | None = None) -> SisypheSHCSAModel:
         """
         Create a SisypheSHCSAModel instance from a PySisyphe Diffusion model (.xdmodel) file.
 
@@ -9690,8 +9750,8 @@ class SisypheSHCSAModel(SisypheDiffusionModel):
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
             - if False, only xml part is loaded
-        wait: Sisyphe.gui.dialogWait.DialogWait | None
-            progress bar dialog (optional)
+        wait : DialogWait | multiprocessing.managers.DictProxy | None
+            optional progress dialog or multiprocessing shared dict (DictProxy)
 
         Returns
         -------
@@ -9703,7 +9763,9 @@ class SisypheSHCSAModel(SisypheDiffusionModel):
             r = SisypheSHCSAModel()
             r.loadModel(filename, binary, wait)
             if fit and binary:
-                if wait is not None: wait.setInformationText('SHCSA model fitting...')
+                if wait is not None:
+                    if isinstance(wait, DialogWait): wait.setInformationText('SHCSA model fitting...')
+                    elif isinstance(wait, DictProxy): wait['msg'] = 'SHCSA model fitting...'
                 r.computeFitting()
             return r
         else: raise IOError('No such file {}.'.format(basename(filename)))
@@ -9908,7 +9970,7 @@ class SisypheSHCSDModel(SisypheDiffusionModel):
     object -> SisypheDiffusionModel -> SisypheSHCSDModel
 
     Creation: 29/10/2023
-    Last revision: 21/03/2024
+    Last revision: 09/07/2025
     """
 
     __slots__ = ['_order']
@@ -9920,7 +9982,7 @@ class SisypheSHCSDModel(SisypheDiffusionModel):
                   filename: str,
                   fit: bool = False,
                   binary: bool = True,
-                  wait: DialogWait | None = None) -> SisypheSHCSDModel:
+                  wait: DialogWait | DictProxy | None = None) -> SisypheSHCSDModel:
         """
         Create a SisypheSHCSDModel instance from a PySisyphe Diffusion model (.xdmodel) file.
 
@@ -9933,8 +9995,8 @@ class SisypheSHCSDModel(SisypheDiffusionModel):
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
             - if False, only xml part is loaded
-        wait: Sisyphe.gui.dialogWait.DialogWait | None
-            progress bar dialog (optional)
+        wait : DialogWait | multiprocessing.managers.DictProxy | None
+            optional progress dialog or multiprocessing shared dict (DictProxy)
 
         Returns
         -------
@@ -9946,7 +10008,9 @@ class SisypheSHCSDModel(SisypheDiffusionModel):
             r = SisypheSHCSDModel()
             r.loadModel(filename, binary, wait)
             if fit and binary:
-                if wait is not None: wait.setInformationText('SHCSD model fitting...')
+                if wait is not None:
+                    if isinstance(wait, DialogWait): wait.setInformationText('SHCSD model fitting...')
+                    elif isinstance(wait, DictProxy): wait['msg'] = 'SHCSD model fitting...'
                 r.computeFitting()
             return r
         else: raise IOError('No such file {}.'.format(basename(filename)))
@@ -10157,7 +10221,7 @@ class SisypheDSIModel(SisypheDiffusionModel):
     object -> SisypheDiffusionModel -> SisypheDSIModel
 
     Creation: 29/10/2023
-    Last revision: 21/03/2024
+    Last revision: 09/07/2025
     """
 
     # Class method
@@ -10167,7 +10231,7 @@ class SisypheDSIModel(SisypheDiffusionModel):
                   filename: str,
                   fit: bool = False,
                   binary: bool = True,
-                  wait: DialogWait | None = None) -> SisypheDSIModel:
+                  wait: DialogWait | DictProxy | None = None) -> SisypheDSIModel:
         """
         Create a SisypheDSIModel instance from a PySisyphe Diffusion model (.xdmodel) file.
 
@@ -10180,8 +10244,8 @@ class SisypheDSIModel(SisypheDiffusionModel):
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
             - if False, only xml part is loaded
-        wait: Sisyphe.gui.dialogWait.DialogWait | None
-            progress bar dialog (optional)
+        wait : DialogWait | multiprocessing.managers.DictProxy | None
+            optional progress dialog or multiprocessing shared dict (DictProxy)
 
         Returns
         -------
@@ -10193,7 +10257,9 @@ class SisypheDSIModel(SisypheDiffusionModel):
             r = SisypheDSIModel()
             r.loadModel(filename, binary, wait)
             if fit and binary:
-                if wait is not None: wait.setInformationText('DSI model fitting...')
+                if wait is not None:
+                    if isinstance(wait, DialogWait): wait.setInformationText('DSI model fitting...')
+                    elif isinstance(wait, DictProxy): wait['msg'] = 'DSI model fitting...'
                 r.computeFitting()
             return r
         else: raise IOError('No such file {}.'.format(basename(filename)))
@@ -10358,7 +10424,7 @@ class SisypheDSIDModel(SisypheDiffusionModel):
     object -> SisypheDiffusionModel -> SisypheDSIDModel
 
     Creation: 29/10/2023
-    Last revision: 21/03/2024
+    Last revision: 09/07/2025
     """
 
     # Class method
@@ -10368,7 +10434,7 @@ class SisypheDSIDModel(SisypheDiffusionModel):
                   filename: str,
                   fit: bool = False,
                   binary: bool = True,
-                  wait: DialogWait | None = None) -> SisypheDSIDModel:
+                  wait: DialogWait | DictProxy | None = None) -> SisypheDSIDModel:
         """
         Create a SisypheDSIDModel instance from a PySisyphe Diffusion model (.xdmodel) file.
 
@@ -10381,8 +10447,8 @@ class SisypheDSIDModel(SisypheDiffusionModel):
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
             - if False, only xml part is loaded
-        wait: Sisyphe.gui.dialogWait.DialogWait | None
-            progress bar dialog (optional)
+        wait : DialogWait | multiprocessing.managers.DictProxy | None
+            optional progress dialog or multiprocessing shared dict (DictProxy)
 
         Returns
         -------
@@ -10394,7 +10460,9 @@ class SisypheDSIDModel(SisypheDiffusionModel):
             r = SisypheDSIDModel()
             r.loadModel(filename, binary, wait)
             if fit and binary:
-                if wait is not None: wait.setInformationText('DSID model fitting...')
+                if wait is not None:
+                    if isinstance(wait, DialogWait): wait.setInformationText('DSID model fitting...')
+                    elif isinstance(wait, DictProxy): wait['msg'] = 'DSID model fitting...'
                 r.computeFitting()
             return r
         else: raise IOError('No such file {}.'.format(basename(filename)))
@@ -10584,11 +10652,11 @@ class SisypheTracking(object):
     object -> SisypheTracking
 
     Creation: 29/10/2023
-    Last revision: 07/04/2025
+    Last revision: 03/07/2025
     """
 
-    __slots__ = ['_model', '_name', '_alg', '_density', '_seeds', '_stepsize', '_npeaks', '_thresholdpeaks',
-                 '_anglepeaks', '_minlength', '_stopping']
+    __slots__ = ['_model', '_name', '_alg', '_density', '_seeds', '_stepsize', '_maxangle', '_npeaks',
+                 '_thresholdpeaks', '_anglepeaks', '_minlength', '_stopping']
 
     # Class constants
 
@@ -10620,6 +10688,8 @@ class SisypheTracking(object):
         seed mask
     _stepsize : float
         step size in mm
+    _maxangle : int
+        maximum angle between two contiguous streamline points in degrees
     _npeaks : int
         maximum  number of peaks
     _thresholdpeaks : float
@@ -10645,6 +10715,10 @@ class SisypheTracking(object):
         self._density: int = 1
         self._seeds: ndarray | None = None
         self._stepsize: float = 1.0
+        # < Revision 03/07/2025
+        # add self._maxangle attribute
+        self._maxangle: int = 20
+        # Revision 03/07/2025 >
         self._npeaks: int = 5
         # noinspection PyUnresolvedReferences
         self._thresholdpeaks: cython.double = 0.5
@@ -10836,10 +10910,10 @@ class SisypheTracking(object):
         Parameters
         ----------
         stepsize : float
-            step size
+            step size (default 0.5)
         """
         if 0.1 <= stepsize <= 2.0: self._stepsize = stepsize
-        else: raise ValueError('invalid step size.')
+        else: raise ValueError('invalid step size (between 0.1 and 2.0.')
 
     def getStepSize(self) -> float:
         """
@@ -10851,6 +10925,37 @@ class SisypheTracking(object):
             step size
         """
         return self._stepsize
+
+    # < Revision 03/07/2025
+    # add setMaxAngle method
+    def setMaxAngle(self, maxangle: int = 20):
+        """
+        Set the max angle attribute of the current SisypheTracking instance. Maximum angle between two
+        contiguous streamline points in degrees (default 20.0).
+
+        Parameters
+        ----------
+        maxangle : int
+            max angle (default 20.0)
+        """
+        if 5.0 <= maxangle <= 90.0: self._maxangle = maxangle
+        else: raise ValueError('invalid maximum angle (between 5.0 and 90.0).')
+    # Revision 03/07/2025 >
+
+    # < Revision 03/07/2025
+    # add getMaxAngle method
+    def getMaxAngle(self) -> int:
+        """
+        Get the max angle attribute of the current SisypheTracking instance. Maximum angle between two contiguous
+        streamline points in degrees.
+
+        Returns
+        -------
+        int
+            max angle
+        """
+        return self._maxangle
+    # Revision 03/07/2025 >
 
     def setStoppingCriterionToFAThreshold(self, threshold: float = 0.1) -> None:
         """
@@ -11074,15 +11179,15 @@ class SisypheTracking(object):
         return self._minlength
 
     # noinspection PyTypeChecker
-    def computeTracking(self, wait: DialogWait | None = None) -> SisypheStreamlines:
+    def computeTracking(self, wait: DialogWait | DictProxy | None = None) -> SisypheStreamlines:
         """
         Compute the fiber tracking according to the current SisypheTracking instance attributes (bundle name, diffusion
         model, tracking algorithm, seed method, seed count per voxel, step size and stopping criterion).
 
         Parameters
         ----------
-        wait: Sisyphe.gui.dialogWait.DialogWait | None
-            progress bar dialog (optional)
+        wait : DialogWait | multiprocessing.managers.DictProxy | None
+            optional progress dialog or multiprocessing shared dict (DictProxy)
 
         Returns
         -------
@@ -11094,9 +11199,14 @@ class SisypheTracking(object):
         seeds = seeds_from_mask(self._seeds, affine, density=self._density)
         l = int(self._minlength / self._stepsize)
         if l < 2: l = 2
-        if wait is not None: wait.setInformationText('{} tracking...'.format(self.getTrackingAlgorithmAsString()))
+        if wait is not None:
+            if isinstance(wait, DialogWait): wait.setInformationText('{} tracking...'.format(self.getTrackingAlgorithmAsString()))
+            elif isinstance(wait, DictProxy): wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
         # Deterministic Euler integration
         if self._alg == self._DEUDX:
+            if wait is not None:
+                if isinstance(wait, DialogWait): wait.addInformationText('Peaks processing')
+                elif isinstance(wait, DictProxy): wait['msg'] = '{} tracking...\nPeaks processing'.format(self.getTrackingAlgorithmAsString())
             if isinstance(self._model, (SisypheDTIModel, SisypheDKIModel)):
                 peaks = peaks_from_model(model=self._model.getModel(),
                                          data=self._model.getDWI(),
@@ -11129,163 +11239,990 @@ class SisypheTracking(object):
                                          npeaks=self._npeaks)
             else: raise TypeError('Invalid model type ({}).'.format(type(self._model)))
             if peaks is not None:
-                sl = Streamlines(eudx_tracking(seeds,
-                                               self._stopping,
-                                               affine,
-                                               min_len=l,
-                                               step_size=self._stepsize,
-                                               pam=peaks))
+                if wait is None:
+                    sl = Streamlines(eudx_tracking(seeds,
+                                                   self._stopping,
+                                                   affine,
+                                                   min_len=l,
+                                                   step_size=self._stepsize,
+                                                   max_angle=self._maxangle,
+                                                   pam=peaks))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    if isinstance(wait, DialogWait):
+                        wait.addInformationText('')
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        bsl = Streamlines(eudx_tracking(bseeds,
+                                                        self._stopping,
+                                                        affine,
+                                                        min_len=l,
+                                                        step_size=self._stepsize,
+                                                        max_angle=int(self._maxangle),
+                                                        pam=peaks))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] =('{} tracking...\n'
+                                                  'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
                 sls = SisypheStreamlines(sl)
         # Deterministic Fiber orientation distribution
         if self._alg == self._DFOD:
             if isinstance(self._model, (SisypheDTIModel, SisypheDKIModel)):
-                sl = Streamlines(deterministic_tracking(seeds,
-                                                        self._stopping,
-                                                        affine,
-                                                        sf=self._model.getFittedModel().odf(small_sphere),
-                                                        sphere=small_sphere,
-                                                        max_angle=30,
-                                                        min_len=l,
-                                                        step_size=self._stepsize))
+                if wait is None:
+                    sl = Streamlines(deterministic_tracking(seeds,
+                                                            self._stopping,
+                                                            affine,
+                                                            sf=self._model.getFittedModel().odf(small_sphere),
+                                                            sphere=small_sphere,
+                                                            max_angle=self._maxangle,
+                                                            min_len=l,
+                                                            step_size=self._stepsize))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    sf = self._model.getFittedModel().odf(small_sphere)
+                    if isinstance(wait, DialogWait):
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        bsl = Streamlines(deterministic_tracking(bseeds,
+                                                                 self._stopping,
+                                                                 affine,
+                                                                 sf=sf,
+                                                                 sphere=small_sphere,
+                                                                 max_angle=self._maxangle,
+                                                                 min_len=l,
+                                                                 step_size=self._stepsize))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
             elif isinstance(self._model, (SisypheDSIModel, SisypheDSIDModel)):
-                sl = Streamlines(deterministic_tracking(seeds,
-                                                        self._stopping,
-                                                        affine,
-                                                        sf=self._model.getFittedModel().odf(small_sphere),
-                                                        sphere=small_sphere,
-                                                        max_angle=30,
-                                                        min_len=l,
-                                                        step_size=self._stepsize))
+                if wait is None:
+                    sl = Streamlines(deterministic_tracking(seeds,
+                                                            self._stopping,
+                                                            affine,
+                                                            sf=self._model.getFittedModel().odf(small_sphere),
+                                                            sphere=small_sphere,
+                                                            max_angle=self._maxangle,
+                                                            min_len=l,
+                                                            step_size=self._stepsize))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    sf = self._model.getFittedModel().odf(small_sphere)
+                    if isinstance(wait, DialogWait):
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        bsl = Streamlines(deterministic_tracking(bseeds,
+                                                                 self._stopping,
+                                                                 affine,
+                                                                 sf=sf,
+                                                                 sphere=small_sphere,
+                                                                 max_angle=self._maxangle,
+                                                                 min_len=l,
+                                                                 step_size=self._stepsize))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
             elif isinstance(self._model, (SisypheSHCSAModel, SisypheSHCSDModel)):
-                # noinspection PyUnresolvedReferences
-                sl = Streamlines(deterministic_tracking(seeds,
-                                                        self._stopping,
-                                                        affine,
-                                                        sh=self._model.getFittedModel().shm_coeff,
-                                                        sphere=default_sphere,
-                                                        max_angle=30,
-                                                        min_len=l,
-                                                        step_size=self._stepsize))
+                if wait is None:
+                    # noinspection PyUnresolvedReferences
+                    sl = Streamlines(deterministic_tracking(seeds,
+                                                            self._stopping,
+                                                            affine,
+                                                            sh=self._model.getFittedModel().shm_coeff,
+                                                            sphere=default_sphere,
+                                                            max_angle=self._maxangle,
+                                                            min_len=l,
+                                                            step_size=self._stepsize))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    if isinstance(wait, DialogWait):
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        # noinspection PyUnresolvedReferences
+                        bsl = Streamlines(deterministic_tracking(bseeds,
+                                                                 self._stopping,
+                                                                 affine,
+                                                                 sh=self._model.getFittedModel().shm_coeff,
+                                                                 sphere=default_sphere,
+                                                                 max_angle=self._maxangle,
+                                                                 min_len=l,
+                                                                 step_size=self._stepsize))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
             else: raise TypeError('Invalid model type ({}).'.format(type(self._model)))
             if sl is not None: sls = SisypheStreamlines(sl)
         # Deterministic Parallel transport
         if self._alg == self._DPT:
             if isinstance(self._model, (SisypheDTIModel, SisypheDKIModel)):
-                sl = Streamlines(ptt_tracking(seeds,
-                                              self._stopping,
-                                              affine,
-                                              sf=self._model.getFittedModel().odf(small_sphere),
-                                              sphere=small_sphere,
-                                              max_angle=30,
-                                              min_len=l,
-                                              step_size=self._stepsize))
+                if wait is None:
+                    sl = Streamlines(ptt_tracking(seeds,
+                                                  self._stopping,
+                                                  affine,
+                                                  sf=self._model.getFittedModel().odf(small_sphere),
+                                                  sphere=small_sphere,
+                                                  max_angle=self._maxangle,
+                                                  min_len=l,
+                                                  step_size=self._stepsize))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    sf = self._model.getFittedModel().odf(small_sphere)
+                    if isinstance(wait, DialogWait):
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        bsl = Streamlines(ptt_tracking(bseeds,
+                                                       self._stopping,
+                                                       affine,
+                                                       sf=sf,
+                                                       sphere=small_sphere,
+                                                       max_angle=self._maxangle,
+                                                       min_len=l,
+                                                       step_size=self._stepsize))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
             elif isinstance(self._model, (SisypheSHCSAModel, SisypheSHCSDModel)):
-                sl = Streamlines(ptt_tracking(seeds,
-                                              self._stopping,
-                                              affine,
-                                              sf=self._model.getFittedModel().odf(small_sphere),
-                                              sphere=small_sphere,
-                                              max_angle=30,
-                                              min_len=l,
-                                              step_size=self._stepsize))
+                if wait is None:
+                    sl = Streamlines(ptt_tracking(seeds,
+                                                  self._stopping,
+                                                  affine,
+                                                  sf=self._model.getFittedModel().odf(small_sphere),
+                                                  sphere=small_sphere,
+                                                  max_angle=self._maxangle,
+                                                  min_len=l,
+                                                  step_size=self._stepsize))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    sf = self._model.getFittedModel().odf(small_sphere)
+                    if isinstance(wait, DialogWait):
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        bsl = Streamlines(ptt_tracking(bseeds,
+                                                       self._stopping,
+                                                       affine,
+                                                       sf=sf,
+                                                       sphere=small_sphere,
+                                                       max_angle=self._maxangle,
+                                                       min_len=l,
+                                                       step_size=self._stepsize))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
             elif isinstance(self._model, (SisypheDSIModel, SisypheDSIDModel)):
-                sl = Streamlines(ptt_tracking(seeds,
-                                              self._stopping,
-                                              affine,
-                                              sf=self._model.getFittedModel().odf(default_sphere),
-                                              sphere=default_sphere,
-                                              max_angle=30,
-                                              min_len=l,
-                                              step_size=self._stepsize))
+                if wait is None:
+                    sl = Streamlines(ptt_tracking(seeds,
+                                                  self._stopping,
+                                                  affine,
+                                                  sf=self._model.getFittedModel().odf(default_sphere),
+                                                  sphere=default_sphere,
+                                                  max_angle=self._maxangle,
+                                                  min_len=l,
+                                                  step_size=self._stepsize))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    sf = self._model.getFittedModel().odf(default_sphere)
+                    if isinstance(wait, DialogWait):
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        bsl = Streamlines(ptt_tracking(bseeds,
+                                                       self._stopping,
+                                                       affine,
+                                                       sf=sf,
+                                                       sphere=default_sphere,
+                                                       max_angle=self._maxangle,
+                                                       min_len=l,
+                                                       step_size=self._stepsize))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
             else: raise TypeError('Invalid model type ({}).'.format(type(self._model)))
             if sl is not None: sls = SisypheStreamlines(sl)
         # Deterministic Closest peak direction
         if self._alg == self._DCPD:
             if isinstance(self._model, (SisypheDTIModel, SisypheDKIModel)):
-                sl = Streamlines(closestpeak_tracking(seeds,
-                                                      self._stopping,
-                                                      affine,
-                                                      sf=self._model.getFittedModel().odf(small_sphere).clip(min=0),
-                                                      sphere=small_sphere,
-                                                      max_angle=30,
-                                                      min_len=l,
-                                                      step_size=self._stepsize))
+                if wait is None:
+                    sl = Streamlines(closestpeak_tracking(seeds,
+                                                          self._stopping,
+                                                          affine,
+                                                          sf=self._model.getFittedModel().odf(small_sphere).clip(min=0),
+                                                          sphere=small_sphere,
+                                                          max_angle=self._maxangle,
+                                                          min_len=l,
+                                                          step_size=self._stepsize))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    sf = self._model.getFittedModel().odf(small_sphere).clip(min=0)
+                    if isinstance(wait, DialogWait):
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        bsl = Streamlines(closestpeak_tracking(bseeds,
+                                                               self._stopping,
+                                                               affine,
+                                                               sf=sf,
+                                                               sphere=small_sphere,
+                                                               max_angle=self._maxangle,
+                                                               min_len=l,
+                                                               step_size=self._stepsize))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
             elif isinstance(self._model, (SisypheSHCSAModel, SisypheSHCSDModel)):
-                # noinspection PyUnresolvedReferences
-                sl = Streamlines(closestpeak_tracking(seeds,
-                                                      self._stopping,
-                                                      affine,
-                                                      sh=self._model.getFittedModel().shm_coeff,
-                                                      sphere=small_sphere,
-                                                      max_angle=30,
-                                                      min_len=l,
-                                                      step_size=self._stepsize))
+                if wait is None:
+                    # noinspection PyUnresolvedReferences
+                    sl = Streamlines(closestpeak_tracking(seeds,
+                                                          self._stopping,
+                                                          affine,
+                                                          sh=self._model.getFittedModel().shm_coeff,
+                                                          sphere=small_sphere,
+                                                          max_angle=self._maxangle,
+                                                          min_len=l,
+                                                          step_size=self._stepsize))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    if isinstance(wait, DialogWait):
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        # noinspection PyUnresolvedReferences
+                        bsl = Streamlines(closestpeak_tracking(bseeds,
+                                                               self._stopping,
+                                                               affine,
+                                                               sh=self._model.getFittedModel().shm_coeff,
+                                                               sphere=small_sphere,
+                                                               max_angle=self._maxangle,
+                                                               min_len=l,
+                                                               step_size=self._stepsize))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
             elif isinstance(self._model, (SisypheDSIModel, SisypheDSIDModel)):
-                sl = Streamlines(closestpeak_tracking(seeds,
-                                                      self._stopping,
-                                                      affine,
-                                                      sf=self._model.getFittedModel().odf(default_sphere).clip(min=0),
-                                                      sphere=default_sphere,
-                                                      max_angle=30,
-                                                      step_size=self._stepsize))
+                if wait is None:
+                    sl = Streamlines(closestpeak_tracking(seeds,
+                                                          self._stopping,
+                                                          affine,
+                                                          sf=self._model.getFittedModel().odf(default_sphere).clip(min=0),
+                                                          sphere=default_sphere,
+                                                          max_angle=self._maxangle,
+                                                          step_size=self._stepsize))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    sf = self._model.getFittedModel().odf(default_sphere).clip(min=0)
+                    if isinstance(wait, DialogWait):
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        bsl = Streamlines(closestpeak_tracking(bseeds,
+                                                               self._stopping,
+                                                               affine,
+                                                               sf=sf,
+                                                               sphere=default_sphere,
+                                                               max_angle=self._maxangle,
+                                                               step_size=self._stepsize))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
             else: raise TypeError('Invalid model type ({}).'.format(type(self._model)))
             if sl is not None: sls = SisypheStreamlines(sl)
         # Probabilistic Bootstrap direction
         if self._alg == self._PBSD:
             if isinstance(self._model, (SisypheDTIModel, SisypheDKIModel, SisypheSHCSAModel, SisypheSHCSDModel)):
-                sl = Streamlines(bootstrap_tracking(seeds,
-                                                    self._stopping,
-                                                    affine,
-                                                    step_size=self._stepsize,
-                                                    min_len=l,
-                                                    data=self._model.getDWI(),
-                                                    model=self._model.getModel(),
-                                                    max_angle=30.0,
-                                                    sphere=small_sphere))
+                if wait is None:
+                    sl = Streamlines(bootstrap_tracking(seeds,
+                                                        self._stopping,
+                                                        affine,
+                                                        step_size=self._stepsize,
+                                                        min_len=l,
+                                                        data=self._model.getDWI(),
+                                                        model=self._model.getModel(),
+                                                        max_angle=self._maxangle,
+                                                        sphere=small_sphere))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    if isinstance(wait, DialogWait):
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        bsl = Streamlines(bootstrap_tracking(bseeds,
+                                                             self._stopping,
+                                                             affine,
+                                                             step_size=self._stepsize,
+                                                             min_len=l,
+                                                             data=self._model.getDWI(),
+                                                             model=self._model.getModel(),
+                                                             max_angle=self._maxangle,
+                                                             sphere=small_sphere))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
             elif isinstance(self._model, (SisypheDSIModel, SisypheDSIDModel)):
-                sl = Streamlines(bootstrap_tracking(seeds,
-                                                    self._stopping,
-                                                    affine,
-                                                    step_size=self._stepsize,
-                                                    min_len=l,
-                                                    data=self._model.getDWI(),
-                                                    model=self._model.getModel(),
-                                                    max_angle=30.0,
-                                                    sphere=default_sphere))
+                if wait is None:
+                    sl = Streamlines(bootstrap_tracking(seeds,
+                                                        self._stopping,
+                                                        affine,
+                                                        step_size=self._stepsize,
+                                                        min_len=l,
+                                                        data=self._model.getDWI(),
+                                                        model=self._model.getModel(),
+                                                        max_angle=self._maxangle,
+                                                        sphere=default_sphere))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    if isinstance(wait, DialogWait):
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        bsl = Streamlines(bootstrap_tracking(bseeds,
+                                                             self._stopping,
+                                                             affine,
+                                                             step_size=self._stepsize,
+                                                             min_len=l,
+                                                             data=self._model.getDWI(),
+                                                             model=self._model.getModel(),
+                                                             max_angle=self._maxangle,
+                                                             sphere=default_sphere))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
             else: raise TypeError('Invalid model type ({}).'.format(type(self._model)))
             if sl is not None: sls = SisypheStreamlines(sl)
         # Probabilistic Fiber orientation distribution
         if self._alg == self._PFOD:
             if isinstance(self._model, (SisypheDTIModel, SisypheDKIModel)):
-                sl = Streamlines(probabilistic_tracking(seeds,
-                                                        self._stopping,
-                                                        affine,
-                                                        sf=self._model.getFittedModel().odf(small_sphere),
-                                                        sphere=small_sphere,
-                                                        max_angle=30,
-                                                        min_len=l,
-                                                        step_size=self._stepsize))
+                if wait is None:
+                    sl = Streamlines(probabilistic_tracking(seeds,
+                                                            self._stopping,
+                                                            affine,
+                                                            sf=self._model.getFittedModel().odf(small_sphere),
+                                                            sphere=small_sphere,
+                                                            max_angle=self._maxangle,
+                                                            min_len=l,
+                                                            step_size=self._stepsize))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    sf = self._model.getFittedModel().odf(small_sphere)
+                    if isinstance(wait, DialogWait):
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        bsl = Streamlines(probabilistic_tracking(bseeds,
+                                                                 self._stopping,
+                                                                 affine,
+                                                                 sf=sf,
+                                                                 sphere=small_sphere,
+                                                                 max_angle=self._maxangle,
+                                                                 min_len=l,
+                                                                 step_size=self._stepsize))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
             elif isinstance(self._model, (SisypheSHCSAModel, SisypheSHCSDModel)):
-                # noinspection PyUnresolvedReferences
-                sl = Streamlines(probabilistic_tracking(seeds,
-                                                        self._stopping,
-                                                        affine,
-                                                        sh=self._model.getFittedModel().shm_coeff,
-                                                        sphere=small_sphere,
-                                                        max_angle=30,
-                                                        min_len=l,
-                                                        step_size=self._stepsize))
+                if wait is None:
+                    # noinspection PyUnresolvedReferences
+                    sl = Streamlines(probabilistic_tracking(seeds,
+                                                            self._stopping,
+                                                            affine,
+                                                            sh=self._model.getFittedModel().shm_coeff,
+                                                            sphere=small_sphere,
+                                                            max_angle=self._maxangle,
+                                                            min_len=l,
+                                                            step_size=self._stepsize))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    if isinstance(wait, DialogWait):
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        # noinspection PyUnresolvedReferences
+                        bsl = Streamlines(probabilistic_tracking(bseeds,
+                                                                 self._stopping,
+                                                                 affine,
+                                                                 sh=self._model.getFittedModel().shm_coeff,
+                                                                 sphere=small_sphere,
+                                                                 max_angle=self._maxangle,
+                                                                 min_len=l,
+                                                                 step_size=self._stepsize))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
             elif isinstance(self._model, (SisypheDSIModel, SisypheDSIDModel)):
-                sl = Streamlines(probabilistic_tracking(seeds,
-                                                        self._stopping,
-                                                        affine,
-                                                        sf=self._model.getFittedModel().odf(default_sphere),
-                                                        sphere=default_sphere,
-                                                        max_angle=30,
-                                                        min_len=l,
-                                                        step_size=self._stepsize))
+                if wait is None:
+                    sl = Streamlines(probabilistic_tracking(seeds,
+                                                            self._stopping,
+                                                            affine,
+                                                            sf=self._model.getFittedModel().odf(default_sphere),
+                                                            sphere=default_sphere,
+                                                            max_angle=self._maxangle,
+                                                            min_len=l,
+                                                            step_size=self._stepsize))
+                else:
+                    # < Revision 03/07/2025
+                    sl = None
+                    n = seeds.shape[0] // 1000 + 1
+                    ilast = seeds.shape[0] + 1
+                    sf = self._model.getFittedModel().odf(default_sphere)
+                    if isinstance(wait, DialogWait):
+                        wait.progressVisibilityOn()
+                        wait.setProgressRange(0, n)
+                        wait.setCurrentProgressValue(0)
+                    elif isinstance(wait, DictProxy):
+                        wait['msg'] = '{} tracking...'.format(self.getTrackingAlgorithmAsString())
+                        wait['max'] = n
+                    t = datetime.now()
+                    for i in range(n):
+                        first = i * 1000
+                        last = (i + 1) * 1000
+                        if last > ilast: last = ilast
+                        bseeds = seeds[first:last, :]
+                        bsl = Streamlines(probabilistic_tracking(bseeds,
+                                                                 self._stopping,
+                                                                 affine,
+                                                                 sf=sf,
+                                                                 sphere=default_sphere,
+                                                                 max_angle=self._maxangle,
+                                                                 min_len=l,
+                                                                 step_size=self._stepsize))
+                        if sl is None: sl = bsl
+                        else:
+                            sl.extend(bsl)
+                            now = datetime.now()
+                            delta = now - t
+                            t = now
+                            delta *= n - i
+                            m = delta.seconds // 60
+                            s = delta.seconds - (m * 60)
+                            if m == 0:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} s.'.format(s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), s)
+                            else:
+                                if isinstance(wait, DialogWait):
+                                    wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
+                                elif isinstance(wait, DictProxy):
+                                    wait['msg'] = ('{} tracking...\n'
+                                                   'Estimated time remaining {} min {} s.').format(
+                                        self.getTrackingAlgorithmAsString(), m, s)
+                        if last == ilast: break
+                        if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                        elif isinstance(wait, DictProxy): wait['value'] = i + 1
+                    # Revision 03/07/2025 >
             else: raise TypeError('Invalid model type ({}).'.format(type(self._model)))
             if sl is not None: sls = SisypheStreamlines(sl)
+            if wait is not None:
+                if isinstance(wait, DialogWait): wait.progressVisibilityOff()
+                elif isinstance(wait, DictProxy): wait['max'] = 0
         if sls is not None:
             sls.getBundle(0).setName(self._name)
             sls.setReferenceID(self._model)

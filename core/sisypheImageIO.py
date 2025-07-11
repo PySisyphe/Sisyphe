@@ -1002,8 +1002,8 @@ def readFromDicomSeries(filename: list[str]) -> sitkImage:
 
     Parameters
     ----------
-    filename : str
-        one dicom filename of the series to convert
+    filename : list[str]
+        dicom files series to convert
 
     Returns
     -------
@@ -1037,7 +1037,7 @@ def readFromDicomFilenames(filenames: list[str]) -> sitkImage:
     Parameters
     ----------
     filenames : list[str]
-        dicom filenames to convert
+        dicom files to convert
 
     Returns
     -------

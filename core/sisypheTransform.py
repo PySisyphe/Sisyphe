@@ -3092,7 +3092,7 @@ class SisypheApplyTransform(object):
         if self.hasTransform():
             if self.hasMoving():
                 if wait is not None:
-                    wait.open()
+                    if not wait.isVisible(): wait.open()
                     wait.setSimpleITKFilter(self._resample)
                     wait.addSimpleITKFilterProcessCommand()
                     wait.buttonVisibilityOff()
@@ -3226,7 +3226,7 @@ class SisypheApplyTransform(object):
         if self.hasTransform():
             if self.hasMovingROI():
                 if wait is not None:
-                    wait.open()
+                    if not wait.isVisible(): wait.open()
                     wait.setSimpleITKFilter(self._resample)
                     wait.addSimpleITKFilterProcessCommand()
                     wait.buttonVisibilityOff()
@@ -3300,7 +3300,7 @@ class SisypheApplyTransform(object):
             if self.hasMovingMesh():
                 n = self._mesh.getNumberOfPoints()
                 if wait is not None:
-                    wait.open()
+                    if not wait.isVisible(): wait.open()
                     wait.setProgressRange(0, n)
                     wait.buttonVisibilityOn()
                     wait.setInformationText('Resample {}...'.format(self._mesh.getBasename()))
@@ -3378,8 +3378,8 @@ class SisypheApplyTransform(object):
         if self.hasTransform():
             if self.hasMovingStreamlines():
                 if wait is not None:
+                    if not wait.isVisible(): wait.open()
                     wait.buttonVisibilityOff()
-                    wait.open()
                     wait.setInformationText('Resample {}...'.format(basename(self._sl.getFilename())))
                 # Use forward transform to resample mesh vertices
                 trf = self._transform.getInverseTransform()

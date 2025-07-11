@@ -1834,7 +1834,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
     # noinspection PyUnusedLocal
     def _onInteractionEvent(self, widget, event) -> None:
         p = self.GetHandleRepresentation().GetWorldPosition()
-        # noinspection PyArgumentList
+        # noinspection PyArgumentList,PyTypeChecker
         self._targetText.SetPosition(p)
         # noinspection PyArgumentList
         self._sphere.SetCenter(p)
@@ -1855,7 +1855,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         self._targetText.SetVisibility(True)
         self.setVisibility(True)
         p = self.GetHandleRepresentation().GetWorldPosition()
-        # noinspection PyArgumentList
+        # noinspection PyArgumentList,PyTypeChecker
         self._targetText.SetPosition(p)
         # noinspection PyArgumentList
         self._sphere.SetCenter(p)
@@ -3565,9 +3565,9 @@ class LineWidget(vtkLineWidget2, NamedWidget):
     def _onInteractionEvent(self, widget, event) -> None:
         p1 = self.GetLineRepresentation().GetPoint1WorldPosition()
         p2 = self.GetLineRepresentation().GetPoint2WorldPosition()
-        # noinspection PyArgumentList
+        # noinspection PyArgumentList,PyTypeChecker
         self._entryText.SetPosition(p1)
-        # noinspection PyArgumentList
+        # noinspection PyArgumentList,PyTypeChecker
         self._targetText.SetPosition(p2)
         data = vtkPolyData()
         self.GetLineRepresentation().GetPolyData(data)
@@ -3597,9 +3597,9 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         self._tubeActor.SetVisibility(False)
         p1 = self.GetLineRepresentation().GetPoint1WorldPosition()
         p2 = self.GetLineRepresentation().GetPoint2WorldPosition()
-        # noinspection PyArgumentList
+        # noinspection PyArgumentList,PyTypeChecker
         self._entryText.SetPosition(p1)
-        # noinspection PyArgumentList
+        # noinspection PyArgumentList,PyTypeChecker
         self._targetText.SetPosition(p2)
         data = vtkPolyData()
         self.GetLineRepresentation().GetPolyData(data)
