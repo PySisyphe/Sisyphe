@@ -762,14 +762,15 @@ class DialogRegistration(QDialog):
             except Exception as err:
                 if reg.is_alive(): reg.terminate()
                 if not self._wait.getStopped():
+                    self._wait.hide()
                     messageBox(self,
                                title=self.windowTitle(),
                                text='Registration error: {}\n{}.'.format(type(err), str(err)))
+                    self._wait.show()
             finally:
                 # Remove temporary std::cout file
                 if exists(stdout): remove(stdout)
             # noinspection PyUnreachableCode
-            self._wait.close()
             self._wait.buttonVisibilityOff()
             self._wait.progressVisibilityOff()
             trf = None
@@ -885,11 +886,13 @@ class DialogRegistration(QDialog):
                 else: f.setInterpolator(sitkLinear)
                 resampled = f.execute(fixed=fvol, save=False, wait=self._wait)
                 if self._settings.getParameterValue('CheckRegistration'):
+                    self._wait.setInformationText('Check registration...')
                     # < Revision 22/05/2025
                     # dialog = DialogManualRegistration(fvol, resampled)
                     dialog = DialogManualRegistration(fvol, resampled, parent=self)
                     # Revision 22/05/2025 >
                     dialog.setDialogToCheck()
+                    dialog.setWindowTitle('Check registration')
                     if platform == 'win32':
                         try: self._updateWindowTitleBarColor(dialog)
                         except: pass

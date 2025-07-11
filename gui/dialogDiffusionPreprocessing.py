@@ -14,6 +14,9 @@ from os.path import exists
 
 from dipy.core.gradients import gradient_table
 
+from multiprocessing import Queue
+from multiprocessing import Manager
+
 from numpy import array
 
 from PyQt5.QtCore import Qt
@@ -32,6 +35,7 @@ from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.functionsSettingsWidget import FunctionSettingsWidget
 from Sisyphe.processing.dipyFunctions import dwiPreprocessing
+from Sisyphe.processing.capturedStdoutProcessing import ProcessDiffusionPreprocessing
 from Sisyphe.gui.dialogWait import DialogWait
 
 __all__ = ['DialogDiffusionPreprocessing']
@@ -58,7 +62,7 @@ class DialogDiffusionPreprocessing(QDialog):
 
     QDialog -> DialogDiffusionPreprocessing
 
-    Last revision: 18/06/2025
+    Last revision: 11/07/2025
     """
 
     # Special method
@@ -166,8 +170,11 @@ class DialogDiffusionPreprocessing(QDialog):
 
         # noinspection PyUnresolvedReferences
         self._exit.clicked.connect(self.accept)
+        # < Revision 11/07/2025
         # noinspection PyUnresolvedReferences
-        self._exec.clicked.connect(self.execute)
+        # self._exec.clicked.connect(self.execute)
+        self._exec.clicked.connect(self.multiExecute)
+        # Revision 11/07/2025 >
 
         # < Revision 17/06/2025
         self.adjustSize()
@@ -448,3 +455,110 @@ class DialogDiffusionPreprocessing(QDialog):
         else:
             # noinspection PyInconsistentReturns
             self.accept()
+
+    def multiExecute(self):
+        wait = DialogWait()
+        wait.setInformationText('Diffusion preprocessing intialization...')
+        wait.buttonVisibilityOn()
+        wait.open()
+        # Parameters
+        prefix = self._preproc.getParameterValue('Prefix')
+        suffix = self._preproc.getParameterValue('Suffix')
+        """
+        brainseg    
+        dict, {'algo': str = 'huang', 'size': int = 1, 'niter': int = 1}
+        """
+        if self._preproc.getParameterValue('Mask'):
+            brainseg = dict()
+            algo = self._preproc.getParameterValue('Algo')[0]
+            algo = algo.lower()
+            algo = algo.replace(' ', '')
+            brainseg['algo'] = algo
+            brainseg['size'] = self._preproc.getParameterValue('Size')
+            brainseg['niter'] = self._preproc.getParameterValue('Iter')
+        else: brainseg = None
+        """
+        gibbs       
+        dict, {'neighbour': int = 3}
+        """
+        if self._preproc.getParameterValue('GibbsSuppression'):
+            gibbs = dict()
+            gibbs['neighbour'] = self._preproc.getParameterValue('GibbsNeighbour')
+        else: gibbs = None
+        """
+        denoise     
+        dict, {'algo': 'Local PCA', 'smooth': int = 2, 'radius': int = 2, 'method': str = 'eig'}
+              {'algo': 'General function PCA', 'smooth': int = 2, 'radius': int = 2, 'method': str = 'eig'}
+              {'algo': 'Marcenko-Pastur PCA', 'smooth': int = 2, 'radius': int = 2, 'method': str = 'eig'}
+              {'algo': 'Non-local means', 'noisealgo': str, 'rec': str, 'ncoils': int, 'nphase': int, 'patchradius': int = 1, 'blockradius': int = 5}
+              {'algo': 'Self-Supervised Denoising', 'radius': int = 0, 'solver': str = 'ols'}
+              {'algo': 'Adaptive soft coefficient matching', 'noisealgo': str, 'rec': str, 'ncoils': int, 'nphase': int}
+        """
+        denoise = dict()
+        denoise['algo'] = self._preproc.getParameterValue('Denoise')[0]
+        if denoise['algo'] != 'No':
+            if denoise['algo'][-3:] == 'PCA':
+                denoise['smooth'] = self._pca.getParameterValue('Smooth')
+                denoise['PatchRadius'] = self._pca.getParameterValue('PatchRadius')
+                denoise['PCAMethod'] = self._pca.getParameterValue('PCAMethod')[0]
+            elif denoise['algo'] == 'Non-local means':
+                denoise['noisealgo'] = self._preproc.getParameterValue('NoiseEstimation')
+                denoise['rec'] = self._preproc.getParameterValue('MRReconstruction')
+                denoise['ncoils'] = self._preproc.getParameterValue('ReceiverArray')
+                denoise['nphase'] = self._preproc.getParameterValue('PhaseArray')
+                denoise['patchradius'] = self._nlmeans.getParameterValue('PatchRadius')
+                denoise['blockradius'] = self._nlmeans.getParameterValue('BlockRadius')
+            elif denoise['algo'] == 'Self-Supervised Denoising':
+                denoise['patchradius'] = self._supervised.getParameterValue('PatchRadius')
+                denoise['solver'] = self._supervised.getParameterValue('Solver')[0]
+            elif denoise['algo'] == 'Adaptive soft coefficient matching':
+                denoise['noisealgo'] = self._preproc.getParameterValue('NoiseEstimation')
+                denoise['rec'] = self._preproc.getParameterValue('MRReconstruction')
+                denoise['ncoils'] = self._preproc.getParameterValue('ReceiverArray')
+                denoise['nphase'] = self._preproc.getParameterValue('PhaseArray')
+        else: denoise = None
+        # Preprocessing loop
+        r = None
+        with Manager() as manager:
+            mng = manager.dict()
+            queue = Queue()
+            process = ProcessDiffusionPreprocessing(self._bvals.getFilename(),
+                                                    self._bvecs.getFilename(),
+                                                    brainseg, gibbs, denoise,
+                                                    prefix, suffix, mng, queue)
+            try:
+                process.start()
+                while process.is_alive():
+                    wait.messageFromDictProxyManager(mng)
+                    if not queue.empty():
+                        # noinspection PyUnusedLocal
+                        r = queue.get()
+                        if process.is_alive(): process.terminate()
+                    if wait.getStopped(): process.terminate()
+            except Exception as err:
+                wait.hide()
+                if process.is_alive(): process.terminate()
+                r = 'Diffusion preprocessing error: {}\n{}.'.format(type(err), str(err))
+        wait.close()
+        if r is not None:
+            if r == 'terminate':
+                # Exit
+                r = messageBox(self,
+                               self.windowTitle(),
+                               'Would you like to do\nmore diffusion preprocessing ?',
+                               icon=QMessageBox.Question,
+                               buttons=QMessageBox.Yes | QMessageBox.No,
+                               default=QMessageBox.No)
+                if r == QMessageBox.Yes:
+                    self._bvals.clear(signal=False)
+                    self._bvecs.clear(signal=False)
+                    self._exec.setEnabled(False)
+                else:
+                    # noinspection PyInconsistentReturns
+                    self.accept()
+            else:
+                # Show process exception dialog
+                # noinspection PyTypeChecker
+                messageBox(self,
+                           title=self.windowTitle(),
+                           text=r)

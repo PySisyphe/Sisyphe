@@ -134,8 +134,7 @@ class DialogSkullStripping(AbstractDialogFunction):
                 from Sisyphe.lib.db.extractor import Extractor
                 self._extractor = Extractor()
             for filename in self.getFilenames():
-                try:
-                    self.function(filename, wait)
+                try: self.function(filename, wait)
                 except Exception as err:
                     messageBox(self,
                                title=self._funcname,
@@ -161,7 +160,7 @@ class DialogSkullStripping(AbstractDialogFunction):
         suffix = self.getParameterValue('Suffix')
         # ANTs U-net
         if model[0] == 'A':
-            wait.setInformationText('{} {}'.format(basename(filename), 'ANTs U-net {} Skull stripping...'))
+            wait.setInformationText('{} ANTs U-net Skull stripping...'.format(basename(filename)))
             wait.setButtonVisibility(True)
             queue = Queue()
             extractor = ProcessSkullStrip(img, self._modality, self._getAntspynetCacheDirectory(), queue)
@@ -174,7 +173,7 @@ class DialogSkullStripping(AbstractDialogFunction):
             wait.setButtonVisibility(False)
         # DeepBrain U-net
         else:
-            wait.setInformationText('{} {}'.format(basename(filename), 'DeepBrain U-net Skull stripping...'))
+            wait.setInformationText('{} DeepBrain U-net Skull stripping...'.format(basename(filename)))
             # shape x, y, z after transpose
             try: rimg = self._extractor.run(img.getNumpy()).T
             except: pass

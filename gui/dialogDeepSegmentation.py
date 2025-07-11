@@ -15,6 +15,7 @@ from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepLesionSegment
 from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepWhiteMatterHyperIntensitiesSegmentation
 from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepTOFVesselSegmentation
 from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepTissueSegmentation
+
 from multiprocessing import Queue
 
 from sys import platform

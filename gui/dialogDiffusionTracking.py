@@ -8,9 +8,15 @@ External packages/modules
 
 from sys import platform
 
+import logging
+import traceback
+
 from os.path import exists
 from os.path import splitext
 from os.path import basename
+
+from multiprocessing import Queue
+from multiprocessing import Manager
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
@@ -29,6 +35,7 @@ from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.functionsSettingsWidget import FunctionSettingsWidget
+from Sisyphe.processing.capturedStdoutProcessing import ProcessDiffusionTracking
 from Sisyphe.gui.dialogWait import DialogWait
 
 __all__ = ['DialogDiffusionTracking']
@@ -54,6 +61,8 @@ class DialogDiffusionTracking(QDialog):
     ~~~~~~~~~~~
 
     QDialog -> DialogDiffusionTracking
+
+    Last revision: 03/07/2025
     """
 
     # Special method
@@ -62,6 +71,9 @@ class DialogDiffusionTracking(QDialog):
 
         super().__init__(parent)
         self._ID = None
+        # < Revision 03/07/2025
+        self._logger = logging.getLogger(__name__)
+        # Revision 03/07/2025 >
 
         # Init window
 
@@ -127,8 +139,11 @@ class DialogDiffusionTracking(QDialog):
 
         # noinspection PyUnresolvedReferences
         exitb.clicked.connect(self.accept)
+        # < Revision 11/07/2025
         # noinspection PyUnresolvedReferences
-        self._process.clicked.connect(self.execute)
+        # self._process.clicked.connect(self.execute)
+        self._process.clicked.connect(self.multiExecute)
+        # Revision 11/07/2025 >
         self._model.FieldChanged.connect(self._validate)
         self._track.getParameterWidget('SeedROI').FieldChanged.connect(self._validate)
         self._track.getParameterWidget('StoppingROI').FieldChanged.connect(self._validate)
@@ -235,6 +250,9 @@ class DialogDiffusionTracking(QDialog):
             track.setBundleName(self._track.getParameterValue('BundleName'))
             track.setSeedCountPerVoxel(self._track.getParameterValue('SeedCount'))
             track.setStepSize(self._track.getParameterValue('StepSize'))
+            # < Revision 03/07/2025
+            track.setMaxAngle(self._track.getParameterValue('Angle'))
+            # Revision 03/07/2025 >
             track.setNumberOfPeaks(self._track.getParameterValue('NPeaks'))
             track.setRelativeThresholdOfPeaks(self._track.getParameterValue('RelativePeakThreshold'))
             track.setMinSeparationAngleOfPeaks(self._track.getParameterValue('MinSeparationAngle'))
@@ -317,7 +335,6 @@ class DialogDiffusionTracking(QDialog):
                                title=self.windowTitle(),
                                text='No such file {}.'.format(basename(filename)))
                     return
-                track.setStoppingCriterionToROI(roi)
             elif self._combo3.currentText() == 'GM/WM/CSF':
                 # Gray matter
                 filename = self._track.getParameterWidget('StoppingGM').getFilename()
@@ -415,7 +432,10 @@ class DialogDiffusionTracking(QDialog):
             try: sl = track.computeTracking(wait)
             except Exception as err:
                 wait.close()
-                messageBox(self, self.windowTitle(), '{}'.format(err))
+                messageBox(self,
+                           '{} error'.format(self.windowTitle()),
+                           '{}\n{}'.format(type(err), str(err)))
+                self._logger.error(traceback.format_exc())
                 return
             # Save streamlines
             filename = splitext(self._model.getFilename())[0] + '_' + track.getBundleName() + SisypheStreamlines.getFileExt()
@@ -433,3 +453,88 @@ class DialogDiffusionTracking(QDialog):
                            '{} tractogram of {} streamlines.'.format(sl.getName(), sl.count()),
                            icon=QMessageBox.Information)
             self._clear()
+
+    def multiExecute(self):
+        if not self._model.isEmpty() and exists(self._model.getFilename()):
+            wait = DialogWait()
+            wait.setInformationText('Diffusion tracking intialization...')
+            wait.buttonVisibilityOn()
+            wait.open()
+            # Parameters
+            seedcount = self._track.getParameterValue('SeedCount')
+            stepsize = self._track.getParameterValue('StepSize')
+            maxangle = self._track.getParameterValue('Angle')
+            npeaks = self._track.getParameterValue('NPeaks')
+            peakthreshold = self._track.getParameterValue('RelativePeakThreshold')
+            minangle = self._track.getParameterValue('MinSeparationAngle')
+            minlength = self._track.getParameterValue('MinimalLength')
+            if self._combo1.currentText() == 'Deterministic':
+                method = self._track.getParameterWidget('DeterministicAlgorithm').currentText()
+            else:
+                method = self._track.getParameterWidget('ProbabilisticAlgorithm').currentText()
+            seed = dict()
+            # < Revision 11/07/2025
+            # bugg fix, set seed['algo']
+            seed['algo'] = self._combo2.currentText()
+            # Revision 11/07/2025 >
+            if self._combo2.currentText() == 'FA/GFA':
+                seed['threshold'] = self._track.getParameterValue('SeedFAThreshold')
+            elif self._combo2.currentText() == 'ROI':
+                seed['rois'] = self._track.getParameterWidget('SeedROI').getFilenames()
+            stopping = dict()
+            # < Revision 11/07/2025
+            # bugg fix, set stopping['algo']
+            stopping['algo'] = self._combo3.currentText()
+            # Revision 11/07/2025 >
+            if self._combo3.currentText() == 'FA/GFA':
+                stopping['threshold'] = self._track.getParameterValue('StoppingFAThreshold')
+            elif self._combo3.currentText() == 'ROI':
+                stopping['roi'] = self._track.getParameterWidget('StoppingROI').getFilename()
+            elif self._combo3.currentText() == 'GM/WM/CSF':
+                stopping['gm'] = self._track.getParameterWidget('StoppingGM').getFilename()
+                stopping['wm'] = self._track.getParameterWidget('StoppingWM').getFilename()
+                stopping['csf'] = self._track.getParameterWidget('StoppingCSF').getFilename()
+            # Preprocessing loop
+            r = None
+            with Manager() as manager:
+                mng = manager.dict()
+                queue = Queue()
+                process = ProcessDiffusionTracking(self._model.getFilename(), seedcount, stepsize, maxangle, npeaks,
+                                                   peakthreshold, minangle, minlength, self._combo1.currentText(),
+                                                   method, seed, stopping, mng, queue)
+                try:
+                    process.start()
+                    while process.is_alive():
+                        wait.messageFromDictProxyManager(mng)
+                        if not queue.empty():
+                            # noinspection PyUnusedLocal
+                            r = queue.get()
+                            if process.is_alive(): process.terminate()
+                        if wait.getStopped(): process.terminate()
+                except Exception as err:
+                    wait.hide()
+                    if process.is_alive(): process.terminate()
+                    r = 'Diffusion tracking error: {}\n{}.'.format(type(err), str(err))
+            wait.close()
+            if r is not None:
+                if r[0] == 'terminate':
+                    messageBox(self,
+                               title=self.windowTitle(),
+                               text=r[1])
+                    # Exit
+                    r = messageBox(self,
+                                   self.windowTitle(),
+                                   'Would you like to perform\nmore diffusion tracking ?',
+                                   icon=QMessageBox.Question,
+                                   buttons=QMessageBox.Yes | QMessageBox.No,
+                                   default=QMessageBox.No)
+                    if r == QMessageBox.Yes: self._clear()
+                    else:
+                        # noinspection PyInconsistentReturns
+                        self.accept()
+                else:
+                    # Show process exception dialog
+                    # noinspection PyTypeChecker
+                    messageBox(self,
+                               title=self.windowTitle(),
+                               text=r)

@@ -9,8 +9,13 @@ External packages/modules
 from sys import platform
 
 from os.path import exists
+from os.path import join
+from os.path import dirname
 from os.path import basename
 from os.path import splitext
+
+from multiprocessing import Queue
+from multiprocessing import Manager
 
 from numpy import array
 
@@ -19,6 +24,7 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheDicom import loadBVal
@@ -34,6 +40,7 @@ from Sisyphe.core.sisypheVolume import SisypheVolumeCollection
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.functionsSettingsWidget import FunctionSettingsWidget
+from Sisyphe.processing.capturedStdoutProcessing import ProcessDiffusionModel
 from Sisyphe.gui.dialogWait import DialogWait
 
 __all__ = ['DialogDiffusionModel']
@@ -57,7 +64,7 @@ class DialogDiffusionModel(QDialog):
 
     QDialog -> DialogDiffusionModel
 
-    Last revision 17/06/2025
+    Last revision: 11/07/2025
     """
 
     # Special method
@@ -104,8 +111,12 @@ class DialogDiffusionModel(QDialog):
         self._DKI = FunctionSettingsWidget('DKIModel')
         self._SHCSA = FunctionSettingsWidget('SHCSAModel')
         self._SHCSD = FunctionSettingsWidget('SHCSDModel')
-        self._DSI = FunctionSettingsWidget('DSI Model')
-        self._DSID = FunctionSettingsWidget('DSID Model')
+        # < Revision 21/06/2025
+        # self._DSI = FunctionSettingsWidget('DSI Model')
+        # self._DSID = FunctionSettingsWidget('DSID Model')
+        self._DSI = FunctionSettingsWidget('DSIModel')
+        self._DSID = FunctionSettingsWidget('DSIDModel')
+        # < Revision 21/06/2025
         self._DTI.setSettingsButtonText('DTI Model')
         self._DKI.setSettingsButtonText('DKI Model')
         self._SHCSA.setSettingsButtonText('SHCSA Model')
@@ -164,8 +175,11 @@ class DialogDiffusionModel(QDialog):
 
         # noinspection PyUnresolvedReferences
         exitb.clicked.connect(self.accept)
+        # < Revision 11/07/2025
         # noinspection PyUnresolvedReferences
-        self._save.clicked.connect(self.save)
+        # self._save.clicked.connect(self.save)
+        self._save.clicked.connect(self.multiExecute)
+        # Revision 11/07/2025 >
 
         # < Revision 17/06/2025
         self.adjustSize()
@@ -367,9 +381,9 @@ class DialogDiffusionModel(QDialog):
             nd -= nb0  # DWI count
             # Acqusition validation
             if nd < ndmin:
-                messageBox(self, self.windowTitle(), 'Number of DWI images is not consistent with the {} model.\n'
-                                                     '{}'.format(self._combo.currentText(),
-                                                                 self._combo.toolTip()))
+                wait.close()
+                messageBox(self, self.windowTitle(), 'Number of DWI images is not consistent '
+                                                     'with the {} model.'.format(self._combo.currentText()))
                 return
             # Revision 04/04/2025 >
             # Load dwi volumes
@@ -378,10 +392,14 @@ class DialogDiffusionModel(QDialog):
             wait.setProgressRange(0, len(dwinames)-1)
             wait.progressVisibilityOn()
             for dwiname in dwinames:
+                # < Revision 03/07/2025
+                dwiname= join(dirname(filename), dwiname)
+                # Revision 03/07/2025 >
                 if exists(dwiname):
-                    wait.setInformationText('Load {}...'.format(dwiname))
+                    wait.setInformationText('Load {}...'.format(basename(dwiname)))
                     wait.incCurrentProgressValue()
                     vol = SisypheVolume()
+                    # noinspection PyTypeChecker
                     vol.load(dwiname)
                     vols.append(vol)
                 else:
@@ -389,30 +407,6 @@ class DialogDiffusionModel(QDialog):
                     messageBox(self, self.windowTitle(), 'No such file {}'.format(dwiname))
                     return
             model.setDWI(vols)
-            # Save mean B0
-            """
-            wait.setInformationText('save mean B0...')
-            # < Revision 04/04/2025
-            b0vols = SisypheVolumeCollection()
-            for i in range(len(bvals)):
-                if bvals[i] == 0:
-                    if exists(dwinames[i]): b0vols.load(dwinames[i])
-            if b0vols.count() == 1:
-                b0 = b0vols[0]
-                refid = b0.getID()
-            elif b0vols.count() > 1:
-                b0 = b0vols.getMeanVolume()
-                b0.setID(b0.getArrayID())
-                refid = b0.getID()
-            else:
-                b0 = None
-                refid = vols[0].getID()
-            if b0 is not None:
-                b0.setFilename(filename)
-                b0.setFilenameSuffix('B0')
-                b0.acquisition.setSequenceToB0()
-                b0.save()
-            """
             # Mask processing
             wait.setInformationText('Mask processing...')
             wait.progressVisibilityOff()
@@ -421,19 +415,6 @@ class DialogDiffusionModel(QDialog):
             niter = self._model.getParameterValue('Iter')
             size = self._model.getParameterValue('Size')
             model.calcMask(algo, niter, size)
-            """
-            mask = SisypheVolume()
-            mask.copyFromNumpyArray(model.getMask(),
-                                    vols[0].getSpacing(),
-                                    vols[0].getOrigin(),
-                                    vols[0].getDirections(),
-                                    defaultshape=False)
-            mask.acquisition.setSequenceToMask()
-            mask.setFilename(filename)
-            mask.setFilenameSuffix('mask')
-            mask.setID(refid)
-            mask.save()
-            """
             # Model fitting
             filename = splitext(filename)[0] + model.getFileExt()
             wait.setInformationText('Model fitting...')
@@ -513,6 +494,92 @@ class DialogDiffusionModel(QDialog):
             self._bvals.clear(signal=False)
             self._bvecs.clear(signal=False)
             self._save.setEnabled(False)
+
+    def multiExecute(self):
+        wait = DialogWait()
+        wait.setInformationText('Diffusion model intialization...')
+        wait.buttonVisibilityOn()
+        wait.open()
+        # Parameters
+        order = None
+        method = None
+        maps = dict()
+        if self._combo.currentText() == 'DTI':
+            method = self._DTI.getParameterValue('Method')[0]
+            maps['fa'] = self._DTI.getParameterValue('FA')
+            maps['ga'] = self._DTI.getParameterValue('GA')
+            maps['md'] = self._DTI.getParameterValue('MD')
+            maps['tr'] = self._DTI.getParameterValue('Trace')
+            maps['ad'] = self._DTI.getParameterValue('AD')
+            maps['rd'] = self._DTI.getParameterValue('RD')
+        elif self._combo.currentText() == 'DKI':
+            method = self._DKI.getParameterValue('Method')[0]
+            maps['fa'] = self._DKI.getParameterValue('FA')
+            maps['ga'] = self._DKI.getParameterValue('GA')
+            maps['md'] = self._DKI.getParameterValue('MD')
+            maps['tr'] = self._DKI.getParameterValue('Trace')
+            maps['ad'] = self._DKI.getParameterValue('AD')
+            maps['rd'] = self._DKI.getParameterValue('RD')
+        elif self._combo.currentText() == 'SHCSA':
+            order = self._SHCSA.getParameterValue('Order')
+            maps['gfa'] = self._SHCSA.getParameterValue('GFA')
+        elif self._combo.currentText() == 'SHCSD':
+            order = self._SHCSD.getParameterValue('Order')
+            maps['gfa'] = self._SHCSD.getParameterValue('GFA')
+        elif self._combo.currentText() == 'DSI':
+            maps['gfa'] = self._DSI.getParameterValue('GFA')
+        elif self._combo.currentText() == 'DSID':
+            maps['gfa'] = self._DSID.getParameterValue('GFA')
+        corr = self._model.getParameterValue('Orientation')
+        algo = self._model.getParameterValue('Algo')[0]
+        niter = self._model.getParameterValue('Iter')
+        size = self._model.getParameterValue('Size')
+        if corr is None: corr = False
+        # Preprocessing loop
+        r = None
+        with Manager() as manager:
+            mng = manager.dict()
+            queue = Queue()
+            try:
+                process = ProcessDiffusionModel(self._bvals.getFilename(),
+                                                self._bvecs.getFilename(),
+                                                self._combo.currentText(),
+                                                method, order, maps, corr, algo, niter, size,True, mng, queue)
+                process.start()
+                while process.is_alive():
+                    wait.messageFromDictProxyManager(mng)
+                    if not queue.empty():
+                        # noinspection PyUnusedLocal
+                        r = queue.get()
+                        if process.is_alive(): process.terminate()
+                    if wait.getStopped(): process.terminate()
+            except Exception as err:
+                wait.hide()
+                if process.is_alive(): process.terminate()
+                r = 'Diffusion model error: {}\n{}.'.format(type(err), str(err))
+        wait.close()
+        if r is not None:
+            if r == 'terminate':
+                # Exit
+                r = messageBox(self,
+                               self.windowTitle(),
+                               'Would you like to estimate\nmore diffusion model ?',
+                               icon=QMessageBox.Question,
+                               buttons=QMessageBox.Yes | QMessageBox.No,
+                               default=QMessageBox.No)
+                if r == QMessageBox.Yes:
+                    self._bvals.clear(signal=False)
+                    self._bvecs.clear(signal=False)
+                    self._save.setEnabled(False)
+                else:
+                    # noinspection PyInconsistentReturns
+                    self.accept()
+            else:
+                # Show process exception dialog
+                # noinspection PyTypeChecker
+                messageBox(self,
+                           title=self.windowTitle(),
+                           text=r)
 
     def showEvent(self, a0):
         super().showEvent(a0)

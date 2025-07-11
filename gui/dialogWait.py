@@ -83,7 +83,7 @@ class DialogWait(QDialog):
 
     QWidget - > QDialog -> DialogWait
 
-    Last revision: 21/05/2025
+    Last revision: 11/07/2025
     """
 
     # Class method
@@ -281,7 +281,7 @@ class DialogWait(QDialog):
             self._center()
         else: raise TypeError('parameter type {} is not str.'.format(type(txt)))
 
-    def addInformationText(self, txt):
+    def addInformationText(self, txt = ''):
         if txt == '': self._info.setText(self._baseinfo)
         else: self._info.setText('{}\n{}'.format(self._baseinfo, txt))
         self.adjustSize()
@@ -377,6 +377,36 @@ class DialogWait(QDialog):
             QApplication.processEvents()
         else:
             raise TypeError('parameter type {} is not int.'.format(type(v)))
+
+    def messageFromDictProxyManager(self, mng):
+        if 'msg' in mng:
+            if mng['msg'] is not None:
+                self.setInformationText(mng['msg'])
+                mng['msg'] = None
+        if 'amsg' in mng:
+            if mng['amsg'] is not None:
+                self.addInformationText(mng['amsg'])
+                mng['amsg'] = None
+        if 'max' in mng:
+            if mng['max'] is not None:
+                if mng['max'] > 0:
+                    self.setProgressRange(0, mng['max'])
+                    if not self.getProgressVisibility(): self.progressVisibilityOn()
+                    mng['max'] = None
+                else:
+                    self.progressVisibilityOff()
+                    mng['max'] = None
+        if 'value' in mng:
+            if mng['value'] is not None:
+                self.setCurrentProgressValue(mng['value'])
+                mng['value'] = None
+        # < Revision 11/07/2025
+        if 'inc' in mng:
+            if mng['inc'] is not None:
+                self.incCurrentProgressValue()
+                mng['inc'] = None
+        # Revision 11/07/2025 >
+        QApplication.processEvents()
 
     # noinspection PyUnusedLocal
     def setCurrentProgressValuePercent(self, v, dummy):

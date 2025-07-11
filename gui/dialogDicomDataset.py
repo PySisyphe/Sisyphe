@@ -60,6 +60,8 @@ class DialogDicomDataset(QDialog):
     ~~~~~~~~~~~
 
     QDialog -> DialogDicomDataset
+
+    Last revision: 26/06/2025
     """
 
     # Special method
@@ -77,6 +79,10 @@ class DialogDicomDataset(QDialog):
         self.setWindowTitle('DICOM dataset')
         # noinspection PyTypeChecker
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        # < Revision 26/06/2025
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowMinMaxButtonsHint, True)
+        # Revision 26/06/2025 >
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
 
@@ -92,6 +98,9 @@ class DialogDicomDataset(QDialog):
         self._files = FilesSelectionWidget()
         self._files.setSelectionModeToSingle()
         self._files.filterDICOM()
+        # < Revision 26/06/2025
+        self._files.setMaximumNumberOfFiles(256)
+        # Revision 26/06/2025 >
         self._files.FilesSelectionWidgetSelectionChanged.connect(self._initDataset)
         self._files.FilesSelectionWidgetCleared.connect(self._fileSelectionCleared)
         self._files.setTextLabel('Dicom series files')
@@ -99,9 +108,15 @@ class DialogDicomDataset(QDialog):
         self._dataset.setPrivateTagVisibility(False)
 
         self._searchtag = DicomComboBoxWidget()
+        # < Revision 26/06/2025
+        # noinspection PyTypeChecker
+        self._searchtag.setSizeAdjustPolicy(0)
+        # Revision 26/06/2025 >
         self._searchtag.setPrivateTagVisibility(False)
         self._searchtag.setEditable(True)
-        self._searchtag.setFixedWidth(200)
+        # < Revision 26/06/2025
+        # self._searchtag.setFixedWidth(200)
+        # Revision 26/06/2025 >
         # noinspection PyUnresolvedReferences
         self._searchtag.currentIndexChanged.connect(self._searchChanged)
 
@@ -203,10 +218,8 @@ class DialogDicomDataset(QDialog):
                 if isDicom(filename):
                     self._dataset.setDicomFile(filename)
                     self._searchtag.setDicomDataset(self._dataset.getDicomDataset(), self._private.checkState() < 2)
-                else:
-                    raise IOError('{} is not a valid DICOM file.'.format(basename(filename)))
-            else:
-                raise IOError('{} no such file.'.format(basename(filename)))
+                else: raise IOError('{} is not a valid DICOM file.'.format(basename(filename)))
+            else: raise IOError('{} no such file.'.format(basename(filename)))
 
     def _fileSelectionCleared(self, obj):
         if obj == self._files:
