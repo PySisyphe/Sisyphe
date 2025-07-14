@@ -5,6 +5,7 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+import sys
 from sys import platform
 
 from os.path import join
@@ -12,8 +13,6 @@ from os.path import exists
 from os.path import abspath
 from os.path import dirname
 from os.path import basename
-
-import logging
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSize
@@ -104,7 +103,10 @@ class TabWidget(QWidget):
     def __init__(self, views=None, parent=None):
         super().__init__(parent)
         # < Revision 07/07/2025
+        # if not hasattr(sys, '_MEIPASS'):
+        import logging
         self._logger = logging.getLogger(__name__)
+        # else: self._logger = None
         # Revision 07/07/2025 >
 
         self._views = views
@@ -285,7 +287,7 @@ class TabROIListWidget(TabWidget):
                                 self._draw.binaryOR(rois)
                                 self._updateROIDisplay()
                                 wait.close()
-                                self._logger.info('ROI {}'.format(name))
+                                if self._logger is not None: self._logger.info('ROI {}'.format(name))
                             else: messageBox(self, 'ROI Union', 'Less than two ROI checked.')
                     else:
                         messageBox(self, 'ROI union',
@@ -311,7 +313,7 @@ class TabROIListWidget(TabWidget):
                                 self._draw.binaryAND(rois)
                                 self._updateROIDisplay()
                                 wait.close()
-                                self._logger.info('ROI {}'.format(name))
+                                if self._logger is not None: self._logger.info('ROI {}'.format(name))
                             else: messageBox(self, 'ROI Intersection', 'Less than two ROI checked.')
                     else:
                         messageBox(self,
@@ -338,7 +340,7 @@ class TabROIListWidget(TabWidget):
                                 self._draw.binaryXOR(rois)
                                 self._updateROIDisplay()
                                 wait.close()
-                                self._logger.info('ROI {}'.format(name))
+                                if self._logger is not None: self._logger.info('ROI {}'.format(name))
                             else: messageBox(self, 'ROI Symmetric difference', 'Less than two ROI checked.')
                     else:
                         messageBox(self,
@@ -368,7 +370,7 @@ class TabROIListWidget(TabWidget):
                                 self._draw.binaryNAND(rois)
                                 self._updateROIDisplay()
                                 wait.close()
-                                self._logger.info('ROI {}'.format(name))
+                                if self._logger is not None: self._logger.info('ROI {}'.format(name))
                             else: messageBox(self, 'ROI Difference', 'No ROI checked.')
                     else:
                         messageBox(self,
@@ -1430,7 +1432,7 @@ class TabROIToolsWidget(TabWidget):
             if self._views.getBrushFlag() > 0:
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
-                self._logger.info('ROI tools - Brush tool selected')
+                if self._logger is not None: self._logger.info('ROI tools - Brush tool selected')
             else: self._views.setBrushROIFlag(self._brushtype.currentIndex())
 
     def interpolate(self):
@@ -1444,19 +1446,19 @@ class TabROIToolsWidget(TabWidget):
                         orient = self._views.getCurrentOrientation()
                         self._draw.interpolateBetweenSlices(first, last, orient)
                         self._updateROIDisplay()
-                        self._logger.info('ROI tools - Interpolate slices')
+                        if self._logger is not None: self._logger.info('ROI tools - Interpolate slices')
 
     def undo(self):
         if self._draw:
             self._draw.popUndoLIFO()
             self._updateROIDisplay()
-            self._logger.info('ROI tools - Undo')
+            if self._logger is not None: self._logger.info('ROI tools - Undo')
 
     def redo(self):
         if self._draw:
             self._draw.popRedoLIFO()
             self._updateROIDisplay()
-            self._logger.info('ROI tools - Redo')
+            if self._logger is not None: self._logger.info('ROI tools - Redo')
 
     # Slice ROI actions
 
@@ -1468,7 +1470,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.morphoSliceDilate(index, orient)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Binary dilate slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Binary dilate slice {}'.format(index))
 
     def slcErode(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1478,7 +1480,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.morphoSliceErode(index, orient)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Binnary erode slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Binnary erode slice {}'.format(index))
 
     def slcOpening(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1488,7 +1490,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.morphoSliceOpening(index, orient)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Binary opening slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Binary opening slice {}'.format(index))
 
     def slcClosing(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1498,7 +1500,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.morphoSliceClosing(index, orient)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Binary closing slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Binary closing slice {}'.format(index))
 
     def slcInvert(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1508,7 +1510,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.binaryNotSlice(index, orient)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Binary not slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Binary not slice {}'.format(index))
 
     def slcHoles(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1518,12 +1520,12 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.fillHolesSlice(index, orient)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Fill holes slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Fill holes slice {}'.format(index))
 
     def slcFill(self):
         if self.hasViewCollection() and self.hasCollection():
             self._views.set2DFillROIFlag()
-            self._logger.info('ROI tools - Slice fill tool selected')
+            if self._logger is not None: self._logger.info('ROI tools - Slice fill tool selected')
 
     def slcObject(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1536,7 +1538,7 @@ class TabROIToolsWidget(TabWidget):
                     if algo == 'morphology': algo = 'mean'
                     self._draw.objectSegmentSlice(index, orient, algo)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Object segmentation slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Object segmentation slice {}'.format(index))
 
     def slcBack(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1549,7 +1551,7 @@ class TabROIToolsWidget(TabWidget):
                     if algo == 'morphology': algo = 'mean'
                     self._draw.backgroundSegmentSlice(index, orient, algo)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Background segmentation slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Background segmentation slice {}'.format(index))
 
     def slcThresholding(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1559,7 +1561,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.thresholdingSlice(index, orient)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Thresholding slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Thresholding slice {}'.format(index))
 
     def slcCopy(self):
         if self._draw is not None:
@@ -1568,7 +1570,7 @@ class TabROIToolsWidget(TabWidget):
                 orient = self._views.getCurrentOrientation()
                 self._draw.copySlice(index, orient)
                 self._updateROIDisplay()
-                self._logger.info('ROI tools - Copy slice {}'.format(index))
+                if self._logger is not None: self._logger.info('ROI tools - Copy slice {}'.format(index))
 
     def slcCut(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1578,7 +1580,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.cutSlice(index, orient)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Cut slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Cut slice {}'.format(index))
 
     def slcPaste(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1588,7 +1590,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.pasteSlice(index, orient)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Paste slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Paste slice {}'.format(index))
 
     def slcClear(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1598,7 +1600,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.clearSlice(index, orient)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Clear slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Clear slice {}'.format(index))
 
     def slcHFlip(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1608,7 +1610,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.flipSlice(index, orient, True, False)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Horizontal flip slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Horizontal flip slice {}'.format(index))
 
     def slcVFlip(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1618,7 +1620,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.flipSlice(index, orient, False, True)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Vertical flip slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Vertical flip slice {}'.format(index))
 
     def slcUp(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1628,7 +1630,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.shiftSlice(index, orient, 0, self._move.value())
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Move up slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Move up slice {}'.format(index))
 
     def slcDown(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1638,7 +1640,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.shiftSlice(index, orient, 0, -self._move.value())
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Move down slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Move down slice {}'.format(index))
 
     def slcLeft(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1648,7 +1650,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.shiftSlice(index, orient, self._move.value(), 0)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Move left slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Move left slice {}'.format(index))
 
     def slcRight(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1658,7 +1660,7 @@ class TabROIToolsWidget(TabWidget):
                     orient = self._views.getCurrentOrientation()
                     self._draw.shiftSlice(index, orient, -self._move.value(), 0)
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Move right slice {}'.format(index))
+                    if self._logger is not None: self._logger.info('ROI tools - Move right slice {}'.format(index))
 
     def slcFilterExtent(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1669,7 +1671,7 @@ class TabROIToolsWidget(TabWidget):
                     if self._extent.value() == -1: self._draw.majorBlobSelectSlice(index, orient)
                     else: self._draw.blobFilterExtentSlice(index, orient, self._extent.value())
                     self._updateROIDisplay()
-                    self._logger.info('ROI tools - Blob filter extent {} slice {}'.format(self._extent.value(), index))
+                    if self._logger is not None: self._logger.info('ROI tools - Blob filter extent {} slice {}'.format(self._extent.value(), index))
 
     def slcRegionGrowing(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1678,7 +1680,7 @@ class TabROIToolsWidget(TabWidget):
                 self._rg2DRegion.setChecked(True)
                 self._cc2DRegion.setChecked(False)
                 self._views.set2DRegionGrowingROIFlag()
-                self._logger.info('ROI tools - Slice region growing tool selected')
+                if self._logger is not None: self._logger.info('ROI tools - Slice region growing tool selected')
             else:
                 self._btn['2Dregion'].setChecked(False)
                 self._rg2DRegion.setChecked(False)
@@ -1693,7 +1695,7 @@ class TabROIToolsWidget(TabWidget):
                 self._rg2DRegion.setChecked(False)
                 self._cc2DRegion.setChecked(True)
                 self._views.set2DRegionConfidenceROIFlag()
-                self._logger.info('ROI tools - Slice region confidence tool selected')
+                if self._logger is not None: self._logger.info('ROI tools - Slice region confidence tool selected')
             else:
                 self._btn['2Dregion'].setChecked(False)
                 self._rg2DRegion.setChecked(False)
@@ -1706,52 +1708,52 @@ class TabROIToolsWidget(TabWidget):
     def slcBlobDilate(self):
         if self.hasViewCollection() and self.hasCollection():
             self._views.set2DBlobDilateROIFlag()
-            self._logger.info('ROI tools - Slice blob dilate tool selected')
+            if self._logger is not None: self._logger.info('ROI tools - Slice blob dilate tool selected')
 
     def slcBlobErode(self):
         if self.hasViewCollection() and self.hasCollection():
             self._views.set2DBlobErodeROIFlag()
-            self._logger.info('ROI tools - Slice blob erode tool selected')
+            if self._logger is not None: self._logger.info('ROI tools - Slice blob erode tool selected')
 
     def slcBlobOpening(self):
         if self.hasViewCollection() and self.hasCollection():
             self._views.set2DBlobOpenROIFlag()
-            self._logger.info('ROI tools - Slice blob opening tool selected')
+            if self._logger is not None: self._logger.info('ROI tools - Slice blob opening tool selected')
 
     def slcBlobClosing(self):
         if self.hasViewCollection() and self.hasCollection():
             self._views.set2DBlobCloseROIFlag()
-            self._logger.info('ROI tools - Slice blob closing tool selected')
+            if self._logger is not None: self._logger.info('ROI tools - Slice blob closing tool selected')
 
     def slcBlobCopy(self):
         if self.hasViewCollection() and self.hasCollection():
             self._views.set2DBlobCopyROIFlag()
-            self._logger.info('ROI tools - Slice blob copy tool selected')
+            if self._logger is not None: self._logger.info('ROI tools - Slice blob copy tool selected')
 
     def slcBlobCut(self):
         if self.hasViewCollection() and self.hasCollection():
             self._views.set2DBlobCutROIFlag()
-            self._logger.info('ROI tools - Slice blob cut tool selected')
+            if self._logger is not None: self._logger.info('ROI tools - Slice blob cut tool selected')
 
     def slcBlobPaste(self):
         if self.hasViewCollection() and self.hasCollection():
             self._views.set2DBlobPasteROIFlag()
-            self._logger.info('ROI tools - Slice blob paste tool selected')
+            if self._logger is not None: self._logger.info('ROI tools - Slice blob paste tool selected')
 
     def slcBlobRemove(self):
         if self.hasViewCollection() and self.hasCollection():
             self._views.set2DBlobRemoveROIFlag()
-            self._logger.info('ROI tools - Slice blob remove tool selected')
+            if self._logger is not None: self._logger.info('ROI tools - Slice blob remove tool selected')
 
     def slcBlobKeep(self):
         if self.hasViewCollection() and self.hasCollection():
             self._views.set2DBlobKeepROIFlag()
-            self._logger.info('ROI tools - Slice blob keep tool selected')
+            if self._logger is not None: self._logger.info('ROI tools - Slice blob keep tool selected')
 
     def slcBlobThresholding(self):
         if self.hasViewCollection() and self.hasCollection():
             self._views.set2DBlobThresholdROIFlag()
-            self._logger.info('ROI tools - Slice blob thresholding tool selected')
+            if self._logger is not None: self._logger.info('ROI tools - Slice blob thresholding tool selected')
 
     def slcBlobRegionGrowing(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1760,7 +1762,7 @@ class TabROIToolsWidget(TabWidget):
                 self._rg2DBlobRegion.setChecked(True)
                 self._cc2DBlobRegion.setChecked(False)
                 self._views.set2DBlobRegionGrowingROIFlag()
-                self._logger.info('ROI tools - Slice blob region growing tool selected')
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob region growing tool selected')
             else:
                 self._btn['2Dblobregion'].setChecked(False)
                 self._rg2DBlobRegion.setChecked(False)
@@ -1775,7 +1777,7 @@ class TabROIToolsWidget(TabWidget):
                 self._rg2DBlobRegion.setChecked(False)
                 self._cc2DBlobRegion.setChecked(True)
                 self._views.set2DBlobRegionConfidenceROIFlag()
-                self._logger.info('ROI tools - Slice blob region confidence tool selected')
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob region confidence tool selected')
             else:
                 self._btn['2Dblobregion'].setChecked(False)
                 self._rg2DBlobRegion.setChecked(False)
@@ -1796,7 +1798,7 @@ class TabROIToolsWidget(TabWidget):
                     self._draw.euclideanDilate(self._thick.value())
                     self._updateROIDisplay()
                     wait.close()
-                    self._logger.info('ROI tools - Expand {}'.format(self._thick.value()))
+                    if self._logger is not None: self._logger.info('ROI tools - Expand {}'.format(self._thick.value()))
 
     def voiEuclideanShrink(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1809,7 +1811,7 @@ class TabROIToolsWidget(TabWidget):
                     self._draw.euclideanErode(self._thick.value())
                     self._updateROIDisplay()
                     wait.close()
-                    self._logger.info('ROI tools - Shrink {}'.format(self._thick.value()))
+                    if self._logger is not None: self._logger.info('ROI tools - Shrink {}'.format(self._thick.value()))
 
     def voiDilate(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1821,7 +1823,7 @@ class TabROIToolsWidget(TabWidget):
                 self._draw.morphoDilate()
                 self._updateROIDisplay()
                 wait.close()
-                self._logger.info('ROI tools - Binary dilate')
+                if self._logger is not None: self._logger.info('ROI tools - Binary dilate')
 
     def voiErode(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1833,7 +1835,7 @@ class TabROIToolsWidget(TabWidget):
                 self._draw.morphoErode()
                 self._updateROIDisplay()
                 wait.close()
-                self._logger.info('ROI tools - Binary erode')
+                if self._logger is not None: self._logger.info('ROI tools - Binary erode')
 
     def voiOpening(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1845,7 +1847,7 @@ class TabROIToolsWidget(TabWidget):
                 self._draw.morphoOpening()
                 self._updateROIDisplay()
                 wait.close()
-                self._logger.info('ROI tools - Binary opening')
+                if self._logger is not None: self._logger.info('ROI tools - Binary opening')
 
     def voiClosing(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1857,14 +1859,14 @@ class TabROIToolsWidget(TabWidget):
                 self._draw.morphoClosing()
                 self._updateROIDisplay()
                 wait.close()
-                self._logger.info('ROI tools - Binary closing')
+                if self._logger is not None: self._logger.info('ROI tools - Binary closing')
 
     def voiInvert(self):
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 self._draw.binaryNOT()
                 self._updateROIDisplay()
-                self._logger.info('ROI tools - Binary not')
+                if self._logger is not None: self._logger.info('ROI tools - Binary not')
 
     def voi3DHoles(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1876,7 +1878,7 @@ class TabROIToolsWidget(TabWidget):
                 self._draw.fillHoles()
                 self._updateROIDisplay()
                 wait.close()
-                self._logger.info('ROI tools - Fill holes')
+                if self._logger is not None: self._logger.info('ROI tools - Fill holes')
 
     def voi2DHoles(self, dim):
         if self.hasViewCollection() and self.hasCollection():
@@ -1891,19 +1893,19 @@ class TabROIToolsWidget(TabWidget):
                 self._draw.fillHolesAllSlices(dim)
                 self._updateROIDisplay()
                 wait.close()
-                self._logger.info('ROI tools - Fill holes (by slices)')
+                if self._logger is not None: self._logger.info('ROI tools - Fill holes (by slices)')
 
     def voiFill(self):
         if self.hasViewCollection() and self.hasCollection():
             self._views.set3DFillROIFlag()
-            self._logger.info('ROI tools - Fill tool selected')
+            if self._logger is not None: self._logger.info('ROI tools - Fill tool selected')
 
     def voiClear(self):
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 self._draw.clear()
                 self._updateROIDisplay()
-                self._logger.info('ROI tools - Clear')
+                if self._logger is not None: self._logger.info('ROI tools - Clear')
 
     def voiObject(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1918,7 +1920,7 @@ class TabROIToolsWidget(TabWidget):
                 else: self._draw.objectSegment(algo)
                 self._updateROIDisplay()
                 wait.close()
-                self._logger.info('ROI tools - Object segmentation')
+                if self._logger is not None: self._logger.info('ROI tools - Object segmentation')
 
     def voiBack(self):
         if self.hasViewCollection() and self.hasCollection():

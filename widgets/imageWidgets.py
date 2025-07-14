@@ -8,6 +8,7 @@ External packages/modules
     - SimpleITK, Medical image processing, https://simpleitk.org/
 """
 
+import sys
 from sys import platform
 
 from os import getcwd
@@ -19,8 +20,6 @@ from os.path import abspath
 from os.path import splitext
 
 from time import perf_counter
-
-import logging
 
 from numpy import ndarray as np_ndarray
 from numpy import fliplr
@@ -445,7 +444,10 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             super().__init__(parent)
             self.setObjectName('ThumbnailButton')
             # < Revision 06/07/2025
+            # if not hasattr(sys, '_MEIPASS'):
+            import logging
             self._logger = logging.getLogger(__name__)
+            # else: self._logger = None
             # Revision 06/07/2025 >
 
             from Sisyphe.widgets.toolBarThumbnail import ToolBarThumbnail
@@ -1078,7 +1080,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             except Exception as err: messageBox(self, 'Save PySisyphe volume', '{}'.format(err))
             mainwindow = self.getMainWindow()
             if mainwindow is not None: mainwindow.setStatusBarMessage('{} saved.'.format(self._multi.getBasename()))
-            self._logger.info('Save {}'.format(self._multi.getFilename()))
+            if self._logger is not None: self._logger.info('Save {}'.format(self._multi.getFilename()))
             self._preview.setToolTip(str(self._multi))
         else: self.saveas()
     # Revision 10/12/2024 >
@@ -1102,7 +1104,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 messageBox(self, 'Save PySisyphe volume', 'error : {}'.format(err))
             mainwindow = self.getMainWindow()
             if mainwindow is not None: mainwindow.setStatusBarMessage('{} saved.'.format(self._multi.getBasename()))
-            self._logger.info('Save {}'.format(self._multi.getFilename()))
+            if self._logger is not None: self._logger.info('Save {}'.format(self._multi.getFilename()))
             self._preview.setToolTip(str(self._multi))
     # Revision 10/12/2024 >
 
@@ -1144,7 +1146,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             wait.setInformationText('Split {}'.format(self._multi.getBasename()))
             wait.setProgressRange(0, n)
             wait.progressVisibilityOn()
-            self._logger.info('Split {}'.format(self._multi.getBasename()))
+            if self._logger is not None: self._logger.info('Split {}'.format(self._multi.getBasename()))
             fix = len(str(n))
             for i in range(n):
                 try:
@@ -1156,7 +1158,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                     wait.setInformationText('Split {}\nSave {}'.format(self._multi.getBasename(), vol.getBasename()))
                     wait.incCurrentProgressValue()
                     vol.save()
-                    self._logger.info('  Save {}'.format(vol.getBasename()))
+                    if self._logger is not None: self._logger.info('  Save {}'.format(vol.getBasename()))
                 except Exception as err:
                     messageBox(self, 'Split', '{}'.format(err))
                     break
@@ -1342,7 +1344,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                         if moveto:
                             self.getMainWindow().showSliceView()
                             self.getMainWindow().updateTimers()
-                self._logger.info('Slice view display {}'.format(self._volume.getBasename()))
+                if self._logger is not None: self._logger.info('Slice view display {}'.format(self._volume.getBasename()))
             if flag: wait.close()
         self._action['slices'].blockSignals(True)
         self._action['slices'].setChecked(True)
@@ -1456,7 +1458,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             if moveto:
                                 self.getMainWindow().showOrthogonalView()
                                 self.getMainWindow().updateTimers()
-                    self._logger.info('Orthogonal view display {}'.format(self._volume.getBasename()))
+                    if self._logger is not None: self._logger.info('Orthogonal view display {}'.format(self._volume.getBasename()))
                 if flag: wait.close()
         self._action['orthogonal'].blockSignals(True)
         self._action['orthogonal'].setChecked(True)
@@ -1576,7 +1578,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             if moveto:
                                 self.getMainWindow().showSynchronisedView()
                                 self.getMainWindow().updateTimers()
-                    self._logger.info('Synchronized view display {}'.format(self._volume.getBasename()))
+                    if self._logger is not None: self._logger.info('Synchronized view display {}'.format(self._volume.getBasename()))
                 if flag: wait.close()
         self._action['synchronised'].blockSignals(True)
         self._action['synchronised'].setChecked(True)
@@ -1673,7 +1675,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             if moveto:
                                 self.getMainWindow().showProjectionView()
                                 self.getMainWindow().updateTimers()
-                    self._logger.info('Projection view display {}'.format(self._volume.getBasename()))
+                    if self._logger is not None: self._logger.info('Projection view display {}'.format(self._volume.getBasename()))
                 if flag: wait.close()
         self._action['projections'].blockSignals(True)
         self._action['projections'].setChecked(True)
@@ -1715,7 +1717,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 if moveto:
                     self.getMainWindow().showComponentView()
                     self.getMainWindow().updateTimers()
-            self._logger.info('Multi-component view display {}'.format(self._volume.getBasename()))
+            if self._logger is not None: self._logger.info('Multi-component view display {}'.format(self._volume.getBasename()))
             if flag: wait.close()
         self._action['multi'].blockSignals(True)
         self._action['multi'].setChecked(True)
@@ -1746,7 +1748,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                     # self.setDown(True)
                     if self._views.addOverlay(self._volume, wait):
                         self.setDown(True)
-                        self._logger.info('Display overlay {}'.format(self._volume.getBasename()))
+                        if self._logger is not None: self._logger.info('Display overlay {}'.format(self._volume.getBasename()))
                     # Revision 27/05/2025 >
                 except Exception as err:
                     wait.hide()
@@ -1798,7 +1800,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     def defaultWindow(self):
         self._lutwidget.defaultWindow()
         self._onMenuHide()
-        self._logger.info('Set default window {}'.format(self._volume.getBasename()))
+        if self._logger is not None: self._logger.info('Set default window {}'.format(self._volume.getBasename()))
     # Revision 24/10/2024 >
 
     # < Revision 24/10/2024

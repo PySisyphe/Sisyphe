@@ -5,6 +5,7 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+import sys
 from sys import platform
 
 from os import getcwd
@@ -16,8 +17,6 @@ from os.path import dirname
 from os.path import basename
 from os.path import splitext
 from os.path import abspath
-
-import logging
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSize
@@ -166,7 +165,10 @@ class ItemAttributesWidget(QFrame):
     def __init__(self, item=None, views=None, listattr=None, minwidth=None, parent=None):
         super().__init__(parent)
         # < Revision 06/07/2025
+        # if not hasattr(sys, '_MEIPASS'):
+        import logging
         self._logger = logging.getLogger(__name__)
+        # else: self._logger = None
         # Revision 06/07/2025 >
 
         # < Revision 19/03/2024
@@ -404,7 +406,7 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
         if isinstance(v, bool):
             self._visibility.setVisibilitySateIcon(v)
             self._visibilityChanged(self)
-            self._logger.info('Set visibility {} overlay {}'.format(v, self._item.getBasename()))
+            if self._logger is not None: self._logger.info('Set visibility {} overlay {}'.format(v, self._item.getBasename()))
         else: raise TypeError('parameter type {} is not bool.'.format(v))
 
     def getVisibility(self):
@@ -416,7 +418,7 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
                 v = int(v * 100)
                 self._opacity.setValue(v)
                 self._opacityChanged(v)
-                self._logger.info('Set opacity {} overlay {}'.format(v, self._item.getBasename()))
+                if self._logger is not None: self._logger.info('Set opacity {} overlay {}'.format(v, self._item.getBasename()))
             else: raise ValueError('parameter value {} is not between 0.0 and 1.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
@@ -583,7 +585,7 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
     def setColor(self, r, g, b):
         self._color.setFloatColor(r, g, b)
         self._colorChanged()
-        self._logger.info('Set color {} ROI {}'.format((r, g, b), self._item.getName()))
+        if self._logger is not None: self._logger.info('Set color {} ROI {}'.format((r, g, b), self._item.getName()))
 
     def getColor(self):
         return self._color.getFloatColor()
@@ -602,7 +604,7 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
             if 0.0 <= v <= 1.0:
                 self._opacity.setOpacity(v)
                 self._opacityChanged()
-                self._logger.info('Set opacity {} ROI {}'.format(v, self._item.getName()))
+                if self._logger is not None: self._logger.info('Set opacity {} ROI {}'.format(v, self._item.getName()))
             else: raise ValueError('parameter value {} is not between 0.0 and 1.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
@@ -613,7 +615,7 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
         if isinstance(v, bool):
             self._visibility.setVisibilitySateIcon(v)
             self._visibilityChanged()
-            self._logger.info('Set visbility {} ROI {}'.format(v, self._item.getName()))
+            if self._logger is not None: self._logger.info('Set visbility {} ROI {}'.format(v, self._item.getName()))
         else: raise TypeError('parameter type {} is not bool'.format(type(v)))
 
     def getVisibility(self):
@@ -634,7 +636,7 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
         try:
             if self._item.hasFilename(): self._item.setDefaultFilename()
             self._item.save()
-            self._logger.info('Save ROI {}'.format(self._item.getFilename()))
+            if self._logger is not None: self._logger.info('Save ROI {}'.format(self._item.getFilename()))
             if self.hasViewCollection(): self._views.clearUndo()
         except Exception as err:
             messageBox(self, 'Save ROI', text='{}'.format(err))
@@ -998,11 +1000,11 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
 
     def settings(self):
         self._dialogprop.setProperties(self._item.getActor().GetProperty())
-        self._logger.info('Dialog exec [gui.dialogMeshProperties.DialogMeshProperties]')
+        if self._logger is not None: self._logger.info('Dialog exec [gui.dialogMeshProperties.DialogMeshProperties]')
         self._dialogprop.exec()
         c = self._item.getActor().GetProperty().GetColor()
         self._color.setFloatColor(c[0], c[1], c[2])
-        self._logger.info('Change Properties ROI {}'.format(self._item.getName()))
+        if self._logger is not None: self._logger.info('Change Properties ROI {}'.format(self._item.getName()))
 
     def transform(self):
         if self._tx.value() != 0.0 or self._ty.value() != 0.0 or self._tz.value() != 0.0 or \
@@ -1016,12 +1018,12 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             self._item.applyTransform(trf)
             self._clearTransform()
             self._updateViews()
-            self._logger.info('Set geometric transform Mesh {}\n{}'.format(self._item.getName(), str(trf)))
+            if self._logger is not None: self._logger.info('Set geometric transform Mesh {}\n{}'.format(self._item.getName(), str(trf)))
 
     def setColor(self, r, g, b):
         self._color.setFloatColor(r, g, b)
         self._colorChanged()
-        self._logger.info('Set color {} Mesh {}'.format((r, g, b), self._item.getName()))
+        if self._logger is not None: self._logger.info('Set color {} Mesh {}'.format((r, g, b), self._item.getName()))
 
     def getColor(self):
         return self._color.getFloatColor()
@@ -1059,7 +1061,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             if 0.0 <= v <= 1.0:
                 self._opacity.setOpacity(v)
                 self._opacityChanged()
-                self._logger.info('Set opacity {} Mesh {}'.format(v, self._item.getName()))
+                if self._logger is not None: self._logger.info('Set opacity {} Mesh {}'.format(v, self._item.getName()))
             else: raise ValueError('parameter value {} is not between 0.0 and 1.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
@@ -1070,7 +1072,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         if isinstance(v, bool):
             self._visibility.setVisibilitySateIcon(v)
             self._visibilityChanged()
-            self._logger.info('Set visibility {} Mesh {}'.format(v, self._item.getName()))
+            if self._logger is not None: self._logger.info('Set visibility {} Mesh {}'.format(v, self._item.getName()))
         else: raise TypeError('parameter type {} is not bool'.format(type(v)))
 
     def getVisibility(self):
@@ -1080,13 +1082,13 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._tx.setValue(t[0])
         self._ty.setValue(t[1])
         self._tz.setValue(t[2])
-        self._logger.info('Set translations {} Mesh {}'.format(t, self._item.getName()))
+        if self._logger is not None: self._logger.info('Set translations {} Mesh {}'.format(t, self._item.getName()))
 
     def setRotations(self, r):
         self._rx.setValue(r[0])
         self._ry.setValue(r[1])
         self._rz.setValue(r[2])
-        self._logger.info('Set rotations {} Mesh {}'.format(r, self._item.getName()))
+        if self._logger is not None: self._logger.info('Set rotations {} Mesh {}'.format(r, self._item.getName()))
 
     def setMesh(self, mesh):
         if isinstance(mesh, SisypheMesh):
@@ -1105,7 +1107,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             if not self._item.hasFilename():
                 self._item.setFilename(join(self._views.getVolume().getDirname(),
                                             self._item.getName() + self._item.getFileExt()))
-            self._logger.info('Save {}'.format(self._item.getFilename()))
+            if self._logger is not None: self._logger.info('Save {}'.format(self._item.getFilename()))
             self._item.save()
         except Exception as err:
             messageBox(self, 'Save Mesh', text='{}'.format(err))
@@ -1528,7 +1530,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
     def setColor(self, r, g, b, signal=True):
         self._color.setFloatColor(r, g, b)
         if signal: self._colorChanged()
-        self._logger.info('Set color {} Tool {}'.format((r, g, b), self._item.getName()))
+        if self._logger is not None: self._logger.info('Set color {} Tool {}'.format((r, g, b), self._item.getName()))
 
     def getColor(self):
         return self._color.getFloatColor()
@@ -2294,7 +2296,10 @@ class ListAttributesWidget(QWidget):
     def __init__(self, views=None, parent=None):
         super().__init__(parent)
         # < Revision 06/07/2025
+        # if not hasattr(sys, '_MEIPASS'):
+        import logging
         self._logger = logging.getLogger(__name__)
+        # else: self._logger = None
         # Revision 06/07/2025 >
 
         self._collection = None

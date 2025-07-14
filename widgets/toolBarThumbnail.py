@@ -5,6 +5,7 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+import sys
 from sys import platform
 
 from os import getcwd
@@ -14,8 +15,6 @@ from os.path import dirname
 from os.path import basename
 from os.path import splitext
 from os.path import abspath
-
-import logging
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMenu
@@ -80,7 +79,10 @@ class ToolBarThumbnail(QToolBar):
     def __init__(self, size=128, mainwindow=None, views=None, parent=None):
         super().__init__(parent)
         # < Revision 06/07/2025
+        # if not hasattr(sys, '_MEIPASS'):
+        import logging
         self._logger = logging.getLogger(__name__)
+        # else: self._logger = None
         # Revision 06/07/2025 >
 
         from Sisyphe.gui.windowSisyphe import WindowSisyphe
@@ -343,7 +345,7 @@ class ToolBarThumbnail(QToolBar):
                             self._views.removeOverlay(vol)
                         self.removeAction(action)
                         # self._actions.remove(action)
-                        self._logger.info('Remove from thumbnail {}'.format(vol.getFilename()))
+                        if self._logger is not None: self._logger.info('Remove from thumbnail {}'.format(vol.getFilename()))
             if self.hasMainWindow():
                 self._mainwindow.updateMemoryUsage()
                 self._mainwindow.setStatusBarMessage('Volume {} closed.'.format(vol.getBasename()))
@@ -360,7 +362,7 @@ class ToolBarThumbnail(QToolBar):
             for i in range(n):
                 self.getWidgetFromIndex(i).getActions()['overlay'].setChecked(False)
                 self.getWidgetFromIndex(i).setDown(False)
-        self._logger.info('Remove all overlays')
+        if self._logger is not None: self._logger.info('Remove all overlays')
 
     def addVolume(self, vol, wait=None):
         if isinstance(vol, SisypheVolume):
@@ -374,7 +376,7 @@ class ToolBarThumbnail(QToolBar):
                     action.setDefaultWidget(widget)
                     self.addAction(action)
                     # self._actions.append(action)
-                    self._logger.info('Add to thumbnail {}'.format(vol.getFilename()))
+                    if self._logger is not None:self._logger.info('Add to thumbnail {}'.format(vol.getFilename()))
                     if self.hasMainWindow():
                         if vol.hasFilename: self._mainwindow.addRecent(vol.getFilename())
                         self._mainwindow.updateMemoryUsage()
@@ -469,7 +471,7 @@ class ToolBarThumbnail(QToolBar):
             for i in range(len(self.actions())):
                 v = self.getVolumeFromIndex(i)
                 v.save()
-                self._logger.info('Save {}'.format(v.getFilename()))
+                if self._logger is not None: self._logger.info('Save {}'.format(v.getFilename()))
             if self.hasMainWindow():
                 self._mainwindow.setStatusBarMessage('All volumes saved.')
 
@@ -516,7 +518,7 @@ class ToolBarThumbnail(QToolBar):
             self.removeSelected()
             self.clear()
             # self._actions.clear()
-            self._logger.info('Remove all volumes from thumbnail')
+            if self._logger is not None: self._logger.info('Remove all volumes from thumbnail')
             if self.hasMainWindow():
                 self._mainwindow.updateTimers(-1)
                 self._mainwindow.updateMemoryUsage()
