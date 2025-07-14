@@ -23,26 +23,8 @@ from numpy import array
 
 from ants.core import write_transform
 
-from dipy.core.gradients import gradient_table
-
-from Sisyphe.core.sisypheDicom import loadBVal
-from Sisyphe.core.sisypheDicom import loadBVec
-from Sisyphe.core.sisypheTracts import SisypheTracking
-from Sisyphe.core.sisypheTracts import SisypheDTIModel
-from Sisyphe.core.sisypheTracts import SisypheDKIModel
-from Sisyphe.core.sisypheTracts import SisypheSHCSAModel
-from Sisyphe.core.sisypheTracts import SisypheSHCSDModel
-from Sisyphe.core.sisypheTracts import SisypheDSIModel
-from Sisyphe.core.sisypheTracts import SisypheDSIDModel
-from Sisyphe.core.sisypheTracts import SisypheDiffusionModel
-from Sisyphe.core.sisypheTracts import SisypheStreamlines
-from Sisyphe.core.sisypheROI import SisypheROI
-from Sisyphe.core.sisypheROI import SisypheROICollection
-from Sisyphe.core.sisypheVolume import SisypheVolume
-from Sisyphe.core.sisypheVolume import SisypheVolumeCollection
-from Sisyphe.processing.dipyFunctions import dwiPreprocessing
-
-__all__ = ['CapturedStdout',
+__all__ = ['CaptureStdout',
+           'CapturePythonStdout',
            'ProcessSkullStrip',
            'ProcessRegistration',
            'ProcessRealignment',
@@ -60,10 +42,17 @@ __all__ = ['CapturedStdout',
            'ProcessDiffusionTracking']
 
 """
+Functions
+---------
+
+    - removeLogger
+    - restoreLogger
+
 Class hierarchy
 ~~~~~~~~~~~~~~~
 
     - CapturedStdout
+    - CapturePythonStdout
     - Process -> ProcessSkullStrip
               -> ProcessRegistration
               -> ProcessRealignment
@@ -87,7 +76,7 @@ QApplication module.
 Creation: 17/04/2025
 """
 
-class CapturedStdout:
+class CaptureStdout:
     """
     CaptureStdout
 
@@ -98,25 +87,16 @@ class CapturedStdout:
     designed to work reliably in environments where sys.stdout may not be a valid stream (e.g. frozen application
     with PyInstaller)
 
-    Last revision: 25/06/2025
+    Last revision: 13/07/2025
     """
 
     # Special methods
 
-    """
-    Private attributes
-
-    prevfd      file
-    prev        file
-    _filename   str
-    """
-
     def __init__(self, filename, lowlevel=True):
         """
-        old:
-        self.prevfd = None
-        self.prev = None
         self._filename = filename
+        self._original_stdout_fd = -1
+        self._capture_file = None
         """
         self._filename = filename
         self._original_stdout_fd = -1  # dummy file descriptor
@@ -128,21 +108,12 @@ class CapturedStdout:
 
     def __enter__(self):
         """
-        dst = open('stdout.log', 'a')
-        dst_fd = dst.fileno()
-        stdout_fd = sys.stdout.fileno()
-        os.close(stdout_fd)
-        os.dup2(dst_fd, stdout_fd)
-
-        old:
-        F = open(self._filename, 'w')
-        # copy sys.stdout file descriptor to prevfd
-        self.prevfd = dup(sys.stdout.fileno())
-        # copy stdout file descriptor to file F (sys.stdout redirected to file F)
-        dup2(F.fileno(), sys.stdout.fileno())
-        # copy stdout to prev
-        self.prev = sys.stdout
-        return F
+        self._capture_file = open(self._filename, 'w')
+        new_fd = self._capture_file.fileno()
+        try: self._original_stdout_fd = dup(1)
+        except OSError: self._original_stdout_fd = -1
+        dup2(new_fd, 1)
+        return self._capture_file
         """
         # open file to capture stdout
         self._new_stdout_file = open(self._filename, 'w')
@@ -163,19 +134,50 @@ class CapturedStdout:
 
     def __exit__(self, exc_type, exc_value, traceback):
         """
-        old:
-        dup2(self.prevfd, self.prev.fileno())
-        sys.stdout = self.prev
+        if self._capture_file:
+            self._capture_file.flush()
+            self._capture_file.close()
+        if self._original_stdout_fd != -1:
+            dup2(self._original_stdout_fd, 1)
+            close(self._original_stdout_fd)
         """
         if self._new_stdout_file:
             # close stdout file
             self._new_stdout_file.flush()
             self._new_stdout_file.close()
         if self._original_stdout_fd != -1:
-            # restore original stdout if not dummy
+            # restore original stdout if not dummy,
             if self._lowlevel: dup2(self._original_stdout_fd, 1)
             else: dup2(self._original_stdout_fd, sys.stdout.fileno())
             close(self._original_stdout_fd)
+
+
+class CapturePythonStdout:
+    """
+    CapturePythonStdout
+
+    Description
+    ~~~~~~~~~~~
+
+    Class to redirect python sys.stdout to a text file.
+
+    Last revision: 14/07/2025
+    """
+
+    # Special methods
+
+    def __init__(self, filename):
+        self._filename = filename
+        self._original_sys_stdout = sys.stdout
+        self._new_stdout_file = None
+
+    def __enter__(self):
+        self._new_stdout_file = open(self._filename, 'w')
+        sys.stdout = self._new_stdout_file
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        sys.stdout = self._original_sys_stdout
+        self._new_stdout_file.close()
 
 
 class ProcessSkullStrip(Process):
@@ -290,7 +292,7 @@ class ProcessRegistration(Process):
             invtransforms: inverse transformation filename               
         """
         # noinspection PyUnusedLocal
-        with CapturedStdout(self._stdout) as F:
+        with CaptureStdout(self._stdout) as F:
             """
             ants.registration(fixed, moving, type_of_transform="SyN", initial_transform=None, outprefix="",
             mask=None, grad_step=0.2, flow_sigma=3, total_sigma=0, aff_metric="mattes", aff_sampling=32,
@@ -314,7 +316,7 @@ class ProcessRegistration(Process):
             aff_smoothing_sigmas : vector of multi-resolution smoothing factors for linear registration
             smoothing_in_mm : boolean; currently only impacts low dimensional registration
             """
-            from ants.registration import registration
+            from Sisyphe.lib.ants.registration import registration
             r = registration(fixed, moving, type_of_transform=self._regtype,
                              initial_transform=self._transform, mask=mask, mask_all_stages=self._maskallstages,
                              aff_metric=self._metric[0], syn_metric=self._metric[1],
@@ -391,7 +393,7 @@ class ProcessRealignment(Process):
                      'fwdtransforms': str,
                      'invtransforms': str}
             """
-            from ants.registration import registration
+            from Sisyphe.lib.ants.registration import registration
             r = registration(fixed, moving, type_of_transform='BOLDRigid', initial_transform=transform, mask=mask,
                              aff_metric=self._metric, aff_random_sampling_rate=self._sampling, verbose=False)
             if len(r['fwdtransforms']) == 1:
@@ -456,7 +458,7 @@ class ProcessAtropos(Process):
             for i in range(len(self._init)):
                 self._init[i] = from_numpy(self._init[i], spacing=self._spacing)
         # noinspection PyUnusedLocal
-        with CapturedStdout(self._stdout) as F:
+        with CaptureStdout(self._stdout) as F:
             from Sisyphe.lib.ants.atropos import atropos
             # noinspection PyTypeChecker
             r = atropos(vol, x=mask, i=self._init, m=self._mrf, c=self._conv, priorweight=self._weight, verbose=1)
@@ -515,7 +517,7 @@ class ProcessCorticalThickness(Process):
         gm.set_direction(d)
         wm.set_direction(d)
         # noinspection PyUnusedLocal
-        with CapturedStdout(self._stdout) as F:
+        with CaptureStdout(self._stdout) as F:
             from ants.segmentation import kelly_kapowski
             r = kelly_kapowski(s=seg, g=gm, w=wm, its=self._iters, r=self._grdstep, m=self._grdsmooth, verbose=1)
         self._result.put(r.numpy())
@@ -573,7 +575,7 @@ class ProcessDeepTumorSegmentation(Process):
         from antspynet.utilities.get_antsxnet_data import set_antsxnet_cache_directory
         set_antsxnet_cache_directory(self._cache)
         # noinspection PyUnusedLocal
-        with CapturedStdout(self._stdout) as F:
+        with CapturePythonStdout(self._stdout) as F:
             r = brain_tumor_segmentation(flair, t1, t1ce, t2, verbose=True)
         r2 = dict()
         r2['lbl'] = r['segmentation_image'].numpy()
@@ -627,7 +629,7 @@ class ProcessDeepHippocampusSegmentation(Process):
         from antspynet.utilities.get_antsxnet_data import set_antsxnet_cache_directory
         set_antsxnet_cache_directory(self._cache)
         # noinspection PyUnusedLocal
-        with CapturedStdout(self._stdout) as F:
+        with CapturePythonStdout(self._stdout) as F:
             r = hippmapp3r_segmentation(t1, verbose=True)
         self._result.put(r.numpy())
 
@@ -681,7 +683,7 @@ class ProcessDeepMedialTemporalSegmentation(Process):
         from antspynet.utilities.get_antsxnet_data import set_antsxnet_cache_directory
         set_antsxnet_cache_directory(self._cache)
         # noinspection PyUnusedLocal
-        with CapturedStdout(self._stdout) as F:
+        with CapturePythonStdout(self._stdout) as F:
             r = deep_flash(t1, t2, which_parcellation=self._model, verbose=True)
         r2 = dict()
         r2['lbl'] = r['segmentation_image'].numpy()
@@ -741,7 +743,7 @@ class ProcessDeepLesionSegmentation(Process):
         from antspynet.utilities.get_antsxnet_data import set_antsxnet_cache_directory
         set_antsxnet_cache_directory(self._cache)
         # noinspection PyUnusedLocal
-        with CapturedStdout(self._stdout) as F:
+        with CapturePythonStdout(self._stdout) as F:
             r = lesion_segmentation(t1, verbose=True)
         self._result.put(r.numpy())
 
@@ -801,17 +803,17 @@ class ProcessDeepWhiteMatterHyperIntensitiesSegmentation(Process):
         if self._model == 'sysu':
             from antspynet.utilities.white_matter_hyperintensity_segmentation import sysu_media_wmh_segmentation
             # noinspection PyUnusedLocal
-            with CapturedStdout(self._stdout) as F:
+            with CapturePythonStdout(self._stdout) as F:
                 r = sysu_media_wmh_segmentation(flair, t1, verbose=True)
         elif self._model == 'hypermapp3r':
             from antspynet.utilities.white_matter_hyperintensity_segmentation import hypermapp3r_segmentation
             # noinspection PyUnusedLocal
-            with CapturedStdout(self._stdout) as F:
+            with CapturePythonStdout(self._stdout) as F:
                 r = hypermapp3r_segmentation(flair, t1, verbose=True)
         elif self._model == 'antsxnet':
             from antspynet.utilities.white_matter_hyperintensity_segmentation import wmh_segmentation
             # noinspection PyUnusedLocal
-            with CapturedStdout(self._stdout) as F:
+            with CapturePythonStdout(self._stdout) as F:
                 r = wmh_segmentation(flair, t1, mask, verbose=True)
         else: raise ValueError('Invalid model.')
         self._result.put(r.numpy())
@@ -860,7 +862,7 @@ class ProcessDeepTOFVesselSegmentation(Process):
         from antspynet.utilities.get_antsxnet_data import set_antsxnet_cache_directory
         set_antsxnet_cache_directory(self._cache)
         # noinspection PyUnusedLocal
-        with CapturedStdout(self._stdout) as F:
+        with CapturePythonStdout(self._stdout) as F:
             r = brain_mra_vessel_segmentation(tof, verbose=True)
         self._result.put(r.numpy())
 
@@ -909,7 +911,7 @@ class ProcessDeepTissueSegmentation(Process):
         from antspynet.utilities.get_antsxnet_data import set_antsxnet_cache_directory
         set_antsxnet_cache_directory(self._cache)
         # noinspection PyUnusedLocal
-        with CapturedStdout(self._stdout) as F:
+        with CapturePythonStdout(self._stdout) as F:
             r = deep_atropos(t1, verbose=True)
         r2 = dict()
         r2['lbl'] = r['segmentation_image'].numpy()
@@ -958,6 +960,7 @@ class ProcessDiffusionPreprocessing(Process):
     def run(self):
         self._mng['msg'] = 'Load gradient B values...'
         if exists(self._fbval):
+            from Sisyphe.core.sisypheDicom import loadBVal
             try: bvals = loadBVal(self._fbval, format='xml')
             except:
                 self._result.put('{} format is invalid.'.format(basename(self._fbval)))
@@ -967,6 +970,7 @@ class ProcessDiffusionPreprocessing(Process):
             self.terminate()
         self._mng['msg'] = 'Load gradient directions...'
         if exists(self._fbvec):
+            from Sisyphe.core.sisypheDicom import loadBVec
             try: bvecs = loadBVec(self._fbvec, format='xml', numpy=True)
             except:
                 self._result.put('{} format is invalid.'.format(basename(self._fbvec)))
@@ -978,6 +982,8 @@ class ProcessDiffusionPreprocessing(Process):
         # noinspection PyUnboundLocalVariable
         dwinames = list(bvals.keys())
         bvals = array(list(bvals.values()))
+        from Sisyphe.core.sisypheVolume import SisypheVolume
+        from Sisyphe.core.sisypheVolume import SisypheVolumeCollection
         vols = SisypheVolumeCollection()
         for dwiname in dwinames:
             if exists(dwiname):
@@ -987,9 +993,11 @@ class ProcessDiffusionPreprocessing(Process):
             else:
                 self._result.put('Diffusion-weighted images are missing.')
                 self.terminate()
+        from dipy.core.gradients import gradient_table
         # noinspection PyUnboundLocalVariable
         gtable = gradient_table(bvals=bvals, bvecs=bvecs)
         try:
+            from Sisyphe.processing.dipyFunctions import dwiPreprocessing
             dwiPreprocessing(vols,
                              self._prefix,
                              self._suffix,
@@ -1049,6 +1057,7 @@ class ProcessDiffusionModel(Process):
         self._mng['msg'] = 'Load gradient B values...'
         if exists(self._fbval):
             try:
+                from Sisyphe.core.sisypheDicom import loadBVal
                 bvals = loadBVal(self._fbval, format='xml')
             except:
                 self._result.put('{} format is invalid.'.format(basename(self._fbval)))
@@ -1060,6 +1069,7 @@ class ProcessDiffusionModel(Process):
         self._mng['msg'] = 'Load gradient directions...'
         if exists(self._fbvec):
             try:
+                from Sisyphe.core.sisypheDicom import loadBVec
                 bvecs = loadBVec(self._fbvec, format='xml', numpy=True)
             except:
                 self._result.put('{} format is invalid.'.format(basename(self._fbvec)))
@@ -1072,6 +1082,8 @@ class ProcessDiffusionModel(Process):
         # noinspection PyUnboundLocalVariable
         dwinames = list(bvals.keys())
         bvals = array(list(bvals.values()))
+        from Sisyphe.core.sisypheVolume import SisypheVolume
+        from Sisyphe.core.sisypheVolume import SisypheVolumeCollection
         vols = SisypheVolumeCollection()
         for dwiname in dwinames:
             if exists(dwiname):
@@ -1097,6 +1109,7 @@ class ProcessDiffusionModel(Process):
         if 'tr' in self._maps: tr = self._maps['tr']
         if 'ad' in self._maps: ad = self._maps['ad']
         if 'rd' in self._maps: rd = self._maps['rd']
+        from Sisyphe.core.sisypheTracts import SisypheDTIModel
         if self._model == 'DTI':
             msg = 'DTI Model fitting...'
             model = SisypheDTIModel()
@@ -1105,29 +1118,34 @@ class ProcessDiffusionModel(Process):
             ndim = 6
         elif self._model == 'DKI':
             msg = 'DKI Model fitting...'
+            from Sisyphe.core.sisypheTracts import SisypheDKIModel
             model = SisypheDKIModel()
             model.setFitAlgorithm(self._method)
             tag = fa or ga or md or tr or ad or rd
             ndim = 15
         elif self._model == 'SHCSA':
             msg = 'SHCSA Model fitting...'
+            from Sisyphe.core.sisypheTracts import SisypheSHCSAModel
             model = SisypheSHCSAModel()
             model.setOrder(self._order)
             tag = gfa
             ndim = 100
         elif self._model == 'SHCSD':
             msg = 'SHCSD Model fitting...'
+            from Sisyphe.core.sisypheTracts import SisypheSHCSDModel
             model = SisypheSHCSDModel()
             model.setOrder(self._order)
             tag = gfa
             ndim = 20
         elif self._model == 'DSI':
             msg = 'DSI Model fitting...'
+            from Sisyphe.core.sisypheTracts import SisypheDSIModel
             model = SisypheDSIModel()
             tag = gfa
             ndim = 100
         elif self._model == 'DSID':
             msg = 'DSID Model fitting...'
+            from Sisyphe.core.sisypheTracts import SisypheDSIDModel
             model = SisypheDSIDModel()
             tag = gfa
             ndim = 100
@@ -1265,11 +1283,14 @@ class ProcessDiffusionTracking(Process):
     # Public methods
 
     def run(self):
+
         self._mng['msg'] = 'Open model {}...'.format(basename(self._model))
+        from Sisyphe.core.sisypheTracts import SisypheDiffusionModel
         try: model = SisypheDiffusionModel.openModel(self._model, False, True, self._mng)
         except Exception as err:
             self._result.put('{} format is invalid.\n{}\n{}.'.format(basename(self._model), type(err), str(err)))
             self.terminate()
+        from Sisyphe.core.sisypheTracts import SisypheTracking
         # noinspection PyUnboundLocalVariable
         track = SisypheTracking(model)
         track.setSeedCountPerVoxel(self._seedcount)
@@ -1302,6 +1323,7 @@ class ProcessDiffusionTracking(Process):
                 if not exists(f):
                     self._result.put('No such file {}.'.format(basename(f)))
                     self.terminate()
+            from Sisyphe.core.sisypheROI import SisypheROICollection
             rois = SisypheROICollection()
             self._mng['msg'] = 'Load seed ROI(s)...'
             rois.load(filenames)
@@ -1317,6 +1339,7 @@ class ProcessDiffusionTracking(Process):
             if not exists(filename):
                 self._result.put('No such file {}.'.format(basename(filename)))
                 self.terminate()
+            from Sisyphe.core.sisypheROI import SisypheROI
             roi = SisypheROI()
             self._mng['msg'] = 'Load stopping ROI...'
             roi.load(filename)
@@ -1325,6 +1348,7 @@ class ProcessDiffusionTracking(Process):
                 self._result.put('Invalid ROI size {}.'.format(roi.getSize()))
                 self.terminate()
         elif self._stopping['algo'] == 'GM/WM/CSF':
+            from Sisyphe.core.sisypheVolume import SisypheVolume
             # Gray matter map
             filename = self._stopping['gm']
             if not exists(filename):
@@ -1373,6 +1397,7 @@ class ProcessDiffusionTracking(Process):
         except Exception as err:
             self._result.put('{} tracking failed.\n{}\n{}.'.format(basename(self._model), type(err), str(err)))
             self.terminate()
+        from Sisyphe.core.sisypheTracts import SisypheStreamlines
         filename = splitext(self._model)[0] + '_' + track.getBundleName() + SisypheStreamlines.getFileExt()
         self._mng['msg'] = 'save {} streamlines...'.format(track.getBundleName())
         # noinspection PyUnboundLocalVariable
