@@ -12,6 +12,8 @@ from os import rmdir
 from shutil import rmtree
 from shutil import copy
 
+from binascii import unhexlify
+
 from glob import glob
 
 from os.path import isfile
@@ -29,8 +31,6 @@ from xml.dom import minidom
 
 from zipfile import ZipFile
 
-from PyQt5.QtWidgets import QApplication
-
 from Sisyphe.version import isOlderThan
 from Sisyphe.version import getVersionFromHost
 from Sisyphe.lib.mega.mega import Mega
@@ -40,6 +40,8 @@ __all__ = ['downloadFromHost',
            'installFromHost',
            'updatePySisyphe']
 
+_V = b'70797369737970686540676d61696c2e636f6d'
+
 """
 Functions
 ~~~~~~~~~
@@ -47,8 +49,9 @@ Functions
     - downloadFromHost
     - installFromHost
     - updatePySisypheToNewerVersion
+    
+Last revision: 11/07/2025
 """
-
 
 def downloadFromHost(urls: str | list[str],
                      dst: str = getcwd(),
@@ -77,7 +80,12 @@ def downloadFromHost(urls: str | list[str],
         wait.progressVisibilityOff()
     mega = Mega()
     mega.setProgress(wait)
-    mega.login_anonymous()
+    # < Revision 11/07/2025
+    # mega.login_anonymous()
+    v1 = unhexlify(_V).decode()
+    v2 = unhexlify(_V[:18]).decode()
+    mega.login(v1, v2)
+    # Revision 11/07/2025 >
     for url in urls:
         if wait is not None:
             wait.setInformationText('Download{}...'.format(info))

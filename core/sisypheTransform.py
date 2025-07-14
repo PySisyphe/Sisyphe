@@ -3471,7 +3471,7 @@ class SisypheTransformCollection(object):
     object -> SisypheTransformCollection
 
     Creation: 05/10/2021
-    Last revision: 18/04/05/2025
+    Last revision: 14/07/2025
     """
 
     __slots__ = ['_trfs', '_index']
@@ -3737,7 +3737,7 @@ class SisypheTransformCollection(object):
 
     def remove(self, value: int | str | SisypheTransform | SisypheVolume) -> None:
         """
-         Remove a SisypheTransform element from the current SisypheTransformCollection instance container.
+        Remove a SisypheTransform element from the current SisypheTransformCollection instance container.
 
         Parameters
         ----------
@@ -3745,10 +3745,20 @@ class SisypheTransformCollection(object):
             index, ID, SisypheTransform ID attribute or SisypheVolume ID attribute
         """
         # value is SisypheTransform
-        if isinstance(value, SisypheTransform): self._trfs.remove(value)
+        if isinstance(value, SisypheTransform):
+            # < Revision 14/07/2025
+            # test value in list before removing
+            if value in self._trfs: self._trfs.remove(value)
+            return
+            # Revision 14/07/2025 >
         # < Revision 18/04/2025
         # value is SisypheVolume, ID str or int index
-        elif isinstance(value, (SisypheVolume, str)): value = self.index(value)
+        elif isinstance(value, (SisypheVolume, str)):
+            # < Revision 14/07/2025
+            # test value in list before indexing
+            if value in self: value = self.index(value)
+            else: return
+            # Revision 14/07/2025 >
         if isinstance(value, int): self.pop(value)
         # Revision 18/04/2025 >
         else: raise TypeError('parameter type {} is not int, str or SisypheTransform.'.format(type(value)))
