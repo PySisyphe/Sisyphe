@@ -18,6 +18,7 @@ from os.path import split
 from os.path import dirname
 from os.path import abspath
 from os.path import exists
+from os.path import isfile
 
 from Sisyphe.processing.capturedStdoutProcessing import ProcessRegistration
 from multiprocessing import Queue
@@ -1045,7 +1046,7 @@ class DialogICBMNormalization(DialogRegistration):
                     if template[0] == '/': template = template[1:]
                 import Sisyphe.templates
                 filename = join(dirname(abspath(Sisyphe.templates.__file__)), template)
-                if exists(filename): self._fixedSelect.open(filename)
+                if exists(filename) and isfile(filename): self._fixedSelect.open(filename)
                 else:
                     messageBox(self,
                                'ICBM Normalization',

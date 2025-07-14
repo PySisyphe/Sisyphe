@@ -50,7 +50,7 @@ class DialogSkullStripping(AbstractDialogFunction):
 
     QDialog -> AbstractDialogFunction -> DialogSkullStripping
 
-    Last revision: 11/10/2024
+    Last revision: 13/07/2025
     """
 
     # Class method
@@ -185,7 +185,10 @@ class DialogSkullStripping(AbstractDialogFunction):
             v = SisypheVolume()
             if probmask:
                 filename2 = addPrefixSuffixToFilename(filename, probprefix, probsuffix)
-                v.copyFromNumpyArray(rimg, spacing=s)
+                # < Revision 13/07/2025
+                # v.copyFromNumpyArray(rimg, spacing=s)
+                v.copyFromNumpyArray(rimg, spacing=s, defaultshape=False)
+                # Revision 13/07/2025 >
                 v.copyAttributesFrom(img, display=False, slope=False)
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequenceToDensityMap()
@@ -195,7 +198,10 @@ class DialogSkullStripping(AbstractDialogFunction):
             # Save mask
             if savemask:
                 filename2 = addPrefixSuffixToFilename(filename, maskprefix, masksuffix)
-                v.copyFromNumpyArray(mask, spacing=s)
+                # < Revision 13/07/2025
+                # v.copyFromNumpyArray(mask, spacing=s)
+                v.copyFromNumpyArray(mask, spacing=s, defaultshape=False)
+                # Revision 13/07/2025 >
                 v.setID(img)
                 v.acquisition.setSequenceToMask()
                 wait.setInformationText('Save {}...'.format(basename(filename2)))

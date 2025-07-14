@@ -9,6 +9,7 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+import sys
 from sys import platform
 
 from os import mkdir
@@ -27,7 +28,6 @@ from os.path import expanduser
 
 import importlib
 import subprocess
-import logging
 import traceback
 
 from psutil import virtual_memory
@@ -223,9 +223,13 @@ class WindowSisyphe(QMainWindow):
 
     def __init__(self, splash: DialogSplash | None = None) -> None:
         super().__init__()
+        self.setObjectName('MainWindow')
 
         # < Revision 01/07/2025
+        # if not hasattr(sys, '_MEIPASS'):
+        import logging
         self._logger = logging.getLogger(__name__)
+        # else: self._logger = None
         # Revision 01/07/2025 >
 
         if splash is not None:
@@ -2512,7 +2516,7 @@ class WindowSisyphe(QMainWindow):
                 else: self.showSliceView()
             except Exception as err:
                 messageBox(self, 'Display in slice view error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else: messageBox(self,
                          'Display in slice view...',
                          'No volume loaded in thumbnail.')
@@ -2528,7 +2532,7 @@ class WindowSisyphe(QMainWindow):
                 else: self.showOrthogonalView()
             except Exception as err:
                 messageBox(self, 'Display in orthogonal view error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else: messageBox(self,
                          'Display in orthogonal view...',
                          'No volume loaded in thumbnail.')
@@ -2544,7 +2548,7 @@ class WindowSisyphe(QMainWindow):
                 else: self.showSynchronisedView()
             except Exception as err:
                 messageBox(self, 'Display in synchronized view error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else: messageBox(self,
                          'Display in synchronised view...',
                          'No volume loaded in thumbnail.')
@@ -2560,7 +2564,7 @@ class WindowSisyphe(QMainWindow):
                 else: self.showProjectionView()
             except Exception as err:
                 messageBox(self, 'Display in projection view error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else: messageBox(self,
                          'Display in projection view...',
                          'No volume loaded in thumbnail.')
@@ -2582,7 +2586,7 @@ class WindowSisyphe(QMainWindow):
                                '{} reference volume is single-component.'.format(v.getBasename()))
             except Exception as err:
                 messageBox(self, 'Display in multi-component view error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             messageBox(self,
                        'Display in multi-component view...',
@@ -2605,14 +2609,14 @@ class WindowSisyphe(QMainWindow):
         try: self._dialog.exec()
         except Exception as err:
             messageBox(self, 'About dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def preferences(self) -> None:
         if self._dialogSettings is not None:
             try: self._dialogSettings.exec()
             except Exception as err:
                 messageBox(self, 'Preferences dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     # File methods called from main menu
 
@@ -2620,37 +2624,37 @@ class WindowSisyphe(QMainWindow):
         try: self._thumbnail.open(filenames)
         except Exception as err:
             messageBox(self, 'Open xvol error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def save(self) -> None:
         try: self._thumbnail.saveSelected()
         except Exception as err:
             messageBox(self, 'Save xvol error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def saveall(self) -> None:
         try: self._thumbnail.saveAll()
         except Exception as err:
             messageBox(self, 'Save all xvol error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def saveAs(self) -> None:
         try: self._thumbnail.saveSelectedAs()
         except Exception as err:
             messageBox(self, 'Save xvol as error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def remove(self) -> None:
         try: self._thumbnail.removeSelected()
         except Exception as err:
             messageBox(self, 'Remove selected xvol error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def removeAll(self) -> None:
         try: self._thumbnail.removeAll()
         except Exception as err:
             messageBox(self, 'Remove all xvol error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def loadNifti(self, filenames: str | list[str] | None = None) -> None:
         if filenames is None:
@@ -2670,7 +2674,7 @@ class WindowSisyphe(QMainWindow):
                 for filename in filenames:
                     filename = abspath(filename)
                     wait.setInformationText('Open {}...'.format(basename(filename)))
-                    self._logger.info('Open {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Open {}'.format(filename))
                     v = SisypheVolume()
                     v.loadFromNIFTI(filename)
                     self.addVolume(v)
@@ -2680,7 +2684,7 @@ class WindowSisyphe(QMainWindow):
                     self.setStatusBarMessage('Open {}'.format(basename(filename)))
             except Exception as err:
                 messageBox(self, 'Open Nifti error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
             wait.close()
 
     def loadMinc(self, filenames: str | list[str] | None = None) -> None:
@@ -2700,7 +2704,7 @@ class WindowSisyphe(QMainWindow):
                 for filename in filenames:
                     filename = abspath(filename)
                     wait.setInformationText('Open {}...'.format(basename(filename)))
-                    self._logger.info('Open {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Open {}'.format(filename))
                     v = SisypheVolume()
                     v.loadFromMINC(filename)
                     self.addVolume(v)
@@ -2710,7 +2714,7 @@ class WindowSisyphe(QMainWindow):
                     self.setStatusBarMessage('Open {}'.format(basename(filename)))
             except Exception as err:
                 messageBox(self, 'Open Minc error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
             wait.close()
 
     def loadNrrd(self, filenames: str | list[str] | None = None) -> None:
@@ -2730,7 +2734,7 @@ class WindowSisyphe(QMainWindow):
                 for filename in filenames:
                     filename = abspath(filename)
                     wait.setInformationText('Open {}...'.format(basename(filename)))
-                    self._logger.info('Open {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Open {}'.format(filename))
                     v = SisypheVolume()
                     v.loadFromNRRD(filename)
                     self.addVolume(v)
@@ -2740,7 +2744,7 @@ class WindowSisyphe(QMainWindow):
                     self.setStatusBarMessage('Open {}'.format(basename(filename)))
             except Exception as err:
                 messageBox(self, 'Open Nrrd error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
             wait.close()
 
     def loadVtk(self, filenames: str | list[str] | None = None) -> None:
@@ -2760,7 +2764,7 @@ class WindowSisyphe(QMainWindow):
                 for filename in filenames:
                     filename = abspath(filename)
                     wait.setInformationText('Open {}...'.format(basename(filename)))
-                    self._logger.info('Open {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Open {}'.format(filename))
                     v = SisypheVolume()
                     v.loadFromVTK(filename)
                     self.addVolume(v)
@@ -2770,7 +2774,7 @@ class WindowSisyphe(QMainWindow):
                     self.setStatusBarMessage('Open {}'.format(basename(filename)))
             except Exception as err:
                 messageBox(self, 'Open Vtk error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
             wait.close()
 
     def loadSis(self, filenames: str | list[str] | None = None) -> None:
@@ -2790,7 +2794,7 @@ class WindowSisyphe(QMainWindow):
                 for filename in filenames:
                     filename = abspath(filename)
                     wait.setInformationText('Open {}...'.format(basename(filename)))
-                    self._logger.info('Open {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Open {}'.format(filename))
                     v = SisypheVolume()
                     v.loadFromSisyphe(filename)
                     self.addVolume(v)
@@ -2800,7 +2804,7 @@ class WindowSisyphe(QMainWindow):
                     self.setStatusBarMessage('Open {}'.format(basename(filename)))
             except Exception as err:
                 messageBox(self, 'Open Sisyphe error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
             wait.close()
 
     def loadVmr(self, filenames: str | list[str] | None = None) -> None:
@@ -2821,7 +2825,7 @@ class WindowSisyphe(QMainWindow):
                 for filename in filenames:
                     filename = abspath(filename)
                     wait.setInformationText('Open {}...'.format(basename(filename)))
-                    self._logger.info('Open {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Open {}'.format(filename))
                     v = SisypheVolume()
                     v.loadFromBrainVoyagerVMR(filename)
                     self.addVolume(v)
@@ -2831,7 +2835,7 @@ class WindowSisyphe(QMainWindow):
                     self.setStatusBarMessage('Open {}'.format(basename(filename)))
             except Exception as err:
                 messageBox(self, 'Open BrainVoyager VMR error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
             wait.close()
 
     def loadMgh(self, filenames: str | list[str] | None = None) -> None:
@@ -2852,7 +2856,7 @@ class WindowSisyphe(QMainWindow):
                 for filename in filenames:
                     filename = abspath(filename)
                     wait.setInformationText('Open {}...'.format(basename(filename)))
-                    self._logger.info('Open {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Open {}'.format(filename))
                     v = SisypheVolume()
                     v.loadFromFreeSurferMGH(filename)
                     self.addVolume(v)
@@ -2862,7 +2866,7 @@ class WindowSisyphe(QMainWindow):
                     self.setStatusBarMessage('Open {}'.format(basename(filename)))
             except Exception as err:
                 messageBox(self, 'Open FreeSurfer MGH error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
             wait.close()
 
     def saveNifti(self) -> None:
@@ -2874,12 +2878,12 @@ class WindowSisyphe(QMainWindow):
             if filename:
                 chdir(dirname(filename))
                 try:
-                    self._logger.info('Save {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Save {}'.format(filename))
                     vol.saveToNIFTI(filename)
                     self.setStatusBarMessage('{} saved'.format(vol.getBasename()))
                 except Exception as err:
                     messageBox(self, 'Save Nifti error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
         else: messageBox(self, 'Save Nifti', 'No volume selected.')
 
     def saveMinc(self) -> None:
@@ -2891,12 +2895,12 @@ class WindowSisyphe(QMainWindow):
             if filename:
                 chdir(dirname(filename))
                 try:
-                    self._logger.info('Save {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Save {}'.format(filename))
                     vol.saveToMINC(filename)
                     self.setStatusBarMessage('{} saved'.format(vol.getBasename()))
                 except Exception as err:
                     messageBox(self, 'Save Minc error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
         else: messageBox(self, 'Save Minc', 'No volume selected.')
 
     def saveNrrd(self) -> None:
@@ -2908,12 +2912,12 @@ class WindowSisyphe(QMainWindow):
             if filename:
                 chdir(dirname(filename))
                 try:
-                    self._logger.info('Save {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Save {}'.format(filename))
                     vol.saveToNRRD(filename)
                     self.setStatusBarMessage('{} saved'.format(vol.getBasename()))
                 except Exception as err:
                     messageBox(self, 'Save Nrrd error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
         else: messageBox(self, 'Save Nrrd', 'No volume selected.')
 
     def saveVtk(self) -> None:
@@ -2925,12 +2929,12 @@ class WindowSisyphe(QMainWindow):
             if filename:
                 chdir(dirname(filename))
                 try:
-                    self._logger.info('Save {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Save {}'.format(filename))
                     vol.saveToVTK(filename)
                     self.setStatusBarMessage('{} saved'.format(vol.getBasename()))
                 except Exception as err:
                     messageBox(self, 'Save Vtk error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
         else: messageBox(self, 'Save VTK', 'No volume selected.')
 
     def saveNumpy(self) -> None:
@@ -2942,12 +2946,12 @@ class WindowSisyphe(QMainWindow):
             if filename:
                 chdir(dirname(filename))
                 try:
-                    self._logger.info('Save {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Save {}'.format(filename))
                     vol.saveToNumpy(filename)
                     self.setStatusBarMessage('{} saved'.format(vol.getBasename()))
                 except Exception as err:
                     messageBox(self, 'Save Numpy error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
         else: messageBox(self, 'Save Numpy', 'No volume selected.')
 
     def importNifti(self) -> None:
@@ -2957,11 +2961,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogImport.DialogImport - Nifti]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogImport.DialogImport - Nifti]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Import Nifti dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def importMinc(self) -> None:
         from Sisyphe.gui.dialogImport import DialogImport
@@ -2970,11 +2974,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogImport.DialogImport - Minc]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogImport.DialogImport - Minc]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Import Minc dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def importNrrd(self) -> None:
         from Sisyphe.gui.dialogImport import DialogImport
@@ -2983,11 +2987,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogImport.DialogImport - Nrrd]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogImport.DialogImport - Nrrd]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Import Nrrd dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def importVtk(self) -> None:
         from Sisyphe.gui.dialogImport import DialogImport
@@ -2996,11 +3000,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogImport.DialogImport - Vtk]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogImport.DialogImport - Vtk]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Import Vtk dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def importSis(self) -> None:
         from Sisyphe.gui.dialogOldSisypheImport import DialogOldSisypheImport
@@ -3012,11 +3016,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogOldSisypheImport.DialogOldSisypheImport - Sisyphe]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogOldSisypheImport.DialogOldSisypheImport - Sisyphe]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Import Sisyphe dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def importDicom(self) -> None:
         from Sisyphe.gui.dialogDicomImport import DialogDicomImport
@@ -3028,11 +3032,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogDicomImport.DialogDicomImport]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDicomImport.DialogDicomImport]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Import Dicom dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def importDicomRT(self) -> None:
         from Sisyphe.gui.dialogDicomRTimport import DialogRTimport
@@ -3044,11 +3048,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogDicomRTimport.DialogRTimport]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDicomRTimport.DialogRTimport]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Import Dicom RT dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def exportNifti(self) -> None:
         from Sisyphe.gui.dialogExport import DialogExport
@@ -3057,11 +3061,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Nifti]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Nifti]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Export Nifti dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def exportMinc(self) -> None:
         from Sisyphe.gui.dialogExport import DialogExport
@@ -3070,11 +3074,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Minc]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Minc]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Export Minc dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def exportNrrd(self) -> None:
         from Sisyphe.gui.dialogExport import DialogExport
@@ -3083,11 +3087,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Nrrd]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Nrrd]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Export Nrrd dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def exportVtk(self) -> None:
         from Sisyphe.gui.dialogExport import DialogExport
@@ -3096,11 +3100,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Vtk]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Vtk]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Export Vtk dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def exportNumpy(self) -> None:
         from Sisyphe.gui.dialogExport import DialogExport
@@ -3109,11 +3113,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Numpy]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Numpy]')
             self._dialog.show()
         except Exception as err:
             messageBox(self, 'Export Numpy dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def exportDicom(self) -> None:
         from Sisyphe.gui.dialogDicomExport import DialogDicomExport
@@ -3125,11 +3129,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogDicomExport.DialogDicomExport]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDicomExport.DialogDicomExport]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'DICOM Export dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def datasetDicom(self) -> None:
         from Sisyphe.gui.dialogDicomDataset import DialogDicomDataset
@@ -3138,11 +3142,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogDicomDataset.DialogDicomDataset]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDicomDataset.DialogDicomDataset]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'DICOM Dataset dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def xmlDicom(self) -> None:
         from Sisyphe.core.sisypheDicom import XmlDicom
@@ -3156,11 +3160,11 @@ class WindowSisyphe(QMainWindow):
                 try: __main__.updateWindowTitleBarColor(self._dialog)
                 except: pass
             try:
-                self._logger.info('Dialog exec [gui.dialogXmlDicom.DialogXmlDicom]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogXmlDicom.DialogXmlDicom]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Xml DICOM Attributes dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def editAttr(self) -> None:
         self._thumbnail.editAttributesSelected()
@@ -3175,11 +3179,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogDatatype.DialogEditID]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDatatype.DialogEditID]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'ID replacement dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def anonymize(self) -> None:
         # < Revision 16/04/2025
@@ -3193,7 +3197,7 @@ class WindowSisyphe(QMainWindow):
         self._dialog.filterSisypheVolume()
         wait = None
         try:
-            self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Anonymize]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Anonymize]')
             if self._dialog.exec():
                 filenames = self._dialog.getFilenames()
                 n = len(filenames)
@@ -3213,7 +3217,7 @@ class WindowSisyphe(QMainWindow):
                 wait.close()
         except Exception as err:
             messageBox(self, 'Anonymize error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
             if wait is not None: wait.close()
 
     def editLabels(self, filename: str | SisypheVolume = '') -> None:
@@ -3237,12 +3241,12 @@ class WindowSisyphe(QMainWindow):
                 dialog.filterSisypheVolume()
                 dialog.filterSameModality('LB')
                 try:
-                    self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFileSelection - Edit labels]')
+                    if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFileSelection - Edit labels]')
                     if dialog.exec():
                         filename = dialog.getFilename()
                 except Exception as err:
                     messageBox(self, 'File selection/Edit labels error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
             if filename != '' and exists(filename):
                 v = SisypheVolume()
                 v.load(filename)
@@ -3254,11 +3258,11 @@ class WindowSisyphe(QMainWindow):
                 except: pass
             self._dialog.setVolume(v)
             try:
-                self._logger.info('gui.dialogFileSelection.DialogFileSelection - Edit labels')
+                if self._logger is not None: self._logger.info('gui.dialogFileSelection.DialogFileSelection - Edit labels')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Edit labels dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def volToLabel(self) -> None:
         from Sisyphe.gui.dialogLabel import DialogVOLtoLabel
@@ -3267,11 +3271,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogLabel.DialogVOLtoLabel]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogLabel.DialogVOLtoLabel]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Volumes to label volume dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def roiToLabel(self) -> None:
         from Sisyphe.gui.dialogLabel import DialogROItoLabel
@@ -3280,11 +3284,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogLabel.DialogROItoLabel]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogLabel.DialogROItoLabel]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'ROIs to label volume dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def labelToRoi(self) -> None:
         from Sisyphe.gui.dialogLabel import DialogLabeltoROI
@@ -3293,11 +3297,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogLabel.DialogLabeltoROI]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogLabel.DialogLabeltoROI]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Label volume to ROIs dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def download(self) -> None:
         from Sisyphe.gui.dialogDownload import DialogDownload
@@ -3320,16 +3324,17 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogDownload(parent=self)
         self._dialog = DialogDownload()
+        self._dialog.setMainWindow(self)
         # Revision 16/04/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogDownload.DialogDownload]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDownload.DialogDownload]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Download manager dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
         self._updatePluginsMenu()
 
     def checkUpdate(self) -> None:
@@ -3374,11 +3379,11 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            self._logger.info('Dialog exec [gui.dialogLutEdit.DialogLutEdit]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogLutEdit.DialogLutEdit]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'LUT Edit dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     # Function methods called from main menu
 
@@ -3413,7 +3418,7 @@ class WindowSisyphe(QMainWindow):
                 try: img = multiComponentSisypheVolumeFromList(vols)
                 except Exception as err:
                     messageBox(self, 'Join error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
                     img = None
                 wait.close()
                 if img is not None:
@@ -3464,7 +3469,7 @@ class WindowSisyphe(QMainWindow):
                                 cimg.save()
                             except Exception as err:
                                 messageBox(self, 'Split error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
                     wait.close()
 
     def datatype(self) -> None:
@@ -3475,11 +3480,11 @@ class WindowSisyphe(QMainWindow):
             except: pass
         self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogDatatype.DialogDatatype]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDatatype.DialogDatatype]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Datatype conversion dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def attributes(self) -> None:
         from Sisyphe.gui.dialogDatatype import DialogAttributes
@@ -3489,11 +3494,11 @@ class WindowSisyphe(QMainWindow):
             except: pass
         self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogDatatype.DialogAttributes]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDatatype.DialogAttributes]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Attributes conversion dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def flip(self,
              filenames: str | list[str] | None = None,
@@ -3514,11 +3519,11 @@ class WindowSisyphe(QMainWindow):
             self._dialog.accept()
         else:
             try:
-                self._logger.info('Dialog exec [gui.dialogFlipAxes.DialogFlipAxes]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFlipAxes.DialogFlipAxes]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Flip axis dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def swap(self,
              filenames: str | list[str] | None = None,
@@ -3539,11 +3544,11 @@ class WindowSisyphe(QMainWindow):
             self._dialog.accept()
         else:
             try:
-                self._logger.info('Dialog exec [gui.dialogSwapAxes.DialogSwapAxes]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSwapAxes.DialogSwapAxes]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Permute axis dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def neck(self,
              filenames: str | list[str] | None = None,
@@ -3562,19 +3567,19 @@ class WindowSisyphe(QMainWindow):
             if params is not None:
                 self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogRemoveNeckSlices]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogRemoveNeckSlices]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Remove neck slices dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogRemoveNeckSlices]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogRemoveNeckSlices]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Remove neck slices dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def algmean(self) -> None:
         title = 'Mean volume calculation'
@@ -3590,7 +3595,7 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSingleComponent()
         dialog.filterSameSize()
         dialog.setCurrentVolumeButtonVisibility(False)
-        self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Mean volume]')
+        if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Mean volume]')
         if dialog.exec():
             filenames = dialog.getFilenames()
             n = len(filenames)
@@ -3621,11 +3626,11 @@ class WindowSisyphe(QMainWindow):
                         chdir(dirname(filename))
                         m.updateArrayID()
                         m.saveAs(filename)
-                        self._logger.info('Mean volume processing - Save {}'.format(filename))
+                        if self._logger is not None: self._logger.info('Mean volume processing - Save {}'.format(filename))
                 except Exception as err:
                     wait.hide()
                     messageBox(self, 'Mean volume error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
                 wait.close()
 
     def algmedian(self) -> None:
@@ -3642,7 +3647,7 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSingleComponent()
         dialog.filterSameSize()
         dialog.setCurrentVolumeButtonVisibility(False)
-        self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Median volume]')
+        if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Median volume]')
         if dialog.exec():
             filenames = dialog.getFilenames()
             n = len(filenames)
@@ -3673,11 +3678,11 @@ class WindowSisyphe(QMainWindow):
                         chdir(dirname(filename))
                         m.updateArrayID()
                         m.saveAs(filename)
-                        self._logger.info('Median volume processing - Save {}'.format(filename))
+                        if self._logger is not None: self._logger.info('Median volume processing - Save {}'.format(filename))
                 except Exception as err:
                     wait.hide()
                     messageBox(self, 'Median volume error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
                 wait.close()
 
     def algstd(self) -> None:
@@ -3694,7 +3699,7 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSingleComponent()
         dialog.filterSameSize()
         dialog.setCurrentVolumeButtonVisibility(False)
-        self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Standard deviation volume]')
+        if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Standard deviation volume]')
         if dialog.exec():
             filenames = dialog.getFilenames()
             n = len(filenames)
@@ -3725,11 +3730,11 @@ class WindowSisyphe(QMainWindow):
                         chdir(dirname(filename))
                         m.updateArrayID()
                         m.saveAs(filename)
-                        self._logger.info('Standard deviation volume processing - Save {}'.format(filename))
+                        if self._logger is not None: self._logger.info('Standard deviation volume processing - Save {}'.format(filename))
                 except Exception as err:
                     wait.hide()
                     messageBox(self, 'Standard deviation volume error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
                 wait.close()
 
     def algmin(self) -> None:
@@ -3746,7 +3751,7 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSingleComponent()
         dialog.filterSameSize()
         dialog.setCurrentVolumeButtonVisibility(False)
-        self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Minimum volume]')
+        if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Minimum volume]')
         if dialog.exec():
             filenames = dialog.getFilenames()
             n = len(filenames)
@@ -3777,11 +3782,11 @@ class WindowSisyphe(QMainWindow):
                         chdir(dirname(filename))
                         m.updateArrayID()
                         m.saveAs(filename)
-                        self._logger.info('Minimum volume processing - Save {}'.format(filename))
+                        if self._logger is not None: self._logger.info('Minimum volume processing - Save {}'.format(filename))
                 except Exception as err:
                     wait.hide()
                     messageBox(self, 'Minimum volume error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
                 wait.close()
 
     def algmax(self) -> None:
@@ -3796,7 +3801,7 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSingleComponent()
         dialog.filterSameSize()
         dialog.setCurrentVolumeButtonVisibility(False)
-        self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Maximum volume]')
+        if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Maximum volume]')
         if dialog.exec():
             filenames = dialog.getFilenames()
             n = len(filenames)
@@ -3827,11 +3832,11 @@ class WindowSisyphe(QMainWindow):
                         chdir(dirname(filename))
                         m.updateArrayID()
                         m.saveAs(filename)
-                        self._logger.info('Maximum volume processing - Save {}'.format(filename))
+                        if self._logger is not None: self._logger.info('Maximum volume processing - Save {}'.format(filename))
                 except Exception as err:
                     wait.hide()
                     messageBox(self, 'Maximum volume error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
                 wait.close()
 
     def algmath(self) -> None:
@@ -3843,11 +3848,11 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogAlgebra.DialogAlgebra]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogAlgebra.DialogAlgebra]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Algebra dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def texture(self,
                 filenames: str | list[str] | None = None,
@@ -3864,19 +3869,19 @@ class WindowSisyphe(QMainWindow):
             if params is not None:
                 self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogTexture.DialogTexture]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogTexture.DialogTexture]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Texture feature maps dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
-                self._logger.info('Dialog exec [gui.dialogTexture.DialogTexture]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogTexture.DialogTexture]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Texture feature maps dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def histmatch(self,
                   filenames: str | list[str] | None = None,
@@ -3895,19 +3900,19 @@ class WindowSisyphe(QMainWindow):
             if params is not None:
                 self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogHistogramIntensityMatching]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogHistogramIntensityMatching]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Histogram inensity matching dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogHistogramIntensityMatching]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogHistogramIntensityMatching]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Histogram inensity matching dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def regmatch(self,
                  filenames: str | list[str] | None = None,
@@ -3926,19 +3931,19 @@ class WindowSisyphe(QMainWindow):
             if params is not None:
                 self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogRegressionIntensityMatching]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogRegressionIntensityMatching]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Regression inensity matching dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogRegressionIntensityMatching]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogRegressionIntensityMatching]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Regression inensity matching dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def signalNorm(self,
                    filenames: str | list[str] | None = None,
@@ -3955,19 +3960,19 @@ class WindowSisyphe(QMainWindow):
             if params is not None:
                 self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogIntensityNormalization]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogIntensityNormalization]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Signal normalization dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogIntensityNormalization]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogIntensityNormalization]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Signal normalization dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def filterMean(self,
                    filenames: str | list[str] | None = None,
@@ -3984,19 +3989,19 @@ class WindowSisyphe(QMainWindow):
             if params is not None:
                 self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogMeanFilter]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogMeanFilter]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Mean filter dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogMeanFilter]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogMeanFilter]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Mean filter dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def filterMedian(self,
                      filenames: str | list[str] | None = None,
@@ -4013,19 +4018,19 @@ class WindowSisyphe(QMainWindow):
             if params is not None:
                 self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogMedianFilter]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogMedianFilter]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Median filter dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogMedianFilter]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogMedianFilter]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Median filter dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def filterGaussian(self,
                        filenames: str | list[str] | None = None,
@@ -4042,19 +4047,19 @@ class WindowSisyphe(QMainWindow):
             if params is not None:
                 self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogGaussianFilter]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogGaussianFilter]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Gaussian filter dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogGaussianFilter]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogGaussianFilter]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Gaussian filter dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def filterGradient(self,
                        filenames: str | list[str] | None = None,
@@ -4071,19 +4076,19 @@ class WindowSisyphe(QMainWindow):
             if params is not None:
                 self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogGradientFilter]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogGradientFilter]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Gradient magnitude filter dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogGradientFilter]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogGradientFilter]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Gradient magnitude filter dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def filterLaplacian(self,
                         filenames: str | list[str] | None = None,
@@ -4100,19 +4105,19 @@ class WindowSisyphe(QMainWindow):
             if params is not None:
                 self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogLaplacianFilter]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogLaplacianFilter]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Laplacian filter dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogLaplacianFilter]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogLaplacianFilter]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Laplacian filter dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def filterAniso(self,
                     filenames: str | list[str] | None = None,
@@ -4129,19 +4134,19 @@ class WindowSisyphe(QMainWindow):
             if params is not None:
                 self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogAnisotropicDiffusionFilter]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogAnisotropicDiffusionFilter]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Anisotropic diffusion filter dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogAnisotropicDiffusionFilter]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogAnisotropicDiffusionFilter]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Anisotropic diffusion filter dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def filterBias(self,
                    filenames: str | list[str] | None = None,
@@ -4158,19 +4163,19 @@ class WindowSisyphe(QMainWindow):
             if params is not None:
                 self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogBiasFieldCorrectionFilter]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogBiasFieldCorrectionFilter]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Bias field correction dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
-                self._logger.info('Dialog exec [gui.dialogFunction.DialogBiasFieldCorrectionFilter]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogBiasFieldCorrectionFilter]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Bias field correction dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def automate(self) -> None:
         from Sisyphe.gui.dialogWorkflow import DialogWorkflow
@@ -4180,11 +4185,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogWorkflow.DialogWorkflow]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogWorkflow.DialogWorkflow]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Workflow processing dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def getPluginList(self) -> list[str]:
         path = join(self.getMainDirectory(), 'plugins', '**')
@@ -4218,7 +4223,7 @@ class WindowSisyphe(QMainWindow):
                                            'Install plugin',
                                            '{} plugin has been successfully installed.'.format(name),
                                            icon=QMessageBox.Information)
-                                self._logger.info('Plugin {} installed.'.format(name))
+                                if self._logger is not None: self._logger.info('Plugin {} installed.'.format(name))
                                 self.setStatusBarMessage('Plugin {} installed.'.format(name))
                             else:
                                 messageBox(self,
@@ -4234,7 +4239,7 @@ class WindowSisyphe(QMainWindow):
                                '{} plugin is already installed.'.format(basename(plugin)))
         except Exception as err:
             messageBox(self, 'Plugin installation error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def removePlugin(self, plugin: str = '') -> None:
         try:
@@ -4264,7 +4269,7 @@ class WindowSisyphe(QMainWindow):
                                        'Remove plugin',
                                        '{} plugin has been successfully removed.'.format(name),
                                        icon=QMessageBox.Information)
-                            self._logger.info('Plugin {} removed.'.format(name))
+                            if self._logger is not None: self._logger.info('Plugin {} removed.'.format(name))
                             self.setStatusBarMessage('Plugin {} removed.'.format(name))
                         else:
                             messageBox(self,
@@ -4273,7 +4278,7 @@ class WindowSisyphe(QMainWindow):
             else: self._updatePluginsMenu()
         except Exception as err:
             messageBox(self, 'Remove plugin error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     # Registration methods called from main menu
 
@@ -4307,7 +4312,7 @@ class WindowSisyphe(QMainWindow):
                     fid.calcErrors()
                 except Exception as err:
                     messageBox(self, 'Stereotactic frame detection error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
                     return
             else:
                 wait = DialogWait(title='Stereotactic frame detection')
@@ -4327,7 +4332,7 @@ class WindowSisyphe(QMainWindow):
                     except Exception as err:
                         wait.close()
                         messageBox(self, 'Stereotactic frame detection error', '{}\n{}'.format(type(err), str(err)))
-                        self._logger.error(traceback.format_exc())
+                        if self._logger is not None: self._logger.error(traceback.format_exc())
                         return
                     wait.close()
                 else:
@@ -4340,18 +4345,18 @@ class WindowSisyphe(QMainWindow):
             self._dialog = DialogFiducialBox(fid)
             if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
             try:
-                self._logger.info('Dialog exec [gui.dialogFiducialBox.DialogFiducialBox] {}'.format(v.getBasename()))
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFiducialBox.DialogFiducialBox] {}'.format(v.getBasename()))
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Stereotactic frame detection dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
                 return
             n = self._thumbnail.getVolumeIndex(v)
             if n is not None:
                 widget = self._thumbnail.getWidgetFromIndex(n)
                 widget.updateTooltip()
                 self.setStatusBarMessage('{} stereotactic frame detected'.format(v.getBasename()))
-                self._logger.info('{} stereotactic frame detected'.format(v.getFilename()))
+                if self._logger is not None: self._logger.info('{} stereotactic frame detected'.format(v.getFilename()))
 
     def acpcSelection(self, filename: str = '') -> None:
         v = None
@@ -4381,11 +4386,11 @@ class WindowSisyphe(QMainWindow):
             if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
             self._dialog.setVolume(v)
             try:
-                self._logger.info('Dialog exec [gui.dialogACPC.DialogACPC] {}'.format(v.getBasename()))
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogACPC.DialogACPC] {}'.format(v.getBasename()))
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'AC-PC selection dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
                 return
             n = self._thumbnail.getVolumeIndex(v)
             if n is not None:
@@ -4393,7 +4398,7 @@ class WindowSisyphe(QMainWindow):
                 widget = self._thumbnail.getWidgetFromIndex(n)
                 widget.updateTooltip()
                 self.setStatusBarMessage('{} AC-PC selected'.format(v.getBasename()))
-                self._logger.info('{} AC-PC selected'.format(v.getFilename()))
+                if self._logger is not None: self._logger.info('{} AC-PC selected'.format(v.getFilename()))
 
     def reorient(self, filename: str = '') -> None:
         v = None
@@ -4423,14 +4428,14 @@ class WindowSisyphe(QMainWindow):
             if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
             self._dialog.setVolume(v)
             try:
-                self._logger.info('Dialog exec [gui.dialogReorient.DialogReorient] {}'.format(v.getBasename()))
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogReorient.DialogReorient] {}'.format(v.getBasename()))
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Volume reorientation dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
                 return
             self.setStatusBarMessage('{} reoriented'.format(v.getBasename()))
-            self._logger.info('{} reoriented'.format(v.getFilename()))
+            if self._logger is not None: self._logger.info('{} reoriented'.format(v.getFilename()))
 
     def manualRegistration(self) -> None:
         from Sisyphe.gui.dialogManualRegistration import DialogManualRegistration
@@ -4443,7 +4448,7 @@ class WindowSisyphe(QMainWindow):
         self._dialog.setWindowTitle('Manual registration volumes selection')
         self._dialog.createFileSelectionWidget('Fixed', toolbar=self._thumbnail, current=True)
         self._dialog.createFileSelectionWidget('Moving', toolbar=self._thumbnail, current=True)
-        self._logger.info('Dialog exec [gui.dialogFileSelection.DialogMultiFileSelection]')
+        if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogMultiFileSelection]')
         if self._dialog.exec():
             wait = DialogWait(title='Open volumes for manual registration', progress=False)
             wait.open()
@@ -4460,11 +4465,11 @@ class WindowSisyphe(QMainWindow):
             self._dialog.setDialogToResample()
             wait.close()
             try:
-                self._logger.info('Dialog exec [gui.dialogManualRegistration.DialogManualRegistration]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogManualRegistration.DialogManualRegistration]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Manual registration dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def rigidRegistration(self,
                           fixed: str | None = None,
@@ -4481,18 +4486,18 @@ class WindowSisyphe(QMainWindow):
             self._dialog.setMoving(moving, editable=False)
             if params is not None: self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Rigid registration]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Rigid registration]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Rigid registration dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             try:
-                self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Rigid registration]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Rigid registration]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Rigid registration dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def affineRegistration(self,
                            fixed: str | None = None,
@@ -4509,18 +4514,18 @@ class WindowSisyphe(QMainWindow):
             self._dialog.setMoving(moving, editable=False)
             if params is not None: self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Affine registration]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Affine registration]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Affine registration dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             try:
-                self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Affine registration]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Affine registration]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Affine registration dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def displacementFieldRegistration(self,
                                       fixed: str | None = None,
@@ -4537,18 +4542,18 @@ class WindowSisyphe(QMainWindow):
             self._dialog.setMoving(moving, editable=False)
             if params is not None: self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Displacement field registration]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Displacement field registration]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Displacement field registration dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             try:
-                self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Displacement field registration]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Displacement field registration]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Displacement field registration dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def normalize(self,
                   fixed: str | None = None,
@@ -4568,18 +4573,18 @@ class WindowSisyphe(QMainWindow):
             self._dialog.setMoving(moving, editable=False)
             if params is not None: self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogRegistration.DialogICBMNormalization]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogICBMNormalization]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Spatial normalization dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             try:
-                self._logger.info('Dialog exec [gui.dialogRegistration.DialogICBMNormalization]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogICBMNormalization]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Spatial normalization dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def batchRegistration(self) -> None:
         from Sisyphe.gui.dialogRegistration import DialogBatchRegistration
@@ -4592,11 +4597,11 @@ class WindowSisyphe(QMainWindow):
         self._dialog.getMovingSelectionWidget().setToolbarThumbnail(self._thumbnail)
         self._dialog.getBatchSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogRegistration.DialogBatchRegistration]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogBatchRegistration]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Batch registration dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def realignment(self) -> None:
         from Sisyphe.gui.dialogSeriesRealignment import DialogSeriesRealignment
@@ -4607,11 +4612,11 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogSeriesRealignment.DialogSeriesRealignment]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSeriesRealignment.DialogSeriesRealignment]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Time series realignment dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def eddycurrent(self) -> None:
         from Sisyphe.gui.dialogRegistration import DialogEddyCurrentCorrection
@@ -4623,11 +4628,11 @@ class WindowSisyphe(QMainWindow):
         self._dialog.getFixedSelectionWidget().setToolbarThumbnail(self._thumbnail)
         self._dialog.getBatchSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogRegistration.DialogEddyCurrentCorrection]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogEddyCurrentCorrection]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Eddy current correction dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def resample(self) -> None:
         from Sisyphe.gui.dialogResample import DialogResample
@@ -4638,11 +4643,11 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getMovingSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogResample.DialogResample]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogResample.DialogResample]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Resample dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def jacobian(self) -> None:
         from Sisyphe.gui.dialogJacobian import DialogJacobian
@@ -4653,11 +4658,11 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogJacobian.DialogJacobian]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogJacobian.DialogJacobian]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Displacement field jacobian determinant dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def asymmetry(self) -> None:
         from Sisyphe.gui.dialogRegistration import DialogAsymmetry
@@ -4670,11 +4675,11 @@ class WindowSisyphe(QMainWindow):
         self._dialog.getMovingSelectionWidget().setToolbarThumbnail(self._thumbnail)
         self._dialog.getBatchSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogRegistration.DialogAsymmetry]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogAsymmetry]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Asymmetry displacement field dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     # to do
     def fieldinv(self):
@@ -4697,19 +4702,19 @@ class WindowSisyphe(QMainWindow):
             if params is not None:
                 self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogSkullStripping.DialogSkullStripping]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSkullStripping.DialogSkullStripping]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Skull stripping dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
-                self._logger.info('Dialog exec [gui.dialogSkullStripping.DialogSkullStripping]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSkullStripping.DialogSkullStripping]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Skull stripping dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def kMeansClustering(self) -> None:
         from Sisyphe.gui.dialogSegmentation import DialogKMeansClustering
@@ -4720,11 +4725,11 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogSegmentation.DialogKMeansClustering]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSegmentation.DialogKMeansClustering]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'KMeans clustering dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def kMeansSegmentation(self) -> None:
         from Sisyphe.gui.dialogSegmentation import DialogKMeansSegmentation
@@ -4735,11 +4740,11 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogSegmentation.DialogKMeansSegmentation]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSegmentation.DialogKMeansSegmentation]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'KMeans segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def priorBasedSegmentation(self,
                                filenames: str | list[str] | None = None,
@@ -4756,19 +4761,19 @@ class WindowSisyphe(QMainWindow):
             if params is not None:
                 self._dialog.setParametersFromDict(params)
             try:
-                self._logger.info('Dialog exec [gui.dialogSegmentation.DialogPriorBasedSegmentation]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSegmentation.DialogPriorBasedSegmentation]')
                 self._dialog.execute()
             except Exception as err:
                 messageBox(self, 'Prior based tissue segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             self._dialog.getSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
-                self._logger.info('Dialog exec [gui.dialogSegmentation.DialogPriorBasedSegmentation]')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSegmentation.DialogPriorBasedSegmentation]')
                 self._dialog.exec()
             except Exception as err:
                 messageBox(self, 'Prior based tissue segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def thickness(self) -> None:
         from Sisyphe.gui.dialogSegmentation import DialogCorticalThickness
@@ -4779,11 +4784,11 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogSegmentation.DialogCorticalThickness]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSegmentation.DialogCorticalThickness]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Cortical thickness dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def registrationSegmentation(self) -> None:
         from Sisyphe.gui.dialogSegmentation import DialogRegistrationBasedSegmentation
@@ -4796,11 +4801,11 @@ class WindowSisyphe(QMainWindow):
         w1.setToolbarThumbnail(self._thumbnail)
         w2.setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogSegmentation.DialogRegistrationBasedSegmentation]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSegmentation.DialogRegistrationBasedSegmentation]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Registration based segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def hippocampusSegmentation(self) -> None:
         from Sisyphe.gui.dialogDeepSegmentation import DialogDeepHippocampusSegmentation
@@ -4812,11 +4817,11 @@ class WindowSisyphe(QMainWindow):
         w = self._dialog.getSelectionWidget()
         w.setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepHippocampusSegmentation]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepHippocampusSegmentation]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Deep learning hippocampus segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def temporalSegmentation(self) -> None:
         from Sisyphe.gui.dialogDeepSegmentation import DialogDeepMedialTemporalSegmentation
@@ -4829,11 +4834,11 @@ class WindowSisyphe(QMainWindow):
         w1.setToolbarThumbnail(self._thumbnail)
         w2.setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Deep learning medial temporal segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def tumorSegmentation(self) -> None:
         from Sisyphe.gui.dialogDeepSegmentation import DialogDeepTumorSegmentation
@@ -4848,11 +4853,11 @@ class WindowSisyphe(QMainWindow):
         w3.setToolbarThumbnail(self._thumbnail)
         w4.setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepTumorSegmentation]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepTumorSegmentation]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Deep learning tumor segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def lesionSegmentation(self) -> None:
         from Sisyphe.gui.dialogDeepSegmentation import DialogDeepLesionSegmentation
@@ -4864,11 +4869,11 @@ class WindowSisyphe(QMainWindow):
         w = self._dialog.getSelectionWidget()
         w.setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepLesionSegmentation]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepLesionSegmentation]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Deep learning T1-hypointensity lesion segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def wmhSegmentation(self) -> None:
         from Sisyphe.gui.dialogDeepSegmentation import DialogDeepWhiteMatterHyperIntensitiesSegmentation
@@ -4883,11 +4888,11 @@ class WindowSisyphe(QMainWindow):
         w3.setToolbarThumbnail(self._thumbnail)
         w4.setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepWhiteMatterHyperIntensitiesSegmentation]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepWhiteMatterHyperIntensitiesSegmentation]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Deep learning white matter hyperintensities segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def vesselSegmentation(self) -> None:
         from Sisyphe.gui.dialogDeepSegmentation import DialogDeepTOFVesselSegmentation
@@ -4899,11 +4904,11 @@ class WindowSisyphe(QMainWindow):
         w = self._dialog.getSelectionWidget()
         w.setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepTOFVesselSegmentation]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepTOFVesselSegmentation]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Deep learning TOF vessels segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def tissueSegmentation(self) -> None:
         from Sisyphe.gui.dialogDeepSegmentation import DialogDeepTissueSegmentation
@@ -4912,11 +4917,11 @@ class WindowSisyphe(QMainWindow):
         w = self._dialog.getSelectionWidget()
         w.setToolbarThumbnail(self._thumbnail)
         try:
-            self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepTissueSegmentation]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepTissueSegmentation]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Deep learning tissue segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     # Map processing methods called from main menu
 
@@ -4974,11 +4979,11 @@ class WindowSisyphe(QMainWindow):
         if model < 3:
             from Sisyphe.gui.dialogStatModel import DialogfMRIObs
             self._dialog = DialogfMRIObs(title, conditions, subjects, groups)
-            self._logger.info('Dialog exec [gui.dialogStatModel.DialogfMRIObs]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogStatModel.DialogfMRIObs]')
         else:
             from Sisyphe.gui.dialogStatModel import DialogObs
             self._dialog = DialogObs(title, conditions, subjects, groups)
-            self._logger.info('Dialog exec [gui.dialogStatModel.DialogObs]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogStatModel.DialogObs]')
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
             if self._dialog.exec():
@@ -5002,14 +5007,14 @@ class WindowSisyphe(QMainWindow):
                             self._dialog = DialogContrast(design)
                             if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
                             try:
-                                self._logger.info('Dialog exec [gui.dialogStatContrast.DialogContrast]')
+                                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogStatContrast.DialogContrast]')
                                 self._dialog.exec()
                             except Exception as err:
                                 messageBox(self, 'Contrast dialog error', '{}\n{}'.format(type(err), str(err)))
-                                self._logger.error(traceback.format_exc())
+                                if self._logger is not None: self._logger.error(traceback.format_exc())
         except Exception as err:
             messageBox(self, 'Model dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def contrast(self, filename: str = '') -> None:
         if not isinstance(filename, str): filename = ''
@@ -5028,11 +5033,11 @@ class WindowSisyphe(QMainWindow):
                 self._dialog = DialogContrast(design)
                 if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
                 try:
-                    self._logger.info('Dialog exec [gui.dialogStatContrast.DialogContrast]')
+                    if self._logger is not None: self._logger.info('Dialog exec [gui.dialogStatContrast.DialogContrast]')
                     self._dialog.exec()
                 except Exception as err:
                     messageBox(self, 'Contrast dialog error', '{}\n{}'.format(type(err), str(err)))
-                    self._logger.error(traceback.format_exc())
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
             else: messageBox(self,
                              'Contrast',
                              '{} model is not estimated.'.format(basename(filename)))
@@ -5086,11 +5091,11 @@ class WindowSisyphe(QMainWindow):
                     # Revision 29/11/2024 >
                 else:
                     try:
-                        self._logger.info('Dialog exec [gui.dialogStatResult.DialogResult]')
+                        if self._logger is not None: self._logger.info('Dialog exec [gui.dialogStatResult.DialogResult]')
                         self._dialog.exec()
                     except Exception as err:
                         messageBox(self, 'Result dialog error', '{}\n{}'.format(type(err), str(err)))
-                        self._logger.error(traceback.format_exc())
+                        if self._logger is not None: self._logger.error(traceback.format_exc())
             else: wait.close()
 
     def conjunction(self) -> None:
@@ -5101,11 +5106,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogStatContrast.DialogConjunction]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogStatContrast.DialogConjunction]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Conjunction dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def tmapTozmap(self) -> None:
         from Sisyphe.gui.dialogStatContrast import DialogTMapToZMap
@@ -5115,11 +5120,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogStatContrast.DialogTMapToZMap]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogStatContrast.DialogTMapToZMap]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'T to Z-map dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def confounders(self) -> None:
         from Sisyphe.gui.dialogTimeSeries import DialogSeriesPreprocessing
@@ -5129,11 +5134,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogTimeSeries.DialogSeriesPreprocessing]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogTimeSeries.DialogSeriesPreprocessing]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Time series preprocessing dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def seedCorrelation(self) -> None:
         from Sisyphe.gui.dialogTimeSeries import DialogSeriesSeedToVoxel
@@ -5143,11 +5148,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogTimeSeries.DialogSeriesSeedToVoxel]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogTimeSeries.DialogSeriesSeedToVoxel]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Seed-to-voxel time series correlation dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def matrixCorrelation(self) -> None:
         from Sisyphe.gui.dialogTimeSeries import DialogSeriesConnectivityMatrix
@@ -5158,11 +5163,11 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.setScreenshotsWidget(self._captures)
         try:
-            self._logger.info('Dialog exec [gui.dialogTimeSeries.DialogSeriesConnectivityMatrix]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogTimeSeries.DialogSeriesConnectivityMatrix]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Time series correlation matrix dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def fastICA(self) -> None:
         from Sisyphe.gui.dialogTimeSeries import DialogSeriesFastICA
@@ -5172,11 +5177,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogTimeSeries.DialogSeriesFastICA]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogTimeSeries.DialogSeriesFastICA]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Single-subject time series ICA dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def groupICA(self) -> None:
         from Sisyphe.gui.dialogTimeSeries import DialogSeriesCanICA
@@ -5186,11 +5191,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogTimeSeries.DialogSeriesCanICA]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogTimeSeries.DialogSeriesCanICA]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Multi-subject time series ICA dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def perfusion(self) -> None:
         from Sisyphe.gui.dialogPerfusion import DialogPerfusion
@@ -5200,11 +5205,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogPerfusion.DialogPerfusion]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogPerfusion.DialogPerfusion]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Perfusion dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     # Diffusion methods called from main menu
 
@@ -5216,11 +5221,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogDiffusionGradients.DialogDiffusionGradients]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionGradients.DialogDiffusionGradients]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Diffusion gradients dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def diffusionPreprocessing(self) -> None:
         from Sisyphe.gui.dialogDiffusionPreprocessing import DialogDiffusionPreprocessing
@@ -5230,11 +5235,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogDiffusionPreprocessing.DialogDiffusionPreprocessing]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionPreprocessing.DialogDiffusionPreprocessing]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Diffusion preporcessing dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def diffusionModel(self) -> None:
         from Sisyphe.gui.dialogDiffusionModel import DialogDiffusionModel
@@ -5243,12 +5248,12 @@ class WindowSisyphe(QMainWindow):
         self._dialog = DialogDiffusionModel()
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
-        # try:
-        self._logger.info('Dialog exec [gui.dialogDiffusionModel.DialogDiffusionModel]')
-        self._dialog.exec()
-        # except Exception as err:
-        # messageBox(self, 'Diffusion model dialog error', '{}\n{}'.format(type(err), str(err)))
-        # self._logger.error(traceback.format_exc())
+        try:
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionModel.DialogDiffusionModel]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'Diffusion model dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def diffusionBundleROISelection(self) -> None:
         from Sisyphe.gui.dialogDiffusionBundle import DialogBundleROISelection
@@ -5258,11 +5263,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleROISelection]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleROISelection]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'ROI based selection dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def diffusionBundleFilterSelection(self) -> None:
         from Sisyphe.gui.dialogDiffusionBundle import DialogBundleFilteringSelection
@@ -5272,11 +5277,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleFilteringSelection]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleFilteringSelection]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Filter based selection dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def diffusionBundleAtlasSelection(self) -> None:
         from Sisyphe.gui.dialogDiffusionBundle import DialogBundleAtlasSelection
@@ -5286,11 +5291,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleAtlasSelection]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleAtlasSelection]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Template based selection dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def diffusionTractogram(self) -> None:
         from Sisyphe.gui.dialogDiffusionTracking import DialogDiffusionTracking
@@ -5300,11 +5305,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogDiffusionTracking.DialogDiffusionTracking]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionTracking.DialogDiffusionTracking]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Tractogram generation dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def diffusionDensityMap(self) -> None:
         from Sisyphe.gui.dialogDiffusionBundle import DialogBundleToDensityMap
@@ -5314,11 +5319,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleToDensityMap]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleToDensityMap]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Density map dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def diffusionPathLengthMap(self) -> None:
         from Sisyphe.gui.dialogDiffusionBundle import DialogBundleToPathLengthMap
@@ -5328,11 +5333,11 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleToPathLengthMap]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleToPathLengthMap]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Path length map dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def diffusionConnectivityMatrix(self) -> None:
         from Sisyphe.gui.dialogDiffusionBundle import DialogBundleConnectivityMatrix
@@ -5343,11 +5348,11 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.setScreenshotsWidget(self._captures)
         try:
-            self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleConnectivityMatrix]')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleConnectivityMatrix]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Connectivity matrix dialog error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
         # Public command methods (generate exceptions)
 
@@ -5355,11 +5360,11 @@ class WindowSisyphe(QMainWindow):
 
     def addVolume(self, vol: SisypheVolume) -> None:
         try:
-            self._logger.info('Add {}'.format(vol.getFilename))
+            if self._logger is not None: self._logger.info('Add {}'.format(vol.getFilename))
             self._thumbnail.addVolume(vol)
         except Exception as err:
             messageBox(self, 'Add xvol error', '{}\n{}'.format(type(err), str(err)))
-            self._logger.error(traceback.format_exc())
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     # Qt events
 

@@ -6,9 +6,9 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+import sys
 from sys import platform
 
-import logging
 import traceback
 
 from os.path import exists
@@ -72,7 +72,10 @@ class DialogDiffusionTracking(QDialog):
         super().__init__(parent)
         self._ID = None
         # < Revision 03/07/2025
+        # if not hasattr(sys, '_MEIPASS'):
+        import logging
         self._logger = logging.getLogger(__name__)
+        # else: self._logger = None
         # Revision 03/07/2025 >
 
         # Init window
@@ -435,7 +438,7 @@ class DialogDiffusionTracking(QDialog):
                 messageBox(self,
                            '{} error'.format(self.windowTitle()),
                            '{}\n{}'.format(type(err), str(err)))
-                self._logger.error(traceback.format_exc())
+                if self._logger is not None: self._logger.error(traceback.format_exc())
                 return
             # Save streamlines
             filename = splitext(self._model.getFilename())[0] + '_' + track.getBundleName() + SisypheStreamlines.getFileExt()
