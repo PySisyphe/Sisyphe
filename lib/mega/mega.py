@@ -1,7 +1,7 @@
 import math
 import re
 import json
-import logging
+# import logging
 import secrets
 from pathlib import Path
 import hashlib
@@ -26,7 +26,7 @@ from .crypto import (a32_to_base64, encrypt_key, base64_url_encode,
                      decrypt_key, mpi_to_int, stringhash, prepare_key, make_id,
                      makebyte, modular_inverse)
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 
 class Mega:
@@ -56,11 +56,11 @@ class Mega:
         else:
             self.login_anonymous()
         self._trash_folder_node_id = self.get_node_by_type(4)[0]
-        logger.info('Login complete')
+        # logger.info('Login complete')
         return self
 
     def _login_user(self, email, password):
-        logger.info('Logging in user...')
+        # logger.info('Logging in user...')
         email = email.lower()
         get_user_salt_resp = self._api_request({'a': 'us0', 'user': email})
         user_salt = None
@@ -85,7 +85,7 @@ class Mega:
         self._login_process(resp, password_aes)
 
     def login_anonymous(self):
-        logger.info('Logging in anonymous temporary user...')
+        # logger.info('Logging in anonymous temporary user...')
         master_key = [random.randint(0, 0xFFFFFFFF)] * 4
         password_key = [random.randint(0, 0xFFFFFFFF)] * 4
         session_self_challenge = [random.randint(0, 0xFFFFFFFF)] * 4
@@ -194,7 +194,7 @@ class Mega:
                 return int_resp
             if int_resp == -3:
                 msg = 'Request failed, retrying'
-                logger.info(msg)
+                # logger.info(msg)
                 raise RuntimeError(msg)
             raise RequestError(int_resp)
         return json_resp[0]
@@ -357,7 +357,7 @@ class Mega:
                 continue
 
     def get_files(self):
-        logger.info('Getting all files...')
+        # logger.info('Getting all files...')
         files = self._api_request({'a': 'f', 'c': 1, 'r': 1})
         files_dict = {}
         shared_keys = {}
@@ -749,8 +749,7 @@ class Mega:
                 mac_str = mac_encryptor.encrypt(encryptor.encrypt(block))
 
                 file_info = os.stat(temp_output_file.name)
-                logger.info('%s of %s downloaded', file_info.st_size,
-                            file_size)
+                # logger.info('%s of %s downloaded', file_info.st_size,file_size)
                 if self._wait is not None:
                     self._wait.setCurrentProgressValue(file_info.st_size)
             file_mac = str_to_a32(mac_str)
@@ -824,17 +823,16 @@ class Mega:
                                                 data=chunk,
                                                 timeout=self.timeout)
                     completion_file_handle = output_file.text
-                    logger.info('%s of %s uploaded', upload_progress,
-                                file_size)
+                    # logger.info('%s of %s uploaded', upload_progress, file_size)
             else:
                 output_file = requests.post(ul_url + "/0",
                                             data='',
                                             timeout=self.timeout)
                 completion_file_handle = output_file.text
 
-            logger.info('Chunks uploaded')
-            logger.info('Setting attributes to complete upload')
-            logger.info('Computing attributes')
+            # logger.info('Chunks uploaded')
+            # logger.info('Setting attributes to complete upload')
+            # logger.info('Computing attributes')
             file_mac = str_to_a32(mac_str)
 
             # determine meta mac
@@ -851,7 +849,7 @@ class Mega:
                 ul_key[5], meta_mac[0], meta_mac[1]
             ]
             encrypted_key = a32_to_base64(encrypt_key(key, self.master_key))
-            logger.info('Sending request to update attributes')
+            # logger.info('Sending request to update attributes')
             # update attributes
             data = self._api_request({
                 'a':
@@ -867,7 +865,7 @@ class Mega:
                     'k': encrypted_key
                 }]
             })
-            logger.info('Upload complete')
+            # logger.info('Upload complete')
             return data
 
     def _mkdir(self, name, parent_node_id):
