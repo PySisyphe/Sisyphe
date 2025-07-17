@@ -63,4 +63,4 @@ PySisyphe is plug-in extensible and provides a fully documented API that gives a
 Download Binary archive
 =======================
 
-MS Windows binary [PySisyphe 0.9.1](https://mega.nz/file/ZPMRFDja#zwo_Uo9tafL6qAMWRvK_rlF4SfGOqfkBegH2f9Irm2w)
+MS Windows binary [PySisyphe 0.9.1](https://mega.nz/file/ROsUBCrC#cFegnQhjsL72UsrnDYfHZY_UHHMPvPQZuT3Uv_Y8YDs)
