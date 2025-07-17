@@ -34,7 +34,6 @@ from os.path import expanduser
 
 import sys
 
-import logging
 import traceback
 
 import ctypes
@@ -49,6 +48,11 @@ from vtk import vtkObject
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.gui.dialogSplash import DialogSplash
+
+# < Revision 16/07/2025
+import matplotlib
+matplotlib.use('Qt5Agg')
+# Revision 16/07/2025 >
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QLocale
@@ -121,6 +125,12 @@ def qtMessageHandler(type: QtMsgType, context: QMessageLogContext, msg: str):
 # Display a dialog box and log the traceback
 # noinspection PyUnusedLocal
 def globalExceptionHandler(tp, value, tb):
+    # < Revision 13/07/2025
+    # Close wait dialog if it exists
+    for w in QApplication.topLevelWindows():
+        if w.objectName() == 'DialogWaitWindow':
+            w.close()
+    # Revision 13/07/2025 >
     messageBox(None,
                'PySisyphe uncaught exception',
                '{}\nSee PySisyphe.log for traceback details.'.format(str(value)))
@@ -130,7 +140,9 @@ def globalExceptionHandler(tp, value, tb):
     else: summary = ''
     if len(stack) > 1: msg = ''.join(stack[:-1])
     else: msg = ''
+    # if not hasattr(sys, '_MEIPASS'):
     logging.error('{}{}  {}'.format(msg, summary, str(value)))
+
 # Revision 04/07/2025 >
 
 if __name__ == "__main__":
@@ -168,7 +180,10 @@ if __name__ == "__main__":
 
     """
     Logging
+    PySisyphe.log file in .PySisyphe user directory
     """
+    # if not hasattr(sys, '_MEIPASS'):
+    import logging
     userdir = join(expanduser('~'), '.PySisyphe')
     if not exists(userdir): initPySisypheUserPath()
     filename = join(userdir, 'PySisyphe.log')
@@ -178,6 +193,7 @@ if __name__ == "__main__":
                         level=logging.INFO,
                         format='%(asctime)s - %(name)s - %(levelname)s\n%(message)s')
     logger = logging.getLogger(__name__)
+    # else: logger = None
 
     """
     Create application
@@ -260,5 +276,7 @@ if __name__ == "__main__":
                 if splitext(filename)[1] == SisypheVolume.getFileExt():
                     main.open(filename)
 
-    logger.info('session start')
-    sys.exit(app.exec_())
+    if logger is not None: logger.info('session start')
+    app.exec_()
+    if logger is not None: logger.info('session end')
+    sys.exit(0)
