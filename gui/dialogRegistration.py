@@ -100,7 +100,7 @@ class DialogRegistration(QDialog):
 
     QDialog -> DialogRegistration
 
-    Last revision: 22/05/2025
+    Last revision: 16/07/2025
     """
     # Class method
 
@@ -923,7 +923,10 @@ class DialogRegistration(QDialog):
             if trf is not None and resampled is not None:
                 if self._settings.getParameterValue('Resample'):
                     dialog = self._resamplesettings.getParameterValue('Dialog')
-                    if self.windowTitle()[0] == 'T':
+                    # < Revision 16/07/2025
+                    # if self.windowTitle()[0] == 'T':
+                    # Revision 16/07/2025 >
+                    if self.windowTitle()[0] == 'I':
                         prefix = self._resamplesettings.getParameterValue('NormalizationPrefix')
                         suffix = self._resamplesettings.getParameterValue('NormalizationSuffix')
                     else:
