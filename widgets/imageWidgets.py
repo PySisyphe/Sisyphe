@@ -8,7 +8,6 @@ External packages/modules
     - SimpleITK, Medical image processing, https://simpleitk.org/
 """
 
-import sys
 from sys import platform
 
 from os import getcwd
@@ -95,7 +94,7 @@ class ImagePreviewWidget(QWidget):
 
     QWidget -> ImagePreviewWidget
 
-    Last revision: 05/03/2025
+    Last revision: 16/07/2025
     """
 
     _VSIZE = 16
@@ -130,7 +129,7 @@ class ImagePreviewWidget(QWidget):
     _vmax           float, higher window value
     """
 
-    def __init__(self, image=None, lut='gray', size=128, orient='upper', parent=None):
+    def __init__(self, image=None, lut='gray', size=128, orient='upper', aspect=1.0, parent=None):
         super().__init__(parent)
 
         # Init icon
@@ -188,6 +187,10 @@ class ImagePreviewWidget(QWidget):
         else: raise TypeError('constructor image type {} is not Numpy or SitkImage.'.format(type(image)))
         self._image = image
         self._orient = orient
+        # < Revision 16/07/2025
+        # add aspect parameter
+        self._aspect = aspect
+        # Revision 16/07/2025 >
 
         # Init Lut
 
@@ -215,9 +218,14 @@ class ImagePreviewWidget(QWidget):
         if self._image is not None:
             if self._image.ndim == 3: mat = self._image[self._currentslice, :, :]
             else: mat = self._image
+            # < Revision 16/07/2025
+            # add aspect parameter
+            # self._axe.imshow(fliplr(mat), origin=self._orient, cmap=self._lut,
+            #                  vmin=self._vmin, vmax=self._vmax, interpolation='bilinear')
             # noinspection PyTypeChecker
-            self._axe.imshow(fliplr(mat), origin=self._orient, cmap=self._lut,
+            self._axe.imshow(fliplr(mat), origin=self._orient, cmap=self._lut, aspect=self._aspect,
                              vmin=self._vmin, vmax=self._vmax, interpolation='bilinear')
+            # Revision 16/07/2025 >
             self._canvas.draw_idle()
             QApplication.processEvents()
 
@@ -329,12 +337,19 @@ class SisypheImageViewWidget(ImagePreviewWidget):
 
     QWidget -> ImagePreviewWidget -> SisypheImagePreviewWidget
 
-    Last revision:
+    Last revision: 16/07/2025
     """
 
     def __init__(self, image=None, lut='gray', size=128, parent=None):
         if isinstance(image, (SisypheImage, SisypheVolume)):
-            super().__init__(image.getNumpy(), lut, size, 'lower', parent)
+            # < Revision 16/07/2025
+            # change axes aspect ratio if anistropic pixel
+            s = image.getSpacing()
+            if s[0] != s[1]: aspect = s[1] / s[2]
+            else: aspect = 1.0
+            # super().__init__(image.getNumpy(), lut, size, 'lower', parent)
+            super().__init__(image.getNumpy(), lut, size, 'lower', aspect, parent)
+            # Revision 16/07/2025
             self.setToolTip(str(image))
         else: raise TypeError('constructor image parameter {} is not SisypheImage or SisypheVolume.'.format(type(image)))
 
