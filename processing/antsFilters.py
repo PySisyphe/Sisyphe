@@ -217,6 +217,7 @@ Functions
 """
 
 
+# noinspection PyUnusedLocal
 def antsKMeansSegmentation(vol, mask=None, nclass=3, niter=3, smooth=0.3, radius=1,
                            save=False, segprefix='seg_', segsuffix='',
                            classprefix='', classsuffix='class*_', wait=None):
@@ -308,6 +309,7 @@ def antsKMeansSegmentation(vol, mask=None, nclass=3, niter=3, smooth=0.3, radius
     finally:
         # Remove temporary std::cout file
         if exists(stdout): remove(stdout)
+    # noinspection PyUnreachableCode
     if wait is not None:
         wait.setButtonVisibility(False)
         wait.setProgressVisibility(False)
@@ -356,6 +358,7 @@ def antsKMeansSegmentation(vol, mask=None, nclass=3, niter=3, smooth=0.3, radius
     return r
 
 
+# noinspection PyUnusedLocal
 def antsPriorBasedSegmentation(vol, priors, mask=None, weight=0.5, niter=10, smooth=0.3, radius=1, conv=None,
                                save=False, segprefix='seg_', segsuffix='', wait=None):
     """
@@ -449,6 +452,7 @@ def antsPriorBasedSegmentation(vol, priors, mask=None, weight=0.5, niter=10, smo
     finally:
         # Remove temporary std::cout file
         if exists(stdout): remove(stdout)
+    # noinspection PyUnreachableCode
     if wait is not None:
         wait.setButtonVisibility(False)
         wait.setProgressVisibility(False)
@@ -496,6 +500,7 @@ def antsPriorBasedSegmentation(vol, priors, mask=None, weight=0.5, niter=10, smo
     return r
 
 
+# noinspection PyUnusedLocal
 def antsCorticalThickness(seg, gm, wm, niter=50, grdstep=0.5, grdsmooth=1,
                           save=False, prefix='thickness_', suffix='', wait=None):
     """
@@ -589,6 +594,7 @@ def antsCorticalThickness(seg, gm, wm, niter=50, grdstep=0.5, grdsmooth=1,
     finally:
         # Remove temporary std::cout file
         if exists(stdout): remove(stdout)
+    # noinspection PyUnreachableCode
     if wait is not None:
         wait.buttonVisibilityOff()
         wait.progressVisibilityOff()

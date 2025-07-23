@@ -96,6 +96,7 @@ def brainMaskFromProbabilityTissueMaps(vols: list[SisypheVolume] | SisypheVolume
         mask.acquisition.setSequence(SisypheAcquisition.MASK)
         return mask
     else:
+        # noinspection PyInconsistentReturns
         if gm is None and wm is None:
             raise ValueError('missing grey and white matter maps.')
         elif gm is None:

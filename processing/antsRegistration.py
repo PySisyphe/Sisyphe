@@ -171,6 +171,7 @@ Function
 """
 
 
+# noinspection PyUnusedLocal
 def antsRegistration(fvol, mvol, rvol=(), algo='AntsRigid', interpol='linear', estim='no', metric=('mattes', 'mattes'),
                      sampling=0.2, prefix='r_', suffix='', wait=None):
     """
@@ -492,6 +493,7 @@ def antsRegistration(fvol, mvol, rvol=(), algo='AntsRigid', interpol='linear', e
     finally:
         # Remove temporary std::cout file
         if exists(stdout): remove(stdout)
+    # noinspection PyUnreachableCode
     if wait is not None:
         wait.buttonVisibilityOff()
         wait.setProgressVisibility(False)
@@ -566,4 +568,7 @@ def antsRegistration(fvol, mvol, rvol=(), algo='AntsRigid', interpol='linear', e
             f.setMoving(vol)
             resampled.append(f.execute(fixed=fvol, save=True, prefix=prefix, suffix=suffix, wait=wait))
         return resampled
-    if wait is not None: wait.hide()
+    # noinspection PyInconsistentReturns
+    if wait is not None:
+        # noinspection PyInconsistentReturns
+        wait.hide()

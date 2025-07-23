@@ -92,6 +92,7 @@ class CaptureStdout:
 
     # Special methods
 
+    # noinspection SpellCheckingInspection
     def __init__(self, filename, lowlevel=True):
         """
         self._filename = filename
@@ -893,6 +894,7 @@ class ProcessDeepTissueSegmentation(Process):
         Process.__init__(self)
         self._t1 = t1.getNumpy(defaultshape=False).astype('float32')
         self._cache = cache
+        print(cache)
         self._spacing = t1.getSpacing()
         self._stdout = stdout
         self._result = queue
