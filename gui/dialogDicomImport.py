@@ -88,7 +88,7 @@ class DialogDicomImport(QDialog):
         # noinspection PyTypeChecker
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
-        self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.50))
+        self.setMinimumSize(int(screen.width() * 0.33), int(screen.height() * 0.50))
 
         # Init QLayout
 
@@ -232,7 +232,7 @@ class DialogDicomImport(QDialog):
                             # DICOM filenames conversion to SimpleITK image
                             try: img = readFromDicomFilenames(filenames)
                             except:
-                                messageBox(self,'DICOM import','DICOM read error.')
+                                messageBox(self, 'DICOM import', 'DICOM read error.')
                                 continue
                             # Siemens mosaic conversion
                             if tree.isMosaic(series):

@@ -47,6 +47,8 @@ class DialogExport(QDialog):
     ~~~~~~~~~~~
 
     QDialog -> DialogExport
+
+    Last revision: 17/07/2025
     """
 
     # Special method
@@ -65,8 +67,10 @@ class DialogExport(QDialog):
         # noinspection PyTypeChecker
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
-        self.setMinimumWidth(int(screen.width() * 0.33))
-        self.setSizeGripEnabled(False)
+        # < Revision 17/07/2025
+        # self.setMinimumWidth(int(screen.width() * 0.33))
+        self.setMinimumSize(int(screen.width() * 0.50), int(screen.height() * 0.50))
+        # Revision 17/07/2025 >
 
         # Init QLayout
 
@@ -113,7 +117,6 @@ class DialogExport(QDialog):
         ok.clicked.connect(self.accept)
 
         # Window
-
 
         self.setModal(True)
 

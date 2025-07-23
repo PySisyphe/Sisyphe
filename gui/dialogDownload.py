@@ -79,6 +79,7 @@ class DialogDownload(QDialog):
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
+        self._main = None
 
         self.setWindowTitle('Download manager')
         # noinspection PyTypeChecker
@@ -224,6 +225,12 @@ class DialogDownload(QDialog):
 
     # Public methods
 
+    def setMainWindow(self, main):
+        self._main = main
+
+    def hasMainWindow(self):
+        return self._main is not None
+
     def checkAll(self):
         folder = self._sections.selectedItems()[0].text(0)
         for item in self._urls[folder].values():
@@ -258,4 +265,8 @@ class DialogDownload(QDialog):
                             return
                         item[2].setChecked(False)
                         item[2].setEnabled(False)
+                        if self.hasMainWindow():
+                            if folder == 'Templates':
+                                # noinspection PyProtectedMember
+                                self._main._initTemplateMenu()
         if wait is not None: wait.close()

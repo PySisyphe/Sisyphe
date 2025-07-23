@@ -68,7 +68,6 @@ class DialogImport(QDialog):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.50), int(screen.height() * 0.50))
-        self.setSizeGripEnabled(False)
 
         # Init QLayout
 

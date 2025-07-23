@@ -11,7 +11,6 @@ from os.path import join
 from os.path import basename
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QVBoxLayout
@@ -42,6 +41,8 @@ class DialogDicomExport(QDialog):
     ~~~~~~~~~~~
 
     QDialog -> DialogDicomExport
+
+    Last revision: 17/07/2025
     """
 
     # Special method
@@ -53,7 +54,10 @@ class DialogDicomExport(QDialog):
         # noinspection PyTypeChecker
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
-        self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
+        # < Revision 17/07/2025
+        # self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
+        self.setMinimumSize(int(screen.width() * 0.50), int(screen.height() * 0.50))
+        # Revision 17/07/2025 >
 
         # Init QLayout
 

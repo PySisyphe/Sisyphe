@@ -6,7 +6,6 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
-import sys
 from sys import platform
 
 import traceback
