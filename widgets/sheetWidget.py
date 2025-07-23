@@ -197,6 +197,7 @@ class SheetWidget(QWidget):
             for j in range(self._tree.headerItem().columnCount()):
                 self._tree.headerItem().setTextAlignment(j, Qt.AlignCenter)
             self._tree.header().setStretchLastSection(False)
+            # noinspection PyTypeChecker
             self._tree.header().setSectionResizeMode(QHeaderView.Stretch)
             for row in self._sheet.index:
                 item = QTreeWidgetItem(self._tree)
@@ -357,6 +358,7 @@ class SheetWidget(QWidget):
             self._sheet.toClipboard()
 
     def getStatistics(self):
+        # noinspection PyInconsistentReturns
         if not self.isEmpty() and self._sheet.size > 0:
             sheet = self._sheet.describe()
             skew = DataFrame(self._sheet.skew()).T
@@ -489,7 +491,9 @@ class SheetChartWidget(SheetStatisticsWidget):
         btlayout = self._sheet.getButtonsLayout()
         self._chart = QPushButton('Draw chart')
         self._chartmenu = QMenu()
+        # noinspection PyTypeChecker
         self._chartmenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
         self._chartmenu.setWindowFlag(Qt.FramelessWindowHint, True)
         self._chartmenu.setAttribute(Qt.WA_TranslucentBackground, True)
         # noinspection PyUnresolvedReferences

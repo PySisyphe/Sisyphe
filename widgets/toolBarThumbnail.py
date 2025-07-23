@@ -5,7 +5,6 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
-import sys
 from sys import platform
 
 from os import getcwd
@@ -376,7 +375,7 @@ class ToolBarThumbnail(QToolBar):
                     action.setDefaultWidget(widget)
                     self.addAction(action)
                     # self._actions.append(action)
-                    if self._logger is not None:self._logger.info('Add to thumbnail {}'.format(vol.getFilename()))
+                    if self._logger is not None: self._logger.info('Add to thumbnail {}'.format(vol.getFilename()))
                     if self.hasMainWindow():
                         if vol.hasFilename: self._mainwindow.addRecent(vol.getFilename())
                         self._mainwindow.updateMemoryUsage()

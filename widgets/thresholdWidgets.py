@@ -140,8 +140,12 @@ class ThresholdViewWidget(QWidget):
                 p = load_palette('auto')
                 background = p.color(QPalette.Base)
             else:
-                if parent is not None: background = parent.palette().color(QPalette.Base)
-                else: background = self.palette().color(QPalette.Base)
+                if parent is not None:
+                    # noinspection PyTypeChecker
+                    background = parent.palette().color(QPalette.Base)
+                else:
+                    # noinspection PyTypeChecker
+                    background = self.palette().color(QPalette.Base)
             # < Revision 11/03/2025
             self._fig.set_facecolor((background.red() / 255,
                                      background.green() / 255,
