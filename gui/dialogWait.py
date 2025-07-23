@@ -83,7 +83,7 @@ class DialogWait(QDialog):
 
     QWidget - > QDialog -> DialogWait
 
-    Last revision: 11/07/2025
+    Last revision: 17/07/2025
     """
 
     # Class method
@@ -116,7 +116,7 @@ class DialogWait(QDialog):
                  chart=False,
                  cancel=False,
                  parent=None):
-        super().__init__(parent)
+        super().__init__()
 
         # Window
 
@@ -124,15 +124,34 @@ class DialogWait(QDialog):
         if platform == 'win32':
             # noinspection PyTypeChecker
             self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
-            # import pywinstyles
-            # cl = self.palette().base().color()
-            # c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
-            # pywinstyles.change_header_color(self, c)
             try: __main__.updateWindowTitleBarColor(self)
             except: pass
+            self._layout = QVBoxLayout()
+            self.setLayout(self._layout)
         elif platform == 'darwin':
+            # < Revision 17/07/2025
+            # bug fix darwin platform, to get a dialog box with rounded border
             # noinspection PyTypeChecker
             self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+            # noinspection PyTypeChecker
+            self.setAttribute(Qt.WA_TranslucentBackground)
+            from PyQt5.QtWidgets import QFrame
+            self._frame = QFrame()
+            self._frame.setObjectName('WaitFrame')
+            self._slayout = QVBoxLayout()
+            self._slayout.setContentsMargins(0, 0, 0, 0)
+            self._slayout.addWidget(self._frame)
+            bcolor = self.palette().window().color()
+            self.setStyleSheet(
+                f"QFrame#WaitFrame {{"
+                f"  background-color: {bcolor.name()};"
+                f"  border-radius: 10px;"
+                f"}}")
+            self._layout = QVBoxLayout()
+            self._frame.setLayout(self._layout)
+            self.setLayout(self._slayout)
+            # Revision 17/07/2025 >
+
         # < Revision 21/05/2025
         self.setModal(True)
         # Revision 21/05/2025 >
@@ -171,10 +190,8 @@ class DialogWait(QDialog):
 
         # Init QLayout
 
-        self._layout = QVBoxLayout()
         self._layout.setContentsMargins(50, 50, 50, 50)
         self._layout.setSpacing(10)
-        self.setLayout(self._layout)
 
         self._layout.addWidget(self._canvas)
         self._layout.addWidget(self._info)
@@ -227,6 +244,13 @@ class DialogWait(QDialog):
         QApplication.processEvents()
 
     # Public methods
+
+    def open(self):
+        if platform == 'darwin':
+            # bug fix darwin platform, open() always displays a title bar
+            # override open() to call show() and hide title bar
+            self.show()
+        else: super().open()
 
     def setStopped(self):
         self._stopped = True
@@ -281,7 +305,7 @@ class DialogWait(QDialog):
             self._center()
         else: raise TypeError('parameter type {} is not str.'.format(type(txt)))
 
-    def addInformationText(self, txt = ''):
+    def addInformationText(self, txt=''):
         if txt == '': self._info.setText(self._baseinfo)
         else: self._info.setText('{}\n{}'.format(self._baseinfo, txt))
         self.adjustSize()
@@ -462,6 +486,7 @@ class DialogWait(QDialog):
     # Qt event
 
     def showEvent(self, event):
+        super().showEvent(event)
         self._stopped = False
         self._center()
 
@@ -709,7 +734,7 @@ class DialogWaitRegistration(DialogWait):
                     elif ch == 'Stage 2': self.setInformationText('Stage 2: U-net tumor clustering...')
                     elif ch == 'Predict':
                         try:
-                            r = list(filter(lambda x: x != '' ,line.split(' ')))
+                            r = list(filter(lambda x: x != '', line.split(' ')))
                             if len(r) == 5:
                                 if not self.getProgressVisibility():
                                     self.progressVisibilityOn()

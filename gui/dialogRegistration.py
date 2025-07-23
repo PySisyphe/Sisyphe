@@ -100,7 +100,7 @@ class DialogRegistration(QDialog):
 
     QDialog -> DialogRegistration
 
-    Last revision: 16/07/2025
+    Last revision: 17/07/2025
     """
     # Class method
 
@@ -164,7 +164,10 @@ class DialogRegistration(QDialog):
         # Init QLayout
 
         self._layout = QVBoxLayout()
-        self._layout.setContentsMargins(10, 0, 10, 0)
+        if platform == 'win32': self._layout.setContentsMargins(10, 0, 10, 0)
+        # < Revision 17/07/2025
+        elif platform == 'darwin': self._layout.setContentsMargins(0, 10, 0, 0)
+        # Revision 17/07/2025 >
         self._layout.setSpacing(0)
         self.setLayout(self._layout)
 
@@ -173,7 +176,6 @@ class DialogRegistration(QDialog):
         self._fixedSelect = FileSelectionWidget(parent=self)
         self._fixedSelect.filterSisypheVolume()
         self._fixedSelect.setTextLabel('Fixed volume')
-        self._fixedSelect.setMinimumWidth(500)
         self._fixedSelect.setCurrentVolumeButtonVisibility(True)
         self._fixedSelect.FieldChanged.connect(self._updateFixed)
 
@@ -181,7 +183,6 @@ class DialogRegistration(QDialog):
         self._movingSelect.filterSisypheVolume()
         self._movingSelect.setTextLabel('Moving volume')
         self._movingSelect.alignLabels(self._fixedSelect)
-        self._movingSelect.setMinimumWidth(500)
         self._movingSelect.setCurrentVolumeButtonVisibility(True)
         self._movingSelect.FieldChanged.connect(self._updateMoving)
 
@@ -261,10 +262,11 @@ class DialogRegistration(QDialog):
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
-        self.adjustSize()
         # imposing dialog width -> set minimum width to a child widget of the main layout
         screen = QApplication.primaryScreen().geometry()
         self._fixedSelect.setMinimumWidth(int(screen.width() * 0.33))
+        self._movingSelect.setMinimumWidth(int(screen.width() * 0.33))
+        self.adjustSize()
         # dialog resize off
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
@@ -274,6 +276,7 @@ class DialogRegistration(QDialog):
 
     def _updateWindowTitleBarColor(self, window):
         if platform == 'win32':
+            # noinspection PyUnresolvedReferences
             import pywinstyles
             cl = self.palette().base().color()
             scl = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())

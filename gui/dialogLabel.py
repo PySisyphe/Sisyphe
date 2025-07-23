@@ -59,7 +59,7 @@ class DialogVOLtoLabel(QDialog):
 
     QDialog -> DialogVOLtoLabel
 
-    Last revision: 13/02/2025
+    Last revision: 17/07/2025
     """
 
     # Special method
@@ -76,14 +76,10 @@ class DialogVOLtoLabel(QDialog):
         self.setWindowTitle('Probability volumes to Label volume')
         # noinspection PyTypeChecker
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        screen = QApplication.primaryScreen().geometry()
-        self.setMinimumWidth(int(screen.width() * 0.33))
-        self.setSizeGripEnabled(False)
 
         # Init QLayout
 
         self._layout = QVBoxLayout()
-        self._layout.setSizeConstraint(QVBoxLayout.SetFixedSize)
         self._layout.setContentsMargins(5, 5, 5, 0)
         self._layout.setSpacing(5)
         self.setLayout(self._layout)
@@ -113,9 +109,9 @@ class DialogVOLtoLabel(QDialog):
         layout.addWidget(self._ok)
         layout.addWidget(cancel)
         layout.addStretch()
-        layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
 
         self._layout.addLayout(layout)
+        self._layout.setSizeConstraint(QVBoxLayout.SetFixedSize)
 
         # Qt Signals
 
@@ -123,6 +119,15 @@ class DialogVOLtoLabel(QDialog):
         self._ok.clicked.connect(self.convert)
         # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
+
+        # Window
+
+        # < Revision 17/07/2025
+        screen = QApplication.primaryScreen().geometry()
+        self._list.setMinimumWidth(int(screen.width() * 0.33))
+        self.adjustSize()
+        # Revision 17/07/2025 >
+        self.setModal(True)
 
     # Public methods
 
@@ -185,7 +190,7 @@ class DialogROItoLabel(QDialog):
 
     QDialog -> DialogROItoLabel
 
-    Last revision: 13/02/2025
+    Last revision: 17/07/2025
     """
 
     # Special method
@@ -202,14 +207,10 @@ class DialogROItoLabel(QDialog):
         self.setWindowTitle('ROI(s) to Label volume')
         # noinspection PyTypeChecker
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        screen = QApplication.primaryScreen().geometry()
-        self.setMinimumWidth(int(screen.width() * 0.33))
-        self.setSizeGripEnabled(False)
 
         # Init QLayout
 
         self._layout = QVBoxLayout()
-        self._layout.setSizeConstraint(QVBoxLayout.SetFixedSize)
         self._layout.setContentsMargins(5, 5, 5, 0)
         self._layout.setSpacing(5)
         self.setLayout(self._layout)
@@ -238,9 +239,9 @@ class DialogROItoLabel(QDialog):
         layout.addWidget(self._ok)
         layout.addWidget(cancel)
         layout.addStretch()
-        layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
 
         self._layout.addLayout(layout)
+        self._layout.setSizeConstraint(QVBoxLayout.SetFixedSize)
 
         # Qt Signals
 
@@ -248,6 +249,15 @@ class DialogROItoLabel(QDialog):
         self._ok.clicked.connect(self.convert)
         # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
+
+        # Window
+
+        # < Revision 17/07/2025
+        screen = QApplication.primaryScreen().geometry()
+        self._list.setMinimumWidth(int(screen.width() * 0.33))
+        self.adjustSize()
+        # Revision 17/07/2025 >
+        self.setModal(True)
 
     # Public methods
 
@@ -308,7 +318,7 @@ class DialogLabeltoROI(QDialog):
 
     QDialog -> DialogLabelToROI
 
-    Last revision: 13/02/2025
+    Last revision: 17/07/2025
     """
 
     # Special method
@@ -325,14 +335,10 @@ class DialogLabeltoROI(QDialog):
         self.setWindowTitle('Label volume(s) to ROI(s)')
         # noinspection PyTypeChecker
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        screen = QApplication.primaryScreen().geometry()
-        self.setMinimumWidth(int(screen.width() * 0.33))
-        self.setSizeGripEnabled(False)
 
         # Init QLayout
 
         self._layout = QVBoxLayout()
-        self._layout.setSizeConstraint(QVBoxLayout.SetFixedSize)
         self._layout.setContentsMargins(5, 5, 5, 0)
         self._layout.setSpacing(5)
         self.setLayout(self._layout)
@@ -359,9 +365,9 @@ class DialogLabeltoROI(QDialog):
         layout.addWidget(self._ok)
         layout.addWidget(cancel)
         layout.addStretch()
-        layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
 
         self._layout.addLayout(layout)
+        self._layout.setSizeConstraint(QVBoxLayout.SetFixedSize)
 
         # Qt Signals
 
@@ -369,6 +375,15 @@ class DialogLabeltoROI(QDialog):
         self._ok.clicked.connect(self.convert)
         # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
+
+        # Window
+
+        # < Revision 17/07/2025
+        screen = QApplication.primaryScreen().geometry()
+        self._list.setMinimumWidth(int(screen.width() * 0.33))
+        self.adjustSize()
+        # Revision 17/07/2025 >
+        self.setModal(True)
 
     # Public methods
 

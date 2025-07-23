@@ -940,6 +940,7 @@ class DialogTarget(QDialog):
             else: raise TypeError('{} invalid type (HandleWidget or LineWidget expected).'.format(type(self._tool)))
 
     def getTargetPosition(self):
+        # noinspection PyInconsistentReturns
         if self.hasViewCollection():
             # Cursor position (Default)
             p = self._views.getVolumeView().getCursorWorldPosition()

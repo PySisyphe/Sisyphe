@@ -34,9 +34,14 @@ from radiomics import __version__ as vradiomics
 from pandas import __version__ as vpandas
 from skimage import __version__ as vski
 from scipy import __version__ as vscipy
+from nibabel._version import __version__ as vnb
+from nilearn import __version__ as vnl
 # noinspection PyProtectedMember
 from docx import __version__ as vdocx
+from fpdf import __version__ as vpdf
 from qtconsole import __version__ as vcons
+# noinspection PyPep8Naming
+import GPUtil as gpu
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import PYQT_VERSION_STR
@@ -75,7 +80,7 @@ class DialogSplash(QDialog):
 
     QDialog -> DialogSplash
 
-    Last revision: 07/03/2025
+    Last revision: 18/07/2025
     """
 
     # Class method
@@ -160,6 +165,24 @@ class DialogSplash(QDialog):
 
         diskpart = disk_partitions()
         diskusage = disk_usage('/')
+        # < Revision 18/07/2025
+        if sys.platform == 'darwin': diskfree = diskusage[3]
+        else: diskfree = 100 - diskusage[3]
+        from Sisyphe.widgets.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+        inter = QVTKRenderWindowInteractor(self)
+        inter.Initialize()
+        renderer = inter.GetRenderWindow()
+        renderer.SetOffScreenRendering(1)
+        backend = renderer.GetRenderingBackend()
+        if renderer.IsDirect() > 0: backend += ', hardware acceleration'
+        else: backend += ', no hardware acceleration'
+        if hasattr(sys, '_MEIPASS'): eenv = 'stand-alone frozen execution'
+        else: eenv = 'venv execution'
+        gpus = gpu.getGPUs()
+        if len(gpus) > 0:
+            gpus = gpus[0]
+            backend += ' ({} {} GBytes)'.format(gpus.name, int(gpus.memoryTotal // 1024))
+        # Revision 18/07/2025 >
 
         icndir = 'logos'
 
@@ -172,10 +195,11 @@ class DialogSplash(QDialog):
         self._info.setWordWrap(True)
         self._info.setText('PySisyphe {} (2021), developed by Jean-Albert Lotterie, contact: pysisyphe@gmail.com\n\n'
                            'Python {}, Qt {}, Numpy {}, Pandas {}, Matplotlib {}, Pydicom {}, '
-                           'SimpleITK {}, ITK {}, VTK {}, ANTs {}, Dipy {}, pyradiomics {}, '
-                           'Scikit-image {}, SciPy {}, python-docx {}, qtconsole {}\n\n'
+                           'SimpleITK {}, ITK {}, VTK {}, ANTs {}, Dipy {}, Nibabel {}, Nilearn {}, pyradiomics {}, '
+                           'Scikit-image {}, SciPy {}, python-docx {}, fpdf {}, qtconsole {}\n\n'
                            'User: {}, Home path: {}\n'
-                           'Platform: {}, version {}\n'
+                           'Platform: {}, version {}, {}\n'
+                           'VTK Renderer backend {}\n'
                            'CPU {} {:.1f} GHz, {} cores {} threads\n'
                            'Memory {:.1f} GB\n'
                            'Screen size {}x{}, scaling factor {:.1f}, {:.1f} DPI\n'
@@ -183,10 +207,10 @@ class DialogSplash(QDialog):
                            'GBytes, {:.1f}% free'.format(versionSisyphe,
                                                          vpython, PYQT_VERSION_STR, vnumpy,
                                                          vpandas, vmplt, vpdcm,
-                                                         vsitk, vitk, vvtk, vants, vdipy, vradiomics[1:],
-                                                         vski, vscipy, vdocx, vcons,
+                                                         vsitk, vitk, vvtk, vants, vdipy, vnb, vnl, vradiomics[1:],
+                                                         vski, vscipy, vdocx, vpdf, vcons,
                                                          vuser, vhome, vsysname,
-                                                         vrelease, vmachine,
+                                                         vrelease, eenv, backend, vmachine,
                                                          cpu_freq().max / 1000, cpu_count(False),
                                                          cpu_count(True),
                                                          virtual_memory().total / (1024*1024),
@@ -196,7 +220,7 @@ class DialogSplash(QDialog):
                                                          screen.logicalDotsPerInch(),
                                                          diskpart[0][0], diskpart[0][2],
                                                          diskusage[0] / (1024 ** 3),
-                                                         100 - diskusage[3]))
+                                                         diskfree))
         self._message = QLabel(parent=self)
         self._message.setAlignment(Qt.AlignCenter)
         self._message.setFixedWidth(1000)

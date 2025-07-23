@@ -213,6 +213,7 @@ class DialogPerfusion(AbstractDialogFunction):
             if self._settings.getParameterWidget('Dialog').checkState() == Qt.Checked:
                 dialog = DialogArterialInputFunction(parent=self)
                 if platform == 'win32':
+                    # noinspection PyUnresolvedReferences
                     import pywinstyles
                     cl = self.palette().base().color()
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
