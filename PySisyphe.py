@@ -30,6 +30,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from os.path import exists
 from os.path import join
 from os.path import splitext
+from os.path import dirname
 from os.path import expanduser
 
 import sys
@@ -37,8 +38,6 @@ import sys
 import traceback
 
 import ctypes
-
-import argparse
 
 # fix Qt crash on macOS BigSur platform
 if sys.platform == 'darwin':
@@ -59,13 +58,18 @@ from PyQt5.QtCore import QLocale
 from PyQt5.QtCore import qInstallMessageHandler
 from PyQt5.QtCore import QtMsgType
 from PyQt5.QtCore import QMessageLogContext
+from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QEvent
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPalette
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QApplication
 
 if sys.platform == 'win32':
+    # noinspection PyUnresolvedReferences
     import pywinstyles
+    # noinspection PyUnresolvedReferences
     import qdarktheme
 
 from Sisyphe.widgets.basicWidgets import messageBox
@@ -74,7 +78,7 @@ from Sisyphe.core.sisypheSettings import initPySisypheUserPath
 """
 PySisyphe main
 
-Last revision: 13/03/2025
+Last revision: 22/07/2025
 """
 
 BACKGROUND: QColor | None = None
@@ -90,7 +94,6 @@ functions
     - getForegroundAsQColor
     - getForegroundAsStr
     - qtMessageHandler
-    
 """
 
 def getPalette() -> QPalette:
@@ -142,8 +145,23 @@ def globalExceptionHandler(tp, value, tb):
     else: msg = ''
     # if not hasattr(sys, '_MEIPASS'):
     logging.error('{}{}  {}'.format(msg, summary, str(value)))
-
 # Revision 04/07/2025 >
+
+# < Revision 22/07/2025
+# add QApplicationEventHandler class
+class QApplicationEventHandler(QApplication):
+
+    openFileRequest = pyqtSignal(QUrl, name='openFileRequest')
+
+    def event(self, event):
+        if event.type() == QEvent.FileOpen:
+            # noinspection PyUnresolvedReferences
+            self.openFileRequest.emit(event.url())
+            return True
+        return super().event(event)
+# Revision 22/07/2025 >
+
+
 
 if __name__ == "__main__":
 
@@ -171,36 +189,112 @@ if __name__ == "__main__":
     # Revision 19/03/2025 >
 
     """
-    Parse input arguments
+    Windows registry
     """
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-o', '--open', help='Open PySisyphe volume (*.xvol)', nargs="*", type=str)
-    args = parser.parse_args()
+    # < Revision 22/07/2025
+    # Windows registry management
+    if sys.platform == 'win32':
+        if hasattr(sys, '_MEIPASS'):
+            # noinspection PyProtectedMember
+            path = dirname(sys.executable)
+            # Set file type associations in Windows registry
+            import winreg
+            from Sisyphe.version import getVersion
+            try:
+                # key exists, PySisyphe is already installed
+                winreg.OpenKeyEx(winreg.HKEY_CURRENT_USER,r'Software\\Classes\\Applications\\PySisyphe')
+                flag = False
+            except:
+                # key does not exist, PySisyphe is already installed
+                flag = True
+            # Install PySisyphe Windows registry
+            if flag:
+                root = winreg.OpenKeyEx(winreg.HKEY_CURRENT_USER,r'Software\\Classes\\Applications')
+                k = winreg.CreateKey(root, r'PySisyphe.exe')
+                if k: winreg.CloseKey(k); k = None
+                k = winreg.CreateKey(root, r'PySisyphe.exe\\ApplicationCompany')
+                winreg.SetValue(root, r'PySisyphe.exe\\ApplicationCompany', winreg.REG_SZ, 'PySisyphe')
+                if k: winreg.CloseKey(k); k = None
+                k = winreg.CreateKey(root, r'PySisyphe.exe\\FriendlyAppName')
+                winreg.SetValue(root, r'PySisyphe.exe\\FriendlyAppName', winreg.REG_SZ, 'PySisyphe')
+                if k: winreg.CloseKey(k); k = None
+                k = winreg.CreateKey(root, r'PySisyphe.exe\\Path')
+                winreg.SetValue(root, r'PySisyphe.exe\\Path', winreg.REG_SZ, path)
+                if k: winreg.CloseKey(k); k = None
+                k = winreg.CreateKey(root, r'PySisyphe.exe\\Version')
+                winreg.SetValue(root, r'PySisyphe.exe\\Version', winreg.REG_SZ, getVersion())
+                if k: winreg.CloseKey(k); k = None
+                k = winreg.CreateKey(root, r'PySisyphe.exe\\Capabilities')
+                winreg.SetValueEx(k, 'ApplicationDescription', 0, winreg.REG_SZ, 'PySisyphe neuroimaging software')
+                winreg.SetValueEx(k, 'ApplicationName', 0, winreg.REG_SZ, 'PySisyphe')
+                if k: winreg.CloseKey(k); k = None
+                k = winreg.CreateKey(root, r'PySisyphe.exe\\shell')
+                if k: winreg.CloseKey(k); k = None
+                k = winreg.CreateKey(root, r'PySisyphe.exe\\shell\\open')
+                if k: winreg.CloseKey(k); k = None
+                k = winreg.CreateKey(root, r'PySisyphe.exe\\shell\\open\\command')
+                v = '\"{}\" \"%1\"'.format(sys.executable)
+                winreg.SetValue(root, r'PySisyphe.exe\\shell\\open\\command', winreg.REG_SZ, v)
+                if k: winreg.CloseKey(k); k = None
+                k = winreg.CreateKey(root, r'PySisyphe.exe\\SupportedTypes')
+                winreg.SetValue(root, r'PySisyphe.exe\\SupportedTypes', winreg.REG_SZ, '.xvol')
+                if k: winreg.CloseKey(k); k = None
+                if root: winreg.CloseKey(root)
+            # Update PySisyphe Windows registry
+            else:
+                try:
+                    root = winreg.OpenKeyEx(winreg.HKEY_CURRENT_USER,r'Software\\Classes\\Applications\\PySisyphe.exe')
+                    # Update path and shell command
+                    rpath = winreg.QueryValue(root, r'Path')
+                    if path != rpath:
+                        winreg.SetValue(root, r'Path', winreg.REG_SZ, path)
+                        v = '\"{}\" \"%1\"'.format(sys.executable)
+                        winreg.SetValue(root, r'PySisyphe.exe\\shell\\open\\command', winreg.REG_SZ, v)
+                    if root: winreg.CloseKey(root)
+                    # Update version
+                    rversion = winreg.QueryValue(root, r'Version')
+                    if rversion != getVersion(): winreg.SetValue(root, r'Version', winreg.REG_SZ, getVersion())
+                except: pass
+    # Revision 22/07/2025 >
+
+    """
+    Parse filename argument
+    """
+
+    filename = None
+    args = sys.argv
+    if len(args) > 1:
+        filename = sys.argv[1]
+        ext = splitext(filename)[1]
+        if ext != SisypheVolume.getFileExt(): filename = None
 
     """
     Logging
     PySisyphe.log file in .PySisyphe user directory
     """
-    # if not hasattr(sys, '_MEIPASS'):
     import logging
     userdir = join(expanduser('~'), '.PySisyphe')
     if not exists(userdir): initPySisypheUserPath()
-    filename = join(userdir, 'PySisyphe.log')
-    logging.basicConfig(filename=filename,
+    filelog = join(userdir, 'PySisyphe.log')
+    logging.basicConfig(filename=filelog,
                         encoding='utf-8',
                         filemode='w',
                         level=logging.INFO,
                         format='%(asctime)s - %(name)s - %(levelname)s\n%(message)s')
     logger = logging.getLogger(__name__)
-    # else: logger = None
 
     """
     Create application
     """
     from Sisyphe.gui.windowSisyphe import WindowSisyphe
 
-    app = QApplication(sys.argv)
+    # < Revision 22/07/2025
+    if sys.platform == 'win32': app = QApplication(sys.argv)
+    elif sys.platform == 'darwin': app = QApplicationEventHandler(sys.argv)
+    else: sys.exit(0)
+    # Revision 22/07/2025 >
+
     # < Revision 18/02/2025
     QApplication.setApplicationName('PySisyphe')
     QApplication.setWindowIcon(QIcon(join(WindowSisyphe.getDefaultIconDirectory(), 'pysisyphe.png')))
@@ -268,13 +362,15 @@ if __name__ == "__main__":
 
     main = WindowSisyphe(splash)
     if sys.platform == 'win32': updateWindowTitleBarColor(main)
+    elif sys.platform == 'darwin':
+        # noinspection PyUnresolvedReferences
+        app.openFileRequest.connect(main.open)
     splash.close()
 
-    if args.open is not None:
-        for filename in args.open:
-            if exists(filename):
-                if splitext(filename)[1] == SisypheVolume.getFileExt():
-                    main.open(filename)
+    if filename is not None:
+        if exists(filename):
+            try: main.open(filename)
+            except: pass
 
     if logger is not None: logger.info('session start')
     app.exec_()
