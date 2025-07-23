@@ -1,6 +1,6 @@
 ipython==8.33.0
-numpy==1.23.5
-pandas=2.2.3
+numpy==1.26.4
+pandas==2.2.3
 cython==3.0.12
 matplotlib==3.6.3
 PyQt5==5.15.10
@@ -12,7 +12,7 @@ vtk==9.4.2
 pydicom==3.0.1
 nibabel==5.3.2
 nilearn==0.11.1
-pyradiomics-bhklab==3.1.4
+pyradiomics==3.0.1
 dipy==1.11.0
 antspyx==0.5.4
 antspynet==0.2.9
@@ -21,8 +21,9 @@ scikit-image==0.25.2
 scikit-learn==1.6.1
 darkdetect==0.7.1
 pyqtdarktheme-fork==2.3.4
-pywinstyles=1.8
+pywinstyles==1.8
 python-docx==1.1.2
 fpdf2==2.8.2
 pickleshare==0.7.5
-mega==1.0.8
+pycryptodome==3.22.0
+GPUtil==1.4.0
