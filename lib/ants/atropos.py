@@ -121,7 +121,7 @@ def atropos(a, x, i='Kmeans[3]', m='[0.2,1x1]', c='[5,0]',
 
     elif isinstance(a, (list, tuple)):
         if len(a) > 6:
-            print('more than 6 input images not really supported, using first 6')
+            # print('more than 6 input images not really supported, using first 6')
             a = a[:6]
         myargs = {
             'd': mydim,
