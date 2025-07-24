@@ -178,6 +178,9 @@ class DialogSplash(QDialog):
         else: backend += ', no hardware acceleration'
         if hasattr(sys, '_MEIPASS'): eenv = 'stand-alone frozen execution'
         else: eenv = 'venv execution'
+        # < Revision 24/07/2025
+        inter.hide()
+        # Revision 24/07/2025 >
         gpus = gpu.getGPUs()
         if len(gpus) > 0:
             gpus = gpus[0]
@@ -394,7 +397,8 @@ class DialogSplash(QDialog):
 
         if sys.platform == 'win32':
             # noinspection PyTypeChecker
-            self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+            # self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
         elif sys.platform == 'darwin':
             # noinspection PyTypeChecker
             self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
