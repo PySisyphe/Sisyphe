@@ -99,7 +99,7 @@ class VolumeViewWidget(AbstractViewWidget):
 
     QWidget -> AbstractViewWidget -> VolumeViewWidget
 
-    Last revision: 27/03/2025
+    Last revision: 24/07/2025
     """
 
     _CODETOBLEND = {0: 'composite', 1: 'MaximumIntensity', 2: 'MinimumIntensity',
@@ -159,14 +159,17 @@ class VolumeViewWidget(AbstractViewWidget):
     """
 
     def __init__(self, parent=None):
+
+        self._sph = None            # vtkSphereSource, sphere centered on cursor
+        self._cursorsph = None      # vtkActor, sphere actor centered on cursor
+
         super().__init__(parent)
 
         self._slice0 = None         # vtkImageSlice, axial
         self._slice1 = None         # vtkImageSlice, coronal
         self._slice2 = None         # vtkImageSlice, sagittal
         self._texture = None        # vtkVolume, volume rendering
-        self._sph = None            # vtkSphereSource, sphere centered on cursor
-        self._cursorsph = None      # vtkActor, sphere actor centered on cursor
+
         self._mesh = SisypheMeshCollection()
         self._tract = SisypheTractCollection()
         self._tract.setRenderer(self.getRenderer())
@@ -472,7 +475,7 @@ class VolumeViewWidget(AbstractViewWidget):
         wait.close()
 
     def _initCursor(self):
-        if self.hasVolume():
+        if self._cursor is None:
             # Cursor
             cursor = vtkCursor3D()
             cursor.AxesOn()
@@ -481,11 +484,12 @@ class VolumeViewWidget(AbstractViewWidget):
             cursor.YShadowsOff()
             cursor.ZShadowsOff()
             cursor.WrapOff()
-            fx, fy, fz = self._volume.getFieldOfView()
-            fx /= 2
-            fy /= 2
-            fz /= 2
-            cursor.SetModelBounds(-fx, fx, -fy, fy, -fz, fz)
+            # fx, fy, fz = self._volume.getFieldOfView()
+            # fx /= 2
+            # fy /= 2
+            # fz /= 2
+            # cursor.SetModelBounds(-fx, fx, -fy, fy, -fz, fz)
+            cursor.SetModelBounds(-500, 500, -500, 500, -500, 500)
             cursor.Update()
             mapper = vtkPolyDataMapper()
             # noinspection PyArgumentList
@@ -574,8 +578,12 @@ class VolumeViewWidget(AbstractViewWidget):
             elif self._action['isosurface'].isChecked(): self.setBlendModeToIsoSurface()
             self._updateTextureTransfer()
             # Revision 18/10/2024 >
-            self._initCursor()
-            x, y, z = self._slice0.GetCenter()
+            # < Revision 24/07/2025
+            # _initCursor() already called by abstractViewWidget.__init__() ancestor
+            # self._initCursor()
+            # x, y, z = self._slice0.GetCenter()
+            x, y, z = volume.getCenter()
+            # Revision 24/07/2025 >
             self.setCursorWorldPosition(x, y, z, False)
             self._renderer.GetActiveCamera().SetFocalPoint(x, y, z)
             self.setCameraToLeft()

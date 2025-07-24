@@ -1387,7 +1387,10 @@ class AbstractViewWidget(QFrame):
             # Ruler
             self._ruler.SetVisibility(self._action['showruler'].isChecked())
             # Cursor
-            if self._cursor is None: self._initCursor()
+            # < Revision 24/07/2025
+            # _initCursor() is always called by __init__()
+            # if self._cursor is None: self._initCursor()
+            # Revision 24/07/2025 >
             if self._cursor is not None: self._cursor.SetVisibility(self._action['showcursor'].isChecked())
             self._renderwindow.Render()
 
@@ -1402,7 +1405,9 @@ class AbstractViewWidget(QFrame):
         # Marker
         self._orientmarker.SetEnabled(False)
         # Cursor
-        self._cursor.SetVisibility(False)
+        # < Revision 24/07/2025
+        if self._cursor is not None: self._cursor.SetVisibility(False)
+        # Revision 24/07/2025 >
         self._renderwindow.Render()
 
     def setSelectable(self, v):

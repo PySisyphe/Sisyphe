@@ -118,7 +118,7 @@ class SliceViewWidget(AbstractViewWidget):
     QWidget -> AbstractViewWidget -> SliceViewWidget
 
     Creation: 30/03/2022
-    Last revision: 27/01/2025
+    Last revision: 24/07/2025
     """
 
     # Class constants
@@ -823,7 +823,10 @@ class SliceViewWidget(AbstractViewWidget):
         self._stack.VisibilityOn()
         self._updateCameraOrientation()
         p = self._renderer.GetActiveCamera().GetFocalPoint()
-        self.setCursorWorldPosition(p[0], p[1], p[2])
+        # < Revision 24/07/2025
+        # self.setCursorWorldPosition(p[0], p[1], p[2])
+        self.setCursorWorldPosition(p[0], p[1], p[2], False)
+        # < Revision 24/07/2025
         self._renderwindow.Render()
 
     # < Revision 18/10/2024
@@ -1354,57 +1357,59 @@ class SliceViewWidget(AbstractViewWidget):
     def _onMouseMoveEvent(self,  obj, evt_name):
         super()._onMouseMoveEvent(obj, evt_name)
         if self.hasVolume():
-            interactorstyle = self._window.GetInteractorStyle()
-            last = interactorstyle.GetLastPos()
-            # k = interactorstyle.GetKeySym()
-            # Zoom, Control Key (Cmd key on mac)
-            # if k == 'Control_L' or self.getZoomFlag() is True:
-            if self._interactor.GetControlKey() or self.getZoomFlag() is True:
-                if interactorstyle.GetButton() == 1:
-                    # Zoom
-                    dx = (last[1] - self._mousepos0[1]) / 10
-                    if dx < 0: self.zoomIn()
-                    else: self.zoomOut()
-            # Pan, Alt Key
-            # elif k == 'Alt_L' or self.getMoveFlag() is True:
-            elif self._interactor.GetKeySym() == 'Alt_L' or self.getMoveFlag() is True:
-                if interactorstyle.GetButton() == 1:
-                    # Camera and focal position
-                    pfirst = self._getWorldFromDisplay(self._mousepos0[0],  self._mousepos0[1])
-                    plast = self._getWorldFromDisplay(last[0], last[1])
-                    p = [self._campos0[0] + pfirst[0] - plast[0],
-                         self._campos0[1] + pfirst[1] - plast[1],
-                         self._campos0[2] + pfirst[2] - plast[2]]
-                    self.setCameraPlanePosition(p)
-            # Windowing, Shift Key
-            # elif k == 'Shift_L' or self.getLevelFlag() is True:
-            elif self._interactor.GetShiftKey() or self.getLevelFlag() is True:
-                if interactorstyle.GetButton() == 1:
-                    wmin, wmax = self._volume.display.getWindow()
-                    rmin, rmax = self._volume.display.getRange()
-                    dx = self._win0[0] - last[0]
-                    dy = last[1] - self._win0[1]
-                    r = (rmax - rmin) / 100
-                    if dx != 0: wmin = wmin + (dx / abs(dx)) * r
-                    if dy != 0: wmax = wmax + (dy / abs(dy)) * r
-                    self._volume.display.setWindow(wmin, wmax)
-                    self._renderwindow.Render()
-                    # noinspection PyUnresolvedReferences
-                    self.RenderUpdated.emit(self)
-                    self._win0 = last
-            elif self.getFollowFlag() is True:
-                # Update cursor position information and display
-                self.setCursorFromDisplayPosition(last[0], last[1])
-                p = self.getCursorWorldPosition()
-                self.CursorPositionChanged.emit(self, p[0], p[1], p[2])  # 3D position corrected by offset
-            else:
-                if interactorstyle.GetButton() == 1 and self.isCursorEnabled():
+            try:
+                interactorstyle = self._window.GetInteractorStyle()
+                last = interactorstyle.GetLastPos()
+                # k = interactorstyle.GetKeySym()
+                # Zoom, Control Key (Cmd key on mac)
+                # if k == 'Control_L' or self.getZoomFlag() is True:
+                if self._interactor.GetControlKey() or self.getZoomFlag() is True:
+                    if interactorstyle.GetButton() == 1:
+                        # Zoom
+                        dx = (last[1] - self._mousepos0[1]) / 10
+                        if dx < 0: self.zoomIn()
+                        else: self.zoomOut()
+                # Pan, Alt Key
+                # elif k == 'Alt_L' or self.getMoveFlag() is True:
+                elif self._interactor.GetKeySym() == 'Alt_L' or self.getMoveFlag() is True:
+                    if interactorstyle.GetButton() == 1:
+                        # Camera and focal position
+                        pfirst = self._getWorldFromDisplay(self._mousepos0[0],  self._mousepos0[1])
+                        plast = self._getWorldFromDisplay(last[0], last[1])
+                        p = [self._campos0[0] + pfirst[0] - plast[0],
+                             self._campos0[1] + pfirst[1] - plast[1],
+                             self._campos0[2] + pfirst[2] - plast[2]]
+                        self.setCameraPlanePosition(p)
+                # Windowing, Shift Key
+                # elif k == 'Shift_L' or self.getLevelFlag() is True:
+                elif self._interactor.GetShiftKey() or self.getLevelFlag() is True:
+                    if interactorstyle.GetButton() == 1:
+                        wmin, wmax = self._volume.display.getWindow()
+                        rmin, rmax = self._volume.display.getRange()
+                        dx = self._win0[0] - last[0]
+                        dy = last[1] - self._win0[1]
+                        r = (rmax - rmin) / 100
+                        if dx != 0: wmin = wmin + (dx / abs(dx)) * r
+                        if dy != 0: wmax = wmax + (dy / abs(dy)) * r
+                        self._volume.display.setWindow(wmin, wmax)
+                        self._renderwindow.Render()
+                        # noinspection PyUnresolvedReferences
+                        self.RenderUpdated.emit(self)
+                        self._win0 = last
+                elif self.getFollowFlag() is True:
                     # Update cursor position information and display
                     self.setCursorFromDisplayPosition(last[0], last[1])
                     p = self.getCursorWorldPosition()
                     self.CursorPositionChanged.emit(self, p[0], p[1], p[2])  # 3D position corrected by offset
-            if self._action['showinfo'].isChecked():
-                self._updateBottomRightInfo()
+                else:
+                    if interactorstyle.GetButton() == 1 and self.isCursorEnabled():
+                        # Update cursor position information and display
+                        self.setCursorFromDisplayPosition(last[0], last[1])
+                        p = self.getCursorWorldPosition()
+                        self.CursorPositionChanged.emit(self, p[0], p[1], p[2])  # 3D position corrected by offset
+                if self._action['showinfo'].isChecked():
+                    self._updateBottomRightInfo()
+            except: pass
 
     def _onLeftReleaseEvent(self,  obj, evt_name):
         super()._onLeftReleaseEvent(obj, evt_name)
