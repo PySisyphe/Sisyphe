@@ -3921,7 +3921,7 @@ class SisypheROIDraw(object):
     object -> SisypheROIDraw
 
     Creation: 08/09/2022
-    Last revision: 24/03/2025
+    Last revision: 24/07/2025
     """
 
     __slots__ = {'_volume', '_gradient', '_mask', '_brush', '_vbrush', '_roi', '_undo', '_undolifo', '_redolifo',
@@ -6044,6 +6044,10 @@ class SisypheROIDraw(object):
                 fill = sitkGetImageFromArray(np)
                 fill.SetOrigin(img.GetOrigin())
                 fill.SetDirection(img.GetDirection())
+                # < Revision 24/07/2025
+                # bug fix, images self._roi.getSITKImage() and fill should have the same spacing
+                fill.SetSpacing(self._roi.getSITKImage().GetSpacing())
+                # Revision 24/07/2025 >
                 img = img | fill
                 self._updateSliceFromSITKImage(img, sindex, dim)
                 if self._undo: self.appendSliceToLIFO(sindex, dim)
@@ -6069,6 +6073,10 @@ class SisypheROIDraw(object):
                 fill = sitkGetImageFromArray(np)
                 fill.SetOrigin(self._roi.getSITKImage().GetOrigin())
                 fill.SetDirection(self._roi.getSITKImage().GetDirection())
+                # < Revision 24/07/2025
+                # bug fix, images self._roi.getSITKImage() and fill should have the same spacing
+                fill.SetSpacing(self._roi.getSITKImage().GetSpacing())
+                # Revision 24/07/2025 >
                 img = self._roi.getSITKImage() | fill
                 self._updateRoiFromSITKImage(img)
                 if self._undo: self.appendVolumeToLIFO()
