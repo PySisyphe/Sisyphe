@@ -3,11 +3,14 @@ External packages/modules
 -------------------------
 """
 
+import sys
+
 from os import getcwd
 from os import remove
 from os import chdir
 from os import mkdir
 from os import rmdir
+from os.path import getmtime
 
 from shutil import rmtree
 from shutil import copy
@@ -50,7 +53,7 @@ Functions
     - installFromHost
     - updatePySisypheToNewerVersion
     
-Last revision: 11/07/2025
+Last revision: 24/07/2025
 """
 
 def downloadFromHost(urls: str | list[str],
@@ -147,7 +150,20 @@ def installFromHost(urls: str | list[str],
                 dst = join(dst, base)
                 if not exists(dst): mkdir(dst)
                 if wait is not None: wait.setInformationText('Copy {}...'.format(basename(src)))
-                copy(src, dst)
+                # < Revision 24/07/2024
+                # Copy src only if the file is more recent
+                # copy(src, dst)
+                ext = splitext(src)[1]
+                if sys.platform == 'win32' and ext == '.so':
+                    remove(src)
+                    continue
+                elif sys.platform == 'darwin' and ext == '.pyd':
+                    remove(src)
+                    continue
+                if exists(dst):
+                    if getmtime(src) > getmtime(dst): copy(src, dst)
+                else: copy(src, dst)
+                # Revision 24/07/2024 >
                 remove(src)
             elif isdir(file): folders.append(file)
             if wait is not None: wait.incCurrentProgressValue()
@@ -177,13 +193,19 @@ def updatePySisyphe(wait: DialogWait | None = None) -> None:
                 doc = minidom.parse(filename)
                 root = doc.documentElement
                 if root.nodeName == 'host' and root.getAttribute('version') == '1.0':
-                    section = doc.getElementsByTagName('source')
+                    updatesec = 'updatepy'
+                    if hasattr(sys, '_MEIPASS'):
+                        if sys.platform == 'win32': updatesec = 'updatepyc'
+                    section = doc.getElementsByTagName(updatesec)
                     if len(section) > 0:
                         section = section[0]
                         url = section.getAttribute('url')
                 if url is not None and url != '':
                     try:
                         with TemporaryDirectory() as temp:
-                            installFromHost(url[1], temp, dst, info='version {}'.format(version), wait=wait)
+                            # < Revision 24/07/2025
+                            # installFromHost(url[1], temp, dst, info='version {}'.format(version), wait=wait)
+                            installFromHost(url, temp, dst, info='version {}'.format(version), wait=wait)
+                            # Revision 24/07/2025 >
                     except: raise ConnectionError('PySisyphe update failed.')
     else: raise ConnectionError('Failed to connect to host.')
