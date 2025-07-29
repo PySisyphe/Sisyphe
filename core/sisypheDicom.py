@@ -3301,14 +3301,20 @@ class ImportFromRTStruct(ImportFromDicom):
                     # ds = read_file(filename, stop_before_pixels=True, specific_tags=tags)
                     ds = dcmread(filename, stop_before_pixels=True, specific_tags=tags)
                     # Revision 07/03/2025 >
-                    for i in range(ds['StructureSetROISequence'].VM):
+                    # < Revision 29/07/2025
+                    # bug fix related to pydicom version
+                    # Since version 3.0.1, the VM attribute of a sequence (SQ) is always 1. To get the number of
+                    # elements in a sequence (SQ), use len(DataElement.value).
+                    # for i in range(ds['StructureSetROISequence'].VM): (is no longer functional with pydicom 3.0.1)
+                    for i in range(len(ds['StructureSetROISequence'].value)):
                         img.fill(0)
                         sq = ds['StructureSetROISequence']
                         name = sq[i][0x3006, 0x0026].value
                         sq = ds['ROIContourSequence']
                         color = sq[i][0x3006, 0x002a].value
                         # ROIContourSequence
-                        for j in range(sq[i][0x3006, 0x0040].VM):
+                        # for j in range(sq[i][0x3006, 0x0040].VM): (is no longer functional with pydicom 3.0.1)
+                        for j in range(len(sq[i][0x3006, 0x0040].value)):
                             sqc = sq[i][0x3006, 0x0040][j]
                             if sqc[0x3006, 0x0042].value == 'CLOSED_PLANAR':
                                 SOPInstanceUID = sqc[0x3006, 0x0016][0][0x0008, 0x1155].value
@@ -3352,6 +3358,7 @@ class ImportFromRTStruct(ImportFromDicom):
                             roi.saveAs(savename)
                             if QApplication.instance() is not None: QApplication.processEvents()
                         self._rtroi.append(roi)
+                # Revision 29/07/2025 >
                 if getdirs is False:
                     self._refvol.setOrigin()
                     self._refvol.setDirections()
