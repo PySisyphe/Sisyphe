@@ -3103,7 +3103,7 @@ class ImportFromRTStruct(ImportFromDicom):
     object -> ImportFromDicom -> ImportFromRTStruct
 
     Creation: 08/09/2022
-    Last revision: 07/03/2025
+    Last revision: 29/07/2025
     """
     __slots__ = ['_rtstructfile', '_rtroi']
 
@@ -3284,7 +3284,11 @@ class ImportFromRTStruct(ImportFromDicom):
         """
         if not self.isEmpty():
             if self.hasRTStructFilename():
-                super().execute(progress, getdirs=getdirs)
+                # < Revision 29/07/2025
+                # bug fix, keep dicom origin for correct world coordinates to voxel coordinates conversion
+                # super().execute(progress, getdirs=getdirs)
+                super().execute(progress, getdirs=True)
+                # < Revision 29/07/2025
                 self._rtroi.clear()
                 iudlist = [v[0] for v in self._reflist]
                 npsize = self._refvol.getSize()[::-1]
@@ -3637,7 +3641,7 @@ class ExportToRTStruct(object):
             dsrtstudy = Dataset()
             # dsrtstudy[0x0008, 0x1150].value = '1.2.840.10008.3.1.2.3.1'             # Referenced SOP Class UID
             # dsrtstudy[0x0008, 0x1155].value = gen.getCurrentInstanceUID()           # Referenced SOP Instance UID
-            dsrtstudy.add_new((0x0008, 0x1150), dictionary_VR((0x0008, 0x1150)), '1.2.840.10008.3.1.2.3.1' )
+            dsrtstudy.add_new((0x0008, 0x1150), dictionary_VR((0x0008, 0x1150)), '1.2.840.10008.3.1.2.3.1')
             dsrtstudy.add_new((0x0008, 0x1155), dictionary_VR((0x0008, 0x1155)), gen.getCurrentInstanceUID())
             dsrtseries = Dataset()
             # dsrtseries[0x0020, 0x000e].value = self._refseriesuid                   # Series Instance UID
