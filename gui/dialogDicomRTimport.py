@@ -13,7 +13,7 @@ from os.path import join
 from os.path import exists
 from os.path import dirname
 from os.path import basename
-from os.path import splitext
+from os.path import isfile
 
 from glob import glob
 
@@ -31,7 +31,7 @@ from PyQt5.QtWidgets import QApplication
 # < Revision 07/03/2025
 from pydicom import dcmread as read_file
 # Revision 07/03/2025 >
-from pydicom.misc import is_dicom
+# from pydicom.misc import is_dicom
 
 from SimpleITK import sitkFloat32
 from SimpleITK import Cast as sitkCast
@@ -39,6 +39,7 @@ from SimpleITK import sitkLinear
 from SimpleITK import Euler3DTransform
 from SimpleITK import ResampleImageFilter
 
+from Sisyphe.core.sisypheImageIO import isDicom
 from Sisyphe.core.sisypheConstants import getRegularDirections
 from Sisyphe.core.sisypheConstants import getDicomExt
 from Sisyphe.core.sisypheVolume import SisypheVolume
@@ -70,6 +71,8 @@ class DialogRTimport(QDialog):
     ~~~~~~~~~~~
 
     QDialog -> DialogRTimport
+
+    Last revision: 31/07/2025
     """
 
     # Special method
@@ -90,7 +93,7 @@ class DialogRTimport(QDialog):
         # noinspection PyTypeChecker
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
-        self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.50))
+        self.setMinimumSize(int(screen.width() * 0.50), int(screen.height() * 0.50))
 
         self._size = None
         self._spacing = None
@@ -241,19 +244,6 @@ class DialogRTimport(QDialog):
         self._spacing = None
         self._origin = None
 
-    @classmethod
-    def _suffixDigitDataSort(cls, filename):
-        name = splitext(filename)[0]
-        r = name.split('.')[-1]
-        if r.isdigit(): return int(r)
-        r = name.split('-')[-1]
-        if r.isdigit(): return int(r)
-        r = name.split('-')[-1]
-        if r.isdigit(): return int(r)
-        r = name.split('#')[-1]
-        if r.isdigit(): return int(r)
-        return filename
-
     def _updateSeries(self, images):
         if isinstance(images, dict):
             if len(images) > 0:
@@ -270,28 +260,36 @@ class DialogRTimport(QDialog):
                         itemseries.setCheckState(0, Qt.Checked)
                         if keyseries == 'rtstruct':
                             itemseries.setText(0, 'RTStruct')
-                            itemseries.setData(0, Qt.UserRole, 'RTStruct')
+                            # itemseries.setData(0, Qt.UserRole, 'RTStruct')
                         elif keyseries == 'rtdose':
                             itemseries.setText(0, 'RTDose')
-                            itemseries.setData(0, Qt.UserRole, 'RTDose')
+                            # itemseries.setData(0, Qt.UserRole, 'RTDose')
                         else:
                             itemseries.setText(0, 'Series UID: {}'.format(keyseries))
-                            itemseries.setData(0, Qt.UserRole, 'Series')
+                            # itemseries.setData(0, Qt.UserRole, 'Series')
                         itemref.addChild(itemseries)
                         for filename in images[keyref][keyseries]:
                             itemfile = QTreeWidgetItem(itemseries)
                             if keyseries in ('rtstruct', 'rtdose'):
                                 itemfile.setFlags(itemfile.flags() | Qt.ItemIsUserCheckable)
                                 itemfile.setCheckState(0, Qt.Checked)
+                            else: filename = filename[1]
                             itemfile.setText(0, basename(filename))
+                            itemfile.setData(0, Qt.UserRole, dirname(filename))
                             itemseries.addChild(itemfile)
                         # itemseries.sortChildren(0, Qt.AscendingOrder)
         else: raise TypeError('parameter type {} is not dict.'.format(type(images)))
 
     def _newdir(self):
+        # < Revision 30/07/2025
         folder = self._dir.getPath()
-        folder = join(folder, self._filter.currentText())
-        filenames = glob(folder)
+        if self._filter.currentText() == '*': filt = '**'
+        else: filt = self._filter.currentText()
+        # folder = join(folder, self._filter.currentText())
+        folder = join(folder, filt)
+        # filenames = glob(folder)
+        filenames = glob(folder, recursive=True)
+        # Revision 30/07/2025 >
         images = dict()
         if filenames:
             n = len(filenames)
@@ -308,7 +306,7 @@ class DialogRTimport(QDialog):
                 try:
                     for filename in filenames:
                         frameref = None
-                        if is_dicom(filename):
+                        if isfile(filename) and isDicom(filename):
                             ds = read_file(filename, stop_before_pixels=True)
                             modality = ds['Modality'].value
                             series = ds['SeriesInstanceUID'].value
@@ -331,25 +329,39 @@ class DialogRTimport(QDialog):
                                             if 'rtdose' not in images[frameref]: images[frameref]['rtdose'] = list()
                                             images[frameref]['rtdose'].append(filename)
                                 elif modality in getDicomImageModalities():
-                                    if frameref not in images: images[frameref] = dict()
-                                    if series not in images[frameref]: images[frameref][series] = list()
-                                    images[frameref][series].append(filename)
+                                    # < Revision 31/07/2025
+                                    # if frameref not in images: images[frameref] = dict()
+                                    # if series not in images[frameref]: images[frameref][series] = list()
+                                    # images[frameref][series].append(filename)
+                                    if 'InstanceNumber' in ds:
+                                        if frameref not in images: images[frameref] = dict()
+                                        if series not in images[frameref]: images[frameref][series] = list()
+                                        images[frameref][series].append((int(ds['InstanceNumber'].value), filename))
+                                    # Revision 31/07/2025 >
                                 progress.incCurrentProgressValue()
-                finally:
-                    progress.hide()
+                finally: progress.hide()
         # Keep series with dicom reference volume + rtstruct and/or rtdose
         if len(images) > 0:
-            for key in images:
-                tag = 0
-                if 'rtstruct' in images[key]: tag += 1
-                if 'rtdose' in images[key]: tag += 1
-                if tag == 0 or len(images[key]) == tag: del images[key]
-                # sort filenames by numeric suffix if available
-                for key2 in images[key]:
-                    images[key][key2].sort(key=lambda v: self._suffixDigitDataSort(v))
+            for ref in images:
+                rtdose = False
+                rtstruct = False
+                rtref = False
+                for series in images[ref]:
+                    if series == 'rtstruct': rtstruct = True
+                    elif series == 'rtdose': rtdose = True
+                    else:
+                        if len(images[ref][series]) > 0:
+                            images[ref][series].sort()
+                            rtref = True
+                        else: del images[ref][series]
+                if (rtstruct or rtdose) and rtref is False: del images[ref]
+                elif rtref is False:
+                    messageBox(self, 'DICOM RT import', text='{}\nA reference image is missing.'.format(ref))
+                elif (rtstruct or rtdose) is False:
+                    messageBox(self, 'DICOM RT import', text='{}\nRTSTRUCT or RTDOSE image is missing.'.format(ref))
         # Update QTreeWidget
         if len(images) > 0: self._updateSeries(images)
-        self._dir.clear(signal=False)
+        else: self._dir.clear(signal=False)
 
     @classmethod
     def _convertRTStruct(cls, filename, dcmfiles):
@@ -406,7 +418,10 @@ class DialogRTimport(QDialog):
                 identity = getIdentityFromDicom(filename)
                 acq = getAcquisitionFromDicom(filename)
                 vol.setSITKImage(img)
-                vol.setOrigin()
+                # < Revision 30/07/2025
+                # vol.setOrigin()
+                vol.setDefaultOrigin()
+                # Revision 30/07/2025 >
                 vol.identity = identity
                 vol.acquisition = acq
                 # Sisyphe write
@@ -442,7 +457,10 @@ class DialogRTimport(QDialog):
             identity = getIdentityFromDicom(filenames[0])
             acq = getAcquisitionFromDicom(filenames[0])
             vol.setSITKImage(img)
-            vol.setOrigin()
+            # < Revision 31/07/2025
+            # vol.setOrigin()
+            vol.setDefaultOrigin()
+            # Revision 31/07/2025 >
             vol.identity = identity
             vol.acquisition = acq
             # Sisyphe write
@@ -481,28 +499,33 @@ class DialogRTimport(QDialog):
                                 child = item.child(j)
                                 if child.checkState(0) > 0:
                                     # convert RTStruct
-                                    if child.data(0, Qt.UserRole) == 'RTStruct':
+                                    # if child.data(0, Qt.UserRole) == 'RTStruct':
+                                    if child.text(0) == 'RTStruct':
                                         n3 = child.childCount()
                                         if n3 > 0:
                                             for k in range(n3):
                                                 child2 = child.child(k)
                                                 if child2.checkState(0) > 0:
-                                                    rtsructfiles.append(join(folder, child2.text(0)))
+                                                    # rtsructfiles.append(join(folder, child2.text(0)))
+                                                    rtsructfiles.append(join(child2.data(0, Qt.UserRole), child2.text(0)))
                                     # convert RTDose
-                                    elif child.data(0, Qt.UserRole) == 'RTDose':
+                                    # elif child.data(0, Qt.UserRole) == 'RTDose':
+                                    elif child.text(0) == 'RTDose':
                                         n3 = child.childCount()
                                         if n3 > 0:
                                             for k in range(n3):
                                                 child2 = child.child(k)
                                                 if child2.checkState(0) > 0:
-                                                    rtdosefiles.append(join(folder, child2.text(0)))
+                                                    # rtdosefiles.append(join(folder, child2.text(0)))
+                                                    rtdosefiles.append(join(child2.data(0, Qt.UserRole), child2.text(0)))
                                     # convert DICOM reference series
                                     else:
                                         n3 = child.childCount()
                                         if n3 > 0:
                                             for k in range(n3):
                                                 child2 = child.child(k)
-                                                dcmfiles.append(join(folder, child2.text(0)))
+                                                # dcmfiles.append(join(folder, child2.text(0)))
+                                                dcmfiles.append(join(child2.data(0, Qt.UserRole), child2.text(0)))
             # Convert
             n = len(rtdosefiles) + len(rtsructfiles) + int(len(dcmfiles) > 0)
             if n > 0:

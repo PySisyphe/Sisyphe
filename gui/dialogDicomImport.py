@@ -88,7 +88,7 @@ class DialogDicomImport(QDialog):
         # noinspection PyTypeChecker
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
-        self.setMinimumSize(int(screen.width() * 0.33), int(screen.height() * 0.50))
+        self.setMinimumSize(int(screen.width() * 0.50), int(screen.height() * 0.50))
 
         # Init QLayout
 
