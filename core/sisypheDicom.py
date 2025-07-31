@@ -3305,7 +3305,7 @@ class ImportFromRTStruct(ImportFromDicom):
                     # bug fix related to pydicom version
                     # Since version 3.0.1, the VM attribute of a sequence (SQ) is always 1. To get the number of
                     # elements in a sequence (SQ), use len(DataElement.value).
-                    # for i in range(ds['StructureSetROISequence'].VM): (is no longer functional with pydicom 3.0.1)
+                    # for i in range(ds['StructureSetROISequence'].VM):
                     for i in range(len(ds['StructureSetROISequence'].value)):
                         img.fill(0)
                         sq = ds['StructureSetROISequence']
@@ -3313,51 +3313,52 @@ class ImportFromRTStruct(ImportFromDicom):
                         sq = ds['ROIContourSequence']
                         color = sq[i][0x3006, 0x002a].value
                         # ROIContourSequence
-                        # for j in range(sq[i][0x3006, 0x0040].VM): (is no longer functional with pydicom 3.0.1)
-                        for j in range(len(sq[i][0x3006, 0x0040].value)):
-                            sqc = sq[i][0x3006, 0x0040][j]
-                            if sqc[0x3006, 0x0042].value == 'CLOSED_PLANAR':
-                                SOPInstanceUID = sqc[0x3006, 0x0016][0][0x0008, 0x1155].value
-                                suffix = int(SOPInstanceUID.split('.')[-1])
-                                cz = iudlist.index(suffix)
-                                c = sqc[0x3006, 0x0050].value
-                                cx = list()
-                                cy = list()
-                                for k in range(len(c) // 3):
-                                    idx = k * 3
-                                    p = self._refvol.getVoxelCoordinatesFromWorldCoordinates(c[idx:idx+3])
-                                    cx.append(p[0])
-                                    cy.append(p[1])
-                                contour = list(zip(cy, cx))
-                                slc = polygon2mask(npsize[-2:], contour)
-                                img[cz, :, :] = img[cz, :, :] + slc.astype('uint8')
-                            else: raise ValueError('ROI geometry {} is not supported.'.format(sqc[0x3006, 0x0042].value))
-                        # Numpy to SimpleITK image
-                        sitkimg = GetImageFromArray(img)
-                        sitkimg.SetSpacing(self._refvol.getSpacing())
-                        sitkimg.SetDirection(self._refvol.getDirections())
-                        sitkimg.SetOrigin(self._refvol.getOrigin())
-                        # SimpleITK to VTK orientation
-                        sitkimg = flipImageToVTKDirectionConvention(sitkimg)
-                        sitkimg = convertImageToAxialOrientation(sitkimg)[0]
-                        # SimpleITK to SisypheROI
-                        roi = SisypheROI(sitkimg)
-                        roi.setReferenceID(self._refvol.getID())
-                        roi.setName(name)
-                        roi.setColor(int(color[0]), int(color[1]), int(color[2]))
-                        if getdirs is False:
-                            roi.setOrigin()
-                            roi.setDirections()
-                        # Save SisypheROI
-                        if self._savetag:
-                            if self._folder != '': folder = self._folder
-                            else: folder = dirname(filename)
-                            savename = join(folder, name) + SisypheROI.getFileExt()
-                            if progress: progress.setInformationText('Save {}.'.format(basename(savename)))
-                            # noinspection PyTypeChecker
-                            roi.saveAs(savename)
-                            if QApplication.instance() is not None: QApplication.processEvents()
-                        self._rtroi.append(roi)
+                        # for j in range(sq[i][0x3006, 0x0040].VM):
+                        if (0x3006, 0x0040) in sq[i]:
+                            for j in range(len(sq[i][0x3006, 0x0040].value)):
+                                sqc = sq[i][0x3006, 0x0040][j]
+                                if sqc[0x3006, 0x0042].value == 'CLOSED_PLANAR':
+                                    SOPInstanceUID = sqc[0x3006, 0x0016][0][0x0008, 0x1155].value
+                                    suffix = int(SOPInstanceUID.split('.')[-1])
+                                    cz = iudlist.index(suffix)
+                                    c = sqc[0x3006, 0x0050].value
+                                    cx = list()
+                                    cy = list()
+                                    for k in range(len(c) // 3):
+                                        idx = k * 3
+                                        p = self._refvol.getVoxelCoordinatesFromWorldCoordinates(c[idx:idx+3])
+                                        cx.append(p[0])
+                                        cy.append(p[1])
+                                    contour = list(zip(cy, cx))
+                                    slc = polygon2mask(npsize[-2:], contour)
+                                    img[cz, :, :] = img[cz, :, :] + slc.astype('uint8')
+                                else: raise ValueError('ROI geometry {} is not supported.'.format(sqc[0x3006, 0x0042].value))
+                            # Numpy to SimpleITK image
+                            sitkimg = GetImageFromArray(img)
+                            sitkimg.SetSpacing(self._refvol.getSpacing())
+                            sitkimg.SetDirection(self._refvol.getDirections())
+                            sitkimg.SetOrigin(self._refvol.getOrigin())
+                            # SimpleITK to VTK orientation
+                            sitkimg = flipImageToVTKDirectionConvention(sitkimg)
+                            sitkimg = convertImageToAxialOrientation(sitkimg)[0]
+                            # SimpleITK to SisypheROI
+                            roi = SisypheROI(sitkimg)
+                            roi.setReferenceID(self._refvol.getID())
+                            roi.setName(name)
+                            roi.setColor(int(color[0]), int(color[1]), int(color[2]))
+                            if getdirs is False:
+                                roi.setOrigin()
+                                roi.setDirections()
+                            # Save SisypheROI
+                            if self._savetag:
+                                if self._folder != '': folder = self._folder
+                                else: folder = dirname(filename)
+                                savename = join(folder, name) + SisypheROI.getFileExt()
+                                if progress: progress.setInformationText('Save {}.'.format(basename(savename)))
+                                # noinspection PyTypeChecker
+                                roi.saveAs(savename)
+                                if QApplication.instance() is not None: QApplication.processEvents()
+                            self._rtroi.append(roi)
                 # Revision 29/07/2025 >
                 if getdirs is False:
                     self._refvol.setOrigin()

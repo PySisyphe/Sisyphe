@@ -148,7 +148,7 @@ IO functions
     - writeToJSON(img: SimpleITK.Image, filename: str)
     - writeToNumpy(img: SimpleITK.Image, filename: str)
 
-    Last revision: 30/04/2024
+    Last revision: 31/07/2025
 """
 
 
@@ -172,8 +172,12 @@ def isDicom(f: str) -> bool:
         file = open(f, 'rb')
         try:
             file.seek(128, 0)
-            r = file.read(4)
-            return r == b'DICM'
+            hdr = file.read(4)
+            # < Revision 31/07/2025
+            # bug fix
+            # return r == b'DICM'
+            r = hdr == b'DICM'
+            # Revision 31/07/2025 >
         except: pass
         finally:
             file.close()
