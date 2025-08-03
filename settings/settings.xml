@@ -173,4 +173,13 @@
 		<CurrentPath vartype="dir">/Users/Jean-Albert/.PySisyphe/database</CurrentPath>
 		<DefaultPath vartype="dir">/Users/Jean-Albert/.PySisyphe/database</DefaultPath>
 	</Database>
+	<DicomHost>
+		<AET label="DICOM SCP host AE title" vartype="str">ANY-SCP</AET>
+		<URL label="DICOM SCP host URL/IP" vartype="str">www.dicomserver.co.uk</URL>
+		<Port label="DICOM SCP host Port" varmax="65535" varmin="1" vartype="int">11112</Port>
+		<Login label="User login required" vartype="bool">False</Login>
+		<Username vartype="str"></Username>
+		<Password vartype="str"></Password>
+		<DicomFolder vartype="dir"></DicomFolder>
+	</DicomHost>
 </settings>

@@ -1,5 +1,32 @@
 <?xml version="1.0" ?>
 <tooltips version="1.0">
+	<DicomHost>
+		<Title>
+			The DICOM host is a Service Class Provider (SCP) and must support 
+			the storage of SOP Class instances (Storage Service Class), 
+			verification of DICOM connectivity (Verification Service Class) 
+			and querying and retrieval of managed SOP instances (Query/Retrieve 
+			Service Class).
+
+			This DICOM SCP server is identified by an AE Title (AET), a URL (or 
+			IP address) and a port. The connection can be secured by a user login
+			and password. These parameters must be obtained from the PACS
+			administrator.
+		</Title>
+		<AET>
+			AE title of the DICOM SCP server (16 bit case sensitive string).
+			Application Entity (AE) is the unique identifier of a DICOM device.
+		</AET>
+		<URL>URL or IP address of the DICOM SCP server</URL>
+		<Port>Port of the DICOM SCP server</Port>
+		<Login>Does the DICOM SCP server require a user login?</Login>
+		<Username>user login</Username>
+		<Password>user password</Password>
+		<DicomFolder>
+			This is the folder used to store images downloaded from the DICOM SCP 
+			server.
+		</DicomFolder>
+	</DicomHost>
 	<ActiveContour>
 		<Title>
 			Active contour level set method (also known as snake) segments 
