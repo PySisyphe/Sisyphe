@@ -63,5 +63,5 @@ PySisyphe is plug-in extensible and provides a fully documented API that gives a
 Download Binary archive
 =======================
 
-- Windows binary [PySisyphe 0.9.1](https://mega.nz/file/MKNmiL5C#tct5UUwrzg9VNP4XcrzjyAQaiIxlK4cmEsqTQN61IH0)
+- Windows binary [PySisyphe 0.9.1](https://mega.nz/file/lGdi2Q4C#5ivCMljBQu2x1jYigBc2NGRSpudmsQMC96p3Y-YldMM)
 - MacOS 11+ intel binary [PySisyphe 0.9.1](https://mega.nz/file/oeUhnQ5C#e80tXG4weYjfx9Rr-oAKi40DsFW4iRXxglckAJ-e08I)
