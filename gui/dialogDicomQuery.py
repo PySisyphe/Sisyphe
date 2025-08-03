@@ -62,6 +62,9 @@ Class hierarchy
 
 _all__ = ['DialogDicomQueryRetrieve']
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 def getDicomDirectory():
     userdir = join(expanduser('~'), '.PySisyphe')
@@ -83,8 +86,9 @@ def handle_store(event):
     ds.file_meta = meta
     ds.is_little_endian = context.transfer_syntax.is_little_endian
     ds.is_implicit_VR = context.transfer_syntax.is_implicit_VR
-    filename = ds.SOPInstanceUID + '.dcm'
-    ds.save_as(join(DialogDicomQueryRetrieve.getDicomFolder(), filename), write_like_original=False)
+    filename = join(DialogDicomQueryRetrieve.getDicomFolder(), ds.SOPInstanceUID + '.dcm')
+    logger.info('Retrieve {} from DICOM SCP host'.format(filename))
+    ds.save_as(filename, write_like_original=False)
     return 0x0000
 
 
@@ -217,7 +221,7 @@ class DialogDicomQueryRetrieve(QDialog):
         if exists(folder): self._folder.open(folder)
         else: self._folder.open(getDicomDirectory())
         self._folder.FieldCleared.connect(lambda _, default=getDicomDirectory(): self._folder.open(default))
-        self._FOLDER = self._folder.getFilename()
+        DialogDicomQueryRetrieve._FOLDER = self._folder.getFilename()
 
         lyout2 = QVBoxLayout()
         lyout2.setSpacing(2)
