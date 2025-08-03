@@ -9,7 +9,6 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
-import sys
 from sys import platform
 
 from os import mkdir
@@ -680,6 +679,7 @@ class WindowSisyphe(QMainWindow):
         self._action['dcmimport'] = submenu.addAction(icimport, 'DICOM Import...')
         self._action['dcmrtimport'] = submenu.addAction(icimport, 'DICOM RT Import...')
         self._action['dcmexport'] = submenu.addAction(icexport, 'DICOM Export...')
+        self._action['dcmquery'] = submenu.addAction(icimport, 'DICOM Query/Retrieve from DICOM SCP Server...')
         submenu.addSeparator()
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
@@ -744,6 +744,7 @@ class WindowSisyphe(QMainWindow):
         self._action['exportnrrd'].triggered.connect(self.exportNrrd)
         self._action['exportvtk'].triggered.connect(self.exportVtk)
         self._action['exportnpy'].triggered.connect(self.exportNumpy)
+        self._action['dcmquery'].triggered.connect(self.queryDicom)
         self._action['dcmexport'].triggered.connect(self.exportDicom)
         self._action['dcmds'].triggered.connect(self.datasetDicom)
         self._action['xdcm'].triggered.connect(self.xmlDicom)
@@ -3133,6 +3134,19 @@ class WindowSisyphe(QMainWindow):
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'DICOM Export dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+
+    def queryDicom(self) -> None:
+        from Sisyphe.gui.dialogDicomQuery import DialogDicomQueryRetrieve
+        self._dialog = DialogDicomQueryRetrieve()
+        if platform == 'win32':
+            try: __main__.updateWindowTitleBarColor(self._dialog)
+            except: pass
+        try:
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDicomQuery.DialogDicomQueryRetrieve]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'DICOM Query Retrieve dialog error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def datasetDicom(self) -> None:
