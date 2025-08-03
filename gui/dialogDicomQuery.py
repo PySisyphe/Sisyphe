@@ -288,6 +288,8 @@ class DialogDicomQueryRetrieve(QDialog):
             self._port = self._settings.getParameterValue('Port')
             self._username = bytes(self._settings.getParameterValue('Username'), 'utf-8')
             self._password = bytes(self._settings.getParameterValue('Password'), 'utf-8')
+            self._wait.open()
+            self._wait.setInformationText('Request from {} DICOM SCP host'.format(self._url))
             ae = AE()
             ae.add_requested_context(Verification)
             ae.add_requested_context(StudyRootQueryRetrieveInformationModelFind)
@@ -352,6 +354,7 @@ class DialogDicomQueryRetrieve(QDialog):
                                 self._study.addTopLevelItem(item)
                                 empty = False
                             elif status.Status == 0:
+                                self._wait.hide()
                                 if empty:
                                     messageBox(self,
                                                title=self.windowTitle(),
@@ -361,20 +364,24 @@ class DialogDicomQueryRetrieve(QDialog):
                                     self._study.sortItems(5, 1)
                                 break
                             else:
+                                self._wait.hide()
                                 messageBox(self,
                                            title=self.windowTitle(),
                                            text='Connection to {} DICOM SCP host timed out, '
                                                 'was aborted or received invalid response'.format(self._url))
                     connect.release()
             elif connect.is_rejected:
+                self._wait.hide()
                 messageBox(self,
                            title=self.windowTitle(),
                            text='Connection to {} DICOM SCP host rejected'.format(self._url))
             elif connect.is_aborted:
+                self._wait.hide()
                 messageBox(self,
                            title=self.windowTitle(),
                            text='Connection to {} DICOM SCP host aborted'.format(self._url))
             else:
+                self._wait.hide()
                 messageBox(self,
                            title=self.windowTitle(),
                            text='Connection to {} DICOM SCP host failed'.format(self._url))
@@ -512,6 +519,7 @@ class DialogDicomQueryRetrieve(QDialog):
                                            text='Connection to {} DICOM SCP host timed out, '
                                                 'was aborted or received invalid response'.format(self._url))
                         self._wait.hide()
+                        # noinspection PyTypeChecker
                         item.setCheckState(0, Qt.Unchecked)
                         connect.release()
                 elif connect.is_rejected:
