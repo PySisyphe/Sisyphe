@@ -5,7 +5,6 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
-import sys
 from sys import platform
 
 from os import getcwd
@@ -2670,6 +2669,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._export = IconPushButton('export.png', size=ListAttributesWidget._VSIZE)
         self._mesh = IconPushButton('roi2mesh.png', size=ListAttributesWidget._VSIZE)
         self._dist = IconPushButton('map.png', size=ListAttributesWidget._VSIZE)
+        self._features = IconPushButton('texture.png', size=ListAttributesWidget._VSIZE)
 
         # noinspection PyUnresolvedReferences
         self._remove.clicked.connect(self.remove)
@@ -2681,18 +2681,22 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._mesh.clicked.connect(self.toMesh)
         # noinspection PyUnresolvedReferences
         self._dist.clicked.connect(self.toDistance)
+        # noinspection PyUnresolvedReferences
+        self._features.clicked.connect(self.features)
 
         self._remove.setToolTip('Remove checked ROI(s)')
         self._duplicate.setToolTip('Duplicate selected ROI')
         self._export.setToolTip('Export checked ROI(s)')
         self._mesh.setToolTip('Conversion of checked ROI(s) to mesh(es)')
         self._dist.setToolTip('Distance map processing from checked ROI(s)')
+        self._features.setToolTip('Checked ROI(s) feature processing')
 
         self._btlayout1.insertWidget(5, self._export)
         self._btlayout1.insertWidget(5, self._remove)
         self._btlayout2.insertWidget(3, self._mesh)
         self._btlayout2.insertWidget(3, self._dist)
         self._btlayout2.insertWidget(3, self._duplicate)
+        self._btlayout2.insertWidget(6, self._features)
 
         self._popup = QMenu()
         # noinspection PyTypeChecker
@@ -2790,6 +2794,8 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._mesh.setFixedSize(size, size)
         self._dist.setIconSize(QSize(size - 8, size - 8))
         self._dist.setFixedSize(size, size)
+        self._features.setIconSize(QSize(size - 8, size - 8))
+        self._features.setFixedSize(size, size)
 
     def getCheckedROI(self):
         rois = list()
@@ -3276,6 +3282,37 @@ class ListROIAttributesWidget(ListAttributesWidget):
             if mainwindow is not None:
                 mainwindow.setStatusBarMessage('Distance map processed from ROI(s).')
     # Revision 25/10/2024 >
+
+    # < Revision 05/08/2025
+    # add toDistance method
+    # noinspection PyProtectedMember
+    def features(self):
+        rois = self.getCheckedROI()
+        if len(rois) > 0:
+            from Sisyphe.gui.dialogTexture import DialogROITexture
+            dialog = DialogROITexture()
+            # Add reference filename to dialog
+            v = self._views.getVolume()
+            dialog.setFilenames(v.getFilename())
+            # Add roi filenames to dialog
+            filenames = list()
+            for roi in rois:
+                roi.save()
+                filenames.append(roi.getFilename())
+            dialog.setROIs(filenames)
+            if platform == 'win32':
+                # noinspection PyProtectedMember
+                DialogROITexture._updateWindowTitleBarColor(dialog)
+            # noinspection PyProtectedMember
+            dialog._files.setVisible(False)
+            # noinspection PyProtectedMember
+            dialog._rois.setVisible(False)
+            screen = QApplication.primaryScreen().geometry()
+            dialog._features.setMinimumHeight(int(screen.height() * 0.50))
+            dialog.adjustSize()
+            dialog.exec()
+        else: messageBox(self, 'ROI(s) texture features', 'No ROI checked.')
+    # Revision 05/08/2025 >
 
     # Qt event
 
