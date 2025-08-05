@@ -849,6 +849,7 @@ class WindowSisyphe(QMainWindow):
         self._action['regmatch'] = submenu.addAction('Regression intensity matching...')
         self._action['signorm'] = submenu.addAction('Intensity normalization...')
         self._action['texture'] = self._menu['func'].addAction(ictexture, 'Texture feature maps...')
+        self._action['texture2'] = self._menu['func'].addAction(ictexture, 'ROI texture features...')
         self._action['bias'] = self._menu['func'].addAction(icbias, 'Bias field correction...')
 
         self._menu['func'].addSeparator()
@@ -892,6 +893,7 @@ class WindowSisyphe(QMainWindow):
         self._action['algmax'].triggered.connect(self.algmax)
         self._action['algebra'].triggered.connect(self.algmath)
         self._action['texture'].triggered.connect(lambda: self.texture())
+        self._action['texture2'].triggered.connect(lambda: self.texture2())
         self._action['mean'].triggered.connect(lambda: self.filterMean())
         self._action['median'].triggered.connect(lambda: self.filterMedian())
         self._action['gaussian'].triggered.connect(lambda: self.filterGaussian())
@@ -3896,6 +3898,19 @@ class WindowSisyphe(QMainWindow):
             except Exception as err:
                 messageBox(self, 'Texture feature maps dialog error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
+
+    def texture2(self):
+        from Sisyphe.gui.dialogTexture import DialogROITexture
+        self._dialog = DialogROITexture()
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        try:
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogTexture.DialogROITexture]')
+            self._dialog.exec()
+            if self._logger is not None: self._logger.info('Dialog close [gui.dialogTexture.DialogROITexture]')
+        except Exception as err:
+            messageBox(self, 'ROI texture features dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def histmatch(self,
                   filenames: str | list[str] | None = None,

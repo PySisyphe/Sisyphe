@@ -226,6 +226,9 @@ class DialogGenericResults(QDialog):
                 hdrs = list()
                 for i in range(tree.columnCount()):  # cols
                     hdr = tree.headerItem().text(i)
+                    # < Revision 05/08/2025
+                    hdr = hdr.replace('\n', ' ')
+                    # Revision 05/08/2025 >
                     hdrs.append(hdr)
                     df[hdr] = list()
                 for i in range(tree.topLevelItemCount()):  # rows

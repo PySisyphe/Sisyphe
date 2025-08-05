@@ -27,6 +27,7 @@ import vtk
 from numpy.version import version as vnumpy
 from matplotlib import __version__ as vmplt
 from pydicom import __version__ as vpdcm
+from pynetdicom import __version__ as vpndcm
 from SimpleITK import __version__ as vsitk
 from ants import __version__ as vants
 from dipy import __version__ as vdipy
@@ -197,7 +198,7 @@ class DialogSplash(QDialog):
         self._info.setFixedWidth(1000)
         self._info.setWordWrap(True)
         self._info.setText('PySisyphe {} (2021), developed by Jean-Albert Lotterie, contact: pysisyphe@gmail.com\n\n'
-                           'Python {}, Qt {}, Numpy {}, Pandas {}, Matplotlib {}, Pydicom {}, '
+                           'Python {}, Qt {}, Numpy {}, Pandas {}, Matplotlib {}, Pydicom {}, Pynetdicom {}, '
                            'SimpleITK {}, ITK {}, VTK {}, ANTs {}, Dipy {}, Nibabel {}, Nilearn {}, pyradiomics {}, '
                            'Scikit-image {}, SciPy {}, python-docx {}, fpdf {}, qtconsole {}\n\n'
                            'User: {}, Home path: {}\n'
@@ -209,7 +210,7 @@ class DialogSplash(QDialog):
                            'Primary disk {}, {} file system, {:.1f} '
                            'GBytes, {:.1f}% free'.format(versionSisyphe,
                                                          vpython, PYQT_VERSION_STR, vnumpy,
-                                                         vpandas, vmplt, vpdcm,
+                                                         vpandas, vmplt, vpdcm, vpndcm,
                                                          vsitk, vitk, vvtk, vants, vdipy, vnb, vnl, vradiomics[1:],
                                                          vski, vscipy, vdocx, vpdf, vcons,
                                                          vuser, vhome, vsysname,
