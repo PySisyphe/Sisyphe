@@ -1,0 +1,108 @@
+Version history
+~~~~~~~~~~~~~~~
+
+version 0.9.1, build 05/08/2025
+-------------------------------
+
+**new file**
+	gui/darkroi/texture.png
+	gui/lightroi/texture.png
+**new external module**
+	pynetdicom 3.0.4
+**new module**
+	gui.dialogDicomQuery
+**new class**
+	gui.dialogDicomQuery.DialogDicomQueryRetrieve
+	gui.dialogTexture.Dialog.DialogROITexture
+**new method**
+	gui.windowSisyphe.WindowSisyphe.queryDicom
+	gui.windowSisyphe.WindowSisyphe.texture2
+**new function**
+	gui.dialogDicomQuery.getDicomDirectory
+	gui.dialogDicomQuery.handle_store
+**update file**
+	settings/settings.xml
+		add DicomHost section
+	settings/tooltips.xml
+		add DicomHost section
+**upgrade external module**
+	pydicom, upgrade 2.3.1 to 3.0.1
+		generate a bug in core.sisypheDicom.ImportFromRTStruct.execute() method (see bug fix in update method)
+**update module**
+	core.sisypheDicom
+	gui.dialogSplash
+	gui.dialogDicomRTImport
+	core.sisypheImageIO
+	gui.dialogGenericResults
+	gui.windowSisyphe
+	gui.attributesWidgets
+	gui.dialogSplash
+**update class**
+	core.sisypheDicom.ImportFromRTStruct
+		update execute() method
+	gui.dialogDicomRTImport.DialogRTimport
+		update _convert() method
+	gui.dialogGenericResults.DialogGenericResults
+		update _getDataFrame() method
+	gui.windowSisyphe.WindowSisyphe
+		add queryDicom() method to exec gui.dialogDicomQuery.DialogDicomQueryRetrieve dialog
+		add texture2() method to exec gui.dialogTexture.Dialog.DialogROITexture dialog
+	gui.attributesWidgets.ListROIAttributesWidget
+		add features() method to exec gui.dialogTexture.Dialog.DialogROITexture dialog
+		update __init__() method
+	gui.dialogSplash.DialogSplash
+		update __init__() method
+**update method**
+	core.sisypheDicom.ImportFromRTStruct.execute()
+		bug fix, since version 3.0.1 of pydicom, the VM attribute of a sequence (SQ) is always 1, 
+		to get the number of elements in a sequence (SQ), use len(DataElement.value)
+		bug fix, set reference volume origin to default (0.0, 0.0, 0.0)
+		bug fix, test if the dicom ROIContourSequence field exists
+		bug fix, add multiple folders management
+	gui.dialogDicomRTImport.DialogRTimport._convert()
+	gui.dialogGenericResults.DialogGenericResults._getDataFrame()
+		replace \n by space of the dataFrame header row
+	gui.attributesWidgets.ListROIAttributesWidget.__init__()
+		add features IconPushButton (_features)
+	gui.dialogSplash.DialogSplash.__init__()
+		display pynetdicom version in dialog splash
+**update function**
+	core.sisypheImageIO.isDicom
+		bug fix, return value correction, str to bool
+
+version 0.9.1, build 28/08/2025
+-------------------------------
+
+**update module**
+	widgets.attributesWidget
+	widgets.tabToolsWidgets
+**update class**
+	widgets.attributesWidget.ItemMeshAttributesWidget
+	widgets.attributesWidget.ItemToolAttributesWidget
+	widgets.attributesWidget.ItemBundleAttributesWidget
+	widgets.attributesWidget.ListMeshAttributesWidget
+	widgets.attributesWidget.ListToolAttributesWidget
+	widgets.attributesWidget.ListBundleAttributesWidget
+	widgets.tabToolsWidgets.TabROIToolsWidget
+	widgets.tabToolsWidgets.TabTrackingWidget
+**update method**
+	widgets.attributesWidget.ItemMeshAttributesWidget.settings()
+	widgets.attributesWidget.ItemToolAttributesWidget.properties()
+	widgets.attributesWidget.ItemToolAttributesWidget.target()
+	widgets.attributesWidget.ItemToolAttributesWidget.length()
+	widgets.attributesWidget.ItemBundleAttributesWidget._editColor()
+	widgets.attributesWidget.ListMeshAttributesWidget.addIsosurface()
+	widgets.attributesWidget.ListToolAttributesWidget.newHandle()
+	widgets.attributesWidget.ListToolAttributesWidget.newLine()
+	widgets.attributesWidget.ListToolAttributesWidget.duplicate()
+	widgets.attributesWidget.ListToolAttributesWidget.features()
+	widgets.attributesWidget.ListToolAttributesWidget.features2()
+	widgets.attributesWidget.ListBundleAttributesWidget.dissection()
+	widgets.attributesWidget.ListBundleAttributesWidget.filter()
+	widgets.attributesWidget.ListBundleAttributesWidget.centroid()
+	widgets.attributesWidget.ListBundleAttributesWidget.cluster()
+	widgets.attributesWidget.ListBundleAttributesWidget.statistics()
+	widgets.tabToolsWidgets.TabROIToolsWidget._dialogActiveContour()
+	widgets.tabToolsWidgets.TabTrackingWidget.atlas()
+	widgets.tabToolsWidgets.TabTrackingWidget.dissection()
+		update dialog title bar color for Win32 platform
