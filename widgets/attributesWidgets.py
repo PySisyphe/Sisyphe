@@ -660,7 +660,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
 
     QFrame -> ItemAttributesWidget -> ItemMeshAttributesWidget
 
-    Last revision 19/03/2025
+    Last revision 28/08/2025
     """
 
     # Special method
@@ -1000,6 +1000,14 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
     def settings(self):
         self._dialogprop.setProperties(self._item.getActor().GetProperty())
         if self._logger is not None: self._logger.info('Dialog exec [gui.dialogMeshProperties.DialogMeshProperties]')
+        # < Revision 28/08/2025
+        # update title bar color of the dialog box for Win32 platform
+        if platform == 'win32':
+            import pywinstyles
+            cl = self.palette().base().color()
+            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+            pywinstyles.change_header_color(self._dialogprop, c)
+        # Revision 28/08/2025 >
         self._dialogprop.exec()
         c = self._item.getActor().GetProperty().GetColor()
         self._color.setFloatColor(c[0], c[1], c[2])
@@ -1147,7 +1155,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
     QFrame -> ItemAttributesWidget -> ItemToolAttributesWidget
 
-    Last revision: 19/03/2025
+    Last revision: 28/08/2025
     """
 
     # Special method
@@ -1611,6 +1619,14 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             settings.setParameterVisibility('PointSize', wline)
             settings.setParameterVisibility('LineWidth', wline)
             self._logger.info('Dialog exec [gui.dialogSettings.DialogSetting - Tool properties]')
+            # < Revision 28/08/2025
+            # update title bar color of the dialog box for Win32 platform
+            if platform == 'win32':
+                import pywinstyles
+                cl = self.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._dialogprop, c)
+            # Revision 28/08/2025 >
             if self._dialogprop.exec() == QDialog.Accepted:
                 txt = settings.getParameterValue('TextTarget')
                 if txt is None: txt = 'Target'
@@ -1677,6 +1693,14 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         if self.hasViewCollection():
             self._dialogtarget.setTrajectoryFieldsVisibility(isinstance(self._item, LineWidget))
             self._logger.info('Dialog exec [gui.dialogTarget.DialogTarget]')
+            # < Revision 28/08/2025
+            # update title bar color of the dialog box for Win32 platform
+            if platform == 'win32':
+                import pywinstyles
+                cl = self.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._dialogtarget, c)
+            # Revision 28/08/2025 >
             if self._dialogtarget.exec() == QDialog.Accepted:
                 r = self._dialogtarget.getAttributes()
                 self._views.getVolumeView().moveTool(self._item, target=r['target'], entry=r['entry'])
@@ -1711,6 +1735,14 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 settings.getParameterWidget('ExtendEntry').setValue(0.0)
                 settings.getParameterWidget('ExtendTarget').setValue(0.0)
                 self._logger.info('Dialog exec [gui.dialogFromXml.DialogFromXml - Tool length]')
+                # < Revision 28/08/2025
+                # update title bar color of the dialog box for Win32 platform
+                if platform == 'win32':
+                    import pywinstyles
+                    cl = self.palette().base().color()
+                    c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                    pywinstyles.change_header_color(self._dialoglength, c)
+                # Revision 28/08/2025 >
                 if self._dialoglength.exec() == QDialog.Accepted:
                     view = self._views.getOrthogonalSliceTrajectoryViewWidget()
                     e1 = settings.getParameterValue('ExtendEntry')
@@ -1792,6 +1824,14 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 if vol.getACPC().hasACPC(): w.addItem('ACPC')
                 # settings.getParameterWidget().setVisible(vol.getACPC().hasACPC())
             self._logger.info('Dialog exec [gui.dialogFromXml.DialogFromXml - Tool moving]')
+            # < Revision 28/08/2025
+            # update title bar color of the dialog box for Win32 platform
+            if platform == 'win32':
+                import pywinstyles
+                cl = self.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._dialogmove, c)
+            # Revision 28/08/2025 >
             if self._dialogmove.exec() == QDialog.Accepted:
                 c = wp.currentIndex()
                 if c == 0:
@@ -1956,7 +1996,7 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
 
     QFrame -> ItemAttributesWidget -> ItemStreamlineAttributesWidget
 
-    Last revision: 19/03/2025
+    Last revision: 28/08/2025
     """
 
     # Class constant
@@ -2095,6 +2135,14 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
         settings.getParameterWidget('SolidColor').setFloatColor(r=c[0], g=c[1], b=c[2], signal=False)
         settings.getParameterWidget('ScalarsVolume')
         settings.getParameterWidget('ScalarsLut').setCurrentText(lut)
+        # < Revision 28/08/2025
+        # update title bar color of the dialog box for Win32 platform
+        if platform == 'win32':
+            import pywinstyles
+            cl = self.palette().base().color()
+            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+            pywinstyles.change_header_color(self._dialogcolor, c)
+        # Revision 28/08/2025 >
         if self._dialogcolor.exec() == QDialog.Accepted:
             wait = DialogWait()
             wait.open()
@@ -3356,7 +3404,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListMeshAttributesWidget
 
-    Last revision: 20/02/2025
+    Last revision: 28/08/2025
     """
 
     # Special method
@@ -3807,6 +3855,14 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                         self._dialog.setVolume(vol)
                         self._dialog.setThresholdFlagToMinimum()
                         self._dialog.setThresholdFlagButtonsVisibility(False)
+                        # < Revision 28/08/2025
+                        # update title bar color of the dialog box for Win32 platform
+                        if platform == 'win32':
+                            import pywinstyles
+                            cl = self.palette().base().color()
+                            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                            pywinstyles.change_header_color(self._dialog, c)
+                        # Revision 28/08/2025 >
                         if self._dialog.exec() == QDialog.Accepted:
                             value = self._dialog.getThreshold()
                             wait = DialogWait()
@@ -4621,7 +4677,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListToolAttributesWidget
 
-    Last revision: 02/11/2024
+    Last revision: 28/08/2025
     """
 
     # Special method
@@ -4791,6 +4847,14 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     self._dialogtarget.clear()
                     self._dialogtarget.setDefaultPosition()
                     self._logger.info('Dialog exec [gui.dialogTarget.DialogTarget - New target]')
+                    # < Revision 28/08/2025
+                    # update title bar color of the dialog box for Win32 platform
+                    if platform == 'win32':
+                        import pywinstyles
+                        cl = self.palette().base().color()
+                        c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                        pywinstyles.change_header_color(self._dialogtarget, c)
+                    # Revision 28/08/2025 >
                     if self._dialogtarget.exec() == QDialog.Accepted:
                         view = self._views.getVolumeView()
                         if view is not None:
@@ -4829,6 +4893,14 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     self._dialogtarget.clear()
                     self._dialogtarget.setDefaultPosition()
                     self._logger.info('Dialog exec [gui.dialogTarget.DialogTarget - New trajectory]')
+                    # < Revision 28/08/2025
+                    # update title bar color of the dialog box for Win32 platform
+                    if platform == 'win32':
+                        import pywinstyles
+                        cl = self.palette().base().color()
+                        c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                        pywinstyles.change_header_color(self._dialogtarget, c)
+                    # Revision 28/08/2025 >
                     if self._dialogtarget.exec() == QDialog.Accepted:
                         view = self._views.getVolumeView()
                         if view is not None:
@@ -5028,6 +5100,14 @@ class ListToolAttributesWidget(ListAttributesWidget):
                         vol = self._views.getVolume()
                         if vol is not None: settings.getParameterWidget('Orientation').setVisible(vol.getACPC().hasACPC())
                         self._logger.info('Dialog exec [gui.dialogFromXml.DialogFromXml - Tool duplicate]')
+                        # < Revision 28/08/2025
+                        # update title bar color of the dialog box for Win32 platform
+                        if platform == 'win32':
+                            import pywinstyles
+                            cl = self.palette().base().color()
+                            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                            pywinstyles.change_header_color(self._dialogduplicate, c)
+                        # Revision 28/08/2025 >
                         if self._dialogduplicate.exec() == QDialog.Accepted:
                             lat = settings.getParameterValue('Laterality')
                             if lat is None: lat = 0.0
@@ -5322,6 +5402,14 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     wait.close()
                     self._dialogfeatures.autoSize(0)
                     self._logger.info('Dialog exec [gui.dialogGenericResults.DialogGenericResults - Tool features]')
+                    # < Revision 28/08/2025
+                    # update title bar color of the dialog box for Win32 platform
+                    if platform == 'win32':
+                        import pywinstyles
+                        cl = self.palette().base().color()
+                        c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                        pywinstyles.change_header_color(self._dialogfeatures, c)
+                    # Revision 28/08/2025 >
                     self._dialogfeatures.exec()
                 else:
                     messageBox(self,
@@ -5389,6 +5477,14 @@ class ListToolAttributesWidget(ListAttributesWidget):
                         wait.close()
                         self._dialogfeatures.autoSize(0)
                         self._logger.info('Dialog exec [gui.dialogGenericResults.DialogGenericResults - Tool features (mesh distances)]')
+                        # < Revision 28/08/2025
+                        # update title bar color of the dialog box for Win32 platform
+                        if platform == 'win32':
+                            import pywinstyles
+                            cl = self.palette().base().color()
+                            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                            pywinstyles.change_header_color(self._dialogfeatures, c)
+                        # Revision 28/08/2025 >
                         self._dialogfeatures.exec()
                     else:
                         messageBox(self,
@@ -6111,6 +6207,14 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     self._roidialog.setReferenceID(refid)
                     self._roidialog.setReferenceFOV(wchk[0].getStreamlines().getDWIFOV(decimals=1))
                     self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogStreamlinesROISelection]')
+                    # < Revision 28/08/2025
+                    # update title bar color of the dialog box for Win32 platform
+                    if platform == 'win32':
+                        import pywinstyles
+                        cl = self.palette().base().color()
+                        c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                        pywinstyles.change_header_color(self._roidialog, c)
+                    # Revision 28/08/2025 >
                     if self._roidialog.exec() == QDialog.Accepted:
                         wait = DialogWait()
                         wait.setInformationText('Bundle streamlines selection by ROI...')
@@ -6400,6 +6504,14 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 n = len(wchk)
                 if n > 0:
                     self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogStreamlinesFiltering]')
+                    # < Revision 28/08/2025
+                    # update title bar color of the dialog box for Win32 platform
+                    if platform == 'win32':
+                        import pywinstyles
+                        cl = self.palette().base().color()
+                        c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                        pywinstyles.change_header_color(self._fltdialog, c)
+                    # Revision 28/08/2025 >
                     if self._fltdialog.exec() == QDialog.Accepted:
                         wait = DialogWait()
                         wait.setInformationText('Bundle filtering...')
@@ -6474,6 +6586,14 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     n = len(wchk)
                     if n > 0:
                         self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogStreamlinesClustering]')
+                        # < Revision 28/08/2025
+                        # update title bar color of the dialog box for Win32 platform
+                        if platform == 'win32':
+                            import pywinstyles
+                            cl = self.palette().base().color()
+                            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                            pywinstyles.change_header_color(self._cltdialog, c)
+                        # Revision 28/08/2025 >
                         if self._cltdialog.exec() == QDialog.Accepted:
                             wait = DialogWait()
                             wait.setInformationText('Bundle clustering...')
@@ -6545,6 +6665,14 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     if n > 0:
                         self._cltdialog.setCentroidMode()
                         self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogStreamlinesClustering - Centroid]')
+                        # < Revision 28/08/2025
+                        # update title bar color of the dialog box for Win32 platform
+                        if platform == 'win32':
+                            import pywinstyles
+                            cl = self.palette().base().color()
+                            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                            pywinstyles.change_header_color(self._cltdialog, c)
+                        # Revision 28/08/2025 >
                         if self._cltdialog.exec() == QDialog.Accepted:
                             wait = DialogWait()
                             wait.setInformationText('Bundle centroid...')
@@ -6786,6 +6914,14 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         self._statdialog.newHistogramTab(data[i], label='{} {}'.format(labels[i], title), scrshot=self._scrsht, units=unit)
                     wait.close()
                     self._logger.info('Dialog exec [gui.dialogGenericResults.DialogGenericResults - Streamlines {}]'.format(title))
+                    # < Revision 28/08/2025
+                    # update title bar color of the dialog box for Win32 platform
+                    if platform == 'win32':
+                        import pywinstyles
+                        cl = self.palette().base().color()
+                        c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                        pywinstyles.change_header_color(self._statdialog, c)
+                    # Revision 28/08/2025 >
                     self._statdialog.exec()
                 else: messageBox(self, 'Bundle statistics', 'No bundle checked.')
 

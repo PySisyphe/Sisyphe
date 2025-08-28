@@ -406,7 +406,7 @@ class TabROIToolsWidget(TabWidget):
 
     QWidget -> TabROIToolsWidget
 
-    Last revision: 08/03/2025
+    Last revision: 28/08/2025
     """
 
     # Special method
@@ -1369,6 +1369,14 @@ class TabROIToolsWidget(TabWidget):
     # < Revision 24/03/2025
     # add _dialogActiveContour method
     def _dialogActiveContour(self):
+        # < Revision 28/08/2025
+        # update title bar color of the dialog box for Win32 platform
+        if platform == 'win32':
+            import pywinstyles
+            cl = self.palette().base().color()
+            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+            pywinstyles.change_header_color(self._contourdialog, c)
+        # Revision 28/08/2025 >
         if self._contourdialog.exec() == QDialog.Accepted:
             self._updateActiveContourParameters()
     # Revision 24/03/2025 >
@@ -2508,7 +2516,7 @@ class TabTrackingWidget(TabWidget):
 
     QWidget -> TabTrackingWidget
 
-    Last revision: 20/02/2025
+    Last revision: 28/08/2025
     """
 
     # Special method
@@ -2653,6 +2661,14 @@ class TabTrackingWidget(TabWidget):
             slt = self.getTractogram()
             if not slt.isAtlas():
                 self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogStreamlinesAtlasSelection]')
+                # < Revision 28/08/2025
+                # update title bar color of the dialog box for Win32 platform
+                if platform == 'win32':
+                    import pywinstyles
+                    cl = self.palette().base().color()
+                    c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                    pywinstyles.change_header_color(self._atlasdialog, c)
+                # Revision 28/08/2025 >
                 if self._atlasdialog.exec() == QDialog.Accepted:
                     checked = self._atlasdialog.getAtlasBundlesChecked()
                     n = len(checked)
@@ -2725,6 +2741,14 @@ class TabTrackingWidget(TabWidget):
             self._roidialog.setReferenceFOV(slt.getDWIFOV(decimals=1))
             self._roidialog.inPlaceVisibilityOff()
             self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogStreamlinesROISelection]')
+            # < Revision 28/08/2025
+            # update title bar color of the dialog box for Win32 platform
+            if platform == 'win32':
+                import pywinstyles
+                cl = self.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._roidialog, c)
+            # Revision 28/08/2025 >
             if self._roidialog.exec() == QDialog.Accepted:
                 wait = DialogWait()
                 wait.setInformationText('Streamlines ROI selection...')
