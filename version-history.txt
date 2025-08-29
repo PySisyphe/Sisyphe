@@ -106,3 +106,53 @@ version 0.9.1, build 28/08/2025
 	widgets.tabToolsWidgets.TabTrackingWidget.atlas()
 	widgets.tabToolsWidgets.TabTrackingWidget.dissection()
 		update dialog title bar color for Win32 platform
+
+version 0.9.1, build 30/08/2025
+-------------------------------
+
+**update module**
+	core.sisypheROI
+		update cython compilation
+	widgets.thresholdWidgets
+	widgets.tabToolsWidgets
+	gui.dialogFiducialBox
+	gui.windowSisyphe
+**update class**
+	core.sisypheROI.SisypheROIDraw
+		update setMorphologyRadius() method
+		update getMorphologyRadius() method
+	widgets.thresholdWidgets.ThresholdViewWidget
+		add _onButtonResetEvent() method
+		add setResetButtonVisibility() method
+		add getResetButtonVisibility() method
+		update __init__() method
+	widgets.tabToolsWidgets.TabROIToolsWidget
+		add _menuThresholdShow() method
+		update _brushThresholdChanged() method
+	gui.dialogFiducialBox.DialogFiducialBox
+		update __init__() method
+	gui.windowSisyphe.WindowSisyphe
+		update frameDetection() method
+**new method**
+	widgets.thresholdWidgets._onButtonResetEvent()
+		event method to reset widget thresholds
+	widgets.thresholdWidgets.setResetButtonVisibility()
+		set reset button visibility
+	widgets.thresholdWidgets.setResetButtonVisibility()
+		get reset button visibility
+	widgets.tabToolsWidgets.TabROIToolsWidget._menuThresholdShow()
+		bug fix, loss of volume display in darwin platform when popup menu is shown
+**update method**
+	core.sisypheROI.SisypheROIDraw.setMorphologyRadius()
+		bug fix, add int parameter type
+	core.sisypheROI.SisypheROIDraw.getMorphologyRadius()
+		bug fix, change return type from float to int
+	widgets.thresholdWidgets.ThresholdViewWidget.__init__()
+		add reset button (self._resetbutton attribute), to reset widget thresholds
+	widgets.tabToolsWidgets.TabROIToolsWidget._brushThresholdChanged()
+		bug fix, loss of volume display in darwin platform when popup menu is shown
+	gui.dialogFiducialBox.DialogFiducialBox.__init__()
+		bug fix, remove setModal(True)
+		Qt5 bug of modal dialog on darwin platform, popup menu items cannot be selected
+	gui.windowSisyphe.WindowSisyphe.frameDetection()
+		Qt5 bug of modal dialog on darwin platform, popup menu items cannot be selected, modal simulation to fix it
