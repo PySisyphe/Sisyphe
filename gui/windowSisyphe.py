@@ -131,7 +131,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 07/07/2025
+    Last revision: 29/08/2025
     """
 
     # Class constants
@@ -4373,13 +4373,37 @@ class WindowSisyphe(QMainWindow):
             from Sisyphe.gui.dialogFiducialBox import DialogFiducialBox
             self._dialog = DialogFiducialBox(fid)
             if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
-            try:
+            if platform == 'darwin':
+                # < Revision 29/08/2025
+                # Qt5 bug of modal dialog on darwin platform, popup menu items cannot be selected.
+                # modal simulation to fix it
+                self.setEnabled(False)
+                self._menubar.setEnabled(False)
+                self.repaint()
+                self._dialog.setEnabled(True)
+                # noinspection PyTypeChecker
+                self._dialog.setAttribute(Qt.WA_DeleteOnClose)
+                # noinspection PyTypeChecker
+                self._dialog.setWindowFlag(Qt.WindowStaysOnTopHint)
+                # noinspection PyUnresolvedReferences
+                self._dialog.finished.connect(lambda: self.setEnabled(True))
+                # noinspection PyUnresolvedReferences
+                self._dialog.finished.connect(lambda: self._menubar.setEnabled(True))
+                # noinspection PyUnresolvedReferences
+                self._dialog.finished.connect(lambda: self._dialog.close())
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFiducialBox.DialogFiducialBox] {}'.format(v.getBasename()))
-                self._dialog.exec()
-            except Exception as err:
-                messageBox(self, 'Stereotactic frame detection dialog error', '{}\n{}'.format(type(err), str(err)))
-                if self._logger is not None: self._logger.error(traceback.format_exc())
-                return
+                self._dialog.show()
+                while self._dialog.isVisible():
+                    QApplication.processEvents()
+                # Revision 29/08/2025 >
+            else:
+                try:
+                    if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFiducialBox.DialogFiducialBox] {}'.format(v.getBasename()))
+                    self._dialog.exec()
+                except Exception as err:
+                    messageBox(self, 'Stereotactic frame detection dialog error', '{}\n{}'.format(type(err), str(err)))
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
+                    return
             n = self._thumbnail.getVolumeIndex(v)
             if n is not None:
                 widget = self._thumbnail.getWidgetFromIndex(n)

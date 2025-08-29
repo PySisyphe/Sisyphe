@@ -120,7 +120,9 @@ class DialogFiducialBox(QDialog):
         self._layout.addLayout(lyout)
         self.setLayout(self._layout)
 
-        self.setModal(True)
+        # < Revision 29/08/2025
+        # self.setModal(True)
+        # Revision 29/08/2025 >
 
     # Private method
 
