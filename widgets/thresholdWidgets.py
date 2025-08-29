@@ -58,7 +58,7 @@ class ThresholdViewWidget(QWidget):
 
     QWidget -> ThresholdViewWidget
 
-    Last revision: 11/03/2025
+    Last revision: 29/08/2025
     """
 
     # Class methods
@@ -171,9 +171,15 @@ class ThresholdViewWidget(QWidget):
             # Init Buttons
 
             self._autobutton = QPushButton('Auto')
-            self._autobutton.setFixedWidth(80)
+            # self._autobutton.setFixedWidth(80)
             # noinspection PyUnresolvedReferences
             self._autobutton.clicked.connect(self._onButtonAutoEvent)
+            # < Revision 29/08/2025
+            # add reset button
+            self._resetbutton = QPushButton('Reset')
+            # noinspection PyUnresolvedReferences
+            self._resetbutton.clicked.connect(self._onButtonResetEvent)
+            # Revision 29/08/2025 >
             self._minflag = QRadioButton('Min.')
             self._maxflag = QRadioButton('Max.')
             self._twoflag = QRadioButton('Two')
@@ -229,6 +235,10 @@ class ThresholdViewWidget(QWidget):
             hlyout.setDirection(QHBoxLayout.LeftToRight)
             hlyout.addWidget(self._editmin, Qt.AlignLeft)
             hlyout.addWidget(self._autobutton, Qt.AlignHCenter)
+            # < Revision 29/08/2025
+            # add reset button
+            hlyout.addWidget(self._resetbutton, Qt.AlignHCenter)
+            # Revision 29/08/2025 >
             hlyout.addWidget(self._editmax, Qt.AlignRight)
             lyout.addLayout(hlyout, 1, 1)
 
@@ -593,10 +603,20 @@ class ThresholdViewWidget(QWidget):
         # Revision 23/07/2024 >
         self._onThresholdChangedEvent()
 
+    # < Revision 29/08/2025
+    # add _onButtonResetEvent() method
+    def _onButtonResetEvent(self):
+        vmin, vmax = self._volume.getRange()
+        self._editmin.setValue(vmin)
+        self._editmax.setValue(vmax)
+        self._onThresholdChangedEvent()
+    # Revision 29/08/2025 >
+
     # Public methods
 
     # < Revision 10/03/2025
-    # fix vtkWin32OpenGLRenderWindow error: wglMakeCurrent failed in MakeCurrent()
+    # fix vtkWin32OpenGLRenderWindow error:
+    # wglMakeCurrent failed in MakeCurrent()
     # finalize method must be explicitely called before class destruction
     def finalize(self):
         self._view.finalize()
@@ -701,6 +721,19 @@ class ThresholdViewWidget(QWidget):
 
     def getAutoButtonVisibility(self):
         return self._autobutton.isVisible()
+
+    # < Revision 29/08/2025
+    # add setResetButtonVisibility() method
+    def setResetButtonVisibility(self, v):
+        if isinstance(v, bool): self._resetbutton.setVisible(v)
+        else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
+    # Revision 29/08/2025 >
+
+    # < Revision 29/08/2025
+    # add getResetButtonVisibility() method
+    def getResetButtonVisibility(self):
+        return self._resetbutton.isVisible()
+    # Revision 29/08/2025 >
 
     def setThresholdFlag(self, v):
         if isinstance(v, int):

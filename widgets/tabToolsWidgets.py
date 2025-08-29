@@ -406,7 +406,7 @@ class TabROIToolsWidget(TabWidget):
 
     QWidget -> TabROIToolsWidget
 
-    Last revision: 28/08/2025
+    Last revision: 29/08/2025
     """
 
     # Special method
@@ -443,6 +443,7 @@ class TabROIToolsWidget(TabWidget):
         super().__init__(views, parent)
 
         self._draw = None
+        self._menuThreshold = QMenu(self)
         self._threshold = ThresholdViewWidget(None, size=384, parent=self)
         self._threshold.setThresholdFlagToTwo()
         self._threshold.setThresholdFlagButtonsVisibility(False)
@@ -550,7 +551,7 @@ class TabROIToolsWidget(TabWidget):
 
         # Popup menu
 
-        self._menuThreshold = QMenu(self)
+        # self._menuThreshold = QMenu(self)
         # noinspection PyTypeChecker
         self._menuThreshold.setWindowFlag(Qt.NoDropShadowWindowHint, True)
         # noinspection PyTypeChecker
@@ -559,6 +560,10 @@ class TabROIToolsWidget(TabWidget):
         self._menuThreshold.addAction(self._athreshold)
         # noinspection PyUnresolvedReferences
         self._menuThreshold.aboutToHide.connect(self._brushThresholdChanged)
+        # < Revision 29/08/2025
+        # noinspection PyUnresolvedReferences
+        self._menuThreshold.aboutToShow.connect(self._menuThresholdShow)
+        # Revision 29/08/2025 >
         self._btn['threshold'].setMenu(self._menuThreshold)
 
         self._menu2DRegion = QMenu()
@@ -1174,6 +1179,11 @@ class TabROIToolsWidget(TabWidget):
             self._btn['2Dblobthreshold'].setToolTip('Blob thresholding in current slice' + info)
             self._btn['3Dthreshold'].setToolTip('Thresholding' + info)
             self._btn['3Dblobthreshold'].setToolTip('Thresholding in blob' + info)
+            # < Revision 29/08/2025
+            # bug fix, loss of volume display in darwin platform when popup is shown
+            if platform == 'darwin':
+                self._menuThreshold.removeAction(self._athreshold)
+            # Revision 29/08/2025 >
 
     # noinspection PyUnusedLocal
     def _brushSizeChanged(self, v):
@@ -1380,6 +1390,14 @@ class TabROIToolsWidget(TabWidget):
         if self._contourdialog.exec() == QDialog.Accepted:
             self._updateActiveContourParameters()
     # Revision 24/03/2025 >
+
+    # < Revision 29/08/2025
+    # add _menuThresholdShow method
+    # # bug fix, loss of volume display in darwin platform when popup is shown
+    def _menuThresholdShow(self):
+        if platform == 'darwin':
+            self._menuThreshold.addAction(self._athreshold)
+    # Revision 29/08/2025 >
 
     # Public methods
 
