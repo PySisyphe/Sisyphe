@@ -64,4 +64,4 @@ Download Binary archive
 =======================
 
 - Windows binary [PySisyphe 0.9.1 build 28-08-2025](https://mega.nz/file/JTtTwDRa#A8Cq9F6R--HATcRB7j8MgKu4hSEOGH7rduLR08A4O5g)
-- MacOS 11+ intel binary [PySisyphe 0.9.1 build 05-08-2025](https://mega.nz/file/IPN2zBoA#qvX1uTWduwbvXO1UO_0OHFdbkIXTIZd9wx2KDPmSnT4)
+- MacOS 11+ intel binary [PySisyphe 0.9.1 build 30-08-2025](https://mega.nz/file/IPN2zBoA#qvX1uTWduwbvXO1UO_0OHFdbkIXTIZd9wx2KDPmSnT4)
