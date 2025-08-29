@@ -3921,7 +3921,7 @@ class SisypheROIDraw(object):
     object -> SisypheROIDraw
 
     Creation: 08/09/2022
-    Last revision: 24/07/2025
+    Last revision: 29/08/2025
     """
 
     __slots__ = {'_volume', '_gradient', '_mask', '_brush', '_vbrush', '_roi', '_undo', '_undolifo', '_redolifo',
@@ -4339,23 +4339,34 @@ class SisypheROIDraw(object):
         elif self._struct == sitkCross: return 'cross'
         else: return 'annulus'
 
-    def setMorphologyRadius(self, radius: float) -> None:
+    # < Revision 29/08/2025
+    # add int parameter type
+    # setMorphologyRadius(self, radius: float) -> None:
+    # Revision 29/08/2025 >
+    def setMorphologyRadius(self, radius: int | float) -> None:
         """
         Set the radius (in voxels) of the structuring element used in morphological methods (erosion, dilatation,
         opening, closing).
 
         Parameters
         ----------
-        radius : int
+        radius : int | float
             structuring element radius in voxels
         """
         if isinstance(radius, (int, float)):
             if radius <= 0.0: radius = 1.0
             if radius > 20.0: radius = 20.0
-            self._morphradius = radius
+            # < Revision 29/08/2025
+            # bug fix, parameter conversion to int
+            self._morphradius = int(radius)
+            # Revision 29/08/2025 >
         else: raise TypeError('parameter type {} is not int or float.'.format(type(radius)))
 
-    def getMorphologyRadius(self) -> float:
+    # < Revision 29/08/2025
+    # replace return type, from float to int
+    # def getMorphologyRadius(self) -> float:
+    # Revision 29/08/2025 >
+    def getMorphologyRadius(self) -> int:
         """
         Get the radius (in voxels) of the structuring element used in morphological methods (erosion, dilatation,
         opening, closing).
