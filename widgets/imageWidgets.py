@@ -432,7 +432,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     QPushButton - > SisypheVolumeThumbnailButtonWidget
 
-    Last revision: 06/07/2025
+    Last revision: 03/09/2025
     """
 
     # Special method
@@ -1038,7 +1038,11 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
         dialog = DialogVolumeAttributes(vol=self._multi)
         if platform == 'win32':
             import pywinstyles
-            cl = self.palette().base().color()
+            # < Revision 03/09/2025
+            # cl = self.palette().base().color()
+            if self._thumbnail is not None: cl = self._thumbnail.palette().base().color()
+            else: cl = self.palette().base().color()
+            # Revision 03/09/2025 >
             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(dialog, c)
         dialog.exec()
@@ -1056,7 +1060,11 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             dialog = DialogXmlDicom(filename)
             if platform == 'win32':
                 import pywinstyles
-                cl = self.palette().base().color()
+                # < Revision 03/09/2025
+                # cl = self.palette().base().color()
+                if self._thumbnail is not None: cl = self._thumbnail.palette().base().color()
+                else: cl = self.palette().base().color()
+                # Revision 03/09/2025 >
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(dialog, c)
             dialog.exec()
@@ -1068,7 +1076,11 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 dialog = DialogEditLabels()
                 if platform == 'win32':
                     import pywinstyles
-                    cl = self.palette().base().color()
+                    # < Revision 03/09/2025
+                    # cl = self.palette().base().color()
+                    if self._thumbnail is not None: cl = self._thumbnail.palette().base().color()
+                    else: cl = self.palette().base().color()
+                    # Revision 03/09/2025 >
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(dialog, c)
                 dialog.setVolume(self._volume)
@@ -2054,7 +2066,11 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
         dialog = DialogGenericResults()
         if platform == 'win32':
             import pywinstyles
-            cl = self.palette().base().color()
+            # < Revision 03/09/2025
+            # cl = self.palette().base().color()
+            if self._thumbnail is not None: cl = self._thumbnail.palette().base().color()
+            else: cl = self.palette().base().color()
+            # Revision 03/09/2025 >
             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(dialog, c)
         if self._volume.acquisition.hasUnit(): unit = self._volume.acquisition.getUnit()
