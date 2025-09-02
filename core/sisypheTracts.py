@@ -1778,10 +1778,8 @@ class SisypheTractCollection(object):
         ----------
         v : int
             representation code:
-                - 0, RGB mode, colors derived from unit vector directed to next point of the tract (x-axis component in
-                red, y-axis component in green and z-axis component in blue).
-                - 1, CMAP mode, colors derived from scalar values associated with points using the look-up table
-                colormap attribute of the current instance.
+                - 0, RGB mode, colors derived from unit vector directed to next point of the tract (x-axis component in red, y-axis component in green and z-axis component in blue).
+                - 1, CMAP mode, colors derived from scalar values associated with points using the look-up table colormap attribute of the current instance.
                 - 2, COLOR mode, solid color given by the color attribute of the current instance.
         bundle : str
             bundle name, if bundle name is empty, the first bundle is selected.
@@ -1808,10 +1806,8 @@ class SisypheTractCollection(object):
         -------
         int
             representation code:
-                - 0, RGB mode, colors derived from unit vector directed to next point of the tract (x-axis component
-                in red, y-axis component in green and z-axis component in blue).
-                - 1, CMAP mode, colors derived from scalar values associated with points using the look-up table
-                colormap attribute of the current instance.
+                - 0, RGB mode, colors derived from unit vector directed to next point of the tract (x-axis component in red, y-axis component in green and z-axis component in blue).
+                - 1, CMAP mode, colors derived from scalar values associated with points using the look-up table colormap attribute of the current instance.
                 - 2, COLOR mode, solid color given by the color attribute of the current instance.
         """
         if len(self._bundles) > 0:
@@ -1829,10 +1825,8 @@ class SisypheTractCollection(object):
         ----------
         v : str
             representation code:
-                - 'rgb', RGB mode, colors derived from unit vector directed to next point of the tract (x-axis
-                component in red, y-axis component in green and z-axis component in blue).
-                - 'scalars', CMAP mode, colors derived from scalar values associated with points using the look-up
-                table colormap attribute of the current instance.
+                - 'rgb', RGB mode, colors derived from unit vector directed to next point of the tract (x-axis component in red, y-axis component in green and z-axis component in blue).
+                - 'scalars', CMAP mode, colors derived from scalar values associated with points using the look-up table colormap attribute of the current instance.
                 - 'color', COLOR mode, solid color given by the color attribute of the current instance.
         bundle : str
             bundle name, if bundle name is empty, the first bundle is selected.
@@ -1859,10 +1853,8 @@ class SisypheTractCollection(object):
         -------
         str
             representation code:
-                - 'rgb', RGB mode, colors derived from unit vector directed to next point of the tract (x-axis
-                component in red, y-axis component in green and z-axis component in blue).
-                - 'scalars', CMAP mode, colors derived from scalar values associated with points using the look-up
-                table colormap attribute of the current instance.
+                - 'rgb', RGB mode, colors derived from unit vector directed to next point of the tract (x-axis component in red, y-axis component in green and z-axis component in blue).
+                - 'scalars', CMAP mode, colors derived from scalar values associated with points using the look-up table colormap attribute of the current instance.
                 - 'color', COLOR mode, solid color given by the color attribute of the current instance.
         """
         if len(self._bundles) > 0:
@@ -2729,10 +2721,8 @@ class SisypheBundle(object):
         ----------
         v : int
             representation code:
-                - 0, RGB mode, colors derived from unit vector directed to next point of the tract (x-axis component in
-                red, y-axis component in green and z-axis component in blue).
-                - 1, CMAP mode, colors derived from scalar values associated with points using the look-up table
-                colormap attribute of the current instance.
+                - 0, RGB mode, colors derived from unit vector directed to next point of the tract (x-axis component in red, y-axis component in green and z-axis component in blue).
+                - 1, CMAP mode, colors derived from scalar values associated with points using the look-up table colormap attribute of the current instance.
                 - 2, COLOR mode, solid color given by the color attribute of the current instance.
         """
         if v in self._REPTYPE: self._rep = v
@@ -2746,10 +2736,8 @@ class SisypheBundle(object):
         -------
         int
             representation code:
-                - 0, RGB mode, colors derived from unit vector directed to next point of the tract (x-axis component in
-                red, y-axis component in green and z-axis component in blue).
-                - 1, CMAP mode, colors derived from scalar values associated with points using the look-up table
-                colormap attribute of the current instance.
+                - 0, RGB mode, colors derived from unit vector directed to next point of the tract (x-axis component in red, y-axis component in green and z-axis component in blue).
+                - 1, CMAP mode, colors derived from scalar values associated with points using the look-up table colormap attribute of the current instance.
                 - 2, COLOR mode, solid color given by the color attribute of the current instance.
         """
         return self._rep
@@ -2762,10 +2750,8 @@ class SisypheBundle(object):
         ----------
         v : str
             representation code:
-                - 'rgb', RGB mode, colors derived from unit vector directed to next point of the tract (x-axis
-                component in red, y-axis component in green and z-axis component in blue).
-                - 'scalars', CMAP mode, colors derived from scalar values associated with points using the look-up
-                table colormap attribute of the current instance.
+                - 'rgb', RGB mode, colors derived from unit vector directed to next point of the tract (x-axis component in red, y-axis component in green and z-axis component in blue).
+                - 'scalars', CMAP mode, colors derived from scalar values associated with points using the look-up table colormap attribute of the current instance.
                 - 'color', COLOR mode, solid color given by the color attribute of the current instance.
         """
         v = v.lower()
@@ -2960,8 +2946,7 @@ class SisypheBundleCollection(object):
     Scope of methods:
 
         - container methods
-        - set operator methods between SisypheBundle elements of the container (union, intersection, difference,
-        symmetric difference)
+        - set operator methods between SisypheBundle elements of the container (union, intersection, difference, symmetric difference)
 
     Inheritance
     ~~~~~~~~~~~
@@ -4672,10 +4657,8 @@ class SisypheStreamlines(object):
         ----------
         v : int
             representation code:
-                - 0, RGB mode, colors derived from unit vector directed to next point of the streamline (x-axis
-                component in red, y-axis component in green and z-axis component in blue).
-                - 1, CMAP mode, colors derived from scalar values associated with points using the look-up table
-                colormap attribute of the current instance.
+                - 0, RGB mode, colors derived from unit vector directed to next point of the streamline (x-axis component in red, y-axis component in green and z-axis component in blue).
+                - 1, CMAP mode, colors derived from scalar values associated with points using the look-up table colormap attribute of the current instance.
                 - 2, COLOR mode, solid color given by the color attribute of the current instance.
         bundle : str
             bundle name or 'all' for all streamlines
@@ -4698,10 +4681,8 @@ class SisypheStreamlines(object):
         -------
         int
             representation code:
-                - 0, RGB mode, colors derived from unit vector directed to next point of the streamline (x-axis
-                component in red, y-axis component in green and z-axis component in blue).
-                - 1, CMAP mode, colors derived from scalar values associated with points using the look-up table
-                colormap attribute of the current instance.
+                - 0, RGB mode, colors derived from unit vector directed to next point of the streamline (x-axis component in red, y-axis component in green and z-axis component in blue).
+                - 1, CMAP mode, colors derived from scalar values associated with points using the look-up table colormap attribute of the current instance.
                 - 2, COLOR mode, solid color given by the color attribute of the current instance.
         """
         if bundle == 'all': bundle = self._bundles[0].getName()
@@ -4717,10 +4698,8 @@ class SisypheStreamlines(object):
         ----------
         v : str
             representation code:
-                - 'rgb', RGB mode, colors derived from unit vector directed to next point of the streamlineb(x-axis
-                component in red, y-axis component in green and z-axis component in blue).
-                - 'scalars', CMAP mode, colors derived from scalar values associated with points using the look-up
-                table colormap attribute of the current instance.
+                - 'rgb', RGB mode, colors derived from unit vector directed to next point of the streamlineb(x-axis component in red, y-axis component in green and z-axis component in blue).
+                - 'scalars', CMAP mode, colors derived from scalar values associated with points using the look-up table colormap attribute of the current instance.
                 - 'color', COLOR mode, solid color given by the color attribute of the current instance.
         bundle : str
             bundle name or 'all' for all streamlines
@@ -4743,10 +4722,8 @@ class SisypheStreamlines(object):
         -------
         str
             representation code:
-                - 'rgb', RGB mode, colors derived from unit vector directed to next point of the streamline (x-axis
-                component in red, y-axis component in green and z-axis component in blue).
-                - 'scalars', CMAP mode, colors derived from scalar values associated with points using the look-up
-                table colormap attribute of the current instance.
+                - 'rgb', RGB mode, colors derived from unit vector directed to next point of the streamline (x-axis component in red, y-axis component in green and z-axis component in blue).
+                - 'scalars', CMAP mode, colors derived from scalar values associated with points using the look-up table colormap attribute of the current instance.
                 - 'color', COLOR mode, solid color given by the color attribute of the current instance.
         """
         if bundle == 'all': bundle = self._bundles[0].getName()

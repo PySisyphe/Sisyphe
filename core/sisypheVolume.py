@@ -179,11 +179,9 @@ class SisypheVolume(SisypheImage):
         - Array ID: ID number calculated from scalar values (md5 algorithm)
         - ID: space ID, can be shared between several volumes (i.e. image of the same subject with same field of view)
         - identity: lastname, firstname, birthdate, gender
-        - acquisition: modality, sequence, date of scan, stereotactic frame, signal unit, labels for label map modality,
-        degrees of freedom and autocorrelations for statistical maps
+        - acquisition: modality, sequence, date of scan, stereotactic frame, signal unit, labels for label map modality, degrees of freedom and autocorrelations for statistical maps
         - display: look-up table colormap, range and window values, slope/intercept
-        - acpc: AC coordinates, PC coordinates, geometric transformation to geometric reference with axes aligned on
-        the AC-PC line with origin to the AC coordinates
+        - acpc: AC coordinates, PC coordinates, geometric transformation to geometric reference with axes aligned on the AC-PC line with origin to the AC coordinates
         - transforms: list of geometric transformations to all co-registered volumes
         - dicom: access to Dicom fields of the related XmlDicom file (created during Dicom conversion)
 
@@ -1260,8 +1258,7 @@ class SisypheVolume(SisypheImage):
         There are two types of identifier (i.e. ID):
 
             - Array ID: unique, calculated from scalar values (md5 algorithm). This cannot be edited.
-            - ID: this is a space ID, it is not unique, all volumes sharing a common space have the same ID. This
-            attribute is used as key in the Sisyphe.core.sisypheTransform.SisypheTransforms instances.
+            - ID: this is a space ID, it is not unique, all volumes sharing a common space have the same ID. This attribute is used as key in the Sisyphe.core.sisypheTransform.SisypheTransforms instances.
 
         Returns
         -------
@@ -1371,8 +1368,7 @@ class SisypheVolume(SisypheImage):
         There are two types of identifier (i.e. ID):
 
             - Array ID: unique, calculated from scalar values (md5 algorithm). This cannot be edited.
-            - ID: this is a space ID, it is not unique, all volumes sharing a common space have the same ID. This
-            attribute is used as key in the Sisyphe.core.sisypheTransform.SisypheTransforms instances.
+            - ID: this is a space ID, it is not unique, all volumes sharing a common space have the same ID. This attribute is used as key in the Sisyphe.core.sisypheTransform.SisypheTransforms instances.
 
         Returns
         -------
@@ -1480,7 +1476,7 @@ class SisypheVolume(SisypheImage):
     def setACPC(self, acpc: SisypheACPC) -> None:
         """
         Set the acp instance of the current SisypheVolume instance.
-        Sisyphe.core.sisypheImageAttributes.SisypheACPC attributes are: (AC) and posterior (PC) commissure coordinates,
+        Sisyphe.core.sisypheImageAttributes.SisypheACPC attributes are: anterior (AC) and posterior (PC) commissure coordinates,
         rigid geometric transformation i.e. geometric transformation to reference with axes aligned on the AC-PC line,
         with midACPC point as center of rotation.
 
@@ -1497,7 +1493,7 @@ class SisypheVolume(SisypheImage):
     def getACPC(self) -> SisypheACPC:
         """
         Set the acp instance of the current SisypheVolume instance.
-        Sisyphe.core.sisypheImageAttributes.SisypheACPC attributes are: (AC) and posterior (PC) commissure coordinates,
+        Sisyphe.core.sisypheImageAttributes.SisypheACPC attributes are: anterior (AC) and posterior (PC) commissure coordinates,
         rigid geometric transformation i.e. geometric transformation to reference with axes aligned on the AC-PC line,
         with midACPC point as center of rotation.
 
@@ -2164,7 +2160,7 @@ class SisypheVolume(SisypheImage):
     # add removeAllSuffixes method
     def removeAllSuffixes(self, sep: str = '_') -> None:
         """
-        Remove all prefixes from the file name attribute of the current SisypheVolume instance.
+        Remove all suffixes from the file name attribute of the current SisypheVolume instance.
 
         Parameters
         ----------
@@ -2190,14 +2186,14 @@ class SisypheVolume(SisypheImage):
 
     def setCompressionOn(self) -> None:
         """
-        Enables gzip file compression of the current SisypheVolume instance. PySisyphe volume format (.xroi) can be
+        Enables gzip file compression of the current SisypheVolume instance. PySisyphe volume format (.xvol) can be
         optionally gzipped.
         """
         self._compression = True
 
     def setCompressionOff(self) -> None:
         """
-        Disables gzip file compression of the current SisypheVolume instance. PySisyphe volume format (.xroi) can be
+        Disables gzip file compression of the current SisypheVolume instance. PySisyphe volume format (.xvol) can be
         optionally gzipped.
         """
         self._compression = False
@@ -3184,7 +3180,8 @@ class SisypheVolume(SisypheImage):
         """
         Set the transforms attribute of the current SisypheVolume attribute. Each SisypheVolume is associated with a
         SisypheTransforms instance which stores all the geometric transformations calculated from co-registrations with
-        other SisypheVolume instances. This transforms attribute is saved the same file name with .xtrfs extension.
+        other SisypheVolume instances. This “transforms” attribute is saved under the same file name as the SisypheVolume
+        instance, with the .xtrfs extension.
 
         Parameters
         ----------
@@ -3205,9 +3202,10 @@ class SisypheVolume(SisypheImage):
 
     def getTransforms(self) -> SisypheTransforms:
         """
-        Set the transforms attribute of the current SisypheVolume attribute. Each SisypheVolume is associated with a
+        Get the transforms attribute of the current SisypheVolume attribute. Each SisypheVolume is associated with a
         SisypheTransforms instance, which stores all the geometric transformations calculated from co-registrations
-        with other SisypheVolume instances. This transforms attribute is saved the same file name with .xtrfs extension.
+        with other SisypheVolume instances. This “transforms” attribute is saved under the same file name as the SisypheVolume
+        instance with, the .xtrfs extension.
 
         Returns
         -------
@@ -3218,7 +3216,7 @@ class SisypheVolume(SisypheImage):
 
     def hasTransform(self, ID: str | SisypheVolume) -> bool:
         """
-        Check whether the transforms attribute of the current SisypheVolume attribute contains a given ID.
+        Check whether the transforms attribute of the current SisypheVolume instance contains a given ID.
 
         Parameters
         ----------

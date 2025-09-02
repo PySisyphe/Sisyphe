@@ -3929,8 +3929,7 @@ class SisypheTransforms(SisypheTransformCollection):
     This class works as a named list (key/value) container of SisypheTransform instances.
 
     - Key: ID attribute of a SisypheVolume that is co-registered with the reference SisypheVolume.
-    - Value: the geometric transformation (SisypheTransform instance) used to co-register the SisypheVolume with the
-    reference SisypheVolume.
+    - Value: the geometric transformation (SisypheTransform instance) used to co-register the SisypheVolume with the reference SisypheVolume.
 
     Inherits from SisypheTransformCollection class and adds
 

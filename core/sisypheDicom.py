@@ -884,7 +884,7 @@ class DicomToXmlDicom(object):
 
     def isDefaultBackupXmlDicomDirectory(self) -> bool:
         """
-        Checks whether path of the backup folder is defined. In this case, backup folder is the path of the Dicom files.
+        Check whether path of the backup folder is defined. In this case, backup folder is the path of the Dicom files.
 
         Returns
         -------
@@ -1544,7 +1544,7 @@ class XmlDicom(object):
 
     def hasKeyword(self, keyword: str) -> bool:
         """
-        Checks whether a Dicom field is in XmlDicom instance.
+        Check whether a Dicom field is in XmlDicom instance.
 
         Parameters
         ----------
@@ -1580,7 +1580,7 @@ class XmlDicom(object):
 
     def getKeywordsWithConstantValue(self) -> list[str] | None:
         """
-        Get list of Dicom fields with constant value (same value in all Dicom instances).
+        Get list of Dicom fields with constant value (same value in all Dicom instances within a series).
 
         Returns
         -------
@@ -1599,7 +1599,7 @@ class XmlDicom(object):
 
     def getKeywordsWithValueVariation(self) -> list[str] | None:
         """
-        Get list of Dicom fields having a value variation with Dicom instances (one value for each Dicom instance).
+        Get list of Dicom fields having a value variation with Dicom instances (one value for each Dicom instance within a series).
 
         Returns
         -------
@@ -1643,7 +1643,7 @@ class XmlDicom(object):
 
     def isEmpty(self) -> bool:
         """
-        Checks if XmlInstance is empty (no Dicom field).
+        Check if XmlInstance is empty (no Dicom field).
 
         Returns
         -------
@@ -2029,7 +2029,7 @@ class DicomUIDGenerator(object):
 
     def newStudy(self) -> None:
         """
-        Generates current StudyUID.
+        Generate current StudyUID.
         """
         self._instanceindex = 0
         self._seriesindex = 0
@@ -2046,7 +2046,7 @@ class DicomUIDGenerator(object):
 
     def newSeries(self) -> None:
         """
-        Generates current SeriesUID and FrameOfReferenceUID, increments series index.
+        Generate current SeriesUID and FrameOfReferenceUID, increments series index.
         """
         self._instanceindex = 0
         self._seriesindex += 1
@@ -2060,7 +2060,7 @@ class DicomUIDGenerator(object):
 
     def newInstance(self) -> None:
         """
-        Generates current InstanceUID and increments instance index.
+        Generate current InstanceUID and increments instance index.
         """
         self._instanceindex += 1
         dt = datetime.now()
@@ -2280,7 +2280,7 @@ class ExportToDicom(object):
 
     def hasVolume(self) -> bool:
         """
-        Checks whether PySisyphe volume to convert is defined.
+        Check whether PySisyphe volume to convert is defined.
 
         Returns
         -------
@@ -2322,7 +2322,7 @@ class ExportToDicom(object):
 
     def hasXmlDicomReference(self) -> bool:
         """
-        Checks whether XmlDicom reference is defined.
+        Check whether XmlDicom reference is defined.
 
         Returns
         -------
@@ -2361,7 +2361,7 @@ class ExportToDicom(object):
 
     def isDefaultBackupDicomDirectory(self) -> bool:
         """
-        Checks whether backup folder is defined. The default backup folder is the path of the PySisyphe volume.
+        Check whether backup folder is defined. The default backup folder is the path of the PySisyphe volume.
 
         Returns
         -------
@@ -2692,7 +2692,7 @@ class ImportFromDicom(object):
 
     def hasReferenceUID(self) -> bool:
         """
-        Checks whether Dicom files reference UID is defined.
+        Check whether Dicom files reference UID is defined.
 
         Returns
         -------
@@ -2740,7 +2740,7 @@ class ImportFromDicom(object):
 
     def hasImportFolder(self) -> bool:
         """
-        Checks whether backup folder is defined. The default backup folder is the path of the Dicom files.
+        Check whether backup folder is defined. The default backup folder is the path of the Dicom files.
 
         Returns
         -------
@@ -2762,7 +2762,7 @@ class ImportFromDicom(object):
 
     def hasReferenceVolume(self) -> bool:
         """
-        Checks whether converted PySisyphe volume exists (False before calling execute method).
+        Check whether converted PySisyphe volume exists (False before calling execute method).
 
         Returns
         -------
@@ -2807,7 +2807,7 @@ class ImportFromDicom(object):
 
     def isEmpty(self) -> bool:
         """
-        Checks if ImportFromDicom is empty, Dicom files to convert are not defined.
+        Check if ImportFromDicom is empty, Dicom files to convert are not defined.
 
         Returns
         -------
@@ -2955,7 +2955,7 @@ class ImportFromRTDose(ImportFromDicom):
 
     def hasRTDoseFilename(self) -> bool:
         """
-        Checks whether Dicom RTDose files to convert are defined.
+        Check whether Dicom RTDose files to convert are defined.
 
         Returns
         -------
@@ -2977,7 +2977,7 @@ class ImportFromRTDose(ImportFromDicom):
 
     def hasRTDoseVolume(self) -> bool:
         """
-        Checks whether converted PySisyphe volumes exists (False before calling execute method).
+        Check whether converted PySisyphe volumes exists (False before calling execute method).
 
         Returns
         -------
@@ -3187,7 +3187,7 @@ class ImportFromRTStruct(ImportFromDicom):
 
     def hasRTStructFilename(self) -> bool:
         """
-        Checks whether Dicom RTStruct files to convert are defined.
+        Check whether Dicom RTStruct files to convert are defined.
 
         Returns
         -------
@@ -3209,7 +3209,7 @@ class ImportFromRTStruct(ImportFromDicom):
 
     def hasRTStructROI(self) -> bool:
         """
-        Checks whether converted PySisyphe rois exists (False before calling execute method).
+        Check whether converted PySisyphe rois exists (False before calling execute method).
 
         Returns
         -------
@@ -3806,7 +3806,7 @@ class ExportToRTStruct(object):
 
     def hasReferenceVolume(self) -> bool:
         """
-        Checks whether PySisyphe reference volume is defined.
+        Check whether PySisyphe reference volume is defined.
 
         Returns
         -------
@@ -3854,7 +3854,7 @@ class ExportToRTStruct(object):
 
     def hasROI(self) -> bool:
         """
-        Checks whether PySisyphe ROIs list of conversion is not empty.
+        Check whether PySisyphe ROIs list of conversion is not empty.
 
         Returns
         -------
@@ -3891,7 +3891,7 @@ class ExportToRTStruct(object):
 
     def hasExportFolder(self) -> bool:
         """
-        Checks whether backup folder is defined.
+        Check whether backup folder is defined.
 
         Returns
         -------

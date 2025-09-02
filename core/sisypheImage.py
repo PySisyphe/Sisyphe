@@ -992,7 +992,7 @@ class SisypheImage(object):
 
     def hasITKImage(self) -> bool:
         """
-        Checks whether itk.Image attribute is available.
+        Check whether itk.Image attribute is available.
 
         Returns
         -------
@@ -3070,7 +3070,7 @@ class SisypheImage(object):
     # add replaceNanInfValues method
     def replaceNanInfValues(self, nan: float = 0.0, posinf: float = 0.0, neginf: float = 0.0) -> None:
         """
-        Replace NaN and Inf values with a given values.
+        Replace NaN and Inf values with a given value (default 0.0).
 
         Parameters
         ----------

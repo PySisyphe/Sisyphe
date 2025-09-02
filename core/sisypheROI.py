@@ -1164,14 +1164,14 @@ class SisypheROI(SisypheBinaryImage):
 
     def setCompressionOn(self) -> None:
         """
-        Enables gzip file compression of the current SisypheROI instance. PySisyphe ROI format (.xroi) can be
+        Enable gzip file compression of the current SisypheROI instance. PySisyphe ROI format (.xroi) can be
         optionally gzipped.
         """
         self._compression = True
 
     def setCompressionOff(self) -> None:
         """
-        Disables gzip file compression of the current SisypheROI instance. PySisyphe ROI format (.xroi) can be
+        Disable gzip file compression of the current SisypheROI instance. PySisyphe ROI format (.xroi) can be
         optionally gzipped.
         """
         self._compression = False
@@ -1371,8 +1371,8 @@ class SisypheROI(SisypheBinaryImage):
     # add clearBorderBlobs method
     def clearBorderBlobs(self):
         """
-        Clear blob(s) connected to the border of the current SisypheROI instance. The current SisypheROI instance is
-        overwritten.
+        Clear blobs (connected components) linked to the border of the current SisypheROI instance. The current
+        SisypheROI instance is overwritten.
         """
         if not self.isEmpty():
             if not self.isEmptyArray():
@@ -2881,7 +2881,7 @@ class SisypheROICollection(object):
 
     def isEmpty(self) -> bool:
         """
-        Checks if SisypheROICollection instance container is empty.
+        Check if SisypheROICollection instance container is empty.
 
         Returns
         -------
@@ -2983,7 +2983,7 @@ class SisypheROICollection(object):
 
     def reverse(self) -> None:
         """
-        Reverses the order of the elements in the current SisypheROICollection instance container.
+        Reverse the order of the elements in the current SisypheROICollection instance container.
         """
         self._rois.reverse()
 
@@ -3423,7 +3423,7 @@ class SisypheROICollection(object):
     # add clearBorderBlobs method
     def clearBorderBlobs(self):
         """
-        Clear blob(s) connected to the border of the current SisypheROI instance.
+        Clear blobs (connected components) linked to the border of the current SisypheROI instance.
         """
         if not self.isEmpty():
             for roi in self:
@@ -3686,7 +3686,7 @@ class SisypheROICollection(object):
     # add roiVotingCombination method
     def roiVotingCombination(self) -> SisypheROI:
         """
-        Performs a pixelwise combination of ROIs, where each of them represents a segmentation of the same image. Label
+        Perform a pixelwise combination of ROIs, where each of them represents a segmentation of the same image. Label
         voting is a simple method of classifier combination applied to image segmentation. Typically, the accuracy of
         the combined segmentation exceeds the accuracy of the input segmentations. Voting is therefore commonly used as
         a way of boosting segmentation performance.
@@ -3721,7 +3721,7 @@ class SisypheROICollection(object):
     # add roiSTAPLECombination method
     def roiSTAPLECombination(self) -> SisypheROI:
         """
-        Performs a pixelwise combination of ROIs, where each of them represents a segmentation of the same image. The
+        Perform a pixelwise combination of ROIs, where each of them represents a segmentation of the same image. The
         labelings are weighted relative to each other based on their "performance" as estimated by an
         expectation-maximization algorithm. In the process, a ground truth segmentation is estimated, and the estimated
         performances of the individual segmentations are relative to this estimated ground truth.
@@ -3896,7 +3896,7 @@ class SisypheROIDraw(object):
     ~~~~~~~~~~~
 
     Processing class for SisypheROI instances with undo/redo management. Set input ROI with setROI method. Set input
-    reference valume with SetVolume method.
+    reference volume with SetVolume method.
 
     Scope of methods:
 
@@ -4954,21 +4954,21 @@ class SisypheROIDraw(object):
 
     def setUndoOn(self) -> None:
         """
-        Enables undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a LIFO
+        Enable undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a LIFO
         stack if this option is enabled.
         """
         self.setUndo(True)
 
     def setUndoOff(self) -> None:
         """
-        Disables undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a LIFO
+        Disable undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a LIFO
         stack if this option is enabled.
         """
         self.setUndo(False)
 
     def setUndo(self, v: bool) -> None:
         """
-        Enables/disables undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a
+        Enable/disable undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a
         LIFO stack if this option is enabled.
 
         Parameters
@@ -5573,7 +5573,7 @@ class SisypheROIDraw(object):
 
     def copySlice(self, sindex: int, dim: int) -> None:
         """
-        Copy of a SisypheROI attribute slice to the clipboard.
+        Copy a slice of the SisypheROI attribute to the clipboard.
 
         Parameters
         ----------
@@ -5589,7 +5589,7 @@ class SisypheROIDraw(object):
 
     def cutSlice(self, sindex: int, dim: int) -> None:
         """
-        Cut of a SisypheROI attribute slice to the clipboard.
+        Cut a slice of the SisypheROI attribute to the clipboard.
 
         Parameters
         ----------
@@ -5607,7 +5607,7 @@ class SisypheROIDraw(object):
 
     def pasteSlice(self, sindex: int, dim: int) -> None:
         """
-        Paste a SisypheROI attribute slice from the clipboard.
+        Paste a slice to the SisypheROI attribute from the clipboard.
 
         Parameters
         ----------
@@ -7753,7 +7753,7 @@ class SisypheROIDraw(object):
     # add clearBorderBlob method
     def clearBorderBlob(self) -> None:
         """
-        Remove all blobs (connected components) connected to image border.
+        Remove all blobs (connected components) linked to image border.
         """
         if self.hasROI():
             img = clear_border(self._roi.getNumpy())
@@ -7763,7 +7763,7 @@ class SisypheROIDraw(object):
 
     def blobSelect(self, x: int, y: int, z: int) -> None:
         """
-        Remove all blobs except the one containing the voxel whose coordinates are transmitted, from the SisypheROI
+        Remove all blobs except the one containing the transmitted voxel coordinates, from the SisypheROI
         image attribute.
 
         Parameters
@@ -7787,7 +7787,7 @@ class SisypheROIDraw(object):
 
     def blobRemove(self, x: int, y: int, z: int) -> None:
         """
-        Remove the blob containing the voxel whose coordinates are transmitted, from the SisypheROI image attribute.
+        Remove the blob containing the transmitted voxel coordinates, from the SisypheROI image attribute.
 
         Parameters
         ----------
@@ -7810,7 +7810,7 @@ class SisypheROIDraw(object):
 
     def copyBlob(self, x: int, y: int, z: int) -> None:
         """
-        Copy to clipboard the blob containing the voxel whose coordinates are transmitted, from the SisypheROI image
+        Copy to clipboard the blob containing the transmitted voxel coordinates, from the SisypheROI image
         attribute.
 
         Parameters
@@ -7836,7 +7836,7 @@ class SisypheROIDraw(object):
 
     def cutBlob(self, x: int, y: int, z: int) -> None:
         """
-        Cut to clipboard the blob containing the voxel whose coordinates are transmitted, from the SisypheROI image
+        Cut to clipboard the blob containing the transmitted voxel coordinates, from the SisypheROI image
         attribute.
 
         Parameters
@@ -7865,7 +7865,7 @@ class SisypheROIDraw(object):
 
     def pasteBlob(self, x: int, y: int, z: int) -> None:
         """
-        Paste the blob from clipboard at the position of the voxel whose coordinates are transmitted, into the
+        Paste the blob from clipboard at the position of the transmitted voxel coordinates, into the
         SisypheROI image attribute.
 
         Parameters
@@ -8762,6 +8762,18 @@ class SisypheROIFeatures(object):
     ~~~~~~~~~~~
 
     Extract features (descriptive statistics, shape, texture) from SisypheROI and SisypheVolume instance(s).
+
+    List of calculated features enabled by tag methods :
+
+        - First order statistics (19 features)
+        - Gray Level Co-occurrence Matrix (GLCM, 24 features)
+        - Gray Level Run Length Matrix (GLRM, 16 features)
+        - Gray Level Size Zone Matrix (GLSZM, 16 features)
+        - Neighbouring Gray Tone Difference Matrix (NGTDM, 5 features)
+        - Gray Level Dependence Matrix (GLDM, 14 features)
+        - 3D Shape (16 features)
+
+    The features definition is described in https://pyradiomics.readthedocs.io/en/latest/features.html
 
     Inheritance
     ~~~~~~~~~~~

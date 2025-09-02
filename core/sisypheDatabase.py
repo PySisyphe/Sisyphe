@@ -393,7 +393,7 @@ class SisypheDatabase(object):
 
     def hasDatabasePath(self) -> bool:
         """
-        Checks whether PySisyphe database folder exists.
+        Check whether PySisyphe database folder exists.
 
         Returns
         -------
@@ -478,7 +478,7 @@ class SisypheDatabase(object):
 
     def hasPatient(self, identity: SisypheVolume | SisypheIdentity) -> bool:
         """
-        Checks whether a patient is in SisypheDatabase instance.
+        Check whether a patient is in SisypheDatabase instance.
 
         Parameters
         ----------
@@ -660,7 +660,7 @@ class SisypheDatabase(object):
 
     def removePatients(self, identities: list[SisypheVolume] | list[SisypheIdentity]) -> None:
         """
-        Removes a list of patients from the database, deletes patient sub-folders of the database directory.
+        Remove a list of patients from the database, deletes patient sub-folders of the database directory.
 
         Parameters
         ----------
@@ -843,7 +843,7 @@ class SisypheDatabase(object):
 
     def copySisypheVolumes(self, vols: list[SisypheVolume] | SisypheVolumeCollection) -> None:
         """
-        Copy a list of Sisyphe.core.sisypheVolume.SisypheVolume file (.xvol) in the database.
+        Copy a list of Sisyphe.core.sisypheVolume.SisypheVolume files (.xvol) in the database.
 
         Parameters
         ----------
@@ -956,7 +956,7 @@ class SisypheDatabase(object):
 
     def copySisypheMesh(self, mesh: SisypheMesh, identity: SisypheIdentity) -> None:
         """
-        Copy a Sisyphe.core.sisypheROI.SisypheROI file (.xmesh) in its patient folder.
+        Copy a Sisyphe.core.sisypheMesh.SisypheMesh file (.xmesh) in its patient folder.
 
         Parameters
         ----------
@@ -996,7 +996,7 @@ class SisypheDatabase(object):
 
     def hasSisypheVolume(self, vol: SisypheVolume) -> bool:
         """
-        Checks whether Sisyphe.core.sisypheVolume.SisypheVolume is in the database.
+        Check whether Sisyphe.core.sisypheVolume.SisypheVolume is in the database.
 
         Parameters
         ----------
@@ -1020,7 +1020,7 @@ class SisypheDatabase(object):
 
     def hasSisypheROI(self, roi: SisypheROI, identity: SisypheIdentity) -> bool:
         """
-        Checks whether Sisyphe.core.sisypheROI.SisypheROI is in the database.
+        Check whether Sisyphe.core.sisypheROI.SisypheROI is in the database.
 
         Parameters
         ----------
@@ -1048,7 +1048,7 @@ class SisypheDatabase(object):
 
     def hasSisypheMesh(self, mesh: SisypheMesh, identity: SisypheIdentity) -> bool:
         """
-        Checks whether Sisyphe.core.sisypheMesh.SisypheMesh is in the database.
+        Check whether Sisyphe.core.sisypheMesh.SisypheMesh is in the database.
 
         Parameters
         ----------
@@ -1161,7 +1161,7 @@ class SisypheDatabase(object):
 
     def isEmpty(self) -> bool:
         """
-        Checks whether patient database is empty.
+        Check whether patient database is empty.
 
         Returns
         -------
@@ -1210,10 +1210,8 @@ class SisypheDatabase(object):
                     for f in filelist:
                         backupfile = join(backuppath, basename(f))
                         if exists(backupfile):
-                            if filelist[f] > getmtime(backupfile):
-                                copy(f, backupfile)
-                        else:
-                            copy(f, backuppath)
+                            if filelist[f] > getmtime(backupfile): copy(f, backupfile)
+                        else: copy(f, backuppath)
                         if QApplication.instance() is not None: QApplication.processEvents()
                 else: raise FileExistsError('folder {} does not exist.'.format(patient))
             else: raise TypeError('parameter type {} is not str.'.format(type(patient)))

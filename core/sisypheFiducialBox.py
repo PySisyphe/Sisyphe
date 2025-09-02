@@ -50,8 +50,8 @@ class SisypheFiducialBox(QObject):
     Description
     ~~~~~~~~~~~
 
-    This class detects the Elekta Leksell frame's fiducial markers. It computes a rigid transformation to calculate
-    coordinates between the geometric Leksell reference and the image coordinates, and vice versa.
+    This class is used to detect the Elekta Leksell frame's fiducial markers. It performs a rigid transformation between
+    the Leksell reference coordinates and the image coordinates, and vice versa.
 
     Elekta Leksell frame space, LAI+ convention:
 
@@ -696,7 +696,7 @@ class SisypheFiducialBox(QObject):
 
     def hasErrors(self) -> bool:
         """
-        Checks whether errors are calculated.
+        Check whether errors are calculated.
 
         Returns
         -------
@@ -743,7 +743,7 @@ class SisypheFiducialBox(QObject):
 
     def removeTransformFromVolume(self) -> None:
         """
-        remove the calculated geometric transformation from the Sisyphe.core.sisypheTransform.SisypheTransforms
+        Remove the calculated geometric transformation from the Sisyphe.core.sisypheTransform.SisypheTransforms
         attribute of the processed volume.
         """
         if self.hasVolume():
@@ -756,7 +756,7 @@ class SisypheFiducialBox(QObject):
 
     def hasTransform(self) -> bool:
         """
-        Checks whether rigid transformation between image and Leksell geometric reference is calculated.
+        Check whether rigid transformation between image and Leksell geometric reference is calculated.
 
         Returns
         -------
@@ -853,7 +853,7 @@ class SisypheFiducialBox(QObject):
 
     def removeSliceMarkers(self, n: int) -> None:
         """
-        Removes all fiduciary markers from a slice.
+        Remove all fiduciary markers from a slice.
 
         Parameters
         ----------

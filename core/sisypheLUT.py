@@ -987,7 +987,7 @@ class SisypheLut(object):
 
     def getWindowRange(self) -> tuple[float, float]:
         """
-         Get the windowing range of the look-up table colormap of the current SisypheLut instance.
+        Get the windowing range of the look-up table colormap of the current SisypheLut instance.
 
         Returns
         -------
@@ -1331,8 +1331,7 @@ class SisypheColorTransfer(object):
 
     - Color transfer function which associates image array values with colors
     - Alpha transfer function which associates image array values with alpha (opacity)
-    - Gradient transfer function which associates gradient image array values with alpha (opacity) used to improve the
-    rendering of object edges. (i.e. high gradient values in edges are associated with high alpha)
+    - Gradient transfer function which associates gradient image array values with alpha (opacity) used to improve the rendering of object edges. (i.e. high gradient values in edges are associated with high alpha)
 
     Inheritance
     ~~~~~~~~~~~
@@ -1726,7 +1725,7 @@ class SisypheColorTransfer(object):
         Parameters
         ----------
         gradienttransfer : vtk.vtkPiecewiseFunction
-            gradient trasnfer function to copy
+            gradient transfer function to copy
         """
         if isinstance(gradienttransfer, vtkPiecewiseFunction):
             self._gradienttransfer = gradienttransfer

@@ -412,7 +412,7 @@ def convertImageToAxialOrientation(img: sitkImage) -> tuple[sitkImage, list[int]
 
 def readImage(filename: str, lib: str = 'sitk') -> sitkImage | tuple[sitkImage, dict]:
     """
-    Read image from Nifti, Nrrd, Minc, VTK, Numpy, old Sisyphe, or Bitmap format. Format is detectied from filename
+    Read image from Nifti, Nrrd, Minc, VTK, Numpy, old Sisyphe, or Bitmap format. Format is identified from filename
     extension. Instance returned can be SimpleITK.Image | itk.Image | vtk.ImageData | ants.core.ANTsImage.
 
     Parameters

@@ -2098,14 +2098,14 @@ class SisypheMesh(object):
 
     def shadingOn(self) -> None:
         """
-        Enables mesh shading mode for the current SisypheMesh instance.
+        Enable mesh shading mode for the current SisypheMesh instance.
         """
         if self._polydata is not None:
             self._actor.GetProperty().ShadingOn()
 
     def shadingOff(self) -> None:
         """
-        Disables mesh shading mode for the current SisypheMesh instance.
+        Disable mesh shading mode for the current SisypheMesh instance.
         """
         if self._polydata is not None:
             self._actor.GetProperty().ShadingOff()
@@ -2583,7 +2583,7 @@ class SisypheMesh(object):
         passband : float
             pass band factor, lower values produce more smoothing (between 0.0 and 2.0, default 0.1)
         edge : bool
-            enables/disables customized smoothing of the interior vertices. Interior vertices are classified as either
+            enable/disable customized smoothing of the interior vertices. Interior vertices are classified as either
             "simple", "interior edge", or "fixed", and smoothed differently. A feature edge occurs when the angle
             between the two surface normals of a polygon sharing an edge s greater than a feature angle (45°). Then,
             vertices used by no feature edges are classified "simple", vertices used by exactly two feature edges are
@@ -2591,7 +2591,7 @@ class SisypheMesh(object):
             "simple" vertices are smoothed as before. "interior edge" vertices are smoothed only along their two
             connected edges, and only if the angle between the edges is less than an edge angle (15°).
         boundary : bool
-            enables/disables the smoothing operation on vertices that are on the "boundary" of the mesh. A boundary
+            enable/disable the smoothing operation on vertices that are on the "boundary" of the mesh. A boundary
             vertex is one that is surrounded by a semi-cycle of polygons (or used by a single line)
         updatenormals : bool
             recalculate normals after reduction
@@ -2631,7 +2631,7 @@ class SisypheMesh(object):
             iterations are more stable than larger relaxation factors and smaller numbers of iterations (between 0.0
             and 1.0, default 0.1)
         edge : bool
-            enables/disables customized smoothing of the interior vertices. Interior vertices are classified as either
+            enable/disable customized smoothing of the interior vertices. Interior vertices are classified as either
             "simple", "interior edge", or "fixed", and smoothed differently. A feature edge occurs when the angle
             between the two surface normals of a polygon sharing an edge is greater than a feature angle (45°). Then,
             vertices used by no feature edges are classified "simple", vertices used by exactly two feature edges are
@@ -2639,7 +2639,7 @@ class SisypheMesh(object):
             "simple" vertices are smoothed as before. "interior edge" vertices are smoothed only along their two
             connected edges, and only if the angle between the edges is less than an edge angle (15°).
         boundary : bool
-            enables/disables the smoothing operation on vertices that are on the "boundary" of the mesh. A boundary
+            enable/disable the smoothing operation on vertices that are on the "boundary" of the mesh. A boundary
             vertex is one that is surrounded by a semi-cycle of polygons (or used by a single line)
         updatenormals : bool
             recalculate normals after reduction
