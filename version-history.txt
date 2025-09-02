@@ -156,3 +156,31 @@ version 0.9.1, build 30/08/2025
 		Qt5 bug of modal dialog on darwin platform, popup menu items cannot be selected
 	gui.windowSisyphe.WindowSisyphe.frameDetection()
 		Qt5 bug of modal dialog on darwin platform, popup menu items cannot be selected, modal simulation to fix it
+
+version 0.9.1, build 01/09/2025
+-------------------------------
+
+**update html documentation**
+	add texture.png icon
+	update PySisyphe_dockroi.rst
+	update API documentation, docstring corrections
+	rebuild sphinx
+**update module**
+	gui.dialogEditLabels
+	widgets.imageWidgets
+**update class**
+	gui.dialogEditLabels.DialogEditLabels
+		update __init__() method
+	widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget
+		update editAttributes() method
+		update viewDicomAttributes() method
+		update editLabels() method
+		update statistics() method
+**update method**
+	gui.dialogEditLabels.DialogEditLabels.__init__()
+		remove fixed size of 'Clear labels' and 'Import/export' buttons
+	widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.editAttributes()
+	widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.viewDicomAttributes()
+	widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.editLabels()
+	widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.statistics()
+		update dialog title bar color for Win32 platform
