@@ -53,7 +53,7 @@ class DialogEditLabels(QDialog):
 
     QWidget -> QDialog -> DialogEditLabels
 
-    Last revision: 08/11/2024
+    Last revision: 03/09/2025
     """
 
     # Special method
@@ -128,7 +128,9 @@ class DialogEditLabels(QDialog):
         self._labelpos.setValue(1)
 
         io = MenuPushButton('Import/export')
-        io.setFixedWidth(150)
+        # < Revision 03/09/2025
+        # io.setFixedWidth(150)
+        # Revision 03/09/2025 >
         io.setToolTip('Import list of labels from a text file (*.txt)')
         menu = io.getPopupMenu()
         self._asep = QWidgetAction(self)
@@ -149,7 +151,9 @@ class DialogEditLabels(QDialog):
         save.triggered.connect(self._save)
 
         clear = QPushButton('Clear labels')
-        clear.setFixedWidth(100)
+        # < Revision 03/09/2025
+        # clear.setFixedWidth(100)
+        # Revision 03/09/2025 >
         # noinspection PyUnresolvedReferences
         clear.clicked.connect(self._clear)
 
