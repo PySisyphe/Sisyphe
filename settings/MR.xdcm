@@ -75,7 +75,7 @@
 	<PhotometricInterpretation VM="1" VR="CS">MONOCHROME2</PhotometricInterpretation>
 	<Rows VM="1" VR="US">256</Rows>
 	<Columns VM="1" VR="US">256</Columns>
-	<PixelSpacing VM="2" VR="DS">1.0|1.L0</PixelSpacing>
+	<PixelSpacing VM="2" VR="DS">1.0|1.0</PixelSpacing>
 	<BitsAllocated VM="1" VR="US">16</BitsAllocated>
 	<BitsStored VM="1" VR="US">16</BitsStored>
 	<HighBit VM="1" VR="US">15</HighBit>
