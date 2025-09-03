@@ -8,9 +8,9 @@
 			and querying and retrieval of managed SOP instances (Query/Retrieve 
 			Service Class).
 
-			This DICOM SCP server is identified by an AE Title (AET), a URL (or 
+			This DICOM SCP server is identified by an AE Title (AET), URL (or 
 			IP address) and a port. The connection can be secured by a user login
-			and password. These parameters must be obtained from the PACS
+			and password. These parameters must be obtained from your PACS
 			administrator.
 		</Title>
 		<AET>
