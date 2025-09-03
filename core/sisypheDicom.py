@@ -2208,7 +2208,7 @@ class ExportToDicom(object):
     object -> ExportToDicom
 
     Creation: 08/09/2022
-    Last revision: 27/03/2025
+    Last revision: 03/09/2025
     """
     __slots__ = ['_volume', '_xmlref', '_dcmdirectory']
 
@@ -2500,7 +2500,10 @@ class ExportToDicom(object):
                     # Update instance dependent attributes, edited for each instance
                     ds['SOPInstanceUID'].value = gen.getCurrentInstanceUID()
                     ds['InstanceNumber'].value = gen.getCurrentInstanceIndex()
-                    p[2] = p[2] - (i * self._volume.getSpacing()[2])
+                    # < Revision 03/09/2025
+                    # p[2] = p[2] - (i * self._volume.getSpacing()[2])
+                    p[2] = p[2] - self._volume.getSpacing()[2]
+                    # Revision 03/09/2025 >
                     ds['ImagePositionPatient'].value = p
                     ds['SliceLocation'].value = p[2]
                     minv = int(np[i, :, :].min())
