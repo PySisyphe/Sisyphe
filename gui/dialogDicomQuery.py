@@ -155,7 +155,7 @@ class DialogDicomQueryRetrieve(QDialog):
         self._modality = LabeledComboBox('Modality', parent=self)
         self._modality.addItems(['*', 'CT', 'MR', 'NM', 'OT', 'PT'])
         self._modality.setCurrentIndex(0)
-        self._cdstudy = QCheckBox('Modality date', parent=self)
+        self._cdstudy = QCheckBox('Acq. date', parent=self)
         self._cdstudy.setChecked(False)
         self._dstudy = QDateEdit(parent=self)
         self._dstudy.setMinimumDate(QDate(2000, 1, 1))
