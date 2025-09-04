@@ -67,7 +67,7 @@ class WorkflowItem(QWidget):
     QWidget -> WorkflowItem
 
     Creation: 13/02/2025
-    Last revision: 17/02/2025
+    Last revision: 04/09/2025
     """
 
     # Special method
@@ -82,14 +82,20 @@ class WorkflowItem(QWidget):
         self._process = QLabel(self)
         self._process.setText(name)
         self._input1 = QSpinBox(self)
-        self._input1.setFixedWidth(60)
+        # < Revision 04/09/2025
+        # self._input1.setFixedWidth(60)
+        self._input1.setFixedWidth(100)
+        # Revision 04/09/2025 >
         self._input1.setAlignment(Qt.AlignCenter)
         self._input1.setPrefix('img')
         self._input1.setWrapping(True)
         self._input1.setMinimum(0)
         self._input1.setVisible(False)
         self._input2 = QSpinBox(self)
-        self._input2.setFixedWidth(60)
+        # < Revision 04/09/2025
+        # self._input2.setFixedWidth(60)
+        self._input2.setFixedWidth(100)
+        # Revision 04/09/2025 >
         self._input2.setAlignment(Qt.AlignCenter)
         self._input2.setPrefix('img')
         self._input2.setWrapping(True)
