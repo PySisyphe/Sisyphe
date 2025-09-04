@@ -83,7 +83,7 @@
 	</IntensityNormalizationImageFilter>
 	<BiasFieldCorrectionImageFilter>
 		<UseMask vartype="bool">True</UseMask>
-		<ShrinkFactor varmax="4" varmin="1" vartype="int">3</ShrinkFactor>
+		<ShrinkFactor varmax="4" varmin="1" vartype="int">1</ShrinkFactor>
 		<SplineOrder varmax="10" varmin="1" vartype="int">3</SplineOrder>
 		<NumberOfHistogramBins varmax="512" varmin="32" vartype="int">200</NumberOfHistogramBins>
 		<NumberOfFittingLevels varmax="10" varmin="1" vartype="int">4</NumberOfFittingLevels>
