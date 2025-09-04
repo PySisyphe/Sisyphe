@@ -100,8 +100,8 @@
 	</ActiveContour>
 	<RemoveNeckSlices>
 		<Title>
-			Most sagittal MRI scans have extensive and useless inferior 
-			coverage. This function crop MR volume in z direction, removing 
+			Most 3D MR acquired in sagittal orientation have extensive and useless 
+			inferior coverage. This function crop MR volume in z direction, removing 
 			empty slices and lower slices of neck below foramen magnum.
 		</Title>
 		<ExtentFactor>
