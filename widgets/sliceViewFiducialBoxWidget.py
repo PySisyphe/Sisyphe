@@ -10,6 +10,7 @@ from sys import platform
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMenu
 
+from Sisyphe.core.sisypheSettings import SisypheSettings
 # noinspection PyCompatibility
 from Sisyphe.gui.dialogWait import DialogWait
 from Sisyphe.gui.dialogGenericResults import DialogGenericResults
@@ -49,7 +50,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
 
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceViewFiducialBoxWidget
 
-    Last revision: 21/05/2025
+    Last revision: 05/09/2025
     """
 
     # Special method
@@ -68,10 +69,22 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
             self._fid = fid
             # self._volume = fid.getVolume()
         else: raise ValueError('No SisypheFiducialBox.')
+
+        # < Revision 05/09/2025
+        try:
+            settings = SisypheSettings()
+            fsize = settings.getFieldValue('GUI', 'FontSize') * 2
+            if fsize is None: fsize = 20
+        except: fsize = 20
+        # Revision 05/09/2025 >
         self._dialog = None
         for i in range(10):
             self.addTarget(p=[0, 0, 0], name='', signal=False)
             tool = self.getTool(i)
+            # < Revision 05/09/2025
+            tool.setFontSize(fsize)
+            tool.setTextOffset([20, 20])
+            # Revision 05/09/2025 >
             tool.setText('#{}'.format(i))
             tool.setSphereVisibility(False)
             tool.setLineWidth(2.0)
