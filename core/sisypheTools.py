@@ -17,6 +17,7 @@ from os.path import splitext
 from xml.dom import minidom
 
 from math import pi
+from math import ceil
 from math import sqrt
 from math import atan2
 from math import acos
@@ -2081,7 +2082,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         if usedpi:
             from PyQt5.QtWidgets import QApplication
             f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
-            if f != 1.0: size = int(size / f)
+            if f != 1.0: size = ceil(size / f)
         # Revision 07/09/2025 >
         return size
 
@@ -3880,7 +3881,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         if usedpi:
             from PyQt5.QtWidgets import QApplication
             f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
-            if f != 1.0: size = int(size / f)
+            if f != 1.0: size = ceil(size / f)
         # Revision 07/09/2025 >
         return size
 
