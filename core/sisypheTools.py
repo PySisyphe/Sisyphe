@@ -1682,7 +1682,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
     (vtkDistanceWidget, NamedWidget) -> HandleWidget
 
     Creation: 05/04/2022
-    Last revision: 21/05/2025
+    Last revision: 07/09/2025
     """
 
     _FILEEXT = '.xpoint'
@@ -2039,7 +2039,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         """
         return self._targetText.GetInput()
 
-    def setFontSize(self, size: int) -> None:
+    def setFontSize(self, size: int, usedpi: bool = True) -> None:
         """
         Set the font size used to display the text of the current HandleWidget instance.
 
@@ -2047,20 +2047,43 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         ----------
         size : int
             font size
+        usedpi : bool
+            if True, use screen dpi to apply a zoom factor (zoom factor is 1.0 for a default dpi of 92)
         """
-        if isinstance(size, int): self._targetText.GetTextProperty().SetFontSize(size)
+        if isinstance(size, int):
+            # < Revision 07/09/2025
+            # font size f(dpi)
+            if usedpi:
+                from PyQt5.QtWidgets import QApplication
+                f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
+                if f != 1.0: size = int(size * f)
+            # Revision 07/09/2025 >
+            self._targetText.GetTextProperty().SetFontSize(size)
         else: raise TypeError('parameter type {} is not int.'.format(type(size)))
 
-    def getFontSize(self) -> int:
+    def getFontSize(self, usedpi: bool = True) -> int:
         """
         Get the font size used to display the text of the current HandleWidget instance.
+
+        Parameters
+        ----------
+        usedpi : bool
+            if True, use screen dpi to apply a zoom factor (zoom factor is 1.0 for a default dpi of 92)
 
         Returns
         -------
         int
             font size
         """
-        return self._targetText.GetTextProperty().GetFontSize()
+        size = self._targetText.GetTextProperty().GetFontSize()
+        # < Revision 07/09/2025
+        # font size f(dpi)
+        if usedpi:
+            from PyQt5.QtWidgets import QApplication
+            f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
+            if f != 1.0: size = int(size / f)
+        # Revision 07/09/2025 >
+        return size
 
     def setFontBold(self, v: bool) -> None:
         """
@@ -3396,7 +3419,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
     (vtkDistanceWidget, NamedWidget) -> LineWidget
 
     Creation: 05/04/2022
-    Last revision: 21/05/2025
+    Last revision: 07/09/2025
     """
 
     _FILEEXT = '.xline'
@@ -3814,7 +3837,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         return [self._entryText.GetInput(),
                 self._targetText.GetInput()]
 
-    def setFontSize(self, size: int) -> None:
+    def setFontSize(self, size: int, usedpi: bool = True) -> None:
         """
         Set the font size used to display the text of the current LineWidget instance.
 
@@ -3822,22 +3845,44 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         ----------
         size : int
             font size
+        usedpi : bool
+            if True, use screen dpi to apply a zoom factor (zoom factor is 1.0 for a reference dpi of 92)
         """
         if isinstance(size, int):
+            # < Revision 07/09/2025
+            # font size f(dpi)
+            if usedpi:
+                from PyQt5.QtWidgets import QApplication
+                f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
+                if f != 1.0: size = int(size * f)
+            # Revision 07/09/2025 >
             self._targetText.GetTextProperty().SetFontSize(size)
             self._entryText.GetTextProperty().SetFontSize(size)
         else: raise TypeError('parameter type {} is not int.'.format(type(size)))
 
-    def getFontSize(self) -> int:
+    def getFontSize(self, usedpi: bool = True) -> int:
         """
          Get the font size used to display the text of the currentLineWidget instance.
+
+        Parameters
+        ----------
+        usedpi : bool
+            if True, use screen dpi to apply a zoom factor (zoom factor is 1.0 for a reference dpi of 92)
 
          Returns
          -------
          int
              font size
          """
-        return self._targetText.GetTextProperty().GetFontSize()
+        size = self._targetText.GetTextProperty().GetFontSize()
+        # < Revision 07/09/2025
+        # font size f(dpi)
+        if usedpi:
+            from PyQt5.QtWidgets import QApplication
+            f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
+            if f != 1.0: size = int(size / f)
+        # Revision 07/09/2025 >
+        return size
 
     def setFontBold(self, v: bool) -> None:
         """
