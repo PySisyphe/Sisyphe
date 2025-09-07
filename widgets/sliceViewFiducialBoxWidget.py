@@ -73,9 +73,9 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
         # < Revision 05/09/2025
         try:
             settings = SisypheSettings()
-            fsize = settings.getFieldValue('GUI', 'FontSize') * 2
-            if fsize is None: fsize = 20
-        except: fsize = 20
+            fsize = settings.getFieldValue('GUI', 'FontSize')
+            if fsize is None: fsize = 10
+        except: fsize = 10
         # Revision 05/09/2025 >
         self._dialog = None
         for i in range(10):
