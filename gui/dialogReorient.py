@@ -171,13 +171,18 @@ class DialogReorient(QDialog):
         self._resettrf = QPushButton('Reset Transform')
         # noinspection PyUnresolvedReferences
         self._resettrf.pressed.connect(self.resetTransform)
-        self._auto = QPushButton('Auto')
+        # < Revision 11/09/2025
+        # remove auto button
+        # self._auto = QPushButton('Auto')
         # noinspection PyUnresolvedReferences
-        self._auto.pressed.connect(self.autoTransform)
-        self._auto.setToolTip('Automatic reorientation on principal axes.')
+        # self._auto.pressed.connect(self.autoTransform)
+        # self._auto.setToolTip('Automatic reorientation on principal axes.')
+        # Revision 11/09/2025 >
         self._opacity = LabeledSlider(title='Reslice cursor opacity')
         self._opacity.setRange(0, 100)
-        self._opacity.setFixedWidth(200)
+        # < Revision 11/09/2025
+        # self._opacity.setFixedWidth(200)
+        # Revision 11/09/2025 >
         self._opacity.setValue(int(self._views().getFirstViewWidget().getLineOpacity() * 100))
         self._opacity.valueChanged.connect(self.setResliceCursorOpacity)
         self._width = LabeledDoubleSpinBox('Reslice cursor width')
@@ -205,7 +210,9 @@ class DialogReorient(QDialog):
         lyout.addSpacing(10)
         lyout.addWidget(self._resetfov)
         lyout.addWidget(self._resettrf)
-        lyout.addWidget(self._auto)
+        # < Revision 11/09/2025
+        # lyout.addWidget(self._auto)
+        # Revision 11/09/2025 >
         lyout.addStretch()
         lyout.addWidget(self._opacity)
         lyout.addSpacing(10)
@@ -221,11 +228,15 @@ class DialogReorient(QDialog):
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Exit')
-        cancel.setFixedWidth(100)
+        # < Revision 11/09/2025
+        # cancel.setFixedWidth(100)
+        # Revision 11/09/2025 >
         cancel.setAutoDefault(True)
         cancel.setDefault(True)
         self._execute = QPushButton('Resample')
-        self._execute.setFixedWidth(100)
+        # < Revision 11/09/2025
+        # self._execute.setFixedWidth(100)
+        # Revision 11/09/2025 >
         self._execute.setToolTip('Apply reorientation to volume.')
         self._execute.setEnabled(False)
         layout.addWidget(cancel)
