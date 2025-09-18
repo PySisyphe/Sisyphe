@@ -80,7 +80,7 @@ class DialogGenericResults(QDialog):
     QDialog -> DialogGenericResults
 
     Creation: 25/11/2022
-    Last revision: 12/06/2025
+    Last revision: 18/09/2025
     """
 
     # Special method
@@ -1020,3 +1020,10 @@ class DialogGenericResults(QDialog):
         self._plotlist = list()
         self._treelist = list()
         self._scrshot = list()
+
+    # < Revision 18/09/2025
+    # add showEvent method, Adjust the size of the dialog box to fit the content
+    def showEvent(self, a0):
+        super().showEvent(a0)
+        self.adjustSize()
+    # <Revision 18/09/2025 >
