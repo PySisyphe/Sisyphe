@@ -1267,6 +1267,14 @@ class DialogAsymmetry(DialogRegistration):
         self._settings.getParameterWidget('Inverse').setChecked(False)
         self._resamplesettings.setVisible(False)
 
+        # < Revision 18/09/2025
+        self._jacsettings = FunctionSettingsWidget('DisplacementFieldJacobianDeterminant')
+        self._jacsettings.setSettingsButtonFunctionText()
+        self._jacsettings.VisibilityToggled.connect(self._center)
+        # noinspection PyUnresolvedReferences
+        self.layout().insertWidget(3, self._jacsettings)
+        # Revision 18/09/2025 >
+
         screen = QApplication.primaryScreen().geometry()
         self._batch.setMinimumWidth(int(screen.width() * 0.33))
 
@@ -1284,7 +1292,9 @@ class DialogAsymmetry(DialogRegistration):
         if self._batch.filenamesCount() > 0:
             filenames = self._batch.getFilenames()
             index = 0
-            settings = FunctionSettingsWidget('DisplacementFieldJacobianDeterminant')
+            # < Revision 18/09/2025
+            # settings = FunctionSettingsWidget('DisplacementFieldJacobianDeterminant')
+            # Revision 18/09/2025 >
             for filename in filenames:
                 self._batch.setSelectionTo(index)
                 """
@@ -1321,8 +1331,12 @@ class DialogAsymmetry(DialogRegistration):
                     r = SisypheVolume()
                     r.setSITKImage(field)
                     r.setFilename(fieldname)
-                    prefix = settings.getParameterValue('Prefix')
-                    suffix = settings.getParameterValue('Suffix')
+                    # < Revision 18/09/2025
+                    # prefix = settings.getParameterValue('Prefix')
+                    # suffix = settings.getParameterValue('Suffix')
+                    prefix = self._jacsettings.getParameterValue('Prefix')
+                    suffix = self._jacsettings.getParameterValue('Prefix')
+                    # Revision 18/09/2025 >
                     r.setFilenamePrefix(prefix)
                     r.setFilenameSuffix(suffix)
                     r.getAcquisition().setSequenceToAlgebraMap()
