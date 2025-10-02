@@ -1968,7 +1968,7 @@ class DialogRegistrationBasedSegmentation(QDialog):
 
     QDialog -> DialogRegistrationBasedSegmentation
 
-    Last revision 04/06/2025
+    Last revision 02/10/2025
     """
 
     # Special method
@@ -2211,7 +2211,12 @@ class DialogRegistrationBasedSegmentation(QDialog):
         flags['multiple']['Grey matter map(s)'] = v
         flags['multiple']['White matter map(s)'] = v
         flags['multiple']['CSF map(s)'] = v
-        self._settings.setParameterVisibility('StructureTissue', v)
+        # < Revision 02/10/2025
+        # self._settings.setParameterVisibility('StructureTissue', v)
+        # self._settings.setParameterVisibility('PMAPCorrection', v)
+        self._settings.setParameterVisibility('StructureTissue', (correction != 'No'))
+        self._settings.setParameterVisibility('PMAPCorrection', (correction == 'Masking'))
+        # Revision 02/10/2025 >
         self._volumeSelect.setAvailability(flags)
         self._center(None)
 
