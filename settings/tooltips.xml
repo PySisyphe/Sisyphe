@@ -358,13 +358,11 @@
 	</SkullStripping>
 	<KMeansClustering>
 		<Title>
-			Classifies the intensity values of a scalar volume using the K-Means
+			Classify the intensity values of a scalar volume using the K-Means
 			algorithm.
 
 			PySisyphe uses the SimpleITK library implemenentation 
-			(https://simpleitk.org/doxygen/v2_4/html/index.html)
-			wrapped to python 
-			(https://simpleitk.readthedocs.io/en/master/gettingStarted.html)
+			(https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ScalarImageKmeansImageFilter.html)
 		</Title>
 		<AnisotropicDiffusionFilter/>
 		<BiasFieldCorrection/>
@@ -411,7 +409,7 @@
 	</KMeansSegmentation>
 	<PriorBasedSegmentation>
 		<Title>
-			Computes tissue probability maps (grey matter, white matter and 
+			Computes tissue probability maps (gray matter, white matter and 
 			cerebro-spinal fluid) with a finite mixture modeling (FMM) 
 			segmentation approach with prior constraints. These prior 
 			constraints include the specification of prior probability images 
@@ -483,8 +481,8 @@
 		<NumberOfIterations>Number of iterations (default 45)</NumberOfIterations>
 		<GradientStep/>
 		<GradientSmoothing/>
-		<Prefix>Prefix added to file name to save the cortical thickness map.</Prefix>
-		<Suffix>Suffix added to file name to save the cortical thickness map.</Suffix>
+		<Prefix>Prefix added to save the cortical thickness map.</Prefix>
+		<Suffix>Suffix added to save the cortical thickness map.</Suffix>
 	</CorticalThickness>
 	<RegistrationBasedSegmentation>
 		<Title/>
