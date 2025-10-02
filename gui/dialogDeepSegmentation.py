@@ -80,7 +80,7 @@ class DialogDeepTumorSegmentation(QDialog):
     QDialog -> DialogDeepTumorSegmentation
 
     Creation: 22/10/2024
-    Last revision: 03/06/2025
+    Last revision: 02/10/2025
     """
 
     # Class method
@@ -288,8 +288,11 @@ class DialogDeepTumorSegmentation(QDialog):
                                 2: 'peritumoral edema',
                                 3: '',
                                 4: 'enhancing tumor core'}
-                        for lbl in lbls:
-                            v.acquisition.setLabel(i, lbls[lbl])
+                        # < Revision 02/10/2025
+                        # for lbl in lbls:
+                        for k, lbl in enumerate(lbls):
+                            # v.acquisition.setLabel(i, lbls[lbl])
+                            v.acquisition.setLabel(k, lbls[lbl])
                             if lbl in (1, 2, 4) and saveroi:
                                 roi = v.labelToROI(lbl)
                                 roi.setFilename(filenames3[i])
@@ -298,6 +301,7 @@ class DialogDeepTumorSegmentation(QDialog):
                                 elif lbl == 4: roi.setFilenameSuffix('et')
                                 wait.setInformationText('Save {}...'.format(basename(roi.getFilename())))
                                 roi.save()
+                        # Revision 02/10/2025 >
                         wait.setInformationText('Save {}...'.format(v.getBasename()))
                         v.save()
                         for j in range(len(r['prb'])):
