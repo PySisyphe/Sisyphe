@@ -176,8 +176,8 @@
 		<LocalMargin varmax="10" varmin="0" vartype="int">5</LocalMargin>
 		<LocalStageTransform vartype="lstr">AntsDiffeomorphic|AntsFastDiffeomorphic|AntsSplineDiffeomorphic|AntsFastSplineDiffeomorphic</LocalStageTransform>
 		<SamplingRate varmax="1.0" varmin="0.1" vartype="float">0.5</SamplingRate>
-		<StructureTissue vartype="lstr">GM|WM|CSF|GM+WM|CSF+GM</StructureTissue>
 		<TissueCorrectionAlgorithm vartype="lstr">No|Masking|NearestNeighborTransform</TissueCorrectionAlgorithm>
+		<StructureTissue vartype="lstr">GM|WM|CSF|GM+WM|CSF+GM</StructureTissue>
 		<PMAPCorrection label="Probability map correction" vartype="lstr">p = p(STRUCT) ^ (0.5 / p(TISSUE))|p = p(STRUCT) ^ (1 + log(0.5 / p(TISSUE)))</PMAPCorrection>
 	</RegistrationBasedSegmentation>
 	<UnetTumorSegmentation>
