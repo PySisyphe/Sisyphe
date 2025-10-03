@@ -157,7 +157,7 @@
 		<BrainstemPrior label="Brainstem prior" vartype="vol"/>
 		<CerebellumPrior label="Cerebellum prior" vartype="vol"/>
 		<SkullStrip label="Skull strip" vartype="bool">True</SkullStrip>
-		<SegSGM label="Labelled volume excluding subcortical grey matter" vartype="bool">True</SegSGM>
+		<SegSGM label="Labeled volume excluding subcortical gray matter" vartype="bool">True</SegSGM>
 		<SegPrefix label="Labeled volume prefix" vartype="str">labels</SegPrefix>
 		<SegSuffix label="Labeled volume suffix" vartype="str"/>
 	</PriorBasedSegmentation>
@@ -373,8 +373,8 @@
 		<Algo label="Background thresholding algorithm (mask)" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximum Entropy|Kittler|Isodata|Moments</Algo>
 		<Size label="Morphological operator size (mask)" varmax="10" varmin="1" vartype="int">1</Size>
 		<Iter label="Number of morphological operator iterations (mask)"  varmax="10" varmin="1" vartype="int">2</Iter>
-		<GibbsSuppression label="Gibbs artefact correction" vartype="bool">True</GibbsSuppression>
-		<GibbsNeighbour varmax="10" varmin="1" vartype="int">3</GibbsNeighbour>
+		<GibbsSuppression label="Gibbs artifact correction" vartype="bool">True</GibbsSuppression>
+		<GibbsNeighbour label="Gibbs neighbor" varmax="10" varmin="1" vartype="int">3</GibbsNeighbour>
 		<Denoise label="Denoising algorithm" vartype="lstr">No|Local PCA|General function PCA|Marcenko-Pastur PCA|Non-local means|Self-Supervised Denoising|Adaptive soft coefficient matching</Denoise>
 		<NoiseEstimation label="Noise estimation algorithm" vartype="lstr">Local patches|Piesno</NoiseEstimation>
 		<MRReconstruction label="MR reconstruction" vartype="lstr">SENSE (Philips)|GRAPPA (General Electric, Siemens)</MRReconstruction>
