@@ -430,7 +430,10 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
             if 'patchradius' in denoise: patchradius = denoise['patchradius']
             else: patchradius = 1
             if 'blockradius' in denoise: blockradius = denoise['blockradius']
-            else: blockradius = 5
+            # < Revision 04/10/2025
+            # else: blockradius =
+            else: blockradius = 2
+            # Revision 04/10/2025 >
             if wait is not None:
                 if isinstance(wait, DialogWait): wait.setInformationText('Non-local means denoising...')
                 elif isinstance(wait, DictProxy): wait['msg'] = 'Non-local means denoising...'
