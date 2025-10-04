@@ -1042,8 +1042,8 @@
 	<PCADenoise>
 		<Title>Parameters of local PCA denoising method.</Title>
 		<Smooth>
-			Radius of a Gaussian smoothing filter (in voxels) to apply to the 
-			noise estimate (Default 2).
+			Radius of a Gaussian smoothing kernel (in voxels) applied to the 
+			estimate of the noise before returning it (Default 2).
 		</Smooth>
 		<PatchRadius>
 			Radius of the local patch to be taken around each voxel.
@@ -1059,10 +1059,10 @@
 		<Title>Parameters of non-local means denoising method.</Title>
 		<PatchRadius>
 			Radius of the local patch to be taken around each voxel (default 1).
-			Patch size = patch radius x 2 + 1 (2 gives 5x5x5 patches)
+			Patch size = patch radius x 2 + 1 (1 gives 3x3x3 patches)
 		</PatchRadius>
 		<BlockRadius>
-			Radius of the local patch to be taken around each voxel (default 5).
+			Radius of the local block to be taken around each voxel (default 2).
 			Block size = block radius x 2 + 1 (2 gives 5x5x5 blocks)
 		</BlockRadius>
 	</NLMeansDenoise>
