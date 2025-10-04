@@ -62,7 +62,7 @@ class DialogDiffusionPreprocessing(QDialog):
 
     QDialog -> DialogDiffusionPreprocessing
 
-    Last revision: 11/07/2025
+    Last revision: 04/10/2025
     """
 
     # Special method
@@ -131,7 +131,10 @@ class DialogDiffusionPreprocessing(QDialog):
         self._supervised = FunctionSettingsWidget('SelfSupervisedDenoise')
         self._supervised.settingsVisibilityOn()
         self._supervised.hideIOButtons()
-        self._nlmeans.setSettingsButtonText('Self Supervised Denoising')
+        # < Revision 04/10/2025
+        # self._nlmeans.setSettingsButtonText('Self Supervised Denoising')
+        self._supervised.setSettingsButtonText('Self Supervised Denoising')
+        # Revision 04/10/2025 >
         self._supervised.VisibilityToggled.connect(self._center)
         self._supervised.setVisible(False)
 
