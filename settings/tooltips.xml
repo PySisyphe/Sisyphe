@@ -1069,8 +1069,8 @@
 	<SelfSupervisedDenoise>
 		<Title>Parameters of self-supervised denoising method.</Title>
 		<PatchRadius>
-			Radius of the local patch to be taken around each voxel (default 1).
-			Patch size = patch radius x 2 + 1 (2 gives 5x5x5 patches)
+			Radius of the local patch to be taken around each voxel (default 0).
+			Patch size = patch radius x 2 + 1 (0 gives 1x1x1 patches)
 		</PatchRadius>
 		<Solver>
 			Algorithm used to solve the set of linear equations: ordinary least 
