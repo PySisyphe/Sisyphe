@@ -61,7 +61,7 @@ class DialogDiffusionTracking(QDialog):
 
     QDialog -> DialogDiffusionTracking
 
-    Last revision: 03/07/2025
+    Last revision: 05/10/2025
     """
 
     # Special method
@@ -199,7 +199,10 @@ class DialogDiffusionTracking(QDialog):
     def _stoppingChanged(self):
         self._track.setParameterVisibility('StoppingFAThreshold', self._combo3.currentText() == 'FA/GFA')
         self._track.setParameterVisibility('StoppingROI', self._combo3.currentText() == 'ROI')
-        v = self._combo3.currentText() == 'MAPS'
+        # < Revision 05/10/2025
+        # v = self._combo3.currentText() == 'MAPS'
+        v = self._combo3.currentText() == 'GM/WM/CSF'
+        # Revision 05/10/2025 >
         self._track.setParameterVisibility('StoppingGM', v)
         self._track.setParameterVisibility('StoppingWM', v)
         self._track.setParameterVisibility('StoppingCSF', v)
