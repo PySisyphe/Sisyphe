@@ -339,7 +339,7 @@
 	<TimeSeriesFastICA>
 		<Preprocessing vartype="bool">False</Preprocessing>
 		<NumberOfComponents varmax="30" varmin="1" vartype="int">10</NumberOfComponents>
-		<Threshold label="High variance confounds" varmax="1.0" varmin="0.0" decimals="4" vartype="float">0.8</Threshold>
+		<Threshold label="Component variance threshold" varmax="1.0" varmin="0.0" decimals="4" vartype="float">0.8</Threshold>
 	</TimeSeriesFastICA>
 	<TimeSeriesGroupICA>
 		<NumberOfComponents varmax="30" varmin="1" vartype="int">20</NumberOfComponents>
