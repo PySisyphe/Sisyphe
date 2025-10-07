@@ -91,7 +91,7 @@ class SettingsWidget(QWidget):
     QWidget -> SettingsWidget -> FunctionSettingsWidget
 
     Creation: 11/08/2022
-    Last revision: 02/06/2025
+    Last revision: 07/10/2025
     """
 
     _VSIZE = 24
@@ -137,9 +137,19 @@ class SettingsWidget(QWidget):
             if label.isupper(): r = label
             else:
                 r = ''
-                for c in label:
-                    if c.isupper(): r += ' {}'.format(c)
-                    else: r += c
+                # < Revision 07/10/2025
+                # for c in label:
+                #     if c.isupper(): r += ' {}'.format(c)
+                #     else: r += c
+                for i in range(len(label) - 1):
+                    c0 = label[i]
+                    c1 = label[i + 1]
+                    if c0.isupper() and c1.islower(): r += ' {}'.format(c0)
+                    elif c0.islower() and c1.isupper(): r += '{} '.format(c0)
+                    else: r += c0
+                r += label[-1]
+                r = r.replace('  ', ' ')
+                # Revision 07/10/2025
                 r = r.lstrip().capitalize()
             return r
         else: raise TypeError('parameter type {} is not str.'.format(type(label)))
