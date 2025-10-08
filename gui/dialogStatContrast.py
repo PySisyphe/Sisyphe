@@ -24,7 +24,6 @@ from numpy import zeros
 from numpy import arange
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QRadioButton
 from PyQt5.QtWidgets import QVBoxLayout
@@ -215,14 +214,20 @@ class DialogContrast(QDialog):
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
-        cancel = QPushButton('Cancel', parent=self)
-        cancel.setFixedWidth(100)
+        cancel = QPushButton('Close', parent=self)
+        # < Revision 08/10/2005
+        # cancel.setFixedWidth(100)
+        # Revision 08/10/2005 >
         self._ok = QPushButton('Estimate', parent=self)
-        self._ok.setFixedWidth(100)
-        self._ok.setAutoDefault(True)
-        self._ok.setDefault(True)
-        layout.addWidget(self._ok)
+        # < Revision 08/10/2005
+        # self._ok.setFixedWidth(100)
+        # self._ok.setAutoDefault(True)
+        # self._ok.setDefault(True)
+        cancel.setAutoDefault(True)
+        cancel.setDefault(True)
+        # Revision 08/10/2005 >
         layout.addWidget(cancel)
+        layout.addWidget(self._ok)
         layout.addStretch()
 
         # noinspection PyUnresolvedReferences
@@ -330,7 +335,7 @@ class DialogConjunction(QDialog):
     QDialog -> DialogConjunction
 
     Creation: 19/11/2024
-    Last revision: 05/12/2024
+    Last revision: 08/10/2025
     """
 
     # Special method
@@ -377,14 +382,20 @@ class DialogConjunction(QDialog):
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
-        cancel = QPushButton('Cancel', parent=self)
-        cancel.setFixedWidth(100)
+        cancel = QPushButton('Close', parent=self)
+        # < Revision 08/10/2025
+        # cancel.setFixedWidth(100)
+        # Revision 08/10/2025 >
         self._ok = QPushButton('Execute', parent=self)
-        self._ok.setFixedSize(QSize(100, 32))
-        self._ok.setAutoDefault(True)
-        self._ok.setDefault(True)
-        layout.addWidget(self._ok)
+        # < Revision 08/10/2025
+        # self._ok.setFixedSize(QSize(100, 32))
+        # self._ok.setAutoDefault(True)
+        # self._ok.setDefault(True)
+        cancel.setAutoDefault(True)
+        cancel.setDefault(True)
+        # < Revision 08/10/2025
         layout.addWidget(cancel)
+        layout.addWidget(self._ok)
         layout.addStretch()
 
         # noinspection PyUnresolvedReferences
@@ -465,7 +476,7 @@ class DialogTMapToZMap(QDialog):
 
     QDialog -> DialogTMapToZMap
 
-    Creation: 30/01/2025
+    Creation: 08/10/2025
     """
 
     # Special method
@@ -507,13 +518,19 @@ class DialogTMapToZMap(QDialog):
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel', parent=self)
-        cancel.setFixedWidth(100)
+        # < Revision 08/10/2025
+        # cancel.setFixedWidth(100)
+        # Revision 08/10/2025 >
         self._ok = QPushButton('Execute', parent=self)
-        self._ok.setFixedSize(QSize(100, 32))
-        self._ok.setAutoDefault(True)
-        self._ok.setDefault(True)
-        layout.addWidget(self._ok)
+        # < Revision 08/10/2025
+        # self._ok.setFixedSize(QSize(100, 32))
+        # self._ok.setAutoDefault(True)
+        # self._ok.setDefault(True)
+        cancel.setAutoDefault(True)
+        cancel.setDefault(True)
+        # Revision 08/10/2025 >
         layout.addWidget(cancel)
+        layout.addWidget(self._ok)
         layout.addStretch()
 
         # noinspection PyUnresolvedReferences
