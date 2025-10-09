@@ -141,7 +141,10 @@ class DialogModel(QDialog):
         self._treeobs.setMinimumHeight(self.screen().availableGeometry().height() // 2)
         self._treeobs.setColumnCount(2)
         header = QTreeWidgetItem()
-        header.setText(0, 'Observation(s)/Covariable(s)')
+        # < Revision 09/10/2025
+        # header.setText(0, 'Observation(s)/Covariable(s)')
+        header.setText(0, 'Observation(s)/Covariate(s)')
+        # Revision 09/10/2025 >
         header.setText(1, 'Image count / filenames')
         self._treeobs.header().resizeSection(0, 300)
         self._treeobs.setHeaderItem(header)
@@ -179,15 +182,26 @@ class DialogModel(QDialog):
                 item.setText(1, '{} / {}'.format(c, n))
             # Revision 03/12/2024 >
             self._obsitem.addChild(item)
-        # Covariables
-        self._glbcovitem = QTreeWidgetItem(['Global Covariable(s)', ''])
-        self._grpcovitem = QTreeWidgetItem(['Covariable(s) by group', ''])
-        self._sbjcovitem = QTreeWidgetItem(['Covariable(s) by subject', ''])
-        self._cndcovitem = QTreeWidgetItem(['Covariable(s) by condition', ''])
-        self._glbcovitem.setToolTip(0, 'Double-click to add global covariable(s)')
-        self._grpcovitem.setToolTip(0, 'Double-click to add covariable(s) by group')
-        self._sbjcovitem.setToolTip(0, 'Double-click to add covariable(s) by subject')
-        self._cndcovitem.setToolTip(0, 'Double-click to add covariable(s) by condition')
+        # Covariates
+        # < Revision 09/10/2025
+        # self._glbcovitem = QTreeWidgetItem(['Global Covariable(s)', ''])
+        # self._grpcovitem = QTreeWidgetItem(['Covariable(s) by group', ''])
+        # self._sbjcovitem = QTreeWidgetItem(['Covariable(s) by subject', ''])
+        # self._cndcovitem = QTreeWidgetItem(['Covariable(s) by condition', ''])
+        # self._glbcovitem.setToolTip(0, 'Double-click to add global covariable(s)')
+        # self._grpcovitem.setToolTip(0, 'Double-click to add covariable(s) by group')
+        # self._sbjcovitem.setToolTip(0, 'Double-click to add covariable(s) by subject')
+        # self._cndcovitem.setToolTip(0, 'Double-click to add covariable(s) by condition')
+
+        self._glbcovitem = QTreeWidgetItem(['Global Covariate(s)', ''])
+        self._grpcovitem = QTreeWidgetItem(['Covariate(s) by group', ''])
+        self._sbjcovitem = QTreeWidgetItem(['Covariate(s) by subject', ''])
+        self._cndcovitem = QTreeWidgetItem(['Covariate(s) by condition', ''])
+        self._glbcovitem.setToolTip(0, 'Double-click to add global covariate(s)')
+        self._grpcovitem.setToolTip(0, 'Double-click to add covariate(s) by group')
+        self._sbjcovitem.setToolTip(0, 'Double-click to add covariate(s) by subject')
+        self._cndcovitem.setToolTip(0, 'Double-click to add covariate(s) by condition')
+        # Revision 09/10/2025 >
         self._treeobs.addTopLevelItem(self._obsitem)
         self._treeobs.addTopLevelItem(self._glbcovitem)
         if ngrp > 0: self._treeobs.addTopLevelItem(self._grpcovitem)
@@ -369,7 +383,7 @@ class DialogModel(QDialog):
 
     def _newName(self, name, cov: int = 0) -> str | None:
         if cov == 1:
-            # covariable by group
+            # covariate by group
             for i in range(self._grpcovitem.childCount()):
                 if name == self._grpcovitem.child(i).text(0):
                     buff = name.split('#')
@@ -379,7 +393,7 @@ class DialogModel(QDialog):
                     else: name = '{}#1'.format(buff[0])
                     name = self._newName(name, cov)
         elif cov == 2:
-            # covariable by subject
+            # covariate by subject
             for i in range(self._sbjcovitem.childCount()):
                 if name == self._sbjcovitem.child(i).text(0):
                     buff = name.split('#')
@@ -389,7 +403,7 @@ class DialogModel(QDialog):
                     else: name = '{}#1'.format(buff[0])
                     name = self._newName(name, cov)
         elif cov == 3:
-            # covariable by condition
+            # covariate by condition
             for i in range(self._cndcovitem.childCount()):
                 if name == self._cndcovitem.child(i).text(0):
                     buff = name.split('#')
@@ -399,7 +413,7 @@ class DialogModel(QDialog):
                     else: name = '{}#1'.format(buff[0])
                     name = self._newName(name, cov)
         else:
-            # global covariable
+            # global covariate
             for i in range(self._glbcovitem.childCount()):
                 if name == self._glbcovitem.child(i).text(0):
                     buff = name.split('#')
@@ -416,20 +430,20 @@ class DialogModel(QDialog):
                 self._treeobs.clearSelection()
                 item.setSelected(True)
                 self.addObservations()
-            if parent.text(0) == 'Global Covariable(s)': self._treeobs.editItem(item, 0)
-            elif parent.text(0) == 'Covariable(s) by group': self._treeobs.editItem(item, 0)
-            elif parent.text(0) == 'Covariable(s) by subject': self._treeobs.editItem(item, 0)
-            elif parent.text(0) == 'Covariable(s) by condition': self._treeobs.editItem(item, 0)
+            if parent.text(0) == 'Global Covariate(s)': self._treeobs.editItem(item, 0)
+            elif parent.text(0) == 'Covariate(s) by group': self._treeobs.editItem(item, 0)
+            elif parent.text(0) == 'Covariate(s) by subject': self._treeobs.editItem(item, 0)
+            elif parent.text(0) == 'Covariate(s) by condition': self._treeobs.editItem(item, 0)
         else:
-            if item.text(0) == 'Global Covariable(s)': self.addGlobalCovariable()
-            elif item.text(0) == 'Covariable(s) by group': self.addCovariableByGroup()
-            elif item.text(0) == 'Covariable(s) by subject': self.addCovariableBySubject()
-            elif item.text(0) == 'Covariable(s) by condition': self.addCovariableByCondition()
+            if item.text(0) == 'Global Covariate(s)': self.addGlobalCovariable()
+            elif item.text(0) == 'Covariate(s) by group': self.addCovariableByGroup()
+            elif item.text(0) == 'Covariate(s) by subject': self.addCovariableBySubject()
+            elif item.text(0) == 'Covariate(s) by condition': self.addCovariableByCondition()
 
     def _itemRenamed(self, item, column):
         if column == 0:
             parent = item.parent()
-            if parent.text(0) == 'Global Covariable(s)':
+            if parent.text(0) == 'Global Covariate(s)':
                 for i in range(self._glbcovitem.childCount()):
                     if item != parent.child(i):
                         if item.text(0) == parent.child(i).text(0):
@@ -438,7 +452,7 @@ class DialogModel(QDialog):
                             else: name = '{}#1'.format(buff[0])
                             item.setText(0, name)
                             self._itemRenamed(item, column)
-            elif parent.text(0) == 'Covariable(s) by group':
+            elif parent.text(0) == 'Covariate(s) by group':
                 for i in range(self._grpcovitem.childCount()):
                     if item != parent.child(i):
                         if item.text(0) == parent.child(i).text(0):
@@ -447,7 +461,7 @@ class DialogModel(QDialog):
                             else: name = '{}#1'.format(buff[0])
                             item.setText(0, name)
                             self._itemRenamed(item, column)
-            elif parent.text(0) == 'Covariable(s) by subject':
+            elif parent.text(0) == 'Covariate(s) by subject':
                 for i in range(self._sbjcovitem.childCount()):
                     if item != parent.child(i):
                         if item.text(0) == parent.child(i).text(0):
@@ -456,7 +470,7 @@ class DialogModel(QDialog):
                             else: name = '{}#1'.format(buff[0])
                             item.setText(0, name)
                             self._itemRenamed(item, column)
-            elif parent.text(0) == 'Covariable(s) by condition':
+            elif parent.text(0) == 'Covariate(s) by condition':
                 for i in range(self._cndcovitem.childCount()):
                     if item != parent.child(i):
                         if item.text(0) == parent.child(i).text(0):
@@ -468,28 +482,28 @@ class DialogModel(QDialog):
 
     def _makeDesign(self):
         self._design.getDesignMatrix(recalc=True)
-        # Add covariable(s) by condition
+        # Add covariate(s) by condition
         if self._cndcovitem.childCount() > 0:
             for i in range(self._cndcovitem.childCount()):
                 child = self._cndcovitem.child(i)
                 name = child.text(0)
                 v = child.data(0, Qt.UserRole)
                 self._design.addCovariableByCondition(name, v, estimable=True)
-        # Add covariable(s) by subject
+        # Add covariate(s) by subject
         if self._sbjcovitem.childCount() > 0:
             for i in range(self._sbjcovitem.childCount()):
                 child = self._sbjcovitem.child(i)
                 name = child.text(0)
                 v = child.data(0, Qt.UserRole)
                 self._design.addCovariableBySubject(name, v, estimable=True)
-        # Add covariable(s) by group
+        # Add covariate(s) by group
         if self._grpcovitem.childCount() > 0:
             for i in range(self._grpcovitem.childCount()):
                 child = self._grpcovitem.child(i)
                 name = child.text(0)
                 v = child.data(0, Qt.UserRole)
                 self._design.addCovariableByGroup(name, v, estimable=True)
-        # Add global covariable(s)
+        # Add global covariate(s)
         if self._glbcovitem.childCount() > 0:
             for i in range(self._glbcovitem.childCount()):
                 child = self._glbcovitem.child(i)
@@ -622,10 +636,10 @@ class DialogModel(QDialog):
             for item in items:
                 p = item.parent()
                 if p is not None:
-                    if p.text(0) == 'Global Covariable(s)': p.removeChild(item)
-                    elif p.text(0) == 'Covariable(s) by group': p.removeChild(item)
-                    elif p.text(0) == 'Covariable(s) by subject': p.removeChild(item)
-                    elif p.text(0) == 'Covariable(s) by condition': p.removeChild(item)
+                    if p.text(0) == 'Global Covariate(s)': p.removeChild(item)
+                    elif p.text(0) == 'Covariate(s) by group': p.removeChild(item)
+                    elif p.text(0) == 'Covariate(s) by subject': p.removeChild(item)
+                    elif p.text(0) == 'Covariate(s) by condition': p.removeChild(item)
                     elif p.text(0) == 'Observations': item.takeChildren()
                     elif item.text(0) == '' and p != pp:
                         item.takeChildren()
@@ -659,7 +673,7 @@ class DialogModel(QDialog):
         self._maskroi.setEnabled(False)
 
     def addGlobalCovariable(self):
-        title = 'Add global covariable(s)'
+        title = 'Add global covariate(s)'
         filename = QFileDialog.getOpenFileName(self, title, getcwd(),
                                                filter='CSV (*.csv);;Excel (*.xlsx);;Numpy (*.npy);;Text (*.txt)')[0]
         if filename:
@@ -764,7 +778,7 @@ class DialogModel(QDialog):
                                 self._glbcovitem.setExpanded(True)
 
     def addCovariableByGroup(self):
-        title = 'Add covariable(s) by group'
+        title = 'Add covariate(s) by group'
         filename = QFileDialog.getOpenFileName(self, title, getcwd(),
                                                filter='CSV (*.csv);;Excel (*.xlsx);;Numpy (*.npy);;Text (*.txt)')[0]
         if filename:
@@ -868,7 +882,7 @@ class DialogModel(QDialog):
                                 self._grpcovitem.setExpanded(True)
 
     def addCovariableBySubject(self):
-        title = 'Add covariable(s) by subject'
+        title = 'Add covariate(s) by subject'
         filename = QFileDialog.getOpenFileName(self, title, getcwd(),
                                                filter='CSV (*.csv);;Excel (*.xlsx);;Numpy (*.npy);;Text (*.txt)')[0]
         if filename:
@@ -973,7 +987,7 @@ class DialogModel(QDialog):
                                 self._sbjcovitem.setExpanded(True)
 
     def addCovariableByCondition(self):
-        title = 'Add covariable(s) by condition'
+        title = 'Add covariate(s) by condition'
         filename = QFileDialog.getOpenFileName(self, title, getcwd(),
                                                filter='CSV (*.csv);;Excel (*.xlsx);;Numpy (*.npy);;Text (*.txt)')[0]
         if filename:
@@ -1129,7 +1143,7 @@ class DialogModel(QDialog):
             elif c == 'by group': self._design.setSignalCovariableByGroup()
             elif c == 'by subject': self._design.setSignalCovariableBySubject()
             elif c == 'by condition': self._design.setSignalCovariableByCondition()
-            # Age covariable
+            # Age covariate
             c = self._age.currentText()
             if c == 'no': self._design.setNoAgeCovariable()
             elif c == 'global': self._design.setAgeGlobalCovariable()
@@ -1168,7 +1182,7 @@ class DialogModel(QDialog):
                     elif c == 'by group': self._design.setSignalCovariableByGroup()
                     elif c == 'by subject': self._design.setSignalCovariableBySubject()
                     elif c == 'by condition': self._design.setSignalCovariableByCondition()
-                    # Age covariable
+                    # Age covariate
                     c = self._age.currentText()
                     if c == 'no': self._design.setNoAgeCovariable()
                     elif c == 'global': self._design.setAgeGlobalCovariable()

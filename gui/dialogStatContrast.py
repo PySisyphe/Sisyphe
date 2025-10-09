@@ -179,10 +179,10 @@ class DialogContrast(QDialog):
             
             - 0 confounding variable, not estimable
             - 1 estimable, main effect
-            - 2 estimable, global covariable of interest
-            - 3 estimable, covariable of interest by group
-            - 4 estimable, covariable of interest by subject
-            - 5 estimable, covariable of interest by condition
+            - 2 estimable, global covariate of interest
+            - 3 estimable, covariate of interest by group
+            - 4 estimable, covariate of interest by subject
+            - 5 estimable, covariate of interest by condition
             """
             estimable = cdesign[i][1]
             if estimable == 1:  # Main effect
