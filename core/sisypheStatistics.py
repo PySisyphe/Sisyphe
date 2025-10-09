@@ -1159,7 +1159,7 @@ def convolveModelHRF(model: ndarray, iscan: float) -> ndarray:
 def getHighPass(nscans: int, nblocks: int) -> ndarray:
     """
     High-pass vector processing.
-    These vectors are added to fMRI design matrix as covariable of non-interest.
+    These vectors are added to fMRI design matrix as covariate of non-interest.
 
     Reference:
     Analysis of fmri time series revisited. KJ Friston, AP Holmes, JB Poline, PJ Grasby, SCR Williams, RSJ Frackowiak,
@@ -1269,8 +1269,7 @@ def conjunctionFisher(maps: list[SisypheVolume] | SisypheVolumeCollection) -> Si
 
     Reference:
     Combining brains: a survey of methods for statistical pooling of information. Lazar NA, Luna B, Sweeney JA,
-    Eddy WF. Neuroimage 2002 Jun;16(2):538-50.
-    doi: 10.1006/nimg.2002.1107.
+    Eddy WF. Neuroimage 2002 Jun;16(2):538-50. doi: 10.1006/nimg.2002.1107.
 
     Parameters
     ----------
@@ -2401,22 +2400,22 @@ class SisypheDesign(object):
     _grp        list[str], group names
     _sbj        list[str], subject names
     _cnd        list[str], condition names
-    _design     numpy.ndarray, design matrix X (lines = observations, columns = factor/effects/covariables)
+    _design     numpy.ndarray, design matrix X (lines = observations, columns = factor/effects/covariates)
     _cdesign    list[tuple[str, int]]
-                str, column name of the design matrix (covariable/effect name) 
+                str, column name of the design matrix (covariate/effect name) 
                 int, estimable
                     - 0 not estimable
                     - 1 estimable, main effect
-                    - 2 estimable, global covariable of interest
-                    - 3 estimable, covariable by group
-                    - 4 estimable, covariable by subject
-                    - 5 estimable, covariable by condition  
+                    - 2 estimable, global covariate of interest
+                    - 3 estimable, covariate by group
+                    - 4 estimable, covariate by subject
+                    - 5 estimable, covariate by condition  
     _ancova     int, 0 ANCOVA global, 1 by group, 2 by subject, 3 by condition
     _norm       int, 0 no, 1 scaling mean, 2 scaling median, 3 scaling 75th percentile
                      4 scaling roi mean, 5 scaling roi median, 6 scaling roi 75th percentile,
                      7 ancova mean, 8 ancova median, 9 ancova 75th percentile,
                      10 ancova roi mean, 11 ancova roi median, 12 ancova roi 75th percentile
-    _age        int, age covariable: 0 no, 1 global, 2 by group, 3 by subject, 4 by condition
+    _age        int, age covariate: 0 no, 1 global, 2 by group, 3 by subject, 4 by condition
     _fmri       bool, fMRI model ?
     _beta       SisypheVolume, beta of the model (defined after estimation)
     _variance   SisypheVolume, pooled variance of the model (defined after estimation)
@@ -2439,7 +2438,7 @@ class SisypheDesign(object):
         self._design = None  # numpy.ndarray, design matrix
         self._ancova = 0  # 0 ANCOVA global, 1 by group, 2 by subject, 3 by condition
         self._norm = 0  # 0 no, 1 proportional scaling, 2 roi, 3 ancova
-        self._age = 0  # Age global covariable: 0 No, 1 global, 2 by group, by subject, by condition
+        self._age = 0  # Age global covariate: 0 No, 1 global, 2 by group, by subject, by condition
         self._fmri = False  # fMRI model ?
         self._beta = None  # SisypheVolume
         self._variance = None  # SisypheVolume, pooled variance volume
@@ -2461,7 +2460,7 @@ class SisypheDesign(object):
         buff = ''
         if self._fmri: buff += 'fMRI design\n'
         # < Revision 30/11/2024
-        # add signal normalization and age covariable
+        # add signal normalization and age covariate
         ns = ['No',
               'Mean scaling',
               'Median scaling',
@@ -2481,7 +2480,10 @@ class SisypheDesign(object):
                'by condition']
         if self._norm < 7: buff += 'Signal normalization: {}\n'.format(ns[self._norm])
         else: buff += 'Signal normalization: {} {}\n'.format(ns[self._norm], cov[self._ancova])
-        if self._age > 0: buff += 'Age covariable {}\n'.format(cov[self._age - 1])
+        # < Revision 09/10/2025
+        # if self._age > 0: buff += 'Age covariable {}\n'.format(cov[self._age - 1])
+        if self._age > 0: buff += 'Age covariate {}\n'.format(cov[self._age - 1])
+        # Revision 09/10/2025 >
         # Revision 30/11/2024 >
         if self.hasGroup(): buff += 'Groups (n={}): {}\n'.format(len(self._grp), ' '.join(self._grp))
         if self.hasSubject(): buff += 'Subjects (n={}): {}\n'.format(len(self._sbj), ' '.join(self._sbj))
@@ -2502,10 +2504,10 @@ class SisypheDesign(object):
             buff += 'Factor(s):\n'
             estimable = {0: 'confounding variable, not estimable',
                          1: 'main effect',
-                         2: 'global covariable of interest',
-                         3: 'covariable of interest by group',
-                         4: 'covariable of interest by subject',
-                         5: 'covariable of interest by condition'}
+                         2: 'global covariate of interest',
+                         3: 'covariate of interest by group',
+                         4: 'covariate of interest by subject',
+                         5: 'covariate of interest by condition'}
             for item in self._cdesign:
                 buff += '  {} {}\n'.format(item[0], estimable[item[1]])
         else: buff += '  Empty\n'
@@ -3301,14 +3303,14 @@ class SisypheDesign(object):
         Returns
         -------
         list[tuple[str, int]]
-            - str, column name of the design matrix (covariable/effect name)
-            - int, covariable/effect estimability
+            - str, column name of the design matrix (covariate/effect name)
+            - int, covariate/effect estimability
                 - 0 not estimable
                 - 1 estimable, main effect
-                - 2 estimable, global covariable of interest
-                - 3 estimable, covariable by group
-                - 4 estimable, covariable by subject
-                - 5 estimable, covariable by condition
+                - 2 estimable, global covariate of interest
+                - 3 estimable, covariate by group
+                - 4 estimable, covariate by subject
+                - 5 estimable, covariate by condition
         """
         return self._cdesign
 
@@ -3465,7 +3467,7 @@ class SisypheDesign(object):
 
     def addHRFBoxCarModelToCondition(self, cond: str) -> None:
         """
-        Add a BoxCar (with HRF convolution) covariable to the fMRI model of the current SisypheDesign instance.
+        Add a BoxCar (with HRF convolution) covariate to the fMRI model of the current SisypheDesign instance.
 
         Parameters
         ----------
@@ -3519,7 +3521,7 @@ class SisypheDesign(object):
 
     def addHighPassToCondition(self, cond: str) -> None:
         """
-        Add high pass filter covariables to the fMRI model of the current SisypheDesign instance.
+        Add high pass filter covariates to the fMRI model of the current SisypheDesign instance.
 
         Parameters
         ----------
@@ -3632,20 +3634,20 @@ class SisypheDesign(object):
                             zscore: bool = False,
                             logt: bool = False) -> None:
         """
-        Add a global covariable to the model of the current SisypheDesign instance.
+        Add a global covariate to the model of the current SisypheDesign instance.
 
         Parameters
         ----------
         name : str
-            covariable name
+            covariate name
         cov: ndarray
-            covariable vector, a value for each model observation
+            covariate vector, a value for each model observation
         estimable : bool
-            covariable estimability, confound variable if False (default False)
+            covariate estimability, confound variable if False (default False)
         zscore : bool
-            convert covariable values into z-score (i.e. (value - mean) / std, default False)
+            convert covariate values into z-score (i.e. (value - mean) / std, default False)
         logt : bool
-            apply log to covariable values (default False)
+            apply log to covariate values (default False)
         """
         # < Revision 05/06/2025
         # no space in name
@@ -3687,18 +3689,18 @@ class SisypheDesign(object):
                              zscore: bool = False,
                              logt: bool = False) -> None:
         """
-        Add a covariable by group to the model of the current SisypheDesign instance.
+        Add a covariate by group to the model of the current SisypheDesign instance.
 
         Parameters
         ----------
         name : str
-            covariable name
+            covariate name
         cov: ndarray
-            covariable vector, a value for each model observation
+            covariate vector, a value for each model observation
         estimable : bool
-            covariable estimability, confound variable if False (default False)
+            covariate estimability, confound variable if False (default False)
         zscore : bool
-            convert covariable values into z-score (i.e. (value - mean) / std, default False)
+            convert covariate values into z-score (i.e. (value - mean) / std, default False)
         logt : bool
             apply log to covariable values (default False)
         """
