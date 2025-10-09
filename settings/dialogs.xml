@@ -52,7 +52,7 @@
 		<Roi1 label="ROI signal normalization" vartype="roi"/>
 		<Mask label="Mask" vartype="lstr">Auto|Auto and ROI</Mask>
 		<Roi2 label="Mask ROI" vartype="roi"/>
-		<Age label="Age covariable" vartype="lstr">No</Age>
+		<Age label="Age covariate" vartype="lstr">No</Age>
 	</StatisticalModel>
 	<Attributes>
 		<Anonymize vartype="bool">False</Anonymize>
