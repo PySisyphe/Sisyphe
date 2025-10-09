@@ -30,7 +30,6 @@ from pandas import DataFrame
 from pandas import read_excel
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QTreeWidget
 from PyQt5.QtWidgets import QTreeWidgetItem
@@ -317,10 +316,15 @@ class DialogModel(QDialog):
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel', parent=self)
         cancel.setCheckable(False)
-        cancel.setFixedWidth(100)
+        # < Revision 09/10/2025
+        # cancel.setFixedWidth(100)
+        # Revision 09/10/2025 >
         cancel.setAutoDefault(True)
         cancel.setDefault(True)
         self._ok = QPushButton('Estimate', parent=self)
+        # < Revision 09/10/2025
+        # self._ok.setFixedWidth(100)
+        # Revision 09/10/2025 >
         self._ok.setCheckable(False)
         self._ok.setEnabled(False)
         layout.addWidget(self._ok)
@@ -1310,10 +1314,15 @@ class DialogObs(QDialog):
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel', parent=self)
         cancel.setCheckable(False)
-        cancel.setFixedWidth(100)
+        # < Revision 09/10/2025
+        # cancel.setFixedWidth(100)
+        # Revision 09/10/2025 >
         self._ok = QPushButton('OK', parent=self)
         self._ok.setCheckable(False)
-        self._ok.setFixedSize(QSize(100, 32))
+        # < Revision 09/10/2025
+        # self._ok.setFixedSize(QSize(100, 32))
+        self._ok.setFixedWidth(100)
+        # Revision 09/10/2025 >
         self._ok.setAutoDefault(True)
         self._ok.setDefault(True)
         layout.addWidget(self._ok)
@@ -1637,7 +1646,9 @@ class DialogfMRIObs(QDialog):
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel', parent=self)
         cancel.setCheckable(False)
-        cancel.setFixedWidth(100)
+        # < Revision 09/10/2025
+        # cancel.setFixedWidth(100)
+        # Revision 09/10/2025 >
         self._ok = QPushButton('OK', parent=self)
         self._ok.setCheckable(False)
         self._ok.setFixedWidth(100)

@@ -124,7 +124,7 @@ class DialogResult(QDialog):
     QDialog -> DialogResult
 
     Creation: 18/11/2024
-    Last revision: 10/06/2025
+    Last revision: 09/10/2025
     """
 
     # class method
@@ -1390,7 +1390,10 @@ class DialogResult(QDialog):
             if self._anat is not None: self._sliceView.setVolume(self._anat)
             else: self._sliceView.setVolume(self._mask)
             self._sliceView().getAxialView().setCursorVisibilityOn()
-            self._sliceView().setCursorOpacity(0.25)
+            # < Revision 09/10/2025
+            # self._sliceView().setCursorOpacity(0.25)
+            self._sliceView().setLineOpacity(0.25)
+            # Revision 09/10/2025 >
             self._sliceView().getAxialView().CursorPositionChanged.connect(self._updatePosition)
             self._sliceView().getCoronalView().CursorPositionChanged.connect(self._updatePosition)
             self._sliceView().getSagittalView().CursorPositionChanged.connect(self._updatePosition)
