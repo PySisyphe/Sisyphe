@@ -2304,7 +2304,7 @@ class SisypheDesign(object):
 
     PySisyphe statistical design class.
 
-    Model definition class for voxel by voxel statistical parametric mapping analysis.
+    Model definition class for voxel-by-voxel statistical parametric mapping analysis.
 
     Reference:
     Statistical parametric maps in functional imaging: A general linear approach. KJ Friston, AP Holmes, KJ Worsley,
@@ -2321,7 +2321,7 @@ class SisypheDesign(object):
     object -> SisypheDesign
 
     Creation: 29/11/2023
-    Last revision: 10/06/2025
+    Last revision: 10/10/2025
     """
     __slots__ = ['_obs', '_cobs', '_grp', '_sbj', '_cnd', '_design', '_cdesign', '_ancova', '_norm', '_fmri',
                  '_age', '_beta', '_variance', '_vols', '_mean', '_mask', '_autocorr', '_filename']
@@ -2400,19 +2400,19 @@ class SisypheDesign(object):
     _grp        list[str], group names
     _sbj        list[str], subject names
     _cnd        list[str], condition names
-    _design     numpy.ndarray, design matrix X (lines = observations, columns = factor/effects/covariates)
+    _design     numpy.ndarray, design matrix X (lines = observations, columns = factors/effects/covariates)
     _cdesign    list[tuple[str, int]]
-                str, column name of the design matrix (covariate/effect name) 
+                str, column name of the design matrix (factor/effect/covariate name) 
                 int, estimable
                     - 0 not estimable
                     - 1 estimable, main effect
-                    - 2 estimable, global covariate of interest
+                    - 2 estimable, global covariate
                     - 3 estimable, covariate by group
                     - 4 estimable, covariate by subject
                     - 5 estimable, covariate by condition  
     _ancova     int, 0 ANCOVA global, 1 by group, 2 by subject, 3 by condition
-    _norm       int, 0 no, 1 scaling mean, 2 scaling median, 3 scaling 75th percentile
-                     4 scaling roi mean, 5 scaling roi median, 6 scaling roi 75th percentile,
+    _norm       int, 0 no, 1 mean scaling, 2 median scaling, 3 75th percentile scaling
+                     4 roi mean scaling , 5 roi median scaling, 6 roi 75th percentile scaling,
                      7 ancova mean, 8 ancova median, 9 ancova 75th percentile,
                      10 ancova roi mean, 11 ancova roi median, 12 ancova roi 75th percentile
     _age        int, age covariate: 0 no, 1 global, 2 by group, 3 by subject, 4 by condition
@@ -3678,8 +3678,12 @@ class SisypheDesign(object):
                 self._cdesign.append(('global', 0))
             # global factor already exists
             else:
+                # < Revision 10/10/2025
                 # insert covariable column before global factor
-                self._design = insert(self._design, [gi], cov, axis=1)
+                # self._design = insert(self._design, [gi], cov, axis=1)
+                # add covariable column
+                self._design = append(self._design, cov, axis=1)
+                # Revision 10/10/2025 >
             # Revision 03/12/2024 >
 
     def addCovariableByGroup(self,
