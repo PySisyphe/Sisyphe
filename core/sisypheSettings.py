@@ -138,6 +138,44 @@ def initPySisypheUserPath() -> None:
     if not exists(file):
         default = join(path2, 'settings.xml')
         copy(default, path)
+        # < Revision 11/10/2025
+        # Apply DPI scale factor to some settings
+        f = getDPIScaleFactor()
+        if f > 1.0:
+            settings = SisypheSettings()
+            # GUI settings
+            v = settings.getFieldValue('GUI', 'ToolbarSize')
+            v = int(f * v)
+            if v % 2 != 0: v -= 1
+            if v < 16: v = 16
+            if v > 64: v = 64
+            settings.setFieldValue('GUI', 'ToolbarSize', v)
+            v = settings.getFieldValue('GUI', 'ThumbnailSize')
+            v = int(f * v)
+            if v % 2 != 0: v -= 1
+            if v < 64: v = 64
+            if v > 256: v = 256
+            settings.setFieldValue('GUI', 'ThumbnailSize', v)
+            v = settings.getFieldValue('GUI', 'IconSize')
+            v = int(f * v)
+            if v % 2 != 0: v -= 1
+            if v < 24: v = 24
+            if v > 64: v = 64
+            settings.setFieldValue('GUI', 'IconSize', v)
+            v = settings.getFieldValue('GUI', 'ZoomFactor')
+            v = f * v
+            if v > 1.0: v = 1.0
+            settings.setFieldValue('GUI', 'ZoomFactor', v)
+            # Viewport settings
+            settings.setFieldValue('Viewport', 'FontSizeScale', f)
+            v = settings.getFieldValue('Viewport', 'IconSize')
+            v = int(f * v)
+            if v % 2 != 0: v -= 1
+            if v < 24: v = 24
+            if v > 64: v = 64
+            settings.setFieldValue('Viewport', 'IconSize', v)
+            settings.save()
+        # Revision 11/10/2025 >
     file = join(path, 'functions.xml')
     if not exists(file):
         default = join(path2, 'functions.xml')
@@ -153,8 +191,64 @@ def setUserSettingsToDefault() -> None:
     dpath = dirname(abspath(Sisyphe.settings.__file__))
     file = join(dpath, 'settings.xml')
     copy(file, upath)
+    # < Revision 11/10/2025
+    # Apply DPI scale factor to some settings
+    f = getDPIScaleFactor()
+    if f > 1.0:
+        settings = SisypheSettings()
+        # GUI settings
+        v = settings.getFieldValue('GUI', 'ToolbarSize')
+        v = int(f * v)
+        if v % 2 != 0: v -= 1
+        if v < 16: v = 16
+        if v > 64: v = 64
+        settings.setFieldValue('GUI', 'ToolbarSize', v)
+        v = settings.getFieldValue('GUI', 'ThumbnailSize')
+        v = int(f * v)
+        if v % 2 != 0: v -= 1
+        if v < 64: v = 64
+        if v > 256: v = 256
+        settings.setFieldValue('GUI', 'ThumbnailSize', v)
+        v = settings.getFieldValue('GUI', 'IconSize')
+        v = int(f * v)
+        if v % 2 != 0: v -= 1
+        if v < 24: v = 24
+        if v > 64: v = 64
+        settings.setFieldValue('GUI', 'IconSize', v)
+        v = settings.getFieldValue('GUI', 'ZoomFactor')
+        v = f * v
+        if v > 1.0: v = 1.0
+        settings.setFieldValue('GUI', 'ZoomFactor', v)
+        # Viewport settings
+        settings.setFieldValue('Viewport', 'FontSizeScale', f)
+        v = settings.getFieldValue('Viewport', 'IconSize')
+        v = int(f * v)
+        if v % 2 != 0: v -= 1
+        if v < 24: v = 24
+        if v > 64: v = 64
+        settings.setFieldValue('Viewport', 'IconSize', v)
+        settings.save()
+    # Revision 11/10/2025 >
     file = join(dpath, 'functions.xml')
     copy(file, upath)
+
+# < Revision 11/10/2025
+# add getDPIScaleFactor function
+def getDPIScaleFactor() -> float:
+    """
+    Calculate the scale factor (i.e. zoom factor), that is used to define the size of icons and some widgets. This
+    will ensure a consistent display regardless of the screen's DPI. This zoom is relative to a reference screen of
+    100.0 DPI.
+
+    Returns
+    -------
+    float
+        DPI scale factor
+    """
+    from PyQt5.QtWidgets import QApplication
+    return QApplication.primaryScreen().logicalDotsPerInch() / 100.0
+# Revision 11/10/2025 >
+
 
 
 fieldTypes = int | float | bool | str | list[int] | list[float] | list[bool] | list[str] | QFont | None
@@ -175,7 +269,7 @@ class SisypheSettings(object):
     object -> SisypheSettings
 
     Creation: 08/09/2022
-    Last revisions: 15/03/2025
+    Last revisions: 11/10/2025
     """
     __slots__ = ['_doc', '_filename']
 
@@ -222,6 +316,44 @@ class SisypheSettings(object):
         if not exists(path):
             file = cls.getDefaultSettings()
             copy(file, getUserPySisyphePath())
+            # < Revision 11/10/2025
+            # Apply DPI scale factor to some settings
+            f = getDPIScaleFactor()
+            if f > 1.0:
+                settings = SisypheSettings()
+                # GUI settings
+                v = settings.getFieldValue('GUI', 'ToolbarSize')
+                v = int(f * v)
+                if v % 2 != 0: v -= 1
+                if v < 16: v = 16
+                if v > 64: v = 64
+                settings.setFieldValue('GUI', 'ToolbarSize', v)
+                v = settings.getFieldValue('GUI', 'ThumbnailSize')
+                v = int(f * v)
+                if v % 2 != 0: v -= 1
+                if v < 64: v = 64
+                if v > 256: v = 256
+                settings.setFieldValue('GUI', 'ThumbnailSize', v)
+                v = settings.getFieldValue('GUI', 'IconSize')
+                v = int(f * v)
+                if v % 2 != 0: v -= 1
+                if v < 24: v = 24
+                if v > 64: v = 64
+                settings.setFieldValue('GUI', 'IconSize', v)
+                v = settings.getFieldValue('GUI', 'ZoomFactor')
+                v = f * v
+                if v > 1.0: v = 1.0
+                settings.setFieldValue('GUI', 'ZoomFactor', v)
+                # Viewport settings
+                settings.setFieldValue('Viewport', 'FontSizeScale', f)
+                v = settings.getFieldValue('Viewport', 'IconSize')
+                v = int(f * v)
+                if v % 2 != 0: v -= 1
+                if v < 24: v = 24
+                if v > 64: v = 64
+                settings.setFieldValue('Viewport', 'IconSize', v)
+                settings.save()
+            # Revision 11/10/2025 >
         return path
 
     @classmethod
@@ -831,8 +963,7 @@ class SisypheSettings(object):
                     try: _ = datetime.strptime(v, '%Y-%m-%d')
                     except: TypeError('parameter type {} is not date, datetime or str formatted date.'.format(type(v)))
             elif vartype == 'int':
-                if not isinstance(v, int):
-                    raise TypeError('parameter type {} is not int'.format(v))
+                if not isinstance(v, int): raise TypeError('parameter type {} is not int'.format(v))
                 v = str(v)
             elif vartype == 'float':
                 if not isinstance(v, float): raise TypeError('parameter type {} is not float'.format(type(v)))
