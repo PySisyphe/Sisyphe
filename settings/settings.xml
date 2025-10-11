@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
 <settings version="1.0">
 	<GUI>
-		<ToolbarSize varmax="64" varmin="16" vartype="int">16</ToolbarSize>
+		<ToolbarSize varmax="64" varmin="16" vartype="int">24</ToolbarSize>
 		<ToolbarVisibility vartype="bool">True</ToolbarVisibility>
-		<ThumbnailSize varmax="256" varmin="64" vartype="int">96</ThumbnailSize>
+		<ThumbnailSize varmax="256" varmin="64" vartype="int">90</ThumbnailSize>
 		<IconSize varmax="64" varmin="24" vartype="int">32</IconSize>
 		<FontFamily vartype="font"></FontFamily>
 		<FontSize varmax="24" varmin="8" vartype="int">10</FontSize>
@@ -70,7 +70,7 @@
 		<exit label="Exit" icon="exit.png" vartype="visibility">True</exit>
 	</ToolbarIcons>
 	<Viewport>
-		<IconSize varmax="64" varmin="24" vartype="int">48</IconSize>
+		<IconSize varmax="64" varmin="24" vartype="int">38</IconSize>
 		<FontSizeScale varmax="2.0" varmin="1.0" vartype="float">1.0</FontSizeScale>
 		<LineWidth varmax="5.0" varmin="0.5" vartype="float">2.0</LineWidth>
 		<LineOpacity label="Font/Line opacity" vartype="percent">1.0</LineOpacity>
