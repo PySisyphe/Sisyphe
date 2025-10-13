@@ -1,0 +1,390 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Segmentation menu &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=049aceee"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sisyphe
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Segmentation menu</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PySisyphe_Segmentation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="segmentation-menu">
+<span id="page-segmentation"></span><h1>Segmentation menu<a class="headerlink" href="#segmentation-menu" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="#menu-section-kmclustering"><span class="std std-ref">KMeans clustering</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-kmsegmentation"><span class="std std-ref">KMeans segmentation</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-skull"><span class="std std-ref">Skull stripping</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-thickness"><span class="std std-ref">Cortical thickness</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-regsegmentation"><span class="std std-ref">Registration based segmentation</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-structs"><span class="std std-ref">Structs</span></a></p></li>
+<li><dl class="simple">
+<dt>Deep learning segmentation &gt;</dt><dd><ul>
+<li><p><a class="reference internal" href="#menu-section-hipp"><span class="std std-ref">Deep-learning Hippocampus segmentation</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-lesion"><span class="std std-ref">Deep-learning Hypo-intensity lesion segmentation</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-temporal"><span class="std std-ref">Deep-learning Medial temporal segmentation</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmenation</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-tumor"><span class="std std-ref">Deep-learning Tumor clustering</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-wmh"><span class="std std-ref">Deep-learning White matter hyper-intensities segmentation</span></a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<section id="kmeans-clustering">
+<span id="menu-section-kmclustering"></span><h2>KMeans clustering<a class="headerlink" href="#kmeans-clustering" title="Link to this heading"></a></h2>
+<p>This menu is used to classify the intensity values of a scalar volume using the K-Means algorithm. The result is a volume of labels with a label index for each class. PySisyphe uses the <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ScalarImageKmeansImageFilter.html">SimpleITK</a> library implemenentation. Anisotropic diffusion filtering and bias field correction can be performed before the classification stage.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select PySisyphe <strong>Volume(s)</strong>.</p>
+<p>Check <strong>Use mask(s)</strong> to display a <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget and select the mask(s) that will restrict clustering to mask voxels.</p>
+<p>Toggle <strong>K means clustering…</strong> button to show/hide clustering parameters:</p>
+<ul class="simple">
+<li><p>Check <strong>Anisotropic diffusion filter</strong> to perform this prerprocessing.</p></li>
+<li><p>Check <strong>Bias filed correction</strong> to perform this prerprocessing.</p></li>
+<li><p>Use the <strong>Number of classes</strong> spinbox to define the number of classes (i.e. labels) used by the K-Means statistical classifier.</p></li>
+<li><p>Label volume of clusters is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Labeled volume prefix</strong> and <strong>Labeled volume suffix</strong> parameters.</p></li>
+<li><p>Check <strong>Save classes as ROI</strong> to save each cluster in an ROI volume (.xroi)</p></li>
+<li><p>ROI volumes are saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Class ROI prefix</strong> and <strong>Class ROI suffix</strong> parameters. The prefix and/or suffix must contain a wildcard character (*), which will be replaced by the cluster index in the ROI file name.</p></li>
+</ul>
+<p>Toggle <strong>Anistropic diffusion image filter…</strong> button to show/hide filtering settings (see <a class="reference internal" href="PySisyphe_Functions.html#menu-section-filter-anisodiff"><span class="std std-ref">Anisotropic diffusion filter</span></a>).</p>
+<p>Toggle <strong>Bias field correction image filter…</strong> button to show/hide bias field correction settings (see <a class="reference internal" href="PySisyphe_Functions.html#menu-section-biasfield"><span class="std std-ref">Bias field correction</span></a>).</p>
+<p>Left-click <strong>Execute</strong> button to perform K-Means clustering.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without clustering.</p>
+</section>
+<section id="kmeans-segmentation">
+<span id="menu-section-kmsegmentation"></span><h2>KMeans segmentation<a class="headerlink" href="#kmeans-segmentation" title="Link to this heading"></a></h2>
+<p>This menu is used to compute tissue probability maps with a kmeans clustering. The result is a probability volume for each class. PySisyphe uses the <a class="reference external" href="https://antspy.readthedocs.io/en/latest/segmentation.html">ANTs</a> library implemenentation. Anisotropic diffusion filtering and bias field correction can be performed before the classification stage.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select PySisyphe <strong>Volume(s)</strong>.</p>
+<p>Check <strong>Use mask(s)</strong> to display a <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget and select the mask(s) that will restrict clustering to mask voxels.</p>
+<p>Toggle <strong>K means segmentation…</strong> button to show/hide segmentation parameters:</p>
+<ul class="simple">
+<li><p>Check <strong>Anisotropic diffusion filter</strong> to perform this prerprocessing.</p></li>
+<li><p>Check <strong>Bias filed correction</strong> to perform this prerprocessing.</p></li>
+<li><p>Use the <strong>Number of classes</strong> spinbox to define the number of classes (i.e. labels) used by the K-Means statistical classifier.</p></li>
+<li><p>Use the <strong>Number of iterations</strong> spinbox the define maximum number of iterations.</p></li>
+<li><p>Use the <strong>MRF smoothing factor</strong> spinbox to define label smoothness, higher value is smoother (default 0.1).</p></li>
+<li><p>Use the <strong>MRF neighborhood radius</strong> spinbox to define the MRF kernel extent in voxels used for label smoothing (default 1).</p></li>
+<li><p>Class volumes are saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Class volume prefix</strong> and <strong>Class volume suffix</strong> parameters. The prefix and/or suffix must contain a wildcard character (*), which will be replaced by the class index in the file name.</p></li>
+</ul>
+<p>Toggle <strong>Anistropic diffusion image filter…</strong> button to show/hide filtering settings (see <a class="reference internal" href="PySisyphe_Functions.html#menu-section-filter-anisodiff"><span class="std std-ref">Anisotropic diffusion filter</span></a>).</p>
+<p>Toggle <strong>Bias field correction image filter…</strong> button to show/hide bias field correction settings (see <a class="reference internal" href="PySisyphe_Functions.html#menu-section-biasfield"><span class="std std-ref">Bias field correction</span></a>).</p>
+<p>Left-click <strong>Execute</strong> button to perform K-Means segmentation.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+</section>
+<section id="skull-stripping">
+<span id="menu-section-skull"></span><h2>Skull stripping<a class="headerlink" href="#skull-stripping" title="Link to this heading"></a></h2>
+<p>This menu is used to perform MR skull stripping using deep-learning U-net pre-trained models.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select PySisyphe <strong>Volume(s)</strong>.</p>
+<p>The parameters are as follows:</p>
+<ul class="simple">
+<li><p>Select the pre-trained model: <em>ANTs U-net</em> or <em>DeepBrain U-net</em>.</p></li>
+<li><p>Select the training modality: <em>T1</em>, <em>T2</em>, <em>T2star</em>, <em>FLAIR</em>, <em>EPI</em>, <em>FA</em> or <em>TOF</em>.</p></li>
+<li><p>Check <strong>Save brain mask</strong> to save the binary mask of the brain (without skull).</p></li>
+<li><p>Check <strong>Save brain mask as ROI</strong> to save the binary mask of the brain as a PySisyphe ROI (.xroi).</p></li>
+<li><p>Mask ROI is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Brain mask prefix</strong> and <strong>Brain mask suffix</strong> parameters.</p></li>
+<li><p>Check <strong>Save brain probability</strong> to save the probability mask of the brain (without skull).</p></li>
+<li><p>Mask probability volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Brain probability prefix</strong> and <strong>Brain probability suffix</strong> parameters.</p></li>
+<li><p>Skull stripped volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Skull stripped prefix</strong> and <strong>Skull Stripped suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform skull stripping.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box without skull stripping.</p>
+</section>
+<section id="mixture-model-tissue-segmentation">
+<span id="menu-section-atropos"></span><h2>Mixture model tissue segmentation<a class="headerlink" href="#mixture-model-tissue-segmentation" title="Link to this heading"></a></h2>
+<p>This menu is used to compute tissue probability maps (grey matter, white matter and cerebro-spinal fluid) with a finite mixture modeling (FMM) segmentation approach with prior constraints. These prior constraints include the specification of prior probability images (one for each class), and MRF prior to enforce spatial smoothing of the labels. Similar algorithms include FAST and SPM. This prior based segmentation provides an Expectation-Maximization framework for statistical segmentation where the intensity profile of each class is modeled as a mixture model and spatial smoothness is enforced by MRF prior. Initial labeling can be performed by kmeans clustering, a set of user-specified prior probability volumes. If specified, the latter initialization option are also used as priors in the MRF update step. The assumed labeling is such that classes are assigned consecutive indices 1, 2, 3, etc. Label 0 is reserved for the background when a mask is specified. The result is a probability volume for each class and a tissue labeled volume. PySisyphe uses the <a class="reference external" href="https://antspy.readthedocs.io/en/latest/segmentation.html">ANTs</a> library implemenentation.</p>
+<p>Anisotropic diffusion filtering and bias field correction can be performed before the segmentation stage.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select PySisyphe <strong>Volume(s)</strong>.</p>
+<p>Toggle <strong>Prior based segmentation…</strong> button to show/hide segmentation parameters:</p>
+<ul class="simple">
+<li><p>Check <strong>Anisotropic diffusion filter</strong> to perform this prerprocessing.</p></li>
+<li><p>Check <strong>Bias filed correction</strong> to perform this prerprocessing.</p></li>
+<li><p>Use the <strong>Number of iterations</strong> spinbox the define maximum number of iterations.</p></li>
+<li><p>Use the <strong>MRF smoothing factor</strong> spinbox to define label smoothness, higher value is smoother (default 0.1).</p></li>
+<li><p>Use the <strong>MRF neighborhood radius</strong> spinbox to define the MRF kernel extent in voxels used for label smoothing (default 1).</p></li>
+<li><p>Use the <strong>Convergence threshold</strong> combobox to define the stopping criterion as a threshold of the mean maximum posterior probability variation between two iterations.</p></li>
+<li><p>Use the <strong>Priors</strong> combobox to select prior probability images (<em>ICBM152</em> or <em>ATROPOS</em> tissue probability templates) or calculated prior images (<em>K-Means algorithm</em>).</p></li>
+<li><p>Use the <strong>Number of classes</strong> spinbox to specify the number of tissue classes: 3 (gray matter, white matter, cerebro-spinal fluid), 4 (cortical gray matter, subcortical gray matter, white matter, cerebro-spinal fluid) or 6 (cortical gray matter, subcortical gray matter, white matter, cerebro-spinal fluid, brainstem, cerebellum).</p></li>
+<li><p>Use the <strong>Prior weight</strong> spinbox to define the prior probability image weight in the the intensity profile of each class modelization: 0 (priors used for initialization only), 0.25 or 0.5.</p></li>
+<li><p>Use the <strong>Prior FWHM smoothing</strong> spinbox to define the full width at half maximum (FWHM) of the Gaussian kernel, which is used for prior probability image smoothing, in millimeters (mm). The default is zero, meaning that no smoothing is applied.</p></li>
+<li><p>Use the <strong>Priors registration</strong> combobox to select the type of geometric transformation (<em>affine</em> or <em>diffeomorphic</em>) used for coregistration between the prior probability images and the volume to be segmented.</p></li>
+<li><p>Select method used to initialize translations for prior probability images coregistration with the <strong>Priors registration estimation</strong> combobox: <em>FOV center alignment</em> (default), <em>center of mass alignment</em> or <em>no estimation</em> (translations and rotations to 0.0).</p></li>
+<li><p>The segmentation is restricted within a prior mask, which can be enlarged using the dilatation morphology operator. Set the kernel radius, expressed in voxels, using the <strong>Kernel radius dilatation of prior mask</strong> spin box.</p></li>
+<li><p>Morphology operators are used for skull stripping, set the kernel radius expressed in voxels with the <strong>Kernel radius morphology for brain extraction</strong> spinbox.</p></li>
+<li><p>Check <strong>Skull strip</strong> to save skull stripped volume.</p></li>
+<li><p>Check <strong>Labeled volume excluding subcortical gray matter</strong> to save labeled volume without subcortical gray matter label.</p></li>
+<li><p>A tissue labeled volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Labeled volume prefix</strong> and <strong>Labeled volume suffix</strong> parameters.</p></li>
+</ul>
+<p>Toggle <strong>Anistropic diffusion image filter…</strong> button to show/hide filtering settings (see <a class="reference internal" href="PySisyphe_Functions.html#menu-section-filter-anisodiff"><span class="std std-ref">Anisotropic diffusion filter</span></a>).</p>
+<p>Toggle <strong>Bias field correction image filter…</strong> button to show/hide bias field correction settings (see <a class="reference internal" href="PySisyphe_Functions.html#menu-section-biasfield"><span class="std std-ref">Bias field correction</span></a>).</p>
+<p>Toggle <strong>Resample…</strong> button to show/hide resampling settings:</p>
+<ul class="simple">
+<li><p>Select the interpolation algorithm (<em>linear</em>, <em>nearest neighbor</em>, <em>b-spline</em>, <em>gaussian</em>, <em>hamming windowed sinc</em>, <em>cosine windowed sinc</em>, <em>welch windowed sinc</em>, <em>lanczos windowed sinc</em>, <em>blackman windowed sinc</em>) used to resample the moving volume.</p></li>
+<li><p>Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Prefix</strong> and <strong>Suffix</strong> parameters.</p></li>
+<li><p>Spatial normalized volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Normalization prefix</strong> and <strong>Normalization suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+</section>
+<section id="cortical-thickness">
+<span id="menu-section-thickness"></span><h2>Cortical thickness<a class="headerlink" href="#cortical-thickness" title="Link to this heading"></a></h2>
+<p>This menu is designed to compute cortical thickness using the DiReCT algorithm (Diffeomorphic Registration-based Cortical Thickness measurement). DiReCT is a registration based estimate of cortical thickness. To guide the deformation, DiReCT constructs a gradient field from the segmented cortical surfaces (WM/GM and GM/CSF). This field acts as an external force that pushes the white matter surface toward the pial surface. PySisyphe uses the <a class="reference external" href="https://antspy.readthedocs.io/en/latest/segmentation.html">ANTs</a> library implemenentation.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select PySisyphe <strong>Label map(s) - Three tissue labels</strong>. These maps are calculated from the <a class="reference internal" href="#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a> or <a class="reference internal" href="#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmenation</span></a> menus. This is an image in which the csf, gray matter, and white matter voxels are all labeled with values of 1, 2, Ind 3, respectively.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widgets below to select <strong>Gray matter map(s)</strong> and <strong>White matter map(s)</strong>. These maps are also calculated from the <a class="reference internal" href="#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a> or <a class="reference internal" href="#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmenation</span></a> menus.</p>
+<p>Toggle <strong>Settings…</strong> button to show/hide cortical thickness parameters.</p>
+<ul class="simple">
+<li><p>Select the <strong>Number of iterations</strong> with the spinbox (default 50).</p></li>
+<li><p>Cortical thickness volume is saved with the label map file name, which is prefixed and/or suffixed by the strings edited in the <strong>Prefix</strong> and <strong>Suffix</strong> parameters.</p></li>
+<li><p>Set the <strong>Gradient step</strong> (default 0.025), which is a parameter of the gradient descent optimization used in the coregistration processing. It is a factor required for gradient update at each iteration.</p></li>
+<li><p>Set the <strong>Gradient smoothing</strong> (default 1.0), which is the gaussian kernel extent, expressed in voxels, used for gradient field smoothing to obtain a more regular and anatomically plausible field. In practice, this smoothing prevents noisy deformation trajectories and ensures that the measured thickness corresponds to an average cortical distance rather than a series of micro-irregularities from the segmentation. Values that are too high (&gt; 3) can over-smooth and bias the thickness in thin regions.</p></li>
+<li><p>Cortical thickness volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Prefix</strong> and <strong>Suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform cortical thickness processing. This is a computationally intensive process that may take longer than 30 minutes.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without processing.</p>
+</section>
+<section id="registration-based-segmentation">
+<span id="menu-section-regsegmentation"></span><h2>Registration based segmentation<a class="headerlink" href="#registration-based-segmentation" title="Link to this heading"></a></h2>
+<p>This menu is used to perform a registration based segmentation. Instead of trying to classify each voxel directly from scratch, as in clustering or deep learning, registration-based segmentation uses reference atlas images (templates) with known anatomical labels (structures). By coregistering an atlas image to a subject’s image, the structures from the atlas can be transferred to the subject, providing a segmentation. Structures can be binary images (mask) or probability images.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>T1</strong> PySisyphe volume(s) to be segmented.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widgets below to select PySisyphe <strong>Gray matter map(s)</strong>, <strong>White matter map(s)</strong> and <strong>CSF map(s)</strong> of the volume(s) to be segmented. These widgets will only be displayed if the item selected in the <strong>Sequence used for registration</strong> combobox is not “T1”.</p>
+<p>Toggle <strong>Registration based segmentation…</strong> button to show/hide parameters.</p>
+<ul>
+<li><p>Set the template modality used as reference atlas with the <strong>Sequence used for registration</strong> combobox. <em>MR T1</em>, <em>gray matter map</em> (GM), <em>white matter map</em> (WM), or <em>cerebrospinal fluid</em> (CSF) are all possible options.</p></li>
+<li><p>Select the global registration algorithm using the <strong>Global stage transform</strong> combobox:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>AntsAffine</em>: single step of affine coregistration (no diffeomorphic step), 4 multiresolution stages with last at full resolution.</p></li>
+<li><p><em>AntsFastAffine</em>: single step of affine coregistration (no diffeomorphic step), fast scheme with only 3 multiresolution stages, and no iteration at full resolution.</p></li>
+<li><p><em>AntsSplineDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.</p></li>
+<li><p><em>AntsDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.</p></li>
+<li><p><em>AntsFastSplineDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.</p></li>
+<li><p><em>AntsFastDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>Check <strong>Local stage</strong> to perform a fine registration step, after the intial global registration step, which is restricted to the structure area.</p></li>
+<li><p>Set the <strong>Local margin</strong>, expressed in voxels, to define the local stage coregistration area around the structure to be segmented.</p></li>
+<li><p>Select the local registration algorithm using the <strong>Local stage transform</strong> combobox:
+- <em>AntsSplineDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+- <em>AntsDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+- <em>AntsFastSplineDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+- <em>AntsFastDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>Select the subsampling used to calculate similarity function using the <strong>Sampling rate</strong> spinbox. The range is between 1.0 (no subsampling, all voxels are used to process similarity function) and lower values greater than 0.0, which indicate the ratio of voxels used to process the similarity function under regular subsampling.</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>After the coregistration step, the structure can be corrected using either a <em>tissue map</em> or a <em>nearest neighbor transform</em>. Select this option from the <strong>Tissue correction algorithm</strong> combobox. The tissue map used for correction is chosen from the <strong>Struture tissue</strong> combobox. This can be <em>gray matter map</em> (GM), <em>white matter map</em> (WM), <em>cerebro-spinal map</em> (CSF), <em>gray matter/white matter mixture map</em> (GM+WM) or <em>gray matter/cerebro-spinal mixture map</em> (CFS+GM). If the structure is a binary image, the mask correction is simply a binary AND between the tissue mask and the structure. If the structure is a probability image, the mask correction is performed using a formula selected from the <strong>Probability map correction</strong> combobox.</p></li>
+</ul>
+</div></blockquote>
+<p>Left-click <strong>Save struct settings</strong> button to save <strong>Structure</strong> and <strong>Template</strong> fields (structure and template file names) with <strong>Registration based segmentation…</strong> parameters in an XML file. The default name is derived from the <strong>Structure</strong> file name with an XML extension. The default folder is the “segmentation” subfolder located in the PySisyphe user folder ($User/.PySisyphe).</p>
+<p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+</section>
+<section id="structs">
+<span id="menu-section-structs"></span><h2>Structs<a class="headerlink" href="#structs" title="Link to this heading"></a></h2>
+<p>This menu displays a tree structure of submenus for loading a struct XML file from the PySisyphe template subfolders or the “segmentation” subfolder within the PySisyphe user folder ($User/.PySisyphe).</p>
+<p>Select a struct item to open it in the <a class="reference internal" href="#menu-section-regsegmentation"><span class="std std-ref">Registration based segmentation</span></a> dialog box.</p>
+</section>
+<section id="deep-learning-hippocampus-segmentation">
+<span id="menu-section-hipp"></span><h2>Deep-learning Hippocampus segmentation<a class="headerlink" href="#deep-learning-hippocampus-segmentation" title="Link to this heading"></a></h2>
+<p>This menu is designed to perform hippocampal segmentation using deep-learning U-net pre-trained model. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> library implemenentation. The segmentation is saved as a label volume. A voxel is labeled 1 for the right hippocampus and 2 for the left.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>T1</strong> PySisyphe volume(s) to be segmented.</p>
+<p>Toggle <strong>Unet hippocampus segmentation…</strong> button to show/hide parameters.</p>
+<ul class="simple">
+<li><p>Check <strong>Save ROI</strong> if you also want to save the result as a PySisyphe ROI (xroi).</p></li>
+<li><p>The label volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Label segmentation prefix</strong> and <strong>Label segmentation suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+</section>
+<section id="deep-learning-hypo-intensity-lesion-segmentation">
+<span id="menu-section-lesion"></span><h2>Deep-learning Hypo-intensity lesion segmentation<a class="headerlink" href="#deep-learning-hypo-intensity-lesion-segmentation" title="Link to this heading"></a></h2>
+<p>This menu is designed to perform T1 hypo-intensity lesion segmentation, such as stroke sequelae, using deep-learning U-net pre-trained model. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> library implemenentation. The lesion is saved as a probability map.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>T1</strong> PySisyphe volume(s) to be segmented.</p>
+<p>Toggle <strong>Unet lesion segmentation…</strong> button to show/hide parameters.</p>
+<ul class="simple">
+<li><p>Check <strong>Save ROI</strong> if you also want to save the result as a PySisyphe ROI (xroi).</p></li>
+<li><p>The probability map is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Probability map prefix</strong> and <strong>Probability map suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+</section>
+<section id="deep-learning-medial-temporal-segmentation">
+<span id="menu-section-temporal"></span><h2>Deep-learning Medial temporal segmentation<a class="headerlink" href="#deep-learning-medial-temporal-segmentation" title="Link to this heading"></a></h2>
+<p>This menu is designed to perform medial temporal segmentation using deep-learning U-net pre-trained model. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> library implemenentation. The segmentation is saved as a label volume.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>T1</strong> PySisyphe volume(s) to be segmented.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget below to select <strong>T2</strong> PySisyphe volume(s) to be segmented. This widget will only be displayed if the <strong>Use T2</strong> parameter is checked. T1 and T2 volumes must be coregistered and resampled using the same space/transform ID.</p>
+<p>Toggle <strong>Unet lesion segmentation…</strong> button to show/hide parameters.</p>
+<ul class="simple">
+<li><p>Check <strong>Use T2</strong> to perform segmentation using two sequences T1 and T2, rather than just T1.</p></li>
+<li><p>Select the pre-trained model <em>yassa</em> or <em>wip</em>.</p></li>
+<li><p>Check <strong>Save ROI</strong> if you also want to save the result as a PySisyphe ROI (xroi).</p></li>
+<li><p>The label volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Label segmentation prefix</strong> and <strong>Label segmentation suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+</section>
+<section id="deep-learning-tissue-segmenation">
+<span id="menu-section-tissue"></span><h2>Deep-learning Tissue segmenation<a class="headerlink" href="#deep-learning-tissue-segmenation" title="Link to this heading"></a></h2>
+<p>This menu is used to compute tissue segmentation (grey matter, white matter and cerebro-spinal fluid) using deep-learning U-net pre-trained model. This function serves as an alternative to the mixture model approach (<a class="reference internal" href="#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a>). The segmentation is saved as a label volume. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> library implemenentation.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>T1</strong> PySisyphe volume(s) to be segmented.</p>
+<p>Toggle <strong>Unet tissue segmentation…</strong> button to show/hide parameters.</p>
+<ul class="simple">
+<li><p>Check <strong>Save probability maps</strong> if you also want to save the result as tissue probability maps.</p></li>
+<li><p>Check <strong>Save ROI</strong> if you also want to save the result as a PySisyphe ROI (xroi).</p></li>
+<li><p>The label volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Label segmentation prefix</strong> and <strong>Label segmentation suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+</section>
+<section id="deep-learning-tumor-clustering">
+<span id="menu-section-tumor"></span><h2>Deep-learning Tumor clustering<a class="headerlink" href="#deep-learning-tumor-clustering" title="Link to this heading"></a></h2>
+<p>This menu is used to compute tumor clustering in three classes: peritumoral oedema (FLAIR/T2 hyper-intensity, T1 hypo-intensity), enhancing tumor core, and non-enhancing tumor core. Four MR sequences could be given: FLAIR, T1, contrast-enhanced T1 and T2. All of these volumes must be coregistered and resampled using the same space/transform ID. The segmentation is saved as a label volume and three mask volumes. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a>  library implemenentation.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select <strong>FLAIR</strong> PySisyhpe volume(s) to be segmented.
+Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select <strong>T1</strong> PySisyhpe volume(s) to be segmented.
+Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select <strong>Contrast-enhanced T1</strong> PySisyhpe volume(s) to be segmented.
+Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select <strong>T2</strong> PySisyhpe volume(s) to be segmented.</p>
+<p>Toggle <strong>Unet tumor segmentation…</strong> button to show/hide parameters.</p>
+<ul class="simple">
+<li><p>Check <strong>Save ROI</strong> if you also want to save the result as a PySisyphe ROI (xroi).</p></li>
+<li><p>The label volume is saved with the contrast-enhanced T1 file name, which is prefixed and/or suffixed by the strings edited in the <strong>Label segmentation prefix</strong> and <strong>Label segmentation suffix</strong> parameters. The masks are saved with the contrast-enhanced T1 file name, suffixed with “ed” for the peritumoral oedema label, “et” for the enhancing tumor core label and “net” for non-enhancing tumor core label.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+</section>
+<section id="deep-learning-white-matter-hyper-intensities-segmentation">
+<span id="menu-section-wmh"></span><h2>Deep-learning White matter hyper-intensities segmentation<a class="headerlink" href="#deep-learning-white-matter-hyper-intensities-segmentation" title="Link to this heading"></a></h2>
+<p>This menu is designed to perform white matter hyper-intensities segmentation, such as multiple sclerosis or vasculo-degenerative lesions. The segmentation is saved as a probability map. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> library implemenentation.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>FLAIR</strong> PySisyphe volume(s) to be segmented.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget below to select <strong>T1</strong> PySisyphe volume(s) to be segmented. This widget will only be displayed if the <strong>Use T1</strong> parameter is checked. FLAIR and T1 volumes must be coregistered and resampled using the same space/transform ID.</p>
+<p>Toggle <strong>Unet whm segmentation…</strong> button to show/hide parameters.</p>
+<ul class="simple">
+<li><p>Check <strong>Use T1</strong> to perform segmentation using two sequences FLAIR and T1, rather than just FLAIR.</p></li>
+<li><p>Select the pre-trained model <em>sysu</em>, <em>hypermapp3r</em> or <em>antsxnet</em>.</p></li>
+<li><p>Check <strong>Save ROI</strong> if you also want to save the result as a PySisyphe ROI (xroi).</p></li>
+<li><p>The probability map is saved with the original FLAIR file name, which is prefixed and/or suffixed by the strings edited in the <strong>Label segmentation prefix</strong> and <strong>Label segmentation suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

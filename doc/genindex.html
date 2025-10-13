@@ -67,6 +67,7 @@
 <li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Versions.html">Version history</a></li>
 </ul>
 
         </div>
@@ -2311,6 +2312,8 @@
 </li>
       <li><a href="API/api_image.html#Sisyphe.core.sisypheImage.SisypheImage.getMax">getMax() (Sisyphe.core.sisypheImage.SisypheImage method)</a>
 </li>
+      <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheTracking.getMaxAngle">getMaxAngle() (Sisyphe.core.sisypheTracts.SisypheTracking method)</a>
+</li>
       <li><a href="API/api_recent.html#Sisyphe.core.sisypheRecent.SisypheRecent.getMaximumCount">getMaximumCount() (Sisyphe.core.sisypheRecent.SisypheRecent method)</a>
 </li>
       <li><a href="API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolumeCollection.getMaxVolume">getMaxVolume() (Sisyphe.core.sisypheVolume.SisypheVolumeCollection method)</a>
@@ -2757,6 +2760,12 @@
 </li>
       <li><a href="API/api_constants.html#Sisyphe.core.sisypheConstants.getRegularDirections">getRegularDirections() (in module Sisyphe.core.sisypheConstants)</a>
 </li>
+      <li><a href="API/api_image.html#Sisyphe.core.sisypheImage.SisypheImage.getRelabeled">getRelabeled() (Sisyphe.core.sisypheImage.SisypheImage method)</a>
+
+      <ul>
+        <li><a href="API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume.getRelabeled">(Sisyphe.core.sisypheVolume.SisypheVolume method)</a>
+</li>
+      </ul></li>
       <li><a href="API/api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheACPC.getRelativeDistanceFromAC">getRelativeDistanceFromAC() (Sisyphe.core.sisypheImageAttributes.SisypheACPC method)</a>
 </li>
       <li><a href="API/api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheACPC.getRelativeDistanceFromMidACPC">getRelativeDistanceFromMidACPC() (Sisyphe.core.sisypheImageAttributes.SisypheACPC method)</a>
@@ -3865,6 +3874,8 @@
 </li>
       <li><a href="API/api_statistics.html#Sisyphe.core.sisypheStatistics.SisypheDesign.isfMRIDesign">isfMRIDesign() (Sisyphe.core.sisypheStatistics.SisypheDesign method)</a>
 </li>
+      <li><a href="API/api_statistics.html#Sisyphe.core.sisypheStatistics.SisypheDesign.isGlobalFactor">isGlobalFactor() (Sisyphe.core.sisypheStatistics.SisypheDesign method)</a>
+</li>
       <li><a href="API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheColorTransfer.isGradientTransferEmpty">isGradientTransferEmpty() (Sisyphe.core.sisypheLUT.SisypheColorTransfer method)</a>
 </li>
       <li><a href="API/api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheAcquisition.isGreyMatterMap">isGreyMatterMap() (Sisyphe.core.sisypheImageAttributes.SisypheAcquisition method)</a>
@@ -4736,10 +4747,10 @@
 </li>
       <li><a href="API/api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform.removeCenter">removeCenter() (Sisyphe.core.sisypheTransform.SisypheTransform method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheColorTransfer.removeColorTransferElement">removeColorTransferElement() (Sisyphe.core.sisypheLUT.SisypheColorTransfer method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="API/api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform.removeDisplacementField">removeDisplacementField() (Sisyphe.core.sisypheTransform.SisypheTransform method)</a>
 </li>
       <li><a href="API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume.removeDisplay">removeDisplay() (Sisyphe.core.sisypheVolume.SisypheVolume method)</a>
@@ -4777,6 +4788,10 @@
 </li>
       </ul></li>
       <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheBundle.removeTracts">removeTracts() (Sisyphe.core.sisypheTracts.SisypheBundle method)</a>
+</li>
+      <li><a href="API/api_fiducial.html#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.removeTransformFromVolume">removeTransformFromVolume() (Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox method)</a>
+</li>
+      <li><a href="API/api_fiducial.html#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.removeXML">removeXML() (Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox method)</a>
 </li>
       <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheBundleCollection.rename">rename() (Sisyphe.core.sisypheTracts.SisypheBundleCollection method)</a>
 </li>
@@ -5700,6 +5715,8 @@
 </li>
       <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheDiffusionModel.setMask">setMask() (Sisyphe.core.sisypheTracts.SisypheDiffusionModel method)</a>
 </li>
+      <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheTracking.setMaxAngle">setMaxAngle() (Sisyphe.core.sisypheTracts.SisypheTracking method)</a>
+</li>
       <li><a href="API/api_recent.html#Sisyphe.core.sisypheRecent.SisypheRecent.setMaximumCount">setMaximumCount() (Sisyphe.core.sisypheRecent.SisypheRecent method)</a>
 </li>
       <li><a href="API/api_roi.html#Sisyphe.core.sisypheROI.SisypheROIDraw.setMeanThreshold">setMeanThreshold() (Sisyphe.core.sisypheROI.SisypheROIDraw method)</a>
@@ -6244,6 +6261,8 @@
         <li><a href="API/api_tools.html#Sisyphe.core.sisypheTools.LineWidget.setSuffix">(Sisyphe.core.sisypheTools.LineWidget method)</a>
 </li>
       </ul></li>
+      <li><a href="API/api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheDisplay.setSymmetricWindow">setSymmetricWindow() (Sisyphe.core.sisypheImageAttributes.SisypheDisplay method)</a>
+</li>
       <li><a href="API/api_tools.html#Sisyphe.core.sisypheTools.HandleWidget.setText">setText() (Sisyphe.core.sisypheTools.HandleWidget method)</a>
 
       <ul>

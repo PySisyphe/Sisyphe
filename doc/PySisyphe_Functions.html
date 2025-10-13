@@ -1,0 +1,545 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Functions menu &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=049aceee"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sisyphe
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Versions.html">Version history</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Functions menu</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PySisyphe_Functions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="functions-menu">
+<span id="page-functions"></span><h1>Functions menu<a class="headerlink" href="#functions-menu" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="#menu-section-join"><span class="std std-ref">Join single component volume(s)</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-split"><span class="std std-ref">Split multi component volume(s)</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-flip"><span class="std std-ref">Flip axis</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-permute"><span class="std std-ref">Permute axis</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-neck"><span class="std std-ref">Remove neck slices</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-datatype"><span class="std std-ref">Datatype conversion</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-attributes"><span class="std std-ref">Attributes conversion</span></a></p></li>
+<li><dl class="simple">
+<dt>Filters &gt;</dt><dd><ul>
+<li><p><a class="reference internal" href="#menu-section-filter-mean"><span class="std std-ref">Mean filter</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-filter-median"><span class="std std-ref">Median filter</span></a></p></li>
+<li><p><span class="xref std std-ref">menu-section-filter-std</span></p></li>
+<li><p><a class="reference internal" href="#menu-section-filter-gaussian"><span class="std std-ref">Gaussian filter</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-filter-gradient"><span class="std std-ref">Gradient magnitude filter</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-filter-laplacian"><span class="std std-ref">Laplacian filter</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-filter-anisodiff"><span class="std std-ref">Anisotropic diffusion filter</span></a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Intensity processing &gt;</dt><dd><ul>
+<li><p><a class="reference internal" href="#menu-section-matching-hist"><span class="std std-ref">Histogram intensity matching</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-matching-reg"><span class="std std-ref">Regression intensity matching</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-norm"><span class="std std-ref">Intensity normalization</span></a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><a class="reference internal" href="#menu-section-texture"><span class="std std-ref">Texture feature maps</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-roitexture"><span class="std std-ref">ROI Texture features</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-biasfield"><span class="std std-ref">Bias field correction</span></a></p></li>
+<li><dl class="simple">
+<dt>Voxel-by-voxel processing &gt;</dt><dd><ul>
+<li><p><a class="reference internal" href="#menu-section-voxel-mean"><span class="std std-ref">Mean volume</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-voxel-median"><span class="std std-ref">Median volume</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-voxel-std"><span class="std std-ref">Standard deviation volume</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-voxel-min"><span class="std std-ref">Minimum volume</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-voxel-max"><span class="std std-ref">Maximum volume</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-algebra"><span class="std std-ref">Algebra</span></a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><a class="reference internal" href="#menu-section-workflow"><span class="std std-ref">Workflow processing</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-workflows"><span class="std std-ref">Workflows</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-installplugin"><span class="std std-ref">Install plugin</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-removeplugin"><span class="std std-ref">Remove plugin</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-plugins"><span class="std std-ref">Plugins</span></a></p></li>
+</ul>
+<section id="join-single-component-volume-s">
+<span id="menu-section-join"></span><h2>Join single component volume(s)<a class="headerlink" href="#join-single-component-volume-s" title="Link to this heading"></a></h2>
+<p>PySisyphe manages both single- and multi-component volumes:</p>
+<ul class="simple">
+<li><p>a single-component volume can be either a 2D or 3D volume, and its voxel value is a scalar.</p></li>
+<li><p>a multi-component is a 4D volume (time series, perfusion series, diffusion series), and its voxel value is a vector.</p></li>
+</ul>
+<p>This menu displays the <strong>Join single component volume(s)</strong> dialog box to create a multi-component volume from a list of single-component volumes.</p>
+<p>Add PySisyphe single-component volumes in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>OK</strong> button to create the multi-component volume.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without processing.</p>
+</section>
+<section id="split-multi-component-volume-s">
+<span id="menu-section-split"></span><h2>Split multi component volume(s)<a class="headerlink" href="#split-multi-component-volume-s" title="Link to this heading"></a></h2>
+<p>PySisyphe manages both single- and multi-component volumes:</p>
+<ul class="simple">
+<li><p>a single-component volume can be either a 2D or 3D volume, and its voxel value is a scalar.</p></li>
+<li><p>a multi-component is a 4D volume (time series, perfusion series, diffusion series), and its voxel value is a vector.</p></li>
+</ul>
+<p>This menu displays the <strong>Split multi component volume(s)</strong> dialog box to create a single-component volume(s) from a multi-component volume.</p>
+<p>Add PySisyphe multi-component volume(s) in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>OK</strong> button to create single-component volumes. Single-component volumes are saved with the multi-component file name suffixed with the component index (_#00.xvol .. _#xx.xvol).</p>
+<p>Left-click <strong>Cancel</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="flip-axis">
+<span id="menu-section-flip"></span><h2>Flip axis<a class="headerlink" href="#flip-axis" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Flip axis</strong> dialog box used to flip one or more volume axes. This manipulation is typically used to correct orientation errors during the import stage.</p>
+<p>Add PySisyphe volume(s) to be processed in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Three checkboxes are provided to flip respectively along the x-axis (left-right flip), the y-axis (anterior-posterior flip), and the z-axis (cranial-caudal flip). Volumes are saved with the original file name prefixed with the string edited in the <strong>prefix</strong> field.</p>
+<p>Left-click <strong>OK</strong> button to flip volumes.</p>
+<p>Left-click <strong>Cancel</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="permute-axis">
+<span id="menu-section-permute"></span><h2>Permute axis<a class="headerlink" href="#permute-axis" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Permute axis</strong> dialog box used to change axis order of volumes. This manipulation is typically used to correct orientation errors during the import stage.</p>
+<p>PySisyphe images are in axial orientation by default. In this case, the axis order is x, y, z. All possible permutations are provided in the <strong>swap order</strong> combo box (y,z,x - z,x,y - x,z,y - y,z,x - z,y,x). The most common permutations are (y, z, x) to perform a sagittal-to-axial conversion, and (x, z, y) to perform a coronal-to-axial conversion. Volumes are saved with the original file name prefixed with the string edited in the <strong>prefix</strong> field.</p>
+<p>Add PySisyphe volume(s) to be processed in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>OK</strong> button to swap axes.</p>
+<p>Left-click <strong>Cancel</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="remove-neck-slices">
+<span id="menu-section-neck"></span><h2>Remove neck slices<a class="headerlink" href="#remove-neck-slices" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Remove neck slices</strong> dialog box to remove the lowest slices of the neck. Most 3D MR acquired in sagittal orientation have extensive and useless inferior coverage. This function crops the MR volume in the z-direction by removing the empty slices and the lower neck slices below the foramen magnum.</p>
+<p>Add PySisyphe volume(s) to be processed in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>The <strong>extent factor</strong>, which is a multiplicative factor, adjusts the position of the lower slice at neck level.. Lower values remove more slices, higher values keep more slices (default 1.8, close to the foramen magnum for most MR scans). Cropped volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> fields.</p>
+<p>Left-click <strong>OK</strong> button to remove neck slices.</p>
+<p>Left-click <strong>Cancel</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="datatype-conversion">
+<span id="menu-section-datatype"></span><h2>Datatype conversion<a class="headerlink" href="#datatype-conversion" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Datatype conversion</strong> dialog box, which is used to change the data type of one or more PySisyphe volumes. Datatypes supported by PySisyphe are <em>uint8</em>, <em>uint16</em>, <em>unit32</em>, <em>uint64</em>, <em>int8</em>, <em>int16</em>, <em>int32</em>, <em>int64</em>, <em>float32</em> and <em>float64</em>.</p>
+<p>Select the new data type using the <strong>Datatype</strong> combo box.</p>
+<p>Add PySisyphe volume(s) to be processed in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>OK</strong> button to perform the data type conversion.</p>
+<p>Left-click <strong>Cancel</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="attributes-conversion">
+<span id="menu-section-attributes"></span><h2>Attributes conversion<a class="headerlink" href="#attributes-conversion" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Attributes conversion</strong> dialog box, which is used to modify common attributes of one or more PySisyphe volumes.</p>
+<p>Select the new data type using the <strong>Datatype</strong> combo box.</p>
+<p>Seven check boxes are provided to modify volume attributes:</p>
+<ul>
+<li><p><strong>Anonymize</strong> to erase identity attributes (<em>lastname</em>, <em>firstname</em>, <em>date of birth</em>)</p></li>
+<li><p><strong>Set modality</strong> to chose one of the following modalities <em>MR</em>, <em>CT</em>, <em>PT</em> (PET), <em>NM</em> (SPECT), <em>LB</em> (Label), <em>TP</em> (template), <em>PJ</em> (2D projection), <em>OT</em> (other modality, secondary processed image)</p></li>
+<li><p><strong>Set sequence</strong> to chose on of the following sequence:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>OT modality: <em>p-map</em>, <em>t-map</em>, <em>z-map</em>, <em>GM</em>, <em>SCGM</em>, <em>CGM</em>, <em>WM</em>, <em>CSF</em>, <em>Brainstem</em>, <em>Cerebellum</em>, <em>Cortical thickness</em>, <em>CBF</em>, <em>CBV</em>, <em>MTT</em>, <em>TTP</em>, <em>Dose</em>, <em>FA</em>, <em>ADC</em>, <em>Bias field</em>, <em>Distance map</em>, <em>Median</em>, <em>Mean</em>, <em>Min</em>, <em>Max</em>, <em>Std</em>, <em>Algebra</em>, <em>Mask</em>, <em>Struct</em>, <em>Displacement field</em>, <em>Jacobian</em>, <em>Labels</em>.</p></li>
+<li><p>MR modality: <em>T1</em>, <em>T2</em>, <em>T2star</em>, <em>PD</em>, <em>FLAIR</em>, <em>CE T1</em>, <em>CE T2</em>, <em>CE FLAIR</em>, <em>CE TOF</em>, <em>EPI</em>, <em>B0</em>, <em>DWI</em>, <em>PWI</em>, <em>ASL</em>, <em>SWI</em>, <em>TOF</em></p></li>
+<li><p>CT modality: <em>CT</em>, <em>CE CT</em></p></li>
+<li><p>PT modality: <em>FDG</em></p></li>
+<li><p>NM modality: <em>HMPAO</em>, <em>ECD</em>, <em>FPCIT</em></p></li>
+<li><p>LB modality: <em>LABELS</em></p></li>
+<li><p>TP modality: all sequences</p></li>
+<li><p>PJ modality: None</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Set unit</strong> to chose the scalar values unit: <em>None</em> (No unit), <em>%</em>, <em>ratio</em>, <em>s</em>, <em>mm</em>, <em>count</em>, <em>Bq</em>, <em>Bq/ml</em>, <em>SUV</em>, <em>mm2/s</em>.</p></li>
+<li><p><strong>Set frame</strong> to chose stereotactic frame: <em>no frame</em> or <em>Leksell frame</em>.</p></li>
+<li><p><strong>Set origin to default</strong> to set origin to [0,0,0]. The coordinate origin is based on the RAS+ convention and is set at the most left, posterior, inferior point in the field of view.</p></li>
+<li><p><strong>Set directions to default</strong> to set axis order to x-axis (left to right), y-axis (posterior to anterior), z-axis (caudal to cranial) i.e. [[1,0,0],[0,1,0],[0,0,1]] with RAS+ convention.</p></li>
+</ul>
+<p>Add PySisyphe volume(s) to be processed in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>Convert</strong> button to perform attribute conversions.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="mean-filter">
+<span id="menu-section-filter-mean"></span><h2>Mean filter<a class="headerlink" href="#mean-filter" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Mean filter</strong> dialog box. It applies an average filter to a volume. It computes a volume in which a given voxel is the mean value of the voxels in a neighborhood around the corresponding input voxel (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MeanImageFilter.html">SimpleITK</a>).</p>
+<p>Filter parameters are as follows:</p>
+<ul class="simple">
+<li><p><strong>Fast</strong>, checkbox to select the fast filter version.</p></li>
+<li><p><strong>Kernel radius</strong>, use the kernel radius in voxels to define the neighborhood extent (default 3).</p></li>
+<li><p>Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> fields.</p></li>
+</ul>
+<p>Add PySisyphe volume(s) to be filtered in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>Execute</strong> button to perform mean filtering.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="median-filter">
+<span id="menu-section-filter-median"></span><h2>Median filter<a class="headerlink" href="#median-filter" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Median filter</strong> dialog box. It applies a median filter to a volume. It computes a volume in which a given voxel is the median value of the voxels in a neighborhood around the corresponding input voxel (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MedianImageFilter.html">SimpleITK</a>).</p>
+<p>Filter parameters are as follows:</p>
+<ul class="simple">
+<li><p><strong>Kernel radius</strong>, use the kernel radius in voxels to define the neighborhood extent (default 3).</p></li>
+<li><p>Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
+<p>Add PySisyphe volume(s) to be filtered in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>Execute</strong> button to perform median filtering.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="gaussian-filter">
+<span id="menu-section-filter-gaussian"></span><h2>Gaussian filter<a class="headerlink" href="#gaussian-filter" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Gaussian filter</strong> dialog box, which is used to perform the Gaussian blurring of a volume.</p>
+<p>Filter parameters are as follows:</p>
+<ul class="simple">
+<li><p><strong>Algorithm</strong>, two types of algorithms are available. The first uses a separable convolution with a discrete Gaussian kernel (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1DiscreteGaussianImageFilter.html#details">SimpleITK</a>). The latter uses a recursive approximation (IIR) of the Gaussian kernel, this filter tends to be faster for large kernels (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1RecursiveGaussianImageFilter.html">SimpleITK</a>).</p></li>
+<li><p><strong>Fwhm</strong>, full width at hall maximum of the gaussian kernel in mm.</p></li>
+<li><p>Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
+<p>Add PySisyphe volume(s) to be filtered in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>Execute</strong> button to perform gaussian filtering.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="gradient-magnitude-filter">
+<span id="menu-section-filter-gradient"></span><h2>Gradient magnitude filter<a class="headerlink" href="#gradient-magnitude-filter" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Gradient magnitude filter</strong> dialog box, which is used to compute the gradient magnitude of a volume at each voxel by convolution with the first derivative of a Gaussian kernel.</p>
+<p>Filter parameters are as follows:</p>
+<ul class="simple">
+<li><p><strong>Algorithm</strong>, two types of algorithms are available. The first uses a separable convolution with a discrete first derivative of a Gaussian kernel (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1GradientMagnitudeImageFilter.html">SimpleITK</a>). The latter uses a recursive approximation (IIR) of the kernel, this filter tends to be faster for large kernels (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1GradientMagnitudeRecursiveGaussianImageFilter.html">SimpleITK</a>).</p></li>
+<li><p><strong>Sigma</strong>, standard deviation of the gaussian kernel in mm.</p></li>
+<li><p>Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
+<p>Add PySisyphe volume(s) to be filtered in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>Execute</strong> button to perform gradient magnitude filter.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="laplacian-filter">
+<span id="menu-section-filter-laplacian"></span><h2>Laplacian filter<a class="headerlink" href="#laplacian-filter" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Laplacian filter</strong> dialog box, which is used to compute a Laplacian filtering, isotropic measure of the 2nd spatial derivative of a volume.</p>
+<p>Filter parameters are as follows:</p>
+<ul class="simple">
+<li><p><strong>Algorithm</strong>, two types of algorithms are available. The first uses a separable convolution with a discrete second derivative of a Gaussian kernel (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LaplacianImageFilter.html">SimpleITK</a>). The latter uses a recursive approximation (IIR) of the kernel, this filter tends to be faster for large kernels (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LaplacianRecursiveGaussianImageFilter.html">SimpleITK</a>).</p></li>
+<li><p><strong>Sigma</strong>, standard deviation of the gaussian kernel in mm.</p></li>
+<li><p>Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
+<p>Add PySisyphe volume(s) to be filtered in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>Execute</strong> button to perform Laplacian filtering.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="anisotropic-diffusion-filter">
+<span id="menu-section-filter-anisodiff"></span><h2>Anisotropic diffusion filter<a class="headerlink" href="#anisotropic-diffusion-filter" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Anisotropic diffusion filter</strong> dialog box, which is used to perform volume denoising with anisotropic diffusion family filters. The advantage of these approaches is that clear boundaries are preserved, with smoothing occurring only within homogeneous regions.</p>
+<p>Filter parameters are as follows:</p>
+<ul>
+<li><p><strong>Algorithm</strong>, four types of algorithms are available.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Anisotropic gradient diffusion filter: iteratively diffuse volumes by solving non-linear partial differential equations based on the classic Perona-Malik, gradient magnitude equation (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1GradientAnisotropicDiffusionImageFilter.html">SimpleITK</a>).</p></li>
+<li><p>Curvature anisotropic diffusion filter: iteratively diffuse volumes by solving non-linear partial differential equations using the modified curvature diffusion equation (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1CurvatureAnisotropicDiffusionImageFilter.html">SimpleITK</a>).</p></li>
+<li><p>Curvature flow filter and MinMax curvature flow: iterative curvature driven volume denoising algorithm. Iso-brightness contours in a grayscale volume are viewed as a level set. The level set is then evolved using a curvature-based speed function (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1CurvatureFlowImageFilter.html">SimpleITK</a> and see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MinMaxCurvatureFlowImageFilter.html">SimpleITK</a>).</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Gradient time step</strong>, which is the finite difference update. Stable values for most 2D and 3D functions are 0.125 and 0.0625 respectively, when the pixel spacing is unity. In general, you should keep the time step below (PixelSpacing)/2N+1, where N is the number of image dimensions.</p></li>
+<li><p><strong>Conductance</strong>, controls the sensitivity of the conductance term in the basic anisotropic diffusion equation. It affects the conductance term in different ways depending on the particular variation on the basic equation. As a general rule, the lower the value, the more strongly the diffusion equation preserves image features (such as high gradients or curvature). A high value for conductance will cause the filter to diffuse image features more readily. Typical values range from 0.5 to 2.0.</p></li>
+<li><p><strong>Number of iterations</strong>, specifies the number of iterations (time-step updates) that the solver will perform to produce a solution. The appropriate number of iterations is dependent on the application and the image being processed. As a general rule, the more iterations performed, the more diffused the image will become.</p></li>
+<li><p>Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
+<p>Add PySisyphe volume(s) to be filtered in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>Execute</strong> button to perform Anisotropic diffusion filtering.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="histogram-intensity-matching">
+<span id="menu-section-matching-hist"></span><h2>Histogram intensity matching<a class="headerlink" href="#histogram-intensity-matching" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Histogram intensity matching</strong> dialog box, which is used to match the intensities of one or more volumes with those of a reference volume. This filter uses a histogram matching technique where the histograms are only matched at a specified number of quantile values (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HistogramMatchingImageFilter.html">SimpleITK</a>).</p>
+<p>Filter parameters are as follows:</p>
+<ul class="simple">
+<li><p><strong>Exclude background</strong>, checkbox to exclude background voxels from histogram matching processing (checked by default). Background voxels are those with grayscale values smaller than the mean.</p></li>
+<li><p><strong>Number of match points</strong>, governs the number of quantile values to be matched.</p></li>
+<li><p><strong>Number of histogram bins</strong>, sets the number of bins used when creating histograms.</p></li>
+<li><p>Matched volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
+<p>Select PySisyphe volume used as reference in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget located at the top of the dialog box.</p>
+<p>Add PySisyphe volume(s) to be matched in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget located below the previous one.</p>
+<p>Left-click <strong>Execute</strong> button to perform histogram intensity matching.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="regression-intensity-matching">
+<span id="menu-section-matching-reg"></span><h2>Regression intensity matching<a class="headerlink" href="#regression-intensity-matching" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Regression intensity matching</strong> dialog box, which is used to match the intensities of one or more volumes with those of a reference volume. This filter uses a regression algorithm for each pair of voxels that have the same coordinates in the two volumes. All volumes must be co-registered to the reference volume.</p>
+<p>Filter parameters are as follows:</p>
+<ul class="simple">
+<li><p><strong>Polynomial order to fit</strong>, order of the polynomial used as regression function.</p></li>
+<li><p><strong>Truncate</strong>, the minimum and maximum values of the matched volume are adjusted to align with the reference volume, if checked (uncheck by default).</p></li>
+<li><p><strong>Exclude background</strong>, checkbox to exclude background voxels from histogram matching processing (checked by default). Background voxels are those with grayscale values smaller than the mean.</p></li>
+<li><p>Matched volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
+<p>Select PySisyphe volume used as reference in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget located at the top of the dialog box.</p>
+<p>Add PySisyphe volume(s) to be matched in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget located below the previous one.</p>
+<p>Left-click <strong>Execute</strong> button to perform regression intensity matching.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="intensity-normalization">
+<span id="menu-section-norm"></span><h2>Intensity normalization<a class="headerlink" href="#intensity-normalization" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Intensity normalization</strong> dialog box, which is used to normalize intensities of one or more volume.</p>
+<p>Filter parameters are as follows:</p>
+<ul>
+<li><p><strong>Method</strong>, two are provided.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>standardize the intensity as <em>z-score</em> i.e. zero mean, [-std, +std] mapped to [-1, 1].</p></li>
+<li><p>standardize the intensity values to the <em>range [0, 1]</em> i.e. [min, max] mapped to [0, 1].</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Truncate centile</strong>, truncate volume intensities with thresholds expressed in percentile (min threshold = centile, max threshold = 100 - centile), no truncation by default i.e centile set to 0.</p></li>
+<li><p>Intensity-normalized volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
+<p>Add PySisyphe volume(s) to be processed in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>Execute</strong> button to perform intensity normalization.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="texture-feature-maps">
+<span id="menu-section-texture"></span><h2>Texture feature maps<a class="headerlink" href="#texture-feature-maps" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Texture feature maps</strong> dialog box, which is used to extract various voxel-based radiomics features (feature maps) from a volume. PySisyphe uses the <a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/">Pyradiomics</a> implementation.</p>
+<p>Add PySisyphe volume(s) to be analyzed in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget located at the top of the dialog box.</p>
+<p>In the list box below the previous widget, select the feature maps to be calculated. Features are divided into six categories: <em>first Order Statistics</em> (<a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.firstorder.RadiomicsFirstOrder">first Order</a>), <em>gray level co-occurrence matrix</em> (<a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.glcm.RadiomicsGLCM">GLCM</a>), <em>gray level run length matrix</em> (<a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.glrlm.RadiomicsGLRLM">GLRLM</a>), <em>gray level size zone matrix</em> (<a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.glszm.RadiomicsGLSZM">GLSZM</a>), <em>neighbouring gray tone difference matrix</em> (<a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.ngtdm.RadiomicsNGTDM">NGTDM</a>), <em>neighbouring gray tone difference matrix</em> (<a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.ngtdm.RadiomicsNGTDM">NGTDM</a>) and <em>gray level dependence matrix</em> (<a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.gldm.RadiomicsGLDM">GLDM</a>). Left-click <strong>&gt;</strong> icon to expand the feature categories. Each category/feature is headed by a checkbox. The check state of a category is copied to its feature children in the tree structure.</p>
+<p>Paremeters are as follows:</p>
+<ul class="simple">
+<li><p><strong>Kernel radius</strong>, kernel extent in voxels used by matrix-based features (GLCM, GLRLM, GLSZM, NGTDM, GLDM)</p></li>
+<li><p><strong>Number of voxels in one batch</strong>, parameter used to limit memory usage and prevent memory error.</p></li>
+<li><p>Feature maps are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Check all</strong> button to check all features in the list box.</p>
+<p>Left-click <strong>Uncheck all</strong> button to uncheck all features in the list box.</p>
+<p>Left-click <strong>Execute</strong> button to process the checked feature maps.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="roi-texture-features">
+<span id="menu-section-roitexture"></span><h2>ROI Texture features<a class="headerlink" href="#roi-texture-features" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>ROI Texture features</strong> dialog box, which is used to extract various ROI-based radiomics features from a volume and ROI(s). PySisyphe uses the <a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/">Pyradiomics</a> implementation.</p>
+<p>Add PySisyphe volume(s) to be analyzed in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget located at the top of the dialog box.</p>
+<p>Add PySisyphe ROI(s) to be analyzed in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget located below the previous.</p>
+<p>In the list box below the previous widget, select the features to be calculated. Features are divided into seven categories: <em>first Order Statistics</em> (<a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.firstorder.RadiomicsFirstOrder">first Order</a>), <em>gray level co-occurrence matrix</em> (<a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.glcm.RadiomicsGLCM">GLCM</a>), <em>gray level run length matrix</em> (<a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.glrlm.RadiomicsGLRLM">GLRLM</a>), <em>gray level size zone matrix</em> (<a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.glszm.RadiomicsGLSZM">GLSZM</a>), <em>neighbouring gray tone difference matrix</em> (<a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.ngtdm.RadiomicsNGTDM">NGTDM</a>), <em>gray level dependence matrix</em> (<a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.gldm.RadiomicsGLDM">GLDM</a>) and <em>shape features</em> (<a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.shape.RadiomicsShape">Shape</a>). Left-click <strong>&gt;</strong> icon to expand the feature categories. Each category/feature is headed by a checkbox. The check state of a category is copied to its feature children in the tree structure.</p>
+<p>Paremeter:</p>
+<ul class="simple">
+<li><p><strong>Kernel radius</strong>, kernel extent in voxels used by matrix-based features (GLCM, GLRLM, GLSZM, NGTDM, GLDM)</p></li>
+</ul>
+<p>Left-click <strong>Check all</strong> button to check all features in the list box.</p>
+<p>Left-click <strong>Uncheck all</strong> button to uncheck all features in the list box.</p>
+<p>Left-click <strong>Execute</strong> button to process the checked features.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="bias-field-correction">
+<span id="menu-section-biasfield"></span><h2>Bias field correction<a class="headerlink" href="#bias-field-correction" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Bias field correction</strong> dialog box. MR images are affected by bias field artefact which is defined as low-frequency intensity inhomogeneity. The N4 algorithm assumes a simple parametric model (B-Spline fitting) for the bias field and does not require tissue class segmentation. A multiple resolutions strategy is used during the correction process. The basic algorithm iterates between sharpening the intensity histogram of the corrected input image and spatially smoothing those results with a B-spline scalar field estimate of the bias field (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1N4BiasFieldCorrectionImageFilter.html">SimpleITK</a>).</p>
+<p>Add PySisyphe volume(s) to be corrected in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Filter parameters are as follows:</p>
+<ul class="simple">
+<li><p><strong>Use mask</strong>, if checked, the background is excluded from the bias field processing (default).</p></li>
+<li><p><strong>Shrink factor</strong>, to perform the correction on a subsampled image (size / shrink factor, default 1 no shrinking).</p></li>
+<li><p><strong>Spline order</strong>, to set the spline order used to model the bias field.</p></li>
+<li><p><strong>Number of histogram bins</strong>, to set the number of bins defining the log input intensity histogram.</p></li>
+<li><p><strong>Number of fitting levels</strong>, to set the number of multiple resolution levels.</p></li>
+<li><p><strong>Number of control points</strong>, to set the control point grid size defining the B-spline estimate of the bias field. In each dimension, the B-spline mesh size is equal to the number of control points in that dimension minus the spline order.</p></li>
+<li><p><strong>Number of iterations</strong>, to set the maximum number of iterations at each fitting level.</p></li>
+<li><p><strong>Convergence threshold</strong>, to set the convergence threshold. Convergence is determined by the coefficient of variation of the current bias field estimate and the previous estimate. If this value is less than the specified threshold, the algorithm proceeds to the next fitting level or terminates if it is at the last level.</p></li>
+<li><p><strong>Wiener filter noise</strong>, to set the noise estimate defining the Wiener filter.</p></li>
+<li><p><strong>Bias field full width at half maximum</strong>, to set the full width at half maximum parameter characterizing the width of the Gaussian deconvolution.</p></li>
+<li><p>Corrected volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+<li><p>Bias field volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>bias field prefix</strong> and <strong>bias field suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to process the bias field correction.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="mean-volume">
+<span id="menu-section-voxel-mean"></span><h2>Mean volume<a class="headerlink" href="#mean-volume" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Mean volume</strong> dialog box, which calculates the mean volume of a list of volumes on a voxel-by-voxel basis. All volumes must have the same field-of-view (i.e. same size and same spacing).</p>
+<p>Add PySisyphe volume(s) in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>OK</strong> button to calculate the mean volume.</p>
+<p>Left-click <strong>Cancel</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="median-volume">
+<span id="menu-section-voxel-median"></span><h2>Median volume<a class="headerlink" href="#median-volume" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Median volume</strong> dialog box, which calculates the median volume of a list of volumes on a voxel-by-voxel basis. All volumes must have the same field-of-view (i.e. same size and same spacing).</p>
+<p>Add PySisyphe volume(s) in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>OK</strong> button to calculate the median volume.</p>
+<p>Left-click <strong>Cancel</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="standard-deviation-volume">
+<span id="menu-section-voxel-std"></span><h2>Standard deviation volume<a class="headerlink" href="#standard-deviation-volume" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Standard deviation volume</strong> dialog box, which calculates the standard deviation volume of a list of volumes on a voxel-by-voxel basis. All volumes must have the same field-of-view (i.e. same size and same spacing).</p>
+<p>Add PySisyphe volume(s) in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>OK</strong> button to calculate the standard deviation volume.</p>
+<p>Left-click <strong>Cancel</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="minimum-volume">
+<span id="menu-section-voxel-min"></span><h2>Minimum volume<a class="headerlink" href="#minimum-volume" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Minimum volume</strong> dialog box, which calculates the minimum volume of a list of volumes on a voxel-by-voxel basis. All volumes must have the same field-of-view (i.e. same size and same spacing).</p>
+<p>Add PySisyphe volume(s) in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>OK</strong> button to calculate the minimum volume.</p>
+<p>Left-click <strong>Cancel</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="maximum-volume">
+<span id="menu-section-voxel-max"></span><h2>Maximum volume<a class="headerlink" href="#maximum-volume" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Maximum volume</strong> dialog box, which calculates the maximum volume of a list of volumes on a voxel-by-voxel basis. All volumes must have the same field-of-view (i.e. same size and same spacing).</p>
+<p>Add PySisyphe volume(s) in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>OK</strong> button to calculate the maximum volume.</p>
+<p>Left-click <strong>Cancel</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="algebra">
+<span id="menu-section-algebra"></span><h2>Algebra<a class="headerlink" href="#algebra" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Algebra</strong> dialog box, which calculates a volume using a free voxel-by-voxel formula applied to a list of volumes. All volumes must have the same field-of-view (i.e. same size and same spacing).</p>
+<p>Add PySisyphe volume(s) in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>All functions of the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#reference">Numpy library</a> and python operators can be used in the formula field. Numpy functions must be prefixed with <strong>np.</strong> (i.e. numpy is imported with the alias np). A volume is inserted into the formula using a list variable, named <em>img</em>, and its order index i in the file selection widget (first index is 0) e.g. <strong>img[i]</strong> or double-click on the file name in the file selection widget to add the volume in the formula.</p>
+<p>Left-click <strong>Execute</strong> button to calculate the volume.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="workflow-processing">
+<span id="menu-section-workflow"></span><h2>Workflow processing<a class="headerlink" href="#workflow-processing" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Workflow processing</strong> dialog box. A workflow is a batch processing mechanism that automates a series of PySisyphe processes. The following functions are supported: <em>loading image</em>, <em>flip axes</em>, <em>swap axes</em>, <em>remove neck</em>, <em>texture feature map</em>, <em>mean filter</em>, <em>median filter</em>, <em>gaussian filter</em>, <em>gradient magnitude filter</em>, <em>laplacian filter</em>, <em>anistropic diffusion filter</em>, <em>bias field correction</em>, <em>histogram intensity matching</em>, <em>regression intensity matching</em>, <em>signal normalization</em>, <em>rigid registration</em>, <em>affine registration</em>, <em>displacement field registration</em>, <em>spatial normalization</em>, <em>skull stripping</em>, <em>prior based registration</em>, <em>algebra</em>.</p>
+<p>Add PySisyphe volume(s) in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget located at the top of the dialog box. These volumes will be processed successively in the workflow, as the first input image with an index of 0.</p>
+<p>The list box located below the previous widget displays the workflow with one function by row. Left-click on a row to select it (blue background). A row consists of 4 elements from left to right: <em>function name</em>, <em>input image index</em> (one or two depending on the functions), <em>function parameters</em> and <em>output image index</em>. Input image index is displayed in a SpinBox widget and can be changed using the widget’s arrows. This input image index is always 0 in the first row (i.e. original image at the first stage of the workflow).</p>
+<p>Select a function in the comboxbox located below the list box.</p>
+<p>Left-click <strong>Add</strong> button to add the comboxbox function in the workflow.</p>
+<p>Left-click <strong>Insert</strong> button to insert the comboxbox function before the selected row in the workflow.</p>
+<p>Left-click <strong>Edit</strong> button to open a dialog box and edit the parameters of the selected row in the workflow.</p>
+<p>Left-click <strong>Remove</strong> button to erase the selected row in the workflow.</p>
+<p>Left-click <strong>Clear</strong> button to clear the workflow.</p>
+<p>Left-click <strong>Open</strong> button to open a PySisyphe workflow XML file (.xwflow).</p>
+<p>Left-click <strong>Save</strong> button to save the workflow as a PySisyphe xwflow XML file in the workflow subfolder of the PySisyphe user folder ($User/.PySisyphe), by default.</p>
+<p>Left-click <strong>Execute</strong> button to run the workflow.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="workflows">
+<span id="menu-section-workflows"></span><h2>Workflows<a class="headerlink" href="#workflows" title="Link to this heading"></a></h2>
+<p>This menu displays a list of workflows saved in the workflow subfolder of the PySisyphe user folder ($User/.PySisyphe).</p>
+<p>Click on a workflow submenu item to open it in the <a class="reference internal" href="#menu-section-workflow"><span class="std std-ref">Workflow processing</span></a> dialog box.</p>
+</section>
+<section id="install-plugin">
+<span id="menu-section-installplugin"></span><h2>Install plugin<a class="headerlink" href="#install-plugin" title="Link to this heading"></a></h2>
+<p>This menu displays a dialog box for selecting the Zip archive of a PySisyphe plugin.</p>
+<p>Plugins can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> dialog box.</p>
+<p>A plugin is a python module:</p>
+<ul class="simple">
+<li><p>The name of the folder where the plugin sources are located is the same as the name of the module.</p></li>
+<li><p>This folder must contain an __init__.py file that could be empty.</p></li>
+<li><p>This folder must contain a python file with the same name as the plugin folder.</p></li>
+<li><p>This file must contain a main function (i.e. def main(parent)), which is the function executed when the plugin is selected in the PySisyphe <a class="reference internal" href="#menu-section-plugins"><span class="std std-ref">Plugins</span></a> menu.</p></li>
+<li><p>Any external module folders not included in the PySisyphe package must be copied to the plugin folder. Use Python relative import syntax to import these modules into your plugin sources.</p></li>
+<li><p>Create a Zip archive of the plugin folder and instal it with the PySisyphe install plugin menu.</p></li>
+</ul>
+</section>
+<section id="remove-plugin">
+<span id="menu-section-removeplugin"></span><h2>Remove plugin<a class="headerlink" href="#remove-plugin" title="Link to this heading"></a></h2>
+<p>This menu opens a dialog box that lets you select the PySisyphe plugin folder you want to remove.</p>
+</section>
+<section id="plugins">
+<span id="menu-section-plugins"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Link to this heading"></a></h2>
+<p>This menu displays a list of plugins that are installed in PySisyphe.</p>
+<p>Run a plugin by clicking on its submenu item.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

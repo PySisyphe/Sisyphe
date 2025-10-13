@@ -1,0 +1,531 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>File menu &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=049aceee"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sisyphe
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Versions.html">Version history</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">File menu</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PySisyphe_File.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="file-menu">
+<span id="page-file"></span><h1>File menu<a class="headerlink" href="#file-menu" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="#menu-section-open"><span class="std std-ref">Open</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-opentemplate"><span class="std std-ref">Open template</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-openformat"><span class="std std-ref">Open from format</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-recent"><span class="std std-ref">Open recent</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-openuser"><span class="std std-ref">Open user folder</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-save"><span class="std std-ref">Save</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-saveall"><span class="std std-ref">Save all</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-saveas"><span class="std std-ref">Save as</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-saveformat"><span class="std std-ref">Save to format</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-close"><span class="std std-ref">Close</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-closeall"><span class="std std-ref">Close all</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-preferences"><span class="std std-ref">Preferences</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-download"><span class="std std-ref">Download manager</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-update"><span class="std std-ref">Check for update</span></a></p></li>
+<li><p><a class="reference internal" href="PySisyphe_Functions.html#menu-section-attributes"><span class="std std-ref">Attributes conversion</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-id"><span class="std std-ref">ID replacement</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-anonymize"><span class="std std-ref">Anonymize</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-editlabels"><span class="std std-ref">Edit volume labels</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-roitolabels"><span class="std std-ref">ROIs to label volume</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-volumetolabels"><span class="std std-ref">Volumes to label volume</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-labelstoroi"><span class="std std-ref">Label volume to ROIs</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-import"><span class="std std-ref">Import</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-export"><span class="std std-ref">Export</span></a></p></li>
+<li><dl class="simple">
+<dt>DICOM &gt;</dt><dd><ul>
+<li><p><a class="reference internal" href="#menu-section-dcmimport"><span class="std std-ref">Dicom import</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-dcmrtimport"><span class="std std-ref">Dicom RT import</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-dcmexport"><span class="std std-ref">Dicom export</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-dcmquery"><span class="std std-ref">Dicom query/retrieve from Dicom SCP Server</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-dcmdataset"><span class="std std-ref">Dicom dataset</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-xmldcm"><span class="std std-ref">XML Dicom attributes</span></a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><a class="reference internal" href="#menu-section-editlut"><span class="std std-ref">Edit LUT</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-quit"><span class="std std-ref">Quit</span></a></p></li>
+</ul>
+<section id="open">
+<span id="menu-section-open"></span><h2>Open<a class="headerlink" href="#open" title="Link to this heading"></a></h2>
+<p>This menu displays a file selection dialog box to open a PySisyphe volume (.xvol) in the thumbnail bar.</p>
+<p>You can also:</p>
+<ul class="simple">
+<li><p>double-click on an empty space in the thumbnail bar,</p></li>
+<li><p>right-click on an empty space in the thumbnail bar to display a popup menu and then select <strong>open volume</strong> submenu,</p></li>
+<li><p>Left-click <a class="reference internal" href="_images/open.png"><img alt="open" src="_images/open.png" style="width: 19.2px; height: 19.2px;" /></a> button in the toolbar.</p></li>
+</ul>
+</section>
+<section id="open-template">
+<span id="menu-section-opentemplate"></span><h2>Open template<a class="headerlink" href="#open-template" title="Link to this heading"></a></h2>
+<p>This menu displays a tree structure of submenus for the available template volumes (.xvol) in PySisyphe.</p>
+<p>Left-click on a template volume menu item to open it in the thumbnail bar.</p>
+<p>Left-click the last sub-menu, <strong>Open template folder</strong>, to open the PySisyphe template folder in the File Manager (Windows) or Finder (MacOS).</p>
+</section>
+<section id="open-from-format">
+<span id="menu-section-openformat"></span><h2>Open from format<a class="headerlink" href="#open-from-format" title="Link to this heading"></a></h2>
+<p>Select a submenu to open an image in one of the following image formats: Nifti (.nii, .hdr, .img, .nia, .nii.gz, .img.gz), Nrrd (.nrrd, .nhdr), Minc (.mnc), FreeSurfer (.mgh, .mgz), Sisyphe (.vol), BrainVoyager (.vmr), VTK (.vti, .vtk).</p>
+<p>Each submenu displays a file selection dialog to open a volume in the thumbnail bar.</p>
+<p>You can also click <a class="reference internal" href="_images/open-nii.png"><img alt="open-nii" src="_images/open-nii.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/open-nrrd.png"><img alt="open-nrrd" src="_images/open-nrrd.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/open-mnc.png"><img alt="open-mnc" src="_images/open-mnc.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/open-mgh.png"><img alt="open-mgh" src="_images/open-mgh.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/open-vol.png"><img alt="open-vol" src="_images/open-vol.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/open-vmr.png"><img alt="open-vmr" src="_images/open-vmr.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/open-vtk.png"><img alt="open-vtk" src="_images/open-vtk.png" style="width: 19.2px; height: 19.2px;" /></a> buttons in the toolbar.</p>
+</section>
+<section id="open-recent">
+<span id="menu-section-recent"></span><h2>Open recent<a class="headerlink" href="#open-recent" title="Link to this heading"></a></h2>
+<p>This menu displays a list of the last ten volumes (.xvol) opened in PySisyphe. This list is stored in the recent.xml file located in the PySisyphe user folder ($User/.PySisyphe).
+Left-click on a volume menu item to open it in the thumbnail bar.</p>
+<p>Left-click the last submenu, <strong>Clear</strong>, to clear the list.</p>
+</section>
+<section id="open-user-folder">
+<span id="menu-section-openuser"></span><h2>Open user folder<a class="headerlink" href="#open-user-folder" title="Link to this heading"></a></h2>
+<p>Open the PySisyphe user folder ($User/.PySisyphe) in the File Manager (Windows) or Finder (MacOS).</p>
+<p>This folder is used to store:</p>
+<ul class="simple">
+<li><p>PySisyphe settings files (functions.xml, settings.xml)</p></li>
+<li><p>list of the last ten volumes loaded into PySisyphe (recent.xml)</p></li>
+<li><p>PySisyphe log file (PySisyphe.log)</p></li>
+<li><p>“controls” subfolder, default folder for saving controls downloaded from <a class="reference internal" href="#menu-section-download"><span class="std std-ref">Download manager</span></a>.</p></li>
+<li><p>“database” subfolder, default folder of the PySisyphe patient database (<a class="reference internal" href="PySisyphe_database.html#page-database"><span class="std std-ref">Database manager</span></a>).</p></li>
+<li><p>“dicom” subfolder, default folder for saving dicom files downloaded from <a class="reference internal" href="#menu-section-dcmquery"><span class="std std-ref">Dicom query/retrieve from Dicom SCP Server</span></a>.</p></li>
+<li><p>“models” subfolder, default folder for saving voxel-by-voxel statistical models (menu Mapping &gt; Model). Shortcuts to the models in this folder are available in the menu <strong>Mapping &gt; Model &gt; Models</strong>.</p></li>
+<li><p>“samples” subfolder, default folder for saving samples downloaded from <a class="reference internal" href="#menu-section-download"><span class="std std-ref">Download manager</span></a>.</p></li>
+<li><p>“segmentation” subfolder, default folder for saving registration based struct segmentation (menu Segmentation -&gt; Registration based segmentation). Shortcuts to the structs in this folder are available in the menu <strong>Segmentation &gt; Structs &gt; User</strong>.</p></li>
+<li><p>“workflow” subfolder, default folder for saving workflow processings (menu <strong>Functions &gt; Workflow processing</strong>). Shortcuts to the workflows in this folder are available in the menu <strong>Functions &gt; Workflow</strong>.</p></li>
+</ul>
+</section>
+<section id="save">
+<span id="menu-section-save"></span><h2>Save<a class="headerlink" href="#save" title="Link to this heading"></a></h2>
+<p>Save the reference volume (thumbnail with blue border) in the thumbnail bar. No effect if no reference volume is available in the thumbnail bar.</p>
+<p>You can also click <a class="reference internal" href="_images/save.png"><img alt="save" src="_images/save.png" style="width: 19.2px; height: 19.2px;" /></a> button in the toolbar.</p>
+</section>
+<section id="save-all">
+<span id="menu-section-saveall"></span><h2>Save all<a class="headerlink" href="#save-all" title="Link to this heading"></a></h2>
+<p>Save all the volumes opened in the thumbnail bar.</p>
+<p>You can also click <a class="reference internal" href="_images/saveall.png"><img alt="saveall" src="_images/saveall.png" style="width: 19.2px; height: 19.2px;" /></a> button in the toolbar.</p>
+</section>
+<section id="save-as">
+<span id="menu-section-saveas"></span><h2>Save as<a class="headerlink" href="#save-as" title="Link to this heading"></a></h2>
+<p>Save the reference volume (thumbnail with blue border) in the thumbnail bar. Displays a file dialog box to edit a new file name and save the reference volume.</p>
+</section>
+<section id="save-to-format">
+<span id="menu-section-saveformat"></span><h2>Save to format<a class="headerlink" href="#save-to-format" title="Link to this heading"></a></h2>
+<p>Select a submenu to save the reference volume (thumbnail with blue border) in the thumbnail bar with one of the following image formats: Nifti (.nii), Numpy (.npy), Nrrd (.nrrd), Minc (.mnc), vtk (.vti). Each submenu displays a file dialog to save the reference volume.</p>
+<p>You can also click <a class="reference internal" href="_images/save-nii.png"><img alt="save-nii" src="_images/save-nii.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/save-npy.png"><img alt="save-npy" src="_images/save-npy.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/save-nrrd.png"><img alt="save-nrrd" src="_images/save-nrrd.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/save-mnc.png"><img alt="save-mnc" src="_images/save-mnc.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/save-vtk.png"><img alt="save-vtk" src="_images/save-vtk.png" style="width: 19.2px; height: 19.2px;" /></a> buttons in the toolbar.</p>
+</section>
+<section id="close">
+<span id="menu-section-close"></span><h2>Close<a class="headerlink" href="#close" title="Link to this heading"></a></h2>
+<p>Close the reference volume (thumbnail with blue border) and remove it from the thumbnail bar. Viewing widgets in the central area are closed. No effect if no reference volume is available in the thumbnail bar.</p>
+<p>You can also click <a class="reference internal" href="_images/close.png"><img alt="close" src="_images/close.png" style="width: 19.2px; height: 19.2px;" /></a> button in the toolbar.</p>
+</section>
+<section id="close-all">
+<span id="menu-section-closeall"></span><h2>Close all<a class="headerlink" href="#close-all" title="Link to this heading"></a></h2>
+<p>Close all the volumes opened in the thumbnail bar. Viewing widgets in the central area are closed.</p>
+<p>You can also click <a class="reference internal" href="_images/closeall.png"><img alt="closeall" src="_images/closeall.png" style="width: 19.2px; height: 19.2px;" /></a> button in the toolbar.</p>
+</section>
+<section id="preferences">
+<span id="menu-section-preferences"></span><h2>Preferences<a class="headerlink" href="#preferences" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Preferences</strong> dialog box. You can also click <a class="reference internal" href="_images/settings.png"><img alt="settings" src="_images/settings.png" style="width: 19.2px; height: 19.2px;" /></a> button in the toolbar.</p>
+<p>This dialog box shows a tree structure of the settings sections on the left. Left-click on <strong>&gt;</strong> button before the section name to display the subsections. Left-click to select a subsection and display its attributes in the right-hand side of the dialog box.</p>
+<p>The Settings sections are as follows:</p>
+<ul>
+<li><p><strong>General</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>GUI: general GUI parameters (<a class="reference internal" href="PySisyphe_toolbar.html#page-toolbar"><span class="std std-ref">Toolbar</span></a> size and visibility, <a class="reference internal" href="PySisyphe_thumbnailbar.html#page-thumbnailbar"><span class="std std-ref">Thumbnail bar</span></a> size, icon size, font name and size).</p></li>
+<li><p>Tolbbar icons: <a class="reference internal" href="PySisyphe_toolbar.html#page-toolbar"><span class="std std-ref">Toolbar</span></a> icons visibility. Left-click on <a class="reference internal" href="_images/view.png"><img alt="view" src="_images/view.png" style="width: 32.0px; height: 32.0px;" /></a> icon to toggle visibility.</p></li>
+<li><p>Viewport: display parameters of the central area view widgets (icon size, line width and opacity, various visibility options).</p></li>
+<li><p>ROI: ROI Tools tab of the dock (<a class="reference internal" href="PySisyphe_dockroitools.html#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>).</p></li>
+<li><p>Mesh: Mesh tab of the dock (<a class="reference internal" href="PySisyphe_dockmesh.html#mesh-section-mesh-settings"><span class="std std-ref">Mesh settings</span></a>).</p></li>
+<li><p>Tools: Target/Trajectory tab of the dock (<a class="reference internal" href="PySisyphe_dockroitools.html#page-dockroitools"><span class="std std-ref">ROI Tools tab of the dock</span></a>).</p></li>
+<li><p>Bundles: Tracking tab of the dock (<a class="reference internal" href="PySisyphe_docktracking.html#page-docktracking"><span class="std std-ref">Tracking tab of the dock</span></a>).</p></li>
+<li><p>Templates: default template volume for various modalities/sequences (MR T1/T2/PD/FLAIR, FDG PET; HMPAO SPECT; tissue probability maps i.e. GM, SCGM, WM, CSF, Brainstem, cerebellum; Brain mask).</p></li>
+<li><p>Database: patient database folders.</p></li>
+<li><p>Dicom host: Dicom SCP host parameters of the <a class="reference internal" href="#menu-section-dcmquery"><span class="std std-ref">Dicom query/retrieve from Dicom SCP Server</span></a></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Filters</strong></p>
+<blockquote>
+<div><p>Edit default parameters of some processings in the <strong>Functions</strong> menu (<a class="reference internal" href="PySisyphe_Functions.html#menu-section-neck"><span class="std std-ref">Remove neck slices</span></a>, <a class="reference internal" href="PySisyphe_Functions.html#menu-section-filter-mean"><span class="std std-ref">Mean filter</span></a>, <a class="reference internal" href="PySisyphe_Functions.html#menu-section-filter-median"><span class="std std-ref">Median filter</span></a>, <a class="reference internal" href="PySisyphe_Functions.html#menu-section-filter-gaussian"><span class="std std-ref">Gaussian filter</span></a>, <a class="reference internal" href="PySisyphe_Functions.html#menu-section-filter-gradient"><span class="std std-ref">Gradient magnitude filter</span></a>, <a class="reference internal" href="PySisyphe_Functions.html#menu-section-filter-laplacian"><span class="std std-ref">Laplacian filter</span></a>, <a class="reference internal" href="PySisyphe_Functions.html#menu-section-filter-anisodiff"><span class="std std-ref">Anisotropic diffusion filter</span></a>, <a class="reference internal" href="PySisyphe_Functions.html#menu-section-matching-hist"><span class="std std-ref">Histogram intensity matching</span></a>, <a class="reference internal" href="PySisyphe_Functions.html#menu-section-matching-reg"><span class="std std-ref">Regression intensity matching</span></a>, <a class="reference internal" href="PySisyphe_Functions.html#menu-section-norm"><span class="std std-ref">Intensity normalization</span></a>, <a class="reference internal" href="PySisyphe_Functions.html#menu-section-biasfield"><span class="std std-ref">Bias field correction</span></a>).</p>
+</div></blockquote>
+</li>
+<li><p><strong>Segmentation</strong></p>
+<blockquote>
+<div><p>Edit default parameters of some processings in the <strong>Segmentation</strong> menu (<a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-skull"><span class="std std-ref">Skull stripping</span></a>, <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-kmclustering"><span class="std std-ref">KMeans clustering</span></a>, <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-kmsegmentation"><span class="std std-ref">KMeans segmentation</span></a>, <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a>, <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-thickness"><span class="std std-ref">Cortical thickness</span></a>, <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-regsegmentation"><span class="std std-ref">Registration based segmentation</span></a>, <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-hipp"><span class="std std-ref">Deep-learning Hippocampus segmentation</span></a>, <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-temporal"><span class="std std-ref">Deep-learning Medial temporal segmentation</span></a>, <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-lesion"><span class="std std-ref">Deep-learning Hypo-intensity lesion segmentation</span></a>, <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmenation</span></a>, <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-tumor"><span class="std std-ref">Deep-learning Tumor clustering</span></a>, <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-wmh"><span class="std std-ref">Deep-learning White matter hyper-intensities segmentation</span></a>).</p>
+</div></blockquote>
+</li>
+<li><p><strong>Registration</strong></p>
+<blockquote>
+<div><p>Edit default parameters of some processings in the <strong>Registration</strong> menu (<a class="reference internal" href="PySisyphe_Registration.html#menu-section-rigid"><span class="std std-ref">Rigid registration</span></a>, <a class="reference internal" href="PySisyphe_Registration.html#menu-section-affine"><span class="std std-ref">Affine registration</span></a>, <a class="reference internal" href="PySisyphe_Registration.html#menu-section-field"><span class="std std-ref">Displacement field registration</span></a>; <a class="reference internal" href="PySisyphe_Registration.html#menu-section-icbm"><span class="std std-ref">ICBM spatial normalization</span></a> i.e. T1 normalization, T2 normalization, PD normalization, PET normalization, SPECT normalization, GM normalization, WM normalization, CSF normalization subsections; Eddy current correction; <a class="reference internal" href="PySisyphe_Registration.html#menu-section-align"><span class="std std-ref">Time series realignment</span></a> i.e. Realignment subsection; <a class="reference internal" href="PySisyphe_Registration.html#menu-section-eddy"><span class="std std-ref">Eddy current correction</span></a>; <a class="reference internal" href="PySisyphe_Registration.html#menu-section-resample"><span class="std std-ref">Resample</span></a>; <a class="reference internal" href="PySisyphe_Registration.html#menu-section-jacob"><span class="std std-ref">Displacement field jacobian determinant</span></a>).</p>
+</div></blockquote>
+</li>
+<li><p><strong>Mapping</strong></p>
+<blockquote>
+<div><p>Edit default parameters of some processings in the <strong>Mapping</strong> menu (<a class="reference internal" href="PySisyphe_Mapping.html#menu-section-conjunction"><span class="std std-ref">Conjunction</span></a>, <a class="reference internal" href="PySisyphe_Mapping.html#menu-section-seriespreproc"><span class="std std-ref">Time series preprocessing</span></a> i.e. Clean time series section, <a class="reference internal" href="PySisyphe_Mapping.html#menu-section-seriesica"><span class="std std-ref">Single subject time series ICA</span></a>, <a class="reference internal" href="PySisyphe_Mapping.html#menu-section-seriesseed"><span class="std std-ref">Seed-to-voxel time series correlation</span></a>, <a class="reference internal" href="PySisyphe_Mapping.html#menu-section-seriescorr"><span class="std std-ref">Time series correlation matrix</span></a>, <a class="reference internal" href="PySisyphe_Mapping.html#menu-section-dsc"><span class="std std-ref">Dynamic susceptibility contrast</span></a>).</p>
+</div></blockquote>
+</li>
+<li><dl class="simple">
+<dt><strong>Diffusion</strong></dt><dd><p>Edit default parameters of some processings in the <strong>Diffusion</strong> menu (<a class="reference internal" href="PySisyphe_Diffusion.html#menu-section-preprocessing"><span class="std std-ref">Preprocessing</span></a> i.e. PCA denoise, NLMeans denoise, Self supervised denoise subsections; <a class="reference internal" href="PySisyphe_Diffusion.html#menu-section-diffmodel"><span class="std std-ref">Diffusion model</span></a> i.e. DTI model, DKI model, SHCSA model, SHCSD model subsections; <a class="reference internal" href="PySisyphe_Diffusion.html#menu-section-tractogram"><span class="std std-ref">tractogram generation</span></a> i.e. Tracking subsection; <a class="reference internal" href="PySisyphe_Diffusion.html#menu-section-roisel"><span class="std std-ref">ROI based streamlines selection</span></a> i.e. Bundle ROI selection subsection; <a class="reference internal" href="PySisyphe_Diffusion.html#menu-section-filtersel"><span class="std std-ref">Filter based streamlines selection</span></a> i.e. Bundle filtering and Bundle clustering subsections; <a class="reference internal" href="PySisyphe_Diffusion.html#menu-section-templatesel"><span class="std std-ref">Template based streamlines selection</span></a> i.e. Bundle atlas selection subsection), or the <strong>Tracking</strong> dock tab (<a class="reference internal" href="PySisyphe_docktracking.html#page-docktracking"><span class="std std-ref">Tracking tab of the dock</span></a>, Bundle to ROI subsection).</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Left-click <strong>Default</strong> button to reset settings to their default values.</p>
+<p>Left-click <strong>Apply</strong> button to apply settings, in particular to see the result of changing the general GUI, Toolbar icons and viewport settings.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog without saving.</p>
+<p>Left-click <strong>OK</strong> button to save settings and close dialog.</p>
+</section>
+<section id="download-manager">
+<span id="menu-section-download"></span><h2>Download manager<a class="headerlink" href="#download-manager" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Download manager</strong> dialog box to download various contents from the PySisyphe cloud server. The content titles are displayed in a list on the left side of the dialog box. Left-click to select a content title and display items available for download in the right-hand side of the dialog box. Each item has a checkbox. Check all the items you want to download. Content that has already been downloaded is disabled.</p>
+<p>Left-click <strong>Uncheck all</strong> button to uncheck all items.</p>
+<p>Left-click <strong>Download</strong> button to download all checked items. No effect if nothing is checked.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>Contents:</p>
+<ul>
+<li><p><strong>Templates</strong>, various template volumes</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Atropos, <a class="reference external" href="https://mindboggle.info/data.html">https://mindboggle.info/data.html</a></p></li>
+<li><p>Distal, <a class="reference external" href="https://www.lead-dbs.org/helpsupport/knowledge-base/atlasesresources/atlases-2/">https://www.lead-dbs.org/helpsupport/knowledge-base/atlasesresources/atlases-2/</a></p></li>
+<li><p>Arterial, <a class="reference external" href="https://www.nitrc.org/projects/arterialatlas/">https://www.nitrc.org/projects/arterialatlas/</a></p></li>
+<li><p>Atag, <a class="reference external" href="https://www.nitrc.org/projects/atag">https://www.nitrc.org/projects/atag</a></p></li>
+<li><p>Brainnav, <a class="reference external" href="https://www.nitrc.org/projects/brainstemnavig">https://www.nitrc.org/projects/brainstemnavig</a></p></li>
+<li><p>Bundles HCP, <a class="reference external" href="https://brain.labsolver.org/hcp_template.html">https://brain.labsolver.org/hcp_template.html</a></p></li>
+<li><p>Bundles IIT, <a class="reference external" href="https://www.nitrc.org/projects/iit/">https://www.nitrc.org/projects/iit/</a></p></li>
+<li><p>Bundles LC2TEC, <a class="reference external" href="https://www.nitrc.org/projects/brainstem_atlas/">https://www.nitrc.org/projects/brainstem_atlas/</a></p></li>
+<li><p>Desikan, <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S1053811906000437?via%3Dihub">https://www.sciencedirect.com/science/article/abs/pii/S1053811906000437?via%3Dihub</a></p></li>
+<li><p>Destrieux, <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S1053811910008542?via%3Dihub">https://www.sciencedirect.com/science/article/abs/pii/S1053811910008542?via%3Dihub</a></p></li>
+<li><p>HR, <a class="reference external" href="https://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009">https://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009</a></p></li>
+<li><p>LPBA40, <a class="reference external" href="https://www.loni.usc.edu/research/atlas_downloads">https://www.loni.usc.edu/research/atlas_downloads</a></p></li>
+<li><p>PD25, <a class="reference external" href="https://nist.mni.mcgill.ca/multi-contrast-pd25-atlas/">https://nist.mni.mcgill.ca/multi-contrast-pd25-atlas/</a></p></li>
+<li><p>Subcortical (functional Yeo et al. <a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/22832566/">https://pubmed.ncbi.nlm.nih.gov/22832566/</a>, hippocampus, hypothalamus, thalamus)</p></li>
+<li><p>ICBM452, <a class="reference external" href="https://www.loni.usc.edu/research/atlas_downloads">https://www.loni.usc.edu/research/atlas_downloads</a></p></li>
+<li><p>NAC, <a class="reference external" href="https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html">https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html</a></p></li>
+<li><p>SPL, <a class="reference external" href="https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html">https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html</a></p></li>
+<li><p>SRI24, <a class="reference external" href="https://www.nitrc.org/projects/sri24">https://www.nitrc.org/projects/sri24</a></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Controls</strong></p>
+<blockquote>
+<div><p>Control populations for 3D T1 MR, FDG PET (118 subjects), and HMPAO SPECT (33 subjects). These files are saved in the “controls” sub-folder of the PySisyphe user folder ($User/.PySisyphe).</p>
+</div></blockquote>
+</li>
+<li><p><strong>Plugins</strong></p>
+<blockquote>
+<div><p>PySisyphe plugins. Each plugin is downloaded as a ZIP archive that can be installed from the menu <strong>Functions &gt; Install plugin</strong>. Once the plugin is installed, it can be run from the <strong>Functions &gt; Plugins</strong> submenu.</p>
+</div></blockquote>
+</li>
+<li><p><strong>Samples</strong></p>
+<blockquote>
+<div><p>Various volumes for testing PySisyphe. These files are saved in the “samples” subfolder of the PySisyphe user folder ($User/.PySisyphe).</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="check-for-update">
+<span id="menu-section-update"></span><h2>Check for update<a class="headerlink" href="#check-for-update" title="Link to this heading"></a></h2>
+<p>Check if a new version of PySisyphe is available on the PySisyphe cloud server. If a more recent version is available, you will be prompted to install an update.</p>
+</section>
+<section id="edit-attributes">
+<span id="menu-section-attributes"></span><h2>Edit attributes<a class="headerlink" href="#edit-attributes" title="Link to this heading"></a></h2>
+<p>This menu displays a dialog box to edit attributes of the reference volume (thumbnail with blue border) in the thumbnail bar.</p>
+<p>Volumes attributes are as follows:</p>
+<ul class="simple">
+<li><p>identity (<em>lastname</em>, <em>firstname</em>, <em>birth date</em>),</p></li>
+<li><p>acquisition (<em>modality</em>, <em>sequence</em>, <em>scalar values unit</em>, <em>frame</em>, <em>date of scan</em>),</p></li>
+<li><p>image (<em>array ID</em>, <em>transform/space ID</em>, <em>size</em>, <em>spacing</em>, <em>origin</em>, <em>datatype</em>, <em>slope</em>, <em>intercept</em>, <em>direction vectors</em>, <em>memory size</em>).</p></li>
+</ul>
+<p>Left-click <strong>Reset</strong> button to restore original attributes.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without applying attribute changes.</p>
+<p>Left-click <strong>OK</strong> button to close dialog box with attribute changes.</p>
+<p>You can also click <a class="reference internal" href="_images/list.png"><img alt="list" src="_images/list.png" style="width: 19.2px; height: 19.2px;" /></a> button in the toolbar.</p>
+</section>
+<section id="menu-section-id">
+<span id="id-replacement"></span><h2>ID replacement<a class="headerlink" href="#menu-section-id" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>ID replacement</strong> dialog box to copy a reference volume ID (Transform/space ID) to a list of volume(s), ROI(s), meshs(es) or streamlines. Volume(s) and ROI(s) must have the same matrix size, spacing and field of view as the reference volume.</p>
+<p>Open a reference volume in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget located at the top of the dialog box.</p>
+<p>Open the volume(s)/ROI(s)/meshs(es)/streamlines whose ID needs to be updated in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget below the previous one.</p>
+<p>Left-click <strong>Execute</strong> button to copy reference volume ID to volume(s) added in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>You can also click <a class="reference internal" href="_images/id.png"><img alt="id" src="_images/id.png" style="width: 19.2px; height: 19.2px;" /></a> button in the toolbar.</p>
+</section>
+<section id="anonymize">
+<span id="menu-section-anonymize"></span><h2>Anonymize<a class="headerlink" href="#anonymize" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Anomymize volume(s)</strong> dialog box.</p>
+<p>Open the volume(s) to anonymize (i.e. erase identity attributes) in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget of the dialog box.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without performing any processing.</p>
+<p>Left-click <strong>OK</strong> button to anonymize volume(s) added in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>You can also click <a class="reference internal" href="_images/anonymize.png"><img alt="anonymize" src="_images/anonymize.png" style="width: 19.2px; height: 19.2px;" /></a> button in the toolbar.</p>
+</section>
+<section id="edit-volume-labels">
+<span id="menu-section-editlabels"></span><h2>Edit volume labels<a class="headerlink" href="#edit-volume-labels" title="Link to this heading"></a></h2>
+<p>This menu is assigned to a label volume (LB modality). In this volume, each scalar value in the image array is associated with a label. These labels are written to a xml file with the same name as the volume and .xlabels extension.</p>
+<p>Displays a file selection dialog to get the label volume to edit. This volume is then displayed in the <strong>Edit label</strong> dialog box. The left part shows the label volume in a slice view widget. The right part shows a table with two columns, the first for label indexes and the second for label names. Label names can be edited. Left-click on a row to select a label. The slice widget displays this label in red.</p>
+<p>Left-click <strong>Import/Export</strong> button shows a popup menu. The first three elements define the <em>separator character</em> used to split items in the imported/exported text file, the <em>position of the label index item</em> in a line of the imported text file, and finally the <em>position of the label name item</em> in a line of the imported text file. The last two menus are used to either load or save labels to a text file.</p>
+<p>Left-click <strong>Clear labels</strong> button to clear the table of labels.</p>
+<p>Left-click <strong>Cancel</strong> button to cancel the edit and close dialog box.</p>
+<p>Left-click <strong>OK</strong> button to apply the edit and close dialog box.</p>
+<p>You can also click <a class="reference internal" href="_images/labels.png"><img alt="labels" src="_images/labels.png" style="width: 19.2px; height: 19.2px;" /></a> button in the toolbar.</p>
+</section>
+<section id="rois-to-label-volume">
+<span id="menu-section-roitolabels"></span><h2>ROIs to label volume<a class="headerlink" href="#rois-to-label-volume" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>ROIs to label volume</strong> dialog box to create a label volume (modality LB) from one or more ROI(s). In label volume, each scalar value in the image array is associated with a label. These labels are written to an XML file with the same name as the volume and .xlabels extension.</p>
+<p>Add PySisyphe ROI(s) in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>OK</strong> button to create the label volume. The label indexes are incremented according to the ROI(s) order in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without processing.</p>
+</section>
+<section id="volumes-to-label-volume">
+<span id="menu-section-volumetolabels"></span><h2>Volumes to label volume<a class="headerlink" href="#volumes-to-label-volume" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Volumes to label volume</strong> dialog box to create a label volume (modality LB) from a list of tissue probability volumes. In label volume, each scalar value in the image array is associated with a label. These labels are written to an XML file with the same name as the volume and .xlabels extension.</p>
+<p>Add PySisyphe tissue probability volumes in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>OK</strong> button to create the label volume. The label value chosen in each voxel is the index of the volume, according to the volume order in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget, with the highest scalar probability value.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without processing.</p>
+</section>
+<section id="label-volume-to-rois">
+<span id="menu-section-labelstoroi"></span><h2>Label volume to ROIs<a class="headerlink" href="#label-volume-to-rois" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Label volume to ROIs</strong> dialog box to create ROI(s) from a label volume (modality LB). In label volume, each scalar value in the image array is associated with a label. These labels are written to an XML file with the same name as the volume and .xlabels extension.</p>
+<p>Add PySisyphe label volumes in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Left-click <strong>OK</strong> button to create ROI(s). A ROI is generated for each label and saved under its respective label name.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without processing.</p>
+</section>
+<section id="import">
+<span id="menu-section-import"></span><h2>Import<a class="headerlink" href="#import" title="Link to this heading"></a></h2>
+<p>Select a submenu to import an image in one of the following image formats: Nifti (.nii, .hdr, .img, .nia, .nii.gz, .img.gz), Nrrd (.nrrd, .nhdr), Minc (.mnc), Sisyphe (.vol), VTK (.vti, .vtk). This displays an <strong>Import</strong> dialog box that converts volumes to the PySisyphe format (.xvol).</p>
+<p>Add volumes to convert in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget. You can set the backup directory for converted volumes in the <strong>Import directory</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget. If the backup directory is not defined (default), volumes will be saved in the same folder as the original files.</p>
+<p>Left-click <strong>Import</strong> button to perform volume conversion. Images are saved in axial orientation by default.</p>
+<p>Left-click <strong>OK</strong> button to close dialog box.</p>
+<p>You can also click <a class="reference internal" href="_images/importnii.png"><img alt="importnii" src="_images/importnii.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/importnrrd.png"><img alt="importnrrd" src="_images/importnrrd.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/importmnc.png"><img alt="importmnc" src="_images/importmnc.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/importvol.png"><img alt="importvol" src="_images/importvol.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/importvtk.png"><img alt="importvtk" src="_images/importvtk.png" style="width: 19.2px; height: 19.2px;" /></a> buttons in the toolbar.</p>
+</section>
+<section id="export">
+<span id="menu-section-export"></span><h2>Export<a class="headerlink" href="#export" title="Link to this heading"></a></h2>
+<p>Select a submenu to export an image in one of the following image formats: Nifti (.nii), Nrrd (.nrrd, .nhdr), Minc (.mnc), Numpy (.npy), VTK (.vti). This displays an <strong>Export</strong> dialog box that converts PySisyphe (xvol) volumes to the export format.</p>
+<p>Add volumes to convert in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget. You can set the backup directory for converted volumes in the <strong>Export directory</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget. If the backup directory is not defined (default), volumes will be saved in the same folder as the original files.</p>
+<p>Left-click <strong>Export</strong> button to perform volume conversion.</p>
+<p>Left-click <strong>OK</strong> button to close dialog box.</p>
+</section>
+<section id="dicom-import">
+<span id="menu-section-dcmimport"></span><h2>Dicom import<a class="headerlink" href="#dicom-import" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Dicom Import</strong> dialog box for converting Dicom files to the PySisyphe image format (.xvol).</p>
+<p>Select filter extension with the combobox at the top. There is no filter by default (“.*”, All extensions are allowed), other filters include “dcm”, “dicom”, “ima”, “nema”.</p>
+<p>Left-click <strong>Directory</strong> button shows a popup menu to select the first directory (<strong>new menu</strong>), or add a directory (<strong>add</strong>) in which the Dicom files will be searched recursively. After directory selection, Dicom files found are added to the list box. Files are grouped and sorted by <em>Series UID</em> and possibly subseries (time series, perfusion series, diffusion series). Left-click <strong>&gt;</strong> icon to expand series/subseries and show its Dicom files. Each series/subseries/file is headed by a checkbox and checked by default. The check state of an item is copied to its children in the tree structure. Series/subseries/file can be selected with a left-click.</p>
+<p>Left-click <strong>Check all</strong> button to check all series/subseries/files displayed in the list box.</p>
+<p>Left-click <strong>Uncheck all</strong> button to uncheck all series/subseries/files displayed in the list box.</p>
+<p>Left-click <strong>Uncheck selected</strong> button to uncheck selected series/subseries/files displayed in the list box.</p>
+<p>Left-click <strong>Clear</strong> button to clear the list box.</p>
+<p>You can set the backup directory for converted volumes in the <strong>Import directory</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget. If the backup directory is not defined (default), volumes will be saved in the same folder as the original dicom files.</p>
+<p>Select the format of conversion in the <strong>Format</strong> combobox. The following formats are allowed: PySisiphe (.xvol, default), Minc (.mnc), Nifti (.nii), Nrrd (.nrrd), Numpy (.npy), VTK (.vti).</p>
+<p>Select <strong>Use acquisition number</strong> checkbox to use this dicom field as a suffix for the converted file name (unchecked by default).</p>
+<p>Select <strong>Keep DICOM origin</strong> checkbox to copy the DICOM field origin into the converted file (unchecked by default, i.e. origin sets to [0.0, 0.0, 0.0])</p>
+<p>Left-click <strong>Import</strong> button to convert the checked series/subseries/files. Each converted PySisyphe volume (.xvol) is associated with a PySisyphe XML dicom file (.xdcm), which stores DICOM fields as key/value XML nodes. Converted images are saved in axial orientation by default.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>You can also click <a class="reference internal" href="_images/importdcm.png"><img alt="importdcm" src="_images/importdcm.png" style="width: 19.2px; height: 19.2px;" /></a> button in the toolbar.</p>
+</section>
+<section id="dicom-rt-import">
+<span id="menu-section-dcmrtimport"></span><h2>Dicom RT import<a class="headerlink" href="#dicom-rt-import" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Dicom RT import</strong> dialog box, which is used to convert Dicom RT files to PySisyphe image (reference series and RTDose, .xvol) and ROI formats (RTStruct, .xroi).</p>
+<p>Select filter extension with the combobox at the top, there is no filter by default (“.*”, All extensions are allowed), other filters include “dcm”, “dicom”, “ima”, “nema”.</p>
+<p>Select the Dicom RT directory with the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget located at the top of the dialog box. Dicom files found are added to the list box. Files are grouped and sorted by <em>Frame of reference UID</em> with there are three possible subseries (reference Series UID, RTDose series, and RTStruct). Left-click <strong>&gt;</strong> icon to expand series/subseries and show its Dicom files. Each series/subseries/file is headed by a checkbox and checked by default. The check state of an item is copied to its children in the tree structure. Series/subseries/file can be selected with a left-click.</p>
+<p>Left-click <strong>Check all</strong> button to check all series/subseries/files displayed in the list box.</p>
+<p>Left-click <strong>Uncheck all</strong> button to uncheck all series/subseries/files displayed in the list box.</p>
+<p>Left-click <strong>Uncheck selected</strong> button to uncheck selected series/subseries/files displayed in the list box.</p>
+<p>Left-click <strong>Clear</strong> button to clear the list box.</p>
+<p>You can set the backup directory for converted volumes in the <strong>Import directory</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget. If the backup directory is not defined (default), the volumes and ROIs will be saved in the same folder as the original dicom files.</p>
+<p>Left-click <strong>Import</strong> button to convert the checked series/subseries/files.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="dicom-export">
+<span id="menu-section-dcmexport"></span><h2>Dicom export<a class="headerlink" href="#dicom-export" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Dicom Export</strong> dialog box, which is used to convert PySisyphe image to Dicom format.</p>
+<p>Add PySisyphe volumes to convert in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>You can set the backup directory for converted volumes in the <strong>Export directory</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget. If the backup directory is not defined (default), the dicom files will be saved in the same folder as the original PySisyphe volumes.</p>
+<p>Left-click <strong>Export</strong> button to convert the volumes.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="dicom-query-retrieve-from-dicom-scp-server">
+<span id="menu-section-dcmquery"></span><h2>Dicom query/retrieve from Dicom SCP Server<a class="headerlink" href="#dicom-query-retrieve-from-dicom-scp-server" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Dicom Query Retreive</strong> dialog box, which is used to download dicom series from a PACS server (Dicom SCP host).</p>
+<p>Dicom study queries use the following items: <em>patient identity</em> (lastname, firstname, date of birth), <em>image modality</em> and <em>acquisition date</em>. You can edit these items at the top of the dialog box. Date items are used only if they are checked.</p>
+<p>Left-click <strong>Search</strong> to run a query with the current items. Series found were displayed in the first list box with the following dicom study fields: <em>accession number</em>, <em>lastname</em>, <em>firstname</em>, <em>date of birth</em>, <em>modality</em>, <em>study date</em> and <em>description</em>. Left-click on a study row to select it. The available series in this study will then be displayed in the second list box, below the first. This list will contain the following dicom series fields: <em>series number</em> and <em>description</em>. Each series is headed with a checkbox.</p>
+<p>You can choose the directory where downloaded DICOM files are saved with the <strong>Dicom folder</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget. These files are saved by default in the “dicom” sub-folder of the PySisyphe user folder ($User/.PySisyphe).</p>
+<p>Left-click on <strong>DICOM SCP Host Settings</strong> button to toggle visibility of the PACS server parameters.</p>
+<p>PACS server parameters are as follows:</p>
+<ul class="simple">
+<li><p><strong>DICOM SCP host AE title</strong></p></li>
+<li><p><strong>DICOM SCP host URL/IP adress</strong></p></li>
+<li><p><strong>DICOM SCP host port</strong></p></li>
+<li><p>checkbox to define if user login is required</p></li>
+<li><p><strong>Username</strong> and <strong>Password</strong></p></li>
+</ul>
+<p>The DICOM host (PACS server) is a Service Class Provider (SCP) and must support the storage of SOP Class instances (Storage Service Class), verification of DICOM connectivity (Verification Service Class) and querying/retrieval of managed SOP instances (Query/Retrieve Service Class).</p>
+<p>This DICOM SCP server is identified by an AE Title (AET), URL (or IP address) and a port. The connection can be secured by a user login and password. <strong>These parameters must be obtained from your PACS administrator</strong>.</p>
+<p>Left-click <strong>Import</strong> button to download checked series from PACS server.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="dicom-dataset">
+<span id="menu-section-dcmdataset"></span><h2>Dicom dataset<a class="headerlink" href="#dicom-dataset" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Dicom Dataset</strong> dialog box, which is used to explore the fields of a dicom file in a tree structure.</p>
+<p>Add dicom file(s) to explore with the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top of the dialog box. Left-click on a dicom file to select it in the list box, its dicom fields (i.e. dataset), are displayed as a table with the following dicom field items as columns: <em>tag</em>, <em>name</em>, <em>VR</em> (Value Representation i.e. value type), <em>VM</em> (Value Multiplicity, single scalar value if 1 or vector with VM values) and the proper <em>value</em>. Dicom fields are headed with a checkbox. Left-click (+/- CTRL key) to select one or more dicom field rows.</p>
+<p>The <strong>Search DataElement</strong> comboboxis filled with the names of all dicom fields from the current dicom file, which are sorted in alphabetical order. Select a field name to move the view on that field.</p>
+<p>You can remove private fields from the displayed dataset by checking this option.</p>
+<p>Double-click on a Dicom <em>value</em> in the list box to edit it.</p>
+<p>Left-click <strong>Check selected</strong> button to check dicom fields selected in the table.</p>
+<p>Left-click <strong>Uncheck selected</strong> button to uncheck dicom fields selected in the table.</p>
+<p>Left-click <strong>Save to CSV</strong> button to save checked fields in a CSV file.</p>
+<p>Left-click <strong>Save to text</strong> button to save checked fields in a text file.</p>
+<p>Left-click <strong>Save to dicom</strong> button to save the dicom file.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="xml-dicom-attributes">
+<span id="menu-section-xmldcm"></span><h2>XML Dicom attributes<a class="headerlink" href="#xml-dicom-attributes" title="Link to this heading"></a></h2>
+<p>This menu displays a file selection dialog for viewing a PySisyphe XML Dicom file (.xdcm). This file is created automatically when DICOM files are imported (see <a class="reference internal" href="#menu-section-dcmimport"><span class="std std-ref">Dicom import</span></a>).</p>
+<p>This file is displayed as a table in a dialog box with the following dicom field items as columns: <em>tag</em>, <em>name</em>, <em>VR</em> (Value Representation i.e. value type), <em>VM</em> (Value Multiplicity, single scalar value if 1 or vector with VM values) and the proper <em>value</em>. Dicom fields are headed with a checkbox. Fields cannot be edited.</p>
+<p>Left-click <strong>Check all</strong> button to check all dicom fields.</p>
+<p>Left-click <strong>Uncheck all</strong> button to uncheck all dicom fields.</p>
+<p>Left-click <strong>Check selected</strong> button to check dicom fields selected in the table.</p>
+<p>Left-click <strong>Uncheck selected</strong> button to uncheck dicom fields selected in the table.</p>
+<p>Left-click <strong>Save</strong> button to save the checked fields with the format chosen from the popup menu (XML, text, CSV, Excel, Matfile, Latex, or copy to clipboard).</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="edit-lut">
+<span id="menu-section-editlut"></span><h2>Edit LUT<a class="headerlink" href="#edit-lut" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Edit Lut</strong> dialog box. This dialog box contains a widget that is used for editing colormaps.</p>
+<p>The background of the widget shows the colormap. Only two color points are initially defined and displayed as triangles on the left and right edges, these points cannot be dragged.</p>
+<p>Double-click in the free widget area add a new color point. Press left mouse button and drag to move a color point.</p>
+<p>Right-click on a color point to show a popup menu:</p>
+<ul class="simple">
+<li><p><strong>Remove point</strong>, remove the current color point.</p></li>
+<li><p><strong>Change point color</strong>, change the color of the current point (displays a dialog box for color selection).</p></li>
+<li><p><strong>Swap color with next point</strong>, swap the color between the current point and the next.</p></li>
+<li><p><strong>Swap color with previous point</strong>, swap the color between the current point and the previous.</p></li>
+<li><p><strong>Clear all</strong>, to clear all the points except ends.</p></li>
+<li><p><strong>Save…</strong>, to save the current colormap. The following formats are allowed: PySiSyphe LUT (.xlut), binary LUT (.lut, <a class="reference external" href="https://people.cas.sc.edu/rorden/mricron/index.HTML">MRIcron</a>) or text (.txt).</p></li>
+</ul>
+<p>Left-click <strong>Save</strong> button displays a file selection dialog box to save the colormap.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>You can also click <a class="reference internal" href="_images/rgb.png"><img alt="rgb" src="_images/rgb.png" style="width: 19.2px; height: 19.2px;" /></a> button in the toolbar.</p>
+</section>
+<section id="quit">
+<span id="menu-section-quit"></span><h2>Quit<a class="headerlink" href="#quit" title="Link to this heading"></a></h2>
+<p>Close PySisyphe. You can also click <a class="reference internal" href="_images/exit.png"><img alt="exit" src="_images/exit.png" style="width: 19.2px; height: 19.2px;" /></a> button in the toolbar.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

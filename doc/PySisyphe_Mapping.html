@@ -1,0 +1,569 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapping menu &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=049aceee"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sisyphe
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Versions.html">Version history</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Mapping menu</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PySisyphe_Mapping.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mapping-menu">
+<span id="page-mapping"></span><h1>Mapping menu<a class="headerlink" href="#mapping-menu" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Model &gt;</dt><dd><ul>
+<li><p><a class="reference internal" href="#menu-section-fmri-model"><span class="std std-ref">fMRI model definition</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-glm-model"><span class="std std-ref">General linear model definition</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-models"><span class="std std-ref">Models</span></a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><a class="reference internal" href="#menu-section-contrast"><span class="std std-ref">Contrast</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-result"><span class="std std-ref">Result</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-conjunction"><span class="std std-ref">Conjunction</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-t2zmap"><span class="std std-ref">t to z-map conversion</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-seriespreproc"><span class="std std-ref">Time series preprocessing</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-seriesseed"><span class="std std-ref">Seed-to-voxel time series correlation</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-seriesica"><span class="std std-ref">Single subject time series ICA</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-seriescorr"><span class="std std-ref">Time series correlation matrix</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-dsc"><span class="std std-ref">Dynamic susceptibility contrast</span></a></p></li>
+</ul>
+<section id="fmri-model-definition">
+<span id="menu-section-fmri-model"></span><h2>fMRI model definition<a class="headerlink" href="#fmri-model-definition" title="Link to this heading"></a></h2>
+<p>This menu allows you to define the statistical model that will be used for the voxel-by-voxel fMRI analysis (see <a class="reference external" href="https://nilearn.github.io/stable/glm/glm_intro.html">Nilearn introduction to fMRI statistical analysis</a>).</p>
+<div class="admonition-design-matrix-model-estimation admonition">
+<p class="admonition-title">Design matrix &amp; model estimation</p>
+<p>The statistical model is described by the <strong>design matrix X</strong>, in which the rows represent the observations and the columns represent the explanatory factors (i.e. effects/covariates).</p>
+<p>The model is estimated using a multiple regression scheme using least squares solver (Moore-Penrose pseudo-inverse).</p>
+<p>beta = pinv(X) Y = (XtX)-1 Xt Y
+residuals i.e. model errors = Y - X beta
+pooled variance = variance(residuals)</p>
+<p>Y, vector of observations,
+X, design matrix,
+beta, vector of regressor weight values, one value for each factor (effects/covariates)</p>
+</div>
+<p>PySisyphe manages only block-related fMRI design, the following statistical models are available:</p>
+<ul class="simple">
+<li><p>fMRI conditions, one subject with one or more conditions (condition = block-related fMRI time series).</p></li>
+<li><p>fMRI subjects/conditions, several subjects with one or more conditions.</p></li>
+<li><p>fMRI groups/subjects/conditions, several subjects divided into several groups with one or more conditions.</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>A first <strong>fMRI Model</strong> dialog box is displayed to define fMRI conditions/subjects/groups and condition blocks.</p></li>
+</ol>
+<ul class="simple">
+<li><p>Define the number of fMRI conditions using the <strong>Condition count</strong> spinbox.</p></li>
+<li><p>Define the number of subjects using the <strong>Subject count</strong> spinbox, not displayed for fMRI conditions model.</p></li>
+<li><p>Define the number of subject groups using the <strong>Group count</strong> spinbox, not displayed for fMRI conditions and fMRI subjects/conditions models.</p></li>
+</ul>
+<p>A tree widget is located below to configure the condition blocks in the fMRI time series. For each condition, you must set the index of the first block in the column title <strong>First</strong>, the number of images per activation block in the columun titled <strong>Active</strong>, the number of images per rest block in the column titled <strong>Rest</strong>, and finally the inter-scan interval of the time series (TR in s) in the column title <strong>inter-scan</strong>. You can edit the names of conditions by double-clicking on them in the first column titled <strong>conditions</strong>.</p>
+<p>Left-click <strong>OK</strong> button to validate the model and display a second <strong>fMRI Model</strong> dialog box.</p>
+<p>Left-click <strong>Cancel</strong> button to exit dialog box.</p>
+<ol class="arabic simple" start="2">
+<li><p>A second <strong>fMRI Model</strong> dialog box is displayed to add observations (time-series images) and covariates to the statistical model.</p></li>
+</ol>
+<p>A tree widget is located at the top with a button bar below.</p>
+<p>To add time-series images in the statistical model, follow the steps below:</p>
+<ul class="simple">
+<li><p>Left-click on a condition/subject/group item to select it in the <strong>Observations</strong> tree structure, located in the first column. The second column, titled <strong>Image count/filenames</strong> displays the number of observations (i.e., the number of PySisyphe volumes in the fMRI time series) required for this item.</p></li>
+<li><p>Left-click <strong>Add observation(s)</strong> button.</p></li>
+<li><p>In the file selection dialog box, select the time series PySisyphe volumes (.xvol).</p></li>
+<li><p>The File names are displayed as child items of the current condition in the second column, titled <strong>Image count/filenames</strong>. A tooltip displaying the file’s volume attributes pops up when the user puts the mouse pointer over a file name.</p></li>
+</ul>
+<p>There are four types of covariates that can be added to the statistical model. A covariate must contain a number of elements equal to the total number of observations in the statistical model.</p>
+<ul class="simple">
+<li><p><em>global covariate</em>, one column in the design matrix,</p></li>
+<li><p><em>covariate by condition</em>, one column by condition in the design matrix,</p></li>
+<li><p><em>covariate by subjet</em>, one column by subject in the design matrix,</p></li>
+<li><p><em>covariate by group</em>, one column by group in the design matrix.</p></li>
+</ul>
+<p>To add a covariate, follow the steps below:</p>
+<ul class="simple">
+<li><p>Left-click <strong>Add global cov.</strong>, <strong>Add cov. by condition</strong>, <strong>Add cov. by subject</strong> or <strong>Add cov. by group</strong> button.</p></li>
+<li><p>In the file selection dialog box, select covariate values from a file in one of the following supported formats: CSV, JSON, LaTeX, text, Excel XLSX, or Python XSHEET.</p></li>
+<li><p>The covariate name, which defaults to the file name without the extension, is added as a new child in the covariate tree structure (global covariate, Covariate by condition, Covariate by subject or Covariate by group) in the first column. You can edit the covariate names by double-clicking on them. A tooltip displaying the covariate values pops up when the user puts the mouse pointer over a covariate name.</p></li>
+</ul>
+<p>To remove observations, follow the steps below:</p>
+<ul class="simple">
+<li><p>Left-click on a condition/subject/group item to select it in the <strong>Observations</strong> tree structure.</p></li>
+<li><p>Left-click <strong>Remove</strong> button.</p></li>
+<li><p>File names of the time series PySisyphe volumes of the current condition in the second column are removed.</p></li>
+</ul>
+<p>To remove a covariate, follow the steps below:</p>
+<ul class="simple">
+<li><p>Left-click on a condition/subject/group item to select it in the global covariate(s), Covariate(s) by condition, Covariate(s) by subject or Covariate(s) by group tree structure.</p></li>
+<li><p>Left-click <strong>Remove</strong> button.</p></li>
+<li><p>The covariate is removed from the first column’s tree structure.</p></li>
+</ul>
+<p>Left-click <strong>Remove all</strong> button to remove all obersvations and covariates from the statistical model.</p>
+<p>Left-click <strong>View design</strong> button shows the design matrix chart in a dialog box. This dialog includes two buttons at the bottom: a <strong>Save bitamp</strong> button to save a bitmap of the chart (supported bitmap formats BMP, JPG, PNG, TIFF and SVG), and a <strong>Copy to clipboard</strong> button to copy a bitmap capture of the chart to the clipboard.</p>
+<p>Left-click <strong>Save</strong> button to save the current model as a PySisyphe statistical model file (.xmodel). The default folder is the “models” subfolder located in the PySisyphe user folder ($User/.PySisyphe).</p>
+<p>Statistical model parameters are as follows:</p>
+<ul>
+<li><p>Select the method used for <strong>Signal normalization</strong>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>no</em>, native signal</p></li>
+<li><p><em>mean scaling</em>, (voxel value / mean volume value in the analysis mask) * 100</p></li>
+<li><p><em>median scaling</em>, (voxel value / median volume value in the analysis mask) * 100</p></li>
+<li><p><em>75th percentile scaling</em>, (voxel value / 75th percentile volume value in the analysis mask) * 100</p></li>
+<li><p><em>ROI mean scaling</em>, (voxel value / mean volume value in ROI mask) * 100</p></li>
+<li><p><em>ROI median scaling</em>, (voxel value / median volume value in ROI mask) * 100</p></li>
+<li><p><em>ROI 75th percentile scaling</em>, (voxel value / 75th percentile volume value in ROI mask) * 100</p></li>
+<li><p><em>ANCOVA mean</em>, add mean volume values in the analysis mask as a covariate to the statistical model</p></li>
+<li><p><em>ANCOVA median</em>, add median volume values in the analysis mask as a covariate to the statistical model</p></li>
+<li><p><em>ANCOVA 75th percentile</em>, add 75th percentile volume values in the analysis mask as a covariate to the statistical model</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Use the <strong>ROI signal normalization</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget, to select the PySisyphe ROI(s) (.xroi) that will be used for signal normalization (see above).</p></li>
+<li><p>Select the <strong>Mask</strong> of analysis. A brain mask is computed and statistical analysis is restricted to the voxels within this mask.  When the <strong>Auto</strong> option is selected, the brain mask is the analysis mask. When the <strong>Auto + ROI</strong> option is selected, the mask of analysis is the intersection (i.e. logical AND) between the brain mask and a ROI.</p></li>
+<li><p>Use the <strong>Mask ROI</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget, to select the PySisyphe ROI(s) (.xroi) that will be used to compute the mask of analysis (see above).</p></li>
+<li><p>An <strong>Age covariate</strong> can be added automatically to the model as a global covariate, Covariate by condition, Covariate by subject or Covariate by group. Age values are extracted from PySisyphe volume attributes (birth date and acquisition date).</p></li>
+</ul>
+<p>Left-click <strong>Estimate</strong> button to compute the model estimation. Once this calculation has been completed, it is proposed to save the statistical model and then move on to the next step of defining a <a class="reference internal" href="#menu-section-contrast"><span class="std std-ref">Contrast</span></a>. Five files are saved: PySisyphe statistical model file (.xmodel), PySisyphe volume of beta (.xvol) suffixed with “beta”, PySisyphe volume of pooled variance (.xvol) suffixed with “sig2”, PySisyphe multi-component volume of observations (.xvol) suffixed with “obs”, PySisyphe mean volume of observations (.xvol) suffixed with “mean” and PySisyphe analysis mask (.xvol) suffixed with “mask”.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="general-linear-model-definition">
+<span id="menu-section-glm-model"></span><h2>General linear model definition<a class="headerlink" href="#general-linear-model-definition" title="Link to this heading"></a></h2>
+<p>This menu allows you to define the statistical model that will be used for the voxel-by-voxel general linear model analysis (GLM).</p>
+<p>The following statistical models are available:</p>
+<ul class="simple">
+<li><p><em>One sample t-test</em>, one group of n images,</p></li>
+<li><p><em>Two sample t-test</em>, two groups of n1 and n2 images,</p></li>
+<li><p><em>Paired t-test</em>, ns subjects with two conditions of n(1) and n(2) images,</p></li>
+<li><p><em>GLM subjects/conditions</em>, ns subjects with nc conditions of n(1) … n(nc) images,</p></li>
+<li><p><em>GLM groups/subjects/conditions</em>, ng groups of ns(1) … ns(ng) subjects with nc conditions of n(1) … n(nc) images</p></li>
+<li><p><em>GLM groups</em>, ng groups with n(1) and n(ng) images,</p></li>
+<li><p><em>GLM groups/subjects</em>, ng groups of ns(1) … ns(ng) subjects with n(ns(1)) … n(ns(ng)) images</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>A first <strong>GLM Model</strong> dialog box is displayed to define the number conditions/subjects/groups and set the number of images for each.</p></li>
+</ol>
+<ul class="simple">
+<li><p>Define the number of conditions using the <strong>Condition count</strong> spinbox.</p></li>
+<li><p>Define the number of subjects using the <strong>Subject count</strong> spinbox.</p></li>
+<li><p>Define the number of subject groups using the <strong>Group count</strong> spinbox.</p></li>
+</ul>
+<p>Left-click <strong>OK</strong> button to validate the model and display a second <strong>GLM Model</strong> dialog box.</p>
+<p>Left-click <strong>Cancel</strong> button to exit dialog box.</p>
+<ol class="arabic simple" start="2">
+<li><p>A second <strong>GLM Model</strong> dialog box is displayed to add observations (images) and covariates to the statistical model.</p></li>
+</ol>
+<p>A tree widget is located at the top with a button bar below.</p>
+<p>To add time-series images in the statistical model, follow the steps below:</p>
+<ul class="simple">
+<li><p>Left-click on a condition/subject/group item to select it in the <strong>Observations</strong> tree structure, located in the first column. The number of obervations (i.e. number of PySisyphe volumes) required for this item is displayed in the second column titled <strong>Image count/filenames</strong>.</p></li>
+<li><p>Left-click <strong>Add observation(s)</strong> button.</p></li>
+<li><p>In the file selection dialog box, select PySisyphe volumes (.xvol).</p></li>
+<li><p>The File names are displayed as child items of the current condition in the second column, titled <strong>Image count/filenames</strong>. A tooltip displaying the file’s volume attributes pops up when the user puts the mouse pointer over a file name.</p></li>
+</ul>
+<p>There are four types of covariates that can be added to the statistical model. A covariate must contain a number of elements equal to the total number of observations in the statistical model.</p>
+<ul class="simple">
+<li><p><em>global covariate</em>, one column in the design matrix,</p></li>
+<li><p><em>covariate by condition</em>, one column by condition in the design matrix,</p></li>
+<li><p><em>covariate by subjet</em>, one column by subject in the design matrix,</p></li>
+<li><p><em>covariate by group</em>, one column by group in the design matrix.</p></li>
+</ul>
+<p>To add a covariate, follow the steps below:</p>
+<ul class="simple">
+<li><p>Left-click <strong>Add global cov.</strong>, <strong>Add cov. by condition</strong>, <strong>Add cov. by subject</strong> or <strong>Add cov. by group</strong> button.</p></li>
+<li><p>In the file selection dialog box, select covariate values from a file in one of the following supported formats: CSV, JSON, LaTeX, text, Excel XLSX, or Python XSHEET.</p></li>
+<li><p>The covariate name, which defaults to the file name without the extension, is added as a new child in the covariate tree structure (global covariate, Covariate by condition, Covariate by subject or Covariate by group) in the first column. You can edit the covariate names by double-clicking on them. A tooltip displaying the covariate values pops up when the user puts the mouse pointer over a covariate name.</p></li>
+</ul>
+<p>To remove observations, follow the steps below:</p>
+<ul class="simple">
+<li><p>Left-click on a condition/subject/group item to select it in the <strong>Observations</strong> tree structure.</p></li>
+<li><p>Left-click <strong>Remove</strong> button.</p></li>
+<li><p>PySisyphe file names of the current item are removed.</p></li>
+</ul>
+<p>To remove a covariate, follow the steps below:</p>
+<ul class="simple">
+<li><p>Left-click on a condition/subject/group item to select it in the global covariate(s), Covariate(s) by condition, Covariate(s) by subject or Covariate(s) by group tree structure.</p></li>
+<li><p>Left-click <strong>Remove</strong> button.</p></li>
+<li><p>The covariate is removed from the first column’s tree structure.</p></li>
+</ul>
+<p>Left-click <strong>Remove all</strong> button to remove all obersvations and covariates from the statistical model.</p>
+<p>Left-click <strong>View design</strong> button shows the design matrix chart in a dialog box. This dialog includes two buttons at the bottom: a <strong>Save bitamp</strong> button to save a bitmap of the chart (supported bitmap formats BMP, JPG, PNG, TIFF and SVG), and a <strong>Copy to clipboard</strong> button to copy a bitmap capture of the chart to the clipboard.</p>
+<p>Left-click <strong>Save</strong> button to save the current model as a PySisyphe statistical model file (.xmodel). The default folder is the “models” subfolder located in the PySisyphe user folder ($User/.PySisyphe).</p>
+<p>Statistical model parameters are as follows:</p>
+<ul>
+<li><p>Select the method used for <strong>Signal normalization</strong>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>no</em>, native signal</p></li>
+<li><p><em>mean scaling</em>, (voxel value / mean volume value in the analysis mask) * 100</p></li>
+<li><p><em>median scaling</em>, (voxel value / median volume value in the analysis mask) * 100</p></li>
+<li><p><em>75th percentile scaling</em>, (voxel value / 75th percentile volume value in the analysis mask) * 100</p></li>
+<li><p><em>ROI mean scaling</em>, (voxel value / mean volume value in ROI mask) * 100</p></li>
+<li><p><em>ROI median scaling</em>, (voxel value / median volume value in ROI mask) * 100</p></li>
+<li><p><em>ROI 75th percentile scaling</em>, (voxel value / 75th percentile volume value in ROI mask) * 100</p></li>
+<li><p><em>ANCOVA mean</em>, add mean volume values in the analysis mask as a covariate to the statistical model</p></li>
+<li><p><em>ANCOVA median</em>, add median volume values in the analysis mask as a covariate to the statistical model</p></li>
+<li><p><em>ANCOVA 75th percentile</em>, add 75th percentile volume values in the analysis mask as a covariate to the statistical model</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Use the <strong>ROI signal normalization</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget, to select the PySisyphe ROI(s) (.xroi) that wil be used for signal normalization (see above).</p></li>
+<li><p>Select the <strong>Mask</strong> of analysis. A brain mask is computed and statistical analysis is restricted to the voxels within this mask.  When the <strong>Auto</strong> option is selected, the brain mask is the analysis mask. When the <strong>Auto + ROI</strong> option is selected, the mask of analysis is the intersection (i.e. logical AND) between the brain mask and a ROI.</p></li>
+<li><p>Use the <strong>Mask ROI</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget, to select the PySisyphe ROI(s) (.xroi) that wil be used to compute the mask of analysis (see above).</p></li>
+<li><p>An <strong>Age covariate</strong> can be added automatically to the model as a global covariate, Covariate by condition, Covariate by subject or Covariate by group. Age values are extracted from PySisyphe volume attributes (birth date and acquisition date).</p></li>
+</ul>
+<p>Left-click <strong>Estimate</strong> button to compute the model estimation. Once this calculation has been completed, it is proposed to save the statistical model and then move on to the next step of defining a <a class="reference internal" href="#menu-section-contrast"><span class="std std-ref">Contrast</span></a>.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="models">
+<span id="menu-section-models"></span><h2>Models<a class="headerlink" href="#models" title="Link to this heading"></a></h2>
+<p>This menu displays PySisyphe statistical model files (.xmodel) in the “models” subfolder in the PySisyphe user folder ($User/.PySisyphe).</p>
+<p>Select a model item to open it in the <a class="reference internal" href="#menu-section-fmri-model"><span class="std std-ref">fMRI model definition</span></a> or <a class="reference internal" href="#menu-section-glm-model"><span class="std std-ref">General linear model definition</span></a> dialog box.</p>
+<p>The last submenu <strong>Open model</strong> shows a file selection dialog box to open a PySisyphe statistical model file (.xmodel) in the <a class="reference internal" href="#menu-section-fmri-model"><span class="std std-ref">fMRI model definition</span></a> or <a class="reference internal" href="#menu-section-glm-model"><span class="std std-ref">General linear model definition</span></a> dialog box.</p>
+</section>
+<section id="contrast">
+<span id="menu-section-contrast"></span><h2>Contrast<a class="headerlink" href="#contrast" title="Link to this heading"></a></h2>
+<p>This menu is used to define a contrast from a statistical model.</p>
+<p>In the file selection dialog box, select a PySisyphe statistical model file (.xmodel).</p>
+<p>A <strong>Statistical contrast</strong> dialog box is displayed showing design matrix chart at the top and parameters below:</p>
+<ul class="simple">
+<li><p>Select the factor to analyze, main factor is selected by default.</p></li>
+<li><p>Check the type of statistics to perform, <em>t-test</em> (t-map) or <em>z-score</em> (z-map)</p></li>
+<li><p>Define the contrast as weight values for each design matrix column associated with the selected factor. The sum of the weights must be equal to +1.0, 0.0 (If there is more than one weight), or -1.0.</p></li>
+</ul>
+<p>Left-click <strong>Estimate</strong> button to compute the contrast estimation. Once this calculation has been completed, it is proposed to save the statistical map.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box. This menu is used to navigate a statistical</p>
+</section>
+<section id="result">
+<span id="menu-section-result"></span><h2>Result<a class="headerlink" href="#result" title="Link to this heading"></a></h2>
+<p>This menu is used to navigate a statistical map that was generated from the <a class="reference internal" href="#menu-section-contrast"><span class="std std-ref">Contrast</span></a> menu.</p>
+<p>In the file selection dialog box, select a PySisyphe statistical map (.xvol).</p>
+<p>A <strong>Statistical result</strong> dialog box is displayed. It consists of five areas.</p>
+<ol class="arabic">
+<li><p>The first part consists of a tabbed widget with five tabs:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Slices</strong> tab shows the statistical map in an <a class="reference internal" href="PySisyphe_orthogonalview.html#page-orthogonalview"><span class="std std-ref">Orthogonal view widget</span></a> with a cross-shaped cursor. The background volume is the T1 symmetric ICBM152 template if the statistical map is normalized in the ICBM152 space; otherwise, the mean volume of observations is used. Left-clicking on the slice view moves the cursor to the current position of the mouse.</p></li>
+<li><p><strong>Projections</strong> tab shows the statistical map in an <a class="reference internal" href="PySisyphe_projectionview.html#page-projectionview"><span class="std std-ref">Projection view widget</span></a>. The background volume is the T1 symmetric ICBM152 template if the statistical map is normalized in the ICBM152 space; otherwise, the mean volume of obervations is used.</p></li>
+<li><p><strong>Beta chart</strong> tab shows a box plot chart of beta values at the current position of the cross-shaped cursor. Beta is a regressor weight assigned to each factor in the statistical model. It is an estimate of the factor’s contribution to the signal resulting from multiple regression analysis used to solve the general linear model. This tab includes three buttons at the bottom: a <strong>Save bitamp</strong> button to save a bitmap of the chart (supported bitmap formats BMP, JPG, PNG, TIFF and SVG), a <strong>Copy to clipboard</strong> button to copy a bitmap capture of the chart to the clipboard, and a <strong>Copy to screenshots</strong> button to copy a bitmap capture of the chart to the <a class="reference internal" href="PySisyphe_screenshots.html#page-screenshots"><span class="std std-ref">Screenshots manager</span></a>.</p></li>
+<li><p><strong>Time series chart</strong> tab shows a line plot chart of the time series signal (blue) and the adjusted model (orange) at the current position of the cross-shaped cursor. This tab is only visible for fMRI models. It has the same three buttons as the previous tab.</p></li>
+<li><p><strong>Regression chart</strong> tab shows a scatter plot chart between the modelled signal of the first factor on the x-axis and the osbserved signal on the y-axis. The regression line is plotted and the title reports the Pearson’s correlation coefficient. This tab has the same three buttons as the previous one.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>The second part consists of widgets to set <strong>statistical thresholds</strong>. These thresholds affect the statistical map, which is updated after each change.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Voxels with statistical significance below the <strong>Voxel threshold</strong> are removed from the statistical map. There are six types of thresholds available: <em>t-value</em>, <em>z-value</em>, <em>uncorrected p-value</em> (i.e. uncorrected for multiple comparisons), <em>Bonferroni corrected p-value</em> (Bonferroni correction for multiple comparisons, p-value / number of repeated tests i.e. voxel count in the analysis mask), <em>Gaussian field corrected p-value</em>, and <em>q FDR</em> (False Discovry Rate). There is a problem with multiple comparisons because the number of statistical tests performed is equal to the number of voxels in the analysis mask. The Bonferroni correction is too conservative because it does not take into account the spatial autocorrelations occurring in the images used in neuroimaging (MR, PET, SPECT modality). The other two methods, Gaussian field (see A unified statistical approach for determining significant signals in images of cerebral activation KJ Worsley, S Marrett, P Neelin, AC Vandal, KJ Friston, AC Evans. Hum Brain Mapp. 1996;4(1):58-73) and false discovry rate (see Controlling the false discovery rate: a practical and powerful approach to multiple testing. Benjamini Y, Hochberg Y. Journal of the Royal Statistical Society, Series B. 1995;57(1):289–300.) are more effective in this context.</p></li>
+<li><p>Significant voxels are spatially grouped into clusters. Any clusters below the <strong>Cluster extent threshold</strong> are removed from the statistical map. There are five extent thresholds available: <em>number of voxels</em>, <em>number of resels</em>, <em>volume</em> in mm3, <em>uncorrected p-value</em>, <em>Gaussian field corrected p-value</em>. Spatial autocorrelations are evaluated as a Gaussian field, whose extent is expressed as a Gaussian kernel described by a full width at half maximum (FWHM) in mm, in each dimension. A resel, which represents a volume of spatial autocorrelations, is the product of the FWHM on the three axes.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>The third part shows global statistical results, which are organized by themes:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>t-map results</em>: degrees of freedom of the GLM model, autocorrelations FWHM in mm, Resel volume in mm3, volume of the analysis mask expressed in mm3, number of voxels, number of resels.</p></li>
+<li><p><em>Expected results</em> taking into account the number of comparisons and autocorrelations: number of significant voxels, number of clusters, number of voxels per cluster.</p></li>
+<li><p><em>Observed results</em> for the current voxel threshold: number of significant voxels, number of clusters, number of voxels per cluster.</p></li>
+<li><p><em>Voxel threshold</em>, current voxel threshold expressed as t-value, z-value, uncorrected p-value, Bonferroni corrected p-value and Gaussian field corrected p-value.</p></li>
+<li><p><em>Cluster extent threshold</em>, current cluster extent expressed as number of voxels, number of resels, volume, uncorrected p-value, Gaussian field corrected p-value.</p></li>
+<li><p><em>Cursor position</em>, voxel coordinates, t-value, z-value, uncorrected p-value, Bonferroni corrected p-value and Gaussian field corrected p-value at the cross-shaped cursor position.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>The fourth part displays a tab providing statistical results for each cluster at the current significance and extent thresholds. Left-click on a table header to sort the rows according to the values in that column. The items provided for a cluster are as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>x, y, z</em>, coordinates of the local maximum in the cluster, expressed as voxel indices along each axis.</p></li>
+<li><p><em>world x, y, z</em>, coordinates of the local maximum in the cluster, expressed in mm along each axis (i.e. world coordinates).</p></li>
+<li><p><em>t-value</em>, <em>z-value</em>, <em>Bonferroni corrected p-value</em> and <em>Gaussian field corrected p-value</em> at the local maximum in the cluster.</p></li>
+<li><p>Cluster extent expressed as <em>number of voxels</em>, <em>number of resels</em>, <em>volume</em>, cluster <em>uncorrected p-value</em>, cluster <em>Gaussian field corrected p-value</em>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>A button bar is included in the last part.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Left-click <strong>Save report</strong> button to save a summary report of the statistical analysis results in a PDF file.</p></li>
+<li><p>Left-click <strong>Save table</strong> button to save the cluster table in various formats: csv, Excel (.xlsx), PySisyphe XML sheet (.xsheet), or numpy (.npy).</p></li>
+<li><p>Left-click <strong>Save map</strong> button to save the statistical map with the current voxel and extent thresholds as a PySisphe volume (.xvol).</p></li>
+<li><p>Left-click <strong>Close</strong> button to exit dialog box.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="conjunction">
+<span id="menu-section-conjunction"></span><h2>Conjunction<a class="headerlink" href="#conjunction" title="Link to this heading"></a></h2>
+<p>This menu is used to perform statitical map conjunction. A Conjunction allow you to determine whether a voxel or group of voxels passes a statistical threshold for two or more statistical maps (see Combining brains: a survey of methods for statistical pooling of information. Lazar NA, Luna B, Sweeney JA, Eddy WF. Neuroimage 2002 Jun;16(2):538-50. doi: 10.1006/nimg.2002.1107). The t-maps are converted into z-maps so that conjunctions can be performed using either t or z-maps.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top, to select <strong>Statistical maps</strong> PySisyphe volume (.xvol).</p>
+<p>Toggle <strong>Settings…</strong> button to show/hide parameters:</p>
+<ul class="simple">
+<li><p>Select the conjunction <strong>Method</strong>: <em>Fisher</em>, <em>Mudholkar</em>, <em>Stouffer</em>, <em>Tippett</em> or <em>Worsley</em>.</p></li>
+<li><p>Edit the <strong>Default file name</strong>. This name is used to save the conjunction as a PySisyphe volume (.xvol) in the folder of the first statistical map.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to compute the conjunction of statistical maps.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="t-to-z-map-conversion">
+<span id="menu-section-t2zmap"></span><h2>t to z-map conversion<a class="headerlink" href="#t-to-z-map-conversion" title="Link to this heading"></a></h2>
+<p>This menu is used to convert t-map volume(s) to z-map volulme(s).</p>
+<div class="admonition-t-to-z-map-processing admonition">
+<p class="admonition-title">t to z-map processing</p>
+<p>p = 1.0 - student cdf(t, df)
+z = norm ppf(1.0 - p)</p>
+<p>df, degrees of freedom
+t, t-value
+p, p-value
+z, z-value
+student cdf, Student cumulative distribution function
+norm ppf, Normal inverse cumulative distribution function (i.e. percent point function)</p>
+</div>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top, to select <strong>t maps</strong> PySisyphe volume (.xvol).</p>
+<p>Left-click <strong>Execute</strong> button to compute z-maps. z-map volume(s) is(are) saved with the original file name, which is suffixed with “zmap”.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="time-series-preprocessing">
+<span id="menu-section-seriespreproc"></span><h2>Time series preprocessing<a class="headerlink" href="#time-series-preprocessing" title="Link to this heading"></a></h2>
+<p>This menu is used to compute preprocessing on a time series volume: spatial filtering (gaussian smoothing), detrend, standardize signal (z-scored), standardize confounds (z-scored), high variance confounds, low pass filtering and high pass filtering. PySisyphe uses the <a class="reference external" href="https://nilearn.github.io/stable/index.html">Nilearn</a> library implemenentation.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget at the top, to select a <strong>Time series</strong> PySisyphe multi-component volume (.xvol).</p>
+<p>Use the <strong>Confound variable(s)</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget, under the previous, to select a confounding variable file. This file is filled with a list of values whose number must be equal to the components count in the time series volume. It can have various formats: csv, Excel (.xlsx), PySisyphe XML sheet (.xsheet), or numpy (.npy).</p>
+<p>The preprocessing parameters are as follows:</p>
+<ul class="simple">
+<li><p>Check the <strong>Tissue confounds</strong> parameter if you want to add tissue-based signal confounds: mean signal in cerebro-spinal fluid, mean signal in gray matter, mean signal in white matter, mean global signal (cerebro-spinal fluid + gray matter + white matter). Tissue masks are extracted from a tissue label volume (see next).</p></li>
+<li><p>Use the <strong>Tissue label map</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select a tissue label volume used to calculate tissue signal confounding variables. The label volume must be in the same space/transform ID as the time series multi-component volume. It is generated from either the <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a> or <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmenation</span></a> menu.</p></li>
+<li><p>Set the <strong>Gaussian smoothing FWHM</strong> in millimeters to apply to the time series. No smoothing if 0.0 (default).</p></li>
+<li><p>Check the <strong>Detrend</strong> parameter to detrend the time series.</p></li>
+<li><p>Check the <strong>Standardize</strong> parameter to standardize the time series signal. Timeseries are z-scored, i.e. shifted to zero mean and scaled to unit variance (default False).</p></li>
+<li><p>Check the  <strong>Standardize confounders</strong> parameter to standadize confounding variables. Each variable is z-scored, mean is shifted to zero and scaled to unit variance in the time dimension (default True).</p></li>
+<li><p>Check the <strong>High variance confounds</strong> parameter to compute high variance confounds on provided image and regressed out (default False).</p></li>
+<li><p>Set the <strong>Low pass filter cutoff</strong>, frequence in Hertz. If specified, signals above this frequency will be filtered out. Usual value of 0.1. If 0.0, no low-pass filtering will be performed (default).</p></li>
+<li><p>Set the  <strong>High pass filter cutoff</strong>, frequence in Hertz. If specified, signals below this frequency will be filtered out. Usual value of 0.01. If 0.0, no high-pass filtering will be performed (default).</p></li>
+<li><p>Use the  <strong>Get TR from Dicom file</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget to get the time series Repetition Time value (TR, in ms) from a dicom file.</p></li>
+<li><p>Set the <strong>TR</strong> parameter, time series Repetition Time value (TR, in ms). This value can be extracted from a Dicom file (see above).</p></li>
+<li><p>The preprocessed volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Prefix</strong> and <strong>Suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform preprocessing.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="seed-to-voxel-time-series-correlation">
+<span id="menu-section-seriesseed"></span><h2>Seed-to-voxel time series correlation<a class="headerlink" href="#seed-to-voxel-time-series-correlation" title="Link to this heading"></a></h2>
+<p>This menu is used to compute seed-to-voxel correlation map from a time series (i.e. fMRI resting-state) multi-component volume. This map shows the temporal correlation between a seed region and the rest of the brain. PySisyphe uses the  <a class="reference external" href="https://nilearn.github.io/stable/auto_examples/03_connectivity/plot_seed_to_voxel_correlation.html">Nilearn</a> library implemenentation.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget at the top, to select a <strong>Time series</strong> PySisyphe multi-component volume (.xvol).</p>
+<p>The seed-to-voxel time series correlation parameters are as follows:</p>
+<ul class="simple">
+<li><p>Check the <strong>preprocessing</strong> option to compute <a class="reference internal" href="#menu-section-seriespreproc"><span class="std std-ref">Time series preprocessing</span></a> before correlation. This triggers the display of the <a class="reference internal" href="#menu-section-seriespreproc"><span class="std std-ref">Time series preprocessing</span></a> parameters.</p></li>
+<li><p>Use the <strong>Seed ROI</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget to select a PySisyphe ROI (.xroi), which will be used as the seed region to compute the correlation with the rest of the brain.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform a time series correlation. A cross-correlation map is saved with the original file name, which is suffixed with “seed_cmap”. A z-map is also saved with the original file name, which is suffixed with “seed_zmap”.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="single-subject-time-series-ica">
+<span id="menu-section-seriesica"></span><h2>Single subject time series ICA<a class="headerlink" href="#single-subject-time-series-ica" title="Link to this heading"></a></h2>
+<p>This menu is used to compute a time series (i.e. fMRI resting state) Independent Component Analysis (ICA). ICA separates a multivariate signal into additive subcomponents that are maximally independent. PySisyphe uses the <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.FastICA.htmlandhttps://nilearn.github.io/dev/auto_examples/07_advanced/plot_ica_resting_state.html">scikit learn library FastICA</a> implemenentation.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget at the top, to select a <strong>Time series</strong> PySisyphe multi-component volume (.xvol).</p>
+<p>The Single subject time series ICA parameters are as follows:</p>
+<ul class="simple">
+<li><p>Check the <strong>preprocessing</strong> option to compute <a class="reference internal" href="#menu-section-seriespreproc"><span class="std std-ref">Time series preprocessing</span></a> before correlation. This triggers the display of the <a class="reference internal" href="#menu-section-seriespreproc"><span class="std std-ref">Time series preprocessing</span></a> parameters.</p></li>
+<li><p>Set the <strong>Number of components</strong> to extract.</p></li>
+<li><p>Set the <strong>Component variance threshold</strong>, ratio used to remove components that are likened to noise and have a low weight in the signal variance.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform ICA. An ICA multi-component volume is saved with the original file name, which is suffixed with “ica”.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="time-series-correlation-matrix">
+<span id="menu-section-seriescorr"></span><h2>Time series correlation matrix<a class="headerlink" href="#time-series-correlation-matrix" title="Link to this heading"></a></h2>
+<p>This menu is used to extract a time series signals (i.e. fMRI resting state) from a brain parcellation and compute a correlation matrix. PySisyphe uses the <a class="reference external" href="https://nilearn.github.io/dev/auto_examples/03_connectivity/plot_signal_extraction.html#sphx-glr-auto-examples-03-connectivity-plot-signal-extraction-py">Nilearn</a> library implemenentation.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget at the top, to select a <strong>Time series</strong> PySisyphe multi-component volume (.xvol).</p>
+<p>The Time series correlation matrix parameters are as follows:</p>
+<ul class="simple">
+<li><p>Check the <strong>preprocessing</strong> option to compute <a class="reference internal" href="#menu-section-seriespreproc"><span class="std std-ref">Time series preprocessing</span></a> before correlation. This triggers the display of the <a class="reference internal" href="#menu-section-seriespreproc"><span class="std std-ref">Time series preprocessing</span></a> parameters.</p></li>
+<li><p>Use the <strong>Label volume</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget to select a PySisyphe label volume (.xvol), which will be used for brain parcellation.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to compute the correlation matrix.</p>
+<p>The result is displayed in a dialog box with two tabs. The first tab, titled <strong>Connectivity matrix</strong>, shows the connectivity matrix as a chart. This tab includes three buttons at the bottom: a <strong>Save bitamp</strong> button to save a bitmap of the chart (supported bitmap formats BMP, JPG, PNG, TIFF and SVG), a <strong>Copy to clipboard</strong> button to copy a bitmap capture of the chart to the clipboard, and a <strong>Copy to screenshots</strong> button to copy a bitmap capture of the chart to the <a class="reference internal" href="PySisyphe_screenshots.html#page-screenshots"><span class="std std-ref">Screenshots manager</span></a>. The second tab, titled <strong>Connectivity table</strong>, shows the connectivity matrix values in table format. This tab includes the button <strong>Save Dataset</strong>, which shows a dialog box to save the table in various formats (CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET).</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="dynamic-susceptibility-contrast">
+<span id="menu-section-dsc"></span><h2>Dynamic susceptibility contrast<a class="headerlink" href="#dynamic-susceptibility-contrast" title="Link to this heading"></a></h2>
+<p>This menu is used to compute dynamic susceptibility contrast MR perfusion analysis. The following maps were produced: <em>cerebral blood flow</em> (CBF in ml/min/100g), <em>cerebral blood volume</em> (CBV in ml/100g), <em>mean transit time</em> (MTT in s), <em>leakage volume</em> (LKV in ml/100g), <em>time to pic</em> (TTP in s), <em>time to bolus arrival</em> (TTB in s), <em>signal recovery</em> (SR) and <em>percentage signal recovery</em> (PSR).</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget at the top, to select a PySisyphe <strong>DSC-MR multi-component volume(s)</strong> (.xvol).</p>
+<p>The Dynamic susceptibility contrast parameters are as follows:</p>
+<ul class="simple">
+<li><p>Set the <strong>TR</strong> parameter, repetition time of the dynamic susceptibility contrast MR perfusion images, in milliseconds.</p></li>
+<li><p>Set the <strong>TE</strong> parameter, echo time of the dynamic susceptibility contrast MR perfusion images, in milliseconds.</p></li>
+<li><p>Select the thresholding algorithm used for mask processing from the <strong>Masking algorithm</strong> combobox. PySisyphe provides the following algorithms from the SimpleITK library: <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html">Huang</a>, Mean, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html">Otsu</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html">Renyi</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html">Yen</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html">Li</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html">Shanbhag</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1TriangleThresholdImageFilter.html">Triangle</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html">Intermodes</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html">Maximumentropy</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html">Kittler</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html">Isodata</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html">Moments</a> (default Huang)</p></li>
+<li><p>Set the <strong>Baseline indices (first, last)</strong> parameters. This is the range (start and end) of volume indices used as baseline signal to calculate contrast concentration curves.</p></li>
+<li><p>Set the <strong>Number of AIF voxels</strong> parameter, number of voxels used to calculate arterial input function (mean curve of these voxels)</p></li>
+<li><p>Check <strong>AIF dialog</strong> to determine whether or not to display a dialog box for selecting voxels that will be used to compute the arterial input function.</p></li>
+<li><p>Check <strong>Smoothing</strong> to determine whether or not to smooth contrast concentration curves.</p></li>
+<li><p>Check <strong>Signal recovery maps processing</strong> to determine whether or not to calculate signal recovery (SR) and percentage signal recovery (PSR) maps.</p></li>
+<li><p>Check <strong>DSC maps processing</strong> to determine whether or not to calculate cerebral blood flow (CBF), cerebral blood volume (CBV), mean transit time (MTT), time to pic (TTP), time to bolus arrival (TTB)</p></li>
+<li><p>Check <strong>Gamma variate fitting</strong> to determine whether or not contrast concentration curves are fitted with a gamma variate. In this case, integration is performed using the analytical solution of the gamma variate function. Otherwise, a numerical integration is performed using the composite trapezoidal rule.</p></li>
+</ul>
+<div class="admonition-gamma-variate-fitting admonition">
+<p class="admonition-title">Gamma variate fitting</p>
+<p>Gamma variate(t) = k (t - t0) ** a * exp(- (t - t0) / b)</p>
+<dl class="simple">
+<dt>Optimized parameters:</dt><dd><ul class="simple">
+<li><p>t0, bolus arrival time</p></li>
+<li><p>k, scale factor</p></li>
+<li><p>a and b, arbitrary parameters</p></li>
+</ul>
+</dd>
+<dt>Gamma variate analytical solutions:</dt><dd><ul class="simple">
+<li><p>integral = k * (b ** (a + 1)) * gamma(a + 1)</p></li>
+<li><p>mean transit time = t0 + b * (a + 1)</p></li>
+<li><p>peak time = t0 + (a * b)</p></li>
+<li><p>peak concentration = k ((a * b) / e) ** a</p></li>
+</ul>
+</dd>
+</dl>
+</div>
+<ul class="simple">
+<li><p>Check <strong>Deconvolution</strong> to determine whether or not CBF and CBV are processed using a deconvolution algorithm. Contrast concentration deconvolution is an ill-posed problem, which requires some form of regularization in order to extract a physically acceptable solution. Deconvolution algorithm is based on truncated singular value decomposition with L-curve criterion (LCC) regularization. If this option is unchecked, fast approximations of CBF and MTT are calculated directly from the contrast concentration time series without deconvolution.</p></li>
+<li><p>Check <strong>Leakage</strong> to determine whether or not to calculate leakage volume (LKV).</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to compute perfusion maps.</p>
+<p>If the AIF dialog parameter is checked, an <strong>arterial input function</strong> dialog box will be displayed first:</p>
+<ul>
+<li><p>The left side shows a mean image from the time series of perfusion-weighted images in a <a class="reference internal" href="PySisyphe_sliceview.html#page-sliceview"><span class="std std-ref">Slice view widget</span></a> with a cross-shaped cursor. Left-clicking on the slice view moves the cursor to the current position of the mouse.</p></li>
+<li><p>The voxels considered for calculating the AIF curve are selected based on three criteria: shortest time to pic, highest peak amplitude, and minimal curve width.</p></li>
+<li><p>The right side shows a chart of the time series signal curves. The mean brain curve is shown in blue, the curve of the voxel at the current cursor position is shown in green, the current AIF curve is shown in red, and the curves of each AIF voxel are shown in gray. A gray curve can be selected by left-clicking, the cursor is centered on the voxel associated with this curve, which is then drawn in green.</p></li>
+<li><p>A button bar is displayed below the chart:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Left-click <strong>Add</strong> button to add the current voxel, under the cross-shaped cursor, to the AIF calculation. The AIF curve is then updated.</p></li>
+<li><p>Left-click <strong>Remove</strong> button to remove the current voxel, under the cross-shaped cursor, from the AIF calculation. The AIF curve is then updated.</p></li>
+<li><p>Left-click <strong>Clear</strong> button to remove all voxels selected for AIF calculation. The mean AIF curve and the AIF voxel curves are then removed from the chart.</p></li>
+<li><p>Left-click <strong>Save bitmap</strong> button to save the chart as a bitmap file (supported bitmap formats BMP, JPG, PNG, TIFF and SVG)</p></li>
+<li><p>Left-click <strong>Clipboard</strong> button to copy the chart to the clipboard.</p></li>
+<li><p>Left-click <strong>Screenshots</strong> button to copy the chart to the <a class="reference internal" href="PySisyphe_screenshots.html#page-screenshots"><span class="std std-ref">Screenshots manager</span></a>.</p></li>
+<li><p>Left-click <strong>Save ROI</strong> button to save the selected voxels for the AIF calculation as a PySisyphe ROI (.xroi).</p></li>
+<li><p>Left-click <strong>Save Dataset</strong> button to save all the curves displayed in the chart as table (supported formats CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET).</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Left-click <strong>OK</strong> button to calculate perfusion maps. This is a computationally intensive process that may take more than 30 minutes depending on the selected parameters.</p></li>
+<li><p>Left-click <strong>Cancel</strong> button to exit dialog box without calculating the perfusion maps.</p></li>
+</ul>
+<p>Perfusion maps are saved with the original file name, which is suffixed with the map acronym (i.e. cbf, cbv, mtt, ttp, ttb, lkv, sr, psr).</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
