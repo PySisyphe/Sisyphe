@@ -1,0 +1,559 @@
+.. _page-functions:
+
+Functions menu
+==============
+
+- :ref:`menu-section-join`
+- :ref:`menu-section-split`
+- :ref:`menu-section-flip`
+- :ref:`menu-section-permute`
+- :ref:`menu-section-neck`
+- :ref:`menu-section-datatype`
+- :ref:`menu-section-attributes`
+- Filters >
+	- :ref:`menu-section-filter-mean`
+	- :ref:`menu-section-filter-median`
+	- :ref:`menu-section-filter-std`
+	- :ref:`menu-section-filter-gaussian`
+	- :ref:`menu-section-filter-gradient`
+	- :ref:`menu-section-filter-laplacian`
+	- :ref:`menu-section-filter-anisodiff`
+- Intensity processing >
+	- :ref:`menu-section-matching-hist`
+	- :ref:`menu-section-matching-reg`
+	- :ref:`menu-section-norm`
+- :ref:`menu-section-texture`
+- :ref:`menu-section-roitexture`
+- :ref:`menu-section-biasfield`
+- Voxel-by-voxel processing >
+	- :ref:`menu-section-voxel-mean`
+	- :ref:`menu-section-voxel-median`
+	- :ref:`menu-section-voxel-std`
+	- :ref:`menu-section-voxel-min`
+	- :ref:`menu-section-voxel-max`
+	- :ref:`menu-section-algebra`
+- :ref:`menu-section-workflow`
+- :ref:`menu-section-workflows`
+- :ref:`menu-section-installplugin`
+- :ref:`menu-section-removeplugin`
+- :ref:`menu-section-plugins`
+
+.. _menu-section-join:
+Join single component volume(s)
+-------------------------------
+
+PySisyphe manages both single- and multi-component volumes:
+
+- a single-component volume can be either a 2D or 3D volume, and its voxel value is a scalar.
+- a multi-component is a 4D volume (time series, perfusion series, diffusion series), and its voxel value is a vector.
+
+This menu displays the **Join single component volume(s)** dialog box to create a multi-component volume from a list of single-component volumes.
+
+Add PySisyphe single-component volumes in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **OK** button to create the multi-component volume.
+
+Left-click **Cancel** button to close dialog box without processing.
+
+.. _menu-section-split:
+Split multi component volume(s)
+-------------------------------
+
+PySisyphe manages both single- and multi-component volumes:
+
+- a single-component volume can be either a 2D or 3D volume, and its voxel value is a scalar.
+- a multi-component is a 4D volume (time series, perfusion series, diffusion series), and its voxel value is a vector.
+
+This menu displays the **Split multi component volume(s)** dialog box to create a single-component volume(s) from a multi-component volume.
+
+Add PySisyphe multi-component volume(s) in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **OK** button to create single-component volumes. Single-component volumes are saved with the multi-component file name suffixed with the component index (_#00.xvol .. _#xx.xvol).
+
+Left-click **Cancel** button button to close dialog box without processing.
+
+.. _menu-section-flip:
+Flip axis
+---------
+
+This menu displays the **Flip axis** dialog box used to flip one or more volume axes. This manipulation is typically used to correct orientation errors during the import stage. 
+
+Add PySisyphe volume(s) to be processed in the :ref:`widgets-section-multi-file` widget.
+
+Three checkboxes are provided to flip respectively along the x-axis (left-right flip), the y-axis (anterior-posterior flip), and the z-axis (cranial-caudal flip). Volumes are saved with the original file name prefixed with the string edited in the **prefix** field.
+
+Left-click **OK** button to flip volumes.
+
+Left-click **Cancel** button button to close dialog box without processing.
+
+.. _menu-section-permute:
+Permute axis
+------------
+
+This menu displays the **Permute axis** dialog box used to change axis order of volumes. This manipulation is typically used to correct orientation errors during the import stage.
+
+PySisyphe images are in axial orientation by default. In this case, the axis order is x, y, z. All possible permutations are provided in the **swap order** combo box (y,z,x - z,x,y - x,z,y - y,z,x - z,y,x). The most common permutations are (y, z, x) to perform a sagittal-to-axial conversion, and (x, z, y) to perform a coronal-to-axial conversion. Volumes are saved with the original file name prefixed with the string edited in the **prefix** field.
+
+Add PySisyphe volume(s) to be processed in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **OK** button to swap axes.
+
+Left-click **Cancel** button button to close dialog box without processing.
+
+.. _menu-section-neck:
+Remove neck slices
+------------------
+
+This menu displays the **Remove neck slices** dialog box to remove the lowest slices of the neck. Most 3D MR acquired in sagittal orientation have extensive and useless inferior coverage. This function crops the MR volume in the z-direction by removing the empty slices and the lower neck slices below the foramen magnum.
+
+Add PySisyphe volume(s) to be processed in the :ref:`widgets-section-multi-file` widget.
+
+The **extent factor**, which is a multiplicative factor, adjusts the position of the lower slice at neck level.. Lower values remove more slices, higher values keep more slices (default 1.8, close to the foramen magnum for most MR scans). Cropped volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** fields.
+
+Left-click **OK** button to remove neck slices.
+
+Left-click **Cancel** button button to close dialog box without processing.
+
+.. _menu-section-datatype:
+Datatype conversion
+-------------------
+
+This menu displays the **Datatype conversion** dialog box, which is used to change the data type of one or more PySisyphe volumes. Datatypes supported by PySisyphe are *uint8*, *uint16*, *unit32*, *uint64*, *int8*, *int16*, *int32*, *int64*, *float32* and *float64*.
+
+Select the new data type using the **Datatype** combo box.
+
+Add PySisyphe volume(s) to be processed in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **OK** button to perform the data type conversion.
+
+Left-click **Cancel** button button to close dialog box without processing.
+
+.. _menu-section-attributes:
+Attributes conversion
+---------------------
+
+This menu displays the **Attributes conversion** dialog box, which is used to modify common attributes of one or more PySisyphe volumes.
+
+Select the new data type using the **Datatype** combo box.
+
+Seven check boxes are provided to modify volume attributes:
+
+- **Anonymize** to erase identity attributes (*lastname*, *firstname*, *date of birth*)
+- **Set modality** to chose one of the following modalities *MR*, *CT*, *PT* (PET), *NM* (SPECT), *LB* (Label), *TP* (template), *PJ* (2D projection), *OT* (other modality, secondary processed image)
+- **Set sequence** to chose on of the following sequence:
+
+	- OT modality: *p-map*, *t-map*, *z-map*, *GM*, *SCGM*, *CGM*, *WM*, *CSF*, *Brainstem*, *Cerebellum*, *Cortical thickness*, *CBF*, *CBV*, *MTT*, *TTP*, *Dose*, *FA*, *ADC*, *Bias field*, *Distance map*, *Median*, *Mean*, *Min*, *Max*, *Std*, *Algebra*, *Mask*, *Struct*, *Displacement field*, *Jacobian*, *Labels*.
+	- MR modality: *T1*, *T2*, *T2star*, *PD*, *FLAIR*, *CE T1*, *CE T2*, *CE FLAIR*, *CE TOF*, *EPI*, *B0*, *DWI*, *PWI*, *ASL*, *SWI*, *TOF*
+	- CT modality: *CT*, *CE CT*
+	- PT modality: *FDG*
+	- NM modality: *HMPAO*, *ECD*, *FPCIT*
+	- LB modality: *LABELS*
+	- TP modality: all sequences
+	- PJ modality: None
+
+- **Set unit** to chose the scalar values unit: *None* (No unit), *%*, *ratio*, *s*, *mm*, *count*, *Bq*, *Bq/ml*, *SUV*, *mm2/s*.
+- **Set frame** to chose stereotactic frame: *no frame* or *Leksell frame*.
+- **Set origin to default** to set origin to [0,0,0]. The coordinate origin is based on the RAS+ convention and is set at the most left, posterior, inferior point in the field of view.
+- **Set directions to default** to set axis order to x-axis (left to right), y-axis (posterior to anterior), z-axis (caudal to cranial) i.e. [[1,0,0],[0,1,0],[0,0,1]] with RAS+ convention.
+
+Add PySisyphe volume(s) to be processed in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **Convert** button to perform attribute conversions.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-filter-mean:
+Mean filter
+-----------
+
+This menu displays the **Mean filter** dialog box. It applies an average filter to a volume. It computes a volume in which a given voxel is the mean value of the voxels in a neighborhood around the corresponding input voxel (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MeanImageFilter.html>`_).
+
+Filter parameters are as follows:
+
+- **Fast**, checkbox to select the fast filter version.
+- **Kernel radius**, use the kernel radius in voxels to define the neighborhood extent (default 3).
+- Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** fields.
+
+Add PySisyphe volume(s) to be filtered in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **Execute** button to perform mean filtering.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-filter-median:
+Median filter
+-------------
+
+This menu displays the **Median filter** dialog box. It applies a median filter to a volume. It computes a volume in which a given voxel is the median value of the voxels in a neighborhood around the corresponding input voxel (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MedianImageFilter.html>`_).
+
+Filter parameters are as follows:
+
+- **Kernel radius**, use the kernel radius in voxels to define the neighborhood extent (default 3).
+- Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** parameters.
+
+Add PySisyphe volume(s) to be filtered in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **Execute** button to perform median filtering.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-filter-gaussian:
+Gaussian filter
+---------------
+
+This menu displays the **Gaussian filter** dialog box, which is used to perform the Gaussian blurring of a volume.
+
+Filter parameters are as follows:
+
+- **Algorithm**, two types of algorithms are available. The first uses a separable convolution with a discrete Gaussian kernel (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1DiscreteGaussianImageFilter.html#details>`_). The latter uses a recursive approximation (IIR) of the Gaussian kernel, this filter tends to be faster for large kernels (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1RecursiveGaussianImageFilter.html>`_).
+- **Fwhm**, full width at hall maximum of the gaussian kernel in mm.
+- Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** parameters.
+
+Add PySisyphe volume(s) to be filtered in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **Execute** button to perform gaussian filtering.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-filter-gradient:
+Gradient magnitude filter
+-------------------------
+
+This menu displays the **Gradient magnitude filter** dialog box, which is used to compute the gradient magnitude of a volume at each voxel by convolution with the first derivative of a Gaussian kernel.
+
+Filter parameters are as follows:
+
+- **Algorithm**, two types of algorithms are available. The first uses a separable convolution with a discrete first derivative of a Gaussian kernel (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1GradientMagnitudeImageFilter.html>`_). The latter uses a recursive approximation (IIR) of the kernel, this filter tends to be faster for large kernels (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1GradientMagnitudeRecursiveGaussianImageFilter.html>`_).
+- **Sigma**, standard deviation of the gaussian kernel in mm.
+- Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** parameters.
+
+Add PySisyphe volume(s) to be filtered in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **Execute** button to perform gradient magnitude filter.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-filter-laplacian:
+Laplacian filter
+----------------
+
+This menu displays the **Laplacian filter** dialog box, which is used to compute a Laplacian filtering, isotropic measure of the 2nd spatial derivative of a volume.
+
+Filter parameters are as follows:
+
+- **Algorithm**, two types of algorithms are available. The first uses a separable convolution with a discrete second derivative of a Gaussian kernel (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LaplacianImageFilter.html>`_). The latter uses a recursive approximation (IIR) of the kernel, this filter tends to be faster for large kernels (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LaplacianRecursiveGaussianImageFilter.html>`_).
+- **Sigma**, standard deviation of the gaussian kernel in mm.
+- Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** parameters.
+
+Add PySisyphe volume(s) to be filtered in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **Execute** button to perform Laplacian filtering.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-filter-anisodiff:
+Anisotropic diffusion filter
+----------------------------
+
+This menu displays the **Anisotropic diffusion filter** dialog box, which is used to perform volume denoising with anisotropic diffusion family filters. The advantage of these approaches is that clear boundaries are preserved, with smoothing occurring only within homogeneous regions.
+
+Filter parameters are as follows:
+
+- **Algorithm**, four types of algorithms are available.
+
+	- Anisotropic gradient diffusion filter: iteratively diffuse volumes by solving non-linear partial differential equations based on the classic Perona-Malik, gradient magnitude equation (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1GradientAnisotropicDiffusionImageFilter.html>`_).
+	- Curvature anisotropic diffusion filter: iteratively diffuse volumes by solving non-linear partial differential equations using the modified curvature diffusion equation (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1CurvatureAnisotropicDiffusionImageFilter.html>`_).
+	- Curvature flow filter and MinMax curvature flow: iterative curvature driven volume denoising algorithm. Iso-brightness contours in a grayscale volume are viewed as a level set. The level set is then evolved using a curvature-based speed function (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1CurvatureFlowImageFilter.html>`_ and see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MinMaxCurvatureFlowImageFilter.html>`_).
+
+- **Gradient time step**, which is the finite difference update. Stable values for most 2D and 3D functions are 0.125 and 0.0625 respectively, when the pixel spacing is unity. In general, you should keep the time step below (PixelSpacing)/2N+1, where N is the number of image dimensions.
+- **Conductance**, controls the sensitivity of the conductance term in the basic anisotropic diffusion equation. It affects the conductance term in different ways depending on the particular variation on the basic equation. As a general rule, the lower the value, the more strongly the diffusion equation preserves image features (such as high gradients or curvature). A high value for conductance will cause the filter to diffuse image features more readily. Typical values range from 0.5 to 2.0.
+- **Number of iterations**, specifies the number of iterations (time-step updates) that the solver will perform to produce a solution. The appropriate number of iterations is dependent on the application and the image being processed. As a general rule, the more iterations performed, the more diffused the image will become.
+- Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** parameters.
+
+Add PySisyphe volume(s) to be filtered in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **Execute** button to perform Anisotropic diffusion filtering.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-matching-hist:
+Histogram intensity matching
+----------------------------
+
+This menu displays the **Histogram intensity matching** dialog box, which is used to match the intensities of one or more volumes with those of a reference volume. This filter uses a histogram matching technique where the histograms are only matched at a specified number of quantile values (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HistogramMatchingImageFilter.html>`_).
+
+Filter parameters are as follows:
+
+- **Exclude background**, checkbox to exclude background voxels from histogram matching processing (checked by default). Background voxels are those with grayscale values smaller than the mean.
+- **Number of match points**, governs the number of quantile values to be matched.
+- **Number of histogram bins**, sets the number of bins used when creating histograms.
+- Matched volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** parameters.
+
+Select PySisyphe volume used as reference in the :ref:`widgets-section-single-file` widget located at the top of the dialog box.
+
+Add PySisyphe volume(s) to be matched in the :ref:`widgets-section-multi-file` widget located below the previous one.
+
+Left-click **Execute** button to perform histogram intensity matching.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-matching-reg:
+Regression intensity matching
+-----------------------------
+
+This menu displays the **Regression intensity matching** dialog box, which is used to match the intensities of one or more volumes with those of a reference volume. This filter uses a regression algorithm for each pair of voxels that have the same coordinates in the two volumes. All volumes must be co-registered to the reference volume.
+
+Filter parameters are as follows:
+
+- **Polynomial order to fit**, order of the polynomial used as regression function.
+- **Truncate**, the minimum and maximum values of the matched volume are adjusted to align with the reference volume, if checked (uncheck by default).
+- **Exclude background**, checkbox to exclude background voxels from histogram matching processing (checked by default). Background voxels are those with grayscale values smaller than the mean.
+- Matched volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** parameters.
+
+Select PySisyphe volume used as reference in the :ref:`widgets-section-single-file` widget located at the top of the dialog box.
+
+Add PySisyphe volume(s) to be matched in the :ref:`widgets-section-multi-file` widget located below the previous one.
+
+Left-click **Execute** button to perform regression intensity matching.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-norm:
+Intensity normalization
+-----------------------
+
+This menu displays the **Intensity normalization** dialog box, which is used to normalize intensities of one or more volume.
+
+Filter parameters are as follows:
+
+- **Method**, two are provided.
+
+	- standardize the intensity as *z-score* i.e. zero mean, [-std, +std] mapped to [-1, 1].
+	- standardize the intensity values to the *range [0, 1]* i.e. [min, max] mapped to [0, 1].
+
+- **Truncate centile**, truncate volume intensities with thresholds expressed in percentile (min threshold = centile, max threshold = 100 - centile), no truncation by default i.e centile set to 0.
+- Intensity-normalized volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** parameters.
+
+Add PySisyphe volume(s) to be processed in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **Execute** button to perform intensity normalization.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-texture:
+Texture feature maps
+--------------------
+
+This menu displays the **Texture feature maps** dialog box, which is used to extract various voxel-based radiomics features (feature maps) from a volume. PySisyphe uses the `Pyradiomics <https://pyradiomics.readthedocs.io/en/latest/>`_ implementation.
+
+Add PySisyphe volume(s) to be analyzed in the :ref:`widgets-section-multi-file` widget located at the top of the dialog box.
+
+In the list box below the previous widget, select the feature maps to be calculated. Features are divided into six categories: *first Order Statistics* (`first Order <https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.firstorder.RadiomicsFirstOrder>`_), *gray level co-occurrence matrix* (`GLCM <https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.glcm.RadiomicsGLCM>`_), *gray level run length matrix* (`GLRLM <https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.glrlm.RadiomicsGLRLM>`_), *gray level size zone matrix* (`GLSZM <https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.glszm.RadiomicsGLSZM>`_), *neighbouring gray tone difference matrix* (`NGTDM <https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.ngtdm.RadiomicsNGTDM>`_), *neighbouring gray tone difference matrix* (`NGTDM <https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.ngtdm.RadiomicsNGTDM>`_) and *gray level dependence matrix* (`GLDM <https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.gldm.RadiomicsGLDM>`_). Left-click **>** icon to expand the feature categories. Each category/feature is headed by a checkbox. The check state of a category is copied to its feature children in the tree structure.
+
+Paremeters are as follows:
+
+- **Kernel radius**, kernel extent in voxels used by matrix-based features (GLCM, GLRLM, GLSZM, NGTDM, GLDM)
+- **Number of voxels in one batch**, parameter used to limit memory usage and prevent memory error.
+- Feature maps are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** parameters.
+
+Left-click **Check all** button to check all features in the list box.
+
+Left-click **Uncheck all** button to uncheck all features in the list box.
+
+Left-click **Execute** button to process the checked feature maps.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-roitexture:
+ROI Texture features
+--------------------
+
+This menu displays the **ROI Texture features** dialog box, which is used to extract various ROI-based radiomics features from a volume and ROI(s). PySisyphe uses the `Pyradiomics <https://pyradiomics.readthedocs.io/en/latest/>`_ implementation.
+
+Add PySisyphe volume(s) to be analyzed in the :ref:`widgets-section-multi-file` widget located at the top of the dialog box.
+
+Add PySisyphe ROI(s) to be analyzed in the :ref:`widgets-section-multi-file` widget located below the previous.
+
+In the list box below the previous widget, select the features to be calculated. Features are divided into seven categories: *first Order Statistics* (`first Order <https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.firstorder.RadiomicsFirstOrder>`_), *gray level co-occurrence matrix* (`GLCM <https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.glcm.RadiomicsGLCM>`_), *gray level run length matrix* (`GLRLM <https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.glrlm.RadiomicsGLRLM>`_), *gray level size zone matrix* (`GLSZM <https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.glszm.RadiomicsGLSZM>`_), *neighbouring gray tone difference matrix* (`NGTDM <https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.ngtdm.RadiomicsNGTDM>`_), *gray level dependence matrix* (`GLDM <https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.gldm.RadiomicsGLDM>`_) and *shape features* (`Shape <https://pyradiomics.readthedocs.io/en/latest/features.html#radiomics.shape.RadiomicsShape>`_). Left-click **>** icon to expand the feature categories. Each category/feature is headed by a checkbox. The check state of a category is copied to its feature children in the tree structure.
+
+Paremeter:
+
+- **Kernel radius**, kernel extent in voxels used by matrix-based features (GLCM, GLRLM, GLSZM, NGTDM, GLDM)
+
+Left-click **Check all** button to check all features in the list box.
+
+Left-click **Uncheck all** button to uncheck all features in the list box.
+
+Left-click **Execute** button to process the checked features.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-biasfield:
+Bias field correction
+---------------------
+
+This menu displays the **Bias field correction** dialog box. MR images are affected by bias field artefact which is defined as low-frequency intensity inhomogeneity. The N4 algorithm assumes a simple parametric model (B-Spline fitting) for the bias field and does not require tissue class segmentation. A multiple resolutions strategy is used during the correction process. The basic algorithm iterates between sharpening the intensity histogram of the corrected input image and spatially smoothing those results with a B-spline scalar field estimate of the bias field (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1N4BiasFieldCorrectionImageFilter.html>`_).
+
+Add PySisyphe volume(s) to be corrected in the :ref:`widgets-section-multi-file` widget.
+
+Filter parameters are as follows:
+
+- **Use mask**, if checked, the background is excluded from the bias field processing (default).
+- **Shrink factor**, to perform the correction on a subsampled image (size / shrink factor, default 1 no shrinking).
+- **Spline order**, to set the spline order used to model the bias field.
+- **Number of histogram bins**, to set the number of bins defining the log input intensity histogram.
+- **Number of fitting levels**, to set the number of multiple resolution levels.
+- **Number of control points**, to set the control point grid size defining the B-spline estimate of the bias field. In each dimension, the B-spline mesh size is equal to the number of control points in that dimension minus the spline order.
+- **Number of iterations**, to set the maximum number of iterations at each fitting level.
+- **Convergence threshold**, to set the convergence threshold. Convergence is determined by the coefficient of variation of the current bias field estimate and the previous estimate. If this value is less than the specified threshold, the algorithm proceeds to the next fitting level or terminates if it is at the last level. 
+- **Wiener filter noise**, to set the noise estimate defining the Wiener filter.
+- **Bias field full width at half maximum**, to set the full width at half maximum parameter characterizing the width of the Gaussian deconvolution.
+- Corrected volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** parameters.
+- Bias field volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **bias field prefix** and **bias field suffix** parameters.
+
+Left-click **Execute** button to process the bias field correction.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-voxel-mean:
+Mean volume
+-----------
+
+This menu displays the **Mean volume** dialog box, which calculates the mean volume of a list of volumes on a voxel-by-voxel basis. All volumes must have the same field-of-view (i.e. same size and same spacing).
+
+Add PySisyphe volume(s) in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **OK** button to calculate the mean volume.
+
+Left-click **Cancel** button button to close dialog box without processing.
+
+.. _menu-section-voxel-median:
+Median volume
+-------------
+
+This menu displays the **Median volume** dialog box, which calculates the median volume of a list of volumes on a voxel-by-voxel basis. All volumes must have the same field-of-view (i.e. same size and same spacing).
+
+Add PySisyphe volume(s) in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **OK** button to calculate the median volume.
+
+Left-click **Cancel** button button to close dialog box without processing.
+
+.. _menu-section-voxel-std:
+Standard deviation volume
+-------------------------
+
+This menu displays the **Standard deviation volume** dialog box, which calculates the standard deviation volume of a list of volumes on a voxel-by-voxel basis. All volumes must have the same field-of-view (i.e. same size and same spacing).
+
+Add PySisyphe volume(s) in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **OK** button to calculate the standard deviation volume.
+
+Left-click **Cancel** button button to close dialog box without processing.
+
+.. _menu-section-voxel-min:
+Minimum volume
+--------------
+
+This menu displays the **Minimum volume** dialog box, which calculates the minimum volume of a list of volumes on a voxel-by-voxel basis. All volumes must have the same field-of-view (i.e. same size and same spacing).
+
+Add PySisyphe volume(s) in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **OK** button to calculate the minimum volume.
+
+Left-click **Cancel** button button to close dialog box without processing.
+
+.. _menu-section-voxel-max:
+Maximum volume
+--------------
+
+This menu displays the **Maximum volume** dialog box, which calculates the maximum volume of a list of volumes on a voxel-by-voxel basis. All volumes must have the same field-of-view (i.e. same size and same spacing).
+
+Add PySisyphe volume(s) in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **OK** button to calculate the maximum volume.
+
+Left-click **Cancel** button button to close dialog box without processing.
+
+.. _menu-section-algebra:
+Algebra
+-------
+
+This menu displays the **Algebra** dialog box, which calculates a volume using a free voxel-by-voxel formula applied to a list of volumes. All volumes must have the same field-of-view (i.e. same size and same spacing).
+
+Add PySisyphe volume(s) in the :ref:`widgets-section-multi-file` widget.
+
+All functions of the `Numpy library <https://numpy.org/doc/stable/reference/index.html#reference>`_ and python operators can be used in the formula field. Numpy functions must be prefixed with **np.** (i.e. numpy is imported with the alias np). A volume is inserted into the formula using a list variable, named *img*, and its order index i in the file selection widget (first index is 0) e.g. **img[i]** or double-click on the file name in the file selection widget to add the volume in the formula.
+
+Left-click **Execute** button to calculate the volume.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-workflow:
+Workflow processing
+-------------------
+
+This menu displays the **Workflow processing** dialog box. A workflow is a batch processing mechanism that automates a series of PySisyphe processes. The following functions are supported: *loading image*, *flip axes*, *swap axes*, *remove neck*, *texture feature map*, *mean filter*, *median filter*, *gaussian filter*, *gradient magnitude filter*, *laplacian filter*, *anistropic diffusion filter*, *bias field correction*, *histogram intensity matching*, *regression intensity matching*, *signal normalization*, *rigid registration*, *affine registration*, *displacement field registration*, *spatial normalization*, *skull stripping*, *prior based registration*, *algebra*.
+
+Add PySisyphe volume(s) in the :ref:`widgets-section-multi-file` widget located at the top of the dialog box. These volumes will be processed successively in the workflow, as the first input image with an index of 0.
+
+The list box located below the previous widget displays the workflow with one function by row. Left-click on a row to select it (blue background). A row consists of 4 elements from left to right: *function name*, *input image index* (one or two depending on the functions), *function parameters* and *output image index*. Input image index is displayed in a SpinBox widget and can be changed using the widget's arrows. This input image index is always 0 in the first row (i.e. original image at the first stage of the workflow).
+
+Select a function in the comboxbox located below the list box.
+
+Left-click **Add** button to add the comboxbox function in the workflow.
+
+Left-click **Insert** button to insert the comboxbox function before the selected row in the workflow.
+
+Left-click **Edit** button to open a dialog box and edit the parameters of the selected row in the workflow.
+
+Left-click **Remove** button to erase the selected row in the workflow.
+
+Left-click **Clear** button to clear the workflow.
+
+Left-click **Open** button to open a PySisyphe workflow XML file (.xwflow).
+
+Left-click **Save** button to save the workflow as a PySisyphe xwflow XML file in the workflow subfolder of the PySisyphe user folder ($User/.PySisyphe), by default.
+
+Left-click **Execute** button to run the workflow.
+
+Left-click **Close** button button to close dialog box without processing.
+
+.. _menu-section-workflows:
+Workflows
+---------
+
+This menu displays a list of workflows saved in the workflow subfolder of the PySisyphe user folder ($User/.PySisyphe).
+
+Click on a workflow submenu item to open it in the :ref:`menu-section-workflow` dialog box.
+
+.. _menu-section-installplugin:
+Install plugin
+--------------
+
+This menu displays a dialog box for selecting the Zip archive of a PySisyphe plugin.
+
+Plugins can be downloaded from the :ref:`menu-section-download` dialog box.
+
+A plugin is a python module:
+
+- The name of the folder where the plugin sources are located is the same as the name of the module.
+- This folder must contain an __init__.py file that could be empty.
+- This folder must contain a python file with the same name as the plugin folder.
+- This file must contain a main function (i.e. def main(parent)), which is the function executed when the plugin is selected in the PySisyphe :ref:`menu-section-plugins` menu.
+- Any external module folders not included in the PySisyphe package must be copied to the plugin folder. Use Python relative import syntax to import these modules into your plugin sources.
+- Create a Zip archive of the plugin folder and instal it with the PySisyphe install plugin menu.
+
+.. _menu-section-removeplugin:
+Remove plugin
+-------------
+
+This menu opens a dialog box that lets you select the PySisyphe plugin folder you want to remove.
+
+.. _menu-section-plugins:
+Plugins
+-------
+
+This menu displays a list of plugins that are installed in PySisyphe.
+
+Run a plugin by clicking on its submenu item.

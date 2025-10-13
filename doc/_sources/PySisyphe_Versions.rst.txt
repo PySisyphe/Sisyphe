@@ -1,0 +1,662 @@
+.. _page-versions:
+
+Version history
+===============
+
+- :ref:`build26-07-2025`
+- :ref:`build05-08-2025`
+- :ref:`build28-08-2025`
+- :ref:`build30-08-2025`
+- :ref:`build15-10-2025`
+
+.. _build26-07-2025:
+version 0.9.1, build 26/07/2025
+-------------------------------
+
+- First distributed version.
+- Github page deployment: https://github.com/PySisyphe/Sisyphe
+- First PyInstaller stand alone frozen version for Windows and MacOS platforms (x64 CPU)
+- Shared link to Mega repository for downloading frozen versions: https://mega.nz/folder/hKEBzRTR#MUodQFh4N8LeukE2hbkzNA
+
+.. _build05-08-2025:
+version 0.9.1, build 05/08/2025
+-------------------------------
+
+- **new files**
+
+	- gui/darkroi/texture.png
+	- gui/lightroi/texture.png
+
+- **new external module**
+
+	- pynetdicom 3.0.4
+
+- **new module**
+
+	- gui.dialogDicomQuery
+	
+		- Dialog box for Dicom Query/retreive 
+
+- **new classes**
+
+	- gui.dialogDicomQuery.DialogDicomQueryRetrieve
+	
+		- Dialog box for Dicom Query/retreive 
+	
+	- gui.dialogTexture.Dialog.DialogROITexture
+	
+		- Dialog box for texture analysis in ROI
+
+- **new methods**
+
+	- gui.windowSisyphe.WindowSisyphe.queryDicom
+	- gui.windowSisyphe.WindowSisyphe.texture2
+
+- **new functions**
+
+	- gui.dialogDicomQuery.getDicomDirectory
+	- gui.dialogDicomQuery.handle_store
+
+- **updated files**
+
+	- settings/settings.xml
+	
+		- add DicomHost section
+	
+	- settings/tooltips.xml
+	
+		- add DicomHost section
+
+- **upgraded external module**
+
+	- pydicom, upgrade 2.3.1 to 3.0.1
+	
+		- generate a bug in core.sisypheDicom.ImportFromRTStruct.execute() method
+
+- **updated modules**
+
+	- core.sisypheDicom
+	- gui.dialogSplash
+	- gui.dialogDicomRTImport
+	- core.sisypheImageIO
+	- gui.dialogGenericResults
+	- gui.windowSisyphe
+	- gui.attributesWidgets
+	- gui.dialogSplash
+
+- **updated classes**
+
+	- core.sisypheDicom.ImportFromRTStruct
+	
+		- update execute() method
+	
+	- gui.dialogDicomRTImport.DialogRTimport
+	
+		- update _convert() method
+	
+	- gui.dialogGenericResults.DialogGenericResults
+	
+		- update _getDataFrame() method
+	
+	- gui.windowSisyphe.WindowSisyphe
+	
+		- add queryDicom() method to exec gui.dialogDicomQuery.DialogDicomQueryRetrieve dialog
+		- add texture2() method to exec gui.dialogTexture.Dialog.DialogROITexture dialog
+	
+	- gui.attributesWidgets.ListROIAttributesWidget
+	
+		- add features() method to exec gui.dialogTexture.Dialog.DialogROITexture dialog
+		- update __init__() method
+	
+	- gui.dialogSplash.DialogSplash
+	
+		- update __init__() method
+
+- **updated methods**
+
+	- core.sisypheDicom.ImportFromRTStruct.execute()
+	
+		- bug fix, since version 3.0.1 of pydicom, the VM attribute of a sequence (SQ) is always 1, 
+		- to get the number of elements in a sequence (SQ), use len(DataElement.value)
+		- bug fix, set reference volume origin to default (0.0, 0.0, 0.0)
+		- bug fix, test if the dicom ROIContourSequence field exists
+		- bug fix, add multiple folders management
+	
+	- gui.dialogDicomRTImport.DialogRTimport._convert()
+	- gui.dialogGenericResults.DialogGenericResults._getDataFrame()
+	
+		- replace \n by space of the dataFrame header row
+	
+	- gui.attributesWidgets.ListROIAttributesWidget.__init__()
+	
+		- add features IconPushButton (_features)
+	
+	- gui.dialogSplash.DialogSplash.__init__()
+	
+		- display pynetdicom version in dialog splash
+
+- **updated function**
+
+	- core.sisypheImageIO.isDicom
+	
+		- bug fix, return value, from str to bool
+
+.. _build28-08-2025:
+version 0.9.1, build 28/08/2025
+-------------------------------
+
+- **updated modules**
+
+	- widgets.attributesWidget
+	- widgets.tabToolsWidgets
+
+- **updated classes**
+
+	- widgets.attributesWidget.ItemMeshAttributesWidget
+	- widgets.attributesWidget.ItemToolAttributesWidget
+	- widgets.attributesWidget.ItemBundleAttributesWidget
+	- widgets.attributesWidget.ListMeshAttributesWidget
+	- widgets.attributesWidget.ListToolAttributesWidget
+	- widgets.attributesWidget.ListBundleAttributesWidget
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+	- widgets.tabToolsWidgets.TabTrackingWidget
+
+- **updated methods**
+
+	- widgets.attributesWidget.ItemMeshAttributesWidget.settings()
+	- widgets.attributesWidget.ItemToolAttributesWidget.properties()
+	- widgets.attributesWidget.ItemToolAttributesWidget.target()
+	- widgets.attributesWidget.ItemToolAttributesWidget.length()
+	- widgets.attributesWidget.ItemBundleAttributesWidget._editColor()
+	- widgets.attributesWidget.ListMeshAttributesWidget.addIsosurface()
+	- widgets.attributesWidget.ListToolAttributesWidget.newHandle()
+	- widgets.attributesWidget.ListToolAttributesWidget.newLine()
+	- widgets.attributesWidget.ListToolAttributesWidget.duplicate()
+	- widgets.attributesWidget.ListToolAttributesWidget.features()
+	- widgets.attributesWidget.ListToolAttributesWidget.features2()
+	- widgets.attributesWidget.ListBundleAttributesWidget.dissection()
+	- widgets.attributesWidget.ListBundleAttributesWidget.filter()
+	- widgets.attributesWidget.ListBundleAttributesWidget.centroid()
+	- widgets.attributesWidget.ListBundleAttributesWidget.cluster()
+	- widgets.attributesWidget.ListBundleAttributesWidget.statistics()
+	- widgets.tabToolsWidgets.TabROIToolsWidget._dialogActiveContour()
+	- widgets.tabToolsWidgets.TabTrackingWidget.atlas()
+	- widgets.tabToolsWidgets.TabTrackingWidget.dissection()
+	
+		- update dialog title bar color for Win32 platform
+
+.. _build30-08-2025:
+version 0.9.1, build 30/08/2025
+-------------------------------
+
+- **updated modules**
+
+	- core.sisypheROI
+	
+		- update cython compilation
+	
+	- widgets.thresholdWidgets
+	- widgets.tabToolsWidgets
+	- gui.dialogFiducialBox
+	- gui.windowSisyphe
+
+- **updated classes**
+
+	- core.sisypheROI.SisypheROIDraw
+	
+		- update setMorphologyRadius() method
+		- update getMorphologyRadius() method
+	
+	- widgets.thresholdWidgets.ThresholdViewWidget
+	
+		- add _onButtonResetEvent() method
+		- add setResetButtonVisibility() method
+		- add getResetButtonVisibility() method
+		- update __init__() method
+	
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+	
+		- add _menuThresholdShow() method
+		- update _brushThresholdChanged() method
+	
+	- gui.dialogFiducialBox.DialogFiducialBox
+	
+		- update __init__() method
+	
+	- gui.windowSisyphe.WindowSisyphe
+	
+		- update frameDetection() method
+
+- **new method**
+
+	- widgets.thresholdWidgets._onButtonResetEvent()
+	
+		- event method to reset widget thresholds
+	
+	- widgets.thresholdWidgets.setResetButtonVisibility()
+	
+		- set reset button visibility
+	
+	- widgets.thresholdWidgets.setResetButtonVisibility()
+	
+		- get reset button visibility
+	
+	- widgets.tabToolsWidgets.TabROIToolsWidget._menuThresholdShow()
+	
+		- bug fix, loss of volume display in darwin platform when popup menu is shown
+
+- **updated methods**
+
+	- core.sisypheROI.SisypheROIDraw.setMorphologyRadius()
+	
+		- bug fix, add int parameter type
+	
+	- core.sisypheROI.SisypheROIDraw.getMorphologyRadius()
+	
+		- bug fix, change return type from float to int
+	
+	- widgets.thresholdWidgets.ThresholdViewWidget.__init__()
+	
+		- add reset button (self._resetbutton attribute), to reset widget thresholds
+	
+	- widgets.tabToolsWidgets.TabROIToolsWidget._brushThresholdChanged()
+	
+		- bug fix, loss of volume display in darwin platform when popup menu is shown
+	
+	- gui.dialogFiducialBox.DialogFiducialBox.__init__()
+	
+		- bug fix, remove setModal(True)
+		- Qt5 bug of modal dialog on darwin platform, popup menu items cannot be selected
+	
+	- gui.windowSisyphe.WindowSisyphe.frameDetection()
+	
+		- Qt5 bug of modal dialog on darwin platform, popup menu items cannot be selected, modal simulation to fix it
+
+.. _build15-10-2025:
+version 0.9.1, build 15/10/2025
+-------------------------------
+
+- **update html documentation**
+
+	- add texture.png icon
+	- update PySisyphe_dockroi.rst
+	- add full menu documentation
+	
+		- menu Diffusion: PySisyphe_Diffusion.rst
+		- menu File PySisyphe:_File.rst
+		- menu Functions: PySisyphe_Functions.rst
+		- menu Mapping: PySisyphe_Mapping.rst
+		- menu Registration: PySisyphe_Registration.rst
+		- menu Segmentation: PySisyphe_Segmentation.rst
+		- menu Window PySisyphe:_Window.rst
+	
+	- add version-histrory.rst
+	- update API documentation, docstring corrections
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- /Sisyphe/settings/MR.xdcm
+	
+		- fix error, line 79, in PixelSpacing value, from 1.0/1.L0 to 1.0/1.0
+	
+	- /Sisyphe/settings/dialogs.xml
+	- /Sisyphe/settings/tootips.xml
+	- /Sisyphe/settings/functions.xml
+
+- **updated modules**
+
+	- core.sisypheDicom
+	- core.sliceViewFiducialBoxWidget
+	- core.sisypheTools
+	- core.sisypheStatitics
+	- core.sisypheSettings
+	- processing.dipyFunctions
+	- gui.dialogEditLabels
+	- gui.dialogExport
+	- gui.dialogDicomExport
+	- gui.dialogDicomQuery
+	- gui.dialogLabel
+	- gui.windowSisyphe
+	- gui.dialogWorkflow
+	- gui.dialogReorient
+	- gui.dialogGenericResults
+	- gui.dialogRegistration
+	- gui.dialogSegmentation
+	- gui.dialogDeepSegmentation
+	- gui.dialogDiffusionPreprocessing
+	- gui.dialogDiffusionTracking
+	- gui.dialogStatConstrast
+	- gui.dialogStatModel
+	- gui.dialogStatResult
+	- gui.windowSisyphe
+	- widgets.imageWidgets
+	- widgets.functionsSettingsWidget
+	- widgets.tabToolsWidgets
+
+- **updated function**
+
+	- core.sisypheSettings.initPySisypheUserPath()
+	
+		- line 143, apply DPI scale factor to some settings
+	
+	- core.sisypheSettings.setUserSettingsToDefault()
+	
+		- line 196, apply DPI scale factor to some settings
+	
+	- processing.dipyFunctions.dwiPreprocessing()
+	
+		- line 435, change the default value of the blockradius parameter
+
+- **updated classes**
+
+	- core.sisypheDicom.ExportToDicom
+	
+		- update execute() method
+	
+	- core.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget
+	
+		- update __init__() method
+	
+	- core.sisypheTools.HandleWidget
+	
+		- setFontSize() method
+		- getFontSize() method
+	
+	- core.sisypheTools.LineWidget
+	
+		- setFontSize() method
+		- getFontSize() method
+	
+	- core.sisypheStatitics.SisypheDesign
+	
+		- __str__() method
+		- addGlobalCovariable() method
+	
+	- core.sisypheSettings.SisypheSettings
+	
+		- getUserSettings() method
+	
+	- gui.dialogEditLabels.DialogEditLabels
+	
+		- update __init__() method
+	
+	- gui.dialogExport.DialogExport
+	
+		- update __init__() meaddGlobalCovariable() method
+	
+	- gui.dialogDicomExport.DialogDicomExport
+	
+		- update __init__() method
+	
+	- gui.dialogDicomQuery.DialogDicomQueryRetrieve
+	
+		- update __init__() method
+	
+	- gui.dialogLabel.DialogVOLtoLabel
+	
+		- update __init__() method
+	
+	- gui.dialogLabel.DialogROItoLabel
+	
+		- update __init__() method
+	
+	- gui.dialogLabel.DialogLabeltoROI
+	
+		- update __init__() method
+	
+	- gui.windowSisyphe.WindowSisyphe
+	
+		- update _initRegistrationMenu() method
+	
+	- gui.dialogWorkflow.WorkflowItem
+	
+		- update __init__() method
+	
+	- gui.dialogReorient.DialogReorient
+	
+		- update __init__() method
+	
+	- gui.dialogGenericResults.DialogGenericResults
+	
+		- add showEvent() method
+	
+	- gui.dialogRegistration.DialogAsymmetry
+	
+		- update __init__() method
+		- update execute() method
+	
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation
+	
+		- update _updateAvailability() method
+	
+	- gui.dialogDeepSegmentation.DialogDeepTumorSegmentation
+	
+		- update execute() method
+	
+	- gui.dialogDiffusionPreprocessing.DialogDiffusionPreprocessing
+	
+		- update __init__() method
+	
+	- gui.dialogDiffusionTracking.DialogDiffusionTracking
+	
+		- update _stoppingChanged() method
+	
+	- gui.dialogStatConstrast.DialogContrast
+	
+		- update __init__() method
+	
+	- gui.dialogStatConstrast.DialogConjunction
+	
+		- update __init__() method
+	
+	- gui.dialogStatConstrast.DialogTMapToZMap
+	
+		- update __init__() method
+	
+	- gui.dialogStatModel.DialogModel
+	
+		- update __init__() method
+	
+	- gui.dialogStatModel.DialogObs
+	
+		- update __init__() method
+	
+	- gui.dialogStatModel.DialogfMRIObs
+	
+		- update __init__() method
+	
+	- gui.dialogStatResult.DialogResult
+	
+		- update setMap() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- display documentation for each menu
+	
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget
+	
+		- update editAttributes() method
+		- update viewDicomAttributes() method
+		- update editLabels() method
+		- update statistics() method
+	
+	- widgets.functionsSettingsWidget.SettingsWidget
+	
+		- update formatLabel() method
+
+	- widgets.tabToolsWidgets.TabHelpWidget
+
+		- add setUrl() method
+		- add setPage() method
+
+
+- **updated methods**
+
+	- core.sisypheDicom.ExportToDicom.execute()
+	
+		- bug fix, value incrementation of ds['ImagePositionPatient'] and ds['SliceLocation']
+	
+	- core.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget.__init__()
+	
+		- HandleWidget font size from GUI settings
+	
+	- core.sisypheTools.HandleWidget.setFontSize()
+	
+		- font size f(dpi), add usedpi parameter
+	
+	- core.sisypheTools.HandleWidget.getFontSize()
+	
+		- font size f(dpi), add usedpi parameter
+	
+	- core.sisypheTools.LineWidget.setFontSize()
+	
+		- font size f(dpi), add usedpi parameter
+	
+	- core.sisypheTools.LineWidget.getFontSize()
+	
+		- font size f(dpi), add usedpi parameter
+	
+	- core.sisypheStatitics.SisypheDesign.__str__()
+	
+		- line 2483, translation error, "covariable" to "covariate"
+	
+	- core.sisypheSettings.SisypheSettings.getUserSettings()
+	
+		- line 296, apply DPI scale factor to some settings
+	
+	- core.sisypheStatitics.SisypheDesign.addGlobalCovariable()
+	
+		- line 3681, add covariate always at the last column of the design matrix (not before global factor)
+	
+	- gui.dialogEditLabels.DialogEditLabels.__init__()
+	
+		- remove fixed size of 'Clear labels' and 'Import/export' buttons
+	
+	- gui.dialogExport.DialogExport.__init__()
+	
+		- change the name of the 'Convert' button to 'Export'
+	
+	- gui.dialogDicomExport.DialogDicomExport.__init__()
+	
+		- change the name of the 'Convert' button to 'Export' and remove icon
+	
+	- gui.dialogDicomQuery.DialogDicomQueryRetrieve.__init__()
+	
+		- change the name of the 'Modality date' to 'Acq. date'
+	
+	- gui.dialogLabel.DialogVOLtoLabel.__init__() method
+	
+		- change dialog width
+	
+	- gui.dialogLabel.DialogROItoLabel.__init__() method
+	
+		- change dialog width
+	
+	- gui.dialogLabel.DialogLabeltoROI.__init__() method
+	
+		- change dialog width
+	
+	- gui.windowSisyphe.WindowSisyphe._initRegistrationMenu()
+	
+		- change menu name 'ICBM normalization' to 'ICBM spatial normalization'
+	
+	- gui.dialogWorkflow.WorkflowItem.__init__()
+	
+		- replace fixed size of _input1 and _input2 QSpinBox attributes, from 60 to 100
+	
+	- gui.dialogReorient.DialogReorient.__init__()
+	
+		- remove fixedWidth for all buttons
+		- remove auto button
+	
+	- gui.dialogRegistration.DialogAsymmetry.__init__()
+	
+		- add jacobian determinant settings
+	
+	- gui.dialogRegistration.DialogAsymmetry.execute()
+	
+		- get prefix suffix from jacobian determinant settings
+	
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation._updateAvailability()
+	
+		- visibility of StructureTissue and PMAPCorrection setting parameters
+	
+	- gui.dialogDeepSegmentation.DialogDeepTumorSegmentation.execute()
+	
+		- bug fix, wrong label index and name in .xlabel file
+	
+	- gui.dialogDiffusionPreprocessing.DialogDiffusionPreprocessing.__init__()
+	
+		- bug fix, line 134, self._supervised.setSettingsButtonText('Self Supervised Denoising')
+	
+	- gui.dialogDiffusionTracking.DialogDiffusionTracking._stoppingChanged()
+	
+		- bug fix, line 202, v = self._combo3.currentText() == 'GM/WM/CSF' (not 'MAP')
+	
+	- gui.dialogStatConstrast.DialogContrast.__init__()
+	
+		- cancel button, remove fixed size, set autodefault and default
+	
+	- gui.dialogStatConstrast.DialogConjunction.__init__()
+	
+		- cancel button, remove fixed size, set autodefault and default
+	
+	- gui.dialogStatConstrast.DialogTMapToZMap.__init__()
+	
+		- cancel button, remove fixed size, set autodefault and default
+	
+	- gui.dialogStatModel.DialogModel.__init__()
+	
+		- cancel button, remove fixed size
+	
+	- gui.dialogStatModel.DialogObs.__init__()
+	
+		- cancel button, remove fixed size
+	
+	- gui.dialogStatModel.DialogfMRIObs.__init__()
+	
+		- cancel button, remove fixed size
+	
+	- gui.dialogStatResult.DialogResult.setMap()
+	
+		- bug fix, line 1393, replace .setCursorOpacity(0.25) by .setLineOpacity(0.25)
+	
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.viewDicomAttributes()
+
+		- update dialog title bar color for Win32 platform
+	
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.editLabels()
+
+		- update dialog title bar color for Win32 platform
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.statistics()
+
+		- update dialog title bar color for Win32 platform
+		- update dialog title bar color for Win32 platform
+
+	- widgets.functionsSettingsWidget.SettingsWidget.formatLabel()
+
+		- buf fix, capitalized word management
+
+- **new function**
+
+	- core.sisypheSettings.getDPIScaleFactor()
+
+		- Calculate the scale factor that is used to define the size of icons and some widgets.
+
+- **new method**
+
+	- gui.dialogGenericResults.DialogGenericResults.showEvent()
+
+		- adjust the size of the dialog box to fit the content
+
+	- widgets.tabToolsWidgets.TabHelpWidget
+
+		- add setUrl() method
+
+			- Display an url
+
+		- add setPage() method
+
+			- Display a local page

@@ -38,7 +38,7 @@ ROI item widgets:
 	Left-click to display a ROI color dialog.
 
 |save|
-	Left-click to save ROI (PySisyphe XROI file, xml format), ROI name is used as file name.
+	Left-click to save ROI (PySisyphe ROI file, .xroi), ROI name is used as file name.
 
 |cross|
 	Left-click to remove ROI from list and from view widget(s).
@@ -50,7 +50,7 @@ Icon bar
 Icon bar below ROI list:
 
 |open|
-	Left-click to show ROI selection dialog (PySisyphe XROI file, xml format), adds selected ROI(s) to the list and displays them in the view widget(s). **This ROI must be in the same space as the reference volume displayed in the view widget i.e. same space ID**.
+	Left-click to show ROI selection dialog (PySisyphe ROI file, .xroi), adds selected ROI(s) to the list and displays them in the view widget(s). **This ROI must be in the same space as the reference volume displayed in the view widget i.e. same space ID**.
 
 |add|
 	Left-click to add a new empty ROI to the list.
@@ -80,7 +80,10 @@ Icon bar below ROI list:
 	Left-click to calculate and save distance map(s) of checked ROI(s).
 
 |roi2mesh|
-	Left-click to convert checked ROI(s) to mesh(es) and save.
+	Left-click to convert checked ROI(s) to mesh(es) and save. 
+
+|texture|
+	Left-click to process texture features of checked ROI(s). A dialog box is displayed in which you can select the texture features (`feature definition <https://pyradiomics.readthedocs.io/en/latest/features.html>`_) and kernel radius (in voxels) used by some texture operators.
 
 .. _roi-section-set-operators:
 Set Operators
@@ -135,4 +138,6 @@ Set operators icons at the bottom:
 .. |opacity| image:: /GUI/dock/opacity.png
    :scale: 50 %
 .. |palette| image:: /GUI/dock/palette.png
+   :scale: 50 %
+.. |texture| image:: /GUI/dock/texture.png
    :scale: 50 %

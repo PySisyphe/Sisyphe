@@ -32,7 +32,7 @@ This widget has an edit box on the left and two or three buttons on the right.
 Multiple file selection
 -----------------------
 
-This widget has a list box of selected files at the top, and three or four buttons at th bottom.
+This widget has a list box of selected files at the top, and three or four buttons at the bottom.
 
 **Add** button
 	Left-click to show a file selection dialog and add files in the list box.
@@ -44,7 +44,8 @@ This widget has a list box of selected files at the top, and three or four butto
 	Left-click to remove all files from the list box.
 
 |left| button
-	Left-click to display a menu with a list of the volume(s) that are open in the :ref:`Thumbnail bar <page-thumbnailbar>`. This button is optional and will not always be visible.
+	Left-click to display a menu that lists the volume(s) open in the :ref:`Thumbnail bar <page-thumbnailbar>`. This button is optional and will not always be visible.
+
 
 .. _widgets-section-thresholding:
 Thresholding

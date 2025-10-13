@@ -55,7 +55,7 @@ Mesh item widgets:
 	- **Resample mesh**, resample mesh vertices with current geometric transformation (edit boxes). Resampling is no longer reversible, it is therefore advisable to apply it to a copy of the original mesh.
 
 |save|
-	Left-click to save mesh (PySisyphe XMESH file, xml format), mesh name is used as file name.
+	Left-click to save mesh (PySisyphe mesh file, .xmesh), mesh name is used as file name.
 
 |cross|
 	Left-click to remove mesh from list and from orthogonal view widget.
@@ -67,7 +67,7 @@ Icon bar
 Icon bar below mesh list:
 
 |open|
-	Left-click to show mesh selection dialog (PySisyphe XMESH file, xml format), adds selected mesh(es) to the mesh list and displays them in the orthogonal view widget. **This mesh must be in the same space as the reference volume displayed in the view widget i.e. same space ID**.
+	Left-click to show mesh selection dialog (PySisyphe mesh file, .xmesh), adds selected mesh(es) to the mesh list and displays them in the orthogonal view widget. **This mesh must be in the same space as the reference volume displayed in the view widget i.e. same space ID**.
 
 |head|
 	Left-click to add outer surface mesh to the list and displays it in the orthogonal view widget. The isosurface algorithm used to generate mesh is specified in :ref:`mesh-section-mesh-settings` (**Contour**, **Marching Cube** or **Flying Edge**).

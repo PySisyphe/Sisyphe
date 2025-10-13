@@ -49,7 +49,7 @@ Left-click to select a target or a trajectory element in the list (blue outline 
 	Click **OK** to validate positions and display the new Trajectory in the view widget.
 
 |save|
-	Left-click show a dialog box to save all Target(s)/Trajectory(ies) of the list in a PySisyphe XTOOLS file (xml format).
+	Left-click show a dialog box to save all Target(s)/Trajectory(ies) of the list in a PySisyphe tools file (.xtools).
 
 |delete|
 	Left-click to remove all Target(s)/Trajectory(ies) from the list and from the view widget.
@@ -93,7 +93,7 @@ Left-click to select a target or a trajectory element in the list (blue outline 
 
 	- **Inside mesh**, True if Target/Trajectory coordinate is inside mesh.
 	- **Distance to mesh surface**, euclidean distance between the Target/Trajectory and the nearest point of the mesh surface.
-	- **Distance to mesh center of mass**, eucliddistance distance between the Target/Trajectory and the mesh center of mass.
+	- **Distance to mesh center of mass**, euclidean distance between the Target/Trajectory and the mesh center of mass.
 
 	Two buttons are avalaible at the bottom:
 

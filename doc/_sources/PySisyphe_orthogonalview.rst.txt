@@ -39,7 +39,7 @@ In 3D cell (top-left):
 - Left-click and drag to rotate view.
 - Right-click on texture to show a popup menu (see :ref:`ortho-section-crop`)
 
- Common to all cells:
+Common to all cells:
 
 - MouseWheel + **CTRL** key (CMD key MacOs platform) to change zoom,
 - **Up or Left + CTRL** key (CMD key MacOs platform) to zoom out,
@@ -226,7 +226,7 @@ The last widget defines the color part of the transfer function. The background 
 
 Double-click in the free widget area add a new color point. Press left mouse button and drag to move a color point.
 
-Right-click on a point to show popup menu:
+Right-click on a point to show a popup menu:
 
 - **Remove point**, remove the current color point.
 - **Change point color**, change the color of the current point (displays a dialog box for color selection).

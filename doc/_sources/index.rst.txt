@@ -35,6 +35,7 @@ PySisyphe documentation
    ./API/index.rst
    ./PySisyphe_license.rst
    ./PySisyphe_contact.rst
+   ./PySisyphe_Versions.rst
 
 Indices and tables
 ==================

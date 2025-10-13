@@ -35,8 +35,10 @@ Same functions (1, 2, 3 and 4) are accessible via the menu bar (Views -> IPython
 Most popular commands
 ---------------------
 
-Up/Down keys to get command history.
-Tab key (->|) after a dot to display a pop-up window of available methods.
+**Up/Down** 
+   keys to get command history.
+
+**Tab key (->|)** after a dot to display a pop-up window of available methods.
 
 **?**
    IPython help.
@@ -69,10 +71,6 @@ Tab key (->|) after a dot to display a pop-up window of available methods.
 
 **%notebook <filename>**
    Export and convert IPython notebooks.
-
-**%pip**
-   Run the pip package manager within the current kernel.
-   %pip install <package>
 
 **%pwd**
    Return the current working directory path.

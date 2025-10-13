@@ -10,7 +10,7 @@ Synchronized view widget
 .. image:: /GUI/synchro-view.png
    :align: center
 |
-This widget, placed in the central area, displays the same slice of multiple synchronized volumes (reference, and all volumes displayed as overlays in others view widegts) in a grid. This widget can be used to display ROI (:ref:`ROI <page-dockroi>`). However, it does not display mesh, trajectory/target tools and streamlines (:ref:`Mesh <page-dockmesh>`, :ref:`Target/Trajectory <page-docktarget>`, :ref:`Tracking <page-docktracking>`).
+This widget, placed in the central area, displays the same slice of multiple synchronized volumes (reference, and all volumes displayed as overlays in others view widgets) in a grid. This widget can be used to display ROI (:ref:`ROI <page-dockroi>`). However, it does not display mesh, trajectory/target tools and streamlines (:ref:`Mesh <page-dockmesh>`, :ref:`Target/Trajectory <page-docktarget>`, :ref:`Tracking <page-docktracking>`).
 
 Left-click to select the slice in a grid cell. Some controls can be applied only to a selected cell. This cell is outlined in white.
 

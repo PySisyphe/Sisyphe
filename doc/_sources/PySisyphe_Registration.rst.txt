@@ -1,0 +1,466 @@
+.. _page-registration:
+
+Registration menu
+=================
+
+- :ref:`menu-section-stereo`
+- :ref:`menu-section-acpc`
+- :ref:`menu-section-reorient`
+- :ref:`menu-section-manual`
+- :ref:`menu-section-rigid`
+- :ref:`menu-section-affine`
+- :ref:`menu-section-field`
+- :ref:`menu-section-icbm`
+- :ref:`menu-section-batch`
+- :ref:`menu-section-align`
+- :ref:`menu-section-eddy`
+- :ref:`menu-section-resample`
+- :ref:`menu-section-asym`
+- :ref:`menu-section-jacob`
+
+.. _menu-section-stereo:
+Stereotactic frame detection
+----------------------------
+
+This menu is used for detecting fiducial markers of a Leksell stereotaxic frame.
+
+A file selection dialog box appears first, and it allows you to choose a stereotactic PySisyphe volume (usually MR or CT modality).
+
+Then, a dialog box is displayed to control the detection of the fiducial markers. This dialog box displays the volume in a :ref:`page-sliceview` with cross-shaped target tools located in front of each detected fiducial marker. A detection error is displayed next to each tool. If necessary, you can use the mouse to adjust the position of target tools relative to the fiducial markers.
+
+Left-click |zoomtarget| in the icon bar and select a fiducial marker in the popup menu to zoom in on it. This allows for precise adjustment of the tool's position relative to the fiducial marker. 
+
+Left-click |zoom1| in the icon bar to restore the original zoom.
+
+Left-click **Remove current slice markers** button to remove all target tools from the currently displayed slice. The dialog box of error statistics is displayed after this action (see below).
+
+Left-click **Remove front plate markers** button to remove all target tools from the front plate's fiducial markers, if they exist, because they are not always installed. Their inclusion is optional in the calculation of the geometric transformation that defines the stereotactic space. The dialog box of error statistics (see below) is displayed after this action.
+
+Left-click **Calc geometric transform** button to calculate the geometric transformation that defines the stereotactic space with the current position of the target tools in front of the fiducial markers. The dialog box of error statistics is displayed after this action (see below).
+
+Left-click **Error statistics** button to show statistics relating to fiducial marker position errors. This information is displayed in a dialog box with a stack of tabbed widgets. The first tab **Global error** shows a box and whisker plot of fiducial marker position errors, and below, a table of descriptive statistics (*mean*, *root mean square*, *median*, *standard deviation*, *25th percentile*, *75th percentile*, *minimum* and *maximum*). The second tab **Errors** shows the variation curves of the error for each fiducial marker as a function of the slice level, from bottom to top, and below, a table of errors (columns = fiducial marker, rows = slice level). This makes it possible to identify the slices with the most significant errors, which can then be excluded, if necessary, to improve the results. **Acceptable values are less than 1.0 mm for both the mean and RMS error**.
+
+Left-click **OK** button to save the stereotactic space information and close the dialog box. Two XML files are saved in the same folder and under the same name as the stereotactic volume. The first one, which has the xfid extension, saves the coordinates of the fiducial markers. The second one, with the xtrfs extension, saves the geometric transformation that defines the stereotactic space (XML node with LEKSELL ID).
+
+Left-click **Cancel** button to close the dialog box without saving the stereotactic space information.
+
+.. _menu-section-acpc:
+AC-PC selection
+---------------
+
+This menu is used to define anterior (AC) and posterior commissures (PC), which are anatomical landmarks used in various neurosurgical procedures.
+
+A file selection dialog box appears first, and it allows you to choose a PySisyphe volume (.xvol).
+
+A dialog box is then displayed to define anterior (AC) and posterior commissures (PC). This dialog displays the volume in an :ref:`page-orthogonalview` widget with a cross-shaped cursor. Left-click in the view to change the cursor position.
+
+A button bar is displayed below the view:
+
+- Left-click **Lut** button to popup a :ref:`thumb-section-lut`.
+- Select **AC-PC selection** checkbox to activate AC-PC selection mode. In this mode, left click **Set AC** to define anterior commissure at the current cursor position. Left-click **Get AC** to move the cursor to the defined anterior commissure coordinates. Anterior commissure coordinates are displayed next to the "Get AC" button. The same buttons **Set PC** and **Get PC** are available for the posterior commissure.
+- Select **Rotations** checkbox to activate reorientation mode and set midline rotations in the axial and coronal planes. The cross-shaped cursor is centered on the center of rotation, which is placed at the mid AC-PC point. Place the mouse pointer over a cross-shaped cursor line, press the left mouse button, and drag to adjust the rotation axis in axial or coronal view (sagittal axis is locked between AC and PC). Left click **Set rotations** to define rotations at the current axial and coronal axis orientations. Rotations values, in degrees, are displayed next to the **Set rotations** button. Left-click **Reset** to cancel axis rotations, and the axes will return to their default vertical orientation.
+- The cross-shaped cursor opacity, and line width can be customized using the last two widgets.
+
+Left-click **OK** button to save AC-PC coordinates and axis rotations. These information are stored as attributes in the PySisyphe volume file (.xvol).
+
+Left-click **Cancel** button to the close dialog box without saving AC-PC information.
+
+.. _menu-section-reorient:
+Volume reorientation
+--------------------
+
+This menu is used to perform interactive manual reorientation of a volume using translations and rotations. It also allows you to modify the field of view (FOV).
+
+A file selection dialog box appears first, and it allows you to choose a PySisyphe volume (.xvol).
+
+A dialog box is then displayed for reorientation. It displays the volume in an :ref:`page-orthogonalview` widget with a cross-shaped cursor centered in a rectangular box representing the edges of the field of view (zoom out if necessary to see the entire rectangular box). Place the mouse pointer close to the intersection of the cross-shaped cursor lines, press the left mouse button, and drag to move the FOV (i.e. translations). Place the mouse pointer over a cross-shaped cursor line away from the intersection, press the left mouse button, and drag to rotate the FOV.
+
+A button bar is displayed below the view:
+
+- Left-click **Lut** button to popup a :ref:`thumb-section-lut`.
+- **Image size** (i.e. matrix size, number of voxels in each axis) and **spacing** (i.e. voxel size in mm, in each axis) can be edited in spin boxes to adjust the FOV. The rectangular box representing the edges of the field of view is updated after each adjustment.
+- Left-click **Reset FOV** to undo the modifications to the size and spacing.
+- Left-click **Reset Transform** to undo FOV translations and rotations.
+- The cross-shaped cursor/rectangular box opacity, and line width can be customized using the last two widgets.
+
+Left-click **Resample** to resample the volume with the new FOV position and orientation. A file dialog box is displayed to choose the name of the saved file. By default, it's the same as the original prefixed with "r_".
+
+Left-click **Exit** button to close dialog box.
+
+.. _menu-section-manual:
+Manual registration
+-------------------
+
+This menu is used for interactive manual coregistration of two volumes.
+
+A file selection dialog box appears first, and it allows you to select fixed and moving PySisyphe volumes (.xvol).
+
+A **Manual registration** dialog box is then displayed for co-registration. It shows the fixed volume overlaid by the moving volume in an :ref:`page-orthogonalview` widget. Place the mouse pointer in the central area of each view, press the left mouse button, and drag to move the floating volume. Place the mouse pointer in the peripheral area of each view, press the left mouse button, and drag to rotate the floating volume.
+
+A button bar is displayed below the view:
+
+- You can modify the display mode using the first combobox. In **edge** mode, the fixed volume is replaced by its gradient magnitude (edges). In **edge and native** mode, the gradient magnitude image of the fixed volume is added and overlaid in front of fixed and moving volumes.
+- Check **Crop box** to display a square box with the fixed volume inside and the moving volume outside. Place the mouse pointer inside the box, press the left mouse button, and drag to move the crop box. Place the mouse on the edge of the box, press the left mouse button, and drag to enlarge or reduce the crop box area.
+- Check **Registration area box** to display a rectangular box representing the edges of the fixed volume FOV.
+- Various arrow buttons are displayed at the bottom of each view to apply translations, and rotations, in the direction indicated by these arrows. Left-click on one of these buttons to trigger a translation with a step size, in mm, set in the spin box.
+- Moving volume opacity can be adjusted using the slider.
+- Left-click **Fixed** button to popup a :ref:`thumb-section-lut`.
+- Left-click **Moving** button to popup a :ref:`thumb-section-lut`.
+- You can select the interpolation algorithm (*linear*, *nearest neighbor*, *b-spline*, *gaussian*, *hamming windowed sinc*, *cosine windowed sinc*, *welch windowed sinc*, *lanczos windowed sinc*, *blackman windowed sinc*) used to resample the moving volume with the next combobox.
+- Left-click **Auto** button to initialize the alignment of volumes on the *FOV centers* (default) or on the *centers of mass*.
+- Left-click **Reset** button to undo moving volume translations and rotations.
+- Check **Tooltip off** to stop displaying tooltips in the view.
+
+Left-click **Resample** to resample the moving volume. A file dialog box is displayed to choose the name of the saved file. By default, it's the same as the original prefixed with "r_".
+
+Left-click **Exit** button to close dialog box.
+
+.. _menu-section-rigid:
+Rigid registration
+------------------
+
+This menu is used for rigid coregistration, which involves three translations and three rotations, of a moving volume onto a fixed volume, using ANTs registration methods. The ANTs toolkit provides a hierarchy of transformations with adjustable levels of complexity, regularization, degrees of freedom and behavior as optimizers. ANTs provides 3 similarity metrics optimized by the rigid registration algorithm: *mean squares*, *cross-correlation* and *mutual information*. 
+
+Rigid transformation is an effective method for coregistering intra or inter-modality volumes of the same subject.
+
+The **Rigid registration** dialog box is displayed.
+
+Use the file selection widgets at the top to select **Fixed** and **Moving** PySisyphe volumes.
+
+Toggle **Apply transformation to** checkbox to resample a list of volumes with the calculated geometric transformation. This displays a :ref:`widgets-section-multi-file`. Selected volumes must have the same space/transform ID as the fixed volume (i.e. same FOV and already coregistered to the fixed volume).
+
+Toggle **Registration...** button to show/hide corgistration settings:
+
+- Check **Fixed volume mask** to remove background voxels during coregistration processing.
+- Select method used to initialize translations with the **Estimation** combobox: *FOV center alignment* (default), *center of mass alignment* or *no estimation* (translations and rotations to 0.0).
+- Select the rigid registration algorithm using the **Rigid** combobox.: *AntsRigid* (4 multiresolution stages with last at full resolution) or *AntsFastRigid* (fast scheme with only 3 multiresolution stages, and no iteration at full resolution).
+- Select the similarity metric to optimize using the **Linear metric** combobox: *IM* (i.e. mutual information, default), *CC* (i.e. cross-correlation), *MS* (i.e. mean squares).
+- Select the subsampling used to calculate similarity function using the **Sampling rate** spinbox. The range is between 1.0 (no subsampling, all voxels are used to process similarity function) and lower values, which are greater than 0.0 and indicate the ratio of voxels used to process the similarity function under regular subsampling.
+- Toggle **Check registration** checkbox to display a dialog box, similar to :ref:`menu-section-manual`, to visually assess the quality of the coregistration.
+- Toggle **Resample** checkbox to resample (or not) the coregistered moving volume. If not, the moving volume is not resampled, but the associated XML xtrfs files are updated (geometric transformation for fixed volume coregistration will be added to the moving xtrfs, and geometric transformation for moving volume coregistration will be added to the fixed xtrfs).
+
+Toggle **Resample...** button to show/hide resampling settings:
+- Select the interpolation algorithm (*linear*, *nearest neighbor*, *b-spline*, *gaussian*, *hamming windowed sinc*, *cosine windowed sinc*, *welch windowed sinc*, *lanczos windowed sinc*, *blackman windowed sinc*) used to resample the moving volume.
+- Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the **prefix** and **suffix** parameters.
+
+Left-click **Execute** button to perform coregistration. The moving volume is resampled if the **Resample** checkbox is checked. PySisype XML xtrfs files associated with fixed and moving volumes are updated to store geometric transformations (geometric transformation for fixed volume coregistration will be added to the moving xtrfs, and geometric transformation for moving volume coregistration will be added to the fixed xtrfs).
+
+Left-click **Cancel** button to close dialog box without coregistration.
+
+.. _menu-section-affine:
+Affine registration
+-------------------
+
+This menu is used for affine coregistration of a moving volume onto a fixed volume using ANTs registration methods. This process involves twelve parameters: three translations and nine linear matrix parameters for rotation, scaling, and shearing. The ANTs toolkit provides a hierarchy of transformations with adjustable levels of complexity, regularization, degrees of freedom and behavior as optimizers. ANTs provides 3 similarity metrics optimized by the affine registration algorithm: *mean squares*, *cross-correlation* and *mutual information*.
+
+Affine transformation is an effective method for coregistering inter-modality volumes of the same subject, to compensate for the overall distortions caused by certain acquisition modalities (SPECT/PET versus MR, MR versus CT) or sequences (EPI/Diffusion MR versus 3D T1 MR). It can be also used for intra-modality/inter-subject coregistration of low-resolution modalities (SPECT).
+
+The **Affine registration** dialog box is displayed.
+
+Use the file selection widgets at the top to select **Fixed** and **Moving** PySisyphe volumes.
+
+Toggle **Apply transformation to** checkbox to resample a list of volumes with the calculated geometric transformation. This displays a :ref:`widgets-section-multi-file`. Selected volumes must have the same space ID as the fixed volume (i.e. same FOV and already coregistered to the fixed volume).
+
+Toggle **Registration...** button to show/hide coregistration settings:
+
+- Check **Fixed volume mask** to remove background voxels during registration processing.
+- Select method used to initialize translations with the **Estimation** combobox: *FOV center alignment* (default), *center of mass alignment* or *no estimation* (translations and rotations to 0.0).
+- Select the affine registration algorithm using the **Affine** combobox.: *AntsAffine* (4 multiresolution stages with last at full resolution) or *AntsFastAffine* (fast scheme with only 3 multiresolution stages, and no iteration at full resolution).
+- Select the similarity metric to optimize using the **Linear metric** combobox: *IM* (i.e. mutual information, default), *CC* (i.e. cross-correlation), *MS* (i.e. mean squares).
+- Select the subsampling used to calculate similarity function using the **Sampling rate** spinbox. The range is between 1.0 (no subsampling, all voxels are used to process similarity function) and lower values, which are greater than 0.0 and indicate the ratio of voxels used to process the similarity function under regular subsampling.
+- Toggle **Check registration** checkbox to display a dialog box, similar to :ref:`menu-section-manual`, to visually assess the quality of the coregistration.
+- Toggle **Resample** checkbox to resample (or not) the coregistered moving volume. If not, the moving volume is not resampled, but the associated XML xtrfs files are updated (geometric transformation for fixed volume coregistration will be added to the moving xtrfs, and geometric transformation for moving volume coregistration will be added to the fixed xtrfs).
+
+Toggle **Resample...** button to show/hide resampling settings:
+
+- Select the interpolation algorithm (*linear*, *nearest neighbor*, *b-spline*, *gaussian*, *hamming windowed sinc*, *cosine windowed sinc*, *welch windowed sinc*, *lanczos windowed sinc*, *blackman windowed sinc*) used to resample the moving volume.
+- Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the **prefix** and **suffix** parameters.
+
+Left-click **Execute** button to perform coregistration. The moving volume is resampled if the **Resample** checkbox is checked. PySisyphe XML xtrfs files associated with fixed and moving volumes are updated to store geometric transformations (geometric transformation for fixed volume coregistration will be added to the moving xtrfs, and geometric transformation for moving volume coregistration will be added to the fixed xtrfs).
+
+Left-click **Cancel** button to close dialog box without coregistration.
+
+.. _menu-section-field:
+Displacement field registration
+-------------------------------
+
+This menu is used for displacement field coregistration of a moving volume onto a fixed volume using ANTs registration methods. This non linear method provides local/dense/high-dimensionaltiy transformation via a a displacement field. The displacement field stores 3D vectors of displacements. Transformation is performed at a given point by adding the displacement at that point to the input point. The ANTs toolkit provides a hierarchy of transformations with adjustable levels of complexity, regularization, degrees of freedom and behavior as optimizers. ANTs provides 4 similarity metrics optimized by the displacement field coregistration algorithm: *mean squares*, *cross-correlation*, *mutual information* and and *demons*.
+
+Displacement field transformation is an effective method for inter-subject coregistration of high-resolution modalities (MR).
+
+The **Displacement field registration** dialog box is displayed.
+
+Use the file selection widgets at the top to select **Fixed** and **Moving** PySisyphe volumes.
+
+Toggle **Apply transformation to** checkbox to resample a list of volumes with the calculated geometric transformation. This displays a :ref:`widgets-section-multi-file`. Selected volumes must have the same space/transform ID as the fixed volume (i.e. same FOV and already coregistered to the fixed volume).
+
+Toggle **Registration...** button to show/hide coregistration settings:
+
+- Check **Fixed volume mask** to remove background voxels during registration processing.
+- Select method used to initialize translations with the **Estimation** combobox: *FOV center alignment* (default), *center of mass alignment* or *no estimation* (translations and rotations to 0.0).
+- Select the displacement field registration algorithm using the **Displacement field** combobox:
+
+   - *AntsSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+   - *AntsDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+   - *AntsFastSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsFastDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsRigidSplineDiffeomorphic*: rigid step (no affine step) followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+   - *AntsRigidDiffeomorphic*: rigid step (no affine step) followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+   - *AntsFastRigidSplineDiffeomorphic*: rigid step (no affine step) followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsFastRigidDiffeomorphic*: rigid step (no affine step) followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsSplineDiffeomorphicOnly*: single step of diffeomorphic coregistration without previous rigid of affine step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+   - *AntsDiffeomorphicOnly*: single step of diffeomorphic coregistration without previous rigid of affine step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+
+- Select the similarity metric to optimize linear stage (rigid/affine) using the **Linear metric** combobox: *IM* (i.e. mutual information, default), *CC* (i.e. cross-correlation), *MS* (i.e. mean squares).
+- Select the similarity metric to optimize non-linear stage (displacement field) using the **Non linear metric** combobox: *IM* (i.e. mutual information, default), *CC* (i.e. cross-correlation), *MS* (i.e. mean squares), *DEMONS*.
+- Select the subsampling used to calculate similarity function using the **Sampling rate** spinbox. The range is between 1.0 (no subsampling, all voxels are used to process similarity function) and lower values, which are greater than 0.0 and indicate the ratio of voxels used to process the similarity function under regular subsampling.
+- Toggle **Save inverse displacement field** checkbox to save the inverse displacement field that coregisters the fixed volume to the moving volume.
+- Toggle **Check registration** checkbox to display a dialog box, similar to :ref:`menu-section-manual`, to visually assess the quality of the coregistration.
+- Toggle **Resample** checkbox to resample (or not) the coregistered moving volume. If not, the moving volume is not resampled, but the associated XML xtrfs files are updated (geometric transformation for fixed volume coregistration will be added to the moving xtrfs, and geometric transformation for moving volume coregistration will be added to the fixed xtrfs) and the displacement field is saved as a PySisyphe volume file (.xvol).
+
+Toggle **Resample...** button to show/hide resampling settings:
+
+- Select the interpolation algorithm (*linear*, *nearest neighbor*, *b-spline*, *gaussian*, *hamming windowed sinc*, *cosine windowed sinc*, *welch windowed sinc*, *lanczos windowed sinc*, *blackman windowed sinc*) used to resample the moving volume.
+- Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the **prefix** and **suffix** parameters.
+
+Left-click **Execute** button to perform coregistration. The moving volume is resampled if the **Resample** checkbox is checked. PySisyphe XML xtrfs files associated with fixed and moving volumes are updated to store geometric transformations (geometric transformation for fixed volume coregistration will be added to the moving xtrfs, and geometric transformation for moving volume coregistration will be added to the fixed xtrfs) and the displacement field is saved as a PySisyphe volume file (.xvol).
+
+Left-click **Cancel** button to close dialog box without coregistration.
+
+.. _menu-section-icbm:
+ICBM spatial normalization
+--------------------------
+
+This menu is used for spatial normalization in the MNI-ICBM152 atlas space (see `ICBM152 page <https://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009>`_) of a moving volume using ANTs registration methods. Symmetric and asymmetric versions of MNI-ICBM152 templates are provided for various modalities (MR, CT, SPECT, and PET) and sequences (T1, T2, PD, FLAIR, TOF, GM, WM, and CSF). These templates are used as fixed volumes in coregistration processing.
+
+The **ICBM normalization** dialog box is displayed.
+
+Use the file selection widgets at the top to select **Moving** and **Template** PySisyphe volumes (.xvol). If an MNI-ICBM152 template is defined for this fixed-volume modality/sequence in the PySisyphe settings (see :ref:`menu-section-preferences`), it is automatically added to the template selection widget.
+
+Toggle **Apply transformation to** checkbox to resample a list of volumes with the calculated geometric transformation. This displays a :ref:`widgets-section-multi-file`. Selected volumes must have the same space/transform ID as the fixed volume (i.e. same FOV and already coregistered to the fixed volume).
+
+Toggle **Registration...** button to show/hide coregistration settings:
+
+- Check **Fixed volume mask** to remove background voxels during registration processing.
+- Select method used to initialize translations with the **Estimation** combobox: *FOV center alignment* (default), *center of mass alignment* or *no estimation* (translations and rotations to 0.0).
+- Select the registration algorithm using the **Transform** combobox:
+
+   - *AntsAffine*: single step of affine coregistration (no diffeomorphic step), 4 multiresolution stages with last at full resolution.
+   - *AntsFastAffine*: single step of affine coregistration (no diffeomorphic step), fast scheme with only 3 multiresolution stages, and no iteration at full resolution. 
+   - *AntsSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+   - *AntsDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+   - *AntsFastSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsFastDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+
+- Select the similarity metric to optimize linear stage (rigid/affine) using the **Linear metric** combobox: *IM* (i.e. mutual information, default), *CC* (i.e. cross-correlation), *MS* (i.e. mean squares).
+- Select the similarity metric to optimize non-linear stage (displacement field) using the **Non linear metric** combobox: *IM* (i.e. mutual information, default), *CC* (i.e. cross-correlation), *MS* (i.e. mean squares), *DEMONS*.
+- Select the subsampling used to calculate similarity function using the **Sampling rate** spinbox. The range is between 1.0 (no subsampling, all voxels are used to process similarity function) and lower values, which are greater than 0.0 and indicate the ratio of voxels used to process the similarity function under regular subsampling.
+- Toggle **Save inverse displacement field** checkbox to save the inverse displacement field that coregisters the template volume to the moving volume.
+- Toggle **Check registration** checkbox to display a dialog box, similar to :ref:`menu-section-manual`, to visually assess the quality of the coregistration.
+- Toggle **Resample** checkbox to resample (or not) the coregistered moving volume. If not, the moving volume is not resampled, but the associated XML xtrfs file is updated (geometric transformation for fixed volume coregistration will be added to the moving xtrfs) and the displacement field is saved as a PySisyphe volume file (.xvol).
+
+Toggle **Resample...** button to show/hide resampling settings:
+
+- Select the interpolation algorithm (*linear*, *nearest neighbor*, *b-spline*, *gaussian*, *hamming windowed sinc*, *cosine windowed sinc*, *welch windowed sinc*, *lanczos windowed sinc*, *blackman windowed sinc*) used to resample the moving volume.
+- Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the **prefix** and **suffix** parameters.
+
+Left-click **Execute** button to perform spatial normalization. The moving volume is resampled if the **Resample** checkbox is checked. PySisyphe XML xtrfs files associated with moving volume is updated to store geometric transformation (geometric transformation for template volume coregistration will be added to the moving xtrfs) and the displacement field is saved as a PySisyphe volume file (.xvol).
+
+Left-click **Cancel** button to close dialog box without coregistration.
+
+.. _menu-section-batch:
+Batch registration
+------------------
+
+The batch processing of this menu involves the coregistration of multiple volumes to a single fixed volume.
+
+The **Batch registration** dialog box is displayed.
+
+Use the :ref:`widgets-section-single-file` widget at the top to select **Fixed** PySisyphe volume. Use the :ref:`widgets-section-multi-file` widget to select **Moving** volumes.
+
+Toggle **Registration...** button to show/hide coregistration settings:
+
+- Check **Fixed volume mask** to remove background voxels during registration processing.
+- Select method used to initialize translations with the **Estimation** combobox: *FOV center alignment* (default), *center of mass alignment* or *no estimation* (translations and rotations to 0.0).
+- Use the **Batch** combobox to select the type of coregistration: rigid, affine, or displacement field.
+- Select the coregistration algorithm using the **Rigid/Affine/Displacement field** combobox:
+
+   - *AntsRigid*: single step of rigid coregistration (no diffeomorphic step), 4 multiresolution stages with last at full resolution.
+   - *AntsFastRigid*: single step of rigid coregistration (no diffeomorphic step), fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsAffine*: single step of affine coregistration (no diffeomorphic step), 4 multiresolution stages with last at full resolution.
+   - *AntsFastAffine*: single step of affine coregistration (no diffeomorphic step), fast scheme with only 3 multiresolution stages, and no iteration at full resolution. 
+   - *AntsSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+   - *AntsDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+   - *AntsFastSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsFastDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsRigidSplineDiffeomorphic*: rigid step (no affine step) followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+   - *AntsRigidDiffeomorphic*: rigid step (no affine step) followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+   - *AntsFastRigidSplineDiffeomorphic*: rigid step (no affine step) followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsFastRigidDiffeomorphic*: rigid step (no affine step) followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsSplineDiffeomorphicOnly*: single step of diffeomorphic coregistration without previous rigid of affine step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+   - *AntsDiffeomorphicOnly*: single step of diffeomorphic coregistration without previous rigid of affine step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+
+- Select the similarity metric to optimize linear stage (rigid/affine) using the **Linear metric** combobox: *IM* (i.e. mutual information, default), *CC* (i.e. cross-correlation), *MS* (i.e. mean squares).
+- Select the similarity metric to optimize non-linear stage (displacement field) using the **Non linear metric** combobox: *IM* (i.e. mutual information, default), *CC* (i.e. cross-correlation), *MS* (i.e. mean squares), *DEMONS*.
+- Use the **Sampling rate** spinbox to select the subsampling method used to calculate the similarity function. The range is between 1.0, which indicates that all voxels are used to process the similarity function with no subsampling, and lower values, which are greater than 0.0 and indicate the ratio of voxels used to process the similarity function with regular subsampling.
+- Toggle **Resample** checkbox to resample (or not) the coregistered moving volume. If not, the moving volume is not resampled, but the associated XML xtrfs file is updated (geometric transformation for fixed volume coregistration will be added to the moving xtrfs) and the displacement field is saved as a PySisyphe volume file (.xvol).
+
+Toggle **Resample...** button to show/hide resampling settings:
+
+- Select the interpolation algorithm (*linear*, *nearest neighbor*, *b-spline*, *gaussian*, *hamming windowed sinc*, *cosine windowed sinc*, *welch windowed sinc*, *lanczos windowed sinc*, *blackman windowed sinc*) used to resample the moving volume.
+- Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the **prefix** and **suffix** parameters.
+
+Left-click **Execute** button to run batch coregistration.
+
+Left-click **Cancel** button to close dialog box without coregistration.
+
+.. _menu-section-align:
+Time series realignment
+-----------------------
+
+The purpose of this menu is to realign time series images as fMRI series, resting state series, or dynamic susceptibility contrast MR perfusion series.
+
+The **Time series realignment** dialog box is displayed.
+
+To select PySisyphe time series volumes, use the :ref:`widgets-section-multi-file` widget at the top.
+
+Toggle **Settings...** button to show/hide realignment parameters:
+
+- Use the **Reference** combobox to choose the volume that will be used as a reference to realign all volumes in the time series. This could be the *first*, *middle*, or *time series mean* or *median* volume.
+- Select the similarity metric using the **Metric** combobox: *IM* (i.e. mutual information), *CC* (i.e. cross-correlation), *MS* (i.e. mean squares, default).
+- Use the **Sampling rate** spinbox to select the subsampling method used to calculate the similarity function. The range is between 1.0, which indicates that all voxels are used to process the similarity function with no subsampling, and lower values, which are greater than 0.0 and indicate the ratio of voxels used to process the similarity function with regular subsampling.
+- Check **Compute mean volume** to save the time series mean volume.
+
+Toggle **Resample...** button to show/hide resampling parameters:
+
+- Select the interpolation algorithm (*linear*, *nearest neighbor*, *b-spline*, *gaussian*, *hamming windowed sinc*, *cosine windowed sinc*, *welch windowed sinc*, *lanczos windowed sinc*, *blackman windowed sinc*) used to resample the moving volume.
+- Resampled volumes are saved with their original names, which are prefixed and/or suffixed by the strings edited in the "prefix" and "suffix" parameters. Each resampled volume is associated with an XML xtrfs file (geometric transformation).
+
+Left-click **Execute** button to run realignment. After processing is complete, a realignment dialog box will appear displaying the values of the translations and rotations applied to the time series volumes. The chart displays the translation (mm) and rotation (degrees) curves, and the table below presents the values. Left-click the **Save map** button to save the chart as a bitmap file (.bmp, .jpg, .png, .tiff or .svg). Left-click the **Copy to clipboard** button to copy the chart to the clipboard as a bitmap. Left-click the **Save dataset** button to save the table (.csv, .json, .latex, .text, .xlsx, .PySisyphe xsheet). Left-Click **Close** button to exit.
+
+Left-click **Cancel** button to close dialog box without realignment.
+
+.. _menu-section-eddy:
+Eddy current correction
+-----------------------
+
+Image distortion due to field gradient eddy currents can create image artifacts in diffusion-weighted MR images. This menu allows you to correct image distortion using affine or non-linear coregistration of diffusion-weighted images with B0 used as the fixed image (image without gradient diffusion).
+
+The **Eddy current correction** dialog box is displayed.
+
+Use the :ref:`widgets-section-single-file` widget at the top to select **B0 volume**. Use the :ref:`widgets-section-multi-file` widget to select **Diffusion-weighted** volumes.
+
+Toggle **Registration...** button to show/hide parameters:
+
+- Select the the coregistration algorithm using the **Transform** combobox:
+
+   - *AntsAffine* (default): single step of affine coregistration, 4 multiresolution stages with last at full resolution.
+   - *AntsSplineDiffeomorphicOnly*: single step of diffeomorphic coregistration without previous affine step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+   - *AntsDiffeomorphicOnly*: single step of diffeomorphic coregistration without previous affine step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+   - *AntsFastSplineDiffeomorphicOnly*: single step of diffeomorphic coregistration without previous affine step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsFastDiffeomorphicOnly*: single step of diffeomorphic coregistration without previous affine step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+
+- Select the similarity metric to optimize linear stage (rigid/affine) using the **Linear metric** combobox: *IM* (i.e. mutual information, default), *CC* (i.e. cross-correlation), *MS* (i.e. mean squares).
+- Select the similarity metric to optimize non-linear stage (displacement field) using the **Non linear metric** combobox: *IM* (i.e. mutual information, default), *CC* (i.e. cross-correlation), *MS* (i.e. mean squares), *DEMONS*.
+- Use the **Sampling rate** spinbox to select the subsampling method used to calculate the similarity function. The range is between 1.0, which indicates that all voxels are used to process the similarity function with no subsampling, and lower values, which are greater than 0.0 and indicate the ratio of voxels used to process the similarity function with regular subsampling.
+
+Toggle **Resample...** button to show/hide resampling parameters:
+
+- Select the interpolation algorithm (*linear*, *nearest neighbor*, *b-spline*, *gaussian*, *hamming windowed sinc*, *cosine windowed sinc*, *welch windowed sinc*, *lanczos windowed sinc*, *blackman windowed sinc*) used to resample the moving volume.
+- Resampled volumes are saved with their original names, which are prefixed and/or suffixed by the strings edited in the "prefix" and "suffix" parameters.
+
+Left-click **Execute** button to run eddy current correction.
+
+Left-click **Cancel** button to close dialog box without processing.
+
+.. _menu-section-resample:
+Resample
+--------
+
+This menu lets you resample a volume after applying a geometric transformation.
+
+The **Resample** dialog box is displayed.
+
+Select the PySisyphe moving volume with the :ref:`widgets-section-single-file` widget at the top.
+
+If you want to select a geometric transformation from the XML xtrfs file associated with the moving volume, check the **Self geometric transform** option. The XML xtrfs file stores all geometric transformations calculated from previous coregistration of its associated volume with other volumes used as reference (i.e. target of the coregistration), which are identified by their space/transform ID number. These ID numbers are added to the **Transformations** combbox. The **Transformations** combbox remains empty if the moving volume does not have an associated XML xtrfs file. Information regarding the geometric transformation currently selected in the combobox is displayed in a box below: reference volume of the coregistration (*space/transform ID*, *name*, *size*, *spacing*, *center*) and parameters (*translations*, *rotations*, *zooms*, *shears*, *matrix* for linear transformation; *displacement field file* for non-linear transformation).
+
+Left-click **Get Fixed Volume** button to select a volume, search for its space/transformation ID, and select it from the **Transformations** combobox.
+
+If you want to create a geometric transformation, check **Free geometric transform**. You can then edit the resampling space directly (*size*, *spacing*), the rigid geometric transformation parameters (*translations* in mm and *rotations* in degrees), or provide a displacement field file for a non-linear transformation. You can also set the resampling space from a volume selected using the **From volume** button.
+
+Left-click **Load transforms** button to open an XML xtrfs file. You can also select a PySisyphe volume to open its associated XML xtrfs file.
+
+Left-click **Save** button to save the current geometric transformation in various formats (PySisyhe .xtrf, ANTs .mat, ITK .tfm, MINC .xfm, Matlab .mat, text .txt).
+
+Left-click **Affine to displacement field** button to convert an affine geometric transformation to a displacement field.
+
+Toggle **Resample...** button to show/hide resampling parameters:
+
+- Select the interpolation algorithm (*linear*, *nearest neighbor*, *b-spline*, *gaussian*, *hamming windowed sinc*, *cosine windowed sinc*, *welch windowed sinc*, *lanczos windowed sinc*, *blackman windowed sinc*) used to resample the moving volume.
+- Resampled volumes are saved with their original names, which are prefixed and/or suffixed by the strings edited in the "prefix" and "suffix"  parameters.
+
+Left-click **Execute** button to resample moving volume with the current geometric transformation.
+
+Left-click **Cancel** button to close dialog box without resampling.
+
+.. _menu-section-asym:
+Asymmetry displacement field
+----------------------------
+
+The purpose of this menu is to perform the asymmetry analysis of a volume. This is achieved by performing a nonlinear coregistration of a volume with its symmetrical counterpart in the x-axis. The result is the Jacobian determinant image of the displacement field calculated from the coregistration. The scalar values in this image represent volume ratios. A value less than 1.0 indicates local deflation at the current voxel coordinate relative to the contralateral hemisphere. Conversely, a value greater than 1.0 indicates local inflation at the current voxel coordinate.
+
+The **Asymmetry analysis** dialog box is displayed.
+
+Select the volumes to be analyzed with the :ref:`widgets-section-multi-file` widget at the top.
+
+Toggle **Registration...** button to show/hide parameters:
+
+- Check **Fixed volume mask** to remove background voxels during registration processing.
+- Select method used to initialize translations with the **Estimation** combobox: *FOV center alignment* (default), *center of mass alignment* or *no estimation* (translations and rotations to 0.0).
+- Select the displacement field registration algorithm using the **Displacement field** combobox:
+
+   - *AntsSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+   - *AntsDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+   - *AntsFastSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsFastDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsRigidSplineDiffeomorphic*: rigid step (no affine step) followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+   - *AntsRigidDiffeomorphic*: rigid step (no affine step) followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+   - *AntsFastRigidSplineDiffeomorphic*: rigid step (no affine step) followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsFastRigidDiffeomorphic*: rigid step (no affine step) followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+   - *AntsSplineDiffeomorphicOnly*: single step of diffeomorphic coregistration without previous rigid of affine step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+   - *AntsDiffeomorphicOnly*: single step of diffeomorphic coregistration without previous rigid of affine step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+
+- Select the similarity metric to optimize linear stage (rigid/affine) using the **Linear metric** combobox: *IM* (i.e. mutual information, default), *CC* (i.e. cross-correlation), *MS* (i.e. mean squares).
+- Select the similarity metric to optimize non-linear stage (displacement field) using the **Non linear metric** combobox: *IM* (i.e. mutual information, default), *CC* (i.e. cross-correlation), *MS* (i.e. mean squares), *DEMONS*.
+- Select the subsampling used to calculate similarity function using the **Sampling rate** spinbox. The range is between 1.0 (no subsampling, all voxels are used to process similarity function) and lower values, which are greater than 0.0 and indicate the ratio of voxels used to process the similarity function under regular subsampling.
+
+Toggle **Displacement field jacobian determinant** button to show/hide parameters:
+- Jacobian determinant volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **prefix** and **suffix** parameters.
+
+Left-click **Execute** button to run asymmetry analysis.
+
+Left-click **Cancel** button to close dialog box without processing.
+
+.. _menu-section-jacob:
+Displacement field jacobian determinant
+---------------------------------------
+
+The purpose of this menu is to calculate Jacobian determinant volume from a displacement field. The scalar values in this image represent volume ratios. A value less than 1.0 indicates local deflation at the current voxel coordinate. Conversely, a value greater than 1.0 indicates local inflation at the current voxel coordinate.
+
+The **Jacobian determinant of displacement field** dialog box is displayed.
+
+Select the displacement field volumes with the :ref:`widgets-section-multi-file` widget at the top.
+
+Toggle **Displacement field jacobian determinant** button to show/hide parameter:
+
+- Jacobian determinant volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **prefix** and **suffix** parameters.
+
+Left-click **Execute** button to calculate Jacobian determinant volumes.
+
+Left-click **Cancel** button to close dialog box without processing.
+
+.. |zoomtarget| image:: /GUI/view/zoomtarget.png
+   :scale: 25 %
+.. |zoom1| image:: /GUI/view/zoom1.png
+   :scale: 25 %

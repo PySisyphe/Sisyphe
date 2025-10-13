@@ -22,18 +22,18 @@ Nine buttons on the bottom (2):
    - **Save...**, save screenshot grid (PDF, HTML or Word .docx formats)
    - **Save bitmap...**, save screenshot grid as bitmap (BMP, GIF, JPG, PNG, TIFF, WEBP formats)
 
-   Right-click on a cell of the preview area to display a popup menu:
+Right-click on a cell of the preview area to display a popup menu:
 
-      - **Copy**, copy the bitmap of the current cell to clipboard.
-      - **Cut**, cut the bitmap of the current cell to clipboard.
-      - **Paste**, paste the clipboard to the current cell.
-      - **Add bitmap(s)...**, add a bitmap from disk (BMP, GIF, JPG, PBM, PGM, PNG, SVG, TGA, TIFF, WEBP, XBM, XPM)
-      - **Clear selected**, clear the selected cell.
-      - **Clear all**, clear the preview.
-      - **Orientation**, choose page orientation (**Portrait** or **Landscape**).
-      - **Row count**, choose row count (from 1 to 5).
-      - **Column count**, choose column count (from 1 to 5)
-      - **Save bitmap...**, save screenshot grid as bitmap (BMP, GIF, JPG, PNG, TIFF, WEBP formats)
-      - **Save...**, save screenshot grid (PDF, HTML or Word .docx formats)
+   - **Copy**, copy the bitmap of the current cell to clipboard.
+   - **Cut**, cut the bitmap of the current cell to clipboard.
+   - **Paste**, paste the clipboard to the current cell.
+   - **Add bitmap(s)...**, add a bitmap from disk (BMP, GIF, JPG, PBM, PGM, PNG, SVG, TGA, TIFF, WEBP, XBM, XPM)
+   - **Clear selected**, clear the selected cell.
+   - **Clear all**, clear the preview.
+   - **Orientation**, choose page orientation (**Portrait** or **Landscape**).
+   - **Row count**, choose row count (from 1 to 5).
+   - **Column count**, choose column count (from 1 to 5)
+   - **Save bitmap...**, save screenshot grid as bitmap (BMP, GIF, JPG, PNG, TIFF, WEBP formats)
+   - **Save...**, save screenshot grid (PDF, HTML or Word .docx formats)
 
-   The same menu is available via the menu bar (Views -> Screenshots).
+The same menu is available via the menu bar (Views -> Screenshots).

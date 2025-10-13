@@ -16,7 +16,7 @@ Whole tractogram virtual dissection tools
 -----------------------------------------
 
 **Whole brain tractogram**
-	This file selection widget is used to load a tractogram (PySisyphe XTRACTS file, xml format), usually previously processed via the menu "**Diffusion** -> Tractogram generation...". **This tractogram must be in the same space as the reference volume displayed in the view widget i.e. same space ID**.
+	This file selection widget is used to load a tractogram (PySisyphe XTRACTS file, xml format), usually previously processed via the menu **Diffusion > Tractogram generation...**. This tractogram must be in the same space as the reference volume displayed in the view widget i.e. same space ID.
 
 .. image:: /GUI/tracking-roi-selection.png
    :align: center
@@ -65,7 +65,7 @@ Bundle list
 Left-click to select a bundle element in the list (blue outline in Windows platform, blue background in MasOS platform).
 
 |open|
-	Left-click to show a Bundle selection dialog (PySisyphe XTRACTS file, xml format), adds selected Bundle(s) to the list and displays them in the view widget. **This (These) Bundle(s) must be in the same space as the reference volume displayed in the view widget i.e. same space ID**.
+	Left-click to show a Bundle selection dialog (PySisyphe tractogram file, .xtracts), adds selected Bundle(s) to the list and displays them in the view widget. **This (These) Bundle(s) must be in the same space as the reference volume displayed in the view widget i.e. same space ID**.
 
 |save|
 	Left-click to save all Bundle(s) of the list.
@@ -164,7 +164,7 @@ Left-click to select a bundle element in the list (blue outline in Windows platf
 
 	There is a button bar at the bottom:
 
-	- **Save bitamp**, show a dialog box to save a bitmap of the displayed chart (supported bitmap formats BMP, JPG, PNG, TIFF and SVG)
+	- **Save bitmap**, show a dialog box to save a bitmap of the displayed chart (supported bitmap formats BMP, JPG, PNG, TIFF and SVG)
 	- **Copy to clipboard**, copy a bitmap capture of the displayed chart to the clipboard.
 	- **Copy to screenshots**, copy a bitmap capture of the displayed chart to the :ref:`Screenshots manager <page-screenshots>`.
 	- **Save Dataset**, show a dialog box to save the displayed table (supported formats CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET).

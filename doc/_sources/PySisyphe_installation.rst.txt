@@ -13,7 +13,7 @@ From binary installer
 Download the binary installer for MS Windows or MacOS Intel platforms from https://github.com/PySisyphe/Sisyphe.
 There is no version for the Linux platform, as some of the modules required to run PySisyphe are not yet available on this operating system.
 
-Additional content (templates, atlases, samples, various modality scans from volunteer groups...) can be retrieved directly from the download manager integrated into the PySisyphe interface (menu File -> Download manager...). 
+Additional content (templates, atlases, samples, various modality scans from volunteer groups...) can be retrieved directly from the download manager integrated into the PySisyphe interface (menu **File > Download manager...**). 
 
 .. _install-section-from-source:
 From source

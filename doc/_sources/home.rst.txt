@@ -27,4 +27,5 @@ PySisyphe documentation
 - :ref:`Menubar <page-menubar>`
 - :ref:`API <page-api>`
 - :ref:`License <page-license>`
+- :ref:`Version history <page-versions>`
 - :ref:`Contact <page-contact>`
