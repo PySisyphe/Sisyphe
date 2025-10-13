@@ -292,7 +292,7 @@ Last revision: 10/12/2023</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheMesh">
 <span class="sig-name descname"><span class="pre">copySisypheMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMesh" title="Sisyphe.core.sisypheMesh.SisypheMesh"><span class="pre">SisypheMesh</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheMesh" title="Link to this definition"></a></dt>
-<dd><p>Copy a Sisyphe.core.sisypheROI.SisypheROI file (.xmesh) in its patient folder.</p>
+<dd><p>Copy a Sisyphe.core.sisypheMesh.SisypheMesh file (.xmesh) in its patient folder.</p>
 <section id="id5">
 <h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -365,7 +365,7 @@ Last revision: 10/12/2023</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheVolumes">
 <span class="sig-name descname"><span class="pre">copySisypheVolumes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolumeCollection" title="Sisyphe.core.sisypheVolume.SisypheVolumeCollection"><span class="pre">SisypheVolumeCollection</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.copySisypheVolumes" title="Link to this definition"></a></dt>
-<dd><p>Copy a list of Sisyphe.core.sisypheVolume.SisypheVolume file (.xvol) in the database.</p>
+<dd><p>Copy a list of Sisyphe.core.sisypheVolume.SisypheVolume files (.xvol) in the database.</p>
 <section id="id10">
 <h3>Parameters<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -719,7 +719,7 @@ replaced by ‘*’ wildcard char. default is ‘<em>_*_</em>’ to get all pati
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.hasDatabasePath">
 <span class="sig-name descname"><span class="pre">hasDatabasePath</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasDatabasePath" title="Link to this definition"></a></dt>
-<dd><p>Checks whether PySisyphe database folder exists.</p>
+<dd><p>Check whether PySisyphe database folder exists.</p>
 <section id="id42">
 <h3>Returns<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -732,7 +732,7 @@ replaced by ‘*’ wildcard char. default is ‘<em>_*_</em>’ to get all pati
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.hasPatient">
 <span class="sig-name descname"><span class="pre">hasPatient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasPatient" title="Link to this definition"></a></dt>
-<dd><p>Checks whether a patient is in SisypheDatabase instance.</p>
+<dd><p>Check whether a patient is in SisypheDatabase instance.</p>
 <section id="id43">
 <h3>Parameters<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -752,7 +752,7 @@ replaced by ‘*’ wildcard char. default is ‘<em>_*_</em>’ to get all pati
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheMesh">
 <span class="sig-name descname"><span class="pre">hasSisypheMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMesh" title="Sisyphe.core.sisypheMesh.SisypheMesh"><span class="pre">SisypheMesh</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheMesh" title="Link to this definition"></a></dt>
-<dd><p>Checks whether Sisyphe.core.sisypheMesh.SisypheMesh is in the database.</p>
+<dd><p>Check whether Sisyphe.core.sisypheMesh.SisypheMesh is in the database.</p>
 <section id="id45">
 <h3>Parameters<a class="headerlink" href="#id45" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -774,7 +774,7 @@ replaced by ‘*’ wildcard char. default is ‘<em>_*_</em>’ to get all pati
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheROI">
 <span class="sig-name descname"><span class="pre">hasSisypheROI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">roi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROI" title="Sisyphe.core.sisypheROI.SisypheROI"><span class="pre">SisypheROI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheROI" title="Link to this definition"></a></dt>
-<dd><p>Checks whether Sisyphe.core.sisypheROI.SisypheROI is in the database.</p>
+<dd><p>Check whether Sisyphe.core.sisypheROI.SisypheROI is in the database.</p>
 <section id="id47">
 <h3>Parameters<a class="headerlink" href="#id47" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -796,7 +796,7 @@ replaced by ‘*’ wildcard char. default is ‘<em>_*_</em>’ to get all pati
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheVolume">
 <span class="sig-name descname"><span class="pre">hasSisypheVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.hasSisypheVolume" title="Link to this definition"></a></dt>
-<dd><p>Checks whether Sisyphe.core.sisypheVolume.SisypheVolume is in the database.</p>
+<dd><p>Check whether Sisyphe.core.sisypheVolume.SisypheVolume is in the database.</p>
 <section id="id49">
 <h3>Parameters<a class="headerlink" href="#id49" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -816,7 +816,7 @@ replaced by ‘*’ wildcard char. default is ‘<em>_*_</em>’ to get all pati
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.isEmpty">
 <span class="sig-name descname"><span class="pre">isEmpty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.isEmpty" title="Link to this definition"></a></dt>
-<dd><p>Checks whether patient database is empty.</p>
+<dd><p>Check whether patient database is empty.</p>
 <section id="id51">
 <h3>Returns<a class="headerlink" href="#id51" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -842,7 +842,7 @@ replaced by ‘*’ wildcard char. default is ‘<em>_*_</em>’ to get all pati
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDatabase.SisypheDatabase.removePatients">
 <span class="sig-name descname"><span class="pre">removePatients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheIdentity" title="Sisyphe.core.sisypheImageAttributes.SisypheIdentity"><span class="pre">SisypheIdentity</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDatabase.SisypheDatabase.removePatients" title="Link to this definition"></a></dt>
-<dd><p>Removes a list of patients from the database, deletes patient sub-folders of the database directory.</p>
+<dd><p>Remove a list of patients from the database, deletes patient sub-folders of the database directory.</p>
 <section id="id53">
 <h3>Parameters<a class="headerlink" href="#id53" title="Link to this heading"></a></h3>
 <dl class="simple">

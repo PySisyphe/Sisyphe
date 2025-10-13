@@ -284,9 +284,8 @@
 <ul class="simple">
 <li><p>Color transfer function which associates image array values with colors</p></li>
 <li><p>Alpha transfer function which associates image array values with alpha (opacity)</p></li>
-<li><p>Gradient transfer function which associates gradient image array values with alpha (opacity) used to improve the</p></li>
+<li><p>Gradient transfer function which associates gradient image array values with alpha (opacity) used to improve the rendering of object edges. (i.e. high gradient values in edges are associated with high alpha)</p></li>
 </ul>
-<p>rendering of object edges. (i.e. high gradient values in edges are associated with high alpha)</p>
 </section>
 <section id="inheritance">
 <h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
@@ -1385,7 +1384,7 @@ Black color for the minimum value of the image array. White color for the maximu
 <section id="id78">
 <h3>Parameters<a class="headerlink" href="#id78" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>gradienttransfer<span class="classifier">vtk.vtkPiecewiseFunction</span></dt><dd><p>gradient trasnfer function to copy</p>
+<dt>gradienttransfer<span class="classifier">vtk.vtkPiecewiseFunction</span></dt><dd><p>gradient transfer function to copy</p>
 </dd>
 </dl>
 </section>
@@ -1769,9 +1768,7 @@ instance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.getWindowRange">
 <span class="sig-name descname"><span class="pre">getWindowRange</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.getWindowRange" title="Link to this definition"></a></dt>
-<dd><blockquote>
-<div><p>Get the windowing range of the look-up table colormap of the current SisypheLut instance.</p>
-</div></blockquote>
+<dd><p>Get the windowing range of the look-up table colormap of the current SisypheLut instance.</p>
 <section id="id110">
 <h3>Returns<a class="headerlink" href="#id110" title="Link to this heading"></a></h3>
 <dl class="simple">

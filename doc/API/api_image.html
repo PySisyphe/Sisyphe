@@ -161,6 +161,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage.getProjection"><code class="docutils literal notranslate"><span class="pre">SisypheImage.getProjection()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage.getROI"><code class="docutils literal notranslate"><span class="pre">SisypheImage.getROI()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage.getRange"><code class="docutils literal notranslate"><span class="pre">SisypheImage.getRange()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage.getRelabeled"><code class="docutils literal notranslate"><span class="pre">SisypheImage.getRelabeled()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage.getSITKImage"><code class="docutils literal notranslate"><span class="pre">SisypheImage.getSITKImage()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage.getSecondVectorDirection"><code class="docutils literal notranslate"><span class="pre">SisypheImage.getSecondVectorDirection()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage.getSize"><code class="docutils literal notranslate"><span class="pre">SisypheImage.getSize()</span></code></a></li>
@@ -434,7 +435,7 @@ x, y, z are int or slice object (syntax first:last:step)</p>
 <h2>Inheritance<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
 <p>object -&gt; SisypheImage</p>
 <p>Creation: 12/01/2021
-Last revision: 08/04/2025</p>
+Last revision: 13/06/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.allocate">
 <span class="sig-name descname"><span class="pre">allocate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datatype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.allocate" title="Link to this definition"></a></dt>
@@ -575,7 +576,7 @@ and SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.copyFromSITKImage">
 <span class="sig-name descname"><span class="pre">copyFromSITKImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Image</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.copyFromSITKImage" title="Link to this definition"></a></dt>
 <dd><p>Copy a SimpleITK image buffer to the current SisypheImage instance. Image buffer is not shared between
-SimpleITK image and SisypheImage instances.</p>
+SimpleITK image and SisypheImage instances (deep copy).</p>
 <section id="id17">
 <h3>Parameters<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -678,7 +679,7 @@ SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.copyToSITKImage">
 <span class="sig-name descname"><span class="pre">copyToSITKImage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.copyToSITKImage" title="Link to this definition"></a></dt>
 <dd><p>SimpleITK image copy of the current SisypheImage instance. Image buffer is not shared between SimpleITK image
-and SisypheImage instances.</p>
+and SisypheImage instances (deep copy).</p>
 <section id="id25">
 <h3>Returns<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -788,7 +789,7 @@ SisypheImage instances.</p>
 <dl class="simple">
 <dt>threshold<span class="classifier">float</span></dt><dd><p>threshold applied to scalar image (default 0.0)</p>
 </dd>
-<dt>margin<span class="classifier">int</span></dt><dd><p>isotropic margin added to the bounding box (in voxels, default 0 i.e. non margin)</p>
+<dt>margin<span class="classifier">int</span></dt><dd><p>isotropic margin added to the bounding box (in voxels, default 0 i.e. no margin)</p>
 </dd>
 <dt>blobs<span class="classifier">bool</span></dt><dd><p>bounding box of the whole image if False, of each image blob if True</p>
 </dd>
@@ -821,12 +822,20 @@ SisypheImage instances.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.getCentroid">
-<span class="sig-name descname"><span class="pre">getCentroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getCentroid" title="Link to this definition"></a></dt>
-<dd><p>Get centroid of the image.</p>
+<span class="sig-name descname"><span class="pre">getCentroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'world'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getCentroid" title="Link to this definition"></a></dt>
+<dd><p>Get centroid of the image as world coordinates.</p>
 <section id="id36">
 <h3>Parameters<a class="headerlink" href="#id36" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>binary<span class="classifier">bool</span></dt><dd><p>Processing on a binary mask if True, or greyscale image (as weights) if False</p>
+</dd>
+<dt>ref<span class="classifier">str</span></dt><dd><dl class="simple">
+<dt>reference of returned coordinates</dt><dd><ul class="simple">
+<li><p>‘world’ world coordinates</p></li>
+<li><p>‘array’ array coordinates</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt>c<span class="classifier">int | None</span></dt><dd><ul class="simple">
 <li><p>parameter only used for multi-component image</p></li>
@@ -1444,7 +1453,7 @@ value of the probability density function at the bin, normalized such that the i
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.getITKImage">
-<span class="sig-name descname"><span class="pre">getITKImage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getITKImage" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">getITKImage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">&lt;itkTemplate</span> <span class="pre">itk::Image&gt;</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getITKImage" title="Link to this definition"></a></dt>
 <dd><p>ITKImage view (pointer) of the current SisypheImage. Image buffer is shared between ITKImage and current
 SisypheImage instances.</p>
 <section id="id80">
@@ -1526,7 +1535,7 @@ higher local maximum for which the minimal value is greater.</p>
 2. binary not of background = object
 2. optional stage, iterative binary morphology
 3. keep major blob
-4. fill holes</p>
+4. optional stage, fill holes (‘2d’, ‘3d’ or ‘’)</p>
 <section id="id85">
 <h3>Parameters<a class="headerlink" href="#id85" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -1537,7 +1546,7 @@ higher local maximum for which the minimal value is greater.</p>
 </dd>
 <dt>niter<span class="classifier">int</span></dt><dd><p>number of binary morphology iterations (default 1)</p>
 </dd>
-<dt>kernel<span class="classifier">int</span></dt><dd><p>structuring element size (default 0, no morphology)</p>
+<dt>kernel<span class="classifier">int</span></dt><dd><p>structuring element size, 0 automatic value (kernel=2 if spacing &lt; 1.5 mm, kernel=1 otherwise)</p>
 </dd>
 <dt>fill<span class="classifier">str</span></dt><dd><ul class="simple">
 <li><p>‘2d’, fill holes slice by slice</p></li>
@@ -2155,12 +2164,36 @@ given, array size must match the current SisypheImage instance.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.getRelabeled">
+<span class="sig-name descname"><span class="pre">getRelabeled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cross</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage" title="Sisyphe.core.sisypheImage.SisypheImage"><span class="pre">SisypheImage</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getRelabeled" title="Link to this definition"></a></dt>
+<dd><p>Get a relabeled SisypheImage of the current SisypheImage instance.</p>
+<section id="id126">
+<h3>Parameters<a class="headerlink" href="#id126" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>cross<span class="classifier">dict[int, int]</span></dt><dd><ul class="simple">
+<li><p>label value mapping table between current image and relabeled image</p></li>
+<li><p>key: label value in the current image</p></li>
+<li><p>value: new label value in the relabeled image</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="id127">
+<h3>Returns<a class="headerlink" href="#id127" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheImage</dt><dd><p>relabeled image</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.getSITKImage">
 <span class="sig-name descname"><span class="pre">getSITKImage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getSITKImage" title="Link to this definition"></a></dt>
 <dd><p>SimpleITK view (pointer) of the current SisypheImage instance. Image buffer is shared between SimpleITK image
 and current SisypheImage instances.</p>
-<section id="id126">
-<h3>Returns<a class="headerlink" href="#id126" title="Link to this heading"></a></h3>
+<section id="id128">
+<h3>Returns<a class="headerlink" href="#id128" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>SimpleITK.Image</dt><dd><p>shallow copy of image</p>
 </dd>
@@ -2188,8 +2221,8 @@ and current SisypheImage instances.</p>
 <li><p>Third vector, z-axis image direction, [0.0, 0.0, 1.0] (RAS+ default)</p></li>
 </ul>
 </div></blockquote>
-<section id="id127">
-<h3>Returns<a class="headerlink" href="#id127" title="Link to this heading"></a></h3>
+<section id="id129">
+<h3>Returns<a class="headerlink" href="#id129" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tuple[float, float, float]</dt><dd><p>vector of the y-axis image</p>
 </dd>
@@ -2201,8 +2234,8 @@ and current SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.getSize">
 <span class="sig-name descname"><span class="pre">getSize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getSize" title="Link to this definition"></a></dt>
 <dd><p>Get image size, i.e. voxel count in each dimension.</p>
-<section id="id128">
-<h3>Returns<a class="headerlink" href="#id128" title="Link to this heading"></a></h3>
+<section id="id130">
+<h3>Returns<a class="headerlink" href="#id130" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tuple[int, int, int]</dt><dd><p>image size in x, y, z dimensions</p>
 </dd>
@@ -2214,8 +2247,8 @@ and current SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.getSkewness">
 <span class="sig-name descname"><span class="pre">getSkewness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage" title="Sisyphe.core.sisypheImage.SisypheImage"><span class="pre">SisypheImage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheBinaryImage" title="Sisyphe.core.sisypheImage.SisypheBinaryImage"><span class="pre">SisypheBinaryImage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getSkewness" title="Link to this definition"></a></dt>
 <dd><p>Get skewness of image. Calculation is performed on the entire image (mask parameter = None) or in a mask.</p>
-<section id="id129">
-<h3>Parameters<a class="headerlink" href="#id129" title="Link to this heading"></a></h3>
+<section id="id131">
+<h3>Parameters<a class="headerlink" href="#id131" title="Link to this heading"></a></h3>
 <dl>
 <dt>mask<span class="classifier">str | SisypheImage | SisypheBinaryImage | None</span></dt><dd><ul class="simple">
 <li><p>str, automatic thresholding algorithm used for background segmentation: ‘mean’, ‘otsu’, ‘huang’, ‘renyi’, ‘yen’, ‘li’, ‘shanbhag’, ‘triangle’, ‘intermodes’, ‘maximumentropy’, ‘kittler’, ‘isodata’ or ‘moments’</p></li>
@@ -2232,8 +2265,8 @@ and current SisypheImage instances.</p>
 </dd>
 </dl>
 </section>
-<section id="id130">
-<h3>Returns<a class="headerlink" href="#id130" title="Link to this heading"></a></h3>
+<section id="id132">
+<h3>Returns<a class="headerlink" href="#id132" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>float | list[float]</dt><dd><ul class="simple">
 <li><p>skewness value for single-component image</p></li>
@@ -2249,8 +2282,8 @@ and current SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.getSpacing">
 <span class="sig-name descname"><span class="pre">getSpacing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getSpacing" title="Link to this definition"></a></dt>
 <dd><p>Get voxel size (mm) in each dimension.</p>
-<section id="id131">
-<h3>Returns<a class="headerlink" href="#id131" title="Link to this heading"></a></h3>
+<section id="id133">
+<h3>Returns<a class="headerlink" href="#id133" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tuple[float, float, float]</dt><dd><p>voxel spacing in x, y, z</p>
 </dd>
@@ -2262,8 +2295,8 @@ and current SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.getStandardizeIntensity">
 <span class="sig-name descname"><span class="pre">getStandardizeIntensity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'norm'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage" title="Sisyphe.core.sisypheImage.SisypheImage"><span class="pre">SisypheImage</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getStandardizeIntensity" title="Link to this definition"></a></dt>
 <dd><p>Get an intensity normalized copy of the current SisypheImage instance.</p>
-<section id="id132">
-<h3>Parameters<a class="headerlink" href="#id132" title="Link to this heading"></a></h3>
+<section id="id134">
+<h3>Parameters<a class="headerlink" href="#id134" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>method<span class="classifier">str</span></dt><dd><ul class="simple">
 <li><p>‘norm’, standardize the intensity as zscore (i.e. zero mean, [-std, +std] mapped to [-1, 1]</p></li>
@@ -2272,8 +2305,8 @@ and current SisypheImage instances.</p>
 </dd>
 </dl>
 </section>
-<section id="id133">
-<h3>Returns<a class="headerlink" href="#id133" title="Link to this heading"></a></h3>
+<section id="id135">
+<h3>Returns<a class="headerlink" href="#id135" title="Link to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>SisypheImage</dt><dd><p>standardized image</p>
@@ -2288,8 +2321,8 @@ and current SisypheImage instances.</p>
 <span class="sig-name descname"><span class="pre">getStatistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage" title="Sisyphe.core.sisypheImage.SisypheImage"><span class="pre">SisypheImage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheBinaryImage" title="Sisyphe.core.sisypheImage.SisypheBinaryImage"><span class="pre">SisypheBinaryImage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getStatistics" title="Link to this definition"></a></dt>
 <dd><p>Get descriptive statistics of image. Calculation is performed on the entire image (mask parameter = None) or
 in a mask.</p>
-<section id="id134">
-<h3>Parameters<a class="headerlink" href="#id134" title="Link to this heading"></a></h3>
+<section id="id136">
+<h3>Parameters<a class="headerlink" href="#id136" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>mask<span class="classifier">str | SisypheImage | SisypheBinaryImage | None</span></dt><dd><ul class="simple">
 <li><p>str, automatic thresholding algorithm used for background segmentation: ‘mean’, ‘otsu’, ‘huang’, ‘renyi’, ‘yen’, ‘li’, ‘shanbhag’, ‘triangle’, ‘intermodes’, ‘maximumentropy’, ‘kittler’, ‘isodata’ or ‘moments’</p></li>
@@ -2301,8 +2334,8 @@ in a mask.</p>
 </dd>
 </dl>
 </section>
-<section id="id135">
-<h3>Returns<a class="headerlink" href="#id135" title="Link to this heading"></a></h3>
+<section id="id137">
+<h3>Returns<a class="headerlink" href="#id137" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>dict[str, float]</dt><dd><dl class="simple">
 <dt>key/value:</dt><dd><ul class="simple">
@@ -2327,8 +2360,8 @@ in a mask.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.getStd">
 <span class="sig-name descname"><span class="pre">getStd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage" title="Sisyphe.core.sisypheImage.SisypheImage"><span class="pre">SisypheImage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheBinaryImage" title="Sisyphe.core.sisypheImage.SisypheBinaryImage"><span class="pre">SisypheBinaryImage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getStd" title="Link to this definition"></a></dt>
 <dd><p>Get standard deviation of image. Calculation is performed on the entire image (mask parameter = None) or in a mask.</p>
-<section id="id136">
-<h3>Parameters<a class="headerlink" href="#id136" title="Link to this heading"></a></h3>
+<section id="id138">
+<h3>Parameters<a class="headerlink" href="#id138" title="Link to this heading"></a></h3>
 <dl>
 <dt>mask<span class="classifier">str | SisypheImage | SisypheBinaryImage | None</span></dt><dd><ul class="simple">
 <li><p>str, automatic thresholding algorithm used for background segmentation: ‘mean’, ‘otsu’, ‘huang’, ‘renyi’, ‘yen’, ‘li’, ‘shanbhag’, ‘triangle’, ‘intermodes’, ‘maximumentropy’, ‘kittler’, ‘isodata’ or ‘moments’</p></li>
@@ -2345,8 +2378,8 @@ in a mask.</p>
 </dd>
 </dl>
 </section>
-<section id="id137">
-<h3>Returns<a class="headerlink" href="#id137" title="Link to this heading"></a></h3>
+<section id="id139">
+<h3>Returns<a class="headerlink" href="#id139" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>float | list[float]</dt><dd><ul class="simple">
 <li><p>standard deviation value for single-component image</p></li>
@@ -2378,8 +2411,8 @@ in a mask.</p>
 <li><p>Third vector, z-axis image direction, [0.0, 0.0, 1.0] (RAS+ default)</p></li>
 </ul>
 </div></blockquote>
-<section id="id138">
-<h3>Returns<a class="headerlink" href="#id138" title="Link to this heading"></a></h3>
+<section id="id140">
+<h3>Returns<a class="headerlink" href="#id140" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tuple[float, float, float]</dt><dd><p>vector of the z-axis image</p>
 </dd>
@@ -2394,8 +2427,8 @@ in a mask.</p>
 Truncate threshold is expressed in percentile (min threshold = centile, max threshold = 100 - centile).
 The max and min values of the output image are given in the output range parameter.
 If output range is None, max and min values of the output image are the max and min truncate thresholds.</p>
-<section id="id139">
-<h3>Parameters<a class="headerlink" href="#id139" title="Link to this heading"></a></h3>
+<section id="id141">
+<h3>Parameters<a class="headerlink" href="#id141" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>centile<span class="classifier">int</span></dt><dd><p>truncate threshold expressed in percentile</p>
 </dd>
@@ -2403,8 +2436,8 @@ If output range is None, max and min values of the output image are the max and 
 </dd>
 </dl>
 </section>
-<section id="id140">
-<h3>Returns<a class="headerlink" href="#id140" title="Link to this heading"></a></h3>
+<section id="id142">
+<h3>Returns<a class="headerlink" href="#id142" title="Link to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>SisypheImage</dt><dd><p>truncated intensity image</p>
@@ -2419,8 +2452,8 @@ If output range is None, max and min values of the output image are the max and 
 <span class="sig-name descname"><span class="pre">getVTKImage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">vtkImageData</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getVTKImage" title="Link to this definition"></a></dt>
 <dd><p>VTKImageData view (pointer) of the current SisypheImage. Image buffer is shared between VTKImageData and
 current SisypheImage instances.</p>
-<section id="id141">
-<h3>Returns<a class="headerlink" href="#id141" title="Link to this heading"></a></h3>
+<section id="id143">
+<h3>Returns<a class="headerlink" href="#id143" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>vtk.vtkImageData</dt><dd><p>shallow copy of image</p>
 </dd>
@@ -2432,15 +2465,15 @@ current SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.getVoxelCoordinatesFromWorldCoordinates">
 <span class="sig-name descname"><span class="pre">getVoxelCoordinatesFromWorldCoordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getVoxelCoordinatesFromWorldCoordinates" title="Link to this definition"></a></dt>
 <dd><p>Convert world coordinates to voxel grid coordinates.</p>
-<section id="id142">
-<h3>Parameters<a class="headerlink" href="#id142" title="Link to this heading"></a></h3>
+<section id="id144">
+<h3>Parameters<a class="headerlink" href="#id144" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>p<span class="classifier">list[float, float, float] | tuple[float, float, float]</span></dt><dd><p>world coordinates</p>
 </dd>
 </dl>
 </section>
-<section id="id143">
-<h3>Returns<a class="headerlink" href="#id143" title="Link to this heading"></a></h3>
+<section id="id145">
+<h3>Returns<a class="headerlink" href="#id145" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tuple[float, float, float]</dt><dd><p>voxel coordinates (image reference)</p>
 </dd>
@@ -2452,8 +2485,8 @@ current SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.getVoxelVolume">
 <span class="sig-name descname"><span class="pre">getVoxelVolume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getVoxelVolume" title="Link to this definition"></a></dt>
 <dd><p>Get voxel volume in mm3.</p>
-<section id="id144">
-<h3>Returns<a class="headerlink" href="#id144" title="Link to this heading"></a></h3>
+<section id="id146">
+<h3>Returns<a class="headerlink" href="#id146" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>float</dt><dd><p>voxel volume in mm3</p>
 </dd>
@@ -2465,8 +2498,8 @@ current SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.getWidth">
 <span class="sig-name descname"><span class="pre">getWidth</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getWidth" title="Link to this definition"></a></dt>
 <dd><p>Get image size in x.</p>
-<section id="id145">
-<h3>Returns<a class="headerlink" href="#id145" title="Link to this heading"></a></h3>
+<section id="id147">
+<h3>Returns<a class="headerlink" href="#id147" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>int</dt><dd><p>x-axis image size</p>
 </dd>
@@ -2478,15 +2511,15 @@ current SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.getWorldCoordinatesFromVoxelCoordinates">
 <span class="sig-name descname"><span class="pre">getWorldCoordinatesFromVoxelCoordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.getWorldCoordinatesFromVoxelCoordinates" title="Link to this definition"></a></dt>
 <dd><p>Convert voxel grid coordinates to world coordinates.</p>
-<section id="id146">
-<h3>Parameters<a class="headerlink" href="#id146" title="Link to this heading"></a></h3>
+<section id="id148">
+<h3>Parameters<a class="headerlink" href="#id148" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>p<span class="classifier">list[float, float, float] | tuple[float, float, float]</span></dt><dd><p>voxel coordinates (image reference)</p>
 </dd>
 </dl>
 </section>
-<section id="id147">
-<h3>Returns<a class="headerlink" href="#id147" title="Link to this heading"></a></h3>
+<section id="id149">
+<h3>Returns<a class="headerlink" href="#id149" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tuple[float, float, float]</dt><dd><p>world coordinates</p>
 </dd>
@@ -2497,9 +2530,9 @@ current SisypheImage instances.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.hasITKImage">
 <span class="sig-name descname"><span class="pre">hasITKImage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.hasITKImage" title="Link to this definition"></a></dt>
-<dd><p>Checks whether itk.Image attribute is available.</p>
-<section id="id148">
-<h3>Returns<a class="headerlink" href="#id148" title="Link to this heading"></a></h3>
+<dd><p>Check whether itk.Image attribute is available.</p>
+<section id="id150">
+<h3>Returns<a class="headerlink" href="#id150" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if itk.Image attribute is available (not None)</p>
 </dd>
@@ -2511,8 +2544,8 @@ current SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.hasSameFieldOfView">
 <span class="sig-name descname"><span class="pre">hasSameFieldOfView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage" title="Sisyphe.core.sisypheImage.SisypheImage"><span class="pre">SisypheImage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">vtkImageData</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ANTsImage</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Image</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.hasSameFieldOfView" title="Link to this definition"></a></dt>
 <dd><p>Compare field of view between current SisypheImage instance and other image.</p>
-<section id="id149">
-<h3>Parameters<a class="headerlink" href="#id149" title="Link to this heading"></a></h3>
+<section id="id151">
+<h3>Parameters<a class="headerlink" href="#id151" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>img<span class="classifier">SisypheImage | SimpleITK.Image | itk.Image | vtk.vtkImageData | ants.core.ANTsImage | tuple[float, float, float] | list[float, float, float]</span></dt><dd><p>get FOV value from image attributes (SisypheImage | SimpleITK.Image | itk.Image | vtk.vtkImageData | ants.core.ANTsImage)
 or directly from a tuple or a list of three values</p>
@@ -2521,8 +2554,8 @@ or directly from a tuple or a list of three values</p>
 </dd>
 </dl>
 </section>
-<section id="id150">
-<h3>Returns<a class="headerlink" href="#id150" title="Link to this heading"></a></h3>
+<section id="id152">
+<h3>Returns<a class="headerlink" href="#id152" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if same field of view</p>
 </dd>
@@ -2534,8 +2567,8 @@ or directly from a tuple or a list of three values</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.hasSameOrigin">
 <span class="sig-name descname"><span class="pre">hasSameOrigin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage" title="Sisyphe.core.sisypheImage.SisypheImage"><span class="pre">SisypheImage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">vtkImageData</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ANTsImage</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Image</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.hasSameOrigin" title="Link to this definition"></a></dt>
 <dd><p>Compare origin between the current SisypheImage instance and other image.</p>
-<section id="id151">
-<h3>Parameters<a class="headerlink" href="#id151" title="Link to this heading"></a></h3>
+<section id="id153">
+<h3>Parameters<a class="headerlink" href="#id153" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>origin<span class="classifier">SisypheImage | SimpleITK.Image | vtk.vtkImageData | ants.core.ANTsImage | tuple[float, float, float] | list[float, float, float] | ndarray | str</span></dt><dd><ul class="simple">
 <li><p>get origin from image attribute (SisypheImage, SimpleITK.Image, itk.Image, vtk.vtkImageData, ants.core.ANTsImage),</p></li>
@@ -2545,8 +2578,8 @@ or directly from a tuple or a list of three values</p>
 </dd>
 </dl>
 </section>
-<section id="id152">
-<h3>Returns<a class="headerlink" href="#id152" title="Link to this heading"></a></h3>
+<section id="id154">
+<h3>Returns<a class="headerlink" href="#id154" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if same origin</p>
 </dd>
@@ -2558,15 +2591,15 @@ or directly from a tuple or a list of three values</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.hasSameSize">
 <span class="sig-name descname"><span class="pre">hasSameSize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage" title="Sisyphe.core.sisypheImage.SisypheImage"><span class="pre">SisypheImage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">vtkImageData</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ANTsImage</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Image</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.hasSameSize" title="Link to this definition"></a></dt>
 <dd><p>Compare size between the current SisypheImage instance and other image.</p>
-<section id="id153">
-<h3>Parameters<a class="headerlink" href="#id153" title="Link to this heading"></a></h3>
+<section id="id155">
+<h3>Parameters<a class="headerlink" href="#id155" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>img<span class="classifier">SisypheImage | SimpleITK.Image | itk.Image | vtk.vtkImageData | ants.core.ANTsImage | numpy.ndarray | tuple[int, int, int] | list[int, int, int]</span></dt><dd><p>image to compare</p>
 </dd>
 </dl>
 </section>
-<section id="id154">
-<h3>Returns<a class="headerlink" href="#id154" title="Link to this heading"></a></h3>
+<section id="id156">
+<h3>Returns<a class="headerlink" href="#id156" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if same size</p>
 </dd>
@@ -2578,8 +2611,8 @@ or directly from a tuple or a list of three values</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.hasSameSpacing">
 <span class="sig-name descname"><span class="pre">hasSameSpacing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Sisyphe.core.sisypheImage.SisypheImage" title="Sisyphe.core.sisypheImage.SisypheImage"><span class="pre">SisypheImage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Image</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.hasSameSpacing" title="Link to this definition"></a></dt>
 <dd><p>Compare spacing between the current SisypheImage instance and other image.</p>
-<section id="id155">
-<h3>Parameters<a class="headerlink" href="#id155" title="Link to this heading"></a></h3>
+<section id="id157">
+<h3>Parameters<a class="headerlink" href="#id157" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>img<span class="classifier">SisypheImage | SimpleITK.Image | itk.Image | vtk.vtkImageData | ants.core.ANTsImage | tuple[float, float, float] | list[float, float, float]</span></dt><dd><p>get spacing from image attribute (SisypheImage | SimpleITK.Image | itk.Image | vtk.vtkImageData | ants.core.ANTsImage)
 or directly from a tuple or a list of three values</p>
@@ -2588,8 +2621,8 @@ or directly from a tuple or a list of three values</p>
 </dd>
 </dl>
 </section>
-<section id="id156">
-<h3>Returns<a class="headerlink" href="#id156" title="Link to this heading"></a></h3>
+<section id="id158">
+<h3>Returns<a class="headerlink" href="#id158" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if same spacing</p>
 </dd>
@@ -2602,15 +2635,15 @@ or directly from a tuple or a list of three values</p>
 <span class="sig-name descname"><span class="pre">isAnisotropic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isAnisotropic" title="Link to this definition"></a></dt>
 <dd><p>Check whether voxel is anisotropic, i.e. not same spacing in each dimension
 A tolerance is applied: max(spacing) / min(spacing) &gt; tol</p>
-<section id="id157">
-<h3>Parameters<a class="headerlink" href="#id157" title="Link to this heading"></a></h3>
+<section id="id159">
+<h3>Parameters<a class="headerlink" href="#id159" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tol<span class="classifier">float</span></dt><dd><p>tolerance (default 2.0)</p>
 </dd>
 </dl>
 </section>
-<section id="id158">
-<h3>Returns<a class="headerlink" href="#id158" title="Link to this heading"></a></h3>
+<section id="id160">
+<h3>Returns<a class="headerlink" href="#id160" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if max(spacing) / min(spacing) &gt; tol</p>
 </dd>
@@ -2622,8 +2655,8 @@ A tolerance is applied: max(spacing) / min(spacing) &gt; tol</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isDefaultOrigin">
 <span class="sig-name descname"><span class="pre">isDefaultOrigin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isDefaultOrigin" title="Link to this definition"></a></dt>
 <dd><p>Check whether geometrical reference origin is (0.0, 0.0, 0.0).</p>
-<section id="id159">
-<h3>Returns<a class="headerlink" href="#id159" title="Link to this heading"></a></h3>
+<section id="id161">
+<h3>Returns<a class="headerlink" href="#id161" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if world coordinates origin is (0.0, 0.0, 0.0)</p>
 </dd>
@@ -2635,8 +2668,8 @@ A tolerance is applied: max(spacing) / min(spacing) &gt; tol</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isEmpty">
 <span class="sig-name descname"><span class="pre">isEmpty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isEmpty" title="Link to this definition"></a></dt>
 <dd><p>Check whether image buffer is allocated.</p>
-<section id="id160">
-<h3>Returns<a class="headerlink" href="#id160" title="Link to this heading"></a></h3>
+<section id="id162">
+<h3>Returns<a class="headerlink" href="#id162" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if image buffer is allocated</p>
 </dd>
@@ -2648,8 +2681,8 @@ A tolerance is applied: max(spacing) / min(spacing) &gt; tol</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isEmptyArray">
 <span class="sig-name descname"><span class="pre">isEmptyArray</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isEmptyArray" title="Link to this definition"></a></dt>
 <dd><p>Check whether image is empty i.e. all scalar values in the image array are 0.0.</p>
-<section id="id161">
-<h3>Returns<a class="headerlink" href="#id161" title="Link to this heading"></a></h3>
+<section id="id163">
+<h3>Returns<a class="headerlink" href="#id163" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if image is empty</p>
 </dd>
@@ -2661,8 +2694,8 @@ A tolerance is applied: max(spacing) / min(spacing) &gt; tol</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isFloat32Datatype">
 <span class="sig-name descname"><span class="pre">isFloat32Datatype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isFloat32Datatype" title="Link to this definition"></a></dt>
 <dd><p>Check whether datatype is float32.</p>
-<section id="id162">
-<h3>Returns<a class="headerlink" href="#id162" title="Link to this heading"></a></h3>
+<section id="id164">
+<h3>Returns<a class="headerlink" href="#id164" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if float32 datatype</p>
 </dd>
@@ -2674,8 +2707,8 @@ A tolerance is applied: max(spacing) / min(spacing) &gt; tol</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isFloat64Datatype">
 <span class="sig-name descname"><span class="pre">isFloat64Datatype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isFloat64Datatype" title="Link to this definition"></a></dt>
 <dd><p>Check whether datatype is float64.</p>
-<section id="id163">
-<h3>Returns<a class="headerlink" href="#id163" title="Link to this heading"></a></h3>
+<section id="id165">
+<h3>Returns<a class="headerlink" href="#id165" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if float64 datatype</p>
 </dd>
@@ -2687,8 +2720,8 @@ A tolerance is applied: max(spacing) / min(spacing) &gt; tol</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isFloatDatatype">
 <span class="sig-name descname"><span class="pre">isFloatDatatype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isFloatDatatype" title="Link to this definition"></a></dt>
 <dd><p>Check whether datatype is float (‘float32’ or ‘float64’).</p>
-<section id="id164">
-<h3>Returns<a class="headerlink" href="#id164" title="Link to this heading"></a></h3>
+<section id="id166">
+<h3>Returns<a class="headerlink" href="#id166" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if float datatype</p>
 </dd>
@@ -2700,8 +2733,8 @@ A tolerance is applied: max(spacing) / min(spacing) &gt; tol</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isInt16Datatype">
 <span class="sig-name descname"><span class="pre">isInt16Datatype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isInt16Datatype" title="Link to this definition"></a></dt>
 <dd><p>Check whether datatype is int16.</p>
-<section id="id165">
-<h3>Returns<a class="headerlink" href="#id165" title="Link to this heading"></a></h3>
+<section id="id167">
+<h3>Returns<a class="headerlink" href="#id167" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if int16 datatype</p>
 </dd>
@@ -2713,8 +2746,8 @@ A tolerance is applied: max(spacing) / min(spacing) &gt; tol</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isInt32Datatype">
 <span class="sig-name descname"><span class="pre">isInt32Datatype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isInt32Datatype" title="Link to this definition"></a></dt>
 <dd><p>Check whether datatype is int32.</p>
-<section id="id166">
-<h3>Returns<a class="headerlink" href="#id166" title="Link to this heading"></a></h3>
+<section id="id168">
+<h3>Returns<a class="headerlink" href="#id168" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if int32 datatype</p>
 </dd>
@@ -2726,8 +2759,8 @@ A tolerance is applied: max(spacing) / min(spacing) &gt; tol</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isInt64Datatype">
 <span class="sig-name descname"><span class="pre">isInt64Datatype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isInt64Datatype" title="Link to this definition"></a></dt>
 <dd><p>Check whether datatype is int64.</p>
-<section id="id167">
-<h3>Returns<a class="headerlink" href="#id167" title="Link to this heading"></a></h3>
+<section id="id169">
+<h3>Returns<a class="headerlink" href="#id169" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if int64 datatype</p>
 </dd>
@@ -2739,8 +2772,8 @@ A tolerance is applied: max(spacing) / min(spacing) &gt; tol</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isInt8Datatype">
 <span class="sig-name descname"><span class="pre">isInt8Datatype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isInt8Datatype" title="Link to this definition"></a></dt>
 <dd><p>Check whether datatype is int8.</p>
-<section id="id168">
-<h3>Returns<a class="headerlink" href="#id168" title="Link to this heading"></a></h3>
+<section id="id170">
+<h3>Returns<a class="headerlink" href="#id170" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if int8 datatype</p>
 </dd>
@@ -2752,8 +2785,8 @@ A tolerance is applied: max(spacing) / min(spacing) &gt; tol</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isIntegerDatatype">
 <span class="sig-name descname"><span class="pre">isIntegerDatatype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isIntegerDatatype" title="Link to this definition"></a></dt>
 <dd><p>Check whether datatype is integer (‘uint8’, ‘int8’, ‘uint16’, ‘int16’, ‘uint32’, ‘int32’, ‘uint64’ or ‘int64’).</p>
-<section id="id169">
-<h3>Returns<a class="headerlink" href="#id169" title="Link to this heading"></a></h3>
+<section id="id171">
+<h3>Returns<a class="headerlink" href="#id171" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if integer datatype</p>
 </dd>
@@ -2766,15 +2799,15 @@ A tolerance is applied: max(spacing) / min(spacing) &gt; tol</p>
 <span class="sig-name descname"><span class="pre">isIsotropic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isIsotropic" title="Link to this definition"></a></dt>
 <dd><p>Check whether voxel is isotropic, i.e. same spacing in each dimension.
 A tolerance is applied:  max(spacing) / min(spacing) &lt;= tol</p>
-<section id="id170">
-<h3>Parameters<a class="headerlink" href="#id170" title="Link to this heading"></a></h3>
+<section id="id172">
+<h3>Parameters<a class="headerlink" href="#id172" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tol<span class="classifier">float</span></dt><dd><p>tolerance (default 2.0)</p>
 </dd>
 </dl>
 </section>
-<section id="id171">
-<h3>Returns<a class="headerlink" href="#id171" title="Link to this heading"></a></h3>
+<section id="id173">
+<h3>Returns<a class="headerlink" href="#id173" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if max(spacing) / min(spacing) &lt; tol</p>
 </dd>
@@ -2786,8 +2819,8 @@ A tolerance is applied:  max(spacing) / min(spacing) &lt;= tol</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isMulticomponent">
 <span class="sig-name descname"><span class="pre">isMulticomponent</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isMulticomponent" title="Link to this definition"></a></dt>
 <dd><p>Check whether image is multicomponent (array element is a vector and not a scalar value).</p>
-<section id="id172">
-<h3>Returns<a class="headerlink" href="#id172" title="Link to this heading"></a></h3>
+<section id="id174">
+<h3>Returns<a class="headerlink" href="#id174" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if multicomponent image</p>
 </dd>
@@ -2800,8 +2833,8 @@ A tolerance is applied:  max(spacing) / min(spacing) &lt;= tol</p>
 <span class="sig-name descname"><span class="pre">isThickAnisotropic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thickness</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isThickAnisotropic" title="Link to this definition"></a></dt>
 <dd><p>Check if the voxel is anisotropic and thicker than a given slice thickness in mm.
 A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
-<section id="id173">
-<h3>Parameters<a class="headerlink" href="#id173" title="Link to this heading"></a></h3>
+<section id="id175">
+<h3>Parameters<a class="headerlink" href="#id175" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tol<span class="classifier">float</span></dt><dd><p>tolerance (default 2.0)</p>
 </dd>
@@ -2809,8 +2842,8 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 </dd>
 </dl>
 </section>
-<section id="id174">
-<h3>Returns<a class="headerlink" href="#id174" title="Link to this heading"></a></h3>
+<section id="id176">
+<h3>Returns<a class="headerlink" href="#id176" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if max(spacing) / min(spacing) &gt; tol and max(spacing) &gt;= thickness</p>
 </dd>
@@ -2822,8 +2855,8 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isUInt16Datatype">
 <span class="sig-name descname"><span class="pre">isUInt16Datatype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isUInt16Datatype" title="Link to this definition"></a></dt>
 <dd><p>Check whether datatype is uint16.</p>
-<section id="id175">
-<h3>Returns<a class="headerlink" href="#id175" title="Link to this heading"></a></h3>
+<section id="id177">
+<h3>Returns<a class="headerlink" href="#id177" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if uint16 datatype</p>
 </dd>
@@ -2835,8 +2868,8 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isUInt32Datatype">
 <span class="sig-name descname"><span class="pre">isUInt32Datatype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isUInt32Datatype" title="Link to this definition"></a></dt>
 <dd><p>Check whether datatype is uint32.</p>
-<section id="id176">
-<h3>Returns<a class="headerlink" href="#id176" title="Link to this heading"></a></h3>
+<section id="id178">
+<h3>Returns<a class="headerlink" href="#id178" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if uint32 datatype</p>
 </dd>
@@ -2848,8 +2881,8 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isUInt64Datatype">
 <span class="sig-name descname"><span class="pre">isUInt64Datatype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isUInt64Datatype" title="Link to this definition"></a></dt>
 <dd><p>Check whether datatype is uint64.</p>
-<section id="id177">
-<h3>Returns<a class="headerlink" href="#id177" title="Link to this heading"></a></h3>
+<section id="id179">
+<h3>Returns<a class="headerlink" href="#id179" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if uint64 datatype</p>
 </dd>
@@ -2861,8 +2894,8 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.isUInt8Datatype">
 <span class="sig-name descname"><span class="pre">isUInt8Datatype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.isUInt8Datatype" title="Link to this definition"></a></dt>
 <dd><p>Check whether datatype is uint8.</p>
-<section id="id178">
-<h3>Returns<a class="headerlink" href="#id178" title="Link to this heading"></a></h3>
+<section id="id180">
+<h3>Returns<a class="headerlink" href="#id180" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if uint8 datatype</p>
 </dd>
@@ -2874,8 +2907,8 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.loadFromBrainVoyagerVMR">
 <span class="sig-name descname"><span class="pre">loadFromBrainVoyagerVMR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.loadFromBrainVoyagerVMR" title="Link to this definition"></a></dt>
 <dd><p>Load the current SisypheImage instance from a BrainVoyager (.vmr) file.</p>
-<section id="id179">
-<h3>Parameters<a class="headerlink" href="#id179" title="Link to this heading"></a></h3>
+<section id="id181">
+<h3>Parameters<a class="headerlink" href="#id181" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>BrainVoyager file name</p>
 </dd>
@@ -2887,8 +2920,8 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.loadFromFreeSurferMGH">
 <span class="sig-name descname"><span class="pre">loadFromFreeSurferMGH</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.loadFromFreeSurferMGH" title="Link to this definition"></a></dt>
 <dd><p>Load the current SisypheImage instance from a FreeSurfer MGH (.mgh, .mgz) file.</p>
-<section id="id180">
-<h3>Parameters<a class="headerlink" href="#id180" title="Link to this heading"></a></h3>
+<section id="id182">
+<h3>Parameters<a class="headerlink" href="#id182" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>FreeSurfer file name</p>
 </dd>
@@ -2900,8 +2933,8 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.loadFromMINC">
 <span class="sig-name descname"><span class="pre">loadFromMINC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.loadFromMINC" title="Link to this definition"></a></dt>
 <dd><p>Load the current SisypheImage instance from a Minc (.minc) file.</p>
-<section id="id181">
-<h3>Parameters<a class="headerlink" href="#id181" title="Link to this heading"></a></h3>
+<section id="id183">
+<h3>Parameters<a class="headerlink" href="#id183" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>Minc file name</p>
 </dd>
@@ -2913,8 +2946,8 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.loadFromNIFTI">
 <span class="sig-name descname"><span class="pre">loadFromNIFTI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reorient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.loadFromNIFTI" title="Link to this definition"></a></dt>
 <dd><p>Load the current SisypheImage instance from a Nifti (.nii) file.</p>
-<section id="id182">
-<h3>Parameters<a class="headerlink" href="#id182" title="Link to this heading"></a></h3>
+<section id="id184">
+<h3>Parameters<a class="headerlink" href="#id184" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>Nifti file name</p>
 </dd>
@@ -2928,8 +2961,8 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.loadFromNRRD">
 <span class="sig-name descname"><span class="pre">loadFromNRRD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.loadFromNRRD" title="Link to this definition"></a></dt>
 <dd><p>Load the current SisypheImage instance from a Nrrd (.nrrd) file.</p>
-<section id="id183">
-<h3>Parameters<a class="headerlink" href="#id183" title="Link to this heading"></a></h3>
+<section id="id185">
+<h3>Parameters<a class="headerlink" href="#id185" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>Nrrd file name</p>
 </dd>
@@ -2941,8 +2974,8 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.loadFromNumpy">
 <span class="sig-name descname"><span class="pre">loadFromNumpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.loadFromNumpy" title="Link to this definition"></a></dt>
 <dd><p>Load the current SisypheImage instance from a numpy (.npy) file.</p>
-<section id="id184">
-<h3>Parameters<a class="headerlink" href="#id184" title="Link to this heading"></a></h3>
+<section id="id186">
+<h3>Parameters<a class="headerlink" href="#id186" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>numpy file name</p>
 </dd>
@@ -2954,15 +2987,15 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.loadFromSisyphe">
 <span class="sig-name descname"><span class="pre">loadFromSisyphe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.loadFromSisyphe" title="Link to this definition"></a></dt>
 <dd><p>Load the current SisypheImage instance from an old Sisyphe (.vol) file.</p>
-<section id="id185">
-<h3>Parameters<a class="headerlink" href="#id185" title="Link to this heading"></a></h3>
+<section id="id187">
+<h3>Parameters<a class="headerlink" href="#id187" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>old Sisyphe binary file name</p>
 </dd>
 </dl>
 </section>
-<section id="id186">
-<h3>Returns<a class="headerlink" href="#id186" title="Link to this heading"></a></h3>
+<section id="id188">
+<h3>Returns<a class="headerlink" href="#id188" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>dict</dt><dd><p>Old Sisyphe header (see Sisyphe.sisypheImageIO.loadFromSisyphe docstring for keys and values documentation)</p>
 </dd>
@@ -2974,8 +3007,8 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.loadFromVTK">
 <span class="sig-name descname"><span class="pre">loadFromVTK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.loadFromVTK" title="Link to this definition"></a></dt>
 <dd><p>Load the current SisypheImage instance from a VTK (.vtk) file.</p>
-<section id="id187">
-<h3>Parameters<a class="headerlink" href="#id187" title="Link to this heading"></a></h3>
+<section id="id189">
+<h3>Parameters<a class="headerlink" href="#id189" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>VTK file name</p>
 </dd>
@@ -2987,8 +3020,8 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.noiseEstimate">
 <span class="sig-name descname"><span class="pre">noiseEstimate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.noiseEstimate" title="Link to this definition"></a></dt>
 <dd><p>Estimator of the (Gaussian) noise standard deviation.</p>
-<section id="id188">
-<h3>Returns<a class="headerlink" href="#id188" title="Link to this heading"></a></h3>
+<section id="id190">
+<h3>Returns<a class="headerlink" href="#id190" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>float</dt><dd><p>noise standard deviation</p>
 </dd>
@@ -3002,16 +3035,16 @@ A tolerance is applied for anisotropy: max(spacing) / min(spacing) &gt; tol.</p>
 <dd><p>Get a new SisypheImage instance, cropped in z. Most sagittal MRI scans have extensive and useless inferior
 coverage. This function crop MR volume in z direction, removing empty slices and lower slices of neck below
 foramen magnum.</p>
-<section id="id189">
-<h3>Parameters<a class="headerlink" href="#id189" title="Link to this heading"></a></h3>
+<section id="id191">
+<h3>Parameters<a class="headerlink" href="#id191" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>f<span class="classifier">float</span></dt><dd><p>multiplicative factor to adjust the neck slice. Lower values remove more slices, higher values keep more
 slices (between 1.5 and 2.0, default 1.8 close to the foramen magnum for most MR images)</p>
 </dd>
 </dl>
 </section>
-<section id="id190">
-<h3>Returns<a class="headerlink" href="#id190" title="Link to this heading"></a></h3>
+<section id="id192">
+<h3>Returns<a class="headerlink" href="#id192" title="Link to this heading"></a></h3>
 <p>SisypheImage</p>
 </section>
 </dd></dl>
@@ -3019,9 +3052,9 @@ slices (between 1.5 and 2.0, default 1.8 close to the foramen magnum for most MR
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.replaceNanInfValues">
 <span class="sig-name descname"><span class="pre">replaceNanInfValues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">posinf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neginf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.replaceNanInfValues" title="Link to this definition"></a></dt>
-<dd><p>Replace NaN and Inf values with a given values.</p>
-<section id="id191">
-<h3>Parameters<a class="headerlink" href="#id191" title="Link to this heading"></a></h3>
+<dd><p>Replace NaN and Inf values with a given value (default 0.0).</p>
+<section id="id193">
+<h3>Parameters<a class="headerlink" href="#id193" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>nan<span class="classifier">float, optional</span></dt><dd><p>value to replace NaN (default 0.0)</p>
 </dd>
@@ -3037,8 +3070,8 @@ slices (between 1.5 and 2.0, default 1.8 close to the foramen magnum for most MR
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.saveToJSON">
 <span class="sig-name descname"><span class="pre">saveToJSON</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.saveToJSON" title="Link to this definition"></a></dt>
 <dd><p>Save the current SisypheImage instance to a Json (.json) file.</p>
-<section id="id192">
-<h3>Parameters<a class="headerlink" href="#id192" title="Link to this heading"></a></h3>
+<section id="id194">
+<h3>Parameters<a class="headerlink" href="#id194" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>Json file name</p>
 </dd>
@@ -3050,8 +3083,8 @@ slices (between 1.5 and 2.0, default 1.8 close to the foramen magnum for most MR
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.saveToMINC">
 <span class="sig-name descname"><span class="pre">saveToMINC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.saveToMINC" title="Link to this definition"></a></dt>
 <dd><p>Save the current SisypheImage instance to a Minc (.minc) file.</p>
-<section id="id193">
-<h3>Parameters<a class="headerlink" href="#id193" title="Link to this heading"></a></h3>
+<section id="id195">
+<h3>Parameters<a class="headerlink" href="#id195" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>Minc file name</p>
 </dd>
@@ -3063,8 +3096,8 @@ slices (between 1.5 and 2.0, default 1.8 close to the foramen magnum for most MR
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.saveToNIFTI">
 <span class="sig-name descname"><span class="pre">saveToNIFTI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.saveToNIFTI" title="Link to this definition"></a></dt>
 <dd><p>Save the current SisypheImage instance to a Nifti (.nii) file.</p>
-<section id="id194">
-<h3>Parameters<a class="headerlink" href="#id194" title="Link to this heading"></a></h3>
+<section id="id196">
+<h3>Parameters<a class="headerlink" href="#id196" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>Nifti file name</p>
 </dd>
@@ -3078,8 +3111,8 @@ slices (between 1.5 and 2.0, default 1.8 close to the foramen magnum for most MR
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.saveToNRRD">
 <span class="sig-name descname"><span class="pre">saveToNRRD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.saveToNRRD" title="Link to this definition"></a></dt>
 <dd><p>Save the current SisypheImage instance to a Nrrd (.nrrd) file.</p>
-<section id="id195">
-<h3>Parameters<a class="headerlink" href="#id195" title="Link to this heading"></a></h3>
+<section id="id197">
+<h3>Parameters<a class="headerlink" href="#id197" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>Nrrd file name</p>
 </dd>
@@ -3091,8 +3124,8 @@ slices (between 1.5 and 2.0, default 1.8 close to the foramen magnum for most MR
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.saveToNumpy">
 <span class="sig-name descname"><span class="pre">saveToNumpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.saveToNumpy" title="Link to this definition"></a></dt>
 <dd><p>Save the current SisypheImage instance to a numpy (.npy) file.</p>
-<section id="id196">
-<h3>Parameters<a class="headerlink" href="#id196" title="Link to this heading"></a></h3>
+<section id="id198">
+<h3>Parameters<a class="headerlink" href="#id198" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>numpy file name</p>
 </dd>
@@ -3104,8 +3137,8 @@ slices (between 1.5 and 2.0, default 1.8 close to the foramen magnum for most MR
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.saveToVTK">
 <span class="sig-name descname"><span class="pre">saveToVTK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.saveToVTK" title="Link to this definition"></a></dt>
 <dd><p>Save the current SisypheImage instance to a vtk (.vtk) file.</p>
-<section id="id197">
-<h3>Parameters<a class="headerlink" href="#id197" title="Link to this heading"></a></h3>
+<section id="id199">
+<h3>Parameters<a class="headerlink" href="#id199" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>VTK file name</p>
 </dd>
@@ -3139,8 +3172,8 @@ slices (between 1.5 and 2.0, default 1.8 close to the foramen magnum for most MR
 <li><p>Third vector, y image axis direction, [0.0, 0.0, 1.0] (RAS+ default)</p></li>
 </ul>
 </div></blockquote>
-<section id="id198">
-<h3>Parameters<a class="headerlink" href="#id198" title="Link to this heading"></a></h3>
+<section id="id200">
+<h3>Parameters<a class="headerlink" href="#id200" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>direction  tuple[float, …]</dt><dd><p>9 elements, vectors of image axes</p>
 </dd>
@@ -3152,8 +3185,8 @@ slices (between 1.5 and 2.0, default 1.8 close to the foramen magnum for most MR
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.setOrigin">
 <span class="sig-name descname"><span class="pre">setOrigin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.setOrigin" title="Link to this definition"></a></dt>
 <dd><p>Set geometrical reference origin coordinates.</p>
-<section id="id199">
-<h3>Parameters<a class="headerlink" href="#id199" title="Link to this heading"></a></h3>
+<section id="id201">
+<h3>Parameters<a class="headerlink" href="#id201" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>origin<span class="classifier">list[float, float, float] | tuple[float, float, float]</span></dt><dd><p>image origin in world coordinates</p>
 </dd>
@@ -3172,8 +3205,8 @@ slices (between 1.5 and 2.0, default 1.8 close to the foramen magnum for most MR
 <span class="sig-name descname"><span class="pre">setSITKImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Image</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.setSITKImage" title="Link to this definition"></a></dt>
 <dd><p>Shallow copy of a SimpleITK Image to the current SisypheImage instance. Image buffer is shared between
 SimpleITK image and current SisypheImage instances.</p>
-<section id="id200">
-<h3>Parameters<a class="headerlink" href="#id200" title="Link to this heading"></a></h3>
+<section id="id202">
+<h3>Parameters<a class="headerlink" href="#id202" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>img<span class="classifier">SimpleITK.Image</span></dt><dd><p>image to copy</p>
 </dd>
@@ -3185,8 +3218,8 @@ SimpleITK image and current SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.setSpacing">
 <span class="sig-name descname"><span class="pre">setSpacing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.setSpacing" title="Link to this definition"></a></dt>
 <dd><p>Set voxel size (mm) in each dimension.</p>
-<section id="id201">
-<h3>Parameters<a class="headerlink" href="#id201" title="Link to this heading"></a></h3>
+<section id="id203">
+<h3>Parameters<a class="headerlink" href="#id203" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>sx<span class="classifier">float</span></dt><dd><p>voxel spacing in x</p>
 </dd>
@@ -3202,15 +3235,15 @@ SimpleITK image and current SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.sliceHeadSurface">
 <span class="sig-name descname"><span class="pre">sliceHeadSurface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'e'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.sliceHeadSurface" title="Link to this definition"></a></dt>
 <dd><p>Get head surface (number of pixels) in each slice of the current SisypheImage instance.</p>
-<section id="id202">
-<h3>Parameters<a class="headerlink" href="#id202" title="Link to this heading"></a></h3>
+<section id="id204">
+<h3>Parameters<a class="headerlink" href="#id204" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>orient<span class="classifier">str</span></dt><dd><p>slice orientation (‘a’ axial, ‘c’ coronal, ‘s’ sagittal, ‘e’ every orientation default)</p>
 </dd>
 </dl>
 </section>
-<section id="id203">
-<h3>Returns<a class="headerlink" href="#id203" title="Link to this heading"></a></h3>
+<section id="id205">
+<h3>Returns<a class="headerlink" href="#id205" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>dict[str, list]</dt><dd><ul class="simple">
 <li><p>keys: ‘a’ axial results, ‘c’ coronal results, ‘s’ sagittal results</p></li>
@@ -3229,8 +3262,8 @@ SimpleITK image and current SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.sliceIsEmpty">
 <span class="sig-name descname"><span class="pre">sliceIsEmpty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.sliceIsEmpty" title="Link to this definition"></a></dt>
 <dd><p>Check whether slices are empty i.e. all scalar values in slices are 0.0.</p>
-<section id="id204">
-<h3>Parameters<a class="headerlink" href="#id204" title="Link to this heading"></a></h3>
+<section id="id206">
+<h3>Parameters<a class="headerlink" href="#id206" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>index<span class="classifier">int | list[int] | tuple[int, …]</span></dt><dd><p>slice indices</p>
 </dd>
@@ -3238,8 +3271,8 @@ SimpleITK image and current SisypheImage instances.</p>
 </dd>
 </dl>
 </section>
-<section id="id205">
-<h3>Returns<a class="headerlink" href="#id205" title="Link to this heading"></a></h3>
+<section id="id207">
+<h3>Returns<a class="headerlink" href="#id207" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if slices are empty</p>
 </dd>
@@ -3251,8 +3284,8 @@ SimpleITK image and current SisypheImage instances.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.SisypheImage.standardizeIntensity">
 <span class="sig-name descname"><span class="pre">standardizeIntensity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'norm'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.SisypheImage.standardizeIntensity" title="Link to this definition"></a></dt>
 <dd><p>Intensity normalization of the current SisypheImage instance.</p>
-<section id="id206">
-<h3>Parameters<a class="headerlink" href="#id206" title="Link to this heading"></a></h3>
+<section id="id208">
+<h3>Parameters<a class="headerlink" href="#id208" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>method<span class="classifier">str</span></dt><dd><ul class="simple">
 <li><p>‘norm’, standardize the intensity as zscore (i.e. zero mean, [-std, +std] mapped to [0, 1]</p></li>
@@ -3270,8 +3303,8 @@ SimpleITK image and current SisypheImage instances.</p>
 (min threshold = centile, max threshold = 100 - centile). The max and min values of the output image are given
 in the output range parameter. If output range is None, max and min values of the output image are the max and
 min truncate thresholds.</p>
-<section id="id207">
-<h3>Parameters<a class="headerlink" href="#id207" title="Link to this heading"></a></h3>
+<section id="id209">
+<h3>Parameters<a class="headerlink" href="#id209" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>centile<span class="classifier">int</span></dt><dd><p>truncate threshold expressed in percentile</p>
 </dd>
@@ -3288,15 +3321,15 @@ min truncate thresholds.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.numpyToVtkImageData">
 <span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImage.</span></span><span class="sig-name descname"><span class="pre">numpyToVtkImageData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">np</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">vtkImageData</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.numpyToVtkImageData" title="Link to this definition"></a></dt>
 <dd><p>numpy ndarray to vtk.vtkImageData conversion.</p>
-<section id="id208">
-<h2>Parameters<a class="headerlink" href="#id208" title="Link to this heading"></a></h2>
+<section id="id210">
+<h2>Parameters<a class="headerlink" href="#id210" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>np<span class="classifier">numpy.ndarray</span></dt><dd><p>numpy array to convert</p>
 </dd>
 </dl>
 </section>
-<section id="id209">
-<h2>Returns<a class="headerlink" href="#id209" title="Link to this heading"></a></h2>
+<section id="id211">
+<h2>Returns<a class="headerlink" href="#id211" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>vtk.vtkImageData</dt><dd><p>converted vtkImageData</p>
 </dd>
@@ -3308,15 +3341,15 @@ min truncate thresholds.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImage.simpleITKToVTK">
 <span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImage.</span></span><span class="sig-name descname"><span class="pre">simpleITKToVTK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Image</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">vtkImageData</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImage.simpleITKToVTK" title="Link to this definition"></a></dt>
 <dd><p>SimpleITK.Image to vtk.vtkImageData conversion.</p>
-<section id="id210">
-<h2>Parameters<a class="headerlink" href="#id210" title="Link to this heading"></a></h2>
+<section id="id212">
+<h2>Parameters<a class="headerlink" href="#id212" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>img<span class="classifier">SimpleITK.Image</span></dt><dd><p>SimpleITK.Image to convert</p>
 </dd>
 </dl>
 </section>
-<section id="id211">
-<h2>Returns<a class="headerlink" href="#id211" title="Link to this heading"></a></h2>
+<section id="id213">
+<h2>Returns<a class="headerlink" href="#id213" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>vtk.vtkImageData</dt><dd><p>converted vtkImageData</p>
 </dd>

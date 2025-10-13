@@ -342,7 +342,7 @@ resliced volumes.</p>
 <h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
 <p>object -&gt; SisypheApplyTransform</p>
 <p>Creation: 05/10/2021
-Last revision: 11/02/2025</p>
+Last revision: 22/05/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTransform.SisypheApplyTransform.clearMesh">
 <span class="sig-name descname"><span class="pre">clearMesh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTransform.SisypheApplyTransform.clearMesh" title="Link to this definition"></a></dt>
@@ -2580,7 +2580,7 @@ of values returned by each SisypheTransform element in the container.</p>
 <h2>Inheritance<a class="headerlink" href="#id162" title="Link to this heading"></a></h2>
 <p>object -&gt; SisypheTransformCollection</p>
 <p>Creation: 05/10/2021
-Last revision: 18/04/05/2025</p>
+Last revision: 14/07/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTransform.SisypheTransformCollection.append">
 <span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Sisyphe.core.sisypheTransform.SisypheTransform" title="Sisyphe.core.sisypheTransform.SisypheTransform"><span class="pre">SisypheTransform</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTransform.SisypheTransformCollection.append" title="Link to this definition"></a></dt>
@@ -2745,9 +2745,7 @@ If key is None, removes and returns the last element.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTransform.SisypheTransformCollection.remove">
 <span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#Sisyphe.core.sisypheTransform.SisypheTransform" title="Sisyphe.core.sisypheTransform.SisypheTransform"><span class="pre">SisypheTransform</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTransform.SisypheTransformCollection.remove" title="Link to this definition"></a></dt>
-<dd><blockquote>
-<div><p>Remove a SisypheTransform element from the current SisypheTransformCollection instance container.</p>
-</div></blockquote>
+<dd><p>Remove a SisypheTransform element from the current SisypheTransformCollection instance container.</p>
 <section id="id175">
 <h3>Parameters<a class="headerlink" href="#id175" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -2790,9 +2788,8 @@ calculated from co-registrations with other SisypheVolume instances.</p>
 <p>This class works as a named list (key/value) container of SisypheTransform instances.</p>
 <ul class="simple">
 <li><p>Key: ID attribute of a SisypheVolume that is co-registered with the reference SisypheVolume.</p></li>
-<li><p>Value: the geometric transformation (SisypheTransform instance) used to co-register the SisypheVolume with the</p></li>
+<li><p>Value: the geometric transformation (SisypheTransform instance) used to co-register the SisypheVolume with the reference SisypheVolume.</p></li>
 </ul>
-<p>reference SisypheVolume.</p>
 <p>Inherits from SisypheTransformCollection class and adds</p>
 <ul class="simple">
 <li><p>ID attribute of the associated (or reference) SisypheVolume instance,</p></li>

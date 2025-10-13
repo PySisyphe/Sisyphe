@@ -411,7 +411,7 @@ ex. sagittal to axial -&gt; order = 1, 2, 0 (y, z, x)</p>
 <section id="id19">
 <h2>Parameters<a class="headerlink" href="#id19" title="Link to this heading"></a></h2>
 <dl class="simple">
-<dt>filenames<span class="classifier">list[str]</span></dt><dd><p>dicom filenames to convert</p>
+<dt>filenames<span class="classifier">list[str]</span></dt><dd><p>dicom files to convert</p>
 </dd>
 </dl>
 </section>
@@ -431,7 +431,7 @@ ex. sagittal to axial -&gt; order = 1, 2, 0 (y, z, x)</p>
 <section id="id21">
 <h2>Parameters<a class="headerlink" href="#id21" title="Link to this heading"></a></h2>
 <dl class="simple">
-<dt>filename<span class="classifier">str</span></dt><dd><p>one dicom filename of the series to convert</p>
+<dt>filename<span class="classifier">list[str]</span></dt><dd><p>dicom files series to convert</p>
 </dd>
 </dl>
 </section>
@@ -631,7 +631,7 @@ ex. sagittal to axial -&gt; order = 1, 2, 0 (y, z, x)</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImageIO.readImage">
 <span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageIO.</span></span><span class="sig-name descname"><span class="pre">readImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sitk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Image</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageIO.readImage" title="Link to this definition"></a></dt>
-<dd><p>Read image from Nifti, Nrrd, Minc, VTK, Numpy, old Sisyphe, or Bitmap format. Format is detectied from filename
+<dd><p>Read image from Nifti, Nrrd, Minc, VTK, Numpy, old Sisyphe, or Bitmap format. Format is identified from filename
 extension. Instance returned can be SimpleITK.Image | itk.Image | vtk.ImageData | ants.core.ANTsImage.</p>
 <section id="id39">
 <h2>Parameters<a class="headerlink" href="#id39" title="Link to this heading"></a></h2>
