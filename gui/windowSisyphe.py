@@ -131,7 +131,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 29/08/2025
+    Last revision: 12/10/2025
     """
 
     # Class constants
@@ -938,7 +938,7 @@ class WindowSisyphe(QMainWindow):
                 Rigid registration
                 Affine registration
                 Displacement field registration
-                ICBM Normalization
+                ICBM spatial normalization
                 Batch registration
                 --
                 Time series realignment
@@ -978,7 +978,10 @@ class WindowSisyphe(QMainWindow):
         self._action['rigid'] = self._menu['reg'].addAction(icrigid, 'Rigid registration...')
         self._action['affine'] = self._menu['reg'].addAction(icaffine, 'Affine registration...')
         self._action['field'] = self._menu['reg'].addAction(icdiffeo, 'Displacement field registration...')
-        self._action['icbm'] = self._menu['reg'].addAction(icicbm, 'ICBM normalization...')
+        # < Revision 04/09/2025
+        # self._action['icbm'] = self._menu['reg'].addAction(icicbm, 'ICBM normalization...')
+        self._action['icbm'] = self._menu['reg'].addAction(icicbm, 'ICBM spatial normalization...')
+        # Revision 04/09/2025 >
         self._action['batchreg'] = self._menu['reg'].addAction('Batch registration...')
 
         self._menu['reg'].addSeparator()
@@ -1030,9 +1033,6 @@ class WindowSisyphe(QMainWindow):
                     T1 hypo-intensity lesion segmentation
                     White matter hyper-intensities segmentation
                     Tissue segmentation
-                    # TOF vessels segmentation
-
-
         """
 
         # Icons
@@ -1060,12 +1060,14 @@ class WindowSisyphe(QMainWindow):
         self._menu['regseg'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
         self._menu['regseg'].setWindowFlag(Qt.FramelessWindowHint, True)
         self._menu['regseg'].setAttribute(Qt.WA_TranslucentBackground, True)
+        # < Revision 02/10/2025
+        self._menu['regseg'].aboutToShow.connect(self._updateStructsMenu)
+        # Revision 02/10/2025 >
         self._initStructMenu()
         self._menu['userseg'] = self._menu['regseg'].addMenu('User')
         self._menu['userseg'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
         self._menu['userseg'].setWindowFlag(Qt.FramelessWindowHint, True)
         self._menu['userseg'].setAttribute(Qt.WA_TranslucentBackground, True)
-        self._menu['userseg'].aboutToShow.connect(self._updateStructsMenu)
         self._menu['regseg'].triggered.connect(self._openStruct)
 
         self._menu['seg'].addSeparator()
@@ -1639,6 +1641,7 @@ class WindowSisyphe(QMainWindow):
                 self._action['delplugin'].setEnabled(True)
 
     def _updateStructsMenu(self) -> None:
+        # submenu user
         path = join(self.getUserDirectory(), 'segmentation')
         if not exists(path): mkdir(path)
         path = join(path, '*.xml')
@@ -2616,7 +2619,11 @@ class WindowSisyphe(QMainWindow):
 
     def preferences(self) -> None:
         if self._dialogSettings is not None:
-            try: self._dialogSettings.exec()
+            try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-preferences')
+                # Revision 12/10/2025 >
+                self._dialogSettings.exec()
             except Exception as err:
                 messageBox(self, 'Preferences dialog error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
@@ -2624,25 +2631,29 @@ class WindowSisyphe(QMainWindow):
     # File methods called from main menu
 
     def open(self, filenames: str | list[str] | None = None) -> None:
-        try: self._thumbnail.open(filenames)
+        try:
+            self._thumbnail.open(filenames)
         except Exception as err:
             messageBox(self, 'Open xvol error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def save(self) -> None:
-        try: self._thumbnail.saveSelected()
+        try:
+            self._thumbnail.saveSelected()
         except Exception as err:
             messageBox(self, 'Save xvol error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def saveall(self) -> None:
-        try: self._thumbnail.saveAll()
+        try:
+            self._thumbnail.saveAll()
         except Exception as err:
             messageBox(self, 'Save all xvol error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def saveAs(self) -> None:
-        try: self._thumbnail.saveSelectedAs()
+        try:
+            self._thumbnail.saveSelectedAs()
         except Exception as err:
             messageBox(self, 'Save xvol as error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
@@ -2964,6 +2975,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-import')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogImport.DialogImport - Nifti]')
             self._dialog.exec()
         except Exception as err:
@@ -2977,6 +2991,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-import')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogImport.DialogImport - Minc]')
             self._dialog.exec()
         except Exception as err:
@@ -2990,6 +3007,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-import')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogImport.DialogImport - Nrrd]')
             self._dialog.exec()
         except Exception as err:
@@ -3003,6 +3023,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-import')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogImport.DialogImport - Vtk]')
             self._dialog.exec()
         except Exception as err:
@@ -3019,6 +3042,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-import')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogOldSisypheImport.DialogOldSisypheImport - Sisyphe]')
             self._dialog.exec()
         except Exception as err:
@@ -3035,6 +3061,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-dcmimport')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDicomImport.DialogDicomImport]')
             self._dialog.exec()
         except Exception as err:
@@ -3051,6 +3080,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-dcmrtimport')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDicomRTimport.DialogRTimport]')
             self._dialog.exec()
         except Exception as err:
@@ -3064,6 +3096,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-export')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Nifti]')
             self._dialog.exec()
         except Exception as err:
@@ -3077,6 +3112,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-export')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Minc]')
             self._dialog.exec()
         except Exception as err:
@@ -3090,6 +3128,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-export')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Nrrd]')
             self._dialog.exec()
         except Exception as err:
@@ -3103,6 +3144,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-export')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Vtk]')
             self._dialog.exec()
         except Exception as err:
@@ -3116,6 +3160,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-export')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogExport.DialogExport - Numpy]')
             self._dialog.show()
         except Exception as err:
@@ -3132,6 +3179,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-dcmexport')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDicomExport.DialogDicomExport]')
             self._dialog.exec()
         except Exception as err:
@@ -3145,6 +3195,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-dcmquery')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDicomQuery.DialogDicomQueryRetrieve]')
             self._dialog.exec()
         except Exception as err:
@@ -3158,6 +3211,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-dcmdataset')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDicomDataset.DialogDicomDataset]')
             self._dialog.exec()
         except Exception as err:
@@ -3176,6 +3232,9 @@ class WindowSisyphe(QMainWindow):
                 try: __main__.updateWindowTitleBarColor(self._dialog)
                 except: pass
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-xmldcm')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogXmlDicom.DialogXmlDicom]')
                 self._dialog.exec()
             except Exception as err:
@@ -3183,6 +3242,9 @@ class WindowSisyphe(QMainWindow):
                 if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def editAttr(self) -> None:
+        # < Revision 12/10/2025
+        self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-attributes')
+        # Revision 12/10/2025 >
         self._thumbnail.editAttributesSelected()
 
     def editID(self) -> None:
@@ -3195,6 +3257,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-id')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDatatype.DialogEditID]')
             self._dialog.exec()
         except Exception as err:
@@ -3213,6 +3278,9 @@ class WindowSisyphe(QMainWindow):
         self._dialog.filterSisypheVolume()
         wait = None
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-anonymize')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Anonymize]')
             if self._dialog.exec():
                 filenames = self._dialog.getFilenames()
@@ -3257,6 +3325,9 @@ class WindowSisyphe(QMainWindow):
                 dialog.filterSisypheVolume()
                 dialog.filterSameModality('LB')
                 try:
+                    # < Revision 12/10/2025
+                    self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-editlabels')
+                    # Revision 12/10/2025 >
                     if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFileSelection - Edit labels]')
                     if dialog.exec():
                         filename = dialog.getFilename()
@@ -3287,6 +3358,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-volumetolabels')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogLabel.DialogVOLtoLabel]')
             self._dialog.exec()
         except Exception as err:
@@ -3300,6 +3374,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-roitolabels')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogLabel.DialogROItoLabel]')
             self._dialog.exec()
         except Exception as err:
@@ -3313,6 +3390,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-labelstoroi')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogLabel.DialogLabeltoROI]')
             self._dialog.exec()
         except Exception as err:
@@ -3346,6 +3426,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-download')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDownload.DialogDownload]')
             self._dialog.exec()
         except Exception as err:
@@ -3395,6 +3478,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-editlut')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogLutEdit.DialogLutEdit]')
             self._dialog.exec()
         except Exception as err:
@@ -3418,6 +3504,9 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSingleComponent()
         dialog.filterSameSize()
         dialog.setCurrentVolumeButtonVisibility(False)
+        # < Revision 12/10/2025
+        self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-join')
+        # Revision 12/10/2025 >
         if dialog.exec():
             filenames = dialog.getFilenames()
             n = len(filenames)
@@ -3460,6 +3549,9 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSisypheVolume()
         dialog.filterMultiComponent()
         dialog.setCurrentVolumeButtonVisibility(False)
+        # < Revision 12/10/2025
+        self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-split')
+        # Revision 12/10/2025 >
         if dialog.exec():
             filenames = dialog.getFilenames()
             n = len(filenames)
@@ -3496,6 +3588,9 @@ class WindowSisyphe(QMainWindow):
             except: pass
         self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-datatype')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDatatype.DialogDatatype]')
             self._dialog.exec()
         except Exception as err:
@@ -3510,6 +3605,9 @@ class WindowSisyphe(QMainWindow):
             except: pass
         self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-attributes')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDatatype.DialogAttributes]')
             self._dialog.exec()
         except Exception as err:
@@ -3535,6 +3633,9 @@ class WindowSisyphe(QMainWindow):
             self._dialog.accept()
         else:
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-flip')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFlipAxes.DialogFlipAxes]')
                 self._dialog.exec()
             except Exception as err:
@@ -3560,6 +3661,9 @@ class WindowSisyphe(QMainWindow):
             self._dialog.accept()
         else:
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-permute')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSwapAxes.DialogSwapAxes]')
                 self._dialog.exec()
             except Exception as err:
@@ -3591,6 +3695,9 @@ class WindowSisyphe(QMainWindow):
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-neck')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogRemoveNeckSlices]')
                 self._dialog.exec()
             except Exception as err:
@@ -3612,6 +3719,9 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSameSize()
         dialog.setCurrentVolumeButtonVisibility(False)
         if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Mean volume]')
+        # < Revision 12/10/2025
+        self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-voxel-mean')
+        # Revision 12/10/2025 >
         if dialog.exec():
             filenames = dialog.getFilenames()
             n = len(filenames)
@@ -3664,6 +3774,9 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSameSize()
         dialog.setCurrentVolumeButtonVisibility(False)
         if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Median volume]')
+        # < Revision 12/10/2025
+        self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-voxel-median')
+        # Revision 12/10/2025 >
         if dialog.exec():
             filenames = dialog.getFilenames()
             n = len(filenames)
@@ -3716,6 +3829,9 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSameSize()
         dialog.setCurrentVolumeButtonVisibility(False)
         if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Standard deviation volume]')
+        # < Revision 12/10/2025
+        self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-voxel-std')
+        # Revision 12/10/2025 >
         if dialog.exec():
             filenames = dialog.getFilenames()
             n = len(filenames)
@@ -3768,6 +3884,9 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSameSize()
         dialog.setCurrentVolumeButtonVisibility(False)
         if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Minimum volume]')
+        # < Revision 12/10/2025
+        self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-voxel-min')
+        # Revision 12/10/2025 >
         if dialog.exec():
             filenames = dialog.getFilenames()
             n = len(filenames)
@@ -3818,6 +3937,9 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSameSize()
         dialog.setCurrentVolumeButtonVisibility(False)
         if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Maximum volume]')
+        # < Revision 12/10/2025
+        self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-voxel-max')
+        # Revision 12/10/2025 >
         if dialog.exec():
             filenames = dialog.getFilenames()
             n = len(filenames)
@@ -3864,6 +3986,9 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-algebra')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogAlgebra.DialogAlgebra]')
             self._dialog.exec()
         except Exception as err:
@@ -3893,6 +4018,9 @@ class WindowSisyphe(QMainWindow):
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-texture')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogTexture.DialogTexture]')
                 self._dialog.exec()
             except Exception as err:
@@ -3905,6 +4033,9 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-roitexture')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogTexture.DialogROITexture]')
             self._dialog.exec()
             if self._logger is not None: self._logger.info('Dialog close [gui.dialogTexture.DialogROITexture]')
@@ -3937,6 +4068,9 @@ class WindowSisyphe(QMainWindow):
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-matching-hist')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogHistogramIntensityMatching]')
                 self._dialog.exec()
             except Exception as err:
@@ -3968,6 +4102,9 @@ class WindowSisyphe(QMainWindow):
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-matching-reg')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogRegressionIntensityMatching]')
                 self._dialog.exec()
             except Exception as err:
@@ -3997,6 +4134,9 @@ class WindowSisyphe(QMainWindow):
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-norm')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogIntensityNormalization]')
                 self._dialog.exec()
             except Exception as err:
@@ -4026,6 +4166,9 @@ class WindowSisyphe(QMainWindow):
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-filter-mean')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogMeanFilter]')
                 self._dialog.exec()
             except Exception as err:
@@ -4055,6 +4198,9 @@ class WindowSisyphe(QMainWindow):
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-filter-median')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogMedianFilter]')
                 self._dialog.exec()
             except Exception as err:
@@ -4084,6 +4230,9 @@ class WindowSisyphe(QMainWindow):
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-filter-gaussian')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogGaussianFilter]')
                 self._dialog.exec()
             except Exception as err:
@@ -4113,6 +4262,9 @@ class WindowSisyphe(QMainWindow):
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-filter-gradient')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogGradientFilter]')
                 self._dialog.exec()
             except Exception as err:
@@ -4142,6 +4294,9 @@ class WindowSisyphe(QMainWindow):
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-filter-laplacian')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogLaplacianFilter]')
                 self._dialog.exec()
             except Exception as err:
@@ -4171,6 +4326,9 @@ class WindowSisyphe(QMainWindow):
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-filter-anisodiff')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogAnisotropicDiffusionFilter]')
                 self._dialog.exec()
             except Exception as err:
@@ -4200,6 +4358,9 @@ class WindowSisyphe(QMainWindow):
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-biasfield')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogBiasFieldCorrectionFilter]')
                 self._dialog.exec()
             except Exception as err:
@@ -4214,6 +4375,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-workflow')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogWorkflow.DialogWorkflow]')
             self._dialog.exec()
         except Exception as err:
@@ -4229,6 +4393,9 @@ class WindowSisyphe(QMainWindow):
 
     def addPlugin(self, plugin: str = '') -> None:
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-installplugin')
+            # Revision 12/10/2025 >
             if plugin == '':
                 plugin = QFileDialog.getOpenFileName(self, 'Select a plugin zip archive...', getcwd(),
                                                      filter='ZIP file (*.zip)')[0]
@@ -4272,6 +4439,9 @@ class WindowSisyphe(QMainWindow):
 
     def removePlugin(self, plugin: str = '') -> None:
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-removeplugin')
+            # Revision 12/10/2025 >
             l = self.getPluginList()
             if len(l) > 0:
                 if plugin != '' and plugin in l:
@@ -4325,6 +4495,9 @@ class WindowSisyphe(QMainWindow):
                 dialog.setWindowTitle('Stereotactic frame detection')
                 dialog.filterSisypheVolume()
                 dialog.setToolBarThumbnail(self._thumbnail)
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-stereo')
+                # Revision 12/10/2025 >
                 if dialog.exec():
                     filename = dialog.getFilename()
             if filename != '' and exists(filename):
@@ -4425,6 +4598,9 @@ class WindowSisyphe(QMainWindow):
                 dialog.setWindowTitle('AC-PC selection')
                 dialog.filterSisypheVolume()
                 dialog.setToolBarThumbnail(self._thumbnail)
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-acpc')
+                # Revision 12/10/2025 >
                 if dialog.exec():
                     filename = dialog.getFilename()
             if filename != '' and exists(filename):
@@ -4467,6 +4643,9 @@ class WindowSisyphe(QMainWindow):
                 dialog.setWindowTitle('Volume reorientation')
                 dialog.filterSisypheVolume()
                 dialog.setToolBarThumbnail(self._thumbnail)
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-reorient')
+                # Revision 12/10/2025 >
                 if dialog.exec():
                     filename = dialog.getFilename()
             if filename != '' and exists(filename):
@@ -4502,6 +4681,9 @@ class WindowSisyphe(QMainWindow):
         self._dialog.createFileSelectionWidget('Fixed', toolbar=self._thumbnail, current=True)
         self._dialog.createFileSelectionWidget('Moving', toolbar=self._thumbnail, current=True)
         if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogMultiFileSelection]')
+        # < Revision 12/10/2025
+        self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-manual')
+        # Revision 12/10/2025 >
         if self._dialog.exec():
             wait = DialogWait(title='Open volumes for manual registration', progress=False)
             wait.open()
@@ -4546,6 +4728,9 @@ class WindowSisyphe(QMainWindow):
                 if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-rigid')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Rigid registration]')
                 self._dialog.exec()
             except Exception as err:
@@ -4574,6 +4759,9 @@ class WindowSisyphe(QMainWindow):
                 if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-affine')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Affine registration]')
                 self._dialog.exec()
             except Exception as err:
@@ -4602,6 +4790,9 @@ class WindowSisyphe(QMainWindow):
                 if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-field')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogRegistration - Displacement field registration]')
                 self._dialog.exec()
             except Exception as err:
@@ -4633,6 +4824,9 @@ class WindowSisyphe(QMainWindow):
                 if self._logger is not None: self._logger.error(traceback.format_exc())
         else:
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-icbm')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogICBMNormalization]')
                 self._dialog.exec()
             except Exception as err:
@@ -4650,6 +4844,9 @@ class WindowSisyphe(QMainWindow):
         self._dialog.getMovingSelectionWidget().setToolbarThumbnail(self._thumbnail)
         self._dialog.getBatchSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-batch')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogBatchRegistration]')
             self._dialog.exec()
         except Exception as err:
@@ -4665,6 +4862,9 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-align')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSeriesRealignment.DialogSeriesRealignment]')
             self._dialog.exec()
         except Exception as err:
@@ -4681,6 +4881,9 @@ class WindowSisyphe(QMainWindow):
         self._dialog.getFixedSelectionWidget().setToolbarThumbnail(self._thumbnail)
         self._dialog.getBatchSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-eddy')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogEddyCurrentCorrection]')
             self._dialog.exec()
         except Exception as err:
@@ -4696,6 +4899,9 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getMovingSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-resample')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogResample.DialogResample]')
             self._dialog.exec()
         except Exception as err:
@@ -4711,6 +4917,9 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-jacob')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogJacobian.DialogJacobian]')
             self._dialog.exec()
         except Exception as err:
@@ -4728,6 +4937,9 @@ class WindowSisyphe(QMainWindow):
         self._dialog.getMovingSelectionWidget().setToolbarThumbnail(self._thumbnail)
         self._dialog.getBatchSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-asym')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogAsymmetry]')
             self._dialog.exec()
         except Exception as err:
@@ -4763,6 +4975,9 @@ class WindowSisyphe(QMainWindow):
         else:
             self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-skull')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSkullStripping.DialogSkullStripping]')
                 self._dialog.exec()
             except Exception as err:
@@ -4778,6 +4993,9 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-kmclustering')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSegmentation.DialogKMeansClustering]')
             self._dialog.exec()
         except Exception as err:
@@ -4793,6 +5011,9 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-kmsegmentation')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSegmentation.DialogKMeansSegmentation]')
             self._dialog.exec()
         except Exception as err:
@@ -4822,6 +5043,9 @@ class WindowSisyphe(QMainWindow):
         else:
             self._dialog.getSelectionWidget().setToolbarThumbnail(self._thumbnail)
             try:
+                # < Revision 12/10/2025
+                self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-atropos')
+                # Revision 12/10/2025 >
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSegmentation.DialogPriorBasedSegmentation]')
                 self._dialog.exec()
             except Exception as err:
@@ -4837,6 +5061,9 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.getSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-thickness')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSegmentation.DialogCorticalThickness]')
             self._dialog.exec()
         except Exception as err:
@@ -4854,6 +5081,9 @@ class WindowSisyphe(QMainWindow):
         w1.setToolbarThumbnail(self._thumbnail)
         w2.setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-regsegmentation')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogSegmentation.DialogRegistrationBasedSegmentation]')
             self._dialog.exec()
         except Exception as err:
@@ -4870,6 +5100,9 @@ class WindowSisyphe(QMainWindow):
         w = self._dialog.getSelectionWidget()
         w.setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-hipp')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepHippocampusSegmentation]')
             self._dialog.exec()
         except Exception as err:
@@ -4887,6 +5120,9 @@ class WindowSisyphe(QMainWindow):
         w1.setToolbarThumbnail(self._thumbnail)
         w2.setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-temporal')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation]')
             self._dialog.exec()
         except Exception as err:
@@ -4906,6 +5142,9 @@ class WindowSisyphe(QMainWindow):
         w3.setToolbarThumbnail(self._thumbnail)
         w4.setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-tumor')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepTumorSegmentation]')
             self._dialog.exec()
         except Exception as err:
@@ -4922,6 +5161,9 @@ class WindowSisyphe(QMainWindow):
         w = self._dialog.getSelectionWidget()
         w.setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-lesion')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepLesionSegmentation]')
             self._dialog.exec()
         except Exception as err:
@@ -4941,6 +5183,9 @@ class WindowSisyphe(QMainWindow):
         w3.setToolbarThumbnail(self._thumbnail)
         w4.setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-wmh')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepWhiteMatterHyperIntensitiesSegmentation]')
             self._dialog.exec()
         except Exception as err:
@@ -4970,6 +5215,9 @@ class WindowSisyphe(QMainWindow):
         w = self._dialog.getSelectionWidget()
         w.setToolbarThumbnail(self._thumbnail)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-tissue')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDeepSegmentation.DialogDeepTissueSegmentation]')
             self._dialog.exec()
         except Exception as err:
@@ -5032,10 +5280,16 @@ class WindowSisyphe(QMainWindow):
         if model < 3:
             from Sisyphe.gui.dialogStatModel import DialogfMRIObs
             self._dialog = DialogfMRIObs(title, conditions, subjects, groups)
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-fmri-model')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogStatModel.DialogfMRIObs]')
         else:
             from Sisyphe.gui.dialogStatModel import DialogObs
             self._dialog = DialogObs(title, conditions, subjects, groups)
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-glm-model')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogStatModel.DialogObs]')
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
@@ -5071,6 +5325,9 @@ class WindowSisyphe(QMainWindow):
 
     def contrast(self, filename: str = '') -> None:
         if not isinstance(filename, str): filename = ''
+        # < Revision 12/10/2025
+        self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-contrast')
+        # Revision 12/10/2025 >
         if filename == '' or not exists(filename):
             filename = QFileDialog.getOpenFileName(self, 'Open model...', getcwd(),
                                                    filter=SisypheDesign.getFilterExt())[0]
@@ -5103,6 +5360,9 @@ class WindowSisyphe(QMainWindow):
             self._dialog = DialogFileSelection()
             # Revision 16/04/2025 >
             if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-result')
+            # Revision 12/10/2025 >
             self._dialog.setWindowTitle('Open statistical map')
             self._dialog.filterSisypheVolume()
             self._dialog.filterSameSequence([SisypheAcquisition.TMAP, SisypheAcquisition.ZMAP])
@@ -5159,6 +5419,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-conjunction')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogStatContrast.DialogConjunction]')
             self._dialog.exec()
         except Exception as err:
@@ -5173,6 +5436,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-t2zmap')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogStatContrast.DialogTMapToZMap]')
             self._dialog.exec()
         except Exception as err:
@@ -5187,6 +5453,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-seriespreproc')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogTimeSeries.DialogSeriesPreprocessing]')
             self._dialog.exec()
         except Exception as err:
@@ -5201,6 +5470,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-seriesseed')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogTimeSeries.DialogSeriesSeedToVoxel]')
             self._dialog.exec()
         except Exception as err:
@@ -5216,6 +5488,9 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.setScreenshotsWidget(self._captures)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-seriescorr')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogTimeSeries.DialogSeriesConnectivityMatrix]')
             self._dialog.exec()
         except Exception as err:
@@ -5230,6 +5505,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-seriesica')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogTimeSeries.DialogSeriesFastICA]')
             self._dialog.exec()
         except Exception as err:
@@ -5258,6 +5536,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-dsc')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogPerfusion.DialogPerfusion]')
             self._dialog.exec()
         except Exception as err:
@@ -5274,6 +5555,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Diffusion.html', 'menu-section-gradients')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionGradients.DialogDiffusionGradients]')
             self._dialog.exec()
         except Exception as err:
@@ -5288,6 +5572,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Diffusion.html', 'menu-section-preprocessing')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionPreprocessing.DialogDiffusionPreprocessing]')
             self._dialog.exec()
         except Exception as err:
@@ -5302,6 +5589,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Diffusion.html', 'menu-section-diffmodel')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionModel.DialogDiffusionModel]')
             self._dialog.exec()
         except Exception as err:
@@ -5316,6 +5606,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Diffusion.html', 'menu-section-roisel')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleROISelection]')
             self._dialog.exec()
         except Exception as err:
@@ -5330,6 +5623,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Diffusion.html', 'menu-section-filtersel')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleFilteringSelection]')
             self._dialog.exec()
         except Exception as err:
@@ -5344,6 +5640,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Diffusion.html', 'menu-section-templatesel')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleAtlasSelection]')
             self._dialog.exec()
         except Exception as err:
@@ -5358,6 +5657,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Diffusion.html', 'menu-section-tractogram')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionTracking.DialogDiffusionTracking]')
             self._dialog.exec()
         except Exception as err:
@@ -5372,6 +5674,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Diffusion.html', 'menu-section-density')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleToDensityMap]')
             self._dialog.exec()
         except Exception as err:
@@ -5386,6 +5691,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Diffusion.html', 'menu-section-path')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleToPathLengthMap]')
             self._dialog.exec()
         except Exception as err:
@@ -5401,6 +5709,9 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.setScreenshotsWidget(self._captures)
         try:
+            # < Revision 12/10/2025
+            self._tabHelp.setPage('PySisyphe_Diffusion.html', 'menu-section-connectivity')
+            # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogBundleConnectivityMatrix]')
             self._dialog.exec()
         except Exception as err:
