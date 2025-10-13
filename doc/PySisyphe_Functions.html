@@ -18,7 +18,9 @@
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Registration menu" href="PySisyphe_Registration.html" />
+    <link rel="prev" title="File menu" href="PySisyphe_File.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,7 +44,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
@@ -65,6 +67,45 @@
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_File.html">File menu</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Functions menu</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#join-single-component-volume-s">Join single component volume(s)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#split-multi-component-volume-s">Split multi component volume(s)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flip-axis">Flip axis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#permute-axis">Permute axis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#remove-neck-slices">Remove neck slices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#datatype-conversion">Datatype conversion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#attributes-conversion">Attributes conversion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mean-filter">Mean filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#median-filter">Median filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gaussian-filter">Gaussian filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gradient-magnitude-filter">Gradient magnitude filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#laplacian-filter">Laplacian filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#anisotropic-diffusion-filter">Anisotropic diffusion filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#histogram-intensity-matching">Histogram intensity matching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#regression-intensity-matching">Regression intensity matching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#intensity-normalization">Intensity normalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#texture-feature-maps">Texture feature maps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#roi-texture-features">ROI Texture features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bias-field-correction">Bias field correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mean-volume">Mean volume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#median-volume">Median volume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#standard-deviation-volume">Standard deviation volume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#minimum-volume">Minimum volume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#maximum-volume">Maximum volume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#algebra">Algebra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#workflow-processing">Workflow processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#workflows">Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-plugin">Install plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#remove-plugin">Remove plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plugins">Plugins</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Registration.html">Registration menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Segmentation.html">Segmentation menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Mapping.html">Mapping menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Diffusion.html">Diffusion menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Window.html">Window menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
@@ -109,7 +150,6 @@
 <dt>Filters &gt;</dt><dd><ul>
 <li><p><a class="reference internal" href="#menu-section-filter-mean"><span class="std std-ref">Mean filter</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-filter-median"><span class="std std-ref">Median filter</span></a></p></li>
-<li><p><span class="xref std std-ref">menu-section-filter-std</span></p></li>
 <li><p><a class="reference internal" href="#menu-section-filter-gaussian"><span class="std std-ref">Gaussian filter</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-filter-gradient"><span class="std std-ref">Gradient magnitude filter</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-filter-laplacian"><span class="std std-ref">Laplacian filter</span></a></p></li>
@@ -517,7 +557,10 @@
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="PySisyphe_File.html" class="btn btn-neutral float-left" title="File menu" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="PySisyphe_Registration.html" class="btn btn-neutral float-right" title="Registration menu" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
