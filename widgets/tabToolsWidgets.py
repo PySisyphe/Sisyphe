@@ -2854,7 +2854,7 @@ class TabHelpWidget(QWidget):
 
     QWidget -> TabHelpWidget
 
-    Last revision: 07/03/2025
+    Last revision: 12/10/2025
     """
 
     # Class method
@@ -2953,6 +2953,19 @@ class TabHelpWidget(QWidget):
 
     def home(self):
         self._web.setUrl(self.getHome())
+
+    # < Revision 12/10/2025
+    def setUrl(self, url):
+        self._web.setUrl(url)
+    # Revision 12/10/2025 >
+
+    # < Revision 12/10/2025
+    def setPage(self, page, fragment: str = ''):
+        import Sisyphe.doc
+        url = QUrl.fromLocalFile(join(dirname(abspath(Sisyphe.doc.__file__)), page))
+        if fragment != '': url.setFragment(fragment)
+        self._web.setUrl(url)
+    # Revision 12/10/2025 >
 
     def search(self):
         filt = 'q={}'.format(self._search.getEditText())
