@@ -342,6 +342,10 @@
 <section id="anisotropic-diffusion-filter">
 <span id="menu-section-filter-anisodiff"></span><h2>Anisotropic diffusion filter<a class="headerlink" href="#anisotropic-diffusion-filter" title="Link to this heading"></a></h2>
 <p>This menu displays the <strong>Anisotropic diffusion filter</strong> dialog box, which is used to perform volume denoising with anisotropic diffusion family filters. The advantage of these approaches is that clear boundaries are preserved, with smoothing occurring only within homogeneous regions.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://ieeexplore.ieee.org/document/56205">Article</a>: Scale-space and edge detection using anisotropic diffusion. P Perona; J Malik. IEEE Transactions on Pattern Analysis Machine Intelligence, vol. 12, pp. 629-639, 1990.</p>
+</div>
 <p>Filter parameters are as follows:</p>
 <ul>
 <li><p><strong>Algorithm</strong>, four types of algorithms are available.</p>
@@ -358,14 +362,19 @@
 <li><p><strong>Number of iterations</strong>, specifies the number of iterations (time-step updates) that the solver will perform to produce a solution. The appropriate number of iterations is dependent on the application and the image being processed. As a general rule, the more iterations performed, the more diffused the image will become.</p></li>
 <li><p>Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
 </ul>
-<p>Add PySisyphe volume(s) to be filtered in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>.
+Add PySisyphe volume(s) to be filtered in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
 <p>Left-click <strong>Execute</strong> button to perform Anisotropic diffusion filtering.</p>
 <p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
 </section>
 <section id="histogram-intensity-matching">
 <span id="menu-section-matching-hist"></span><h2>Histogram intensity matching<a class="headerlink" href="#histogram-intensity-matching" title="Link to this heading"></a></h2>
 <p>This menu displays the <strong>Histogram intensity matching</strong> dialog box, which is used to match the intensities of one or more volumes with those of a reference volume. This filter uses a histogram matching technique where the histograms are only matched at a specified number of quantile values (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HistogramMatchingImageFilter.html">SimpleITK</a>).</p>
-<p>Filter parameters are as follows:</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://ieeexplore.ieee.org/document/836373">Article</a>: New Variants of a Method of MRI Scale Standardization. Laszlo G. Nyul, Jayaram K. Udupa, and Xuan Zhang, IEEE Transactions on Medical Imaging, 19(2):143-150, 2000.</p>
+</div>
+<p>Filter parameters are as follows:_</p>
 <ul class="simple">
 <li><p><strong>Exclude background</strong>, checkbox to exclude background voxels from histogram matching processing (checked by default). Background voxels are those with grayscale values smaller than the mean.</p></li>
 <li><p><strong>Number of match points</strong>, governs the number of quantile values to be matched.</p></li>
@@ -446,6 +455,11 @@
 <section id="bias-field-correction">
 <span id="menu-section-biasfield"></span><h2>Bias field correction<a class="headerlink" href="#bias-field-correction" title="Link to this heading"></a></h2>
 <p>This menu displays the <strong>Bias field correction</strong> dialog box. MR images are affected by bias field artefact which is defined as low-frequency intensity inhomogeneity. The N4 algorithm assumes a simple parametric model (B-Spline fitting) for the bias field and does not require tissue class segmentation. A multiple resolutions strategy is used during the correction process. The basic algorithm iterates between sharpening the intensity histogram of the corrected input image and spatially smoothing those results with a B-spline scalar field estimate of the bias field (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1N4BiasFieldCorrectionImageFilter.html">SimpleITK</a>).</p>
+<div class="admonition-references admonition">
+<p class="admonition-title">References</p>
+<p><a class="reference external" href="https://ieeexplore.ieee.org/document/668698">Article 1</a>: A nonparametric method for automatic correction of intensity non-uniformity in MRI data. JG Sled, AP Zijdenbos and AC Evans. IEEE Transactions on Medical Imaging, Vol 17, No 1. Feb 1998.</p>
+<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3071855/">Article 2</a>: N4ITK Improved N3 Bias Correction. NJ Tustison, BB Avants, PA Cook, Y Zheng, A Egan, PA Yushkevich, and JC Gee. IEEE Transactions on Medical Imaging, 2010 June, 29(6):1310-1320.</p>
+</div>
 <p>Add PySisyphe volume(s) to be corrected in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
 <p>Filter parameters are as follows:</p>
 <ul class="simple">

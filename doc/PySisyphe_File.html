@@ -89,6 +89,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#rois-to-label-volume">ROIs to label volume</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#volumes-to-label-volume">Volumes to label volume</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#label-volume-to-rois">Label volume to ROIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#label-volume-to-mask">Label volume to mask</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#remap-label-volume">Remap label volume</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#import">Import</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#export">Export</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dicom-import">Dicom import</a></li>
@@ -161,6 +163,8 @@
 <li><p><a class="reference internal" href="#menu-section-roitolabels"><span class="std std-ref">ROIs to label volume</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-volumetolabels"><span class="std std-ref">Volumes to label volume</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-labelstoroi"><span class="std std-ref">Label volume to ROIs</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-labelstomask"><span class="std std-ref">Label volume to mask</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-labelsremap"><span class="std std-ref">Remap label volume</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-import"><span class="std std-ref">Import</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-export"><span class="std std-ref">Export</span></a></p></li>
 <li><dl class="simple">
@@ -392,8 +396,8 @@ Left-click on a volume menu item to open it in the thumbnail bar.</p>
 <section id="edit-volume-labels">
 <span id="menu-section-editlabels"></span><h2>Edit volume labels<a class="headerlink" href="#edit-volume-labels" title="Link to this heading"></a></h2>
 <p>This menu is assigned to a label volume (LB modality). In this volume, each scalar value in the image array is associated with a label. These labels are written to a xml file with the same name as the volume and .xlabels extension.</p>
-<p>Displays a file selection dialog to get the label volume to edit. This volume is then displayed in the <strong>Edit label</strong> dialog box. The left part shows the label volume in a slice view widget. The right part shows a table with two columns, the first for label indexes and the second for label names. Label names can be edited. Left-click on a row to select a label. The slice widget displays this label in red.</p>
-<p>Left-click <strong>Import/Export</strong> button shows a popup menu. The first three elements define the <em>separator character</em> used to split items in the imported/exported text file, the <em>position of the label index item</em> in a line of the imported text file, and finally the <em>position of the label name item</em> in a line of the imported text file. The last two menus are used to either load or save labels to a text file.</p>
+<p>Displays a file selection dialog to get the label volume to edit. This volume is then displayed in the <strong>Edit label</strong> dialog box. The left part shows the label volume in a slice view widget. The right part shows a table with two columns, the first for label indexes and the second for label names. Label names can be edited. Left-click on a row to select a label. The view widget displays this label in red. Double-click on a label index in the first column to move the display to its position in the view widget.</p>
+<p>Left-click <strong>Import/ Export</strong> button shows a popup menu. The first three elements define the <em>separator character</em> used to split items in the imported/exported text file, the <em>position of the label index item</em> in a line of the imported text file, and finally the <em>position of the label name item</em> in a line of the imported text file. The last two menus are used to either load or save labels to a text file.</p>
 <p>Left-click <strong>Clear labels</strong> button to clear the table of labels.</p>
 <p>Left-click <strong>Cancel</strong> button to cancel the edit and close dialog box.</p>
 <p>Left-click <strong>OK</strong> button to apply the edit and close dialog box.</p>
@@ -418,6 +422,20 @@ Left-click on a volume menu item to open it in the thumbnail bar.</p>
 <p>This menu displays the <strong>Label volume to ROIs</strong> dialog box to create ROI(s) from a label volume (modality LB). In label volume, each scalar value in the image array is associated with a label. These labels are written to an XML file with the same name as the volume and .xlabels extension.</p>
 <p>Add PySisyphe label volumes in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
 <p>Left-click <strong>OK</strong> button to create ROI(s). A ROI is generated for each label and saved under its respective label name.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without processing.</p>
+</section>
+<section id="label-volume-to-mask">
+<span id="menu-section-labelstomask"></span><h2>Label volume to mask<a class="headerlink" href="#label-volume-to-mask" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Label volume to mask</strong> dialog box, which is used to create a PySisyphe binary mask (.xvol) from one or more labels of a label volume (modality LB).</p>
+<p>Add a PySisyphe label volume in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget. This populates the list below with label names in the label volume. Each label name is prefixed with a checkbox. Check the labels you want to add to the mask.</p>
+<p>Left-click <strong>OK</strong> button to create the mask volume. A file dialog box is shown to save the PySisyphe mask (.xvol). A PySisyphe ROI (.xroi) with the same file name is saved if the <strong>Save ROI</strong> option is checked.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without processing.</p>
+</section>
+<section id="remap-label-volume">
+<span id="menu-section-labelsremap"></span><h2>Remap label volume<a class="headerlink" href="#remap-label-volume" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Remap label volume</strong> dialog box, wich is used to change the label indexes and names of a PySisyphe label volume (.xvol).</p>
+<p>Add a PySisyphe label volume in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget. The table below is populated with original label indexes in the first column, new label indexes in the second column, and label names in the last column. The new label indexes and names can be edited.</p>
+<p>Left-click <strong>OK</strong> button to remap the label volume. A file dialog box is shown to save the new PySisyphe label volume (.xvol).</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without processing.</p>
 </section>
 <section id="import">

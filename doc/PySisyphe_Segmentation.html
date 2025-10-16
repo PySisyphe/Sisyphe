@@ -202,6 +202,10 @@
 <section id="mixture-model-tissue-segmentation">
 <span id="menu-section-atropos"></span><h2>Mixture model tissue segmentation<a class="headerlink" href="#mixture-model-tissue-segmentation" title="Link to this heading"></a></h2>
 <p>This menu is used to compute tissue probability maps (grey matter, white matter and cerebro-spinal fluid) with a finite mixture modeling (FMM) segmentation approach with prior constraints. These prior constraints include the specification of prior probability images (one for each class), and MRF prior to enforce spatial smoothing of the labels. Similar algorithms include FAST and SPM. This prior based segmentation provides an Expectation-Maximization framework for statistical segmentation where the intensity profile of each class is modeled as a mixture model and spatial smoothness is enforced by MRF prior. Initial labeling can be performed by kmeans clustering, a set of user-specified prior probability volumes. If specified, the latter initialization option are also used as priors in the MRF update step. The assumed labeling is such that classes are assigned consecutive indices 1, 2, 3, etc. Label 0 is reserved for the background when a mask is specified. The result is a probability volume for each class and a tissue labeled volume. PySisyphe uses the <a class="reference external" href="https://antspy.readthedocs.io/en/latest/segmentation.html">ANTs</a> library implemenentation.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3297199/">Article</a>: An open source multivariate framework for n-tissue segmentation with evaluation on public data. BB Avants, NJ Tustison, J Wu, PA Cook, JC Gee. Neuroinformatics, 2011 Dec, 9(4):381-400.</p>
+</div>
 <p>Anisotropic diffusion filtering and bias field correction can be performed before the segmentation stage.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select PySisyphe <strong>Volume(s)</strong>.</p>
 <p>Toggle <strong>Prior based segmentation…</strong> button to show/hide segmentation parameters:</p>
@@ -238,6 +242,10 @@
 <section id="cortical-thickness">
 <span id="menu-section-thickness"></span><h2>Cortical thickness<a class="headerlink" href="#cortical-thickness" title="Link to this heading"></a></h2>
 <p>This menu is designed to compute cortical thickness using the DiReCT algorithm (Diffeomorphic Registration-based Cortical Thickness measurement). DiReCT is a registration based estimate of cortical thickness. To guide the deformation, DiReCT constructs a gradient field from the segmented cortical surfaces (WM/GM and GM/CSF). This field acts as an external force that pushes the white matter surface toward the pial surface. PySisyphe uses the <a class="reference external" href="https://antspy.readthedocs.io/en/latest/segmentation.html">ANTs</a> library implemenentation.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2836782/">Article</a>: Registration based cortical thickness measurement. SR Das, BB Avants, M Grossman, and JC Gee. Neuroimage 2009, 45:867-879.</p>
+</div>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select PySisyphe <strong>Label map(s) - Three tissue labels</strong>. These maps are calculated from the <a class="reference internal" href="#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a> or <a class="reference internal" href="#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmenation</span></a> menus. This is an image in which the csf, gray matter, and white matter voxels are all labeled with values of 1, 2, Ind 3, respectively.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widgets below to select <strong>Gray matter map(s)</strong> and <strong>White matter map(s)</strong>. These maps are also calculated from the <a class="reference internal" href="#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a> or <a class="reference internal" href="#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmenation</span></a> menus.</p>
 <p>Toggle <strong>Settings…</strong> button to show/hide cortical thickness parameters.</p>
@@ -271,26 +279,21 @@
 </ul>
 </div></blockquote>
 </li>
-</ul>
-<blockquote>
-<div><ul class="simple">
 <li><p>Check <strong>Local stage</strong> to perform a fine registration step, after the intial global registration step, which is restricted to the structure area.</p></li>
 <li><p>Set the <strong>Local margin</strong>, expressed in voxels, to define the local stage coregistration area around the structure to be segmented.</p></li>
-<li><p>Select the local registration algorithm using the <strong>Local stage transform</strong> combobox:
-- <em>AntsSplineDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
-- <em>AntsDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
-- <em>AntsFastSplineDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
-- <em>AntsFastDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.</p></li>
-</ul>
+<li><p>Select the local registration algorithm using the <strong>Local stage transform</strong> combobox:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Select the subsampling used to calculate similarity function using the <strong>Sampling rate</strong> spinbox. The range is between 1.0 (no subsampling, all voxels are used to process similarity function) and lower values greater than 0.0, which indicate the ratio of voxels used to process the similarity function under regular subsampling.</p></li>
+<li><p><em>AntsSplineDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.</p></li>
+<li><p><em>AntsDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.</p></li>
+<li><p><em>AntsFastSplineDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.</p></li>
+<li><p><em>AntsFastDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.</p></li>
 </ul>
 </div></blockquote>
-<ul class="simple">
+</li>
+<li><p>Select the subsampling used to calculate similarity function using the <strong>Sampling rate</strong> spinbox. The range is between 1.0 (no subsampling, all voxels are used to process similarity function) and lower values greater than 0.0, which indicate the ratio of voxels used to process the similarity function under regular subsampling.</p></li>
 <li><p>After the coregistration step, the structure can be corrected using either a <em>tissue map</em> or a <em>nearest neighbor transform</em>. Select this option from the <strong>Tissue correction algorithm</strong> combobox. The tissue map used for correction is chosen from the <strong>Struture tissue</strong> combobox. This can be <em>gray matter map</em> (GM), <em>white matter map</em> (WM), <em>cerebro-spinal map</em> (CSF), <em>gray matter/white matter mixture map</em> (GM+WM) or <em>gray matter/cerebro-spinal mixture map</em> (CFS+GM). If the structure is a binary image, the mask correction is simply a binary AND between the tissue mask and the structure. If the structure is a probability image, the mask correction is performed using a formula selected from the <strong>Probability map correction</strong> combobox.</p></li>
 </ul>
-</div></blockquote>
 <p>Left-click <strong>Save struct settings</strong> button to save <strong>Structure</strong> and <strong>Template</strong> fields (structure and template file names) with <strong>Registration based segmentation…</strong> parameters in an XML file. The default name is derived from the <strong>Structure</strong> file name with an XML extension. The default folder is the “segmentation” subfolder located in the PySisyphe user folder ($User/.PySisyphe).</p>
 <p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
