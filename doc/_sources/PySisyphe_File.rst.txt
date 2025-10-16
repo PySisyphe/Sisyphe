@@ -24,6 +24,8 @@ File menu
 - :ref:`menu-section-roitolabels`
 - :ref:`menu-section-volumetolabels`
 - :ref:`menu-section-labelstoroi`
+- :ref:`menu-section-labelstomask`
+- :ref:`menu-section-labelsremap`
 - :ref:`menu-section-import`
 - :ref:`menu-section-export`
 - DICOM >
@@ -301,9 +303,9 @@ Edit volume labels
 
 This menu is assigned to a label volume (LB modality). In this volume, each scalar value in the image array is associated with a label. These labels are written to a xml file with the same name as the volume and .xlabels extension.
 
-Displays a file selection dialog to get the label volume to edit. This volume is then displayed in the **Edit label** dialog box. The left part shows the label volume in a slice view widget. The right part shows a table with two columns, the first for label indexes and the second for label names. Label names can be edited. Left-click on a row to select a label. The slice widget displays this label in red.
+Displays a file selection dialog to get the label volume to edit. This volume is then displayed in the **Edit label** dialog box. The left part shows the label volume in a slice view widget. The right part shows a table with two columns, the first for label indexes and the second for label names. Label names can be edited. Left-click on a row to select a label. The view widget displays this label in red. Double-click on a label index in the first column to move the display to its position in the view widget. 
 
-Left-click **Import/Export** button shows a popup menu. The first three elements define the *separator character* used to split items in the imported/exported text file, the *position of the label index item* in a line of the imported text file, and finally the *position of the label name item* in a line of the imported text file. The last two menus are used to either load or save labels to a text file.
+Left-click **Import/ Export** button shows a popup menu. The first three elements define the *separator character* used to split items in the imported/exported text file, the *position of the label index item* in a line of the imported text file, and finally the *position of the label name item* in a line of the imported text file. The last two menus are used to either load or save labels to a text file.
 
 Left-click **Clear labels** button to clear the table of labels.
 
@@ -346,6 +348,30 @@ This menu displays the **Label volume to ROIs** dialog box to create ROI(s) from
 Add PySisyphe label volumes in the :ref:`widgets-section-multi-file` widget.
 
 Left-click **OK** button to create ROI(s). A ROI is generated for each label and saved under its respective label name.
+
+Left-click **Cancel** button to close dialog box without processing.
+
+.. _menu-section-labelstomask:
+Label volume to mask
+--------------------
+
+This menu displays the **Label volume to mask** dialog box, which is used to create a PySisyphe binary mask (.xvol) from one or more labels of a label volume (modality LB).
+
+Add a PySisyphe label volume in the :ref:`widgets-section-single-file` widget. This populates the list below with label names in the label volume. Each label name is prefixed with a checkbox. Check the labels you want to add to the mask.
+
+Left-click **OK** button to create the mask volume. A file dialog box is shown to save the PySisyphe mask (.xvol). A PySisyphe ROI (.xroi) with the same file name is saved if the **Save ROI** option is checked.
+
+Left-click **Cancel** button to close dialog box without processing.
+
+.. _menu-section-labelsremap:
+Remap label volume
+-------------------
+
+This menu displays the **Remap label volume** dialog box, wich is used to change the label indexes and names of a PySisyphe label volume (.xvol).
+
+Add a PySisyphe label volume in the :ref:`widgets-section-single-file` widget. The table below is populated with original label indexes in the first column, new label indexes in the second column, and label names in the last column. The new label indexes and names can be edited.
+
+Left-click **OK** button to remap the label volume. A file dialog box is shown to save the new PySisyphe label volume (.xvol).
 
 Left-click **Cancel** button to close dialog box without processing.
 

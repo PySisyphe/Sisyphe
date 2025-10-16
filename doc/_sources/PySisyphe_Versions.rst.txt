@@ -3,11 +3,33 @@
 Version history
 ===============
 
+- :ref:`version-increment-rules`
 - :ref:`build26-07-2025`
 - :ref:`build05-08-2025`
 - :ref:`build28-08-2025`
 - :ref:`build30-08-2025`
+- :ref:`build13-10-2025`
 - :ref:`build15-10-2025`
+
+.. _version-increment-rules:
+Version increment rules
+-----------------------
+
+- **major version increment**:
+
+	- new python interpreter version
+	- 20 minor version increments
+
+- **minor version increment**: 
+
+	- new module, new external module, external module upgrade
+	- 20 patch version increments
+
+- **patch version increment**:
+
+	- update html documentation
+	- new file, file update
+	- module update
 
 .. _build26-07-2025:
 version 0.9.1, build 26/07/2025
@@ -19,7 +41,7 @@ version 0.9.1, build 26/07/2025
 - Shared link to Mega repository for downloading frozen versions: https://mega.nz/folder/hKEBzRTR#MUodQFh4N8LeukE2hbkzNA
 
 .. _build05-08-2025:
-version 0.9.1, build 05/08/2025
+version 0.12.9, build 05/08/2025
 -------------------------------
 
 - **new files**
@@ -27,15 +49,42 @@ version 0.9.1, build 05/08/2025
 	- gui/darkroi/texture.png
 	- gui/lightroi/texture.png
 
+- **updated files**
+
+	- settings/settings.xml
+	
+		- add DicomHost section
+	
+	- settings/tooltips.xml
+	
+		- add DicomHost section
+
 - **new external module**
 
 	- pynetdicom 3.0.4
+
+- **upgraded external module**
+
+	- pydicom, upgrade 2.3.1 to 3.0.1
+	
+		- generate a bug in core.sisypheDicom.ImportFromRTStruct.execute() method
 
 - **new module**
 
 	- gui.dialogDicomQuery
 	
 		- Dialog box for Dicom Query/retreive 
+
+- **updated modules**
+
+	- core.sisypheDicom
+	- gui.dialogSplash
+	- gui.dialogDicomRTImport
+	- core.sisypheImageIO
+	- gui.dialogGenericResults
+	- gui.windowSisyphe
+	- gui.attributesWidgets
+	- gui.dialogSplash
 
 - **new classes**
 
@@ -56,33 +105,6 @@ version 0.9.1, build 05/08/2025
 
 	- gui.dialogDicomQuery.getDicomDirectory
 	- gui.dialogDicomQuery.handle_store
-
-- **updated files**
-
-	- settings/settings.xml
-	
-		- add DicomHost section
-	
-	- settings/tooltips.xml
-	
-		- add DicomHost section
-
-- **upgraded external module**
-
-	- pydicom, upgrade 2.3.1 to 3.0.1
-	
-		- generate a bug in core.sisypheDicom.ImportFromRTStruct.execute() method
-
-- **updated modules**
-
-	- core.sisypheDicom
-	- gui.dialogSplash
-	- gui.dialogDicomRTImport
-	- core.sisypheImageIO
-	- gui.dialogGenericResults
-	- gui.windowSisyphe
-	- gui.attributesWidgets
-	- gui.dialogSplash
 
 - **updated classes**
 
@@ -142,7 +164,7 @@ version 0.9.1, build 05/08/2025
 		- bug fix, return value, from str to bool
 
 .. _build28-08-2025:
-version 0.9.1, build 28/08/2025
+version 0.12.11, build 28/08/2025
 -------------------------------
 
 - **updated modules**
@@ -186,7 +208,7 @@ version 0.9.1, build 28/08/2025
 		- update dialog title bar color for Win32 platform
 
 .. _build30-08-2025:
-version 0.9.1, build 30/08/2025
+version 0.12.16, build 30/08/2025
 -------------------------------
 
 - **updated modules**
@@ -227,7 +249,7 @@ version 0.9.1, build 30/08/2025
 	
 		- update frameDetection() method
 
-- **new method**
+- **new methods**
 
 	- widgets.thresholdWidgets._onButtonResetEvent()
 	
@@ -272,11 +294,11 @@ version 0.9.1, build 30/08/2025
 	
 		- Qt5 bug of modal dialog on darwin platform, popup menu items cannot be selected, modal simulation to fix it
 
-.. _build15-10-2025:
-version 0.9.1, build 15/10/2025
+.. _build13-10-2025:
+version 0.16.5, build 13/10/2025
 -------------------------------
 
-- **update html documentation**
+- **updated html documentation**
 
 	- add texture.png icon
 	- update PySisyphe_dockroi.rst
@@ -334,7 +356,7 @@ version 0.9.1, build 15/10/2025
 	- widgets.functionsSettingsWidget
 	- widgets.tabToolsWidgets
 
-- **updated function**
+- **updated functions**
 
 	- core.sisypheSettings.initPySisypheUserPath()
 	
@@ -360,18 +382,18 @@ version 0.9.1, build 15/10/2025
 	
 	- core.sisypheTools.HandleWidget
 	
-		- setFontSize() method
-		- getFontSize() method
+		- update setFontSize() method
+		- update getFontSize() method
 	
 	- core.sisypheTools.LineWidget
 	
-		- setFontSize() method
-		- getFontSize() method
+		- update setFontSize() method
+		- update getFontSize() method
 	
 	- core.sisypheStatitics.SisypheDesign
 	
-		- __str__() method
-		- addGlobalCovariable() method
+		- update __str__() method
+		- update addGlobalCovariable() method
 	
 	- core.sisypheSettings.SisypheSettings
 	
@@ -645,7 +667,7 @@ version 0.9.1, build 15/10/2025
 
 		- Calculate the scale factor that is used to define the size of icons and some widgets.
 
-- **new method**
+- **new methods**
 
 	- gui.dialogGenericResults.DialogGenericResults.showEvent()
 
@@ -660,3 +682,142 @@ version 0.9.1, build 15/10/2025
 		- add setPage() method
 
 			- Display a local page
+
+.. _build15-10-2025:
+version 0.18.3, build 15/10/2025
+-------------------------------
+
+- **updated html documentation**
+
+	- add "Label volume to mask" dialog box documentation in PySisyphe_File.rst & PySisyphe:_menubar.rst
+	- add "Remaps label volume" dialog box documentation in PySisyphe_File.rst & PySisyphe:_menubar.rst
+	- add "Laterality index" dialog box documentation in PySisyphe_Mapping.rst & PySisyphe:_menubar.rst
+	- PySisyphe_File.rst update
+	- PySisyphe_Versions.rst update
+	- API documentation update
+	- version-histrory.rst update
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- /Sisyphe/settings/functions.xml
+
+- **updated modules**
+
+	- core.sisypheImageAttributes
+	- core.sisypheDownload
+	- gui.dialogLabel
+	- gui.dialogContrast
+	- gui.windowSisyphe
+	- gui.dialogRegistration
+	- gui.dialogEditLabel
+	- gui.dialogFileSelection
+	- gui.dialogDataType
+	- gui.dialogFlipAxes
+	- gui.dialogSwapAxes
+	- gui.dialogFunction
+	- gui.dialogWorkflow
+	- gui.dialogStatContrast
+	- gui.dialogTimeSeries
+	- gui.dialogDiffusionGradients
+	
+- **updated classes**
+
+	- core.sisypheImageAttributes.SisypheAcquisition
+
+		- add clearLabels() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- add labelToMask() method
+		- add relabel() method
+		- add lateralityIndex() method
+		- update __inti__() method
+		- update getUserDirectory() method
+
+	- gui.dialogRegistration.DialogRegistration
+
+		- update execute() method
+
+	- gui.dialogEditLabels.DialogEditLabels
+
+		- update __inti__() method
+		- add _moveTo() method
+		- add getFileSelectionWidget() method
+
+	- gui.dialogFileSelection.DialogFileSelection
+	- gui.dialogFileSelection.DialogFilesSelection
+	- gui.dialogDataType.DialogDataType
+	- gui.dialogFlipAxes.DialogFlipAxes
+	- gui.dialogSwapAxes.DialogSwapAxes
+	- gui.dialogFunction.DialogHistogramIntensityMatching
+	- gui.dialogFunction.DialogRegressionIntensityMatching
+	- gui.dialogWorkflow.DialogWorkflow
+	- gui.dialogStatContrast.DialogConjunction
+	- gui.dialogStatContrast.DialogTMapToZMap
+	- gui.dialogStatContrast.DialogLateralityIndex
+	- gui.dialogTimeSeries.DialogSeriesPreprocessing
+	- gui.dialogTimeSeries.DialogSeriesCanICA
+	- gui.dialogDiffusionGradients.DialogDiffusionGradients
+
+		- add getFileSelectionWidget() / getFilesSelectionWidget() / getReferenceSelectionWidget() methods
+
+- **updated methods**
+
+	- gui.dialogRegistration.DialogRegistration.execute()
+
+		- line 880, bug fix, interpolator setting
+
+	- gui.dialogEditLabels.DialogEditLabels.__init__()
+
+		- line 117, connect _tree double-click signal to _moveTo() method
+
+	- gui.windowSisyphe.WindowSisyphe.__inti__()
+
+		- line 244, call getUserDirectory method
+
+	- gui.windowSisyphe.WindowSisyphe.getUserDirectory()
+
+		- line 185, update PySisyphe user folder functions.xml and settings.xml files when running a new installation for the first time
+
+- **updated functions**
+
+	- core.sisypheDownload.installFromHost()
+
+		- new version installation: copy new functions.xml and settings.xml files to the PySisyphe user folder ($User/.PySisyphe)
+
+	- core.sisypheDownload.updatePySisyphe()
+
+		- new version url in section <host><updatepy> (host.xml file) if venv execution, <host><updatepyc> if frozen execution
+
+- **new classes**
+
+	- gui.dialogLabel.DialogLabeltoMask
+
+		- dialog box to create a mask as a combination of labels from a label volume.
+
+	- gui.dialogLabel.DialogRelabel
+
+		- dialog box to remaps label indexes of a label volume.
+
+	- gui.dialogContrast.DialogLateralityIndex
+
+		- dialog box to calculate laterality index of a statistical map.
+
+- **new methods**
+
+	- core.sisypheImageAttributes.SisypheAcquisition.clearLabels()
+
+		- remove all labels from a label volume
+
+	- gui.windowSisyphe.WindowSisyphe.labelToMask()
+
+		- call gui.dialogLabel.DialogLabeltoMask dialog box
+
+	- gui.windowSisyphe.WindowSisyphe.relabel()
+
+		- call gui.dialogLabel.DialogRelabel dialog box
+
+	- gui.dialogEditLabels.DialogEditLabels._moveTo()
+
+		- center cursor on double-cliked label

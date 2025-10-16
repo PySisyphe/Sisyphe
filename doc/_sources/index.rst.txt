@@ -32,6 +32,13 @@ PySisyphe documentation
    ./PySisyphe_docktracking.rst
    ./PySisyphe_dockhelp.rst
    ./PySisyphe_menubar.rst
+   ./PySisyphe_File.rst
+   ./PySisyphe_Functions.rst
+   ./PySisyphe_Registration.rst
+   ./PySisyphe_Segmentation.rst
+   ./PySisyphe_Mapping.rst
+   ./PySisyphe_Diffusion.rst
+   ./PySisyphe_Window.rst
    ./API/index.rst
    ./PySisyphe_license.rst
    ./PySisyphe_contact.rst

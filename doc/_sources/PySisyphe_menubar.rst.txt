@@ -53,6 +53,8 @@ File
 	- :ref:`ROIs to label volume... <menu-section-roitolabels>`
 	- :ref:`Volumes to label volume... <menu-section-volumetolabels>`
 	- :ref:`Label volume to ROIs... <menu-section-labelstoroi>`
+	- :ref:`Label volume to mask... <menu-section-labelstomask>`
+	- :ref:`Remap label volume... <menu-section-labelsremap>`
 	- :ref:`Import <menu-section-import>` >
 
 		- Import Nifti...
@@ -184,6 +186,7 @@ Mapping
 
 	- :ref:`Contrast... <menu-section-contrast>`
 	- :ref:`Result... <menu-section-result>`
+	- :ref:`Laterality index... <menu-section-latindex>`
 	- :ref:`Conjunction... <menu-section-conjunction>`
 	- :ref:`t to z-map conversion... <menu-section-t2zmap>`
 	- :ref:`Time series preprocessing... <menu-section-seriespreproc>`

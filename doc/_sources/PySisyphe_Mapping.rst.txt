@@ -9,6 +9,7 @@ Mapping menu
 	- :ref:`menu-section-models`
 - :ref:`menu-section-contrast`
 - :ref:`menu-section-result`
+- :ref:`menu-section-latindex`
 - :ref:`menu-section-conjunction`
 - :ref:`menu-section-t2zmap`
 - :ref:`menu-section-seriespreproc`
@@ -37,6 +38,10 @@ This menu allows you to define the statistical model that will be used for the v
 	Y, vector of observations, 
 	X, design matrix,
 	beta, vector of regressor weight values, one value for each factor (effects/covariates)
+
+	`Reference 1 <https://onlinelibrary.wiley.com/doi/10.1002/hbm.460020402>`_: Statistical parametric maps in functional imaging: A general linear approach. KJ Friston, AP Holmes, KJ Worsley, JP Poline, CD Frith, RSJ Frackowiak. Human Brain Mapping 1995;2(4):189-210.
+
+	`Reference 2 <https://www.sciencedirect.com/science/article/abs/pii/S1053811985710075?via%3Dihub>`_: Analysis of fmri time series revisited. KJ Friston, AP Holmes, JB Poline, PJ Grasby, SCR Williams, RSJ Frackowiak, R Turner. Neuroimage 1995 Mar;2(1):45-53.
 
 PySisyphe manages only block-related fMRI design, the following statistical models are available:
 
@@ -288,11 +293,82 @@ A **Statistical result** dialog box is displayed. It consists of five areas.
 	- Left-click **Save map** button to save the statistical map with the current voxel and extent thresholds as a PySisphe volume (.xvol).
 	- Left-click **Close** button to exit dialog box.
 
+.. _menu-section-latindex:
+Laterality index
+----------------
+
+This menu is used to calculate laterality indexes (LI) of a statistical map that was generated from the :ref:`menu-section-contrast` menu.
+
+Hemispheric or regional dominance in cognitive functions, particularly language, can be quantified using laterality indexes (LI). The LI indicates the prevalence of activation in an fMRI statistical map on one side of the brain compared to the other. Its values range from +1.0 (left domi￾nant) to -1.0 (right dominant).
+
+.. admonition::
+	Laterality index methodology
+
+	LI = (NLt - NRt) / (NLt + NRt)
+
+	- NLt Number of voxels activated in the left hemisphere (or left mask) at statistical threshold t.
+	- NRt Number of voxels activated in the right hemisphere (or right mask) at statistical threshold t.
+
+	**Area Under Curve (AUC) LI**
+
+	- CHL cumulative histograms of the number of activated voxels vs statistical threshold t in the left hemisphere (or left mask), CHL(t) = NLt
+	- CHR cumulative histograms of the number of activated voxels vs statistical threshold t in the left hemisphere (or right mask), CHR(t) = NRt
+
+	AUC CHL = ∑ NLt (∑ between t=tmin to t=tmax)
+			   
+	AUC LI = (AUC CHL - AUC CHR) / (AUC CHL + AUC CHR)
+
+	**Average LI**
+
+	Average LI = ∑ (NLt - NRt) / (NLt + NRt) / Nt (∑ between t=tmin to t=tmax)
+
+	Nt number of t intervals
+
+	LI indexes are calculated in a subset of voxels located within symmetric masks in each hemisphere (e.g. language areas).
+
+	`Reference <https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0230129>`_: Implementation of clinically relevant and robust fMRI-based language lateralization: Choosing the laterality index calculation method. I Brumer, E De Vita, J Ashmore, J Jarosz, M Borri. PLoS One. 2020 Mar 12;15(3):e0230129.
+
+The **Laterality index** dialog box is displayed, wich is provides five :ref:`widgets-section-single-file` widgets:
+
+- Select a **Statistical map** PySisyphe volume (.xvol, t-map or z-map sequence attribute).
+- Select one of the PySisyphe volumes (.xvol) of the fMRI time-series used to calculate the statistical map, or the mean volume of the fMRI time-series with the **fMRI volume** widget. This volume is used for the spatial normalization stage used to resample the statistical map in the ICBM152 space. This widget will not be displayed if the statistical map is already normalized in the ICBM152 space (i.e. space/transform ID is *ICBM152*).
+- Select the PySisyphe ICBM152 **Template** volume. This volume is used for the spatial normalization stage. This widget will not be displayed if the statistical map is already normalized in the ICBM152 space (i.e. space/transform ID is *ICBM152*).
+- Select the PySisyphe **Left mask**, left hemisphere mask in the ICBM152 space (i.e. space/transform ID is *ICBM152*). LI indexes are calculated in the subset of voxels located in this mask. It can be either a PySisyphe volume (.xvol) with a *mask* sequence attribute or a PySisyphe ROI (.xroi). The mask file type is defined by the **mask type** parameter (see **Laterality index...** parameters below).
+- Select the PySisyphe **Right mask**, right hemisphere mask in the ICBM152 space (i.e. space/transform ID is *ICBM152*). LI indexes are calculated in the subset of voxels located in this mask. It can be either a PySisyphe volume (.xvol) with a mask sequence attribute or a PySisyphe ROI (.xroi). The mask file type is defined by the **mask type** parameter (see **Laterality index...** parameters below).
+
+Toggle **Laterality index...** button to show/hide parameters:
+
+- Select the **Mask type** option: *volume* (.xvol) with a *mask* sequence attribute or *ROI* (.xroi)
+- Set the number of **Histogram bins**, number of statistical threshold intervals used for cumulative his￾tograms processing (default 100).
+- Use the **Template** :ref:`widgets-section-single-file` widget to set the default ICBM152 template.
+- Use the **Left mask** :ref:`widgets-section-single-file` widget to set the default ICBM152 left hemisphere mask.
+- Use the **Right mask** :ref:`widgets-section-single-file` widget to set the default ICBM152 right hemisphere mask.
+
+Left-click **OK** button to calculate the laterality index (LI). If the statistical map is not in the ICBM152 space (i.e. space/transform ID is not *ICBM152*), a spatial normalization stage is processed first.
+
+The results are displayed in a dialog box that has a chart at the top, and a tab below. The chart shows the cumulative histograms, i.e. number of activated voxels versus statistical threshold, in the left and right hemisphere masks, respectively, in red and blue. The table shows various criteria values: 
+
+	- *AUC left mask*, area under the cumulative histogram curve in the left hemisphere mask.
+	- *AUC right mask*, area under the cumulative histogram curve in the right hemisphere mask.
+	- *LI p=0.05*, laterality index at the p-value=0.05 statistical threshold.
+	- *LI p=0.01*, laterality index at the p-value=0.01 statistical threshold.
+	- *LI p=0.001*, laterality index at the p-value=0.001 statistical threshold.
+	- *Average LI* (See Laterality index methodology above)
+	- *AUC LI* (See Laterality index methodology above)
+
+This dialog box includes four buttons at the bottom: a **Save bitamp** button to save a bitmap of the chart (supported bitmap formats BMP, JPG, PNG, TIFF and SVG), a **Copy to clipboard** button to copy a bitmap capture of the chart to the clipboard, and a **Copy to screenshots** button to copy a bitmap capture of the chart to the :ref:`Screenshots manager <page-screenshots>`, and a **Save Dataset**, which shows a dialog box to save the table in various formats (CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET).
+
+Left-click **Close** button to exit dialog box.
+
 .. _menu-section-conjunction:
 Conjunction
 -----------
 
-This menu is used to perform statitical map conjunction. A Conjunction allow you to determine whether a voxel or group of voxels passes a statistical threshold for two or more statistical maps (see Combining brains: a survey of methods for statistical pooling of information. Lazar NA, Luna B, Sweeney JA, Eddy WF. Neuroimage 2002 Jun;16(2):538-50. doi: 10.1006/nimg.2002.1107). The t-maps are converted into z-maps so that conjunctions can be performed using either t or z-maps.
+This menu is used to perform statitical map conjunction. A Conjunction allow you to determine whether a voxel or group of voxels passes a statistical threshold for two or more statistical maps. The t-maps are converted into z-maps so that conjunctions can be performed using either t or z-maps.
+
+.. admonition:: Reference
+
+	`Article <https://www.sciencedirect.com/science/article/abs/pii/S1053811902911079?via%3Dihub>`_: Combining brains: a survey of methods for statistical pooling of information. NA Lazar, B Luna, JA Sweeney, WF Eddy. Neuroimage 2002 Jun;16(2):538-50.
 
 Use the :ref:`widgets-section-multi-file` widget at the top, to select **Statistical maps** PySisyphe volume (.xvol).
 
@@ -449,6 +525,10 @@ The Dynamic susceptibility contrast parameters are as follows:
 		- mean transit time = t0 + b * (a + 1)
 		- peak time = t0 + (a * b)
 		- peak concentration = k ((a * b) / e) ** a
+
+	`Reference 1 <https://www.ahajournals.org/doi/10.1161/01.res.14.6.502?url_ver=Z39.88-2003&rfr_id=ori:rid:crossref.org&rfr_dat=cr_pub%20%200pubmed>`_: Indicator Transit Time Considered as a Gamma Variate. HK Thompson Jr, CF Starmer, RE Whalen, HD Mcintosh. Circ Res 1964 Jun;14:502-15.
+
+	`Reference 2 <https://iopscience.iop.org/article/10.1088/0031-9155/52/2/009>`_: Pixel-by-pixel deconvolution of bolus-tracking data: optimization and implementation. S Sourbron. M Dujardin, S Makkat and R Luypaert. Phys Med Biol 2007 Jan 21;52(2):429-47.
 
 - Check **Deconvolution** to determine whether or not CBF and CBV are processed using a deconvolution algorithm. Contrast concentration deconvolution is an ill-posed problem, which requires some form of regularization in order to extract a physically acceptable solution. Deconvolution algorithm is based on truncated singular value decomposition with L-curve criterion (LCC) regularization. If this option is unchecked, fast approximations of CBF and MTT are calculated directly from the contrast concentration time series without deconvolution.
 - Check **Leakage** to determine whether or not to calculate leakage volume (LKV).

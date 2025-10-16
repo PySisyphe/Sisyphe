@@ -39,7 +39,21 @@ This menu is used to perform preprocessings of the diffusion-weighted Volumes: *
 
 Gibbs artifacts (also known as truncation, ringing, or spectral leakage artifacts) typically appear as multiple fine parallel lines immediately adjacent to high-contrast interfaces. Gibbs artifacts occur as a consequence of using Fourier transforms to reconstruct MR signals into images. In theory, any signal can be represented as an infinite summation of sine waves of different amplitudes, phases, and frequencies. In MR imaging, however, we are restricted to sampling a finite number of frequencies and must therefore approximate the image by using only a relatively few harmonics in its Fourier representation.  The Fourier series, then, is cut short or truncated, hence the name for this artifact. PySisyphe used the `dipy <https://docs.dipy.org/1.8.0/examples_built/preprocessing/denoise_gibbs.html>`_ implementation.
 
+.. admonition:: Reference
+
+	`Article <https://onlinelibrary.wiley.com/doi/10.1002/mrm.26054>`_: Gibbs‐ringing artifact removal based on local subvoxel‐shifts. Kellner E, Dhital B, Kiselev VG, Reisert M Magn Reson Med 2016;76:1574–1581.
+
 Four denoising algortihms are proposed from the dipy library: `local PCA <https://docs.dipy.org/stable/examples_built/preprocessing/denoise_localpca.html#sphx-glr-examples-built-preprocessing-denoise-localpca-py>`_, general function PCA, `Marcenko Pastur PCA <https://docs.dipy.org/stable/examples_built/preprocessing/denoise_mppca.html#sphx-glr-examples-built-preprocessing-denoise-mppca-py>`_, `non local means <https://docs.dipy.org/stable/examples_built/preprocessing/denoise_nlmeans.html#sphx-glr-examples-built-preprocessing-denoise-nlmeans-py>`_, `self supervised denoising <https://docs.dipy.org/stable/examples_built/preprocessing/denoise_patch2self.html>`_, `adaptive soft coefficient matching <https://docs.dipy.org/stable/examples_built/preprocessing/denoise_ascm.html#sphx-glr-examples-built-preprocessing-denoise-ascm-py>`_.
+
+.. admonition:: References
+
+	`Article 1 <https://pmc.ncbi.nlm.nih.gov/articles/PMC3760829/>`_: Diffusion weighted image denoising using overcomplete local PCA. JV Manjón, P Coupé, L Concha, A Buades, DL Collins, M Robles. Diffusion weighted image denoising using overcomplete. PLOS ONE, 8(9):e73021, 2013.
+
+	`Article 2 <https://pmc.ncbi.nlm.nih.gov/articles/PMC2881565/>`_: An optimized blockwise nonlocal means denoising filter for 3-D magnetic resonance images. P Coupé, P Yger, S Prima, P Hellier, C Kervrann, C Barillot. IEEE Transactions on Medical Imaging, 27(4):425–441, 2008.
+
+	`Article 3 <https://www.computer.org/csdl/proceedings-article/cvpr/2024/530000ac631/20hPHHggy0o>`_: Self-supervised Denoising on Coresets via Matrix Sketchin. S Fadnavis, A Chowdhury, J Batson, P Drineas, E Garyfallidis. Patch2Self2: In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, volume, 27641–27651. 2024.
+
+	`Article 4 <https://digital-library.theiet.org/doi/abs/10.1049/iet-ipr.2011.0161>`_: Adaptive multiresolution Non-Local Means Filter for 3D MR image denoising. P Coupé, JV Manjón, M Robles, LD Collins. IET Image Processing, 6(5):558–568, July 2012.
 
 Use the :ref:`widgets-section-single-file` widget to select a **B-values** PySisyphe XML file (.xbval).
 
@@ -63,6 +77,10 @@ Toggle **Diffusion preprocessing...** button to show/hide preprocessing paramete
 - Define the **Number of receiver array head coils** used to acquire diffusion-weighted images. This parameter is required for noise estimation.
 - Define the **Number of phase array head coils**  used to acquire diffusion-weighted  images. if scanner does a SENSE reconstruction, always use 1, as the noise profile is always Rician. If scanner does a GRAPPA reconstruction, set N as the number of phase array coils. This parameter is required for noise estimation.
 - Preprocessed diffusion-weighted volumes are saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters.
+
+.. admonition:: Reference
+
+	`Article <https://pmc.ncbi.nlm.nih.gov/articles/PMC2732005/>`_: Probabilistic Identification and Estimation of Noise (PIESNO): A self-consistent approach and its applications in MRI. CG Koay, E Özarslan, and C Pierpaoli. Journal of Magnetic Resonance, 199(1):94–103, July 2009.
 
 Toogle **PCA denoising** button to show/hide parameters:
 

@@ -186,6 +186,10 @@ Displacement field registration
 
 This menu is used for displacement field coregistration of a moving volume onto a fixed volume using ANTs registration methods. This non linear method provides local/dense/high-dimensionaltiy transformation via a a displacement field. The displacement field stores 3D vectors of displacements. Transformation is performed at a given point by adding the displacement at that point to the input point. The ANTs toolkit provides a hierarchy of transformations with adjustable levels of complexity, regularization, degrees of freedom and behavior as optimizers. ANTs provides 4 similarity metrics optimized by the displacement field coregistration algorithm: *mean squares*, *cross-correlation*, *mutual information* and and *demons*.
 
+.. admonition:: Reference
+
+	`Article <https://pmc.ncbi.nlm.nih.gov/articles/PMC2276735/>`_: Symmetric diffeomorphic image registration with cross-correlation: evaluating automated labeling of elderly and neurodegenerative brain. BB Avants, CL Epstein, M Grossman, JC Gee. Med Imag Anal. 2008 Feb, 12(1):26-41.
+
 Displacement field transformation is an effective method for inter-subject coregistration of high-resolution modalities (MR).
 
 The **Displacement field registration** dialog box is displayed.

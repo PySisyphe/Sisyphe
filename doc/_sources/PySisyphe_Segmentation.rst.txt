@@ -102,6 +102,10 @@ Mixture model tissue segmentation
 
 This menu is used to compute tissue probability maps (grey matter, white matter and cerebro-spinal fluid) with a finite mixture modeling (FMM) segmentation approach with prior constraints. These prior constraints include the specification of prior probability images (one for each class), and MRF prior to enforce spatial smoothing of the labels. Similar algorithms include FAST and SPM. This prior based segmentation provides an Expectation-Maximization framework for statistical segmentation where the intensity profile of each class is modeled as a mixture model and spatial smoothness is enforced by MRF prior. Initial labeling can be performed by kmeans clustering, a set of user-specified prior probability volumes. If specified, the latter initialization option are also used as priors in the MRF update step. The assumed labeling is such that classes are assigned consecutive indices 1, 2, 3, etc. Label 0 is reserved for the background when a mask is specified. The result is a probability volume for each class and a tissue labeled volume. PySisyphe uses the `ANTs <https://antspy.readthedocs.io/en/latest/segmentation.html>`_ library implemenentation.
 
+.. admonition:: Reference
+
+	`Article <https://pmc.ncbi.nlm.nih.gov/articles/PMC3297199/>`_: An open source multivariate framework for n-tissue segmentation with evaluation on public data. BB Avants, NJ Tustison, J Wu, PA Cook, JC Gee. Neuroinformatics, 2011 Dec, 9(4):381-400.
+
 Anisotropic diffusion filtering and bias field correction can be performed before the segmentation stage.
 
 Use the :ref:`widgets-section-multi-file` widget at the top to select PySisyphe **Volume(s)**.
@@ -146,6 +150,10 @@ Cortical thickness
 
 This menu is designed to compute cortical thickness using the DiReCT algorithm (Diffeomorphic Registration-based Cortical Thickness measurement). DiReCT is a registration based estimate of cortical thickness. To guide the deformation, DiReCT constructs a gradient field from the segmented cortical surfaces (WM/GM and GM/CSF). This field acts as an external force that pushes the white matter surface toward the pial surface. PySisyphe uses the `ANTs <https://antspy.readthedocs.io/en/latest/segmentation.html>`_ library implemenentation.
 
+.. admonition:: Reference
+
+	`Article <https://pmc.ncbi.nlm.nih.gov/articles/PMC2836782/>`_: Registration based cortical thickness measurement. SR Das, BB Avants, M Grossman, and JC Gee. Neuroimage 2009, 45:867-879.
+
 Use the :ref:`widgets-section-multi-file` widget at the top to select PySisyphe **Label map(s) - Three tissue labels**. These maps are calculated from the :ref:`menu-section-atropos` or :ref:`menu-section-tissue` menus. This is an image in which the csf, gray matter, and white matter voxels are all labeled with values of 1, 2, Ind 3, respectively.
 
 Use the :ref:`widgets-section-multi-file` widgets below to select **Gray matter map(s)** and **White matter map(s)**. These maps are also calculated from the :ref:`menu-section-atropos` or :ref:`menu-section-tissue` menus.
@@ -177,22 +185,24 @@ Toggle **Registration based segmentation...** button to show/hide parameters.
 - Set the template modality used as reference atlas with the **Sequence used for registration** combobox. *MR T1*, *gray matter map* (GM), *white matter map* (WM), or *cerebrospinal fluid* (CSF) are all possible options.
 - Select the global registration algorithm using the **Global stage transform** combobox:
 
-   - *AntsAffine*: single step of affine coregistration (no diffeomorphic step), 4 multiresolution stages with last at full resolution.
-   - *AntsFastAffine*: single step of affine coregistration (no diffeomorphic step), fast scheme with only 3 multiresolution stages, and no iteration at full resolution. 
-   - *AntsSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
-   - *AntsDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
-   - *AntsFastSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
-   - *AntsFastDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
- - Check **Local stage** to perform a fine registration step, after the intial global registration step, which is restricted to the structure area.
- - Set the **Local margin**, expressed in voxels, to define the local stage coregistration area around the structure to be segmented.
- - Select the local registration algorithm using the **Local stage transform** combobox:
-   - *AntsSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
-   - *AntsDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
-   - *AntsFastSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
-   - *AntsFastDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+	- *AntsAffine*: single step of affine coregistration (no diffeomorphic step), 4 multiresolution stages with last at full resolution.
+	- *AntsFastAffine*: single step of affine coregistration (no diffeomorphic step), fast scheme with only 3 multiresolution stages, and no iteration at full resolution. 
+	- *AntsSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+	- *AntsDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+	- *AntsFastSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+	- *AntsFastDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
 
-  - Select the subsampling used to calculate similarity function using the **Sampling rate** spinbox. The range is between 1.0 (no subsampling, all voxels are used to process similarity function) and lower values greater than 0.0, which indicate the ratio of voxels used to process the similarity function under regular subsampling.
- - After the coregistration step, the structure can be corrected using either a *tissue map* or a *nearest neighbor transform*. Select this option from the **Tissue correction algorithm** combobox. The tissue map used for correction is chosen from the **Struture tissue** combobox. This can be *gray matter map* (GM), *white matter map* (WM), *cerebro-spinal map* (CSF), *gray matter/white matter mixture map* (GM+WM) or *gray matter/cerebro-spinal mixture map* (CFS+GM). If the structure is a binary image, the mask correction is simply a binary AND between the tissue mask and the structure. If the structure is a probability image, the mask correction is performed using a formula selected from the **Probability map correction** combobox.
+- Check **Local stage** to perform a fine registration step, after the intial global registration step, which is restricted to the structure area.
+- Set the **Local margin**, expressed in voxels, to define the local stage coregistration area around the structure to be segmented.
+- Select the local registration algorithm using the **Local stage transform** combobox:
+
+	- *AntsSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+	- *AntsDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+	- *AntsFastSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+	- *AntsFastDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+
+- Select the subsampling used to calculate similarity function using the **Sampling rate** spinbox. The range is between 1.0 (no subsampling, all voxels are used to process similarity function) and lower values greater than 0.0, which indicate the ratio of voxels used to process the similarity function under regular subsampling.
+- After the coregistration step, the structure can be corrected using either a *tissue map* or a *nearest neighbor transform*. Select this option from the **Tissue correction algorithm** combobox. The tissue map used for correction is chosen from the **Struture tissue** combobox. This can be *gray matter map* (GM), *white matter map* (WM), *cerebro-spinal map* (CSF), *gray matter/white matter mixture map* (GM+WM) or *gray matter/cerebro-spinal mixture map* (CFS+GM). If the structure is a binary image, the mask correction is simply a binary AND between the tissue mask and the structure. If the structure is a probability image, the mask correction is performed using a formula selected from the **Probability map correction** combobox.
 
 Left-click **Save struct settings** button to save **Structure** and **Template** fields (structure and template file names) with **Registration based segmentation...** parameters in an XML file. The default name is derived from the **Structure** file name with an XML extension. The default folder is the "segmentation" subfolder located in the PySisyphe user folder ($User/.PySisyphe). 
 

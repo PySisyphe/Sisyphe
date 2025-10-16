@@ -3,7 +3,7 @@
 License
 =======
 
-**PySisyphe software**, Release alpha 0.9 (c) 2023 J.-A. Lotterie.
+**PySisyphe software**, (c) 2021 J.-A. Lotterie.
    
 The software remains the property of the author J.-A. Lotterie.
  

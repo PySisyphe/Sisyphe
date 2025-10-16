@@ -13,7 +13,6 @@ Functions menu
 - Filters >
 	- :ref:`menu-section-filter-mean`
 	- :ref:`menu-section-filter-median`
-	- :ref:`menu-section-filter-std`
 	- :ref:`menu-section-filter-gaussian`
 	- :ref:`menu-section-filter-gradient`
 	- :ref:`menu-section-filter-laplacian`
@@ -257,6 +256,10 @@ Anisotropic diffusion filter
 
 This menu displays the **Anisotropic diffusion filter** dialog box, which is used to perform volume denoising with anisotropic diffusion family filters. The advantage of these approaches is that clear boundaries are preserved, with smoothing occurring only within homogeneous regions.
 
+.. admonition:: Reference
+
+	`Article <https://ieeexplore.ieee.org/document/56205>`_: Scale-space and edge detection using anisotropic diffusion. P Perona; J Malik. IEEE Transactions on Pattern Analysis Machine Intelligence, vol. 12, pp. 629-639, 1990.
+
 Filter parameters are as follows:
 
 - **Algorithm**, four types of algorithms are available.
@@ -269,7 +272,7 @@ Filter parameters are as follows:
 - **Conductance**, controls the sensitivity of the conductance term in the basic anisotropic diffusion equation. It affects the conductance term in different ways depending on the particular variation on the basic equation. As a general rule, the lower the value, the more strongly the diffusion equation preserves image features (such as high gradients or curvature). A high value for conductance will cause the filter to diffuse image features more readily. Typical values range from 0.5 to 2.0.
 - **Number of iterations**, specifies the number of iterations (time-step updates) that the solver will perform to produce a solution. The appropriate number of iterations is dependent on the application and the image being processed. As a general rule, the more iterations performed, the more diffused the image will become.
 - Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** parameters.
-
+.
 Add PySisyphe volume(s) to be filtered in the :ref:`widgets-section-multi-file` widget.
 
 Left-click **Execute** button to perform Anisotropic diffusion filtering.
@@ -282,7 +285,11 @@ Histogram intensity matching
 
 This menu displays the **Histogram intensity matching** dialog box, which is used to match the intensities of one or more volumes with those of a reference volume. This filter uses a histogram matching technique where the histograms are only matched at a specified number of quantile values (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HistogramMatchingImageFilter.html>`_).
 
-Filter parameters are as follows:
+.. admonition:: Reference
+
+	`Article <https://ieeexplore.ieee.org/document/836373>`_: New Variants of a Method of MRI Scale Standardization. Laszlo G. Nyul, Jayaram K. Udupa, and Xuan Zhang, IEEE Transactions on Medical Imaging, 19(2):143-150, 2000.
+
+Filter parameters are as follows:_
 
 - **Exclude background**, checkbox to exclude background voxels from histogram matching processing (checked by default). Background voxels are those with grayscale values smaller than the mean.
 - **Number of match points**, governs the number of quantile values to be matched.
@@ -393,6 +400,12 @@ Bias field correction
 ---------------------
 
 This menu displays the **Bias field correction** dialog box. MR images are affected by bias field artefact which is defined as low-frequency intensity inhomogeneity. The N4 algorithm assumes a simple parametric model (B-Spline fitting) for the bias field and does not require tissue class segmentation. A multiple resolutions strategy is used during the correction process. The basic algorithm iterates between sharpening the intensity histogram of the corrected input image and spatially smoothing those results with a B-spline scalar field estimate of the bias field (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1N4BiasFieldCorrectionImageFilter.html>`_).
+
+.. admonition:: References
+
+	`Article 1 <https://ieeexplore.ieee.org/document/668698>`_: A nonparametric method for automatic correction of intensity non-uniformity in MRI data. JG Sled, AP Zijdenbos and AC Evans. IEEE Transactions on Medical Imaging, Vol 17, No 1. Feb 1998.
+
+	`Article 2 <https://pmc.ncbi.nlm.nih.gov/articles/PMC3071855/>`_: N4ITK Improved N3 Bias Correction. NJ Tustison, BB Avants, PA Cook, Y Zheng, A Egan, PA Yushkevich, and JC Gee. IEEE Transactions on Medical Imaging, 2010 June, 29(6):1310-1320.
 
 Add PySisyphe volume(s) to be corrected in the :ref:`widgets-section-multi-file` widget.
 
