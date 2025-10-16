@@ -884,7 +884,7 @@ class SisypheAcquisition(object):
     object -> SisypheIdentity
 
     Creation: 16/03/2021
-    Last revision: 21/02/2025
+    Last revision: 14/10/2025
     """
     __slots__ = ['_modality', '_sequence', '_type', '_dateofscan', '_frame', '_unit', '_labels',
                  '_df', '_autocorrx', '_autocorry', '_autocorrz', '_contrast', '_parent']
@@ -1726,6 +1726,15 @@ class SisypheAcquisition(object):
         if isinstance(v, dict): self._labels = v
         else: raise TypeError('parameter type {} is not dict, SisypheAcquisition or SisypheVolume.'.format(type(v)))
     # Revision 06/11/2024 >
+
+    # < Revision 14/10/2025
+    # add clearLabels method
+    def clearLabels(self) -> None:
+        """
+        Remove all labels, image modality must be of the label type.
+        """
+        self._labels = dict()
+    # Revision 14/10/2025 >
 
     def loadLabels(self) -> None:
         """

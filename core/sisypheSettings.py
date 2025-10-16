@@ -250,7 +250,6 @@ def getDPIScaleFactor() -> float:
 # Revision 11/10/2025 >
 
 
-
 fieldTypes = int | float | bool | str | list[int] | list[float] | list[bool] | list[str] | QFont | None
 
 

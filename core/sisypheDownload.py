@@ -10,7 +10,9 @@ from os import remove
 from os import chdir
 from os import mkdir
 from os import rmdir
+
 from os.path import getmtime
+from os.path import expanduser
 
 from shutil import rmtree
 from shutil import copy
@@ -38,6 +40,7 @@ from Sisyphe.version import isOlderThan
 from Sisyphe.version import getVersionFromHost
 from Sisyphe.lib.mega.mega import Mega
 from Sisyphe.gui.dialogWait import DialogWait
+from Sisyphe.core.sisypheSettings import initPySisypheUserPath
 
 __all__ = ['downloadFromHost',
            'installFromHost',
@@ -53,7 +56,7 @@ Functions
     - installFromHost
     - updatePySisypheToNewerVersion
     
-Last revision: 24/07/2025
+Last revision: 15/10/2025
 """
 
 def downloadFromHost(urls: str | list[str],
@@ -163,6 +166,17 @@ def installFromHost(urls: str | list[str],
                 if exists(dst):
                     if getmtime(src) > getmtime(dst): copy(src, dst)
                 else: copy(src, dst)
+                # < Revision 15/10/2025
+                # copy new functions.xml and settings.xml to ~/.PySisyphe
+                if filename == 'functions.xml':
+                    userdir = join(expanduser('~'), '.PySisyphe')
+                    if not exists(userdir): initPySisypheUserPath()
+                    copy(src, userdir)
+                elif filename == 'settings.xml':
+                    userdir = join(expanduser('~'), '.PySisyphe')
+                    if not exists(userdir): initPySisypheUserPath()
+                    copy(src, userdir)
+                # Revision 15/10/2025 >
                 # Revision 24/07/2024 >
                 remove(src)
             elif isdir(file): folders.append(file)
@@ -193,9 +207,12 @@ def updatePySisyphe(wait: DialogWait | None = None) -> None:
                 doc = minidom.parse(filename)
                 root = doc.documentElement
                 if root.nodeName == 'host' and root.getAttribute('version') == '1.0':
-                    updatesec = 'updatepy'
                     if hasattr(sys, '_MEIPASS'):
-                        if sys.platform == 'win32': updatesec = 'updatepyc'
+                        # < Revision 15/10/2025
+                        # if sys.platform == 'win32': updatesec = 'updatepyc'
+                        updatesec = 'updatepyc'
+                        # Revision 15/10/2025 >
+                    else: updatesec = 'updatepy'
                     section = doc.getElementsByTagName(updatesec)
                     if len(section) > 0:
                         section = section[0]
