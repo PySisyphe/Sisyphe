@@ -3459,7 +3459,7 @@ class WindowSisyphe(QMainWindow):
             except: pass
         try:
             # < Revision 12/10/2025
-            # self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-labelstoroi')
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-labelstomask')
             # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogLabel.DialogLabeltoMask]')
             self._dialog.exec()
@@ -3483,7 +3483,7 @@ class WindowSisyphe(QMainWindow):
                 pass
         try:
             # < Revision 12/10/2025
-            # self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-labelstoroi')
+            self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-labelsremap')
             # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogLabel.DialogRelabel]')
             self._dialog.exec()
@@ -5602,7 +5602,7 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
             # < Revision 12/10/2025
-            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-conjunction')
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-latindex')
             # Revision 12/10/2025 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogStatContrast.DialogLateralityIndex]')
             self._dialog.exec()
