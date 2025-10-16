@@ -166,6 +166,8 @@ def initPySisypheUserPath() -> None:
             v = f * v
             if v > 1.0: v = 1.0
             settings.setFieldValue('GUI', 'ZoomFactor', v)
+            if sys.platform == 'darwin':
+                settings.setFieldValue('Viewport', 'FontSize', 14)
             # Viewport settings
             settings.setFieldValue('Viewport', 'FontSizeScale', f)
             v = settings.getFieldValue('Viewport', 'IconSize')

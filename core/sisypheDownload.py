@@ -6,10 +6,10 @@ External packages/modules
 import sys
 
 from os import getcwd
+from os import scandir
 from os import remove
 from os import chdir
 from os import mkdir
-from os import rmdir
 
 from os.path import getmtime
 from os.path import expanduser
@@ -22,7 +22,6 @@ from binascii import unhexlify
 from glob import glob
 
 from os.path import isfile
-from os.path import isdir
 from os.path import join
 from os.path import exists
 from os.path import basename
@@ -134,9 +133,16 @@ def installFromHost(urls: str | list[str],
     wait : Sisyphe.gui.dialogWait.DialogWait
         progress bar dialog (optional)
     """
-    downloadFromHost(urls, temp, wait)
+    # < Revision 15/10/2025
+    # downloadFromHost(urls, temp, wait=wait)
+    downloadFromHost(urls, temp, wait=wait)
+    # Revision 15/10/2025 >
     if dst != '' and exists(dst):
         previous = getcwd()
+        # < Revision 15/10/2025
+        d = [join(temp, f) for f in scandir(temp) if f.is_dir()]
+        if len(d) > 0: temp = d[0]
+        # Revision 15/10/2025 >
         chdir(temp)
         files = glob('**', recursive=True)
         if wait is not None:
@@ -145,14 +151,16 @@ def installFromHost(urls: str | list[str],
             wait.setProgressRange(0, len(files))
             wait.setCurrentProgressValue(0)
             wait.progressVisibilityOn()
-        folders = list()
+        # folders = list()
         for i, file in enumerate(files):
             if isfile(file):
                 base, filename = split(file)
                 src = join(temp, file)
-                dst = join(dst, base)
-                if not exists(dst): mkdir(dst)
-                if wait is not None: wait.setInformationText('Copy {}...'.format(basename(src)))
+                # < Revision 15/10/2025
+                dst2 = join(dst, base)
+                # Revision 15/10/2025 >
+                if not exists(dst): mkdir(dst2)
+                if wait is not None: wait.setInformationText('Copy {}...'.format(filename))
                 # < Revision 24/07/2024
                 # Copy src only if the file is more recent
                 # copy(src, dst)
@@ -163,10 +171,13 @@ def installFromHost(urls: str | list[str],
                 elif sys.platform == 'darwin' and ext == '.pyd':
                     remove(src)
                     continue
-                if exists(dst):
-                    if getmtime(src) > getmtime(dst): copy(src, dst)
-                else: copy(src, dst)
                 # < Revision 15/10/2025
+                # if exists(dst)
+                if exists(dst2):
+                    # if getmtime(src) > getmtime(dst): copy(src, dst)
+                    if getmtime(src) > getmtime(dst): copy(src, dst2)
+                # else: copy(src, dst)
+                else: copy(src, dst2)
                 # copy new functions.xml and settings.xml to ~/.PySisyphe
                 if filename == 'functions.xml':
                     userdir = join(expanduser('~'), '.PySisyphe')
@@ -178,12 +189,17 @@ def installFromHost(urls: str | list[str],
                     copy(src, userdir)
                 # Revision 15/10/2025 >
                 # Revision 24/07/2024 >
-                remove(src)
-            elif isdir(file): folders.append(file)
+                # remove(src)
+            # < Revision 15/10/2025
+            # elif isdir(file): folders.append(file)
+            # Revision 15/10/2025 >
             if wait is not None: wait.incCurrentProgressValue()
-        if len(folders) > 0:
-            for folder in folders:
-                rmdir(folder)
+        # < Revision 15/10/2025
+        # if len(folders) > 0:
+        #    for folder in folders:
+        #        rmdir(folder)
+        # Revision 15/10/2025 >
+        if exists(temp): rmtree(temp)
         chdir(previous)
 
 
@@ -218,11 +234,11 @@ def updatePySisyphe(wait: DialogWait | None = None) -> None:
                         section = section[0]
                         url = section.getAttribute('url')
                 if url is not None and url != '':
-                    try:
-                        with TemporaryDirectory() as temp:
-                            # < Revision 24/07/2025
-                            # installFromHost(url[1], temp, dst, info='version {}'.format(version), wait=wait)
-                            installFromHost(url, temp, dst, info='version {}'.format(version), wait=wait)
-                            # Revision 24/07/2025 >
-                    except: raise ConnectionError('PySisyphe update failed.')
+                    # try:
+                    with TemporaryDirectory() as temp:
+                        # < Revision 24/07/2025
+                        # installFromHost(url[1], temp, dst, info='version {}'.format(version), wait=wait)
+                        installFromHost(url, temp, dst, info='version {}'.format(version), wait=wait)
+                        # Revision 24/07/2025 >
+                    # except: raise ConnectionError('PySisyphe update failed.')
     else: raise ConnectionError('Failed to connect to host.')
