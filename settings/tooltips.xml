@@ -14,7 +14,7 @@
 			administrator.
 		</Title>
 		<AET>
-			AE title of the DICOM SCP server (16 bit case sensitive string).
+			AE title of the DICOM SCP server (16 bit case-sensitive string).
 			Application Entity (AE) is the unique identifier of a DICOM device.
 		</AET>
 		<URL>URL or IP address of the DICOM SCP server</URL>
@@ -284,12 +284,12 @@
 
 			References:
 			
-			(1) J.G. Sled, A.P. Zijdenbos and A.C. Evans. "A Nonparametric 
-			Method for Automatic Correction of Intensity Non-uniformity in Data"
+			(1) J.G. Sled, A.P. Zijdenbos and A.C. Evans. A Nonparametric
+			Method for Automatic Correction of Intensity Non-uniformity in MRI Data
 			IEEE Transactions on Medical Imaging, Vol 17, No 1. Feb 1998.
 			
 			(2) N.J. Tustison, B.B. Avants, P.A. Cook, Y. Zheng, A. Egan, 
-			P.A. Yushkevich, and J.C. Gee. "N4ITK: Improved N3 Bias Correction"
+			P.A. Yushkevich, and J.C. Gee. N4ITK: Improved N3 Bias Correction
 			IEEE Transactions on Medical Imaging, 2010 June, 29(6):1310-1320.
 
 			PySisyphe uses the SimpleITK library implemenentation 
@@ -386,8 +386,8 @@
 			background when a mask is specified.
 
 			Reference: B.B. Avants, N.J. Tustison, J. Wu, P.A. Cook, J.C. Gee. 
-			"An open source multivariate framework for n-tissue segmentation 
-			with evaluation on public data". 
+			An open source multivariate framework for n-tissue segmentation
+			with evaluation on public data.
 			Neuroinformatics, 2011 Dec, 9(4):381-400.
 
 			PySisyphe uses the ANTs library implemenentation
@@ -803,8 +803,8 @@
 			scaled to unit variance (default False).
 		</Std>
 		<StdConfounds>
-			The confounds are z-scored: their mean is put to 0 and their 
-			variance to 1 in the time dimension (default True).
+			The confounds are z-scored: mean is shifted to zero and scaled 
+			to unit variance in the time dimension (default True).
 		</StdConfounds>
 		<HighConfounds>
 			High variance confounds are computed on provided image and regressed
@@ -850,7 +850,7 @@
 		</Masking>
 		<VoxelCount>
 			Number of voxels used to calculate arterial input function 
-			(voxel time series mean curve)
+			(mean curve of these voxels)
 		</VoxelCount>
 		<Baseline>Range (start, end) of volume indices used as baseline signal</Baseline>
 		<Smoothing>Contrast concentration time series smoothing if True</Smoothing>
@@ -916,18 +916,18 @@
 			Maximumentropy, Kittler, Isodata, Moments (default Huang)
 
 			See SimpleITK:
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1YenThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1LiThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html
 		</Algo>
 		<Size>
 			Kernel size, in voxels, of morphology operator used for mask 
@@ -1097,18 +1097,18 @@
 			Huang, Mean, Otsu, Renyi, Yen, Li, Shanbhag, Triangle, Intermodes, 
 			Maximumentropy, Kittler, Isodata, Moments (default Huang)
 
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1YenThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1LiThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html
-			https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html
+			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html
 		</Algo>
 		<Size>
 			Structuring element size of morphological operators used to refine 
@@ -1369,13 +1369,13 @@
 	<BundleAtlasSelection>
 		<Title>
 			Bundle virtual dissection with atlas.
-			This function requires a model bundle (HCP bundle, ICBM152 space) 
+			This function requires an atlas bundle (HCP bundle, ICBM152 space) 
 			and tries to extract similar looking bundle from the input 
 			tractogram.
 		</Title>
 		<MinimalLength>>Minimal length of streamlines in the new bundle</MinimalLength>
 		<ClusteringThreshold>
-			Get the centroids of the model bundle and work with centroids 
+			Get the centroids of the atlas bundle and work with centroids 
 			instead of all streamlines. This helps speed up processing.
 			The larger the value of the threshold, the fewer centroids will be, 
 			and smaller the threshold value, the more centroids will be. If
@@ -1387,9 +1387,9 @@
 		</ReductionMetric>
 		<ReductionThreshold>
 			This threshold will be used to reduce the search space for finding 
-			the streamlines that match model bundle streamlines in shape. 
+			the streamlines that match atlas bundle streamlines in shape. 
 			Instead of looking at the entire tractogram, now we will be looking 
-			at neighboring region of a model bundle in the tractogram. Increase 
+			at neighboring region of an atlas bundle in the tractogram. Increase 
 			the threshold to increase the search space. Range is 15 - 30 mm
 			(default 25 mm).
 		</ReductionThreshold>
@@ -1398,9 +1398,9 @@
 		</PruningMetric>
 		<PruningThreshold>
 			This threshold will filter the streamlines for which the distance 
-			to the model bundle threshold in mm. This serves to filter the 
+			to the atlas bundle threshold in mm. This serves to filter the 
 			neighborhood area (search space) to get streamlines that are like 
-			the model bundle. Range is 6 - 12 mm (default 12 mm).
+			the atlas bundle. Range is 6 - 12 mm (default 12 mm).
 		</PruningThreshold>
 		<Refine>
 			Perform a second stage to refine the clustering.
@@ -1409,7 +1409,7 @@
 			pruning. This method is useful when we are dealing with noisy
 			data or when we want to extract small tracks from tractograms.
 			This time, search space is created using pruned bundle and not
-			model bundle.
+			atlas bundle.
 		</Refine>
 		<RefineReductionThreshold>
 			This threshold will be used to reduce the search space for finding
@@ -1420,7 +1420,7 @@
 		</RefineReductionThreshold>
 		<RefinePruningThreshold>
 			This threshold will filter the streamlines for which the distance
-			to the model bundle threshold in mm. This serves to filter the
+			to the atlas bundle threshold in mm. This serves to filter the
 			neighborhood area (search space) to get streamlines that are like
 			the model bundle. (default 6 mm).
 		</RefinePruningThreshold>

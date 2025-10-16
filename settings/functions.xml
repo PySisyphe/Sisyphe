@@ -317,6 +317,13 @@
 		<Prefix vartype="str">jac</Prefix>
 		<Suffix vartype="str"/>
 	</DisplacementFieldJacobianDeterminant>
+	<LateralityIndex>
+		<MaskType vartype="lstr">volume (.xvol)|ROI (.xroi)</MaskType>
+		<HistogramBins varmax="1000" varmin="50" vartype="int">100</HistogramBins>
+		<Template vartype="vol"/>
+		<LeftMask vartype="vol"/>
+		<RightMask vartype="vol"/>
+	</LateralityIndex>
 	<Conjunction>
 		<Method vartype="lstr">Fisher|Mudholkar|Stouffer|Tippett|Worsley</Method>
 		<DefaultFileName vartype="str">conjunction</DefaultFileName>
