@@ -1727,7 +1727,9 @@ class WindowSisyphe(QMainWindow):
         if platform == 'win32':
             subprocess.Popen('explorer "{}"'.format(folder))
         elif platform == 'darwin':
-            folder = '~' + folder
+            # < Revision 15/10/20215
+            # folder = '~' + folder
+            # Revision 15/10/20215 >
             subprocess.call(["open", folder])
 
     def _openStruct(self, action: QAction | None) -> None:
@@ -3553,7 +3555,7 @@ class WindowSisyphe(QMainWindow):
             r = messageBox(self,
                            'Check for update',
                            'A more recent version of PySisyphe is available.'
-                           '\nWould you like to install it ?',
+                           'Would you like to install it ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
