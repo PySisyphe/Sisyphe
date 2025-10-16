@@ -222,6 +222,8 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
     Returns
     -------
     SisypheVolumeCollection : SisypheROI | None
+
+    Last revision: 04/10/2025
     """
     mask = None
     # < Revision 17/06/2025
