@@ -909,7 +909,7 @@ class DialogWorkflow(QDialog):
     QDialog -> DialogWorkflow
 
     Creation: 13/02/2025
-    Last revision: 19/06/2025
+    Last revision: 15/10/2025
     """
 
     # Class constants
@@ -1397,3 +1397,9 @@ class DialogWorkflow(QDialog):
                            default=QMessageBox.No)
             if r == QMessageBox.Yes: self._files.clear()
             else: self.accept()
+
+    # < Revision 15/10/2025
+    # add getFilesSelectionWidget method
+    def getFilesSelectionWidget(self):
+        return self._files
+    # Revision 15/10/2025 >

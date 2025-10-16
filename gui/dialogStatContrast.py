@@ -22,6 +22,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 from numpy import zeros
 from numpy import arange
+from numpy import argwhere
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
@@ -33,7 +34,11 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
+from Sisyphe.core.sisypheConstants import getID_ICBM152
+from Sisyphe.core.sisypheConstants import addPrefixSuffixToFilename
 from Sisyphe.core.sisypheVolume import SisypheVolume
+from Sisyphe.core.sisypheROI import SisypheROI
+from Sisyphe.core.sisypheTransform import SisypheApplyTransform
 from Sisyphe.core.sisypheImageAttributes import SisypheAcquisition
 from Sisyphe.core.sisypheStatistics import getDOF
 from Sisyphe.core.sisypheStatistics import tmapContrastEstimate
@@ -45,16 +50,22 @@ from Sisyphe.core.sisypheStatistics import conjunctionStouffer
 from Sisyphe.core.sisypheStatistics import conjunctionTippett
 from Sisyphe.core.sisypheStatistics import conjunctionWorsley
 from Sisyphe.core.sisypheStatistics import tTozmap
+from Sisyphe.core.sisypheStatistics import pvalueTot
+from Sisyphe.core.sisypheStatistics import pvalueToz
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import LabeledComboBox
 from Sisyphe.widgets.basicWidgets import LabeledDoubleSpinBox
+from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
 from Sisyphe.widgets.functionsSettingsWidget import FunctionSettingsWidget
 from Sisyphe.gui.dialogWait import DialogWait
+from Sisyphe.gui.dialogRegistration import DialogRegistration
+from Sisyphe.gui.dialogGenericResults import DialogGenericResults
 
 __all__ = ['DialogContrast',
            'DialogConjunction',
-           'DialogTMapToZMap']
+           'DialogTMapToZMap',
+           'DialogLateralityIndex']
 
 """
 Class hierarchy
@@ -63,6 +74,7 @@ Class hierarchy
     - QDialog -> DialogContrast
               -> DialogConjunction
               -> DialogTMapToZMap
+              -> DialogLateralityIndex
 """
 
 class DialogContrast(QDialog):
@@ -335,7 +347,7 @@ class DialogConjunction(QDialog):
     QDialog -> DialogConjunction
 
     Creation: 19/11/2024
-    Last revision: 08/10/2025
+    Last revision: 15/10/2025
     """
 
     # Special method
@@ -463,6 +475,12 @@ class DialogConjunction(QDialog):
                     if r == QMessageBox.Yes: self._files.clearall()
                     else: self.accept()
 
+    # < Revision 15/10/2025
+    # add getFilesSelectionWidget method
+    def getFilesSelectionWidget(self):
+        return self._files
+    # Revision 15/10/2025 >
+
 
 class DialogTMapToZMap(QDialog):
     """
@@ -477,6 +495,7 @@ class DialogTMapToZMap(QDialog):
     QDialog -> DialogTMapToZMap
 
     Creation: 08/10/2025
+    Last revision: 15/10/2025
     """
 
     # Special method
@@ -587,3 +606,508 @@ class DialogTMapToZMap(QDialog):
                            default=QMessageBox.No)
             if r == QMessageBox.Yes: self._files.clearall()
             else: self.accept()
+
+    # < Revision 15/10/2025
+    # add getFilesSelectionWidget method
+    def getFilesSelectionWidget(self):
+        return self._files
+    # Revision 15/10/2025 >
+
+
+class DialogLateralityIndex(QDialog):
+    """
+    Description
+    ~~~~~~~~~~~
+
+    GUI class used to calculate the laterality index of a statistical map.
+
+    Ref: Implementation of clinically relevant and robust fMRI-based language lateralization: Choosing the laterality
+    index calculation method. Brumer I, De Vita E, Ashmore J, Jarosz J, Borri M. PLoS One. 2020 Mar 12;15(3):e0230129.
+    doi: 10.1371/journal.pone.0230129. eCollection 2020.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> DialogLateralityIndex
+
+    Creation: 14/10/2025
+    Last revision: 15/10/2025
+    """
+    # Special method
+
+    """
+    Private attributes
+    
+    _map                FileSelectionWidget
+    _anat               FileSelectionWidget
+    _regsettings        FunctionSettingsWidget
+    _resamplesettings   FunctionSettingsWidget
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setWindowTitle('Laterality index')
+        # noinspection PyTypeChecker
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        self._sshot = None
+
+        # Init QLayout
+
+        self._layout = QVBoxLayout(self)
+        self._layout.setContentsMargins(5, 5, 5, 0)
+        self._layout.setSpacing(0)
+        self.setLayout(self._layout)
+
+        # Init widgets
+
+        self._map = FileSelectionWidget(parent=self)
+        self._map.setTextLabel('Statistical map')
+        self._map.filterSisypheVolume()
+        self._map.filterSameSequence([SisypheAcquisition.TMAP, SisypheAcquisition.ZMAP])
+        self._map.FieldChanged.connect(self._mapAdded)
+        self._layout.addWidget(self._map)
+
+        self._anat = FileSelectionWidget(parent=self)
+        self._anat.setTextLabel('fMRI volume')
+        self._anat.alignLabels(self._map)
+        self._anat.filterSisypheVolume()
+        self._anat.setEnabled(False)
+        self._anat.setVisible(False)
+        self._anat.FieldChanged.connect(self._anatAdded)
+        self._layout.addWidget(self._anat)
+
+        self._template = FileSelectionWidget(parent=self)
+        self._template.setTextLabel('Template')
+        self._template.filterSisypheVolume()
+        self._template.filterICBM()
+        self._template.filterSameModality(SisypheAcquisition.getTPModalityTag())
+        self._template.alignLabels(self._map)
+        # < Revision 15/10/2025
+        self._template.FieldChanged.connect(self._okEnabled)
+        # Revision 15/10/2025 >
+        self._layout.addWidget(self._template)
+
+        self._lmask = FileSelectionWidget(parent=self)
+        self._lmask.setTextLabel('Left mask')
+        self._lmask.alignLabels(self._map)
+        self._lmask.filterSisypheVolume()
+        self._lmask.filterICBM()
+        # < Revision 15/10/2025
+        self._lmask.FieldChanged.connect(self._okEnabled)
+        # Revision 15/10/2025 >
+        self._layout.addWidget(self._lmask)
+
+        self._rmask = FileSelectionWidget(parent=self)
+        self._rmask.setTextLabel('Right mask')
+        self._rmask.alignLabels(self._map)
+        self._rmask.filterSisypheVolume()
+        self._rmask.filterICBM()
+        # < Revision 15/10/2025
+        self._rmask.FieldChanged.connect(self._okEnabled)
+        # Revision 15/10/2025 >
+        self._layout.addWidget(self._rmask)
+
+        self._settings = FunctionSettingsWidget('LateralityIndex', parent=self)
+        self._settings.setSettingsButtonFunctionText()
+        self._settings.VisibilityToggled.connect(self._center)
+        self._settings.getParameterWidget('MaskType').currentIndexChanged.connect(self._maskTypeChanged)
+        filename = self._settings.getParameterValue('LeftMask')
+        if filename != '' and exists(filename): self._lmask.open(filename)
+        filename = self._settings.getParameterValue('RightMask')
+        if filename != '' and exists(filename): self._rmask.open(filename)
+        filename = self._settings.getParameterValue('Template')
+        if filename != '' and exists(filename): self._template.open(filename)
+        widget = self._settings.getParameterWidget('LeftMask')
+        widget.filterSisypheVolume()
+        widget.filterICBM()
+        widget.FieldChanged.connect(self._settingsAdded)
+        widget = self._settings.getParameterWidget('RightMask')
+        widget.filterSisypheVolume()
+        widget.filterICBM()
+        widget.FieldChanged.connect(self._settingsAdded)
+        widget = self._settings.getParameterWidget('Template')
+        widget.filterSisypheVolume()
+        widget.filterICBM()
+        widget.filterSameModality(SisypheAcquisition.getTPModalityTag())
+        widget.FieldChanged.connect(self._settingsAdded)
+        self._layout.addWidget(self._settings)
+
+        self._regsettings = FunctionSettingsWidget('Registration', parent=self)
+        self._regsettings.VisibilityToggled.connect(self._center)
+        self._regsettings.setVisible(False)
+        self._regsettings.setSettingsButtonFunctionText()
+        self._regsettings.setParameterVisibility('Batch', False)
+        self._regsettings.setParameterVisibility('Rigid', False)
+        self._regsettings.setParameterVisibility('Affine', False)
+        self._regsettings.setParameterVisibility('DisplacementField', False)
+        self._regsettings.setParameterVisibility('Transform', True)
+        self._regsettings.setParameterVisibility('ManualRegistration', False)
+        self._regsettings.setParameterVisibility('Inverse', False)
+        self._regsettings.setParameterVisibility('CheckRegistration', False)
+        self._regsettings.setParameterVisibility('Resample', False)
+        self._regsettings.setParameterValue('ManualRegistration', False)
+        self._regsettings.setParameterValue('Inverse', False)
+        self._regsettings.setParameterValue('CheckRegistration', False)
+        self._regsettings.setParameterValue('Resample', True)
+        self._layout.addWidget(self._regsettings)
+
+        self._resamplesettings = FunctionSettingsWidget('Resample', parent=self)
+        self._resamplesettings.VisibilityToggled.connect(self._center)
+        self._resamplesettings.setVisible(False)
+        self._resamplesettings.setSettingsButtonFunctionText()
+        self._resamplesettings.setParameterVisibility('Prefix', False)
+        self._resamplesettings.setParameterVisibility('Suffix', False)
+        self._resamplesettings.setParameterVisibility('NormalizationPrefix', True)
+        self._resamplesettings.setParameterVisibility('NormalizationSuffix', True)
+        self._resamplesettings.setParameterVisibility('Dialog', False)
+        self._resamplesettings.getParameterWidget('Dialog').setChecked(False)
+        self._layout.addWidget(self._resamplesettings)
+
+        # Init default dialog buttons
+
+        layout = QHBoxLayout(self)
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
+        layout.setDirection(QHBoxLayout.RightToLeft)
+        cancel = QPushButton('Cancel', parent=self)
+        self._ok = QPushButton('OK', parent=self)
+        self._ok.setFixedWidth(100)
+        self._ok.setEnabled(False)
+        cancel.setAutoDefault(True)
+        cancel.setDefault(True)
+        layout.addWidget(self._ok)
+        layout.addWidget(cancel)
+        layout.addStretch()
+
+        # noinspection PyUnresolvedReferences
+        self._ok.pressed.connect(self.execute)
+        # noinspection PyUnresolvedReferences
+        cancel.pressed.connect(self.reject)
+
+        self._layout.addLayout(layout)
+
+        # < Revision 06/06/2025
+        self.adjustSize()
+        # imposing dialog width -> set minimum width to a child widget of the main layout
+        screen = QApplication.primaryScreen().geometry()
+        self._map.setMinimumWidth(int(screen.width() * 0.33))
+        # dialog resize off
+        self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
+        # Revision 06/06/2025 >
+        self.setModal(True)
+
+    # Private method
+
+    def _mapAdded(self):
+        if self._map.isEmpty():
+            self._anat.setEnabled(False)
+            self._anat.clear()
+            self._anat.setEnabled(False)
+            self._anat.setVisible(False)
+        else:
+            smap = SisypheVolume()
+            filename = self._map.getFilename()
+            smap.load(filename)
+            if smap.hasSameID(getID_ICBM152()):
+                self._anat.setEnabled(False)
+                self._anat.setVisible(False)
+                self._template.setVisible(False)
+                self._regsettings.setVisible(False)
+                self._resamplesettings.setVisible(False)
+                if not self._lmask.isEmpty() and not self._rmask.isEmpty(): self._ok.setEnabled(True)
+                else: self._ok.setEnabled(False)
+            else:
+                self._anat.setEnabled(True)
+                self._anat.setVisible(True)
+                self._anat.filterSameID(smap.getID())
+                self._template.setVisible(True)
+                smap.setFilenameSuffix('mean')
+                if exists(smap.getFilename()):
+                    self._anat.open(smap.getFilename())
+        self._center(None)
+
+    def _anatAdded(self):
+        if self._anat.isEmpty():
+            self._regsettings.setVisible(False)
+            self._resamplesettings.setVisible(False)
+            self._ok.setEnabled(False)
+        else:
+            anat = SisypheVolume()
+            anat.load(self._anat.getFilename())
+            if anat.hasTransform(getID_ICBM152()):
+                self._template.setVisible(False)
+                self._regsettings.setVisible(False)
+                self._resamplesettings.setVisible(True)
+                if (not self._lmask.isEmpty() and
+                        not self._rmask.isEmpty() and
+                        not self._map.isEmpty()): self._ok.setEnabled(True)
+                else: self._ok.setEnabled(False)
+            else:
+                self._template.setVisible(True)
+                self._regsettings.setVisible(True)
+                self._resamplesettings.setVisible(True)
+                if (not self._lmask.isEmpty() and
+                        not self._rmask.isEmpty() and
+                        not self._map.isEmpty() and
+                        not self._anat.isEmpty()): self._ok.setEnabled(True)
+                else: self._ok.setEnabled(False)
+        self._center(None)
+
+    # < Revision 15/10/2025
+    # add _okEnabled method
+    def _okEnabled(self):
+        r =  (not self._lmask.isEmpty() and not self._rmask.isEmpty() and not self._map.isEmpty())
+        if self._anat.isVisible(): r = r and not self._anat.isEmpty()
+        if self._template.isVisible(): r = r and not self._template.isEmpty()
+        self._ok.setEnabled(r)
+    # Revision 15/10/2025 >
+
+    def _settingsAdded(self, widget):
+        if widget.getTextLabel() == 'Left mask':
+            if not widget.isEmpty():
+                filename = widget.getFilename()
+                if exists(filename): self._lmask.open(filename)
+        elif widget.getTextLabel() == 'Right mask':
+            if not widget.isEmpty():
+                filename = widget.getFilename()
+                if exists(filename): self._rmask.open(filename)
+        elif widget.getTextLabel() == 'Template':
+            if not widget.isEmpty():
+                filename = widget.getFilename()
+                if exists(filename): self._template.open(filename)
+
+    def _maskTypeChanged(self):
+        self._lmask.clear()
+        self._rmask.clear()
+        self._ok.setEnabled(False)
+        if self._settings.getParameterWidget('MaskType').currentText() == 'PySisyphe volume':
+            self._lmask.filterSisypheVolume()
+            self._rmask.filterSisypheVolume()
+        else:
+            self._lmask.filterSisypheROI()
+            self._rmask.filterSisypheROI()
+
+    def _registration(self):
+        dialog = DialogRegistration()
+        if not self._template.isEmpty(): dialog.setFixed(self._template.getFilename(), editable=False)
+        else: return None
+        if not self._anat.isEmpty(): dialog.setMoving(self._anat.getFilename(), editable=False)
+        else: return None
+        if not self._map.isEmpty():
+            # noinspection PyProtectedMember
+            dialog._applyToSelect.add(self._map.getFilename())
+        else: return None
+        settings = dict()
+        settings['registration'] = self._regsettings.getParametersDict()
+        settings['resample'] = self._resamplesettings.getParametersDict()
+        settings['resample']['Prefix'] = settings['resample']['NormalizationPrefix']
+        settings['resample']['Suffix'] = settings['resample']['NormalizationSuffix']
+        dialog.setParametersFromDict(settings)
+        dialog.execute()
+        filename = addPrefixSuffixToFilename(self._map.getFilename(),
+                                             settings['resample']['NormalizationPrefix'],
+                                             settings['resample']['NormalizationSuffix'])
+
+        if exists(filename):
+            rmap = SisypheVolume()
+            rmap.load(filename)
+            return rmap
+        else: return None
+
+    # noinspection PyUnusedLocal
+    def _center(self, widget):
+        self.adjustSize()
+        self.move(self.screen().availableGeometry().center() - self.rect().center())
+        QApplication.processEvents()
+
+    # Public method
+
+    def setScreenshotsWidget(self, widget):
+        self._sshot = widget
+
+    def getScreenshotsWidget(self):
+        return self._sshot
+
+    def hasScreenshotsWidget(self):
+        return self._sshot is not None
+
+    def execute(self):
+        rmap = None
+        if not self._map.isEmpty() and not self._lmask.isEmpty() and not self._rmask.isEmpty():
+            smap = SisypheVolume()
+            filename = self._map.getFilename()
+            smap.load(filename)
+            rfilename = addPrefixSuffixToFilename(filename,
+                                                  self._resamplesettings.getParameterValue('NormalizationPrefix'),
+                                                  self._resamplesettings.getParameterValue('NormalizationSuffix'))
+            if smap.acquisition.isICBM152(): rmap = smap
+            elif exists(rfilename):
+                rmap = SisypheVolume()
+                rmap.load(rfilename)
+            elif smap.hasTransform(getID_ICBM152()):
+                f = SisypheApplyTransform()
+                interpol = self._resamplesettings.getParameterValue('Interpolator')[0]
+                if interpol == 'NearestNeighbor': f.setInterpolator('nearest')
+                elif interpol == 'Linear': f.setInterpolator('linear')
+                elif interpol == 'Bspline': f.setInterpolator('bspline')
+                elif interpol == 'Gaussian': f.setInterpolator('gaussian')
+                elif interpol == 'HammingSinc': f.setInterpolator('hammingsinc')
+                elif interpol == 'CosineSinc': f.setInterpolator('cosinesinc')
+                elif interpol == 'WelchSinc': f.setInterpolator('welchsinc')
+                elif interpol == 'LanczosSinc': f.setInterpolator('lanczossinc')
+                elif interpol == 'BlackmanSinc': f.setInterpolator('blackmansinc')
+                else: f.setInterpolator('linear')
+                f.setInterpolator(interpol)
+                f.setTransform(smap.getTransformFromID(getID_ICBM152()))
+                f.setMoving(smap)
+                rmap = f.resampleMoving(prefix=self._resamplesettings.getParameterValue('NormalizationPrefix'),
+                                        suffix=self._resamplesettings.getParameterValue('NormalizationSuffix'))
+            else:
+                if not self._anat.isEmpty() and not self._template.isEmpty():
+                    # noinspection PyNoneFunctionAssignment
+                    rmap = self._registration()
+                else:
+                    self._ok.setEnabled(False)
+                    if self._anat.isEmpty(): messageBox(self, title=self.windowTitle(), text='No fMRI EPI image.')
+                    elif self._template.isEmpty(): messageBox(self, title=self.windowTitle(),
+                                                              text='No ICBM152 template\nSee in laterality index settings.')
+        else:
+            self._ok.setEnabled(False)
+            if self._map.isEmpty(): messageBox(self, title=self.windowTitle(), text='No statistical map.')
+            elif self._lmask.isEmpty(): messageBox(self, title=self.windowTitle(), text='No left mask.')
+            elif self._rmask.isEmpty(): messageBox(self, title=self.windowTitle(), text='No right mask.')
+        if rmap is not None:
+            if self._settings.getParameterValue('MaskType')[0] == 'volume (.xvol)':
+                v = SisypheVolume()
+                v.load(self._lmask.getFilename())
+                lmask = v.getNumpy().flatten() > 0
+                v = SisypheVolume()
+                v.load(self._rmask.getFilename())
+                rmask = v.getNumpy().flatten() > 0
+            else:
+                v = SisypheROI()
+                v.load(self._lmask.getFilename())
+                lmask = v.getNumpy().flatten() > 0
+                v = SisypheROI()
+                v.load(self._rmask.getFilename())
+                rmask = v.getNumpy().flatten() > 0
+            dlg = DialogGenericResults()
+            if platform == 'win32':
+                import pywinstyles
+                cl = self.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(dlg, c)
+                # noinspection PyTypeChecker
+                dlg.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
+            title = 'Lateraly index'.format(rmap.getBasename())
+            tab1 = dlg.newTab(title, capture=True, clipbrd=True, scrshot=self._sshot, dataset=True)
+            # Chart
+            fig = dlg.getFigure(tab1)
+            fig.set_layout_engine('constrained')
+            fig.clear()
+            img = rmap.getNumpy().flatten()
+            limg = img[lmask]
+            rimg = img[rmask]
+            vmax = max(limg.max(), rimg.max())
+            bins = self._settings.getParameterValue('HistogramBins')
+            ax = fig.add_subplot(111, anchor='C')
+            hl, bl, _ = ax.hist(limg, bins=bins, range=(0.0, vmax), density=False,
+                               histtype='step', cumulative=-1, label='Left mask', color='r', lw=2.0)
+            hr, br, _ = ax.hist(rimg, bins=bins, range=(0.0, vmax), density=False,
+                               histtype='step', cumulative=-1, label='Right mask', color='b', lw=2.0)
+            # AUC LI
+            al = hl.cumsum()[-1]
+            ar = hr.cumsum()[-1]
+            li = round(float((al - ar) / (al + ar)), 2)
+            # Average LI
+            li2 = (hl - hr) / (hl + hr)
+            ali = round(float(li2.mean()), 2)
+            # LI p = 0.05 / 0.01 / 0.001
+            v3 = v4 = v5 = ''
+            li3 = li4 = li5 = None
+            if rmap.acquisition.isZMap():
+                ax.set_xlabel('z-value')
+                v = pvalueToz(0.05)
+                v3 = ' (z = {})'.format(round(v, 2))
+                n = argwhere(bl > v)
+                if len(n) > 0:
+                    index = n[0][0]
+                    if index > 1: index -= 1
+                    li3 = li2[index]
+                v = pvalueToz(0.01)
+                v4 = ' (z = {})'.format(round(v, 2))
+                n = argwhere(bl > v)
+                if len(n) > 0:
+                    index = n[0][0]
+                    if index > 1: index -= 1
+                    li4 = li2[index]
+                v = pvalueToz(0.001)
+                v5 = ' (z = {})'.format(round(v, 2))
+                n = argwhere(bl > v)
+                if len(n) > 0:
+                    index = n[0][0]
+                    if index > 1: index -= 1
+                    li5 = li2[index]
+            elif rmap.acquisition.isTMap():
+                ax.set_xlabel('t-value')
+                dof = rmap.acquisition.getDegreesOfFreedom()
+                v = pvalueTot(0.05, dof)
+                v3 = ' (t = {})'.format(round(v, 2))
+                n = argwhere(bl > v)
+                if len(n) > 0:
+                    index = n[0][0]
+                    if index > 1: index -= 1
+                    li3 = li2[index]
+                v = pvalueTot(0.01, dof)
+                v4 = ' (t = {})'.format(round(v, 2))
+                n = argwhere(bl > v)
+                if len(n) > 0:
+                    index = n[0][0]
+                    if index > 1: index -= 1
+                    li4 = li2[index]
+                v = pvalueTot(0.001, dof)
+                v5 = ' (t = {})'.format(round(v, 2))
+                n = argwhere(bl > v)
+                if len(n) > 0:
+                    index = n[0][0]
+                    if index > 1: index -= 1
+                    li5 = li2[index]
+            ax.legend()
+            # ax.set_ylabel('Number of voxels', rotation=-90, va="bottom")
+            ax.set_ylabel('Number of voxels')
+            fig.suptitle('AUC Laterality index {}'.format(li))
+            # Table
+            dlg.setTreeWidgetHeaderLabels(index=tab1, labels=['Criteria', 'Values'])
+            dlg.addTreeWidgetRow(0, ['AUC left mask', int(al)])
+            dlg.addTreeWidgetRow(0, ['AUC right mask', int(ar)])
+            if li3 is not None: dlg.addTreeWidgetRow(0, ['LI p = 0.05{}'.format(v3), li3], d=2)
+            if li4 is not None: dlg.addTreeWidgetRow(0, ['LI p = 0.01{}'.format(v4), li4], d=2)
+            if li5 is not None: dlg.addTreeWidgetRow(0, ['LI p = 0.001{}'.format(v5), li5], d=2)
+            dlg.addTreeWidgetRow(0, ['Average LI', ali], d=2)
+            dlg.addTreeWidgetRow(0, ['AUC LI', li], d=2)
+            dlg.exec()
+            # Exit
+            r = messageBox(self,
+                           title=self.windowTitle(),
+                           text='Would you like to calculate\nanother laterality index ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
+            if r == QMessageBox.Yes:
+                self._map.clear()
+                self._ok.setEnabled(False)
+            else: self.accept()
+
+    # < Revision 15/10/2025
+    # add getFilesSelectionWidget method
+    def getFilesSelectionWidget(self):
+        widgets = dict()
+        widgets['map'] = self._map
+        widgets['anat'] = self._anat
+        widgets['template'] = self._template
+        widgets['lmask'] = self._lmask
+        widgets['rmask'] = self._rmask
+        return widgets
+    # Revision 15/10/2025 >

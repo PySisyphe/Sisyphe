@@ -72,7 +72,7 @@ class DialogModel(QDialog):
     Description
     ~~~~~~~~~~~
 
-    GUI dialog for voxel by voxel statistical model definition and estimation.
+    GUI dialog for voxel-by-voxel statistical model definition and estimation.
 
     Inheritance
     ~~~~~~~~~~~

@@ -133,7 +133,7 @@ class DialogDatatype(QDialog):
 
     # Public methods
 
-    def getFileSelectionWidget(self):
+    def getFilesSelectionWidget(self):
         return self._files
 
     def execute(self):
@@ -301,6 +301,7 @@ class DialogAttributes(DialogDatatype):
                         break
             wait.close()
             self._files.clearall()
+
 
 class DialogEditID(QDialog):
     """

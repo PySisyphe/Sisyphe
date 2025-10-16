@@ -25,6 +25,8 @@ from os.path import splitext
 from os.path import basename
 from os.path import expanduser
 
+from shutil import copy
+
 import importlib
 import subprocess
 import traceback
@@ -131,7 +133,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 12/10/2025
+    Last revision: 15/10/2025
     """
 
     # Class constants
@@ -180,7 +182,15 @@ class WindowSisyphe(QMainWindow):
     @classmethod
     def getUserDirectory(cls) -> str:
         userdir = join(expanduser('~'), '.PySisyphe')
+        # < Revision 15/10/2025
+        tagfile = join(cls.getMainDirectory(), 'tag')
         if not exists(userdir): initPySisypheUserPath()
+        elif exists(tagfile):
+            # Update the functions.xml and settings.xml files when running a new installation for the first time
+            copy(join(cls.getMainDirectory(), 'settings', 'functions.xml'), userdir)
+            copy(join(cls.getMainDirectory(), 'settings', 'settings.xml'), userdir)
+            remove(tagfile)
+        # Revision 15/10/2025 >
         return userdir
 
     # Special method
@@ -230,6 +240,11 @@ class WindowSisyphe(QMainWindow):
         self._logger = logging.getLogger(__name__)
         # else: self._logger = None
         # Revision 01/07/2025 >
+
+        # < Revision 15/10/2025
+        # Test if the PySisyphe user folder exists and, if not, create it.
+        self.getUserDirectory()
+        # Revision 15/10/2025 >
 
         if splash is not None:
             splash.getProgressBar().setRange(0, 17)
@@ -648,10 +663,16 @@ class WindowSisyphe(QMainWindow):
         self._action['editattr'] = self._menu['file'].addAction(icattr, 'Edit Attributes...')
         self._action['editid'] = self._menu['file'].addAction(icid, 'ID replacement...')
         self._action['anonymize'] = self._menu['file'].addAction(icano, 'Anonymize...')
+
+        self._menu['file'].addSeparator()
         self._action['editlabels'] = self._menu['file'].addAction(iclabel, 'Edit volume labels...')
         self._action['roi2label'] = self._menu['file'].addAction('ROIs to label volume...')
         self._action['vol2label'] = self._menu['file'].addAction('Volumes to label volume...')
         self._action['label2roi'] = self._menu['file'].addAction('Label volume to ROIs...')
+        # < Revision 14/10/2025
+        self._action['label2mask'] = self._menu['file'].addAction('Label volume to mask...')
+        self._action['relabel'] = self._menu['file'].addAction('Remap label volume...')
+        # Revision 14/10/2025 >
 
         self._menu['file'].addSeparator()
         submenu = self._menu['file'].addMenu('Import')
@@ -732,6 +753,10 @@ class WindowSisyphe(QMainWindow):
         self._action['roi2label'].triggered.connect(self.roiToLabel)
         self._action['vol2label'].triggered.connect(self.volToLabel)
         self._action['label2roi'].triggered.connect(self.labelToRoi)
+        # < Revision 14/10/2025
+        self._action['label2mask'].triggered.connect(self.labelToMask)
+        self._action['relabel'].triggered.connect(self.relabel)
+        # Revision 14/10/2025 >
         self._action['importnifti'].triggered.connect(self.importNifti)
         self._action['importminc'].triggered.connect(self.importMinc)
         self._action['importnrrd'].triggered.connect(self.importNrrd)
@@ -1124,6 +1149,7 @@ class WindowSisyphe(QMainWindow):
                         Open model
                 Contrast
                 Result
+                Laterality index
                 Conjunction
                 ---
                 Time series preprocessing
@@ -1167,6 +1193,9 @@ class WindowSisyphe(QMainWindow):
 
         self._action['contrast'] = self._menu['statmap'].addAction('Contrast...')
         self._action['result'] = self._menu['statmap'].addAction('Result...')
+        # < Revision 14/10/2025
+        self._action['latindex'] = self._menu['statmap'].addAction('Laterality index...')
+        # Revision 14/10/2025 >
         self._action['conj'] = self._menu['statmap'].addAction('Conjunction...')
         self._action['mapconv'] = self._menu['statmap'].addAction('t to z-map conversion...')
         self._menu['statmap'].addSeparator()
@@ -1192,6 +1221,9 @@ class WindowSisyphe(QMainWindow):
         self._action['glmgrp3'].triggered.connect(lambda dummy: self.model(9))
         self._action['contrast'].triggered.connect(self.contrast)
         self._action['result'].triggered.connect(self.result)
+        # < Revision 14/10/2025
+        self._action['latindex'].triggered.connect(self.lateralityIndex)
+        # Revision 14/10/2025 >
         self._action['conj'].triggered.connect(self.conjunction)
         self._action['mapconv'].triggered.connect(self.tmapTozmap)
         self._action['confound'].triggered.connect(self.confounders)
@@ -3270,6 +3302,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogFilesSelection(parent=self)
         self._dialog = DialogFilesSelection()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(self._dialog)
@@ -3317,6 +3352,9 @@ class WindowSisyphe(QMainWindow):
                 # < Revision 16/04/2025
                 # dialog = DialogFileSelection(parent=self)
                 dialog = DialogFileSelection()
+                # < Revision 15/10/2025
+                dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
+                # < Revision 15/10/2025
                 # Revision 16/04/2025 >
                 if platform == 'win32':
                     try: __main__.updateWindowTitleBarColor(dialog)
@@ -3354,6 +3392,9 @@ class WindowSisyphe(QMainWindow):
     def volToLabel(self) -> None:
         from Sisyphe.gui.dialogLabel import DialogVOLtoLabel
         self._dialog = DialogVOLtoLabel()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
@@ -3370,6 +3411,9 @@ class WindowSisyphe(QMainWindow):
     def roiToLabel(self) -> None:
         from Sisyphe.gui.dialogLabel import DialogROItoLabel
         self._dialog = DialogROItoLabel()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
@@ -3386,6 +3430,9 @@ class WindowSisyphe(QMainWindow):
     def labelToRoi(self) -> None:
         from Sisyphe.gui.dialogLabel import DialogLabeltoROI
         self._dialog = DialogLabeltoROI()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
@@ -3398,6 +3445,52 @@ class WindowSisyphe(QMainWindow):
         except Exception as err:
             messageBox(self, 'Label volume to ROIs dialog error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
+
+    # < Revision 14/10/2025
+    # add labelToMask method
+    def labelToMask(self) -> None:
+        from Sisyphe.gui.dialogLabel import DialogLabeltoMask
+        self._dialog = DialogLabeltoMask()
+        # < Revision 15/10/2025
+        self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
+        if platform == 'win32':
+            try: __main__.updateWindowTitleBarColor(self._dialog)
+            except: pass
+        try:
+            # < Revision 12/10/2025
+            # self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-labelstoroi')
+            # Revision 12/10/2025 >
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogLabel.DialogLabeltoMask]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'Label volume to mask dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 14/10/2025 >
+
+    # < Revision 14/10/2025
+    # add labelToMask method
+    def relabel(self) -> None:
+        from Sisyphe.gui.dialogLabel import DialogRelabel
+        self._dialog = DialogRelabel()
+        # < Revision 15/10/2025
+        self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
+        if platform == 'win32':
+            try:
+                __main__.updateWindowTitleBarColor(self._dialog)
+            except:
+                pass
+        try:
+            # < Revision 12/10/2025
+            # self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-labelstoroi')
+            # Revision 12/10/2025 >
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogLabel.DialogRelabel]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'Remap label volume error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 14/10/2025 >
 
     def download(self) -> None:
         from Sisyphe.gui.dialogDownload import DialogDownload
@@ -3494,6 +3587,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/05/2025
         # dialog = DialogFilesSelection(parent=self)
         dialog = DialogFilesSelection()
+        # < Revision 15/10/2025
+        dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         dialog.setMaximumNumberOfFiles(300)
         # Revision 16/05/2025 >
         if platform == 'win32':
@@ -3503,7 +3599,7 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSisypheVolume()
         dialog.filterSingleComponent()
         dialog.filterSameSize()
-        dialog.setCurrentVolumeButtonVisibility(False)
+        # dialog.setCurrentVolumeButtonVisibility(False)
         # < Revision 12/10/2025
         self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-join')
         # Revision 12/10/2025 >
@@ -3541,6 +3637,10 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # dialog = DialogFilesSelection(parent=self)
         dialog = DialogFilesSelection()
+        # < Revision 15/10/2025
+        dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
+        dialog.setMaximumNumberOfFiles(300)
         # Revision 16/04/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(dialog)
@@ -3548,7 +3648,7 @@ class WindowSisyphe(QMainWindow):
         dialog.setWindowTitle(title)
         dialog.filterSisypheVolume()
         dialog.filterMultiComponent()
-        dialog.setCurrentVolumeButtonVisibility(False)
+        # dialog.setCurrentVolumeButtonVisibility(False)
         # < Revision 12/10/2025
         self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-split')
         # Revision 12/10/2025 >
@@ -3583,10 +3683,12 @@ class WindowSisyphe(QMainWindow):
     def datatype(self) -> None:
         from Sisyphe.gui.dialogDatatype import DialogDatatype
         self._dialog = DialogDatatype()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
-        self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
             # < Revision 12/10/2025
             self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-datatype')
@@ -3600,10 +3702,12 @@ class WindowSisyphe(QMainWindow):
     def attributes(self) -> None:
         from Sisyphe.gui.dialogDatatype import DialogAttributes
         self._dialog = DialogAttributes()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
-        self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
             # < Revision 12/10/2025
             self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-attributes')
@@ -3621,6 +3725,7 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # dialog = DialogFlipAxes(parent=self)
         self._dialog = DialogFlipAxes()
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
         # Revision 16/04/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(self._dialog)
@@ -3649,6 +3754,7 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # dialog = DialogSwapAxes(parent=self)
         self._dialog = DialogSwapAxes()
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
         # Revision 16/04/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(self._dialog)
@@ -3709,6 +3815,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # dialog = DialogFilesSelection(parent=self)
         dialog = DialogFilesSelection()
+        # < Revision 15/10/2025
+        dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(dialog)
@@ -3717,7 +3826,7 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSisypheVolume()
         dialog.filterSingleComponent()
         dialog.filterSameSize()
-        dialog.setCurrentVolumeButtonVisibility(False)
+        # dialog.setCurrentVolumeButtonVisibility(False)
         if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Mean volume]')
         # < Revision 12/10/2025
         self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-voxel-mean')
@@ -3764,6 +3873,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # dialog = DialogFilesSelection(parent=self)
         dialog = DialogFilesSelection()
+        # < Revision 15/10/2025
+        dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(dialog)
@@ -3772,7 +3884,7 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSisypheVolume()
         dialog.filterSingleComponent()
         dialog.filterSameSize()
-        dialog.setCurrentVolumeButtonVisibility(False)
+        # dialog.setCurrentVolumeButtonVisibility(False)
         if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Median volume]')
         # < Revision 12/10/2025
         self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-voxel-median')
@@ -3819,6 +3931,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # dialog = DialogFilesSelection(parent=self)
         dialog = DialogFilesSelection()
+        # < Revision 15/10/2025
+        dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(dialog)
@@ -3827,7 +3942,7 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSisypheVolume()
         dialog.filterSingleComponent()
         dialog.filterSameSize()
-        dialog.setCurrentVolumeButtonVisibility(False)
+        # dialog.setCurrentVolumeButtonVisibility(False)
         if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Standard deviation volume]')
         # < Revision 12/10/2025
         self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-voxel-std')
@@ -3874,6 +3989,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # dialog = DialogFilesSelection(parent=self)
         dialog = DialogFilesSelection()
+        # < Revision 15/10/2025
+        dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(dialog)
@@ -3882,7 +4000,7 @@ class WindowSisyphe(QMainWindow):
         dialog.filterSisypheVolume()
         dialog.filterSingleComponent()
         dialog.filterSameSize()
-        dialog.setCurrentVolumeButtonVisibility(False)
+        # dialog.setCurrentVolumeButtonVisibility(False)
         if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Minimum volume]')
         # < Revision 12/10/2025
         self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-voxel-min')
@@ -3929,13 +4047,16 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # dialog = DialogFilesSelection(parent=self)
         dialog = DialogFilesSelection()
+        # < Revision 15/10/2025
+        dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(dialog)
         dialog.setWindowTitle(title)
         dialog.filterSisypheVolume()
         dialog.filterSingleComponent()
         dialog.filterSameSize()
-        dialog.setCurrentVolumeButtonVisibility(False)
+        # dialog.setCurrentVolumeButtonVisibility(False)
         if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFileSelection.DialogFilesSelection - Maximum volume]')
         # < Revision 12/10/2025
         self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-voxel-max')
@@ -3982,9 +4103,11 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogAlgebra(parent=self)
         self._dialog = DialogAlgebra()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
-        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
         try:
             # < Revision 12/10/2025
             self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-algebra')
@@ -4002,6 +4125,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogTexture(parent=self)
         self._dialog = DialogTexture()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         if filenames is not None:
@@ -4051,6 +4177,10 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogHistogramIntensityMatching(parent=self)
         self._dialog = DialogHistogramIntensityMatching()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        self._dialog.getReferenceSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         if filenames is not None:
@@ -4085,6 +4215,10 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogRegressionIntensityMatching(parent=self)
         self._dialog = DialogRegressionIntensityMatching()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        self._dialog.getReferenceSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         if filenames is not None:
@@ -4118,6 +4252,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogIntensityNormalization(parent=self)
         self._dialog = DialogIntensityNormalization()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         if filenames is not None:
@@ -4150,6 +4287,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogMeanFilter(parent=self)
         self._dialog = DialogMeanFilter()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         if filenames is not None:
@@ -4182,6 +4322,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogMedianFilter(parent=self)
         self._dialog = DialogMedianFilter()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         if filenames is not None:
@@ -4214,6 +4357,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogGaussianFilter(parent=self)
         self._dialog = DialogGaussianFilter()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         if filenames is not None:
@@ -4246,6 +4392,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogGradientFilter(parent=self)
         self._dialog = DialogGradientFilter()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         if filenames is not None:
@@ -4278,6 +4427,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogLaplacianFilter(parent=self)
         self._dialog = DialogLaplacianFilter()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         if filenames is not None:
@@ -4310,6 +4462,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogAnisotropicDiffusionFilter(parent=self)
         self._dialog = DialogAnisotropicDiffusionFilter()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         if filenames is not None:
@@ -4342,6 +4497,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogBiasFieldCorrectionFilter(parent=self)
         self._dialog = DialogBiasFieldCorrectionFilter()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         if filenames is not None:
@@ -4372,6 +4530,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogWorkflow(parent=self)
         self._dialog = DialogWorkflow()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
@@ -4490,6 +4651,9 @@ class WindowSisyphe(QMainWindow):
                 # < Revision 16/04/2025
                 # dialog = DialogFileSelection(parent=self)
                 dialog = DialogFileSelection()
+                # < Revision 15/10/2025
+                dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
+                # Revision 15/10/2025 >
                 # Revision 16/04/2025 >
                 if platform == 'win32': __main__.updateWindowTitleBarColor(dialog)
                 dialog.setWindowTitle('Stereotactic frame detection')
@@ -4593,6 +4757,9 @@ class WindowSisyphe(QMainWindow):
                 # < Revision 16/04/2025
                 # dialog = DialogFileSelection(parent=self)
                 dialog = DialogFileSelection()
+                # < Revision 15/10/2025
+                dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
+                # Revision 15/10/2025 >
                 # Revision 16/04/2025 >
                 if platform == 'win32': __main__.updateWindowTitleBarColor(dialog)
                 dialog.setWindowTitle('AC-PC selection')
@@ -4638,6 +4805,9 @@ class WindowSisyphe(QMainWindow):
                 # < Revision 16/04/2025
                 # dialog = DialogFileSelection(parent=self)
                 dialog = DialogFileSelection()
+                # < Revision 15/10/2025
+                dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
+                # Revision 15/10/2025 >
                 # Revision 16/04/2025 >
                 if platform == 'win32': __main__.updateWindowTitleBarColor(dialog)
                 dialog.setWindowTitle('Volume reorientation')
@@ -5358,6 +5528,9 @@ class WindowSisyphe(QMainWindow):
             # < Revision 16/04/2025
             # self._dialog = DialogFileSelection(parent=self)
             self._dialog = DialogFileSelection()
+            # < Revision 15/10/2025
+            self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
+            # Revision 15/10/2025 >
             # Revision 16/04/2025 >
             if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
             # < Revision 12/10/2025
@@ -5411,11 +5584,41 @@ class WindowSisyphe(QMainWindow):
                         if self._logger is not None: self._logger.error(traceback.format_exc())
             else: wait.close()
 
+    # < Revision 15/10/2025
+    # add lateralityIndex method
+    def lateralityIndex(self) -> None:
+        from Sisyphe.gui.dialogStatContrast import DialogLateralityIndex
+        # < Revision 16/04/2025
+        # self._dialog = DialogConjunction(parent=self)
+        self._dialog = DialogLateralityIndex()
+        widgets = self._dialog.getFilesSelectionWidget()
+        widgets['map'].setToolbarThumbnail(self._thumbnail)
+        widgets['anat'].setToolbarThumbnail(self._thumbnail)
+        widgets['template'].setToolbarThumbnail(self._thumbnail)
+        widgets['lmask'].setToolbarThumbnail(self._thumbnail)
+        widgets['rmask'].setToolbarThumbnail(self._thumbnail)
+        self._dialog.setScreenshotsWidget(self._captures)
+        # Revision 16/04/2025 >
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        try:
+            # < Revision 12/10/2025
+            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-conjunction')
+            # Revision 12/10/2025 >
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogStatContrast.DialogLateralityIndex]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'Laterality index dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 15/10/2025 >
+
     def conjunction(self) -> None:
         from Sisyphe.gui.dialogStatContrast import DialogConjunction
         # < Revision 16/04/2025
         # self._dialog = DialogConjunction(parent=self)
         self._dialog = DialogConjunction()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
@@ -5433,6 +5636,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogTMapToZMap(parent=self)
         self._dialog = DialogTMapToZMap()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
@@ -5450,6 +5656,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogSeriesPreprocessing(parent=self)
         self._dialog = DialogSeriesPreprocessing()
+        # < Revision 15/10/2025
+        self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
@@ -5467,6 +5676,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogSeriesSeedToVoxel(parent=self)
         self._dialog = DialogSeriesSeedToVoxel()
+        # < Revision 15/10/2025
+        self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
@@ -5484,6 +5696,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogSeriesConnectivityMatrix(parent=self)
         self._dialog = DialogSeriesConnectivityMatrix()
+        # < Revision 15/10/2025
+        self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         self._dialog.setScreenshotsWidget(self._captures)
@@ -5502,6 +5717,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogSeriesFastICA(parent=self)
         self._dialog = DialogSeriesFastICA()
+        # < Revision 15/10/2025
+        self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
@@ -5519,6 +5737,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogSeriesCanICA(parent=self)
         self._dialog = DialogSeriesCanICA()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
@@ -5533,6 +5754,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogPerfusion(parent=self)
         self._dialog = DialogPerfusion()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
@@ -5552,6 +5776,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/04/2025
         # self._dialog = DialogDiffusionGradients(parent=self)
         self._dialog = DialogDiffusionGradients()
+        # < Revision 15/10/2025
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 15/10/2025 >
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:

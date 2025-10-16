@@ -53,7 +53,7 @@ class DialogEditLabels(QDialog):
 
     QWidget -> QDialog -> DialogEditLabels
 
-    Last revision: 03/09/2025
+    Last revision: 14/10/2025
     """
 
     # Special method
@@ -114,6 +114,10 @@ class DialogEditLabels(QDialog):
         self._tree.topLevelItem(0).setSelected(True)
         # noinspection PyUnresolvedReferences
         self._tree.itemSelectionChanged.connect(self._selectionChanged)
+        # < Revision 14/10/2025
+        # noinspection PyUnresolvedReferences
+        self._tree.doubleClicked.connect(self._moveTo)
+        # Revision 14/10/2025 >
 
         layout.addWidget(self._view)
         layout.addWidget(self._tree)
@@ -200,6 +204,20 @@ class DialogEditLabels(QDialog):
         n = int(item.text(0))
         self._view().getDrawInstance().extractingValue(n, mask=False, replace=True)
         self._view().updateRender()
+
+    # < Revision 15/10/2025
+    # add moveTo method
+    def _moveTo(self):
+        item = self._tree.selectedItems()
+        if item is not None:
+            item = item[0]
+            v = self._view.getVolume()
+            index = self._tree.indexFromItem(item, 0).row()
+            if 0 <= index < 256:
+                roi = v.labelToROI(index)
+                x, y, z = roi.getCentroid()
+                self._view().setCursorWorldPosition(x, y, z)
+    # Revision 15/10/2025 >
 
     def _load(self):
         if self._volume is not None:

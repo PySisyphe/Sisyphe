@@ -39,7 +39,7 @@ class DialogFlipAxes(DialogFromXml):
 
     QDialog -> DialogFromXml -> DialogFlipAxes
 
-    Last revision: 13/02/2025
+    Last revision: 15/10/2025
     """
 
     # Special method
@@ -110,3 +110,9 @@ class DialogFlipAxes(DialogFromXml):
                     wait.incCurrentProgressValue()
                     if wait.getStopped(): break
         super().accept()
+
+    # < Revision 15/10/2025
+    # add getFilesSelectionWidget method
+    def getFilesSelectionWidget(self):
+        return self._files
+    # Revision 15/10/2025 >

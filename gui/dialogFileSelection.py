@@ -47,7 +47,7 @@ class DialogFileSelection(QDialog):
     QDialog -> DialogFileSelection
 
     Creation: 15/11/2022
-    Last revision: 19/11/2024
+    Last revision: 15/10/2024
     """
 
     # Special method
@@ -155,6 +155,14 @@ class DialogFileSelection(QDialog):
 
     def _accept(self):
         if self.getFilename() != '': self.accept()
+
+    # Public method
+
+    # < Revision 15/10/2025
+    # add getFileSelectionWidget method
+    def getFileSelectionWidget(self):
+        return  self._widget
+    # Revision 15/10/2025 >
 
 
 class DialogMultiFileSelection(QDialog):
@@ -321,7 +329,7 @@ class DialogFilesSelection(QDialog):
     QDialog -> DialogFilesSelection
 
     Creation: 15/11/2022
-    Last revision: 19/11/2024
+    Last revision: 15/10/2025
     """
 
     # Special method
@@ -432,3 +440,11 @@ class DialogFilesSelection(QDialog):
 
     def _accept(self):
         if self.filenamesCount() > 0: self.accept()
+
+    # Public method
+
+    # < Revision 15/10/2025
+    # add getFileSelectionWidget method
+    def getFilesSelectionWidget(self):
+        return  self._widget
+    # Revision 15/10/2025 >

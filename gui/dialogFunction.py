@@ -688,7 +688,7 @@ class DialogHistogramIntensityMatching(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogHistogramMatching
 
     Creation: 10/10/2023
-    Last revision: 10/10/2023
+    Last revision: 15/10/2025
     """
 
     # Special method
@@ -783,6 +783,12 @@ class DialogHistogramIntensityMatching(AbstractDialogFunction):
             if self._results.getTabCount() > 0:
                 self._results.exec()
 
+    # < Revision 15/10/2025
+    # add getReferenceSelectionWidget method
+    def getReferenceSelectionWidget(self):
+        return self._reference
+    # Revision 15/10/2025 >
+
 
 class DialogRegressionIntensityMatching(AbstractDialogFunction):
     """
@@ -799,7 +805,7 @@ class DialogRegressionIntensityMatching(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogRegressionIntensityMatching
 
     Creation: 23/10/2024
-    Last revision: 29/11/2024
+    Last revision: 15/10/2025
     """
 
     # Special method
@@ -869,6 +875,12 @@ class DialogRegressionIntensityMatching(AbstractDialogFunction):
     def execute(self):
         if not self._reference.isEmpty():
             super().execute()
+
+    # < Revision 15/10/2025
+    # add getReferenceSelectionWidget method
+    def getReferenceSelectionWidget(self):
+        return self._reference
+    # Revision 15/10/2025 >
 
 
 class DialogIntensityNormalization(AbstractDialogFunction):

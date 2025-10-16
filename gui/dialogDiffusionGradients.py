@@ -49,7 +49,7 @@ class DialogDiffusionGradients(QDialog):
 
     QDialog -> DialogDiffusionGradients
 
-    Last revision: 17/06/2025
+    Last revision: 15/10/2025
     """
 
     # Special method
@@ -276,3 +276,9 @@ class DialogDiffusionGradients(QDialog):
             # noinspection PyInconsistentReturns
             self._save.setEnabled(False)
         else: raise AttributeError('No DWI volume or b-values or b-vectors.')
+
+    # < Revision 15/10/2025
+    # add getFilesSelectionWidget method
+    def getFilesSelectionWidget(self):
+        return self._dwiSelect
+    # Revision 15/10/2025 >

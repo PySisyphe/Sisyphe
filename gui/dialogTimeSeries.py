@@ -94,7 +94,7 @@ class DialogSeriesPreprocessing(QDialog):
     QDialog -> DialogSeriesPreprocessing
 
     Creation: 06/02/2025
-    Last revision:
+    Last revision: 15/10/2025
     """
 
     # Special method
@@ -378,6 +378,12 @@ class DialogSeriesPreprocessing(QDialog):
                 self._map.clear()
             else: self.accept()
 
+    # < Revision 15/10/2025
+    # add getFilesSelectionWidget method
+    def getFileSelectionWidget(self):
+        return self._series
+    # Revision 15/10/2025 >
+
 
 class DialogSeriesSeedToVoxel(DialogSeriesPreprocessing):
     """
@@ -395,7 +401,7 @@ class DialogSeriesSeedToVoxel(DialogSeriesPreprocessing):
     QDialog -> DialogSeriesPreprocessing -> DialogSeriesSeedToVoxel
 
     Creation: 06/02/2025
-    Last revision:
+    Last revision: 15/10/2025
     """
 
     # Special method
@@ -611,7 +617,7 @@ class DialogSeriesFastICA(DialogSeriesPreprocessing):
     QDialog -> DialogSeriesPreprocessing -> DialogSeriesFastICA
 
     Creation: 06/02/2025
-    Last revision:
+    Last revision: 15/10/2025
     """
 
     # Special method
@@ -800,7 +806,7 @@ class DialogSeriesConnectivityMatrix(DialogSeriesPreprocessing):
     QDialog -> DialogSeriesPreprocessing -> DialogSeriesConnectivityMatrix
 
     Creation: 06/02/2025
-    Last revision:
+    Last revision: 15/10/2025
     """
 
     # Special method
@@ -1056,7 +1062,7 @@ class DialogSeriesCanICA(QDialog):
     QDialog -> DialogSeriesCanICA
 
     Creation: 11/02/2025
-    Last revision:
+    Last revision: 15/10/2025
     """
 
     # Special method
@@ -1169,3 +1175,9 @@ class DialogSeriesCanICA(QDialog):
                                default=QMessageBox.No)
                 if r == QMessageBox.Yes: self._series.clearall()
                 else: self.accept()
+
+    # < Revision 15/10/2025
+    # add getFilesSelectionWidget method
+    def getFilesSelectionWidget(self):
+        return self._series
+    # Revision 15/10/2025 >
