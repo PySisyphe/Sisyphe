@@ -24,7 +24,6 @@ from glob import glob
 from os.path import isfile
 from os.path import join
 from os.path import exists
-from os.path import basename
 from os.path import dirname
 from os.path import split
 from os.path import splitext
@@ -55,7 +54,7 @@ Functions
     - installFromHost
     - updatePySisypheToNewerVersion
     
-Last revision: 15/10/2025
+Last revision: 17/10/2025
 """
 
 def downloadFromHost(urls: str | list[str],
@@ -234,11 +233,11 @@ def updatePySisyphe(wait: DialogWait | None = None) -> None:
                         section = section[0]
                         url = section.getAttribute('url')
                 if url is not None and url != '':
-                    # try:
-                    with TemporaryDirectory() as temp:
-                        # < Revision 24/07/2025
-                        # installFromHost(url[1], temp, dst, info='version {}'.format(version), wait=wait)
-                        installFromHost(url, temp, dst, info='version {}'.format(version), wait=wait)
-                        # Revision 24/07/2025 >
-                    # except: raise ConnectionError('PySisyphe update failed.')
+                    try:
+                        with TemporaryDirectory() as temp:
+                            # < Revision 24/07/2025
+                            # installFromHost(url[1], temp, dst, info='version {}'.format(version), wait=wait)
+                            installFromHost(url, temp, dst, info='version {}'.format(version), wait=wait)
+                            # Revision 24/07/2025 >
+                    except: raise ConnectionError('PySisyphe update failed.')
     else: raise ConnectionError('Failed to connect to host.')
