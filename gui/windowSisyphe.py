@@ -133,7 +133,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 15/10/2025
+    Last revision: 17/10/2025
     """
 
     # Class constants
@@ -3564,6 +3564,19 @@ class WindowSisyphe(QMainWindow):
                 wait.setInformationText('Update to version {}...'.format(v))
                 wait.show()
                 updatePySisyphe(wait)
+                # < Revision 17/10/2025
+                wait.hide()
+                r = messageBox(self,
+                               'Check for update',
+                               'You must close and restart the application to complete '
+                               'the installation. Do you want to exit now ?',
+                               icon=QMessageBox.Question,
+                               buttons=QMessageBox.Yes | QMessageBox.No,
+                               default=QMessageBox.No)
+                if r == QMessageBox.Yes:
+                    wait.close()
+                    self.exit()
+                # Revision 17/10/2025 >
             wait.close()
 
     def lutEdit(self) -> None:

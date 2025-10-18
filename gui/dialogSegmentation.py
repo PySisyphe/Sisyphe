@@ -1024,7 +1024,10 @@ class DialogPriorBasedSegmentation(QDialog):
     # noinspection PyUnusedLocal
     def _priorsChanged(self, index: int):
         v1 = self._settings.getParameterValue('Priors')[0]
-        v2 = v1 == 'Custom'
+        # < Revision 15/10/2025
+        # v2 = v1 == 'Custom'
+        v2 = v1 == 'CUSTOM'
+        # Revision 15/10/2025 >
         v3 = int(self._settings.getParameterValue('NumberOfPriors')[0])
         self._settings.setParameterVisibility('T1', v2)
         self._settings.setParameterVisibility('Mask', v2)
