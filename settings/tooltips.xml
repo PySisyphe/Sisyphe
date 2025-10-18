@@ -9,9 +9,9 @@
 			Service Class).
 
 			This DICOM SCP server is identified by an AE Title (AET), URL (or 
-			IP address) and a port. The connection can be secured by a user login
-			and password. These parameters must be obtained from your PACS
-			administrator.
+			IP address) and a port. The connection can be secured by a user 
+			login and password. These parameters must be obtained from your 
+			PACS administrator.
 		</Title>
 		<AET>
 			AE title of the DICOM SCP server (16 bit case-sensitive string).
@@ -23,8 +23,8 @@
 		<Username>user login</Username>
 		<Password>user password</Password>
 		<DicomFolder>
-			This is the folder used to store images downloaded from the DICOM SCP 
-			server.
+			This is the folder used to store images downloaded from the DICOM 
+			SCP server.
 		</DicomFolder>
 	</DicomHost>
 	<ActiveContour>
@@ -32,26 +32,18 @@
 			Active contour level set method (also known as snake) segments 
 			structures in images based on a user supplied edge potential map. 
 			An initial contour is itertively propagated outwards (or inwards) 
-			until it \'sticks\' to the shape boundaries. This is done by using a
+			until it sticks to the shape boundaries. This is done by using a
 			level set speed function based on a user supplied edge potential 
 			map. This map has values close to zero in regions near edges and 
 			values close to one in regions with relatively constant intensity. 
 			Typically, the edge potential map is a function of the gradient
 			magnitude.
 
-			PySisyphe uses the SimpleITK library implemenentation 
-			(https://simpleitk.org/doxygen/v2_5/html/index.html)
-			wrapped to python 
-			(https://simpleitk.readthedocs.io/en/master/gettingStarted.html)
+			PySisyphe uses the SimpleITK library implemenentation.
 		</Title>
 		<Algorithm>
 			Three active contour algorithms are available: original geodesic 
-			active contour, shape detection and threshold variants.
-
-			See SimpleITK doc: 
-			./classitk_1_1simple_1_1GeodesicActiveContourLevelSetImageFilter.html
-			./classitk_1_1simple_1_1ShapeDetectionLevelSetImageFilter.html
-			./classitk_1_1simple_1_1ThresholdSegmentationLevelSetImageFilter.html
+			active contour (default), shape detection and threshold variants.
 		</Algorithm>
 		<Radius>
 			Radius en mm of the seed sphere centered used as initial contour 
@@ -100,9 +92,10 @@
 	</ActiveContour>
 	<RemoveNeckSlices>
 		<Title>
-			Most 3D MR acquired in sagittal orientation have extensive and useless 
-			inferior coverage. This function crop MR volume in z direction, removing 
-			empty slices and lower slices of neck below foramen magnum.
+			Most 3D MR acquired in sagittal orientation have extensive and 
+			useless inferior coverage. This function crop MR volume in z 
+			direction, removing empty slices and lower slices of neck below 
+			foramen magnum.
 		</Title>
 		<ExtentFactor>
 			Multiplicative factor to adjust position of the lower slice at neck 
@@ -118,15 +111,15 @@
 			given voxel is the mean value of the voxels in a neighborhood
 			about the corresponding input voxel.
 
-			PySisyphe uses the SimpleITK library implemenentation 
-			(https://simpleitk.org/doxygen/v2_4/html/index.html)
-			wrapped to python 
-			(https://simpleitk.readthedocs.io/en/master/gettingStarted.html)
+			PySisyphe uses the SimpleITK library implemenentation.
 		</Title>
-		<Fast/>
-		<KernelRadius/>
-		<Prefix/>
-		<Suffix/>
+		<Fast>select the fast filter version</Fast>
+		<KernelRadius>
+			kernel radius in voxels to define the neighborhood extent 
+			(default 3).
+		</KernelRadius>
+		<Prefix>Prefix added to the file name of the filtered volume.</Prefix>
+		<Suffix>Suffix added to the file name of the filtered volume.</Suffix>
 	</MeanImageFilter>
 	<MedianImageFilter>
 		<Title>
@@ -135,14 +128,14 @@
 			corresponding input voxel. It is used to smooth an image without 
 			being biased by outliers or shot noise.
 
-			PySisyphe uses the SimpleITK library implemenentation 
-			(https://simpleitk.org/doxygen/v2_4/html/index.html)
-			wrapped to python 
-			(https://simpleitk.readthedocs.io/en/master/gettingStarted.html)
+			PySisyphe uses the SimpleITK library implemenentation.
 		</Title>
-		<KernelRadius/>
-		<Prefix/>
-		<Suffix/>
+		<KernelRadius>
+			kernel radius in voxels to define the neighborhood extent 
+			(default 3).
+		</KernelRadius>
+		<Prefix>Prefix added to the file name of the filtered volume.</Prefix>
+		<Suffix>Suffix added to the file name of the filtered volume.</Suffix>
 	</MedianImageFilter>
 	<GaussianImageFilter>
 		<Title>
@@ -152,15 +145,20 @@
 			uses a recursive approximation (IIR) of the Gaussian kernel, this 
 			filter tends to be faster for large kernels.
 
-			PySisyphe uses the SimpleITK library implemenentation 
-			(https://simpleitk.org/doxygen/v2_4/html/index.html)
-			wrapped to python 
-			(https://simpleitk.readthedocs.io/en/master/gettingStarted.html)
+			PySisyphe uses the SimpleITK library implemenentation.
 		</Title>
-		<Algorithm/>
-		<Fwhm/>
-		<Prefix/>
-		<Suffix/>
+		<Algorithm>
+			Two types of algorithms are available. The first uses a separable 
+			convolution with a discrete Gaussian kernel (default). The latter 
+			uses a recursive approximation (IIR) of the Gaussian kernel, this 
+			filter tends to be faster for large kernels.
+		</Algorithm>
+		<Fwhm>
+			full width at hall maximum of the gaussian kernel in mm 
+			(default 4.0).
+		</Fwhm>
+		<Prefix>Prefix added to the file name of the filtered volume.</Prefix>
+		<Suffix>Suffix added to the file name of the filtered volume.</Suffix>
 	</GaussianImageFilter>
 	<GradientMagnitudeImageFilter>
 		<Title>
@@ -173,15 +171,19 @@
 			approximation (IIR) of the kernel, this filter tends to be faster 
 			for large kernels.
 
-			PySisyphe uses the SimpleITK library implemenentation 
-			(https://simpleitk.org/doxygen/v2_4/html/index.html)
-			wrapped to python
-			(https://simpleitk.readthedocs.io/en/master/gettingStarted.html)
+			PySisyphe uses the SimpleITK library implemenentation.
 		</Title>
-		<Algorithm/>
-		<Sigma/>
-		<Prefix/>
-		<Suffix/>
+		<Algorithm>
+			Two types of algorithms are available. The first uses a separable 
+			convolution with a discrete Gaussian kernel (default). The latter 
+			uses a recursive approximation (IIR) of the Gaussian kernel, this 
+			filter tends to be faster for large kernels.
+		</Algorithm>
+		<Sigma>
+			Standard deviation of the gaussian kernel in mm (default 1.0).
+		</Sigma>
+		<Prefix>Prefix added to the file name of the filtered volume.</Prefix>
+		<Suffix>Suffix added to the file name of the filtered volume.</Suffix>
 	</GradientMagnitudeImageFilter>
 	<LaplacianImageFilter>
 		<Title>
@@ -194,15 +196,19 @@
 			approximation (IIR) of the kernel, this filter tends to be faster 
 			for large kernels.
 
-			PySisyphe uses the SimpleITK library implemenentation 
-			(https://simpleitk.org/doxygen/v2_4/html/index.html)
-			wrapped to python 
-			(https://simpleitk.readthedocs.io/en/master/gettingStarted.html)
+			PySisyphe uses the SimpleITK library implemenentation.
 		</Title>
-		<Algorithm/>
-		<Sigma/>
-		<Prefix/>
-		<Suffix/>
+		<Algorithm>
+			Two types of algorithms are available. The first uses a separable 
+			convolution with a discrete Gaussian kernel (default). The latter 
+			uses a recursive approximation (IIR) of the Gaussian kernel, this 
+			filter tends to be faster for large kernels.
+		</Algorithm>
+		<Sigma>
+			Standard deviation of the gaussian kernel in mm (default 1.0).
+		</Sigma>
+		<Prefix>Prefix added to the file name of the filtered volume.</Prefix>
+		<Suffix>Suffix added to the file name of the filtered volume.</Suffix>
 	</LaplacianImageFilter>
 	<AnisotropicDiffusionImageFilter>
 		<Title>
@@ -223,25 +229,118 @@
 			in a grayscale volume are viewed as a level set. The level set is 
 			then evolved using a curvature-based speed function.
 
-			Reference: "Level Set Methods and Fast Marching Methods", J.A. 
+			Reference: Level Set Methods and Fast Marching Methods. JA 
 			Sethian, Cambridge Press, Chapter 16, Second edition, 1999.
 
-			PySisyphe uses the SimpleITK library implemenentation 
-			(https://simpleitk.org/doxygen/v2_4/html/index.html)
-			wrapped to python 
-			(https://simpleitk.readthedocs.io/en/master/gettingStarted.html)
+			PySisyphe uses the SimpleITK library implemenentation.
 		</Title>
-		<Algorithm/>
-		<GradientTimeStep/>
-		<CurvatureTimeStep/>
-		<FlowTimeStep/>
-		<MinMaxCurvatureTimeStep/>
-		<Conductance/>
-		<Radius/>
-		<NumberOfIterations/>
-		<Prefix/>
-		<Suffix/>
+		<Algorithm>
+			- Anisotropic gradient diffusion filter (default): iteratively 
+			diffuse volumes by solving non-linear partial differential 
+			equations based on the classic Perona-Malik, gradient magnitude 
+			equation.
+
+			- Curvature anisotropic diffusion filter: iteratively diffuse 
+			volumes by solving non-linear partial differential equations using 
+			the modified curvature diffusion equation (MCDE).
+
+			- Curvature flow filter and MinMax curvature flow: iterative 
+			curvature driven volume denoising algorithm. Iso-brightness contours
+			in a grayscale volume are viewed as a level set. The level set is 
+			then evolved using a curvature-based speed function.
+		</Algorithm>
+		<GradientTimeStep>
+			This is the finite difference update (default 0.0625). Stable 
+			values for most 2D and 3D functions are 0.125 and 0.0625 
+			respectively, when the pixel spacing is unity. In general, you 
+			should keep the time step below (PixelSpacing)/2N+1, where N is the 
+			number of image dimensions.
+		</GradientTimeStep>
+		<CurvatureTimeStep>
+			This is the finite difference update (default 0.0625). Stable 
+			values for most 2D and 3D functions are 0.125 and 0.0625 
+			respectively, when the pixel spacing is unity. In general, you 
+			should keep the time step below (PixelSpacing)/2N+1, where N is the 
+			number of image dimensions.
+		</CurvatureTimeStep>
+		<FlowTimeStep>
+			This is the finite difference update (default 0.0625). Stable 
+			values for most 2D and 3D functions are 0.125 and 0.0625 
+			respectively, when the pixel spacing is unity. In general, you 
+			should keep the time step below (PixelSpacing)/2N+1, where N is the 
+			number of image dimensions.
+		</FlowTimeStep>
+		<MinMaxCurvatureTimeStep>
+			This is the finite difference update (default 0.05). Stable 
+			values for most 2D and 3D functions are 0.125 and 0.0625 
+			respectively, when the pixel spacing is unity. In general, you 
+			should keep the time step below (PixelSpacing)/2N+1, where N is the 
+			number of image dimensions.
+		</MinMaxCurvatureTimeStep>
+		<Conductance>
+			Conductance controls the sensitivity of the conductance term in the 
+			basic anisotropic diffusion equation. It affects the conductance 
+			term in different ways depending on the particular variation on the 
+			basic equation. As a general rule, the lower the value, the more 
+			strongly the diffusion equation preserves image features (such as 
+			high gradients or curvature). A high value for conductance will 
+			cause the filter to diffuse image features more readily. 
+			Typical values range from 0.5 to 2.0 (default 1.0).
+		</Conductance>
+		<Radius>
+			In min/max curvature flow, movement is turned on or off depending 
+			on the scale of the noise one wants to remove. Switching depends on 
+			the average image value within a region defined by a radius, in 
+			voxels, around each point. The choice of radius, the stencil 
+			radius, governs the scale of the noise to be removed (default 2).
+		</Radius>
+		<NumberOfIterations>
+			Specifies the number of iterations (time-step updates) that the 
+			solver will perform to produce a solution. The appropriate number 
+			of iterations is dependent on the application and the image being 
+			processed. As a general rule, the more iterations performed, the 
+			more diffused the image will become (default 2).
+		</NumberOfIterations>
+		<Prefix>Prefix added to the file name of the filtered volume.</Prefix>
+		<Suffix>Suffix added to the file name of the filtered volume.</Suffix>
 	</AnisotropicDiffusionImageFilter>
+	<TextureImageFilter>
+		<Title>
+			Extract various voxel-based radiomics features (feature maps) 
+			from a volume.
+		</Title>
+		<KernelRadius>
+			Kernel extent in voxels (default 2) used by the matrix-based 
+			features (GLCM, GLRLM, GLSZM, NGTDM, GLDM). 
+		</KernelRadius>
+		<VoxelBatch>
+			Parameter used to limit memory usage and prevent memory error
+			(default 1024).
+		</VoxelBatch>
+	</TextureImageFilter>
+	<RegressionIntensityMatchingImageFilter>
+		<Title>
+			Normalize the grayscale values for a source volume by matching the 
+			intensities with those of a reference volume.This filter uses a 
+			regression algorithm for each pair of voxels that have the same 
+			coordinates in the two volumes. Souce and reference volumes must be 
+			coregistered.
+		</Title>
+		<Order>
+			Order of the polynomial used as regression function (default 1).
+		</Order>
+		<Truncate>
+			Minimum and maximum values of the matched volume are adjusted to 
+			align with the reference volume, if checked (unchecked by default).
+		</Truncate>
+		<ExcludeBackground>
+			Exclude background voxels from regression matching processing 
+			(checked by default). Background voxels are those with grayscale 
+			values that are smaller than the image mean.
+		</ExcludeBackground>
+		<Prefix>Prefix added to the file name of the filtered volume.</Prefix>
+		<Suffix>Suffix added to the file name of the filtered volume.</Suffix>
+	</RegressionIntensityMatchingImageFilter>
 	<HistogramMatchingImageFilter>
 		<Title>
 			Normalize the grayscale values for a source volume by matching the 
@@ -249,21 +348,46 @@
 			filter uses a histogram matching technique where the histograms are 
 			matched only at a specified number of quantile values.
 
-			Reference: Laszlo G. Nyul, Jayaram K. Udupa, and Xuan Zhang, 
-			"New Variants of a Method of MRI Scale Standardization", 
+			Reference: 
+
+			LG Nyul, JK Udupa, and X Zhang. 
+			New Variants of a Method of MRI Scale Standardization. 
 			IEEE Transactions on Medical Imaging, 19(2):143-150, 2000.
 
-			PySisyphe uses the SimpleITK library implemenentation 
-			(https://simpleitk.org/doxygen/v2_4/html/index.html)
-			wrapped to python 
-			(https://simpleitk.readthedocs.io/en/master/gettingStarted.html)
+			PySisyphe uses the SimpleITK library implemenentation.
 		</Title>
 		<ExcludeBackground/>
-		<NumberOfMatchPoints/>
-		<NumberOfHistogramBins/>
-		<Prefix/>
-		<Suffix/>
+			Exclude background voxels from histogram matching processing 
+			(checked by default). Background voxels are those with grayscale 
+			values that are smaller than the image mean.
+		<NumberOfMatchPoints>
+			Governs the number of quantile values to be matched (default 5).
+		</NumberOfMatchPoints>
+		<NumberOfHistogramBins>
+			Sets the number of bins used when creating histograms (default 200).
+		</NumberOfHistogramBins>
+		<Prefix>Prefix added to the file name of the filtered volume.</Prefix>
+		<Suffix>Suffix added to the file name of the filtered volume.</Suffix>
 	</HistogramMatchingImageFilter>
+	<IntensityNormalizationImageFilter>
+		<Title>
+			Normalize volume intensities.
+		</Title>
+		<Method>
+			- zscore (default): standardize the intensity as z-score 
+			i.e. zero mean, [-std, +std] mapped to [-1, 1]
+			
+			- rescale [0, 1]: standardize the intensity values to the range 
+			[0, 1] i.e. [min, max] mapped to [0, 1].
+		</Method>
+		<Truncate>
+			Truncate volume intensities with thresholds expressed in percentile 
+			(min threshold = centile, max threshold = 100 - centile), no 
+			truncation by default i.e centile set to 0.
+		</Truncate>
+		<Prefix>Prefix added to the file name of the filtered volume.</Prefix>
+		<Suffix>Suffix added to the file name of the filtered volume.</Suffix>
+	</IntensityNormalizationImageFilter>
 	<BiasFieldCorrectionImageFilter>
 		<Title>
 			Computes bias field correction of MR image(s).
@@ -284,29 +408,57 @@
 
 			References:
 			
-			(1) J.G. Sled, A.P. Zijdenbos and A.C. Evans. A Nonparametric
-			Method for Automatic Correction of Intensity Non-uniformity in MRI Data
-			IEEE Transactions on Medical Imaging, Vol 17, No 1. Feb 1998.
+			(1) JG Sled, AP Zijdenbos and AC Evans. A Nonparametric
+			Method for Automatic Correction of Intensity Non-uniformity in MRI 
+			Data. IEEE Transactions on Medical Imaging, Vol 17, No 1. Feb 1998.
 			
-			(2) N.J. Tustison, B.B. Avants, P.A. Cook, Y. Zheng, A. Egan, 
-			P.A. Yushkevich, and J.C. Gee. N4ITK: Improved N3 Bias Correction
+			(2) NJ Tustison, BB Avants, PA Cook, Y Zheng, A Egan, 
+			PA Yushkevich, and JC Gee. N4ITK: Improved N3 Bias Correction
 			IEEE Transactions on Medical Imaging, 2010 June, 29(6):1310-1320.
 
-			PySisyphe uses the SimpleITK library implemenentation 
-			(https://simpleitk.org/doxygen/v2_4/html/index.html)
-			wrapped to python 
-			(https://simpleitk.readthedocs.io/en/master/gettingStarted.html)
+			PySisyphe uses the SimpleITK library implemenentation.
 		</Title>
-		<UseMask/>
-		<ShrinkFactor/>
-		<SplineOrder/>
-		<NumberOfHistogramBins/>
-		<NumberOfFittingLevels/>
-		<NumberOfControlPoints/>
-		<NumberOfIteration/>
-		<ConvergenceThreshold/>
-		<WienerFilterNoise/>
-		<BiasFieldFullWidthAtHalfMaximum/>
+		<UseMask>
+			Exclude background voxels from from the bias field processing 
+			(default).
+		</UseMask>
+		<ShrinkFactor>
+			Perform the correction on a subsampled image (size / shrink factor, 
+			default 1 no shrinking).
+		</ShrinkFactor>
+		<SplineOrder>
+			Spline order used to model the bias field (default 3).
+		</SplineOrder>
+		<NumberOfHistogramBins>
+			Number of bins defining the lnumber of multiple resolution levels 
+			(default 200).
+		</NumberOfHistogramBins>
+		<NumberOfFittingLevels>
+			Number of multiple resolution levels (default 4).
+		</NumberOfFittingLevels>
+		<NumberOfControlPoints>
+			Control point grid size defining the B-spline estimate of the bias 
+			field. In each dimension, the B-spline mesh size is equal to the 
+			number of control points in that dimension minus the spline order 
+			(default 4).
+		</NumberOfControlPoints>
+		<NumberOfIteration>
+			Maximum number of iterations at each fitting level (default 50).
+		</NumberOfIteration>
+		<ConvergenceThreshold>
+			Convergence is determined by the coefficient of variation of the 
+			current bias field estimate and the previous estimate. If this 
+			value is less than the specified threshold, the algorithm proceeds 
+			to the next fitting level or terminates if it is at the last level 
+			(default 0.001).
+		</ConvergenceThreshold>
+		<WienerFilterNoise>
+			Noise estimate defining the Wiener filter (default 0.01).
+		</WienerFilterNoise>
+		<BiasFieldFullWidthAtHalfMaximum>
+			full width at half maximum parameter characterizing the width of 
+			the Gaussian deconvolution (default 0.15).
+		</BiasFieldFullWidthAtHalfMaximum>
 		<Prefix>
 			Prefix added to the file name to save the bias field corrected 
 			image.
@@ -315,8 +467,12 @@
 			Suffix added to the file name to save the bias field corrected 
 			image.
 		</Suffix>
-		<BiasFieldPrefix/>
-		<BiasFieldSuffix/>
+		<BiasFieldPrefix>
+			Prefix added to the file name of the bias field volume.
+		</BiasFieldPrefix>
+		<BiasFieldSuffix>
+			Suffix added to the file name of the bias field volume.
+		</BiasFieldSuffix>
 	</BiasFieldCorrectionImageFilter>
 	<SkullStripping>
 		<Title>
@@ -325,50 +481,66 @@
 		</Title>
 		<Model>
 			Pre-trained model used for skull stripping processing:
-
 			- DeepBrain U-net
-			https://github.com/iitzco/deepbrain
-			https://pypi.org/project/deepbrain/
-
-			or
-
 			- ANTs PyNet U-net
-			https://github.com/ANTsX/ANTsPyNet
-			https://pypi.org/project/antspynet/
 		</Model>
 		<TrainingData>
 			MR sequences used for training the deep learning model:
 
 			- DeepBrain U-net: only T1 MR sequence
 
-			- ANTs PyNet U-net: T1 (ANTs-trained), 
-			T1 (FreeSurfer-trained, Satra Ghosh and Jakub Kaczmarzyk),
-			T1 (Combination of ANTs-trained and FreeSurfer-trained), 
-			T2, FLAIR, T2*, EPI and FA.
+			- ANTs PyNet U-net: T1 (ANTs-trained), T1 (FreeSurfer-trained, 
+			Satra Ghosh and Jakub Kaczmarzyk), T1 (Combination of ANTs-trained 
+			and FreeSurfer-trained), T2, FLAIR, T2*, EPI and FA.
 		</TrainingData>
-		<Mask>Save the brain mask as binary pySisyphe volume (*.xvol)</Mask>
-		<ROIMask>Save the brain mask as pySisyphe ROI (*.xroi)</ROIMask>
-		<MaskPrefix>Prefix added to the file name of the brain mask.</MaskPrefix>
-		<MaskSuffix>Suffix added to the file name of the brain mask.</MaskSuffix>
-		<Probability>Save the probability brain mask as pySisyphe volume (*.xvol)</Probability>
-		<ProbabilityPrefix>Prefix added to the file name of the probability brain mask.</ProbabilityPrefix>
-		<ProbabilitySuffix>Suffix added to the file name of the probability brain mask.</ProbabilitySuffix>
-		<Prefix>Prefix added to the file name of the skull stripped volume.</Prefix>
-		<Suffix>Suffix added to the file name of the skull stripped volume.</Suffix>
+		<Mask>Save the brain mask as binary pySisyphe volume (*.xvol) ?</Mask>
+		<ROIMask>Save the brain mask as pySisyphe ROI (*.xroi) ?</ROIMask>
+		<MaskPrefix>
+			Prefix added to the file name of the brain mask.
+		</MaskPrefix>
+		<MaskSuffix>
+			Suffix added to the file name of the brain mask.
+		</MaskSuffix>
+		<Probability>
+			Save the probability brain mask as pySisyphe volume (*.xvol)
+		</Probability>
+		<ProbabilityPrefix>
+			Prefix added to the file name of the probability brain mask.
+		</ProbabilityPrefix>
+		<ProbabilitySuffix>
+			Suffix added to the file name of the probability brain mask.
+		</ProbabilitySuffix>
+		<Prefix>
+			Prefix added to the file name of the skull stripped volume.
+		</Prefix>
+		<Suffix>
+			Suffix added to the file name of the skull stripped volume.
+		</Suffix>
 	</SkullStripping>
 	<KMeansClustering>
 		<Title>
 			Classify the intensity values of a scalar volume using the K-Means
 			algorithm.
 
-			PySisyphe uses the SimpleITK library implemenentation 
-			(https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ScalarImageKmeansImageFilter.html)
+			PySisyphe uses the SimpleITK library implemenentation.
 		</Title>
-		<AnisotropicDiffusionFilter/>
-		<BiasFieldCorrection/>
-		<NumberOfClasses/>
-		<Prefix/>
-		<Suffix/>
+		<AnisotropicDiffusionFilter>
+			Anisotropic gradient diffusion filtering preprocessing before
+			clustering ?
+		</AnisotropicDiffusionFilter>
+		<BiasFieldCorrection>
+			Bias field correction preprocessing before clustering ?
+		</BiasFieldCorrection>
+		<NumberOfClasses>
+			Number of classes (i.e. labels, default 5) used by the K-Means 
+			statistical classifier.
+		</NumberOfClasses>
+		<Prefix>
+			Prefix added to the file name to save the label volume.
+		</Prefix>
+		<Suffix>
+			Suffix added to the file name to save the label volume.
+		</Suffix>
 	</KMeansClustering>
 	<KMeansSegmentation>
 		<Title>
@@ -385,27 +557,51 @@
 			consecutive indices 1, 2, 3, etc. Label 0 is reserved for the 
 			background when a mask is specified.
 
-			Reference: B.B. Avants, N.J. Tustison, J. Wu, P.A. Cook, J.C. Gee. 
+			Reference:
+
+			BB Avants, NJ Tustison, J Wu, PA Cook, JC Gee. 
 			An open source multivariate framework for n-tissue segmentation
 			with evaluation on public data.
 			Neuroinformatics, 2011 Dec, 9(4):381-400.
 
-			PySisyphe uses the ANTs library implemenentation
-			(https://github.com/ANTsX/ANTs/tree/master)
-			wrapped to python 
-			(https://github.com/ANTsX/ANTsPy; 
-			 https://antspyx.readthedocs.io/en/latest/index.html)
+			PySisyphe uses the ANTs library implemenentation.
 		</Title>
-		<AnisotropicDiffusionFilter/>
-		<BiasFieldCorrection/>
-		<NumberOfClasses/>
-		<NumberOfIterations/>
-		<Smoothing/>
-		<Radius/>
-		<SegPrefix/>
-		<SegSuffix/>
-		<Prefix/>
-		<Suffix/>
+		<AnisotropicDiffusionFilter>
+			Anisotropic gradient diffusion filtering preprocessing before
+			clustering ?
+		</AnisotropicDiffusionFilter>
+		<BiasFieldCorrection>
+			Bias field correction preprocessing before clustering ?
+		</BiasFieldCorrection>
+		<NumberOfClasses>
+			Number of classes (i.e. labels, default 3) used by the K-Means 
+			statistical classifier.
+		</NumberOfClasses>
+		<NumberOfIterations>
+			Maximum number of iterations (default 3).
+		</NumberOfIterations>
+		<Smoothing>
+			Label smoothness, higher value is smoother (default 0.1).
+		</Smoothing>
+		<Radius>
+			MRF kernel extent in voxels used for label smoothing (default 1).
+		</Radius>
+		<SegPrefix>
+		</SegPrefix>
+			Prefix added to the file name to save the label volume.
+		<SegSuffix>
+			Suffix added to the file name to save the label volume.
+		</SegSuffix>
+		<Prefix>
+			Prefix added to the file name to save the class volumes. The prefix 
+			must contain a wildcard character (*), which will be replaced by 
+			the class index in the file name.
+		</Prefix>
+		<Suffix>
+			Suffix added to the file name to save the class volumes. The suffix 
+			must contain a wildcard character (*), which will be replaced by 
+			the class index in the file name.
+		</Suffix>
 	</KMeansSegmentation>
 	<PriorBasedSegmentation>
 		<Title>
@@ -426,41 +622,102 @@
 			that classes are assigned consecutive indices 1, 2, 3, etc. Label 0 
 			is reserved for the background when a mask is specified.
 
-			Reference: B.B. Avants, N.J. Tustison, J. Wu, P.A. Cook, J.C. Gee. 
-			"An open source multivariate framework for n-tissue segmentation 
-			with evaluation on public data". 
+			Reference:
+
+			BB Avants, NJ Tustison, J Wu, PA Cook, JC Gee. 
+			An open source multivariate framework for n-tissue segmentation 
+			with evaluation on public data. 
 			Neuroinformatics, 2011 Dec, 9(4):381-400.
 
-			PySisyphe uses the ANTs library implemenentation 
-			(https://github.com/ANTsX/ANTs/tree/master)
-			wrapped to python 
-			(https://github.com/ANTsX/ANTsPy; 
-			 https://antspyx.readthedocs.io/en/latest/index.html)
+			PySisyphe uses the ANTs library implemenentation.
 		</Title>
-		<AnisotropicDiffusionFilter/>
-		<BiasFieldCorrection/>
-		<NumberOfIterations/>
-		<Smoothing/>
-		<Radius/>
-		<Convergence/>
-		<Priors/>
-		<NumberOfPriors/>
-		<PriorWeight/>
-		<PriorSmoothing/>
-		<PriorsRegistration/>
-		<PriorsRegistrationEstimation/>
-		<T1/>
-		<Mask/>
-		<GMPrior/>
-		<CGMPrior/>
-		<SCGMPrior/>
-		<WMPrior/>
+		<AnisotropicDiffusionFilter>
+			Anisotropic gradient diffusion filtering preprocessing before
+			clustering ?
+		</AnisotropicDiffusionFilter>
+		<BiasFieldCorrection>
+			Bias field correction preprocessing before clustering ?
+		</BiasFieldCorrection>
+		<NumberOfIterations>
+			Maximum number of iterations (default 10).
+		</NumberOfIterations>
+		<Smoothing>
+			Label smoothness, higher value is smoother (default 0.1).
+		</Smoothing>
+		<Radius>
+			MRF kernel extent in voxels used for label smoothing (default 1).
+		</Radius>
+		<Convergence>
+			Stopping criterion as a threshold of the mean maximum posterior 
+			probability variation between two iterations (default no 
+			convergence threshold, all iterations are lasted).
+		</Convergence>
+		<Priors>
+			Prior probability images (ICBM152 default, or ATROPOS tissue 
+			probability templates) or calculated prior images (K-Means 
+			algorithm).
+		</Priors>
+		<NumberOfPriors>
+			Number of tissue classes: 3 (gray matter, white matter, 
+			cerebro-spinal fluid), 4 (default, cortical gray matter, subcortical 
+			gray matter, white matter, cerebro-spinal fluid) or 6 (cortical gray 
+			matter, subcortical gray matter, white matter, cerebro-spinal 
+			fluid, brainstem, cerebellum).
+		</NumberOfPriors>
+		<PriorWeight>
+			Prior probability image weight in the the intensity profile of each 
+			class modelization: 0 (priors used for initialization only), 
+			0.25 (default) or 0.5.
+		</PriorWeight>
+		<PriorSmoothing>
+			Full width at half maximum (FWHM) of the Gaussian kernel, which is 
+			used for prior probability image smoothing, in millimeters (mm). 
+			The default is 0.0, meaning that no smoothing is applied.
+		</PriorSmoothing>
+		<PriorsRegistration>
+			Type of geometric transformation (affine default, or diffeomorphic) 
+			used for coregistration between the prior probability images and 
+			the volume to be segmented.
+		</PriorsRegistration>
+		<PriorsRegistrationEstimation>
+			Method used to initialize translations for prior probability images 
+			coregistration with the Priors registration estimation: FOV center 
+			alignment (default), center of mass alignment or no estimation 
+			(translations and rotations to 0.0).
+		</PriorsRegistrationEstimation>
+		<T1>
+			Custom T1 template volume (.xvol).
+		</T1>
+		<Mask>
+			Custom mask template volume (.xvol).
+		</Mask>
+		<GMPrior>
+			Custom gray matter prior volume (.xvol).
+		</GMPrior>
+		<CGMPrior>
+			Custom cortical gray matter prior volume (.xvol).
+		</CGMPrior>
+		<SCGMPrior>
+			Custom sub-cortical gray matter prior volume (.xvol).
+		</SCGMPrior>
+		<WMPrior>
+			Custom white matter prior volume (.xvol).
+		</WMPrior>
 		<CSFPrior/>
-		<BrainstemPrior/>
-		<CerebellumPrior/>
-		<SegSGM/>
-		<SegPrefix>Prefix added to file name to save the tissue label map.</SegPrefix>
-		<SegSuffix>Suffix added to file name to save the tissue label map.</SegSuffix>
+			Custom cerebro-spinal fluid prior volume (.xvol).
+		</CSFPrior>
+		<BrainstemPrior>
+			Custom brainstem prior volume (.xvol).
+		</BrainstemPrior>
+		<CerebellumPrior>
+			Custom cerebellulm prior volume (.xvol).
+		</CerebellumPrior>
+		<SegPrefix>
+			Prefix added to file name to save the tissue label map.
+		</SegPrefix>
+		<SegSuffix>
+			Suffix added to file name to save the tissue label map.
+		</SegSuffix>
 	</PriorBasedSegmentation>
 	<CorticalThickness>
 		<Title>
@@ -468,30 +725,124 @@
 			(Diffeomorphic Registration-based Cortical Thickness measurement). 
 			DiReCT is a registration based estimate of cortical thickness.
 
-			Reference: S. R. Das, B. B. Avants, M. Grossman, and J. C. Gee, 
+			Reference:
+
+			SR Das, BB Avants, M Grossman, and JC Gee. 
 			Registration based cortical thickness measurement, 
 			Neuroimage 2009, 45:867-879.
 
-			PySisyphe uses the ANTs library implemenentation 
-			(https://github.com/ANTsX/ANTs/tree/master)
-			wrapped to python 
-			(https://github.com/ANTsX/ANTsPy;
-			 https://antspyx.readthedocs.io/en/latest/index.html)
+			PySisyphe uses the ANTs library implemenentation.
 		</Title>
-		<NumberOfIterations>Number of iterations (default 45)</NumberOfIterations>
-		<GradientStep/>
-		<GradientSmoothing/>
-		<Prefix>Prefix added to save the cortical thickness map.</Prefix>
-		<Suffix>Suffix added to save the cortical thickness map.</Suffix>
+		<NumberOfIterations>
+			Number of iterations (default 45).
+		</NumberOfIterations>
+		<GradientStep>
+			Gradient descent optimization, gradient update at each iteration, 
+			used in the coregistration processing (default 0.025).
+		</GradientStep>
+		<GradientSmoothing>
+			Gaussian kernel extent (default 1.0) , expressed in voxels, used 
+			for gradient field smoothing to obtain a more regular and 
+			anatomically plausible field. In practice, this smoothing prevents 
+			noisy deformation trajectories and ensures that the measured 
+			thickness corresponds to an average cortical distance rather than a 
+			series of micro-irregularities from the segmentation. Values that 
+			are too high (> 3) can over-smooth and bias the thickness in thin 
+			regions.
+		</GradientSmoothing>
+		<Prefix>
+			Prefix added to file name to save the cortical thickness map.
+		</Prefix>
+		<Suffix>
+			Suffix added to file name tosave the cortical thickness map.
+		</Suffix>
 	</CorticalThickness>
 	<RegistrationBasedSegmentation>
-		<Title/>
-		<GlobalStageTransform/>
-		<LocalStage/>
-		<LocalMagrin/>
-		<LocalStageTransform/>
-		<StructureTissue/>
-		<TissueCorrectionAlgorithm/>
+		<Title>
+			Instead of trying to classify each voxel directly from scratch, as 
+			in clustering or deep learning, registration-based segmentation 
+			uses reference atlas images (templates) with known anatomical 
+			labels (structures). By coregistering an atlas image to a subject’s 
+			image, the structures from the atlas can be transferred to the 
+			subject, providing a segmentation. Structures can be binary images 
+			(mask) or probability images.
+
+			The algorithm runs in two stages. First, it performs a global 
+			coregistration of the whole brain. Then, it makes fine local 
+			coregistration restricted to the structural area.
+		</Title>
+		<GlobalStageTransform>
+			Global coregistration algorithm:
+
+			- AntsAffine: single step of affine coregistration (no 
+			diffeomorphic step), 4 multiresolution stages with last at full 
+			resolution.
+	
+			- AntsFastAffine: single step of affine coregistration (no 
+			diffeomorphic step), fast scheme with only 3 multiresolution 
+			stages, and no iteration at full resolution. 
+	
+			- AntsSplineDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field modelled using B-spline basis functions, 
+			4 multiresolution stages with last at full resolution.
+	
+			- AntsDiffeomorphic: affine step followed by diffeomorphic step, 
+			displacement field optimized at voxel level, 4 multiresolution 
+			stages with last at full resolution.
+	
+			- AntsFastSplineDiffeomorphic: affine step followed by 
+			diffeomorphic step, displacement field modelled using B-spline 
+			basis functions, fast scheme with only 3 multiresolution stages, 
+			and no iteration at full resolution.
+	
+			- AntsFastDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field optimized at voxel level, fast scheme with 
+			only 3 multiresolution stages, and no iteration at full resolution.
+		</GlobalStageTransform>
+		<LocalStage>
+			Perform or not a local stage, fine coregistration step which is 
+			restricted to the structure area.
+		</LocalStage>
+		<LocalMagrin>
+			Define the local coregistration area as the volume of the structure 
+			to be segmented, enlarged by a margin expressed in voxels.
+		</LocalMagrin>
+		<LocalStageTransform>
+			Local coregistration algorithm:
+
+			- AntsSplineDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field modelled using B-spline basis functions, 
+			4 multiresolution stages with last at full resolution.
+	
+			- AntsDiffeomorphic: affine step followed by diffeomorphic step, 
+			displacement field optimized at voxel level, 4 multiresolution 
+			stages with last at full resolution.
+	
+			- AntsFastSplineDiffeomorphic: affine step followed by 
+			diffeomorphic step, displacement field modelled using B-spline 
+			basis functions, fast scheme with only 3 multiresolution stages, 
+			and no iteration at full resolution.
+	
+			- AntsFastDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field optimized at voxel level, fast scheme with 
+			only 3 multiresolution stages, and no iteration at full resolution.
+		</LocalStageTransform>
+		<StructureTissue>
+			Tissue map used for structure correction: gray matter map (GM), 
+			white matter map (WM), cerebro-spinal map (CSF), gray matter/white 
+			matter mixture map (GM+WM) or gray matter/cerebro-spinal mixture 
+			map (CFS+GM)
+		</StructureTissue>
+		<TissueCorrectionAlgorithm>
+			After the coregistration step, the structure can be corrected 
+			using either a "tissue map" or a "nearest neighbor transform".
+		</TissueCorrectionAlgorithm>
+		<PMAPCorrection>
+			Probability map correction:
+
+			p = p(STRUCT) ^ (0.5 / p(TISSUE)), default
+			p = p(STRUCT) ^ (1 + log(0.5 / p(TISSUE)))
+		</PMAPCorrection>
 	</RegistrationBasedSegmentation>
 	<Registration>
 		<Title>
@@ -508,199 +859,525 @@
 			algorithm: mean squares, cross-correlation, mutual information and 
 			demons (only SyN registration for the last).
 
-			Reference: "Symmetric diffeomorphic image registration with 
-			cross-correlation: evaluating automated labeling of elderly and 
-			neurodegenerative brain". B.B. Avants, C.L. Epstein, M. Grossman, 
-			J.C. Gee. Med Imag Anal. 2008 Feb, 12(1):26-41.
+			Reference: 
 
-			PySisyphe uses the ANTs library implemenentation 
-			(https://github.com/ANTsX/ANTs/tree/master)
-			wrapped to python 
-			(https://github.com/ANTsX/ANTsPy;
-			 https://antspyx.readthedocs.io/en/latest/index.html)
+			BB Avants, CL Epstein, M Grossman, JC Gee.
+			Symmetric diffeomorphic image registration with cross-correlation: 
+			evaluating automated labeling of elderly and 
+			neurodegenerative brain.  Med Imag Anal. 2008 Feb, 12(1):26-41.
+
+			PySisyphe uses the ANTs library implemenentation.
 		</Title>
-		<FixedMask>Mask processing to exclude background.</FixedMask>
-		<Estimation>Translation estimation before automatic registration.</Estimation>
-		<ManualRegistration>Manual registration before automatic registration.</ManualRegistration>
-		<Batch>Type of transform used in batch mode: rigid, affine or displacement field</Batch>
+		<FixedMask>Mask processing to exclude background ?</FixedMask>
+		<Estimation>
+			Translation estimation before automatic registration ?
+		</Estimation>
+		<ManualRegistration>
+			Manual registration before automatic registration ?
+		</ManualRegistration>
+		<Batch>
+			Type of transform used in batch mode: rigid, affine or 
+			displacement field
+		</Batch>
 		<Rigid>
 			Rigid multi-resolution scheme:
 			
-			1) AntsRigid: 4 stages with last at full resolution
+			- AntsRigid: 4 stages with last at full resolution
 			
-			2) AntsRigid: fast scheme with only 3 stages, no iteration at full 
+			- AntsRigid: fast scheme with only 3 stages, no iteration at full 
 			resolution
 		</Rigid>
 		<Affine>
 			Affine multi-resolution scheme:
 			
-			1) AntsAffine: 2 stages rigid -> affine, 4 multi-resolution levels 
+			- AntsAffine: 2 stages rigid -> affine, 4 multi-resolution levels 
 			for each stage, last level of each stage at full resolution.
 			
-			2) AntsFastAffine: 2 stages rigid -> affine, but only 3 
+			- AntsFastAffine: 2 stages rigid -> affine, but only 3 
 			multi-resolution levels for each stage, no iteration at full 
 			resolution.
 		</Affine>
 		<DisplacementField>
 			Non linear registration displacement field:
 			
-			1) AntsSplineDiffeomorphic: 3 stages rigid -> affine -> elastic 
+			- AntsSplineDiffeomorphic: 3 stages rigid -> affine -> elastic 
 			BSpline displacement field, 4 multi-resolution levels for each 
 			stage, last level of each stage at full resolution.
 
-			2) AntsFastSplineDiffeomorphic: 3 stages rigid -> affine -> elastic 
+			- AntsFastSplineDiffeomorphic: 3 stages rigid -> affine -> elastic 
 			BSpline displacement field, but only 3 multi-resolution levels for 
 			each stage, no iteration at full resolution.
 
-			3) AntsDiffeomorphic: 3 stages rigid -> affine -> SyN dense 
+			- AntsDiffeomorphic: 3 stages rigid -> affine -> SyN dense 
 			displacement field, 4 multi-resolution levels for each stage, last 
 			level of each stage at full resolution.
 
-			4) AntsFastDiffeomorphic: 3 stages rigid -> affine -> SyN dense 
+			- AntsFastDiffeomorphic: 3 stages rigid -> affine -> SyN dense 
 			displacement field, but only 3 multi-resolution levels for each 
 			stage, no iteration at full resolution.
 
-			5) AntsRigidSplineDiffeomorphic: 2 stages rigid -> elastic BSpline 
+			- AntsRigidSplineDiffeomorphic: 2 stages rigid -> elastic BSpline 
 			displacement field, 4 multi-resolution levels for each stage, last 
 			level of each stage at full resolution.
 
-			6) AntsFastRigidSplineDiffeomorphic: 2 stages rigid -> elastic 
+			- AntsFastRigidSplineDiffeomorphic: 2 stages rigid -> elastic 
 			BSpline displacement field, but only 3 multi-resolution levels for 
 			each stage, no iteration at full resolution.
 
-			7) AntsRigidDiffeomorphic: 2 stages rigid -> SyN dense displacement 
+			- AntsRigidDiffeomorphic: 2 stages rigid -> SyN dense displacement 
 			field, 4 multi-resolution levels for each stage, last level of each 
 			stage at full resolution.
 
-			8) AntsFastRigidDiffeomorphic: 2 stages rigid -> SyN dense 
+			- AntsFastRigidDiffeomorphic: 2 stages rigid -> SyN dense 
 			displacement field, but only 3 multi-resolution levels for each 
 			stage, no iteration at full resolution.
 
-			9) AntsSplineDiffeomorphicOnly: 1 stage elastic BSpline displacement
+			- AntsSplineDiffeomorphicOnly: 1 stage elastic BSpline displacement
 			field, 4 multi-resolution levels for each stage, last level of each 
 			stage at full resolution.
 
-			10) AntsFastSplineDiffeomorphicOnly: 1 stage elastic BSpline 
+			- AntsFastSplineDiffeomorphicOnly: 1 stage elastic BSpline 
 			displacement field, but only 3 multi-resolution levels for each 
 			stage, no iteration at full resolution.
 
-			11) AntsDiffeomorphicOnly: 1 stage SyN dense displacement field, 
+			- AntsDiffeomorphicOnly: 1 stage SyN dense displacement field, 
 			4 multi-resolution levels for each stage, last level of each stage 
 			at full resolution.
 
-			12) AntsFastDiffeomorphicOnly: 1 stage SyN dense displacement field,
+			- AntsFastDiffeomorphicOnly: 1 stage SyN dense displacement field,
 			but only 3 multi-resolution levels for each stage, no iteration at 
 			full resolution.
 		</DisplacementField>
-		<Transform/>
+		<Transform>
+			- AntsRigid: 4 stages with last at full resolution
+			
+			- AntsRigid: fast scheme with only 3 stages, no iteration at full 
+			resolution
+
+			- AntsAffine: 2 stages rigid -> affine, 4 multi-resolution levels 
+			for each stage, last level of each stage at full resolution.
+			
+			- AntsFastAffine: 2 stages rigid -> affine, but only 3 
+			multi-resolution levels for each stage, no iteration at full 
+			resolution.
+
+			- AntsSplineDiffeomorphic: 3 stages rigid -> affine -> elastic 
+			BSpline displacement field, 4 multi-resolution levels for each 
+			stage, last level of each stage at full resolution.
+
+			- AntsFastSplineDiffeomorphic: 3 stages rigid -> affine -> elastic 
+			BSpline displacement field, but only 3 multi-resolution levels for 
+			each stage, no iteration at full resolution.
+
+			- AntsDiffeomorphic: 3 stages rigid -> affine -> SyN dense 
+			displacement field, 4 multi-resolution levels for each stage, last 
+			level of each stage at full resolution.
+
+			- AntsFastDiffeomorphic: 3 stages rigid -> affine -> SyN dense 
+			displacement field, but only 3 multi-resolution levels for each 
+			stage, no iteration at full resolution.
+
+			- AntsRigidSplineDiffeomorphic: 2 stages rigid -> elastic BSpline 
+			displacement field, 4 multi-resolution levels for each stage, last 
+			level of each stage at full resolution.
+
+			- AntsFastRigidSplineDiffeomorphic: 2 stages rigid -> elastic 
+			BSpline displacement field, but only 3 multi-resolution levels for 
+			each stage, no iteration at full resolution.
+
+			- AntsRigidDiffeomorphic: 2 stages rigid -> SyN dense displacement 
+			field, 4 multi-resolution levels for each stage, last level of each 
+			stage at full resolution.
+
+			- AntsFastRigidDiffeomorphic: 2 stages rigid -> SyN dense 
+			displacement field, but only 3 multi-resolution levels for each 
+			stage, no iteration at full resolution.
+
+			- AntsSplineDiffeomorphicOnly: 1 stage elastic BSpline displacement
+			field, 4 multi-resolution levels for each stage, last level of each 
+			stage at full resolution.
+
+			- AntsFastSplineDiffeomorphicOnly: 1 stage elastic BSpline 
+			displacement field, but only 3 multi-resolution levels for each 
+			stage, no iteration at full resolution.
+
+			- AntsDiffeomorphicOnly: 1 stage SyN dense displacement field, 
+			4 multi-resolution levels for each stage, last level of each stage 
+			at full resolution.
+
+			- AntsFastDiffeomorphicOnly: 1 stage SyN dense displacement field,
+			but only 3 multi-resolution levels for each stage, no iteration at 
+			full resolution.
+		</Transform>
 		<LinearMetric>
-			Similarity metric used : mean squares (MS), mutual information (IM),
-			cross-correlation (CC)</LinearMetric>
-		<NonLinearMetric/>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC).
+		</LinearMetric>
+		<NonLinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC), DEMONS.
+		</NonLinearMetric>
 		<SamplingRate>
 			Subsampling used to calculate similarity function. if 1.0, no 
 			subsampling, all voxels are used to process similarity function. 
 			Lower values, indicate the ratio of voxels used to process 
-			similarity function under regular sub-sampling.
+			similarity function under regular sub-sampling (default 0.5).
 		</SamplingRate>
-		<Inverse/>
+		<Inverse>
+			Save the inverse displacement field that coregisters the fixed 
+			volume to the moving volume ?
+		</Inverse>
 		<CheckRegistration>Display the registration result ?</CheckRegistration>
 		<Resample>Resample the moving volume ?</Resample>
 	</Registration>
 	<T1Normalization>
 		<Title>T1 MR spatial normalization settings.</Title>
-		<Transform/>
-		<LinearMetric/>
-		<NonLinearMetric/>
+		<Transform>
+			- AntsAffine: single step of affine coregistration (no 
+			diffeomorphic step), 4 multiresolution stages with last at full 
+			resolution.
+   			
+   			- AntsFastAffine: single step of affine coregistration (no 
+   			diffeomorphic step), fast scheme with only 3 multiresolution 
+   			stages, and no iteration at full resolution. 
+   
+			- AntsSplineDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field modelled using B-spline basis functions, 
+			4 multiresolution stages with last at full resolution.
+   
+			- AntsDiffeomorphic (default): affine step followed by 
+			diffeomorphic step, displacement field optimized at voxel level, 
+			4 multiresolution stages with last at full resolution.
+   
+   			- AntsFastSplineDiffeomorphic: affine step followed by 
+   			diffeomorphic step, displacement field modelled using B-spline 
+   			basis functions, fast scheme with only 3 multiresolution stages, 
+   			and no iteration at full resolution.
+   
+			- AntsFastDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field optimized at voxel level, fast scheme 
+			with only 3 multiresolution stages, and no iteration at full 
+			resolution.
+		</Transform>
+		<LinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC).
+		</LinearMetric>
+		<NonLinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC), DEMONS.
+		</NonLinearMetric>
 		<SamplingRate>
 			Subsampling used to calculate similarity function. if 1.0, no 
 			subsampling, all voxels are used to process similarity function. 
 			Lower values, indicate the ratio of voxels used to process 
-			similarity function under regular sub-sampling.
+			similarity function under regular sub-sampling (default 0.5).
 		</SamplingRate>
 	</T1Normalization>
 	<T2Normalization>
 		<Title>T2 MR spatial normalization settings.</Title>
-		<Transform/>
-		<LinearMetric/>
-		<NonLinearMetric/>
+		<Transform>
+			- AntsAffine: single step of affine coregistration (no 
+			diffeomorphic step), 4 multiresolution stages with last at full 
+			resolution.
+   			
+   			- AntsFastAffine: single step of affine coregistration (no 
+   			diffeomorphic step), fast scheme with only 3 multiresolution 
+   			stages, and no iteration at full resolution. 
+   
+			- AntsSplineDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field modelled using B-spline basis functions, 
+			4 multiresolution stages with last at full resolution.
+   
+			- AntsDiffeomorphic (default): affine step followed by 
+			diffeomorphic step, displacement field optimized at voxel level, 
+			4 multiresolution stages with last at full resolution.
+   
+   			- AntsFastSplineDiffeomorphic: affine step followed by 
+   			diffeomorphic step, displacement field modelled using B-spline 
+   			basis functions, fast scheme with only 3 multiresolution stages, 
+   			and no iteration at full resolution.
+   
+			- AntsFastDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field optimized at voxel level, fast scheme 
+			with only 3 multiresolution stages, and no iteration at full 
+			resolution.
+		</Transform>
+		<LinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC).
+		</LinearMetric>
+		<NonLinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC), DEMONS.
+		</NonLinearMetric>
 		<SamplingRate>
 			Subsampling used to calculate similarity function. if 1.0, no 
 			subsampling, all voxels are used to process similarity function. 
 			Lower values, indicate the ratio of voxels used to process 
-			similarity function under regular sub-sampling.
+			similarity function under regular sub-sampling (default 0.5).
 		</SamplingRate>
 	</T2Normalization>
 	<PDNormalization>
 		<Title>Proton Density MR spatial normalization settings.</Title>
-		<Transform/>
-		<LinearMetric/>
-		<NonLinearMetric/>
+		<Transform>
+			- AntsAffine: single step of affine coregistration (no 
+			diffeomorphic step), 4 multiresolution stages with last at full 
+			resolution.
+   			
+   			- AntsFastAffine: single step of affine coregistration (no 
+   			diffeomorphic step), fast scheme with only 3 multiresolution 
+   			stages, and no iteration at full resolution. 
+   
+			- AntsSplineDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field modelled using B-spline basis functions, 
+			4 multiresolution stages with last at full resolution.
+   
+			- AntsDiffeomorphic (default): affine step followed by 
+			diffeomorphic step, displacement field optimized at voxel level, 
+			4 multiresolution stages with last at full resolution.
+
+   			- AntsFastSplineDiffeomorphic: affine step followed by 
+   			diffeomorphic step, displacement field modelled using B-spline 
+   			basis functions, fast scheme with only 3 multiresolution stages, 
+   			and no iteration at full resolution.
+   
+			- AntsFastDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field optimized at voxel level, fast scheme 
+			with only 3 multiresolution stages, and no iteration at full 
+			resolution.
+		</Transform>
+		<LinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC).
+		</LinearMetric>
+		<NonLinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC), DEMONS.
+		</NonLinearMetric>
 		<SamplingRate>
 			Subsampling used to calculate similarity function. if 1.0, no 
 			subsampling, all voxels are used to process similarity function. 
 			Lower values, indicate the ratio of voxels used to process 
-			similarity function under regular sub-sampling.
+			similarity function under regular sub-sampling (default 0.5).
 		</SamplingRate>
 	</PDNormalization>
 	<PTNormalization>
 		<Title>PET spatial normalization settings.</Title>
 		<Transform/>
-		<LinearMetric/>
-		<NonLinearMetric/>
+			- AntsAffine: single step of affine coregistration (no 
+			diffeomorphic step), 4 multiresolution stages with last at full 
+			resolution.
+   			
+   			- AntsFastAffine: single step of affine coregistration (no 
+   			diffeomorphic step), fast scheme with only 3 multiresolution 
+   			stages, and no iteration at full resolution. 
+   
+			- AntsSplineDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field modelled using B-spline basis functions, 
+			4 multiresolution stages with last at full resolution.
+   
+			- AntsDiffeomorphic: affine step followed by diffeomorphic step, 
+			displacement field optimized at voxel level, 4 multiresolution 
+			stages with last at full resolution.
+   
+   			- AntsFastSplineDiffeomorphic (default): affine step followed by 
+   			diffeomorphic step, displacement field modelled using B-spline 
+   			basis functions, fast scheme with only 3 multiresolution stages, 
+   			and no iteration at full resolution.
+   
+			- AntsFastDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field optimized at voxel level, fast scheme 
+			with only 3 multiresolution stages, and no iteration at full 
+			resolution.
+		</Transform>
+		<LinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC).
+		</LinearMetric>
+		<NonLinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC), DEMONS.
+		</NonLinearMetric>
 		<SamplingRate>
 			Subsampling used to calculate similarity function. if 1.0, no 
 			subsampling, all voxels are used to process similarity function. 
 			Lower values, indicate the ratio of voxels used to process 
-			similarity function under regular sub-sampling.
+			similarity function under regular sub-sampling (default 0.5).
 		</SamplingRate>
 	</PTNormalization>
 	<NMNormalization>
 		<Title>SPECT spatial normalization settings.</Title>
 		<Transform/>
-		<LinearMetric/>
-		<NonLinearMetric/>
+			- AntsAffine: single step of affine coregistration (no 
+			diffeomorphic step), 4 multiresolution stages with last at full 
+			resolution.
+   			
+   			- AntsFastAffine: single step of affine coregistration (no 
+   			diffeomorphic step), fast scheme with only 3 multiresolution 
+   			stages, and no iteration at full resolution. 
+   
+			- AntsSplineDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field modelled using B-spline basis functions, 
+			4 multiresolution stages with last at full resolution.
+   
+			- AntsDiffeomorphic: affine step followed by diffeomorphic step, 
+			displacement field optimized at voxel level, 4 multiresolution 
+			stages with last at full resolution.
+   
+   			- AntsFastSplineDiffeomorphic (default): affine step followed by 
+   			diffeomorphic step, displacement field modelled using B-spline 
+   			basis functions, fast scheme with only 3 multiresolution stages, 
+   			and no iteration at full resolution.
+   
+			- AntsFastDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field optimized at voxel level, fast scheme 
+			with only 3 multiresolution stages, and no iteration at full 
+			resolution.
+		</Transform>
+		<LinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC).
+		</LinearMetric>
+		<NonLinearMetric>
+		</NonLinearMetric>
 		<SamplingRate>
 			Subsampling used to calculate similarity function. if 1.0, no 
 			subsampling, all voxels are used to process similarity function. 
 			Lower values, indicate the ratio of voxels used to process 
-			similarity function under regular sub-sampling.
+			similarity function under regular sub-sampling (default 0.5).
 		</SamplingRate>
 	</NMNormalization>
 	<GMNormalization>
 		<Title>Gray matter map spatial normalization settings.</Title>
 		<Transform/>
-		<LinearMetric/>
-		<NonLinearMetric/>
+			- AntsAffine: single step of affine coregistration (no 
+			diffeomorphic step), 4 multiresolution stages with last at full 
+			resolution.
+   			
+   			- AntsFastAffine: single step of affine coregistration (no 
+   			diffeomorphic step), fast scheme with only 3 multiresolution 
+   			stages, and no iteration at full resolution. 
+   
+			- AntsSplineDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field modelled using B-spline basis functions, 
+			4 multiresolution stages with last at full resolution.
+   
+			- AntsDiffeomorphic (default): affine step followed by 
+			diffeomorphic step, displacement field optimized at voxel level, 
+			4 multiresolution stages with last at full resolution.
+   
+   			- AntsFastSplineDiffeomorphic: affine step followed by 
+   			diffeomorphic step, displacement field modelled using B-spline 
+   			basis functions, fast scheme with only 3 multiresolution stages, 
+   			and no iteration at full resolution.
+   
+			- AntsFastDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field optimized at voxel level, fast scheme 
+			with only 3 multiresolution stages, and no iteration at full 
+			resolution.
+		</Transform>
+		<LinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC).
+		</LinearMetric>
+		<NonLinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC), DEMONS.
+		</NonLinearMetric>
 		<SamplingRate>
 			Subsampling used to calculate similarity function. if 1.0, no 
 			subsampling, all voxels are used to process similarity function. 
 			Lower values, indicate the ratio of voxels used to process 
-			similarity function under regular sub-sampling.
+			similarity function under regular sub-sampling (default 0.5).
 		</SamplingRate>
 	</GMNormalization>
 	<WMNormalization>
 		<Title>White matter map spatial normalization settings.</Title>
 		<Transform/>
-		<LinearMetric/>
-		<NonLinearMetric/>
+			- AntsAffine: single step of affine coregistration (no 
+			diffeomorphic step), 4 multiresolution stages with last at full 
+			resolution.
+   			
+   			- AntsFastAffine: single step of affine coregistration (no 
+   			diffeomorphic step), fast scheme with only 3 multiresolution 
+   			stages, and no iteration at full resolution. 
+   
+			- AntsSplineDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field modelled using B-spline basis functions, 
+			4 multiresolution stages with last at full resolution.
+   
+			- AntsDiffeomorphic (default): affine step followed by 
+			diffeomorphic step, displacement field optimized at voxel level, 
+			4 multiresolution stages with last at full resolution.
+   
+   			- AntsFastSplineDiffeomorphic: affine step followed by 
+   			diffeomorphic step, displacement field modelled using B-spline 
+   			basis functions, fast scheme with only 3 multiresolution stages, 
+   			and no iteration at full resolution.
+   
+			- AntsFastDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field optimized at voxel level, fast scheme 
+			with only 3 multiresolution stages, and no iteration at full 
+			resolution.
+		</Transform>
+		<LinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC).
+		</LinearMetric>
+		<NonLinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC), DEMONS.
+		</NonLinearMetric>
 		<SamplingRate>
 			Subsampling used to calculate similarity function. if 1.0, no 
 			subsampling, all voxels are used to process similarity function. 
 			Lower values, indicate the ratio of voxels used to process 
-			similarity function under regular sub-sampling.
+			similarity function under regular sub-sampling (default 0.5).
 		</SamplingRate>
 	</WMNormalization>
 	<CSFNormalization>
 		<Title>Cerebro-spinal fluid map spatial normalization settings.</Title>
 		<Transform/>
-		<LinearMetric/>
-		<NonLinearMetric/>
+			- AntsAffine: single step of affine coregistration (no 
+			diffeomorphic step), 4 multiresolution stages with last at full 
+			resolution.
+   			
+   			- AntsFastAffine: single step of affine coregistration (no 
+   			diffeomorphic step), fast scheme with only 3 multiresolution 
+   			stages, and no iteration at full resolution. 
+   
+			- AntsSplineDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field modelled using B-spline basis functions, 
+			4 multiresolution stages with last at full resolution.
+   
+			- AntsDiffeomorphic (default): affine step followed by 
+			diffeomorphic step, displacement field optimized at voxel level, 
+			4 multiresolution stages with last at full resolution.
+   
+   			- AntsFastSplineDiffeomorphic: affine step followed by 
+   			diffeomorphic step, displacement field modelled using B-spline 
+   			basis functions, fast scheme with only 3 multiresolution stages, 
+   			and no iteration at full resolution.
+   
+			- AntsFastDiffeomorphic: affine step followed by diffeomorphic 
+			step, displacement field optimized at voxel level, fast scheme 
+			with only 3 multiresolution stages, and no iteration at full 
+			resolution.
+		</Transform>
+		<LinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC).
+		</LinearMetric>
+		<NonLinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC), DEMONS.
+		</NonLinearMetric>
 		<SamplingRate>
 			Subsampling used to calculate similarity function. if 1.0, no 
 			subsampling, all voxels are used to process similarity function. 
 			Lower values, indicate the ratio of voxels used to process 
-			similarity function under regular sub-sampling.
+			similarity function under regular sub-sampling (default 0.5).
 		</SamplingRate>
 	</CSFNormalization>
 	<EddyCurrent>
@@ -709,34 +1386,78 @@
 			images are corrected by ANTs elastic registration (BSpline 
 			displacement field) with B0 volume.
 
-			PySisyphe uses the ANTs library implemenentation 
-			(https://github.com/ANTsX/ANTs/tree/master) 
-			wrapped to python 
-			(https://github.com/ANTsX/ANTsPy;
-			 https://antspyx.readthedocs.io/en/latest/index.html)
+			PySisyphe uses the ANTs library implemenentation.
 		</Title>
-		<Transform/>
-		<LinearMetric/>
-		<NonLinearMetric/>
-		<SamplingRate/>
-		<Prefix/>
-		<Suffix/>
+		<Transform>
+			- AntsAffine (default): single step of affine coregistration, 4 
+			multiresolution stages with last at full resolution.
+   
+   			- AntsSplineDiffeomorphicOnly: single step of diffeomorphic 
+   			coregistration without previous affine step, displacement field 
+   			modelled using B-spline basis functions, 4 multiresolution stages 
+   			with last at full resolution.
+   
+   			- AntsDiffeomorphicOnly: single step of diffeomorphic 
+   			coregistration without previous affine step, displacement field 
+   			optimized at voxel level, 4 multiresolution stages with last at 
+   			full resolution.
+
+			- AntsFastSplineDiffeomorphicOnly: single step of diffeomorphic 
+			coregistration without previous affine step, displacement field 
+			modelled using B-spline basis functions, fast scheme with only 3 
+			multiresolution stages, and no iteration at full resolution.
+
+			- AntsFastDiffeomorphicOnly: single step of diffeomorphic 
+			coregistration without previous affine step, displacement field 
+			optimized at voxel level, fast scheme with only 3 multiresolution 
+			stages, and no iteration at full resolution.
+		</Transform>
+		<LinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC).
+		</LinearMetric>
+		<NonLinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC), DEMONS.
+		</NonLinearMetric>
+		<SamplingRate>
+			Subsampling used to calculate similarity function. if 1.0, no 
+			subsampling, all voxels are used to process similarity function. 
+			Lower values, indicate the ratio of voxels used to process 
+			similarity function under regular sub-sampling (default 0.5).
+		</SamplingRate>
+		<Prefix>
+			Prefix added to file name to save the corrected volume.
+		</Prefix>
+		<Suffix>
+			Suffix added to file name to save the corrected volume.
+		</Suffix>
 	</EddyCurrent>
 	<Realignment>
 		<Title>
 			Volumes realignment settings (ANTs rigid registration) of a time 
 			series.
 
-			PySisyphe uses the ANTs library implemenentation 
-			(https://github.com/ANTsX/ANTs/tree/master)
-			wrapped to python 
-			(https://github.com/ANTsX/ANTsPy; 
-			 https://antspyx.readthedocs.io/en/latest/index.html)
+			PySisyphe uses the ANTs library implemenentation.
 		</Title>
-		<Reference/>
-		<Metric/>
-		<SamplingRate/>
-		<Mean/>
+		<Reference>
+			Volume that will be used as a reference to realign all volumes in 
+			the time series. This could be the first, middle, time series mean 
+			or median volume.
+		</Reference>
+		<Metric>
+			Similarity metrics: mean squares (MS, default), mutual information 
+			(IM), cross-correlation (CC).
+		</Metric>
+		<SamplingRate>
+			Subsampling used to calculate similarity function. if 1.0, no 
+			subsampling, all voxels are used to process similarity function. 
+			Lower values, indicate the ratio of voxels used to process 
+			similarity function under regular sub-sampling (default 0.5).
+		</SamplingRate>
+		<Mean>
+			Compute and save time series mean volume ?
+		</Mean>
 	</Realignment>
 	<Resample>
 		<Title>
@@ -746,17 +1467,27 @@
 			windowed sinus cardinal, Welch windowed sinus cardinal, Lanczos 
 			windowed sinus cardinal.
 
-			PySisyphe uses the SimpleITK library implemenentation 
-			(https://simpleitk.org/doxygen/v2_4/html/index.html)
-			wrapped to python 
-			(https://simpleitk.readthedocs.io/en/master/gettingStarted.html)
+			PySisyphe uses the SimpleITK library implemenentation.
 		</Title>
 		<Dialog/>
-		<Interpolator/>
-		<Prefix/>
-		<Suffix/>
-		<NormalizationPrefix/>
-		<NormalizationSuffix/>
+		<Interpolator>
+			Interpolation algorithm used to resample the moving volume: 
+			linear (default), nearest neighbor, b-spline, gaussian, 
+			hamming windowed sinc, cosine windowed sinc, welch windowed sinc, 
+			lanczos windowed sinc, blackman windowed sinc.
+		</Interpolator>
+		<Prefix>
+			Prefix added to file name to save the resampled volume.
+		</Prefix>
+		<Suffix>
+			Suffix added to file name to save the resampled volume.
+		</Suffix>
+		<NormalizationPrefix>
+			Prefix added to file name to save the normalized volume.
+		</NormalizationPrefix>
+		<NormalizationSuffix>
+			Suffix added to file name to save the normalized volume.
+		</NormalizationSuffix>
 	</Resample>
 	<DisplacementFieldJacobianDeterminant>
 		<Title>
@@ -764,14 +1495,58 @@
 			output scalar at each voxel is the Jacobian determinant of the 
 			vector field at that location.
 
-			PySisyphe uses the SimpleITK library implemenentation 
-			(https://simpleitk.org/doxygen/v2_4/html/index.html)
-			wrapped to python 
-			(https://simpleitk.readthedocs.io/en/master/gettingStarted.html)
+			PySisyphe uses the SimpleITK library implemenentation.
 		</Title>
-		<Prefix/>
-		<Suffix/>
+		<Prefix>
+			Prefix added to file name to save the Jocobian determinant volume.
+		</Prefix>
+		<Suffix>
+			Suffix added to file name to save the Jocobian determinant volume.
+		</Suffix>
 	</DisplacementFieldJacobianDeterminant>
+	<LateralityIndex>
+		<Title>
+			Hemispheric or regional dominance in cognitive functions, 
+			particularly language, can be quantified using laterality indexes 
+			(LI). The LI indicates the prevalence of activation in an fMRI 
+			statistical map on one side of the brain compared to the other. Its 
+			values range from +1.0 (left dominant) to -1.0 (right dominant).
+		</Title>
+		<MaskType>
+			Type of files used as hemispheric mask: volume (.xvol, default) or 
+			ROI (.xroi).
+		</MaskType>
+		<HistogramBins>
+			Number of statistical threshold intervals used for cumulative 
+			his￾tograms processing (default 100).
+		</HistogramBins>
+		<Template>
+			ICBM152 template volume used for the spatial normalization stage 
+			(.xvol).
+		</Template>
+		<LeftMask>
+			Left hemisphere mask in the ICBM152 space (.xvol).
+		</LeftMask>
+		<RightMask>
+			Right hemisphere mask in the ICBM152 space (.xvol).
+		</RightMask>
+	</LateralityIndex>
+	<Conjunction>
+		<Title>
+			A Conjunction allow you to determine whether a voxel or group of 
+			voxels passes a statistical threshold for two or more statistical 
+			maps. The t-maps are converted into z-maps so that conjunctions can 
+			be performed using either t or z-maps.
+		</Title>
+		<Method>
+			Conjunction method: Fisher (default), Mudholkar, Stouffer, Tippett, 
+			Worsley.
+		</Method>
+		<DefaultFileName>
+			Default file name used to save the conjuction map (default 
+			"conjunction").
+		</DefaultFileName>
+	</Conjunction>
 	<TimeSeriesPreprocessing>
 		<Title>
 			Computes pre-processing on time series:
@@ -788,27 +1563,35 @@
 			- mean signal in cerebro-spinal fluid
 			- mean signal in gray matter
 			- mean signal in white matter
-			- mean global signal (cerebro-spinal fluid + gray matter + white matter)
-			Tissue masks are extracted from a tissue label volume (next field, tissue map)
+			- mean global signal (cerebro-spinal fluid + gray matter + white 
+			matter)
+			
+			Tissue masks are extracted from a tissue label volume (next field, 
+			tissue map)
 		</TissueConfounds>
-		<TissueMap>Tissue label volume (cerebro-spinal fluuid, gray matter, white matter)</TissueMap>
+		<TissueMap>
+			Tissue label volume (cerebro-spinal fluuid, gray matter, white 
+			matter).
+		</TissueMap>
 		<Smoothing>
 			It gives the full-width at half maximum (fwhm) in millimeters of the
 			gaussian smoothing to apply to the time series. No smoothing if 0.0 
 			(default).
 		</Smoothing>
-		<Detrend>Whether to detrend time series or not (default True).</Detrend>
+		<Detrend>
+			Whether to detrend time series or not (checked by default).
+		</Detrend>
 		<Std>
 			The signal is z-scored. Timeseries are shifted to zero mean and 
-			scaled to unit variance (default False).
+			scaled to unit variance (unchecked by default).
 		</Std>
 		<StdConfounds>
 			The confounds are z-scored: mean is shifted to zero and scaled 
-			to unit variance in the time dimension (default True).
+			to unit variance in the time dimension (checked by default).
 		</StdConfounds>
 		<HighConfounds>
 			High variance confounds are computed on provided image and regressed
-			out (default False).
+			out (unchecked by default).
 		</HighConfounds>
 		<LowPass>
 			Low cutoff frequency in Hertz. If specified, signals above this 
@@ -823,6 +1606,53 @@
 		<DCM>Get Repetition Time (TR) value from dicom file</DCM>
 		<TR>Repetition Time (TR) value in ms</TR>
 	</TimeSeriesPreprocessing>
+	<TimeSeriesFastICA>
+		<Title>
+			Compute a time series (i.e. fMRI resting state) Independent 
+			Component Analysis (ICA). ICA separates a multivariate signal into 
+			additive subcomponents that are maximally independent.
+		</Title>
+		<Preprocessing>
+			Compute time-series preprocessings before FastICA (unchecked by 
+			default).
+		</Preprocessing>
+		<NumberOfComponents>
+			Number of components to extract (default 10).
+		</NumberOfComponents>
+		<Threshold>
+			Threshold ratio used to remove components that are likened to noise 
+			and have a low weight in the signal variance (default 0.8).
+		</Threshold>
+	</TimeSeriesFastICA>
+	<TimeSeriesSeedToVoxel>
+		<Title>
+			Compute seed-to-voxel correlation map from a time series (i.e. fMRI 
+			resting-state) multi-component volume. This map shows the temporal 
+			correlation between a seed region and the rest of the brain.
+		</Title>
+		<Preprocessing>
+			Compute time-series preprocessings before seed-to-voxel analysis 
+			(unchecked by default).
+		</Preprocessing>
+		<Seed>
+			PySisyphe ROI (.xroi), which will be used as the seed region to 
+			compute the correlation with the rest of the brain.
+		</Seed>
+	</TimeSeriesSeedToVoxel>
+	<TimeSeriesConnectivityMatrix>
+		<Title>
+			Extract time series signals (i.e. fMRI resting state) from a brain 
+			parcellation and compute a correlation matrix.
+		</Title>
+		<Preprocessing>
+			Compute time-series preprocessings before connectivity matrix 
+			processing (unchecked by default).
+		</Preprocessing>
+		<Label>
+			PySisyphe label volume (.xvol), which will be used for brain 
+			parcellation.
+		</Label>
+	</TimeSeriesConnectivityMatrix>
 	<Perfusion>
 		<Title>
 			Computes dynamic susceptibility contrast MR perfusion analysis.
@@ -844,16 +1674,22 @@
 			images, in milliseconds.
 		</TE>
 		<Masking>
-			Algorithm used to process brain mask (Huang, Mean, Otsu, Renyi, Yen,
-			Li, Shanbhag, Triangle, Intermodes, Maximumentropy, Kittler, 
-			Isodata, Moments)
+			Algorithm used to process brain mask (Huang default, Mean, Otsu, 
+			Renyi, Yen, Li, Shanbhag, Triangle, Intermodes, Maximumentropy, 
+			Kittler, Isodata, Moments).
 		</Masking>
 		<VoxelCount>
-			Number of voxels used to calculate arterial input function 
-			(mean curve of these voxels)
+			Number of voxels (default 10) used to calculate arterial input 
+			function (mean curve of these voxels)
 		</VoxelCount>
-		<Baseline>Range (start, end) of volume indices used as baseline signal</Baseline>
-		<Smoothing>Contrast concentration time series smoothing if True</Smoothing>
+		<Baseline>
+			Range (start, end) of volume indices used as baseline signal 
+			(default start=0, end=4).
+		</Baseline>
+		<Smoothing>
+			Contrast concentration time series smoothing if True (unchecked by 
+			default).
+		</Smoothing>
 		<Fitting>
 			Gamma variate fitting of contrast concentration time series if True 
 			(default). In this case, integration is performed using the 
@@ -872,8 +1708,10 @@
 			- peak time = t0 + (a * b)
 			- peak concentration = k ((a * b) / e) ** a
 
-			Reference: H.K. Thompson Jr, C.F. Starmer, R.E. Whalen, 
-			H.D. Mcintosh. Indicator Transit Time Considered as a Gamma Variate. 
+			Reference:
+
+			HK Thompson Jr, CF Starmer, RE Whalen, HD Mcintosh. 
+			Indicator Transit Time Considered as a Gamma Variate. 
 			Circ Res 1964 Jun;14:502-15.
 
 			Otherwise, a numerical integration is performed using the composite 
@@ -889,7 +1727,7 @@
 			truncated singular value decomposition with L-curve criterion (LCC) 
 			regularization.
 
-			Reference: S. Sourbron, M. Dujardin, S. Makkat and R. Luypaert. 
+			Reference: S Sourbron, M Dujardin, S Makkat and R Luypaert. 
 			Pixel-by-pixel deconvolution of bolus-tracking data: optimization 
 			and implementation. Phys Med Biol 2007 Jan 21;52(2):429-47.
 
@@ -908,33 +1746,23 @@
 			Gibbs artifacts.
 		</Title>
 		<Mask>
-			Create or not a mask. Use this to exclude background from filtering.
+			Create or not a mask. Use this to exclude background from filtering 
+			(checked by default).
 		</Mask>
 		<Algo>
-			Automatic thresholding algorithm used for mask processing: Huang, 
-			Mean, Otsu, Renyi, Yen, Li, Shanbhag, Triangle, Intermodes, 
-			Maximumentropy, Kittler, Isodata, Moments (default Huang)
+			Automatic thresholding algorithm used for mask processing: 
+			Huang (default), Mean, Otsu, Renyi, Yen, Li, Shanbhag, Triangle, 
+			Intermodes, Maximumentropy, Kittler, Isodata, Moments.
 
-			See SimpleITK:
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html
+			PySisyphe uses the SimpleITK library implemenentation.
 		</Algo>
 		<Size>
 			Kernel size, in voxels, of morphology operator used for mask 
-			processing.
+			processing (default 1).
 		</Size>
 		<Iter>
-			Number of morphological operator iterations for mask processing.
+			Number of morphological operator iterations for mask processing 
+			(default 2).
 		</Iter>
 		<GibbsSuppression>
 			Apply Gibbs artifact correction or not.
@@ -952,17 +1780,17 @@
 			harmonics in its Fourier representation.  The Fourier series, then, 
 			is cut short or truncated, hence the name for this artifact.
 
-			PySisyphe used the dipy implementation, see dipy: 
-			https://docs.dipy.org/1.8.0/examples_built/preprocessing/denoise_gibbs.html
+			PySisyphe used the dipy implementation.
 
 			Reference:
-			Kellner, E., Dhital, B., Kiselev, V.G, Reisert, M.
+
+			E Kellner, B Dhital, VG Kiselev, M Reisert.
 			Gibbs‐ringing artifact removal based on local subvoxel‐shifts. 
-			Magn Reson Med 2016;76:1574–1581. https://doi.org/10.1002/mrm.26054
+			Magn Reson Med 2016;76:1574–1581.
 		</GibbsSuppression>
 		<GibbsNeighbour>
 			Number of neighboring voxels used by the Gibbs artifact correction 
-			algorithm (default: 3).
+			algorithm (default 3).
 		</GibbsNeighbour>
 		<Denoise>
 			Choice of denoising algorithm: 
@@ -973,32 +1801,26 @@
 			- adaptive soft coefficient matching (4).
 
 			PySisyphe used the dipy denoising functions.
-			https://docs.dipy.org/stable/examples_built/preprocessing/denoise_localpca.html#sphx-glr-examples-built-preprocessing-denoise-localpca-py
-			https://docs.dipy.org/stable/examples_built/preprocessing/denoise_mppca.html#sphx-glr-examples-built-preprocessing-denoise-mppca-py
-			https://docs.dipy.org/stable/examples_built/preprocessing/denoise_nlmeans.html#sphx-glr-examples-built-preprocessing-denoise-nlmeans-py
-			https://docs.dipy.org/stable/examples_built/preprocessing/denoise_patch2self.html
-			https://docs.dipy.org/stable/examples_built/preprocessing/denoise_ascm.html#sphx-glr-examples-built-preprocessing-denoise-ascm-py
 
 			References:
-			(1) J. V. Manjón, P. Coupé, L. Concha, A. Buades, D. L. Collins, 
-			M. Robles. Diffusion weighted image denoising using overcomplete 
-			Local PCA. PLOS ONE, 8(9):e73021, 2013.
-			doi:10.1371/journal.pone.0073021.
 
-			(2) P. Coupé, P. Yger, S. Prima, P. Hellier, C. Kervrann, 
-			C. Barillot. An optimized blockwise nonlocal means denoising filter 
-			for 3-D magnetic resonance images. IEEE Transactions on Medical 
-			Imaging, 27(4):425–441, 2008. doi:10.1109/TMI.2007.906087.
+			(1) JV Manjón, P Coupé, L Concha, A Buades, DL Collins, M Robles. 
+			Diffusion weighted image denoising using overcomplete Local PCA. 
+			PLOS ONE, 8(9):e73021, 2013.
 
-			(3) S. Fadnavis, A. Chowdhury, J. Batson, P. Drineas, 
-			E. Garyfallidis. Patch2Self2: Self-supervised Denoising on Coresets 
-			via Matrix Sketching. In Proceedings of the IEEE/CVF Conference on 
+			(2) P Coupé, P Yger, S Prima, P Hellier, C Kervrann, C Barillot.
+			An optimized blockwise nonlocal means denoising filter for 
+			3-D magnetic resonance images. IEEE Transactions on Medical 
+			Imaging, 27(4):425–441, 2008.
+
+			(3) S Fadnavis, A Chowdhury, J Batson, P Drineas, E Garyfallidis. 
+			Patch2Self2: Self-supervised Denoising on Coresets via Matrix 
+			Sketching. In Proceedings of the IEEE/CVF Conference on 
 			Computer Vision and Pattern Recognition, volume, 27641–27651. 2024.
 
-			(4) P. Coupé, J. V. Manjón, M. Robles, L. D. Collins. Adaptive 
+			(4) P Coupé, JV Manjón, M Robles, LD Collins. Adaptive 
 			multiresolution Non-Local Means Filter for 3D MR image denoising. 
 			IET Image Processing, 6(5):558–568, July 2012. 
-			doi:10.1049/iet-ipr.2011.0161.
 		</Denoise>
 		<NoiseEstimation>
 			Choice of noise estimation algorithm: Local patches, Piesno.
@@ -1008,15 +1830,12 @@
 			adaptive soft coefficient matching denoising).
 
 			PySisyphe used the dipy noise estiumation functions.
-			https://docs.dipy.org/stable/examples_built/preprocessing/snr_in_cc.html#sphx-glr-examples-built-preprocessing-snr-in-cc-py
-			https://docs.dipy.org/stable/examples_built/preprocessing/piesno.html#sphx-glr-examples-built-preprocessing-piesno-py
 
 			Reference:
-			Cheng Guan Koay, Evren Özarslan, and Carlo Pierpaoli. 
+			CGn Koay, E Özarslan, and C Pierpaoli. 
 			Probabilistic Identification and Estimation of Noise (PIESNO): A 
 			self-consistent approach and its applications in MRI. 
 			Journal of Magnetic Resonance, 199(1):94–103, July 2009.
-			doi:10.1016/j.jmr.2009.03.005.
 		</NoiseEstimation>
 		<MRReconstruction>
 			Parallel reconstruction method of multi-channel coils used to 
@@ -1036,8 +1855,12 @@
 			reconstruction, set N as the number of phase array coils. This 
 			parameter is required for noise estimation.
 		</PhaseArray>
-		<Prefix>Prefix added to file name to save the preprocessed images.</Prefix>
-		<Suffix>Prefix added to file name to save the preprocessed images.</Suffix>
+		<Prefix>
+			Prefix added to file name to save the preprocessed images.
+		</Prefix>
+		<Suffix>
+			Prefix added to file name to save the preprocessed images.
+		</Suffix>
 	</DiffusionPreprocessing>
 	<PCADenoise>
 		<Title>Parameters of local PCA denoising method.</Title>
@@ -1047,7 +1870,7 @@
 		</Smooth>
 		<PatchRadius>
 			Radius of the local patch to be taken around each voxel.
-			Patch size = patch radius x 2 + 1 (2 gives 5x5x5 patches)
+			Patch size = patch radius x 2 + 1 (2 gives 5x5x5 patches, default)
 		</PatchRadius>
 		<PCAMethod>
 			eigenvalue decomposition (eig) or singular value decomposition (svd) 
@@ -1059,18 +1882,18 @@
 		<Title>Parameters of non-local means denoising method.</Title>
 		<PatchRadius>
 			Radius of the local patch to be taken around each voxel (default 1).
-			Patch size = patch radius x 2 + 1 (1 gives 3x3x3 patches)
+			Patch size = patch radius x 2 + 1 (1 gives 3x3x3 patches, default)
 		</PatchRadius>
 		<BlockRadius>
 			Radius of the local block to be taken around each voxel (default 2).
-			Block size = block radius x 2 + 1 (2 gives 5x5x5 blocks)
+			Block size = block radius x 2 + 1 (2 gives 5x5x5 blocks, default)
 		</BlockRadius>
 	</NLMeansDenoise>
 	<SelfSupervisedDenoise>
 		<Title>Parameters of self-supervised denoising method.</Title>
 		<PatchRadius>
-			Radius of the local patch to be taken around each voxel (default 0).
-			Patch size = patch radius x 2 + 1 (0 gives 1x1x1 patches)
+			Radius of the local patch to be taken around each voxel.
+			Patch size = patch radius x 2 + 1 (0 gives 1x1x1 patches, default)
 		</PatchRadius>
 		<Solver>
 			Algorithm used to solve the set of linear equations: ordinary least 
@@ -1094,40 +1917,30 @@
 		</Model>
 		<Algo>
 			Automatic thresholding algorithm used for brain segmentation: 
-			Huang, Mean, Otsu, Renyi, Yen, Li, Shanbhag, Triangle, Intermodes, 
-			Maximumentropy, Kittler, Isodata, Moments (default Huang)
+			Huang (default), Mean, Otsu, Renyi, Yen, Li, Shanbhag, Triangle, 
+			Intermodes, Maximumentropy, Kittler, Isodata, Moments.
 
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html
-			https://simpleitk.org/doxygen/lastest/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html
+			PySisyphe uses the SimpleITK library implemenentation.
 		</Algo>
 		<Size>
 			Structuring element size of morphological operators used to refine 
-			thresholding for brain segmentation.
+			thresholding for brain segmentation (default 1).
 		</Size>
-		<Iter>Number of morphological operator iterations (1 - 10).</Iter>
-		<Orientation>Gradient orientation conversion from LPS+ DICOM orientation to RAS+.</Orientation>
-		<Save>Save or do not save model (default True).</Save>
+		<Iter>Number of morphological operator iterations (default 2).</Iter>
+		<Orientation>
+			Gradient orientation conversion from LPS+ DICOM orientation to 
+			RAS+ (checked by default).
+		</Orientation>
+		<Save>Save or do not save model (checked by default).</Save>
 	</DiffusionModel>
 	<DTIModel>
 		<Title>
 			Diffusion Tensor model
 			Acquisition: up to 6 directions, b-value 1000 s/mm^2, at least 1 B0.
-
-			https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dti.html
 		</Title>
 		<Method>
 			Fitting methods:
-			- WLS: weighted least squares
+			- WLS: weighted least squares (default)
             - LS or OLS: ordinary least squares
             - NLLS: non-linear least-squares
             - RT or RESTORE: RESTORE robust tensor
@@ -1144,12 +1957,10 @@
 			Diffusional Kurtosis model
 			Acquisition: b-values of 0, 500, 1000, 1500, 2000, +/- 2500 s/mm^2, 
 			at least 15 directions.
-
-			https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dki.html
 		</Title>
 		<Method>
 			Fitting methods:
-			- OLS or ULLS: ordinary least squares
+			- OLS or ULLS: ordinary least squares (default)
             - WLS, WLLS or UWLLS: weighted ordinary least squares
             - CLS or LMI: constrained ordinary least squares
             - CWLS: constrained weighted least squares
@@ -1166,10 +1977,8 @@
 			Constant Solid Angle ODF (Q-Ball) model
 			Acquisition: HARDI data with at least 200 directions, b-value 3000 
 			s/mm^2, or multi-shell.
-
-			https://docs.dipy.org/stable/examples_built/reconstruction/reconst_csa.html
 		</Title>
-		<Order>Spherical harmonic order (2 - 10, default 6).</Order>
+		<Order>Spherical harmonic order (default 6).</Order>
 		<GFA>Generalized Fractional Anisotropy (GFA).</GFA>
 	</SHCSAModel>
 	<SHCSDModel>
@@ -1178,10 +1987,8 @@
 			Acquisition: 20 directions, b-value 1000 s/mm^2; benefits 
 			additionally from HARDI data 60 direction, b-value 3000 s/mm^2 or 
 			multi-shell.
-
-			https://docs.dipy.org/stable/examples_built/reconstruction/reconst_csd.html
 		</Title>
-		<Order>Spherical harmonic order (2 - 10, default 6).</Order>
+		<Order>Spherical harmonic order (default 6).</Order>
 		<GFA>Generalized Fractional Anisotropy (GFA).</GFA>
 	</SHCSDModel>
 	<DSIModel>
@@ -1189,8 +1996,6 @@
 			Diffusion Spectrum model
 			Acquisition: at least 100 directions with b-values = 1000, 2000, 
 			3000 s/mm^2.
-
-			https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dsi.html
 		</Title>
 		<GFA>Generalized Fractional Anisotropy (GFA).</GFA>
 	</DSIModel>
@@ -1199,8 +2004,6 @@
 			Diffusion Spectrum Deconvolution model
 			Acquisition: at least 200 directions with b-values = 1000, 2000, 
 			3000 s/mm^2 +/- 4000 s/mm^2.
-
-			https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dsid.html
 		</Title>
 		<GFA>Generalized Fractional Anisotropy (GFA).</GFA>
 	</DSIDModel>
@@ -1208,16 +2011,14 @@
 		<Title>Tracking algorithm selection.</Title>
 		<BundleName>Name of the tractogram</BundleName>
 		<TrackingAlgorithm>
-			Deterministic : Deterministic tractography algorithms perform 
+			- Deterministic: Deterministic tractography algorithms perform 
 			tracking of streamlines in a step-wise fashion by following a 
 			predictable path, such as following the primary diffusion direction.
 			This is so called deterministic because if you repeat the fiber 
 			tracking with same inputs you will get exactly the same set of 
 			streamlines.
-
-			https://docs.dipy.org/stable/examples_built/fiber_tracking/tracking_deterministic.html
 			
-			Probabilistic : The probabilistic approach follows the trajectory 
+			- Probabilistic: The probabilistic approach follows the trajectory 
 			of a possible pathway in a step-wise fashion and propagate 
 			streamlines based on the local orientations reconstructed at each 
 			voxel. In probabilistic tracking, however, the tracking direction 
@@ -1225,126 +2026,148 @@
 			distribution of possible directions. If you repeat the fiber 
 			tracking with same inputs you will not get exactly the same set 
 			of streamlines.
-
-			https://docs.dipy.org/stable/examples_built/fiber_tracking/tracking_probabilistic.html
 		</TrackingAlgorithm>
 		<DeterministicAlgorithm>
-			Euler EuDX tracking: EuDX makes use of the primary direction of the 
-			diffusion tensor to propagate streamlines.
+			- Euler EuDX tracking: EuDX makes use of the primary direction of 
+			the diffusion tensor to propagate streamlines.
 
-			https://docs.dipy.org/stable/examples_built/quick_start/tracking_introduction_eudx.html
+			- Determintistic Fiber orientation distribution tracking: 
+			Deterministic tractography is an alternative to EuDX deterministic 
+			tractography and EuDX does not follow the peaks of the local models 
+			but uses the entire orientation distributions.
 
-			Determintistic Fiber orientation distribution tracking: Deterministic
-			tractography is an alternative to EuDX deterministic tractography and
-			EuDX does not follow the peaks of the local models but uses the entire
-			orientation distributions.
+			- Parallel transport tracking
 
-			https://docs.dipy.org/stable/examples_built/fiber_tracking/tracking_deterministic.html
-			
-			Parallel transport tracking
+			- Closest peak direction tracking
 
-			https://docs.dipy.org/stable/examples_built/fiber_tracking/tracking_ptt.html
-
-			Closest peak direction tracking
-
-			https://docs.dipy.org/stable/examples_built/fiber_tracking/tracking_bootstrap_peaks.html
-		</DeterministicAlgorithm>
+			PySisyphe uses the dipy library implemenentation.
 		<ProbabilisticAlgorithm>
-			Bootstrap direction tracking
+			- Bootstrap direction tracking
 
-			https://docs.dipy.org/stable/examples_built/fiber_tracking/tracking_bootstrap_peaks.html
+			- Probabilistic tracking
 
-			Probabilistic tracking:
-
-			https://docs.dipy.org/stable/examples_built/fiber_tracking/tracking_probabilistic.html
+			- PySisyphe uses the dipy library implemenentation.
 		</ProbabilisticAlgorithm>
 		<SeedMethod>
 			Mask voxels are used as start points for streamlines (seed).
 			
-			- FA, mask calculated from FA threshold
+			- FA, mask calculated from FA threshold (default)
 			- GFA, mask calculated from GFA threshold
 			- ROI, ROI volume
 		</SeedMethod>
-		<SeedFAThreshold>FA threshold used as seed.</SeedFAThreshold>
-		<SeedGFAThreshold>GFA threshold used as seed.</SeedGFAThreshold>
+		<SeedFAThreshold>
+			FA threshold used as seed (default 0.2).
+		</SeedFAThreshold>
+		<SeedGFAThreshold>
+			GFA threshold used as seed (default 0.2).
+		</SeedGFAThreshold>
 		<SeedROI>ROI mask used as seed.</SeedROI>
-		<SeedCount>Number of streamlines generated from a seed voxel (1 - 10, default 10)</SeedCount>
+		<SeedCount>
+			Number of streamlines generated from a seed voxel (default 10).
+		</SeedCount>
 		<StepSize>Streamline sampling in mm (default 0.5).</StepSize>
-		<Angle>Maximum angle between two contiguous streamline points in degrees (default 20).</Angle>
-		<MinimalLength>Minimal lenght of streamlines in mm.</MinimalLength>
+		<Angle>
+			Maximum angle between two contiguous streamline points in degrees 
+			(default 20).
+		</Angle>
+		<MinimalLength>
+			Minimal lenght of streamlines in mm (default 0.0).
+		</MinimalLength>
 		<RelativePeakThreshold>
-			Relative peak threshold (relative to the largest peak) of relevant peak directions (0.0 - 1.0, default 0.5).
-			Peaks below the threshold are ignored.
+			Relative peak threshold (relative to the largest peak) of relevant 
+			peak directions (0.0 - 1.0, default 0.5).Peaks below the threshold 
+			are ignored.
 		</RelativePeakThreshold>
 		<MinSeparationAngle>
-			Minimum angle between relevant peak directions (0° - 90°, default 30°).
+			Minimum angle between relevant peak directions (0° - 90°, 
+			default 30°).
 		</MinSeparationAngle>
 		<NPeaks>
-			Maximum number of relevant discretized directions of peaks (1 - 10, default 5).
-			Directions of peaks are processed from a discretized fiber orientation distribution of the current diffusion
-			model.
+			Maximum number of relevant discretized directions of peaks (1 - 10, 
+			default 5). Directions of peaks are processed from a discretized 
+			fiber orientation distribution of the current diffusion model.
 		</NPeaks>
 		<StoppingCriterion>
-			A mask is used as stopping criterion. Tracking is interrupted when the mask is left.
+			A mask is used as stopping criterion. Tracking is interrupted when 
+			the mask is left.
 			
-			- FA, mask calculated from FA threshold
+			- FA, mask calculated from FA threshold (default)
 			- GFA, mask calculated from GFA threshold
 			- ROI, ROI volume
-			- GM/WM/CSF, anatomically-constrained tractography, masks calculated from GM/WM/CSF maps
+			- GM/WM/CSF, anatomically-constrained tractography, masks 
+			calculated from GM/WM/CSF maps
 		</StoppingCriterion>
-		<StoppingFAThreshold>FA threshold used as stopping criterion.</StoppingFAThreshold>
-		<StoppingGFAThreshold>GFA threshold used as stopping criterion.</StoppingGFAThreshold>
+		<StoppingFAThreshold>
+			FA threshold used as stopping criterion (default 0.1).
+		</StoppingFAThreshold>
+		<StoppingGFAThreshold>
+			GFA threshold used as stopping criterion (default 0.1).
+		</StoppingGFAThreshold>
 		<StoppingROI>ROI mask used as stopping criterion.</StoppingROI>
 		<StoppingGM>
 			Gray matter map used as anatomically-constrained stopping criterion.
 
-			Anatomically-constrained tractography (ACT) uses information from anatomical images to determine when the
-			tractography stops. The include map defines when the streamline reached a ‘valid’ stopping region
-			(e.g. gray matter map) and the exclude map defines when the streamline reached an ‘invalid’ stopping region
-			(e.g. corticospinal fluid map). The ACT stopping criterion uses a trilinear interpolation at the tracking
-			position.
+			Anatomically-constrained tractography (ACT) uses information from 
+			anatomical images to determine when thetractography stops. The 
+			include map defines when the streamline reached a ‘valid’ stopping 
+			region (e.g. gray matter map) and the exclude map defines when the 
+			streamline reached an ‘invalid’ stopping region (e.g. corticospinal 
+			fluid map). The ACT stopping criterion uses a trilinear 
+			interpolation at the tracking position.
 
 			Maps:
 			- include map = gray matter map
 			- exclude map = corticospinal fluid map
-			- background = not(gray matter + white matter + corticospinal fluid maps)
+			- background = not(gray matter + white matter + corticospinal 
+			fluid maps)
 
-			Streamline reconstruction is stopped when the current point is in a voxel belonging to gray matter (> 0.5),
-			cerebro-spinal fluid (> 0.5) or background.
+			Streamline reconstruction is stopped when the current point is in a 
+			voxel belonging to gray matter (> 0.5), cerebro-spinal fluid (> 0.5)
+			or background.
 		</StoppingGM>
 		<StoppingWM>
-			White matter map used as anatomically-constrained stopping criterion.
+			White matter map used as anatomically-constrained stopping 
+			criterion.
 
-			Anatomically-constrained tractography (ACT) uses information from anatomical images to determine when the
-			tractography stops. The include map defines when the streamline reached a ‘valid’ stopping region
-			(e.g. gray matter map) and the exclude map defines when the streamline reached an ‘invalid’ stopping region
-			(e.g. corticospinal fluid map). The ACT stopping criterion uses a trilinear interpolation at the tracking
-			position.
+			Anatomically-constrained tractography (ACT) uses information from 
+			anatomical images to determine when the tractography stops. The 
+			include map defines when the streamline reached a ‘valid’ stopping 
+			region (e.g. gray matter map) and the exclude map defines when the 
+			streamline reached an ‘invalid’ stopping region (e.g. corticospinal 
+			fluid map). The ACT stopping criterion uses a trilinear 
+			interpolation at the tracking position.
 
 			Maps:
 			- include map = gray matter map
 			- exclude map = corticospinal fluid map
-			- background = not(gray matter + white matter + corticospinal fluid maps)
+			- background = not(gray matter + white matter + corticospinal fluid 
+			maps)
 
-			Streamline reconstruction is stopped when the current point is in a voxel belonging to gray matter (> 0.5),
-			cerebro-spinal fluid (> 0.5) or background.
+			Streamline reconstruction is stopped when the current point is in a 
+			voxel belonging to gray matter (> 0.5), cerebro-spinal fluid (> 0.5) 
+			or background.
 		</StoppingWM>
 		<StoppingCSF>
-			Cerebro-spinal fluid matter map used as anatomically-constrained stopping criterion.
+			Cerebro-spinal fluid matter map used as anatomically-constrained 
+			stopping criterion.
 
-			Anatomically-constrained tractography (ACT) uses information from anatomical images to determine when the
-			tractography stops. The include map defines when the streamline reached a ‘valid’ stopping region
-			(e.g. gray matter map) and the exclude map defines when the streamline reached an ‘invalid’ stopping region
-			(e.g. corticospinal fluid map). The ACT stopping criterion uses a trilinear interpolation at the tracking
-			position.
+			Anatomically-constrained tractography (ACT) uses information from 
+			anatomical images to determine when the tractography stops. The 
+			include map defines when the streamline reached a ‘valid’ stopping 
+			region (e.g. gray matter map) and the exclude map defines when the 
+			streamline reached an ‘invalid’ stopping region (e.g. corticospinal 
+			fluid map). The ACT stopping criterion uses a trilinear 
+			interpolation at the tracking position.
 
 			Maps:
 			- include map = gray matter map
 			- exclude map = corticospinal fluid map
-			- background = not(gray matter + white matter + corticospinal fluid maps)
+			- background = not(gray matter + white matter + corticospinal fluid 
+			maps)
 
-			Streamline reconstruction is stopped when the current point is in a voxel belonging to gray matter (> 0.5),
-			cerebro-spinal fluid (> 0.5) or background.
+			Streamline reconstruction is stopped when the current point is in a 
+			voxel belonging to gray matter (> 0.5), cerebro-spinal fluid (> 0.5) 
+			or background.
 		</StoppingCSF>
 	</Tracking>
 	<BundleROISelection>
@@ -1358,9 +2181,11 @@
 			is(are) inside an exclusion ROI.
 		</Title>
 		<BundleName>Name of bundle</BundleName>
-		<MinimalLength>Minimal length of streamlines in the bundle</MinimalLength>
+		<MinimalLength>
+			Minimal length of streamlines in the bundle in mm (default 0.0).
+		</MinimalLength>
 		<Mode>
-			Any: any streamline point is inside ROI.
+			Any: any streamline point is inside ROI (default).
 			All: all streamline points are inside ROI.
 			End: either of the streamline end-points is inside ROI.
 		</Mode>
@@ -1373,7 +2198,9 @@
 			and tries to extract similar looking bundle from the input 
 			tractogram.
 		</Title>
-		<MinimalLength>>Minimal length of streamlines in the new bundle</MinimalLength>
+		<MinimalLength>
+			Minimal length of streamlines in the new bundle in mm (default 50).
+		</MinimalLength>
 		<ClusteringThreshold>
 			Get the centroids of the atlas bundle and work with centroids 
 			instead of all streamlines. This helps speed up processing.
@@ -1383,7 +2210,8 @@
 			set this threshold to 0.1 mm (default 15 mm)
 		</ClusteringThreshold>
 		<ReductionMetric>
-			Minimum average Direct-Flip (mdf) or Mean Average Minimum (mam)
+			Minimum average Direct-Flip (mdf, default) or 
+			Mean Average Minimum (mam)
 		</ReductionMetric>
 		<ReductionThreshold>
 			This threshold will be used to reduce the search space for finding 
@@ -1394,7 +2222,8 @@
 			(default 25 mm).
 		</ReductionThreshold>
 		<PruningMetric>
-			Minimum Diferect Flip distance (mdf, default) or Mean Average Minimum (mam)
+			Minimum Diferect Flip distance (mdf, default) or Mean Average 
+			Minimum (mam)
 		</PruningMetric>
 		<PruningThreshold>
 			This threshold will filter the streamlines for which the distance 
@@ -1432,13 +2261,18 @@
 			in each voxel of this map is the number of streamlines passing 
 			through the voxel.
 			
-			Absolute threshold: number of streamlines.
+			Absolute threshold: number of streamlines (default).
 			
 			Percentile threshold: percentile of the distribution of scalar 
 			values in the density map.
 		</ThresholdType>
-		<Absolute>Threshold is an absolute value of density (i.e. number of streamlines).</Absolute>
-		<Percentile>Threshold is a percentile of the density distribution.</Percentile>
+		<Absolute>
+			Threshold is an absolute value of density (i.e. number of 
+			streamlines, default 100).
+		</Absolute>
+		<Percentile>
+			Threshold is a percentile of the density distribution (default 95).
+		</Percentile>
 	</BundleToROI>
 	<BundleFiltering>
 		<Title>
@@ -1452,13 +2286,13 @@
 			outliers can be removed by thresholding on the cci metric.
 		</Title>
 		<Length>
-			Minimal length of streamlines in the new bundle.
-			0.0 to avoid length filtering.
+			Minimal length in mm of streamlines in the new bundle.
+			0.0 to avoid length filtering (default 20.0).
 		</Length>
 		<MaximumDistance>
 			Maximum MDF (Minimum average Direct-Flip) distance (mm) that will
-			be considered a 'supporting' streamline and included in cci
-			calculation (default 5 mm). 0.0 to avoid cluster confidence
+			be considered a supporting streamline and included in cci
+			calculation (default 5.0 mm). 0.0 to avoid cluster confidence
 			filtering.
         </MaximumDistance>
 		<Threshold>cci threshold used to select streamlines.</Threshold>
@@ -1484,18 +2318,18 @@
 			length, angle between vector endpoints.
 		</Title>
 		<Metric>
-            - 'apd': average pointwise euclidean distance (mm), default metric
-            - 'cmd': center of mass euclidean distance (mm)
-            - 'mpd': midpoint euclidean distance (mm)
-            - 'lgh': length (mm)
-            - 'ang': angle between vector endpoints (degrees)
+            - apd: average pointwise euclidean distance (mm), default metric
+            - cmd: center of mass euclidean distance (mm)
+            - mpd: midpoint euclidean distance (mm)
+            - lgh: length (mm)
+            - ang: angle between vector endpoints (degrees)
 		</Metric>
 		<Threshold>
 			Metric value threshold :
-            - average pointwise euclidean distance, default 10 mm
-            - center of mass euclidean distance, default 5 mm
-            - midpoint euclidean distance, default 5 mm
-            - length, default 10 mm
+            - average pointwise euclidean distance, default 10.0 mm
+            - center of mass euclidean distance, default 5.0 mm
+            - midpoint euclidean distance, default 5.0 mm
+            - length, default 10.0 mm
             - angle between vector endpoints, default 80°
 		</Threshold>
 		<Subsampling>
@@ -1503,7 +2337,25 @@
 			calculation. To save on calculation time, each streamline is 
 			subsampled (default 12 points).
 		</Subsampling>
-		<ClusterSize>Minimum cluster size (number of streamlines, default 10).</ClusterSize>
-		<Centroid/>
+		<ClusterSize>
+			Minimum cluster size (number of streamlines, default 10).
+		</ClusterSize>
+		<Centroid>
+			Save the streamline centroid of the cluster ? (checked by default)
+		</Centroid>
 	</BundleClustering>
+	<BundleConnectivityMatrix>
+		<Title></Title>
+		<BundleLength>
+			Minimal length in mm of streamlines used to calculate 
+			connectvity matrix (default 10.0).
+		</BundleLength>
+		<Values>
+			- Absolute: connectvity matrix values are not normalized (streamline 
+			count, default).
+
+			- Diagonal ratio: connectvity matrix values are normalized as a 
+			ratio with principal diagonal elements.
+		</Values>
+	</BundleConnectivityMatrix>
 </tooltips>

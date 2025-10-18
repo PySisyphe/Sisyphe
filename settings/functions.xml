@@ -149,9 +149,9 @@
 		<BrainMaskRadius label="Kernel radius morphology for brain extraction" varmax="10" varmin="0" vartype="int">2</BrainMaskRadius>
 		<T1 label="T1 template" vartype="vol"/>
 		<Mask label="Mask template" vartype="vol"/>
-		<GMPrior label="Grey matter prior" vartype="vol"/>
-		<CGMPrior label="Cortical grey matter prior" vartype="vol"/>
-		<SCGMPrior label="Sub-cortical grey matter prior" vartype="vol"/>
+		<GMPrior label="Gray matter prior" vartype="vol"/>
+		<CGMPrior label="Cortical gray matter prior" vartype="vol"/>
+		<SCGMPrior label="Sub-cortical gray matter prior" vartype="vol"/>
 		<WMPrior label="White matter prior" vartype="vol"/>
 		<CSFPrior label="Cerebro-spinal fluid prior" vartype="vol"/>
 		<BrainstemPrior label="Brainstem prior" vartype="vol"/>
