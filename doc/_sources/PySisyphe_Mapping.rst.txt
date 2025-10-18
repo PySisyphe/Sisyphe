@@ -299,7 +299,7 @@ Laterality index
 
 This menu is used to calculate laterality indexes (LI) of a statistical map that was generated from the :ref:`menu-section-contrast` menu.
 
-Hemispheric or regional dominance in cognitive functions, particularly language, can be quantified using laterality indexes (LI). The LI indicates the prevalence of activation in an fMRI statistical map on one side of the brain compared to the other. Its values range from +1.0 (left domi￾nant) to -1.0 (right dominant).
+Hemispheric or regional dominance in cognitive functions, particularly language, can be quantified using laterality indexes (LI). The LI indicates the prevalence of activation in an fMRI statistical map on one side of the brain compared to the other. Its values range from +1.0 (left dominant) to -1.0 (right dominant).
 
 .. admonition::
 	Laterality index methodology
@@ -474,7 +474,7 @@ Left-click **Close** button to exit dialog box.
 Time series correlation matrix
 ------------------------------
 
-This menu is used to extract a time series signals (i.e. fMRI resting state) from a brain parcellation and compute a correlation matrix. PySisyphe uses the `Nilearn <https://nilearn.github.io/dev/auto_examples/03_connectivity/plot_signal_extraction.html#sphx-glr-auto-examples-03-connectivity-plot-signal-extraction-py>`_ library implemenentation.
+This menu is used to extract time series signals (i.e. fMRI resting state) from a brain parcellation and compute a correlation matrix. PySisyphe uses the `Nilearn <https://nilearn.github.io/dev/auto_examples/03_connectivity/plot_signal_extraction.html#sphx-glr-auto-examples-03-connectivity-plot-signal-extraction-py>`_ library implemenentation.
 
 Use the :ref:`widgets-section-single-file` widget at the top, to select a **Time series** PySisyphe multi-component volume (.xvol).
 

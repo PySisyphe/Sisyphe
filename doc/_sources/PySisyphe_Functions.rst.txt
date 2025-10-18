@@ -291,7 +291,7 @@ This menu displays the **Histogram intensity matching** dialog box, which is use
 
 Filter parameters are as follows:_
 
-- **Exclude background**, checkbox to exclude background voxels from histogram matching processing (checked by default). Background voxels are those with grayscale values smaller than the mean.
+- **Exclude background**, checkbox to exclude background voxels from histogram matching processing (checked by default). Background voxels are those with grayscale values that are smaller than the image mean.
 - **Number of match points**, governs the number of quantile values to be matched.
 - **Number of histogram bins**, sets the number of bins used when creating histograms.
 - Matched volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** parameters.
@@ -308,7 +308,7 @@ Left-click **Close** button button to close dialog box without processing.
 Regression intensity matching
 -----------------------------
 
-This menu displays the **Regression intensity matching** dialog box, which is used to match the intensities of one or more volumes with those of a reference volume. This filter uses a regression algorithm for each pair of voxels that have the same coordinates in the two volumes. All volumes must be co-registered to the reference volume.
+This menu displays the **Regression intensity matching** dialog box, which is used to match the intensities of one or more volumes with those of a reference volume. This filter uses a regression algorithm for each pair of voxels that have the same coordinates in the two volumes. All volumes must be coregistered to the reference volume.
 
 Filter parameters are as follows:
 

@@ -118,7 +118,19 @@ Toggle **Prior based segmentation...** button to show/hide segmentation paramete
 - Use the **MRF smoothing factor** spinbox to define label smoothness, higher value is smoother (default 0.1).
 - Use the **MRF neighborhood radius** spinbox to define the MRF kernel extent in voxels used for label smoothing (default 1).
 - Use the **Convergence threshold** combobox to define the stopping criterion as a threshold of the mean maximum posterior probability variation between two iterations.
-- Use the **Priors** combobox to select prior probability images (*ICBM152* or *ATROPOS* tissue probability templates) or calculated prior images (*K-Means algorithm*).
+- Use the **Priors** combobox to select prior probability images (*ICBM152* or *ATROPOS* or *CUSTOM* tissue probability templates) or calculated prior images (*K-Means algorithm*). When the *CUSTOM* option is selected, file selection widgets are displayed to select custom prior images:
+
+	- Select a custom **T1 template** volume (.xvol).
+	- Select a custom **Mask template** volume (.xvol).
+	- Select a custom **Gray matter prior** volume (.xvol). This option is displayed only for a **number of classes** equal to 3.
+	- Select a custom **Cortical gray matter prior** volume (.xvol). This option is displayed only for a **number of classes** equal to 4 or 6.
+	- Select a custom **Sub-cortical gray matter prior** volume (.xvol). This option is displayed only for a **number of classes** equal to 4 or 6.
+	- Select a custom **White matter matter prior** volume (.xvol).
+	- Select a custom **Cerebro-spinal fluid prior** volume (.xvol).
+	- Select a custom **Brainstem prior** volume (.xvol). This option is displayed only for a **number of classes** equal to 6.
+	- Select a custom **Cerebellum prior** volume (.xvol). This option is displayed only for a **number of classes** equal to 6.
+	- All these images must be in the same space (i.e., same transform/space ID).
+
 - Use the **Number of classes** spinbox to specify the number of tissue classes: 3 (gray matter, white matter, cerebro-spinal fluid), 4 (cortical gray matter, subcortical gray matter, white matter, cerebro-spinal fluid) or 6 (cortical gray matter, subcortical gray matter, white matter, cerebro-spinal fluid, brainstem, cerebellum).
 - Use the **Prior weight** spinbox to define the prior probability image weight in the the intensity profile of each class modelization: 0 (priors used for initialization only), 0.25 or 0.5.
 - Use the **Prior FWHM smoothing** spinbox to define the full width at half maximum (FWHM) of the Gaussian kernel, which is used for prior probability image smoothing, in millimeters (mm). The default is zero, meaning that no smoothing is applied.
@@ -176,6 +188,8 @@ Registration based segmentation
 
 This menu is used to perform a registration based segmentation. Instead of trying to classify each voxel directly from scratch, as in clustering or deep learning, registration-based segmentation uses reference atlas images (templates) with known anatomical labels (structures). By coregistering an atlas image to a subject’s image, the structures from the atlas can be transferred to the subject, providing a segmentation. Structures can be binary images (mask) or probability images.
 
+The algorithm runs in two stages. First, it performs a global coregistration of the whole brain. Then, it makes fine local coregistration restricted to the structural area.
+
 Use the :ref:`widgets-section-multi-file` widget at the top to select **T1** PySisyphe volume(s) to be segmented.
 
 Use the :ref:`widgets-section-multi-file` widgets below to select PySisyphe **Gray matter map(s)**, **White matter map(s)** and **CSF map(s)** of the volume(s) to be segmented. These widgets will only be displayed if the item selected in the **Sequence used for registration** combobox is not "T1".
@@ -183,7 +197,7 @@ Use the :ref:`widgets-section-multi-file` widgets below to select PySisyphe **Gr
 Toggle **Registration based segmentation...** button to show/hide parameters.
 
 - Set the template modality used as reference atlas with the **Sequence used for registration** combobox. *MR T1*, *gray matter map* (GM), *white matter map* (WM), or *cerebrospinal fluid* (CSF) are all possible options.
-- Select the global registration algorithm using the **Global stage transform** combobox:
+- Select the global coregistration algorithm using the **Global stage transform** combobox:
 
 	- *AntsAffine*: single step of affine coregistration (no diffeomorphic step), 4 multiresolution stages with last at full resolution.
 	- *AntsFastAffine*: single step of affine coregistration (no diffeomorphic step), fast scheme with only 3 multiresolution stages, and no iteration at full resolution. 
@@ -192,8 +206,8 @@ Toggle **Registration based segmentation...** button to show/hide parameters.
 	- *AntsFastSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
 	- *AntsFastDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
 
-- Check **Local stage** to perform a fine registration step, after the intial global registration step, which is restricted to the structure area.
-- Set the **Local margin**, expressed in voxels, to define the local stage coregistration area around the structure to be segmented.
+- Check **Local stage** to perform a fine coregistration step, after the intial global registration step, which is restricted to the structure area.
+- Set the **Local margin**, define the local coregistration area as the volume of the structure to be segmented, enlarged by a margin expressed in voxels.
 - Select the local registration algorithm using the **Local stage transform** combobox:
 
 	- *AntsSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.

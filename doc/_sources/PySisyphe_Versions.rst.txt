@@ -9,7 +9,8 @@ Version history
 - :ref:`build28-08-2025`
 - :ref:`build30-08-2025`
 - :ref:`build13-10-2025`
-- :ref:`build15-10-2025`
+- :ref:`build16-10-2025`
+- :ref:`build01-11-2025`
 
 .. _version-increment-rules:
 Version increment rules
@@ -42,7 +43,7 @@ version 0.9.1, build 26/07/2025
 
 .. _build05-08-2025:
 version 0.12.9, build 05/08/2025
--------------------------------
+--------------------------------
 
 - **new files**
 
@@ -165,7 +166,7 @@ version 0.12.9, build 05/08/2025
 
 .. _build28-08-2025:
 version 0.12.11, build 28/08/2025
--------------------------------
+---------------------------------
 
 - **updated modules**
 
@@ -209,7 +210,7 @@ version 0.12.11, build 28/08/2025
 
 .. _build30-08-2025:
 version 0.12.16, build 30/08/2025
--------------------------------
+---------------------------------
 
 - **updated modules**
 
@@ -296,7 +297,7 @@ version 0.12.16, build 30/08/2025
 
 .. _build13-10-2025:
 version 0.16.5, build 13/10/2025
--------------------------------
+--------------------------------
 
 - **updated html documentation**
 
@@ -683,9 +684,9 @@ version 0.16.5, build 13/10/2025
 
 			- Display a local page
 
-.. _build15-10-2025:
-version 0.18.3, build 15/10/2025
--------------------------------
+.. _build16-10-2025:
+version 0.18.3, build 16/10/2025
+--------------------------------
 
 - **updated html documentation**
 
@@ -821,3 +822,48 @@ version 0.18.3, build 15/10/2025
 	- gui.dialogEditLabels.DialogEditLabels._moveTo()
 
 		- center cursor on double-cliked label
+
+.. _build01-11-2025:
+version 0.18.9, build 01/11/2025
+--------------------------------
+
+- **updated html documentation**
+
+	- PySisyphe_Mapping.rst update
+
+- **updated files**
+
+	- /Sisyphe/settings/tooltips.xml
+	- /Sisyphe/settings/functions.xml
+
+- **updated modules**
+
+	- core.sisypheDownload
+	- gui.windowSisyphe 
+	- gui.dialogSegmentation
+
+- **updated function**
+
+	- core.sisypheDownload.updatePySisyphe()
+
+		- line 238, Try/except block to protect the call to InstallFromHost() method
+
+- **updated classes**
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update checkUpdate() method
+	
+	- gui.dialogSegmentation.DialogPriorBasedSegmentation
+
+		- update _priorsChanged method
+
+- **updates methods**
+
+	- gui.windowSisyphe.WindowSisyphe.checkUpdate()
+
+		- message box to exit after installation
+
+	- gui.dialogSegmentation.DialogPriorBasedSegmentation._priorsChanged()
+
+		- bug fix, line 1027, from 'Custom' to 'CUSTOM' to display file selection widgets (T1, Mask, GMPrior, CGMPrior, WMPrior, CSFPrior, BrainstemPrior, CerebellumPrior)
