@@ -376,7 +376,7 @@ Add PySisyphe volume(s) to be filtered in the <a class="reference internal" href
 </div>
 <p>Filter parameters are as follows:_</p>
 <ul class="simple">
-<li><p><strong>Exclude background</strong>, checkbox to exclude background voxels from histogram matching processing (checked by default). Background voxels are those with grayscale values smaller than the mean.</p></li>
+<li><p><strong>Exclude background</strong>, checkbox to exclude background voxels from histogram matching processing (checked by default). Background voxels are those with grayscale values that are smaller than the image mean.</p></li>
 <li><p><strong>Number of match points</strong>, governs the number of quantile values to be matched.</p></li>
 <li><p><strong>Number of histogram bins</strong>, sets the number of bins used when creating histograms.</p></li>
 <li><p>Matched volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
@@ -388,7 +388,7 @@ Add PySisyphe volume(s) to be filtered in the <a class="reference internal" href
 </section>
 <section id="regression-intensity-matching">
 <span id="menu-section-matching-reg"></span><h2>Regression intensity matching<a class="headerlink" href="#regression-intensity-matching" title="Link to this heading"></a></h2>
-<p>This menu displays the <strong>Regression intensity matching</strong> dialog box, which is used to match the intensities of one or more volumes with those of a reference volume. This filter uses a regression algorithm for each pair of voxels that have the same coordinates in the two volumes. All volumes must be co-registered to the reference volume.</p>
+<p>This menu displays the <strong>Regression intensity matching</strong> dialog box, which is used to match the intensities of one or more volumes with those of a reference volume. This filter uses a regression algorithm for each pair of voxels that have the same coordinates in the two volumes. All volumes must be coregistered to the reference volume.</p>
 <p>Filter parameters are as follows:</p>
 <ul class="simple">
 <li><p><strong>Polynomial order to fit</strong>, order of the polynomial used as regression function.</p></li>

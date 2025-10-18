@@ -209,14 +209,29 @@
 <p>Anisotropic diffusion filtering and bias field correction can be performed before the segmentation stage.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select PySisyphe <strong>Volume(s)</strong>.</p>
 <p>Toggle <strong>Prior based segmentation…</strong> button to show/hide segmentation parameters:</p>
-<ul class="simple">
+<ul>
 <li><p>Check <strong>Anisotropic diffusion filter</strong> to perform this prerprocessing.</p></li>
 <li><p>Check <strong>Bias filed correction</strong> to perform this prerprocessing.</p></li>
 <li><p>Use the <strong>Number of iterations</strong> spinbox the define maximum number of iterations.</p></li>
 <li><p>Use the <strong>MRF smoothing factor</strong> spinbox to define label smoothness, higher value is smoother (default 0.1).</p></li>
 <li><p>Use the <strong>MRF neighborhood radius</strong> spinbox to define the MRF kernel extent in voxels used for label smoothing (default 1).</p></li>
 <li><p>Use the <strong>Convergence threshold</strong> combobox to define the stopping criterion as a threshold of the mean maximum posterior probability variation between two iterations.</p></li>
-<li><p>Use the <strong>Priors</strong> combobox to select prior probability images (<em>ICBM152</em> or <em>ATROPOS</em> tissue probability templates) or calculated prior images (<em>K-Means algorithm</em>).</p></li>
+<li><p>Use the <strong>Priors</strong> combobox to select prior probability images (<em>ICBM152</em> or <em>ATROPOS</em> or <em>CUSTOM</em> tissue probability templates) or calculated prior images (<em>K-Means algorithm</em>). When the <em>CUSTOM</em> option is selected, file selection widgets are displayed to select custom prior images:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Select a custom <strong>T1 template</strong> volume (.xvol).</p></li>
+<li><p>Select a custom <strong>Mask template</strong> volume (.xvol).</p></li>
+<li><p>Select a custom <strong>Gray matter prior</strong> volume (.xvol). This option is displayed only for a <strong>number of classes</strong> equal to 3.</p></li>
+<li><p>Select a custom <strong>Cortical gray matter prior</strong> volume (.xvol). This option is displayed only for a <strong>number of classes</strong> equal to 4 or 6.</p></li>
+<li><p>Select a custom <strong>Sub-cortical gray matter prior</strong> volume (.xvol). This option is displayed only for a <strong>number of classes</strong> equal to 4 or 6.</p></li>
+<li><p>Select a custom <strong>White matter matter prior</strong> volume (.xvol).</p></li>
+<li><p>Select a custom <strong>Cerebro-spinal fluid prior</strong> volume (.xvol).</p></li>
+<li><p>Select a custom <strong>Brainstem prior</strong> volume (.xvol). This option is displayed only for a <strong>number of classes</strong> equal to 6.</p></li>
+<li><p>Select a custom <strong>Cerebellum prior</strong> volume (.xvol). This option is displayed only for a <strong>number of classes</strong> equal to 6.</p></li>
+<li><p>All these images must be in the same space (i.e., same transform/space ID).</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>Use the <strong>Number of classes</strong> spinbox to specify the number of tissue classes: 3 (gray matter, white matter, cerebro-spinal fluid), 4 (cortical gray matter, subcortical gray matter, white matter, cerebro-spinal fluid) or 6 (cortical gray matter, subcortical gray matter, white matter, cerebro-spinal fluid, brainstem, cerebellum).</p></li>
 <li><p>Use the <strong>Prior weight</strong> spinbox to define the prior probability image weight in the the intensity profile of each class modelization: 0 (priors used for initialization only), 0.25 or 0.5.</p></li>
 <li><p>Use the <strong>Prior FWHM smoothing</strong> spinbox to define the full width at half maximum (FWHM) of the Gaussian kernel, which is used for prior probability image smoothing, in millimeters (mm). The default is zero, meaning that no smoothing is applied.</p></li>
@@ -262,12 +277,13 @@
 <section id="registration-based-segmentation">
 <span id="menu-section-regsegmentation"></span><h2>Registration based segmentation<a class="headerlink" href="#registration-based-segmentation" title="Link to this heading"></a></h2>
 <p>This menu is used to perform a registration based segmentation. Instead of trying to classify each voxel directly from scratch, as in clustering or deep learning, registration-based segmentation uses reference atlas images (templates) with known anatomical labels (structures). By coregistering an atlas image to a subject’s image, the structures from the atlas can be transferred to the subject, providing a segmentation. Structures can be binary images (mask) or probability images.</p>
+<p>The algorithm runs in two stages. First, it performs a global coregistration of the whole brain. Then, it makes fine local coregistration restricted to the structural area.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>T1</strong> PySisyphe volume(s) to be segmented.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widgets below to select PySisyphe <strong>Gray matter map(s)</strong>, <strong>White matter map(s)</strong> and <strong>CSF map(s)</strong> of the volume(s) to be segmented. These widgets will only be displayed if the item selected in the <strong>Sequence used for registration</strong> combobox is not “T1”.</p>
 <p>Toggle <strong>Registration based segmentation…</strong> button to show/hide parameters.</p>
 <ul>
 <li><p>Set the template modality used as reference atlas with the <strong>Sequence used for registration</strong> combobox. <em>MR T1</em>, <em>gray matter map</em> (GM), <em>white matter map</em> (WM), or <em>cerebrospinal fluid</em> (CSF) are all possible options.</p></li>
-<li><p>Select the global registration algorithm using the <strong>Global stage transform</strong> combobox:</p>
+<li><p>Select the global coregistration algorithm using the <strong>Global stage transform</strong> combobox:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><em>AntsAffine</em>: single step of affine coregistration (no diffeomorphic step), 4 multiresolution stages with last at full resolution.</p></li>
@@ -279,8 +295,8 @@
 </ul>
 </div></blockquote>
 </li>
-<li><p>Check <strong>Local stage</strong> to perform a fine registration step, after the intial global registration step, which is restricted to the structure area.</p></li>
-<li><p>Set the <strong>Local margin</strong>, expressed in voxels, to define the local stage coregistration area around the structure to be segmented.</p></li>
+<li><p>Check <strong>Local stage</strong> to perform a fine coregistration step, after the intial global registration step, which is restricted to the structure area.</p></li>
+<li><p>Set the <strong>Local margin</strong>, define the local coregistration area as the volume of the structure to be segmented, enlarged by a margin expressed in voxels.</p></li>
 <li><p>Select the local registration algorithm using the <strong>Local stage transform</strong> combobox:</p>
 <blockquote>
 <div><ul class="simple">
