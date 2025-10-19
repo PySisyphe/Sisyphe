@@ -587,8 +587,8 @@
 			MRF kernel extent in voxels used for label smoothing (default 1).
 		</Radius>
 		<SegPrefix>
-		</SegPrefix>
 			Prefix added to the file name to save the label volume.
+		</SegPrefix>
 		<SegSuffix>
 			Suffix added to the file name to save the label volume.
 		</SegSuffix>
@@ -703,7 +703,7 @@
 		<WMPrior>
 			Custom white matter prior volume (.xvol).
 		</WMPrior>
-		<CSFPrior/>
+		<CSFPrior>
 			Custom cerebro-spinal fluid prior volume (.xvol).
 		</CSFPrior>
 		<BrainstemPrior>
@@ -1164,7 +1164,7 @@
 	</PDNormalization>
 	<PTNormalization>
 		<Title>PET spatial normalization settings.</Title>
-		<Transform/>
+		<Transform>
 			- AntsAffine: single step of affine coregistration (no 
 			diffeomorphic step), 4 multiresolution stages with last at full 
 			resolution.
@@ -1208,7 +1208,7 @@
 	</PTNormalization>
 	<NMNormalization>
 		<Title>SPECT spatial normalization settings.</Title>
-		<Transform/>
+		<Transform>
 			- AntsAffine: single step of affine coregistration (no 
 			diffeomorphic step), 4 multiresolution stages with last at full 
 			resolution.
@@ -1240,6 +1240,8 @@
 			cross-correlation (CC).
 		</LinearMetric>
 		<NonLinearMetric>
+			Similarity metrics: mean squares (MS), mutual information (IM),
+			cross-correlation (CC), DEMONS.			
 		</NonLinearMetric>
 		<SamplingRate>
 			Subsampling used to calculate similarity function. if 1.0, no 
@@ -1250,7 +1252,7 @@
 	</NMNormalization>
 	<GMNormalization>
 		<Title>Gray matter map spatial normalization settings.</Title>
-		<Transform/>
+		<Transform>
 			- AntsAffine: single step of affine coregistration (no 
 			diffeomorphic step), 4 multiresolution stages with last at full 
 			resolution.
@@ -1294,7 +1296,7 @@
 	</GMNormalization>
 	<WMNormalization>
 		<Title>White matter map spatial normalization settings.</Title>
-		<Transform/>
+		<Transform>
 			- AntsAffine: single step of affine coregistration (no 
 			diffeomorphic step), 4 multiresolution stages with last at full 
 			resolution.
@@ -1338,7 +1340,7 @@
 	</WMNormalization>
 	<CSFNormalization>
 		<Title>Cerebro-spinal fluid map spatial normalization settings.</Title>
-		<Transform/>
+		<Transform>
 			- AntsAffine: single step of affine coregistration (no 
 			diffeomorphic step), 4 multiresolution stages with last at full 
 			resolution.
@@ -1518,7 +1520,7 @@
 		</MaskType>
 		<HistogramBins>
 			Number of statistical threshold intervals used for cumulative 
-			his￾tograms processing (default 100).
+			histograms processing (default 100).
 		</HistogramBins>
 		<Template>
 			ICBM152 template volume used for the spatial normalization stage 
@@ -2041,6 +2043,7 @@
 			- Closest peak direction tracking
 
 			PySisyphe uses the dipy library implemenentation.
+		</DeterministicAlgorithm>
 		<ProbabilisticAlgorithm>
 			- Bootstrap direction tracking
 
