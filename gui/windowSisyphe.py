@@ -76,6 +76,7 @@ import darkdetect
 from Sisyphe import version
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.core.sisypheConstants import removeAllPrefixesFromFilename
+from Sisyphe.core.sisypheSettings import getDPIScaleFactor
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheVolume import multiComponentSisypheVolumeFromList
 from Sisyphe.core.sisypheImageAttributes import SisypheAcquisition
@@ -133,7 +134,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 17/10/2025
+    Last revision: 19/10/2025
     """
 
     # Class constants
@@ -189,6 +190,46 @@ class WindowSisyphe(QMainWindow):
             # Update the functions.xml and settings.xml files when running a new installation for the first time
             copy(join(cls.getMainDirectory(), 'settings', 'functions.xml'), userdir)
             copy(join(cls.getMainDirectory(), 'settings', 'settings.xml'), userdir)
+            # < Revision 11/10/2025
+            # Apply DPI scale factor to some settings
+            f = getDPIScaleFactor()
+            if f > 1.0:
+                settings = SisypheSettings()
+                # GUI settings
+                v = settings.getFieldValue('GUI', 'ToolbarSize')
+                v = int(f * v)
+                if v % 2 != 0: v -= 1
+                if v < 16: v = 16
+                if v > 64: v = 64
+                settings.setFieldValue('GUI', 'ToolbarSize', v)
+                v = settings.getFieldValue('GUI', 'ThumbnailSize')
+                v = int(f * v)
+                if v % 2 != 0: v -= 1
+                if v < 64: v = 64
+                if v > 256: v = 256
+                settings.setFieldValue('GUI', 'ThumbnailSize', v)
+                v = settings.getFieldValue('GUI', 'IconSize')
+                v = int(f * v)
+                if v % 2 != 0: v -= 1
+                if v < 24: v = 24
+                if v > 64: v = 64
+                settings.setFieldValue('GUI', 'IconSize', v)
+                v = settings.getFieldValue('GUI', 'ZoomFactor')
+                v = f * v
+                if v > 1.0: v = 1.0
+                settings.setFieldValue('GUI', 'ZoomFactor', v)
+                if platform == 'darwin':
+                    settings.setFieldValue('Viewport', 'FontSize', 14)
+                # Viewport settings
+                settings.setFieldValue('Viewport', 'FontSizeScale', f)
+                v = settings.getFieldValue('Viewport', 'IconSize')
+                v = int(f * v)
+                if v % 2 != 0: v -= 1
+                if v < 24: v = 24
+                if v > 64: v = 64
+                settings.setFieldValue('Viewport', 'IconSize', v)
+                settings.save()
+            # Revision 19/10/2025 >
             remove(tagfile)
         # Revision 15/10/2025 >
         return userdir
