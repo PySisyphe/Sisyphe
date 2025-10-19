@@ -44,7 +44,7 @@ class DialogVolumeAttributes(QDialog):
     Inheritance
     ~~~~~~~~~~~
 
-    QWidget -> QDialog -> DialogFontProperties
+    QWidget -> QDialog -> DialogVolumeAttributes
     """
 
     # Special method

@@ -193,8 +193,12 @@ class WindowSisyphe(QMainWindow):
             # < Revision 11/10/2025
             # Apply DPI scale factor to some settings
             f = getDPIScaleFactor()
+            settings = SisypheSettings()
+            # < Revision 19/10/2025
+            if platform == 'darwin':
+                settings.setFieldValue('GUI', 'FontSize', 14)
+            # Revision 19/10/2025 >
             if f > 1.0:
-                settings = SisypheSettings()
                 # GUI settings
                 v = settings.getFieldValue('GUI', 'ToolbarSize')
                 v = int(f * v)
@@ -218,8 +222,6 @@ class WindowSisyphe(QMainWindow):
                 v = f * v
                 if v > 1.0: v = 1.0
                 settings.setFieldValue('GUI', 'ZoomFactor', v)
-                if platform == 'darwin':
-                    settings.setFieldValue('Viewport', 'FontSize', 14)
                 # Viewport settings
                 settings.setFieldValue('Viewport', 'FontSizeScale', f)
                 v = settings.getFieldValue('Viewport', 'IconSize')
@@ -228,7 +230,7 @@ class WindowSisyphe(QMainWindow):
                 if v < 24: v = 24
                 if v > 64: v = 64
                 settings.setFieldValue('Viewport', 'IconSize', v)
-                settings.save()
+            settings.save()
             # Revision 19/10/2025 >
             remove(tagfile)
         # Revision 15/10/2025 >
