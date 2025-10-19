@@ -249,13 +249,16 @@ class SettingsWidget(QWidget):
         try:
             tooltips = SisypheTooltips()
             title = tooltips.getFieldValue(self._function, 'Title')
-            if title is not None:
+            # < Revision 19/10/2025
+            # if title is not None:
+            if title is not None and len(title) > 0:
                 title = title.replace('\t', '')
                 # < Revision 24/03/2025
                 if title[0] == '\n': title = title[1:]
                 if title[-1] == '\n': title = title[:-1]
                 # Revision 24/03/2025 >
                 self.setToolTip(title)
+            # Revision 19/10/2025 >
         except: tooltips = None
         layout = QGridLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -264,12 +267,16 @@ class SettingsWidget(QWidget):
             for parameter in parameters:
                 if tooltips is not None:
                     tooltip = tooltips.getFieldValue(self._function, parameter)
-                    if tooltip is not None:
+                    # < Revision 19/10/2025
+                    # if tooltip is not None:
+                    if tooltip is not None and len(tooltip) > 0:
                         tooltip = tooltip.replace('\t', '')
                         # < Revision 24/03/2025
                         if tooltip[0] == '\n': tooltip = tooltip[1:]
                         if tooltip[-1] == '\n': tooltip = tooltip[:-1]
                         # Revision 24/03/2025 >
+                    else: tooltip = ''
+                    # Revision 19/10/2025 >
                 else: tooltip = ''
                 node = xml.getFieldNode(function, parameter)
                 vartype = node.getAttribute('vartype')
