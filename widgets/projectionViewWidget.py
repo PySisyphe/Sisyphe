@@ -6,13 +6,14 @@ External packages/modules
     - vtk, Visualization, https://vtk.org/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from typing import Optional
+
 from os.path import join
 from os.path import exists
 
-import typing
-
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QShowEvent
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QSlider
@@ -30,6 +31,10 @@ from Sisyphe.widgets.iconBarViewWidgets import IconBarWidget
 from Sisyphe.widgets.basicWidgets import LabeledSpinBox
 from Sisyphe.gui.dialogWait import DialogWait
 
+if TYPE_CHECKING:
+    from vtk import vtkObject
+    from PyQt5.QtGui import QShowEvent
+    from PyQt5.QtWidgets import QWidget
 
 __all__ = ['ProjectionViewWidget',
            'MultiProjectionViewWidget',
@@ -53,12 +58,18 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Class used to display 2D projections of SisypheVolume instance.
+    Specialized subclass of SliceOverlayViewWidget designed to display 2D projections of a SisypheVolume. It generates
+    pre-calculated surface-like views from various angles, which are particularly useful for visualizing data
+    distributed across the brain's cortex.
 
-    Projection directions are: left, right, mid-left, mid-right, ant, post, top, bottom.
-    The projection is processed with a depth expressed in mm from the head surface (default 0.0, whole brain, no thickness).
-    Operators applied to voxels on a projection line: maximum, mean, median, standard deviation, sum.
-    The volume can be cut out to a specified depth (slice index) in the direction of projection.
+    The main features are as follows:
+
+    - Multi-directional projections: generates projections from six standard anatomical directions: left, right, anterior, posterior, top, and bottom.
+    - Configurable projection operators: the value at each pixel in the projection is computed by applying an operator to the voxels along a line perpendicular to the view. Supported operators include maximum, mean, median, standard deviation, and cumulative sum.
+    - Adjustable projection depth: user can specify the thickness (depth in mm) of the volume slab to be included in the projection, starting from the outer surface of the volume.
+    - Internal surface views: can "cut" the volume at a specified slice index before performing the projection. This feature allows for the creation of views of internal structures, such as the medial walls of the cerebral hemispheres.
+    - Anatomical underlay and labeling: can display a projected anatomical atlas (e.g., ICBM152 T1) as a background layer. When corresponding AAL or Brodmann atlas projections are loaded, it provides real-time anatomical labels based on the mouse pointer position.
+    - Foreground/Background blending: manages a primary (foreground) projection and an optional background (atlas) projection, with controls for adjusting the foreground's opacity.
 
     Inheritance
     ~~~~~~~~~~~
@@ -66,12 +77,18 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
     QFame -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> ProjectionViewWidget
 
     Creation: 12/10/2024
-    Last Revision: 21/11/2024
+    Last Revision: 10/10/2025
     """
 
     # Private method
 
-    def _updateProjection(self):
+    def _updateProjection(self) -> None:
+        """
+        Updates the projection display.
+        This method re-computes the projection of the reference volume (_ref attribute) based on the current settings
+        for direction, thickness, operator, and cut depth. It then updates the SliceViewWidget with the new projected
+        volume.
+        """
         if self._ref is not None:
             opacity = self.getProjectionOpacity()
             if self._cut == 0:
@@ -103,7 +120,11 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
             camera.SetFocalPoint(p)
             self._renderwindow.Render()
 
-    def _initSettings(self):
+    def _initSettings(self) -> None:
+        """
+        Initializes projection settings from the application's settings file (settings.xml).
+        Currently, this method calls the superclass's implementation.
+        """
         super()._initSettings()
         op = self._settings.getFieldValue('Viewport', 'ProjectionOperator')[0]
         if op == 'Max': self._operator = 'max'
@@ -113,7 +134,12 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
         else: self._operator = None
         self._thickness = self._settings.getFieldValue('Viewport', 'ProjectionDepth')
 
-    def _initOrientationLabels(self):
+    def _initOrientationLabels(self) -> None:
+        """
+        Initializes the orientation labels based on the projection direction.
+        Sets the text for top, left, and right labels according to the current _direction and _cut values.
+        Currently, this method overrides the superclass's implementation.
+        """
         if self._direction == 'left':
             if self._cut == 0:
                 topinfo = '\n\nLeft hemisphere'
@@ -206,7 +232,12 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
         # Bottom
         self._info['bottomcenter'].SetInput('')
 
-    def _updateBottomRightInfo(self):
+    def _updateBottomRightInfo(self) -> None:
+        """
+        Updates the bottom-right information display with anatomical labels.
+        If AAL or Brodmann atlases are available, it displays the corresponding label for the mouse pointer position.
+        Currently, this method overrides the superclass's implementation.
+        """
         if self._ref is not None:
             if self._aal is not None or self._brodmann is not None:
                 interactorstyle = self._window.GetInteractorStyle()
@@ -235,7 +266,12 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
     # < Revision 17/10/2024
     # override _updateCameraOrientation method
     # info labels bugfix
-    def _updateCameraOrientation(self):
+    def _updateCameraOrientation(self) -> None:
+        """
+        Updates the camera's position and view-up vector based on the current slice orientation.
+        This method overrides the base class implementation to handle the 2D nature of projections, removing the
+        orientation labels update.
+        """
         p = self._getRoundedCoordinate(self._stack.GetMapper().GetCenter())
         p = self._getRoundedCoordinate(p)
         camera = self._renderer.GetActiveCamera()
@@ -260,27 +296,28 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
 
     # Special method
 
-    """
-    Class attributes
-    
-    _cut: int                   cut out depth (slice index)
-    _direction: str             projection direction (left, right, ant, post, top, bottom)
-    _operator: str              operator applied to voxels on a projection line (max, mean, median, std)
-    _thickness: int             projection depth in mm
-    _ref: SisypheVolume         volume to display (reference volume)
-    _t1: SisypheVolume          projection of t1 atlas
-    _aal: SisypheVolume         projection of aal atlas
-    _brodmann: SisypheVolume    projection of brodmann atlas
-    _foreground: vtkImageSlice  vtkImageSlice of the reference volume displayed as foreground
-    _background: vtkImageSlice  vtkImageSlice of the ICBM152 T1 atlas displayed as background
-    """
-
     def __init__(self,
                  direction: str = 'left',
                  operator: str = 'max',
                  thickness: float = 10.0,
                  cut: int = 0,
-                 parent=None):
+                 parent: QWidget | None = None) -> None:
+        """
+        ProjectionViewWidget instance constructor.
+
+        Parameters
+        ----------
+        direction : str (optional)
+            direction of the projection (e.g., 'left', 'right', 'ant'; default 'left').
+        operator : str (optional)
+            operator to apply along the projection line ('max', 'mean', etc.; defaults 'max').
+        thickness : float (optional)
+            depth of the projection in mm (default 10.0).
+        cut : int (optional)
+            slice index to cut the volume before projection (default 0, no cut).
+        parent : QWidget | None (optional)
+            parent widget (Default None).
+        """
         self._cut: int = cut
         self._direction: str = direction
         self._operator: str | None = None
@@ -351,9 +388,33 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
         if self._action['showtooltip'].isChecked(): self.setToolTip(self._tooltipstr)
         else: self.setToolTip('')
 
+    """
+    Class attributes
+
+    _cut: int                   cut out depth (slice index)
+    _direction: str             projection direction (left, right, ant, post, top, bottom)
+    _operator: str              operator applied to voxels on a projection line (max, mean, median, std)
+    _thickness: int             projection depth in mm
+    _ref: SisypheVolume         volume to display (reference volume)
+    _t1: SisypheVolume          projection of t1 atlas
+    _aal: SisypheVolume         projection of aal atlas
+    _brodmann: SisypheVolume    projection of brodmann atlas
+    _foreground: vtkImageSlice  vtkImageSlice of the reference volume displayed as foreground
+    _background: vtkImageSlice  vtkImageSlice of the ICBM152 T1 atlas displayed as background
+    """
+
     # Public synchronisation event methods
 
-    def synchroniseRenderUpdated(self, obj):
+    def synchroniseRenderUpdated(self, obj: QWidget) -> None:
+        """
+        Synchronizes a render update from another widget, updating the windowing.
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : QWidget
+            widget that emitted the signal.
+        """
         if self != obj and self.hasVolume():
             w = obj.getProjection().display.getWindow()
             self._volume.display.setWindow(w[0], w[1])
@@ -367,6 +428,22 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
                   foreground: SisypheVolume,
                   background: SisypheVolume | None = None,
                   mask: SisypheVolume | None = None) -> None:
+        """
+        Set the SisypheVolume instances for projection display.
+        Generates and displays a projection of the foreground volume. If a background volume is provided, its
+        projection is displayed behind the foreground. If the foreground is an ICBM152 volume, standard ICBM152 atlas
+        projections are loaded as background and for anatomical labeling. Currently, this method calls the superclass's
+        implementation.
+
+        Parameters
+        ----------
+        foreground : SisypheVolume
+            SisypheVolume instance to be projected and displayed.
+        background : SisypheVolume | None (optional)
+            SisypheVolume instance to be projected and used as a background (default None).
+        mask : SisypheVolume | None, optional
+            mask to apply before projection processing (default to None).
+        """
         if self.hasVolume():
             super().removeAllOverlays()
             super().removeVolume()
@@ -497,20 +574,59 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
     # < Revision 18/10/2024
     # add replaceVolume method
     def replaceVolume(self, foreground: SisypheVolume) -> None:
+        """
+        Replace the reference SisypheVolume instance for the projection.
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        foreground : SisypheVolume
+            new reference volume.
+        """
         if self.hasVolume():
             self._ref = foreground
     # Revision 18/10/2024
 
     def getProjection(self) -> SisypheVolume | None:
+        """
+        Get the currently displayed projected SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume | None
+            projected SisypheVolume instance, or None if no volume is set.
+        """
         return self._volume
 
     def getVolume(self) -> SisypheVolume | None:
+        """
+        Get the original, un-projected SisypheVolume reference.
+        Currently, this method overrides the superclass's implementation.
+
+        Returns
+        -------
+        SisypheVolume | None
+            original SisypheVolume reference, or None if not set.
+        """
         return self._ref
 
     def hasVolume(self) -> bool:
+        """
+        Check if a SisypheVolume reference is set.
+        Currently, this method overrides the superclass's implementation.
+
+        Returns
+        -------
+        bool
+            True if a reference volume is set, False otherwise.
+        """
         return self._ref is not None
 
-    def removeVolume(self):
+    def removeVolume(self) -> None:
+        """
+        Removes the SisypheVolume reference and all associated data.
+        Currently, this method calls the superclass's implementation.
+        """
         super().removeAllOverlays()
         super().removeVolume()
         self._ref = None
@@ -519,69 +635,205 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
         self._brodmann = None
 
     def setDirectionOfProjection(self, d: str = 'left') -> None:
+        """
+        Sets the direction for the projection.
+
+        Parameters
+        ----------
+        d : str (optional)
+            projection direction. Must be one of 'left', 'right', 'ant', 'post', 'top', 'bottom' (default 'left').
+        """
         if d in ('left', 'right', 'ant', 'post', 'top', 'bottom'):
             self._direction = d
             self._cut = 0
         else: raise ValueError('Invalid direction parameter \'{}\'.'.format(d))
 
     def setDirectionOfProjectionToLeft(self) -> None:
+        """
+        Set the projection direction to 'left'.
+        """
         self.setDirectionOfProjection('left')
 
     def setDirectionOfProjectionToRight(self) -> None:
+        """
+        Set the projection direction to 'right'.
+        """
         self.setDirectionOfProjection('right')
 
     def setDirectionOfProjectionToAnterior(self) -> None:
+        """
+        Set the projection direction to 'ant'.
+        """
         self.setDirectionOfProjection('ant')
 
     def setDirectionOfProjectionToPosterior(self) -> None:
+        """
+        Set the projection direction to 'post'.
+        """
         self.setDirectionOfProjection('post')
 
     def setDirectionOfProjectionToTop(self) -> None:
+        """
+        Set the projection direction to 'top'.
+        """
         self.setDirectionOfProjection('top')
 
     def setDirectionOfProjectionToBottom(self) -> None:
+        """
+        Set the projection direction to 'bottom'.
+        """
         self.setDirectionOfProjection('bottom')
 
     def getDirectionOfProjection(self) -> str:
+        """
+        Get the current projection direction.
+
+        Returns
+        -------
+        str
+            current projection direction ('left', 'right', 'ant', 'post', 'top', 'bottom').
+        """
         return self._direction
 
     def isLeftProjection(self) -> bool:
+        """
+        Check if the current projection direction is 'left'.
+
+        Returns
+        -------
+        bool
+            True if direction is 'left', False otherwise.
+        """
         return self._direction == 'left'
 
     def isRightProjection(self) -> bool:
+        """
+        Check if the current projection direction is 'right'.
+
+        Returns
+        -------
+        bool
+            True if direction is 'right', False otherwise.
+        """
         return self._direction == 'right'
 
     def isAnteriorProjection(self) -> bool:
+        """
+        Check if the current projection direction is 'ant'.
+
+        Returns
+        -------
+        bool
+            True if direction is 'ant', False otherwise.
+        """
         return self._direction == 'ant'
 
     def isPosteriorProjection(self) -> bool:
+        """
+        Check if the current projection direction is 'post'.
+
+        Returns
+        -------
+        bool
+            True if direction is 'post', False otherwise.
+        """
         return self._direction == 'post'
 
     def isTopProjection(self) -> bool:
+        """
+        Check if the current projection direction is 'top'.
+
+        Returns
+        -------
+        bool
+            True if direction is 'top', False otherwise.
+        """
         return self._direction == 'top'
 
     def isBottomProjection(self) -> bool:
+        """
+        Check if the current projection direction is 'bottom'.
+
+        Returns
+        -------
+        bool
+            True if direction is 'bottom', False otherwise.
+        """
         return self._direction == 'bottom'
 
     def setOperatorOfProjection(self, v: str = 'max'):
+        """
+        Set the operator for the projection and updates the viewport.
+        The signal of a pixel in the projection image is calculated from an operator applied to the signals of the
+        voxels located up to a specified depth below the head's surface along the projection line. This operator may be
+        the mean, median, maximum, standard deviation, or cumulative sum of these voxels.
+
+        Parameters
+        ----------
+        v : str (optional)
+            projection operator. Must be one of 'max', 'mean', 'median', 'std', 'sum' (default 'max').
+        """
         if v in ('max', 'mean', 'median', 'std', 'sum'):
             self._operator = v
             if self._ref is not None: self._updateProjection()
         else: raise ValueError('Invalid operator parameter \'{}\'.'.format(v))
 
     def getOperatorOfProjection(self) -> str:
+        """
+        Get the current projection operator.
+        The signal of a pixel in the projection image is calculated from an operator applied to the signals of the
+        voxels located up to a specified depth below the head's surface along the projection line. This operator may be
+        the mean, median, maximum, standard deviation, or cumulative sum of these voxels.
+
+        Returns
+        -------
+        str
+            current projection operator ('max', 'mean', 'median', 'std', 'sum').
+        """
         return self._operator
 
-    def setDepthOfProjection(self, v: float = 0.0) -> None:
+    def setDepthOfProjection(self, v: float = 10.0) -> None:
+        """
+        Set the depth (thickness) of the projection and update the viewport.
+        The signal of a pixel in the projection image is calculated from an operator applied to the signals of the
+        voxels located up to a specified depth below the head's surface along the projection line. This operator may be
+        the mean, median, maximum, standard deviation, or cumulative sum of these voxels.
+
+        Parameters
+        ----------
+        v : float (optional)
+            projection depth in mm (must be between 5.0 and 20.0,default 10.0).
+        """
         if 20.0 >= v >= 5.0:
             self._thickness = v
             if self._ref is not None: self._updateProjection()
         else: raise ValueError('Thickness parameter must be between 5.0 and 20 mm.')
 
     def getDepthOfProjection(self) -> float:
+        """
+        Get the current projection depth.
+        The signal of a pixel in the projection image is calculated from an operator applied to the signals of the
+        voxels located up to a specified depth below the head's surface along the projection line. This operator may be
+        the mean, median, maximum, standard deviation, or cumulative sum of these voxels.
+
+        Returns
+        -------
+        float
+            current projection depth in mm.
+        """
         return self._thickness
 
     def setCuttingSliceIndex(self, v: int = 0) -> None:
+        """
+        Set the slice index at which to cut the volume before projection. This slice is used as the new surface. The
+        signal of a pixel in the projection image is calculated from the values of the voxels located up to a
+        specified depth below this new surface.
+
+        Parameters
+        ----------
+        v : int, optional
+            slice index for cutting (Ddefault 0, no cut).
+        """
         self._cut = v
         if self._cut > 0:
             # self._initOrientationLabels()
@@ -593,12 +845,38 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
                 self._info['topcenter'].SetInput('\n\nMedial left hemisphere')
 
     def getCuttingSliceIndex(self) -> int:
+        """
+        Get the current cutting slice index. This slice is used as the new surface. The signal of a pixel in the
+        projection image is calculated from the values of the voxels located up to a specified depth below this new
+        surface.
+
+        Returns
+        -------
+        int
+            current cutting slice index.
+        """
         return self._cut
 
     def isWholeBrainProjection(self) -> bool:
+        """
+        Check if the projection is of the whole brain (i.e. no cutting).
+
+        Returns
+        -------
+        bool
+            True if no cut is applied, False otherwise.
+        """
         return self._cut == 0
 
     def setProjectionOpacity(self, alpha: float = 1.0):
+        """
+        Set the opacity of the foreground projection.
+
+        Parameters
+        ----------
+        alpha : float (optional)
+            opacity value (0.0 to 1.0, default 1.0).
+        """
         if self._foreground is not None:
             if 1.0 >= alpha >= 0.0:
                 self.setVolumeOpacity(alpha, signal=False)
@@ -606,15 +884,29 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
             else: raise ValueError('Opacity parameter must be between 0.0 and 1.0.')
 
     def getProjectionOpacity(self) -> float:
+        """
+        Get the opacity of the foreground projection.
+
+        Returns
+        -------
+        float
+            current opacity value.
+        """
         return self.getVolumeOpacity()
 
     def updateWindowingFromReference(self) -> None:
+        """
+        Update the windowing of the projected volume from the original SisypheVolume reference.
+        """
         if self._ref is not None:
             w = self._ref.display.getWindow()
             self._volume.display.setWindow(w[0], w[1])
             self._renderwindow.Render()
 
     def updateLutFromReference(self) -> None:
+        """
+        Update the lookup table of the projected volume from the original SisypheVOlume reference.
+        """
         if self._ref is not None:
             lut = self._ref.display.getLUT()
             # < Revision 17/10/2024
@@ -623,7 +915,16 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
             # Revision 17/10/2024 >
             self._renderwindow.Render()
 
-    def showAll(self, signal=True):
+    def showAll(self, signal: bool = True) -> None:
+        """
+        Show all relevant information overlays (info, colorbar, labels, tooltip).
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        signal : bool, optional
+            If True, emits signals for synchronization (default True).
+        """
         self.setInfoVisibilityOn(signal)
         self.setColorbarVisibilityOn(signal)
         self.setOrientationLabelsVisibilityOn(signal)
@@ -631,15 +932,48 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
 
     # Private vtk event methods
 
-    def _onWheelForwardEvent(self,  obj, evt_name) -> None:
+    def _onWheelForwardEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles mouse wheel forward VTK event for zooming.
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event.
+        """
         if self.hasVolume():
             if self._interactor.GetControlKey(): self.zoomOut()
 
-    def _onWheelBackwardEvent(self,  obj, evt_name) -> None:
+    def _onWheelBackwardEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles mouse wheel backward VTK event for zooming.
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event.
+        """
         if self.hasVolume():
             if self._interactor.GetControlKey(): self.zoomIn()
 
-    def _onKeyPressEvent(self,  obj, evt_name):
+    def _onKeyPressEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles key press event for zooming.
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event.
+        """
         if self.hasVolume():
             interactorstyle = self._window.GetInteractorStyle()
             k = interactorstyle.GetKeySym()
@@ -647,12 +981,32 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
                 if k == 'Up' or k == 'Left': self.zoomIn()
                 elif k == 'Down' or k == 'Right': self.zoomOut()
 
-    def _onKeyReleaseEvent(self, obj, evt_name):
+    def _onKeyReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles key release event. Does nothing.
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event.
+        """
         pass
 
     # Qt event methods
 
-    def showEvent(self, a0: typing.Optional[QShowEvent]) -> None:
+    def showEvent(self, a0: Optional[QShowEvent]) -> None:
+        """
+        Handles the Qt show event to set initial projection opacity.
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        a0 : QShowEvent
+            show event.
+        """
         if self._ref is not None:
             if self._ref.acquisition.isICBM152():
                 self.setProjectionOpacity(0.5)
@@ -665,8 +1019,13 @@ class MultiProjectionViewWidget(MultiViewWidget):
     Description
     -----------
 
-    Derived from GridViewWidget class. Class used to display projections (left, right, ant, post, top, bottom) in a
-    multiple view widget.
+    Specialized subclass of the MultiViewWidget class designed to display a comprehensive and synchronized set of
+    pre-calculated 2D projections from a single SisypheVolume.
+
+    The main features are as follows:
+
+    - Comprehensive projection set: it arranges eight ProjectionViewWidget instances in a 2x4 grid. This includes the six standard external projections (left, right, anterior, posterior, top, and bottom) as well as two internal views showing the medial walls of the cerebral hemispheres, which are automatically generated by "cutting" the volume at its center.
+    - Synchronization: navigation controls (zoom, pan), window/level adjustments, and projection parameters (operator, depth, opacity) are mirrored across the entire grid.
 
     Inheritance
     -----------
@@ -674,19 +1033,32 @@ class MultiProjectionViewWidget(MultiViewWidget):
     QWidget -> MultiViewWidget -> GridViewWidget -> MultiProjectionViewWidget
 
     Creation: 12/10/2024
-    Last revision: 07/12/2024
+    Last revision: 10/10/2025
     """
 
     # Special method
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        MultiProjectionViewWidget instance constructor.
+
+        Parameters
+        ----------
+        parent : QWidget | None (optional)
+            Parent widget (default is None).
+        """
         super().__init__(2, 4, parent)
         self._initViews()
         self._initSynchronisationSignalConnect()
 
     # Private methods
 
-    def _initViews(self):
+    def _initViews(self) -> None:
+        """
+        Initializes 8 projection view widgets within a 2 x 4 grid.
+        Creates and assigns a ProjectionViewWidget for each standard direction (left, right, ant, post, top, bottom).
+        Also sets the visibility control for all views.
+        """
         self.setViewWidget(0, 0, ProjectionViewWidget('left'))
         self.setViewWidget(1, 0, ProjectionViewWidget('right'))
         self.setViewWidget(0, 1, ProjectionViewWidget('left'))
@@ -697,7 +1069,12 @@ class MultiProjectionViewWidget(MultiViewWidget):
         self.setViewWidget(1, 3, ProjectionViewWidget('bottom'))
         self.setVisibilityControlToAll()
 
-    def _initSynchronisationSignalConnect(self):
+    def _initSynchronisationSignalConnect(self) -> None:
+        """
+        Initializes signal connections for synchronizing camera and other view properties across all projection view
+        widgets. Connects signals for zoom, camera position, opacity, render updates, and other view method calls to
+        ensure coordinated behavior across all views in the grid.
+        """
         for i in range(8):
             w1 = self.getViewWidgetAt(i // 4, i % 4)
             w1.synchronisationOn()
@@ -718,6 +1095,18 @@ class MultiProjectionViewWidget(MultiViewWidget):
                   foreground: SisypheVolume,
                   background: SisypheVolume | None = None,
                   mask: SisypheVolume | None = None) -> None:
+        """
+        Set the SisypheVolume instances for all projection viewports.
+
+        Parameters
+        ----------
+        foreground : SisypheVolume
+            SisypheVolume instance to be projected and displayed.
+        background : SisypheVolume | None, optional
+            SisypheVolume instance to be projected and used as a background (default None).
+        mask : SisypheVolume | None, optional
+            mask to apply before projection processing (default to None).
+        """
         if foreground.acquisition.isICBM152(): mid = foreground.getSize()[0] // 2
         else:
             # < Revision 09/06/2025
@@ -736,47 +1125,128 @@ class MultiProjectionViewWidget(MultiViewWidget):
     # < Revision 18/10/2024
     # add replaceVolume
     def replaceVolume(self, foreground: SisypheVolume) -> None:
+        """
+        Replace the current displayed SisypheVolume instance in all projection viewports.
+
+        Parameters
+        ----------
+        foreground : SisypheVolume
+            new SisypheVolume instance to display.
+        """
         if self.hasVolume():
             for k in self._views:
                 self._views[k].replaceVolume(foreground)
     # Revision 18/10/2024 >
 
     def getVolume(self) -> SisypheVolume | None:
+        """
+        Get the original, un-projected SisypheVolume reference from the first viewport.
+
+        Returns
+        -------
+        SisypheVolume | None
+            original SisypheVolume reference, or None if not set.
+        """
         return self._views[(0, 0)].getVolume()
 
     def hasVolume(self) -> bool:
+        """
+        Check if a SisypheVolume reference is set in the first viewport.
+
+        Returns
+        -------
+        bool
+            True if a reference volume is set, False otherwise.
+        """
         return self._views[(0, 0)].hasVolume()
 
-    def removeVolume(self):
+    def removeVolume(self) -> None:
+        """
+        Remove the SisypheVolume reference and all associated data in all viewports.
+        """
         for k in self._views:
             self._views[k].removeVolume()
 
-    def setOperatorOfProjection(self, v: str = 'max'):
+    def setOperatorOfProjection(self, v: str = 'max') -> None:
+        """
+        Set the projection operator for all projection viewports.
+
+        Parameters
+        ----------
+        v : str, optional
+            projection operator. Must be one of 'max', 'mean', 'median', 'std', 'sum' (default 'max').
+        """
         for k in self._views:
             self._views[k].setOperatorOfProjection(v)
 
     def getOperatorOfProjection(self) -> str:
+        """
+        Get the projection operator.
+
+        Returns
+        -------
+        str
+            current projection operator ('max', 'mean', 'median', 'std', 'sum').
+        """
         return self._views[(0, 0)].getOperatorOfProjection()
 
     def setDepthOfProjection(self, v: float = 0.0) -> None:
+        """
+        Set the projection depth for all projection viewports.
+
+        Parameters
+        ----------
+        v : float, optional
+            projection depth in mm (default 0.0).
+        """
         for k in self._views:
             self._views[k].setDepthOfProjection(v)
 
     def getDepthOfProjection(self) -> float:
+        """
+        Get the projection depth.
+
+        Returns
+        -------
+        float
+            current projection depth in mm.
+        """
         return self._views[(0, 0)].getDepthOfProjection()
 
     def setProjectionOpacity(self, alpha: float = 1.0):
+        """
+        Set the opacity of the foreground projection for all projection viewports.
+
+        Parameters
+        ----------
+        alpha : float, optional
+            opacity value (0.0 to 1.0, default 1.0).
+        """
         for k in self._views:
             self._views[k].setProjectionOpacity(alpha)
 
     def getProjectionOpacity(self) -> float:
+        """
+        Get the opacity of the foreground projection.
+
+        Returns
+        -------
+        float
+            current opacity value.
+        """
         return self._views[(0, 0)].getProjectionOpacity()
 
     def updateLutFromReference(self) -> None:
+        """
+        Update the lookup table of all projection viewports from the original SisypheVolume reference.
+        """
         for k in self._views:
             self._views[k].updateLutFromReference()
 
     def updateWindowingFromReference(self) -> None:
+        """
+        Update the windowing of all projection viewports from the original SisypheVolume reference.
+        """
         for k in self._views:
             self._views[k].updateWindowingFromReference()
 
@@ -788,8 +1258,8 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
     Description
     -----------
 
-    Derived from IconBarWidget class. Class used to display multiple projections (left, right, ant, post, top, bottom)
-    in iconBarWidget.
+    This widget encapsulates a MultiProjectionViewWidget and extends it by providing a collapsible icon bar that is
+    displayed on the left.
 
     Inheritance
     -----------
@@ -797,19 +1267,24 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
     QWidget -> IconBarWidget -> IconBarMultiProjectionViewWidget
 
     Creation: 13/10/2024
-    Last revision: 06/12/2024
+    Last revision: 10/10/2025
     """
 
     # Special method
 
-    """
-    Class attributes
+    def __init__(self,
+                 widget: MultiProjectionViewWidget | None = None,
+                 parent: QWidget | None = None):
+        """
+        IconBarMultiProjectionViewWidget instance constructor.
 
-    _slider: QSlider            GUI slider to set opacity of the vtkImageSlice foreground
-    _depth: LabeledSpinBox      GUI spinbox to set projection depth in mm
-    """
-
-    def __init__(self, widget=None, parent=None):
+        Parameters
+        ----------
+        widget : MultiProjectionViewWidget | None (optional)
+            MultiProjectionViewWidget instance to encapsulate (default None).
+        parent : QWidget | Non (optional)
+            parent widget (Default None).
+        """
         super().__init__(parent)
         if widget is None: widget = MultiProjectionViewWidget()
         if isinstance(widget, MultiProjectionViewWidget): self.setViewWidget(widget)
@@ -941,13 +1416,26 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
         self._visibilityflags['operator'] = True
         # Revision 06/12/2024 >
 
+    """
+    Class attributes
+
+    _slider: QSlider            GUI slider to set opacity of the vtkImageSlice foreground
+    _depth: LabeledSpinBox      GUI spinbox to set projection depth in mm
+    """
+
     # Private method
 
-    def _opacityChanged(self):
+    def _opacityChanged(self) -> None:
+        """
+        Updates the projection opacity based on the _slider widget.
+        """
         self._widget.setProjectionOpacity(self._slider.value() / 100.0)
         self._slider.setToolTip('Opacity {} %'.format(self._slider.value()))
 
-    def _depthChanged(self):
+    def _depthChanged(self) -> None:
+        """
+        Updates the projection depth based on the _deth widget.
+        """
         if self._widget is not None:
             if self._depth.value() != int(self._widget.getDepthOfProjection()):
                 wait = DialogWait()
@@ -956,7 +1444,15 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
                 self._widget.setDepthOfProjection(self._depth.value())
                 wait.close()
 
-    def _operatorChanged(self, action: QAction):
+    def _operatorChanged(self, action: QAction) -> None:
+        """
+        Updates the projection operator based on the selected menu action.
+
+        Parameters
+        ----------
+        action : QAction
+            QAction instance corresponding to the selected projection operator.
+        """
         if self._widget is not None:
             op = 'mean'
             if action.text() == 'Maximum': op = 'max'
@@ -978,6 +1474,19 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
                   foreground: SisypheVolume,
                   background: SisypheVolume | None = None,
                   mask: SisypheVolume | None = None) -> None:
+        """
+        Set the SisypheVolume instances for projection display and updates the GUI.
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        foreground : SisypheVolume
+            SisypheVolume instance to be projected and displayed.
+        background : SisypheVolume | None (optional)
+            SisypheVolume instance to be projected and used as a background (default None).
+        mask : SisypheVolume | None, optional
+            mask to apply before projection processing (default to None).
+        """
         if self._widget is not None:
             self._hideViewWidget()
             self._widget.setVolume(foreground, background, mask)
@@ -992,6 +1501,10 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
     # Revision 21/11/2024 >
 
     def removeVolume(self) -> None:
+        """
+        Remove the SisypheVolume instance and disable the timer.
+        Currently, this method calls the superclass's implementation.
+        """
         if self._widget is not None:
             super().removeVolume()
             # < Revision 08/11/2024
@@ -1004,12 +1517,20 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
     # < Revision 15/10/2024
     # override addOverlay (inherited from IconBarWidget class) as dummy method, no overlay in projection
     def addOverlay(self, volume: SisypheVolume) -> None:
+        """
+        Dummy method, overlays are not available in this widget.
+        Currently, this method overrides the superclass's implementation.
+        """
         pass
     # Revision 15/10/2024 >
 
     # < Revision 15/10/2024
     # override getOverlayCount (inherited from IconBarWidget class) as dummy method, no overlay in projection, always 0
     def getOverlayCount(self) -> int:
+        """
+        Dummy method, overlays are not available in this widget.
+        Currently, this method overrides the superclass's implementation.
+        """
         return 0
     # Revision 15/10/2024 >
 
@@ -1017,20 +1538,32 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
     # override hasOverlay (inherited from IconBarWidget class) as dummy method, no overlay in projection, always False
     # mandatory method for compatibility with IconBarViewWidgetCollection
     def hasOverlay(self) -> bool:
+        """
+        Dummy method, overlays are not available in this widget.
+        Currently, this method overrides the superclass's implementation.
+        """
         return False
     # Revision 15/10/2024 >
 
     # < Revision 15/10/2024
     # override getOverlayIndex (inherited from IconBarWidget class) as dummy method, no overlay in projection
     # mandatory method for compatibility with IconBarViewWidgetCollection
-    def getOverlayIndex(self, o) -> int | None:
+    def getOverlayIndex(self, o: SisypheVolume) -> int | None:
+        """
+        Dummy method, overlays are not available in this widget.
+        Currently, this method overrides the superclass's implementation.
+        """
         raise NotImplementedError
     # Revision 15/10/2024 >
 
     # < Revision 15/10/2024
     # override removeOverlay (inherited from IconBarWidget class) as dummy method, no overlay in projection
     # mandatory method for compatibility with IconBarViewWidgetCollection
-    def removeOverlay(self, o) -> None:
+    def removeOverlay(self, o: int | SisypheVolume) -> None:
+        """
+        Dummy method, overlays are not available in this widget.
+        Currently, this method overrides the superclass's implementation.
+        """
         pass
     # Revision 15/10/2024 >
 
@@ -1038,12 +1571,20 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
     # override removeAllOverlays (inherited from IconBarWidget class) as dummy method, no overlay in projection
     # mandatory method for compatibility with IconBarViewWidgetCollection
     def removeAllOverlays(self) -> None:
+        """
+        Dummy method, overlays are not available in this widget.
+        Currently, this method overrides the superclass's implementation.
+        """
         pass
     # Revision 15/10/2024 >
 
     # < Revision 15/10/2024
     # override getOverlayFromIndex (inherited from IconBarWidget class) as dummy method, no overlay in projection
     # mandatory method for compatibility with IconBarViewWidgetCollection
-    def getOverlayFromIndex(self, index: int) -> None:
+    def getOverlayFromIndex(self, index: int) -> SisypheVolume:
+        """
+        Dummy method, overlays are not available in this widget.
+        Currently, this method overrides the superclass's implementation.
+        """
         raise NotImplementedError
     # Revision 15/10/2024 >

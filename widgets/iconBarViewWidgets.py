@@ -5,6 +5,11 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from typing import Any
+from typing import Optional
+
 from sys import platform
 from os.path import join
 from os.path import dirname
@@ -50,6 +55,22 @@ from Sisyphe.widgets.basicWidgets import ColorSelectPushButton
 from Sisyphe.widgets.basicWidgets import OpacityPushButton
 from Sisyphe.widgets.LUTWidgets import TransferWidget
 
+if TYPE_CHECKING:
+    from Sisyphe.gui.dialogWait import DialogWait
+    from Sisyphe.widgets.toolBarThumbnail import ToolBarThumbnail
+    from Sisyphe.widgets.sliceViewWidgets import SliceViewWidget
+    from Sisyphe.widgets.multiComponentViewWidget import MultiComponentViewWidget
+    from Sisyphe.widgets.projectionViewWidget import MultiProjectionViewWidget
+    from Sisyphe.widgets.multiViewWidgets import SliceTrajectoryViewWidget
+    from Sisyphe.core.sisypheROI import SisypheROIDraw
+    from Sisyphe.core.sisypheROI import SisypheROICollection
+    from Sisyphe.core.sisypheMesh import SisypheMeshCollection
+    from Sisyphe.core.sisypheTracts import SisypheTractCollection
+    from Sisyphe.core.sisypheTools import ToolWidgetCollection
+    from PyQt5.QtGui import QDragEnterEvent
+    from PyQt5.QtGui import QDropEvent
+    from PyQt5.QtCore import QTimerEvent
+
 """
 Class hierarchy
 ~~~~~~~~~~~~~~~
@@ -66,7 +87,7 @@ Class hierarchy
 Description
 ~~~~~~~~~~~
 
-Adds iconbar support to MultiViewWidget derived classes.
+Adds icon bar support to view widget classes.
 """
 
 
@@ -77,15 +98,31 @@ class IconBarWidget(QWidget):
     Description
     ~~~~~~~~~~~
 
-    Base class that adds icon bar support to image display widgets (derived from MultiViewWidget)
+    Base class that encapsulates a primary view widget (typically a MultiViewWidget subclass) and enhances it with a
+    collapsible, vertical icon bar.
+
+    The main features are as follows:
+
+    - Encapsulated view widget access: the python __call__ syntax where he instance can be called like a function (e.g. instance_name()) returns the native encapsulated view widget. This is a fast and easy way to access all the methods of the encapsulated view widget.
+    - Collapsible icon bar: a space-saving icon bar is displayed on the left. It automatically hides when the mouse is over the main view and reappears when the mouse pointer moves to the left edge. This behavior can be overridden by "pinning" the bar to keep it permanently visible.
+    - Standardized Toolset: The icon bar provides quick access to a rich set of common functionalities, grouped into icons:
+
+        - View control: fullscreen mode, expanding a single sub-view, and zoom controls (in, out, reset).
+        - Display settings: menus for toggling the visibility of on-screen elements like the cursor, information text, orientation markers, color bars, and rulers.
+        - Interactive tools: menus for managing mouse interaction modes, adding measurement tools (e.g. distance, angle), and configuring isolines.
+        - Capture: buttons to save the current view(s) to a bitmap file or copy them directly to the system clipboard.
+
+    - Context-sensitive menus: menus associated with icons are dynamically populated based on the state of the encapsulated view widget. For example, the "Isoline" menu lists all displayed volumes and overlays available for contouring.
+    - Drag-and-Drop integration: fully supports dragging volumes from an external source (like a thumbnail bar) and dropping them onto the view. The drop behavior (e.g., replace the current volume, add as an overlay, or prompt the user) is configurable through application settings (settings.xml).
+    - Customizable interface: offers an extensive API to control the visibility and availability of each button on the icon bar, allowing derived classes to tailor the user interface to their specific needs.
 
     Inheritance
     ~~~~~~~~~~~
 
     QWidget -> IconBarWidget
 
-    Creation: 17/04/2023
-    Last revision: 01/05/2025
+    Creation: 17/04/2022
+    Last revision: 10/10/2025
     """
 
     _BTSIZE = 40    # default button size
@@ -98,29 +135,29 @@ class IconBarWidget(QWidget):
     # Class methods
 
     @classmethod
-    def _getDefaultIconDirectory(cls):
+    def _getDefaultIconDirectory(cls) -> str:
+        """
+        Get the default directory for icon bar icons.
+
+        Returns
+        -------
+        str
+            absolute path to the icon directory.
+        """
         import Sisyphe.gui
         return join(dirname(abspath(Sisyphe.gui.__file__)), 'baricons')
 
     # Special methods
 
-    """
-    Private Attributes
+    def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        IconBarWidget instance constructor.
 
-    _widget             MultiViewWidget, display widget
-    _bar                QFrame, icon bar
-    _transfer           TransferWidget, widget for transfer function settings
-    _menulut            QWidgetAction
-    _ax                 QIcon, axial icon
-    _cor                QIcon, coronal icon
-    _sag                QIcon, sagittal icon
-    _icons              Dict[str, QPushButton], iconbar buttons
-    _visibilityflags    Dict[str, bool], buttons visibility flags
-    _btsize             int, button size
-    _timerid            int, QTimer identifier
-    """
-
-    def __init__(self, parent=None):
+        Parameters
+        ----------
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         self._widget = None
@@ -343,13 +380,60 @@ class IconBarWidget(QWidget):
         self.setLayout(self._vlayout)
         self.setAcceptDrops(True)
 
-    def __call__(self):
+    """
+    Private Attributes
+
+    _widget             MultiViewWidget, display widget
+    _bar                QFrame, icon bar
+    _transfer           TransferWidget, widget for transfer function settings
+    _menulut            QWidgetAction
+    _ax                 QIcon, axial icon
+    _cor                QIcon, coronal icon
+    _sag                QIcon, sagittal icon
+    _icons              Dict[str, QPushButton], iconbar buttons
+    _visibilityflags    Dict[str, bool], buttons visibility flags
+    _btsize             int, button size
+    _timerid            int, QTimer identifier
+    """
+
+    def __call__(self) -> MultiViewWidget:
+        """
+        Allows the instance to be called as a function, returning the encapsulated MultiViewWidget instance.
+
+        Returns
+        -------
+        MultiViewWidget
+            encapsulated display widget.
+        """
         if self._widget is not None: return self._widget
         else: raise AttributeError('Widget attribute is not defined.')
 
     # Private methods
 
-    def _createButton(self, icon0, icon1='', checkable=False, autorepeat=False):
+    def _createButton(self,
+                      icon0: str,
+                      icon1: str = '',
+                      checkable: bool = False,
+                      autorepeat: bool = False) -> RoundedButton:
+        """
+        Creates and configures a RoundedButton for the icon bar.
+
+        Parameters
+        ----------
+        icon0 : str
+            Filename for the button's normal state icon.
+        icon1 : str (optional)
+            Filename for the button's checked state icon (default '').
+        checkable : bool (optional)
+            whether the button is checkable (default False).
+        autorepeat : bool (optional)
+            whether the button auto-repeats when held down (default False).
+
+        Returns
+        -------
+        RoundedButton
+            configured button instance.
+        """
         button = RoundedButton()
         # < Revision 17/03/2025
         # button.setSize(self._BTSIZE)
@@ -367,7 +451,15 @@ class IconBarWidget(QWidget):
         button.setAutoRepeat(autorepeat)
         return button
 
-    def _getBaseParent(self):
+    def _getBaseParent(self) -> QWidget:
+        """
+        Traverses the parent hierarchy to find the top-level parent widget.
+
+        Returns
+        -------
+        QWidget
+            top-level parent widget.
+        """
         w = None
         w2 = self.parent()
         while w2 is not None:
@@ -375,7 +467,15 @@ class IconBarWidget(QWidget):
             w2 = w.parent()
         return w
 
-    def _onMenuTools(self, action):
+    def _onMenuTools(self, action: QAction) -> None:
+        """
+        Handles the 'Tools' menu actions to add measurement tools to the view widget.
+
+        Parameters
+        ----------
+        action : QAction
+            triggered menu action.
+        """
         s = str(action.text())[0]
         w = self.getViewWidget()
         if w is not None:
@@ -391,7 +491,15 @@ class IconBarWidget(QWidget):
                     else: w2.addAngleTool()
                 else: messageBox(self, title=action.text(), text='Select a view before adding a tool.')
 
-    def _onMenuSaveCapture(self, action):
+    def _onMenuSaveCapture(self, action: QAction) -> None:
+        """
+        Handles the 'Capture' menu actions to save or send viewport captures.
+
+        Parameters
+        ----------
+        action : QAction
+            triggered menu action.
+        """
         w = self.getViewWidget()
         if w is not None:
             s = action.text().split()
@@ -425,7 +533,15 @@ class IconBarWidget(QWidget):
                             for cap in caps:
                                 mainwindow.getScreenshots().paste(cap)
 
-    def _onMenuCopyCapture(self, action):
+    def _onMenuCopyCapture(self, action: QAction) -> None:
+        """
+        Handles the 'Copy' menu actions to copy viewport captures to the clipboard.
+
+        Parameters
+        ----------
+        action : QAction
+            triggered menu action.
+        """
         s = str(action.text())[5]
         w = self.getViewWidget()
         if w is not None:
@@ -437,12 +553,28 @@ class IconBarWidget(QWidget):
                                  'No view selected.')
             elif s == 'g': w.copyToClipboard()
 
-    def _onMenuOrientation(self, v):
+    def _onMenuOrientation(self, v: int) -> None:
+        """
+        Updates the orientation icon when the orientation is changed from the menu.
+
+        Parameters
+        ----------
+        v : int
+            orientation index (0: axial, 1: coronal, 2: sagittal).
+        """
         if v == 0: self._icons['orient'].setIcon(self._ax)
         elif v == 1: self._icons['orient'].setIcon(self._cor)
         else: self._icons['orient'].setIcon(self._sag)
 
-    def _onMenuIso(self, action):
+    def _onMenuIso(self, action: QAction) -> None:
+        """
+        Handles the 'Isovalue' menu actions to set and display isolines for a selected volume or overlay.
+
+        Parameters
+        ----------
+        action : QAction
+            triggered menu action.
+        """
         view = self._widget.getFirstSliceViewWidget()
         if view is not None and isinstance(view, SliceOverlayViewWidget):
             n = int(action.data())
@@ -458,7 +590,10 @@ class IconBarWidget(QWidget):
                     view.setIsoIndex(n, signal=True)
                 else: view.setIsoIndex(-1, signal=True)
 
-    def _onShowMenuIso(self):
+    def _onShowMenuIso(self) -> None:
+        """
+        Populates and configures the 'Isovalue' menu before it is shown.
+        """
         view = self._widget.getFirstSliceViewWidget()
         if view is not None and isinstance(view, SliceOverlayViewWidget):
             n = view.getIsoIndex()
@@ -495,7 +630,10 @@ class IconBarWidget(QWidget):
                         action.setChecked(n == i + 1)
                         self._isoMenu.addAction(action)
 
-    def _onIsoEditingFinished(self):
+    def _onIsoEditingFinished(self) -> None:
+        """
+        Updates the isoline values when editing in the line edit is finished.
+        """
         view = self._widget.getFirstSliceViewWidget()
         if view is not None and isinstance(view, SliceOverlayViewWidget):
             if self._isoedit.isEmpty():
@@ -519,7 +657,10 @@ class IconBarWidget(QWidget):
                     self._isoedit.setEditText('')
                     view.setIsoIndex(-1, signal=True)
 
-    def _onIsoColorChanged(self):
+    def _onIsoColorChanged(self) -> None:
+        """
+        Updates the isoline color when the color is changed.
+        """
         view = self._widget.getFirstSliceViewWidget()
         if view is not None and isinstance(view, SliceOverlayViewWidget):
             n = view.getIsoIndex()
@@ -528,7 +669,15 @@ class IconBarWidget(QWidget):
                 view.setIsoLinesColor(c, signal=True)
 
     # noinspection PyUnusedLocal
-    def _onIsoOpacityChanged(self, w):
+    def _onIsoOpacityChanged(self, w: QWidget) -> None:
+        """
+        Updates the isoline opacity when the opacity is changed.
+
+        Parameters
+        ----------
+        w : QWidget
+            widget that emitted the signal.
+        """
         view = self._widget.getFirstSliceViewWidget()
         if view is not None and isinstance(view, SliceOverlayViewWidget):
             n = view.getIsoIndex()
@@ -538,7 +687,10 @@ class IconBarWidget(QWidget):
 
     # < Revision 01/05/2025
     # add _onTransferMenuChanged method
-    def _onTransferMenuChanged(self):
+    def _onTransferMenuChanged(self) -> None:
+        """
+        Adjusts the transfer function menu size when its content changes.
+        """
         if self._transfer is not None:
             menu = self._icons['transfer'].menu()
             self._transfer.adjustSize()
@@ -548,7 +700,10 @@ class IconBarWidget(QWidget):
             QApplication.processEvents()
     # Revision 01/05/2025 >
 
-    def _onExpand(self):
+    def _onExpand(self) -> None:
+        """
+        Toggles the expanded view of the currently selected sub-widget.
+        """
         if self._widget is not None:
             if self._icons['expand'].isChecked():
                 w = self._widget.getSelectedViewWidget()
@@ -562,18 +717,27 @@ class IconBarWidget(QWidget):
                         if action.isChecked(): action.setChecked(False)
                         self._widget[i, j].setVisible(True)
 
-    def _onFullScreen(self):
+    def _onFullScreen(self) -> None:
+        """
+        Toggles the full-screen mode.
+        """
         w = self._getBaseParent()
         from Sisyphe.gui.windowSisyphe import WindowSisyphe
         if isinstance(w, WindowSisyphe): w.toggleFullscreen()
         else: self._icons['screen'].setVisible(False)
 
-    def _onPin(self):
+    def _onPin(self) -> None:
+        """
+        Toggles the pinned state of the icon bar. The icon bar is no longer collapsible when pinned.
+        """
         if self._icons['pin'].isVisible():
             self._icons['pin'].setChecked(False)
         else: self._icons['pin'].setChecked(True)
 
-    def _connectExpandAction(self):
+    def _connectExpandAction(self) -> None:
+        """
+        Connects the 'expand' action of each sub-widget to the expand button.
+        """
         for i in range(0, self._widget.getRows()):
             for j in range(0, self._widget.getCols()):
                 try:
@@ -582,12 +746,18 @@ class IconBarWidget(QWidget):
                         action.triggered.connect(self._icons['expand'].setChecked)
                 except: return
 
-    def _showViewWidget(self):
+    def _showViewWidget(self) -> None:
+        """
+        Shows the icon bar and the encapsulated view widget.
+        """
         self._bar.show()
         self._widget.show()
         QApplication.processEvents()
 
-    def _hideViewWidget(self):
+    def _hideViewWidget(self) -> None:
+        """
+        Hides the icon bar and the encapsulated view widget.
+        """
         self._bar.hide()
         self._widget.hide()
         QApplication.processEvents()
@@ -596,7 +766,17 @@ class IconBarWidget(QWidget):
 
     # < Revision 17/03/2025
     # add setIconSize method
-    def setIconSize(self, size: int | None):
+    def setIconSize(self, size: int | None) -> None:
+        """
+        Set the size, in pixels, of the icons in the icon bar.
+
+        Parameters
+        ----------
+        size : int | None
+
+            - new size for the icons. Clamped between 0 and 64.
+            - if None, set the size to its default value (40).
+        """
         if size > 64: self._btsize = 64
         elif size < 0: self._btsize = self._BTSIZE
         elif size is None: self._btsize = self._BTSIZE
@@ -608,37 +788,75 @@ class IconBarWidget(QWidget):
     # < Revision 17/03/2025
     # add getIconSize method
     def getIconSize(self) -> int:
+        """
+        Get the current size of the icons in the icon bar.
+
+        Returns
+        -------
+        int
+            current icon size in pixels.
+        """
         return self._btsize
 
     # < Revision 08/03/2025
     # fix vtkWin32OpenGLRenderWindow error: wglMakeCurrent failed in MakeCurrent()
     # finalize method must be called before destruction
-    def finalize(self):
+    def finalize(self)  -> None:
+        """
+        Method to be called before IconBarWidget instance destruction.
+        It is used to avoid vtk error on windows platform (vtkWin32OpenGLRenderWindow error: 'wglMakeCurrent failed in
+        MakeCurrent()').
+        """
         if self._widget is not None:
             self._widget.finalize()
     # Revision 08/03/2025 >
 
-    def timerEnabled(self):
-        # timer used to detect when mouse leaves icon bar
-        # call timerEvent Qt event method
+    def timerEnabled(self) -> None:
+        """
+        Enables a timer to manage icon bar visibility based on mouse position.
+        The timer is only started if a SisypheVolume is displayed.
+        """
         if self._widget.hasVolume():
             if self._timerid is None:
                 self._timerid = self.startTimer(0)
 
-    def timerDisabled(self):
+    def timerDisabled(self) -> None:
+        """
+        Disable the icon bar visibility timer.
+        This timer is used to manage icon bar visibility based on mouse position.
+        """
         # timer used to detect when mouse leaves icon bar
         # call timerEvent Qt event method
         if self._timerid is not None:
             self.killTimer(self._timerid)
             self._timerid = None
 
-    def updateRender(self):
+    def updateRender(self) -> None:
+        """
+        Trigger a render update in the encpasulated view widget.
+        """
         self._widget.updateRender()
 
-    def getName(self):
+    def getName(self) -> str:
+        """
+        Get the name of the widget.
+
+        Returns
+        -------
+        str
+            widget name.
+        """
         return self.objectName()
 
-    def setName(self, name):
+    def setName(self, name: str) -> None:
+        """
+        Set the name of the widget and emits a signal.
+
+        Parameters
+        ----------
+        name : str
+            new widget name.
+        """
         if isinstance(name, str):
             self.setObjectName(name)
             # noinspection PyUnresolvedReferences
@@ -647,7 +865,15 @@ class IconBarWidget(QWidget):
 
     # Public reference volume methods
 
-    def setVolume(self, vol):
+    def setVolume(self, vol: SisypheVolume) -> None:
+        """
+        Set the SisypheVolume to be displayed.
+
+        Parameters
+        ----------
+        vol : SisypheVolume
+            volume to display.
+        """
         if isinstance(vol, SisypheVolume):
             if self._widget is not None:
                 self._widget.setVolume(vol)
@@ -655,19 +881,47 @@ class IconBarWidget(QWidget):
 
     # < Revision 18/10/2024
     # add replaceVolume method
-    def replaceVolume(self, vol):
+    def replaceVolume(self, vol: SisypheVolume) -> None:
+        """
+        Replace the currently displayed SisypheVolume with a new one.
+        The new volume must have the same dimensions as the old one.
+
+        Parameters
+        ----------
+        vol : SisypheVolume
+            new volume to display.
+        """
         if isinstance(vol, SisypheVolume):
             if self._widget is not None:
                 self._widget.replaceVolume(vol)
     # Revision 18/10/2024 >
 
-    def getVolume(self):
+    def getVolume(self) -> SisypheVolume:
+        """
+        Get the displayed SisypheVolume.
+
+        Returns
+        -------
+        SisypheVolume
+            reference SisypheVolume.
+        """
         return self._widget.getVolume()
 
-    def hasVolume(self):
+    def hasVolume(self) -> bool:
+        """
+        Check if a reference SisypheVolume is displayed.
+
+        Returns
+        -------
+        bool
+            True if a volume is displayed, False otherwise.
+        """
         return self._widget.hasVolume()
 
-    def removeVolume(self):
+    def removeVolume(self) -> None:
+        """
+        Remove the reference SisypheVolume.
+        """
         if self._widget is not None:
             self._hideViewWidget()
             QApplication.processEvents()
@@ -675,64 +929,156 @@ class IconBarWidget(QWidget):
 
     # Public overlay methods
 
-    def addOverlay(self, volume):
+    def addOverlay(self, volume: SisypheVolume) -> None:
+        """
+        Add an overlay SisypheVolume.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            SisypheVolume to add as an overlay.
+        """
         if self._widget is not None:
             if self._widget.hasVolume():
                 self._widget.addOverlay(volume)
 
-    def getOverlayCount(self):
+    def getOverlayCount(self) -> int:
+        """
+        Get the number of overlay volumes.
+
+        Returns
+        -------
+        int
+            number of overlays.
+        """
         if self._widget is not None:
             if self._widget.hasVolume(): return self._widget.getOverlayCount()
             else: raise AttributeError('no volume in _widget attribute.')
         else: raise AttributeError('_widget attribute is None.')
 
-    def hasOverlay(self):
+    def hasOverlay(self) -> bool:
+        """
+        Checksif there are any overlay volumes.
+
+        Returns
+        -------
+        bool
+            True if at least one overlay exists, False otherwise.
+        """
         if self._widget is not None:
             if self._widget.hasVolume(): return self._widget.hasOverlay()
             else: raise AttributeError('no volume in _widget attribute.')
         else: raise AttributeError('_widget attribute is None.')
 
-    def getOverlayIndex(self, o):
+    def getOverlayIndex(self, o: SisypheVolume) -> int:
+        """
+        Get the index of a specific overlay volume.
+
+        Parameters
+        ----------
+        o : SisypheVolume
+            overlay volume instance to find.
+
+        Returns
+        -------
+        int
+            index of the overlay.
+        """
         if self._widget is not None:
             if self._widget.hasVolume(): return self._widget.getOverlayIndex(o)
             else: raise AttributeError('no volume in _widget attribute.')
         else: raise AttributeError('_widget attribute is None.')
 
-    def removeOverlay(self, o):
+    def removeOverlay(self, o: int | SisypheVolume) -> None:
+        """
+        Remove an overlay volume by index or instance.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            index or instance of the overlay to remove.
+        """
         if self._widget is not None:
             if self._widget.hasVolume():
                 self._widget.removeOverlay(o)
 
-    def removeAllOverlays(self):
+    def removeAllOverlays(self) -> None:
+        """
+        Remove all overlay volumes.
+        """
         if self._widget is not None:
             if self._widget.hasVolume():
                 self._widget.removeAllOverlays()
 
-    def getOverlayFromIndex(self, index):
+    def getOverlayFromIndex(self, index: int) -> SisypheVolume:
+        """
+        Get an overlay volume by its index.
+
+        Parameters
+        ----------
+        index : int
+            index of the overlay to retrieve.
+
+        Returns
+        -------
+        SisypheVolume
+            overlay volume at the specified index.
+        """
         if self._widget is not None:
             if self._widget.hasVolume(): return self._widget.getOverlayFromIndex(index)
             else: raise AttributeError('no volume in _widget attribute.')
         else: raise AttributeError('_widget attribute is None.')
 
-    def setAlignCenters(self, v: bool):
+    def setAlignCenters(self, v: bool) -> None:
+        """
+        Set whether to align the centers of the reference volume and overlays.
+
+        Parameters
+        ----------
+        v : bool
+            True to align centers, False otherwise.
+        """
         if self._widget is not None:
             self._widget.setAlignCenters(v)
 
-    def alignCentersOn(self):
+    def alignCentersOn(self) -> None:
+        """
+        Enable alignment of centers for the reference volume and overlays.
+        """
         if self._widget is not None:
             self._widget.setAlignCentersOn()
 
-    def alignCentersOff(self):
+    def alignCentersOff(self) -> None:
+        """
+        Disable alignment of centers for the reference volume and overlays.
+        """
         if self._widget is not None:
             self._widget.setAlignCentersOff()
 
-    def getAlignCenters(self):
+    def getAlignCenters(self) -> bool:
+        """
+        Get the current state of center alignment.
+
+        Returns
+        -------
+        bool
+            True if center alignment is enabled, False otherwise.
+        """
         if self._widget is not None: return self._widget.getAlignCenters()
         else: raise AttributeError('_widget attribute is None.')
 
     # Public view widget methods
 
-    def setViewWidget(self, widget):
+    def setViewWidget(self, widget: MultiViewWidget) -> None:
+        """
+        Set and configure the view widget encapsulated by the IconBarWidget.
+        This method connects the icon bar buttons to the corresponding actions of the view widget.
+
+        Parameters
+        ----------
+        widget : MultiViewWidget
+            view widget to be encapsulated.
+        """
         if isinstance(widget, MultiViewWidget):
             self._widget = widget
             self._widget.setParent(self)
@@ -970,33 +1316,77 @@ class IconBarWidget(QWidget):
 
         else: raise TypeError('parameter type {} is not MultiViewWidget.'.format(type(widget)))
 
-    def getViewWidget(self):
+    def getViewWidget(self) -> MultiViewWidget:
+        """
+        Get the encapsulated view widget.
+
+        Returns
+        -------
+        MultiViewWidget
+            encapsulated view widget.
+        """
         return self._widget
 
-    def viewWidgetVisibleOn(self):
+    def viewWidgetVisibleOn(self) -> None:
+        """
+        Make the encapsulated view widget visible.
+        """
         self.setViewWidgetVisibility(True)
 
-    def viewWidgetVisibleOff(self):
+    def viewWidgetVisibleOff(self) -> None:
+        """
+        Make the encapsulated view widget invisible.
+        """
         self.setViewWidgetVisibility(False)
 
-    def setViewWidgetVisibility(self, v):
+    def setViewWidgetVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the encapsulated view widget.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the widget, False to hide it.
+        """
         if isinstance(v, bool):
             self._widget.setVisible(v)
             QApplication.processEvents()
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getViewWidgetVisibility(self):
+    def getViewWidgetVisibility(self) -> bool:
+        """
+        Get the visibility of the encapsulated view widget.
+
+        Returns
+        -------
+        bool
+            True if the widget is visible, False otherwise.
+        """
         return self._widget.isVisible()
 
     # Public icon bar widget methods
 
-    def iconBarVisibleOff(self):
+    def iconBarVisibleOff(self) -> None:
+        """
+        Hide the icon bar.
+        """
         self.setIconBarVisibility(False)
 
-    def iconBarVisibleOn(self):
+    def iconBarVisibleOn(self) -> None:
+        """
+        Show the icon bar.
+        """
         self.setIconBarVisibility(True)
 
-    def setIconBarVisibility(self, v):
+    def setIconBarVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the icon bar, respecting the pinned state.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the icon bar, False to hide it.
+        """
         if isinstance(v, bool):
             if self._icons['pin'].isChecked(): v = True
             for key in self._icons:
@@ -1004,52 +1394,124 @@ class IconBarWidget(QWidget):
                 else: self._icons[key].setVisible(False)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getIconBarVisibility(self):
+    def getIconBarVisibility(self) -> bool:
+        """
+        Get the current visibility of the icon bar.
+
+        Returns
+        -------
+        bool
+            True if the icon bar is visible, False otherwise.
+        """
         return self._icons['pin'].isVisible()
 
-    def setFullscreenButtonAvailability(self, v):
+    def setFullscreenButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the fullscreen button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['screen'] = v
             self._icons['screen'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setPinButtonAvailability(self, v):
+    def setPinButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the pin button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['pin'] = v
             if not v: self._icons['pin'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setExpandButtonAvailability(self, v):
+    def setExpandButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the expand button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['expand'] = v
             if not v: self._icons['expand'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setGridButtonAvailability(self, v):
+    def setGridButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the grid layout button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['grid'] = v
             if not v: self._icons['grid'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setOrientButtonAvailability(self, v):
+    def setOrientButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the orientation button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['orient'] = v
             if not v: self._icons['orient'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setInfoButtonAvailability(self, v):
+    def setInfoButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the information button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['info'] = v
             if not v: self._icons['info'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setIsoButtonAvailability(self, v):
+    def setIsoButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the isovalue button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['iso'] = v
             if not v: self._icons['iso'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setSliceButtonsAvailability(self, v):
+    def setSliceButtonsAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the slice navigation buttons.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the buttons available, False to hide them.
+        """
         if isinstance(v, bool):
             self._visibilityflags['sliceplus'] = v
             self._visibilityflags['sliceminus'] = v
@@ -1058,13 +1520,29 @@ class IconBarWidget(QWidget):
                 self._icons['sliceminus'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setShowButtonAvailability(self, v):
+    def setShowButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the show/hide options button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['show'] = v
             if not v: self._icons['show'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setZoomButtonsAvailability(self, v):
+    def setZoomButtonsAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the zoom control buttons.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the buttons available, False to hide them.
+        """
         if isinstance(v, bool):
             self._visibilityflags['zoomin'] = v
             self._visibilityflags['zoomout'] = v
@@ -1075,123 +1553,371 @@ class IconBarWidget(QWidget):
                 self._icons['zoom1'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setActionButtonAvailability(self, v):
+    def setActionButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the mouse actions button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['actions'] = v
             if not v: self._icons['actions'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setToolButtonAvailability(self, v):
+    def setToolButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the measurement tools button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['tools'] = v
             if not v: self._icons['tools'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setCaptureButtonAvailability(self, v):
+    def setCaptureButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the capture button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['capture'] = v
             if not v: self._icons['capture'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setClipboardButtonAvailability(self, v):
+    def setClipboardButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the clipboard button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['clipboard'] = v
             if not v: self._icons['clipboard'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setTransferButtonAvailability(self, v):
+    def setTransferButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the transfer function button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['transfer'] = v
             if not v: self._icons['transfer'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setColorbarButtonAvailability(self, v):
+    def setColorbarButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the color bar button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['colorbar'] = v
             if not v: self._icons['colorbar'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setRulerButtonAvailability(self, v):
+    def setRulerButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability (and visibility) of the ruler button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['ruler'] = v
             if not v: self._icons['ruler'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getFullscreenButtonAvailability(self):
+    def getFullscreenButtonAvailability(self) -> bool:
+        """
+        Get the availability flag for the fullscreen button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['screen']
 
-    def getPinButtonAvailability(self):
+    def getPinButtonAvailability(self) -> bool:
+        """
+        Get the availability flag for the pin button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['pin']
 
-    def getExpandButtonAvailability(self):
+    def getExpandButtonAvailability(self) -> bool:
+        """
+        Get the availability flag for the expand button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['expand']
 
-    def getGridButtonAvailability(self):
+    def getGridButtonAvailability(self) -> bool:
+        """
+        Get the availability flag for the grid layout button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['grid']
 
-    def getOrientButtonAvailability(self):
+    def getOrientButtonAvailability(self) -> bool:
+        """
+        Get the availability flag for the orientation button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['orient']
 
-    def getSliceButtonsAvailability(self):
+    def getSliceButtonsAvailability(self) -> bool:
+        """
+        Get the availability flag for the slice navigation buttons.
+
+        Returns
+        -------
+        bool
+            True if the buttons are available, False otherwise.
+        """
         return self._visibilityflags['sliceplus']
 
-    def getShowButtonAvailability(self):
+    def getShowButtonAvailability(self) -> bool:
+        """
+        Get the availability flag for the show/hide options button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['show']
 
-    def getInfoButtonAvailability(self):
+    def getInfoButtonAvailability(self) -> bool:
+        """
+        Get the availability flag for the information button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['info']
 
-    def getIsoButtonAvailability(self):
+    def getIsoButtonAvailability(self) -> bool:
+        """
+        Getsthe availability flag for the isovalue button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['iso']
 
-    def getActionButtonAvailability(self):
+    def getActionButtonAvailability(self) -> bool:
+        """
+        Get the availability flag for the mouse actions button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['actions']
 
-    def getZoomButtonsAvailability(self):
+    def getZoomButtonsAvailability(self) -> bool:
+        """
+        Get the availability flag for the zoom control buttons.
+
+        Returns
+        -------
+        bool
+            True if the buttons are available, False otherwise.
+        """
         return self._visibilityflags['zoomin']
 
-    def getToolButtonAvailability(self):
+    def getToolButtonAvailability(self) -> bool:
+        """
+        Get the availability flag for the measurement tools button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['tools']
 
-    def getCaptureButtonAvailability(self):
+    def getCaptureButtonAvailability(self) -> bool:
+        """
+        Get the availability flag for the capture button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['capture']
 
-    def getClipboardButtonAvailability(self):
+    def getClipboardButtonAvailability(self) -> bool:
+        """
+        Get the availability flag for the clipboard button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['clipboard']
 
-    def getTransferButtonAvailability(self):
+    def getTransferButtonAvailability(self) -> bool:
+        """
+        Get the availability flag for the transfer function button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['transfer']
 
-    def getColorbarButtonAvailability(self):
+    def getColorbarButtonAvailability(self) -> bool:
+        """
+        Get the availability flag for the color bar button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['colorbar']
 
-    def getRulerButtonAvailability(self):
+    def getRulerButtonAvailability(self) -> bool:
+        """
+        Get the availability flag for the ruler button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['ruler']
 
-    def getThumbnail(self):
+    def getThumbnail(self) -> ToolBarThumbnail:
+        """
+        Get the associated thumbnail bar widget.
+
+        Returns
+        -------
+        ToolBarThumbnail
+            associated thumbnail bar widget instance.
+        """
         return self._thumbnail
 
-    def setThumbnail(self, thumbnail):
+    def setThumbnail(self, thumbnail: ToolBarThumbnail) -> None:
+        """
+        Set the associated thumbnail bar widget.
+
+        Parameters
+        ----------
+        thumbnail : ToolBarThumbnail
+            The thumbnail bar widget to associate with this icon bar.
+        """
         from Sisyphe.widgets.toolBarThumbnail import ToolBarThumbnail
         if isinstance(thumbnail, ToolBarThumbnail):
             self._thumbnail = thumbnail
         else: raise TypeError('parameter type {} is not ToolBarThumbnail.'.format(type(thumbnail)))
 
-    def hasThumbnail(self):
+    def hasThumbnail(self) -> bool:
+        """
+        Check if a thumbnail bar widget is associated.
+
+        Returns
+        -------
+        bool
+            True if a thumbnail bar is associated, False otherwise.
+        """
         return self._thumbnail is not None
 
-    def getButtons(self):
+    def getButtons(self) -> dict[str, RoundedButton]:
+        """
+        Get the dictionary of icon bar buttons.
+
+        Returns
+        -------
+        dict[str, RoundedButton]
+            dictionary mapping button names to their instances.
+        """
         return self._icons
 
     # Event loop, solves VTK mouse move event bug
 
     @classmethod
-    def _widgetUnderCursor(cls, widget):
+    def _widgetUnderCursor(cls, widget: QWidget) -> bool:
+        """
+        Checks if the mouse pointer is currently over a view widget.
+
+        Parameters
+        ----------
+        widget : QWidget
+            The widget to check.
+
+        Returns
+        -------
+        bool
+            True if the cursor is over the widget, False otherwise.
+        """
         p = widget.cursor().pos()
         p = widget.mapFromGlobal(p)
         return 0 <= p.x() < widget.width() and 0 <= p.y() < widget.height()
 
-    def timerEvent(self, event):
+    # Qt events
+
+    def timerEvent(self, event: Optional[QTimerEvent]) -> None:
+        """
+        Handles timer events to manage the auto-hiding of the unpinned icon bar.
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        event : QTimerEvent
+            timer event.
+        """
         w = self._widget
         # Icon bar visibility management
         if self._icons['pin'].isChecked():
@@ -1204,13 +1930,29 @@ class IconBarWidget(QWidget):
                 p = w.mapFromGlobal(p)
                 if 0 <= p.x() < self._icons['pin'].width() and 0 <= p.y() < w.height(): self.iconBarVisibleOn()
 
-    # Qt events
+    def dragEnterEvent(self, event: Optional[QDragEnterEvent]) -> None:
+        """
+        Handles drag enter events, accepting text-based mime data for drag-and-drop operations.
+        This is used to load PySisyphe volume (.xvol) from the thumbnail bar.
 
-    def dragEnterEvent(self, event):
+        Parameters
+        ----------
+        event : QDragEnterEvent
+            drag enter event.
+        """
         if event.mimeData().hasText(): event.acceptProposedAction()
         else: event.ignore()
 
-    def dropEvent(self, event):
+    def dropEvent(self, event: Optional[QDropEvent]) -> None:
+        """
+        Handles drop events to load PySisyphe volume (.xvol) from the thumbnail bar based on user settings.
+        The action (replace, overlay, etc.) depends on the 'DropInView' application setting (settings.xml).
+
+        Parameters
+        ----------
+        event : QDropEvent
+            drop event.
+        """
         if event.mimeData().hasText():
             event.acceptProposedAction()
             txt = event.mimeData().text()
@@ -1264,7 +2006,8 @@ class IconBarOrthogonalSliceViewWidget(IconBarWidget):
     Description
     ~~~~~~~~~~~
 
-    OrthogonalSliceViewWidget with icon bar.
+    This widget encapsulates an OrthogonalSliceViewWidget and extends it by providing a collapsible icon bar that is
+    displayed on the left.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1272,12 +2015,24 @@ class IconBarOrthogonalSliceViewWidget(IconBarWidget):
     QWidget -> IconBarWidget -> IconBarOrthogonalSliceViewWidget
 
     Creation: 17/04/2022
-    Last revision: 17/04/2022
+    Last revision: 10/10/2025
     """
 
     # Special method
 
-    def __init__(self, widget=None, parent=None):
+    def __init__(self,
+                 widget: OrthogonalSliceViewWidget | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        IconBarOrthogonalSliceViewWidget instance constructor.
+
+        Parameters
+        ----------
+        widget : OrthogonalSliceViewWidget | None (optional)
+            OrthogonalSliceViewWidget to encapsulate (default None).
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
         if widget is None: widget = OrthogonalSliceViewWidget()
         if isinstance(widget, OrthogonalSliceViewWidget): self.setViewWidget(widget)
@@ -1292,7 +2047,8 @@ class IconBarOrthogonalRegistrationViewWidget(IconBarWidget):
     Description
     ~~~~~~~~~~~
 
-    OrthogonalRegistrationViewWidget with icon bar.
+    This widget encapsulates an OrthogonalRegistrationViewWidget and extends it by providing a collapsible icon bar
+    that is displayed on the left.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1300,12 +2056,24 @@ class IconBarOrthogonalRegistrationViewWidget(IconBarWidget):
     QWidget -> IconBarWidget -> IconBarOrthogonalRegistrationViewWidget
 
     Creation: 17/04/2022
-    Last revision: 17/04/2022
+    Last revision: 10/10/2025
     """
 
     # Special method
 
-    def __init__(self, widget=None, parent=None):
+    def __init__(self,
+                 widget: OrthogonalRegistrationViewWidget | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        IconBarOrthogonalRegistrationViewWidget instance constructor.
+
+        Parameters
+        ----------
+        widget : OrthogonalRegistrationViewWidget | None (optional)
+            OrthogonalRegistrationViewWidget to encapsulate (default None).
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
         if widget is None: widget = OrthogonalRegistrationViewWidget()
         if isinstance(widget, OrthogonalRegistrationViewWidget): self.setViewWidget(widget)
@@ -1331,42 +2099,108 @@ class IconBarOrthogonalRegistrationViewWidget(IconBarWidget):
 
     # Public methods
 
-    def setCrop(self, crop):
+    def setCrop(self, crop: bool) -> None:
+        """
+        Set whether to crop the registration area.
+
+        Parameters
+        ----------
+        crop : bool
+            True to enable cropping, False to disable it.
+        """
         if isinstance(crop, bool):  self._widget.getFirstSliceViewWidget().setCrop(crop)
         else: raise TypeError('parameter type {} is not bool'.format(type(crop)))
 
-    def getCrop(self):
+    def getCrop(self) -> bool:
+        """
+        Get the current crop state of the registration area.
+
+        Returns
+        -------
+        bool
+            True if cropping is enabled, False otherwise.
+        """
         return self._widget.getFirstSliceViewWidget().getCrop()
 
-    def cropOn(self):
+    def cropOn(self) -> None:
+        """
+        Enable cropping of the registration area.
+        """
         self.setCrop(True)
 
-    def cropOff(self):
+    def cropOff(self) -> None:
+        """
+        Disable cropping of the registration area.
+        """
         self.setCrop(False)
 
-    def setRegistrationBoxVisibility(self, v):
+    def setRegistrationBoxVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the coregistration box.
+        Voxels located outside the registration box are not used to calculate the coregistration.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the box, False to hide it.
+        """
         if isinstance(v, bool): self._widget.getFirstSliceViewWidget().setRegistrationBoxVisibility(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getRegistrationBoxVisibility(self):
+    def getRegistrationBoxVisibility(self) -> bool:
+        """
+        Get the visibility of the coregistration box.
+        Voxels located outside the registration box are not used to calculate the coregistration.
+
+        Returns
+        -------
+        bool
+            True if the box is visible, False otherwise.
+        """
         return self._widget.getFirstSliceViewWidget().getRegistrationBoxVisibility()
 
-    def registrationBoxOn(self):
+    def registrationBoxOn(self) -> None:
+        """
+        Show the registration box.
+        Voxels located outside the coregistration box are not used to calculate the coregistration.
+        """
         self.setRegistrationBoxVisibility(True)
 
-    def registrationBoxOff(self):
+    def registrationBoxOff(self) -> None:
+        """
+        Hide the registration box.
+        Voxels located outside the coregistration box are not used to calculate the coregistration.
+        """
         self.setRegistrationBoxVisibility(False)
 
-    def getRegistrationBoxMatrixArea(self):
+    def getRegistrationBoxMatrixArea(self) -> list[float] | tuple[float, float, float, float, float, float]:
+        """
+        Get the bounds of the coregistration box as a matrix area.
+        Voxels located outside the registration box are not used to calculate the coregistration.
+
+        Returns
+        -------
+        list[float] | tuple[float, float, float, float, float, float]
+            bounds of the registration box.
+        """
         return self._widget.getFirstSliceViewWidget().getRegistrationBoxMatrixArea()
 
-    def displayEdge(self):
+    def displayEdge(self) -> None:
+        """
+        Display the edges of the moving volume for registration visualization.
+        """
         self._widget.getFirstSliceViewWidget().displayEdge()
 
-    def displayNative(self):
+    def displayNative(self) -> None:
+        """
+        Display the native (unprocessed) moving volume.
+        """
         self._widget.getFirstSliceViewWidget().displayNative()
 
-    def displayEdgeAndNative(self):
+    def displayEdgeAndNative(self) -> None:
+        """
+        Display both the edges and the native moving volume.
+        """
         self._widget.getFirstSliceViewWidget().displayEdgeAndNative()
 
 
@@ -1377,7 +2211,8 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
     Description
     ~~~~~~~~~~~
 
-    OrthogonalRegistrationViewWidget with icon bar and rigid transformation buttons.
+    This widget encapsulates an OrthogonalRegistrationViewWidget and extends it by providing a collapsible icon bar
+    that is displayed on the left, with rigid transformation buttons at the bottom.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1385,12 +2220,24 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
     QWidget -> IconBarWidget -> IconBarOrthogonalRegistrationViewWidget -> IconBarOrthogonalRegistrationViewWidget2
 
     Creation: 17/04/2022
-    Last revision: 22/05/2025
+    Last revision: 10/10/2025
     """
 
     # Special method
 
-    def __init__(self, widget=None, parent=None):
+    def __init__(self,
+                 widget: OrthogonalRegistrationViewWidget | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        IconBarOrthogonalRegistrationViewWidget2 instance constructor.
+
+        Parameters
+        ----------
+        widget : OrthogonalRegistrationViewWidget | None (optional)
+            OrthogonalRegistrationViewWidget to encapsulate (default None).
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(widget, parent)
 
         self._buttons = dict()
@@ -1537,7 +2384,10 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
 
     # Private methods
 
-    def _updateTooltips(self):
+    def _updateTooltips(self) -> None:
+        """
+        Updates the tooltips of the rigid transformation buttons with current translation and rotation values.
+        """
         widget = self().getFirstSliceViewWidget()
         r = list(widget.getRotations())
         t = list(widget.getTranslations())
@@ -1560,7 +2410,15 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['rotc2'].setToolTip('Clockwise X rotation\nX Rotation {:.1f}°'.format(r[0]))
         self._buttons['rota2'].setToolTip('Counter-clockwise X Rotation\nX Rotation {:.1f}°'.format(r[0]))
 
-    def _xtranslation(self, v):
+    def _xtranslation(self, v: float) -> None:
+        """
+        Apply a translation along the x-axis.
+
+        Parameters
+        ----------
+        v : float
+            translation step in mm.
+        """
         widget = self().getFirstSliceViewWidget()
         t = list(widget.getTranslations(index=0))
         t[0] += v
@@ -1570,7 +2428,15 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['left1'].setToolTip('Right translation\nX Translation {:.2f} mm'.format(t[0]))
         self._buttons['right1'].setToolTip('Left translation\nX Translation {:.2f} mm'.format(t[0]))
 
-    def _ytranslation(self, v):
+    def _ytranslation(self, v: float) -> None:
+        """
+        Apply a translation along the y-axis.
+
+        Parameters
+        ----------
+        v : float
+            translation step in mm.
+        """
         widget = self().getFirstSliceViewWidget()
         t = list(widget.getTranslations(index=0))
         t[1] += v
@@ -1580,7 +2446,15 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['left2'].setToolTip('Forward translation\nY Translation {:.2f} mm'.format(t[1]))
         self._buttons['right2'].setToolTip('Backward translation\nY Translation {:.2f} mm'.format(t[1]))
 
-    def _ztranslation(self, v):
+    def _ztranslation(self, v: float) -> None:
+        """
+        Apply a translation along the z-axis.
+
+        Parameters
+        ----------
+        v : float
+            translation step in mm.
+        """
         widget = self().getFirstSliceViewWidget()
         t = list(widget.getTranslations(index=0))
         t[2] += v
@@ -1590,7 +2464,15 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['up2'].setToolTip('Cranial translation\nZ Translation {:.2f} mm'.format(t[2]))
         self._buttons['down2'].setToolTip('Caudal translation\nZ Translation {:.2f} mm'.format(t[2]))
 
-    def _xrotation(self, v):
+    def _xrotation(self, v: float) -> None:
+        """
+        Apply a rotation around the x-axis.
+
+        Parameters
+        ----------
+        v : float
+            rotation step in degrees.
+        """
         widget = self().getFirstSliceViewWidget()
         r = list(widget.getRotations(index=0))
         r[0] += v
@@ -1598,7 +2480,15 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['rotc2'].setToolTip('Clockwise X rotation\nX Rotation {:.2f}°'.format(r[0]))
         self._buttons['rota2'].setToolTip('Counter-clockwise X Rotation\nX Rotation {:.2f}°'.format(r[0]))
 
-    def _yrotation(self, v):
+    def _yrotation(self, v: float) -> None:
+        """
+        Apply a rotation around the y-axis.
+
+        Parameters
+        ----------
+        v : float
+            rotation step in degrees.
+        """
         widget = self().getFirstSliceViewWidget()
         r = list(widget.getRotations(index=0))
         r[1] += v
@@ -1606,7 +2496,15 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['rotc1'].setToolTip('Clockwise Y rotation\nY Rotation {:.2f}°'.format(r[1]))
         self._buttons['rota1'].setToolTip('Counter-clockwise Y Rotation\nY Rotation {:.2f}°'.format(r[1]))
 
-    def _zrotation(self, v):
+    def _zrotation(self, v: float) -> None:
+        """
+        Apply a rotation around the z-axis.
+
+        Parameters
+        ----------
+        v : float
+            rotation step in degrees.
+        """
         widget = self().getFirstSliceViewWidget()
         r = list(widget.getRotations(index=0))
         r[2] += v
@@ -1616,32 +2514,84 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
 
     # Public methods
 
-    def addOverlay(self, volume):
+    def addOverlay(self, volume: SisypheVolume) -> None:
+        """
+        Add an overlay and update the transformation tooltips.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            SisypheVolume to add as an overlay.
+        """
         super().addOverlay(volume)
         self._updateTooltips()
 
-    def setMoveOverlayOn(self):
+    def setMoveOverlayOn(self) -> None:
+        """
+        Enable the 'Move overlay' interaction mode.
+        In this mode, overlay volume can be moved or rotated with mouse.
+        """
         widget = self().getFirstSliceViewWidget()
         widget.setMoveOverlayFlag()
 
-    def setMoveOverlayOff(self):
+    def setMoveOverlayOff(self) -> None:
+        """
+        Disable the 'Move overlay' interaction mode.
+        In this mode, overlay volume can be moved or rotated with mouse.
+        """
         widget = self().getFirstSliceViewWidget()
-        widget.setMoveOverlayOff()
+        # < Revision 30/10/2025
+        # widget.setMoveOverlayOff()
+        widget.setMoveOverlayFlag(False)
+        # Revision 30/10/2025 >
 
-    def setMoveButtonsVisibility(self, v):
+    def setMoveButtonsVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of all rigid transformation buttons.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the buttons, False to hide them.
+        """
         if isinstance(v, bool):
             for key in self._buttons:
                 self._buttons[key].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getMoveButtonsVisibility(self):
+    def getMoveButtonsVisibility(self) -> bool:
+        """
+        Get the visibility of the rigid transformation buttons.
+
+        Returns
+        -------
+        bool
+            True if the buttons are visible, False otherwise.
+        """
         return self._buttons['up0'].isVisible()
 
-    def setMoveStep(self, v):
+    def setMoveStep(self, v: float) -> None:
+        """
+        Set the step value for translations (in mm) and rotations (in degrees).
+
+        Parameters
+        ----------
+        v : float
+            The new step value.
+        """
         if isinstance(v, float): self._step = v
         else: raise TypeError('parameter type {} is not float.'.format(float))
 
-    def getMoveStep(self):
+    def getMoveStep(self) -> float:
+        """
+        Get the current step value for translations (in mm) and rotations (in degrees).
+
+        Returns
+        -------
+        float
+            The current step value.
+        """
         return self._step
 
 
@@ -1652,7 +2602,8 @@ class IconBarOrthogonalReorientViewWidget(IconBarWidget):
     Description
     ~~~~~~~~~~~
 
-    OrthogonalReorientViewWidget with icon bar.
+    This widget encapsulates an OrthogonalReorientViewWidget and extends it by providing a collapsible icon bar that is
+    displayed on the left.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1660,10 +2611,22 @@ class IconBarOrthogonalReorientViewWidget(IconBarWidget):
     QWidget -> IconBarWidget -> IconBarOrthogonalReorientViewWidget
 
     Creation: 17/04/2022
-    Last revision:
+    Last revision: 10/10/2025
     """
 
-    def __init__(self, widget=None, parent=None):
+    def __init__(self,
+                 widget: OrthogonalReorientViewWidget | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        IconBarOrthogonalReorientViewWidget instance constructor.
+
+        Parameters
+        ----------
+        widget : OrthogonalReorientViewWidget | None (optional)
+            OrthogonalReorientViewWidget to encapsulate (default None).
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
         if widget is None: widget = OrthogonalReorientViewWidget()
         if isinstance(widget, OrthogonalReorientViewWidget): self.setViewWidget(widget)
@@ -1679,7 +2642,8 @@ class IconBarOrthogonalSliceVolumeViewWidget(IconBarWidget):
     Description
     ~~~~~~~~~~~
 
-    OrthogonalSliceVolumeViewWidget with icon bar.
+    This widget encapsulates an OrthogonalSliceVolumeViewWidget and extends it by providing a collapsible icon bar that
+    is displayed on the left.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1687,12 +2651,24 @@ class IconBarOrthogonalSliceVolumeViewWidget(IconBarWidget):
     QWidget -> IconBarWidget -> IconBarOrthogonalSliceVolumeViewWidget
 
     Creation: 17/04/2022
-    Last revision:
+    Last revision: 10/10/2025
     """
 
     # Special method
 
-    def __init__(self, widget=None, parent=None):
+    def __init__(self,
+                 widget: OrthogonalSliceVolumeViewWidget | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        IconBarOrthogonalSliceVolumeViewWidget instance constructor.
+
+        Parameters
+        ----------
+        widget : OrthogonalSliceVolumeViewWidget | None (optional)
+            OrthogonalSliceVolumeViewWidget to encapsulate (default None).
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
         if widget is None: widget = OrthogonalSliceVolumeViewWidget()
         if isinstance(widget, OrthogonalSliceVolumeViewWidget): self.setViewWidget(widget)
@@ -1701,26 +2677,67 @@ class IconBarOrthogonalSliceVolumeViewWidget(IconBarWidget):
 
     # Public methods
 
-    def setVolume(self, vol):
+    def setVolume(self, vol: SisypheVolume) -> None:
+        """
+        Set the SisypheVolume to be displayed. and connect the transfer function widget to the 3D VolumeViewWidget.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        vol : SisypheVolume
+            SisypheVolume to display.
+        """
         super().setVolume(vol)
         self._transfer.setViewWidget(self().getFirstVolumeViewWidget())
 
-    def setCameraPositionButtonAvailability(self, v):
+    def setCameraPositionButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability of the camera position button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['campos'] = v
             if not v: self._icons['campos'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setTextureSettingsButtonAvailability(self, v):
+    def setTextureSettingsButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability of the 3D texture settings button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['texture'] = v
             if not v: self._icons['texture'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getCameraPositionButtonAvailability(self):
+    def getCameraPositionButtonAvailability(self) -> bool:
+        """
+        Get the availability of the camera position button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['campos']
 
-    def getTextureSettingsButtonAvailability(self):
+    def getTextureSettingsButtonAvailability(self) -> bool:
+        """
+        Get the availability of the 3D texture settings button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['texture']
 
 
@@ -1731,7 +2748,8 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
     Description
     ~~~~~~~~~~~
 
-    OrthogonalSliceTrajectoryViewWidget with icon bar.
+    This widget encapsulates an OrthogonalTrajectoryViewWidget and extends it by providing a collapsible icon bar that
+    is displayed on the left.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1739,10 +2757,22 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
     QWidget -> IconBarWidget -> IconBarOrthogonalSliceTrajectoryViewWidget
 
     Creation: 17/04/2022
-    Last Revision: 06/12/2024
+    Last Revision: 10/10/2025
     """
 
-    def __init__(self, widget=None, parent=None):
+    def __init__(self,
+                 widget: OrthogonalTrajectoryViewWidget | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        IconBarOrthogonalSliceTrajectoryViewWidget instance constructor.
+
+        Parameters
+        ----------
+        widget : OrthogonalTrajectoryViewWidget | None (optional)
+            OrthogonalTrajectoryViewWidget to encapsulate (default None).
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
         if widget is None: widget = OrthogonalTrajectoryViewWidget()
         if isinstance(widget, OrthogonalTrajectoryViewWidget): self.setViewWidget(widget)
@@ -1854,12 +2884,25 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
 
     # Private methods
 
-    def _slabThicknessChanged(self):
+    def _slabThicknessChanged(self) -> None:
+        """
+        Updates the slab thickness and slice step in the view widget when the menu is closed.
+        """
         view = self._widget[0, 1]
         if self._sthick.value() != view.getSlabThickness(): view.setSlabThickness(self._sthick.value(), signal=True)
         if self._sstep.value() != view.getSliceStep(): view.setSliceStep(self._sstep.value(), signal=True)
 
-    def _slabTypeChanged(self, slab):
+    def _slabTypeChanged(self, slab: int) -> None:
+        """
+        Updates the slab rendering mode (Min, Max, Mean, Sum).
+        The signal is blended into the slab thickness using one of the following functions: mean, maximum, minimum,
+        cumulative sum.
+
+        Parameters
+        ----------
+        slab : int
+            slab type index (0: Min, 1: Max, 2: Mean, 3: Sum).
+        """
         if isinstance(slab, int):
             view = self._widget[0, 1]
             if slab == 0: view.setSlabTypeToMin(signal=True)
@@ -1870,7 +2913,16 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
 
     # Public method
 
-    def setVolume(self, vol):
+    def setVolume(self, vol: SisypheVolume) -> None:
+        """
+        Set the SisypheVolume to display, connect the transfer function widget, and reset slab properties.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        vol : SisypheVolume
+            SisypheVolume to display.
+        """
         super().setVolume(vol)
         self._transfer.setViewWidget(self().getFirstVolumeViewWidget())
         # < Revision 18/10/2024
@@ -1881,13 +2933,29 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
         self._widget[0, 1].setSliceStep(1.0, signal=False)
         # Revision 18/10/2024
 
-    def setSlabThicknessButtonAvailability(self, v):
+    def setSlabThicknessButtonAvailability(self, v: bool) -> None:
+        """
+        Set the availability of the slab thickness management button.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the button available, False to hide it.
+        """
         if isinstance(v, bool):
             self._visibilityflags['thick'] = v
             if not v: self._icons['thick'].setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getSlabThicknessButtonAvailability(self):
+    def getSlabThicknessButtonAvailability(self) -> bool:
+        """
+        Get the availability of the slab thickness management button.
+
+        Returns
+        -------
+        bool
+            True if the button is available, False otherwise.
+        """
         return self._visibilityflags['thick']
 
 
@@ -1898,8 +2966,8 @@ class IconBarMultiSliceGridViewWidget(IconBarWidget):
     Description
     ~~~~~~~~~~~
 
-    MultiSliceGridViewWidget with icon bar.
-    Displays several adjacent slices in 3 x 3 grid with overlays and ROI support.
+    This widget encapsulates a MultiSliceGridViewWidget and extends it by providing a collapsible icon bar that is
+    displayed on the left.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1907,10 +2975,28 @@ class IconBarMultiSliceGridViewWidget(IconBarWidget):
     QWidget -> IconBarWidget -> IconBarMultiSliceGridViewWidget
 
     Creation: 17/04/2022
-    Last revision:
+    Last revision: 10/10/2025
     """
 
-    def __init__(self, widget=None, rois=None, draw=None, parent=None):
+    def __init__(self,
+                 widget: MultiSliceGridViewWidget | None = None,
+                 rois: SisypheROICollection | None = None,
+                 draw: SisypheROIDraw | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        IconBarMultiSliceGridViewWidget instance constructor.
+
+        Parameters
+        ----------
+        widget : MultiSliceGridViewWidget | None (optional)
+            MultiSliceGridViewWidget to encapsulate (default None).
+        rois : SisypheROICollection | None (optional)
+            collection of ROIs to be shared among the view widgets (default None).
+        draw : SisypheROIDraw | Noneb(optional)
+            drawing utility instance to be shared among the view widgets (default None).
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
         if widget is None: widget = MultiSliceGridViewWidget(rois=rois, draw=draw)
         if isinstance(widget, MultiSliceGridViewWidget): self.setViewWidget(widget)
@@ -1919,7 +3005,16 @@ class IconBarMultiSliceGridViewWidget(IconBarWidget):
 
     # Public method
 
-    def setVolume(self, vol):
+    def setVolume(self, vol: SisypheVolume) -> None:
+        """
+        Set the SisypheVolume to display, adjust the orientation for thick anisotropic volumes to its native
+        orientation. Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        vol : SisypheVolume
+            SisypheVolume to display.
+        """
         super().setVolume(vol)
         if vol.isThickAnisotropic():
             # Display in native orientation
@@ -1937,8 +3032,8 @@ class IconBarSynchronisedGridViewWidget(IconBarWidget):
     Description
     ~~~~~~~~~~~
 
-    SynchronisedGridViewWidget with icon bar.
-    Displays same slices of multiple volumes in 3 x 3 grid.
+    This widget encapsulates a SynchronisedGridViewWidget and extends it by providing a collapsible icon bar that is
+    displayed on the left.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1946,10 +3041,28 @@ class IconBarSynchronisedGridViewWidget(IconBarWidget):
     QWidget -> IconBarWidget -> IconBarSynchronisedGridViewWidget
 
     Creation: 17/04/2022
-    Last revision:
+    Last revision: 10/10/2025
     """
 
-    def __init__(self, widget=None, rois=None, draw=None, parent=None):
+    def __init__(self,
+                 widget: SynchronisedGridViewWidget | None = None,
+                 rois: SisypheROICollection | None = None,
+                 draw: SisypheROIDraw | None = None,
+                 parent=None) -> None:
+        """
+        IconBarMultiSliceGridViewWidget instance constructor.
+
+        Parameters
+        ----------
+        widget : SynchronisedGridViewWidget | None (optional)
+            SynchronisedGridViewWidget to encapsulate (default None).
+        rois : SisypheROICollection | None (optional)
+            collection of ROIs to be shared among the view widgets (default None).
+        draw : SisypheROIDraw | Noneb(optional)
+            drawing utility instance to be shared among the view widgets (default None).
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
         if widget is None: widget = SynchronisedGridViewWidget(rois=rois, draw=draw)
         if isinstance(widget, SynchronisedGridViewWidget): self.setViewWidget(widget)
@@ -1958,7 +3071,16 @@ class IconBarSynchronisedGridViewWidget(IconBarWidget):
 
     # Private method
 
-    def setVolume(self, vol):
+    def setVolume(self, vol: SisypheVolume) -> None:
+        """
+        Set the SisypheVolume to display, adjust the orientation for thick anisotropic volumes to its native
+        orientation. Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        vol : SisypheVolume
+            volume to display.
+        """
         super().setVolume(vol)
         if vol.isThickAnisotropic():
             # Display in native orientation
@@ -1976,7 +3098,8 @@ class IconBarSliceViewWidget(IconBarWidget):
     Description
     ~~~~~~~~~~~
 
-    SliceViewWidget with icon bar.
+    This widget encapsulates a SliceROIViewWidget and extends it by providing a collapsible icon bar that is displayed
+    on the left.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1984,10 +3107,28 @@ class IconBarSliceViewWidget(IconBarWidget):
     QWidget -> IconBarWidget -> IconBarSliceViewWidget
 
     Creation: 17/04/2022
-    Last revision: 07/12/2024
+    Last revision: 10/10/2025
     """
 
-    def __init__(self, widget=None, rois=None, draw=None, parent=None):
+    def __init__(self,
+                 widget: SliceROIViewWidget | None = None,
+                 rois: SisypheROICollection | None = None,
+                 draw: SisypheROIDraw | None = None,
+                 parent=None) -> None:
+        """
+        IconBarSliceViewWidget instance constructor.
+
+        Parameters
+        ----------
+        widget : SliceROIViewWidget | None (optional)
+            SliceROIViewWidget to encapsulate (default None).
+        rois : SisypheROICollection | None (optional)
+            collection of ROIs to be associated with the encapsulated SliceROIViewWidget (default None).
+        draw : SisypheROIDraw | Noneb(optional)
+            drawing utility instance to be associated with the encapsulated SliceROIViewWidget (default None).
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
         if widget is None: widget = SliceROIViewWidget(rois=rois, draw=draw)
         if isinstance(widget, SliceROIViewWidget): self._setViewWidget(widget)
@@ -1996,7 +3137,15 @@ class IconBarSliceViewWidget(IconBarWidget):
 
     # Private methods
 
-    def _onMenuTools(self, action):
+    def _onMenuTools(self, action: QAction) -> None:
+        """
+        Handles 'Tools' menu actions for a single slice view.
+
+        Parameters
+        ----------
+        action : QAction
+            triggered menu action.
+        """
         s = str(action.text())[0]
         w = self.getViewWidget()
         if w is not None:
@@ -2004,7 +3153,15 @@ class IconBarSliceViewWidget(IconBarWidget):
             elif s == 'O': w.addOrthogonalDistanceTool()
             else: w.addAngleTool()
 
-    def _setViewWidget(self, widget):
+    def _setViewWidget(self, widget: SliceROIViewWidget) -> None:
+        """
+        Set and configures the encapsulated SliceROIViewWidget.
+
+        Parameters
+        ----------
+        widget : SliceROIViewWidget
+            slice view widget to encapsulate.
+        """
         if isinstance(widget, SliceROIViewWidget):
             self._widget = widget
             self._widget.setName('SliceViewWidget')
@@ -2046,19 +3203,41 @@ class IconBarSliceViewWidget(IconBarWidget):
 
     # Public methods
 
-    def setVolume(self, vol):
+    def setVolume(self, vol: SisypheVolume) -> None:
+        """
+        Set the SisypheVolume to display, enable the visibility timer for the icon bar.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        vol : SisypheVolume
+            volume to display.
+        """
         super().setVolume(vol)
         # timer used to detect when mouse leaves icon bar
         # call timerEvent Qt event method
         self.timerEnabled()
 
-    def removeVolume(self):
+    def removeVolume(self) -> None:
+        """
+        Remove the displayed SisypheVolume and disable the visibility timer.
+        Currently, this method calls the superclass's implementation.
+        """
         super().removeVolume()
         # timer used to detect when mouse leaves icon bar
         # call timerEvent Qt event method
         self.timerDisabled()
 
-    def timerEvent(self, event):
+    def timerEvent(self, event: Optional[QTimerEvent]) -> None:
+        """
+        Handles timer events to manage the auto-hiding of the unpinned icon bar.
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        event : QTimerEvent
+            timer event.
+        """
         w = self._widget
         # Icon bar visibility management
         if not self._icons['pin'].isChecked():
@@ -2097,18 +3276,44 @@ class IconBarViewWidgetCollection(QObject):
     QObject -> IconBarViewWidgetCollection
 
     Creation: 17/04/2022
-    Last Revision: 27/05/2025
+    Last Revision: 10/10/2025
     """
 
     __slots__ = ['_widgets', '_index']
 
     # Class method
 
-    def _KeyToIndex(self, key):
+    def _KeyToIndex(self, key: str) -> int:
+        """
+        Converts a widget name (key) to its index in the collection.
+
+        Parameters
+        ----------
+        key : str
+            name of the widget to find.
+
+        Returns
+        -------
+        int
+            index of the widget.
+        """
         keys = [k[0] for k in self._widgets]
         return keys.index(key)
 
     # Special methods
+
+    def __init__(self, parent: object = None) -> None:
+        """
+        IconBarViewWidgetCollection instance contructor.
+
+        Parameters
+        ----------
+        parent : object | None (optional)
+            parent object (default None)
+        """
+        super().__init__(parent)
+        self._widgets = list()
+        self._index = 0
 
     """
     Private attributes
@@ -2117,12 +3322,16 @@ class IconBarViewWidgetCollection(QObject):
     _index      int, index for Iterator
     """
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self._widgets = list()
-        self._index = 0
+    def __str__(self) -> str:
+        """
+        Special overloaded method called by the built-in str() python function.
+        Returns a string representation of the collection, listing the contained widgets.
 
-    def __str__(self):
+        Returns
+        -------
+        str
+            string representation.
+        """
         index = 0
         buff = 'IconBarWidget count #{}\n'.format(len(self._widgets))
         for widget in self._widgets:
@@ -2131,12 +3340,35 @@ class IconBarViewWidgetCollection(QObject):
             buff += '{}\n'.format(str(widget))
         return buff
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """
+        Special overloaded method called by the built-in repr() python function.
+        Returns a detailed string representation for debugging.
+
+        Returns
+        -------
+        str
+            detailed string representation.
+        """
         return 'IconBarViewWidgetCollection instance at <{}>\n'.format(str(id(self))) + self.__str__()
 
     # Container special methods
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: str | int) -> IconBarWidget:
+        """
+        Special overloaded container getter method.
+        Retrieves a widget by its index or name.
+
+        Parameters
+        ----------
+        index : str | int
+            index or name of the widget to retrieve.
+
+        Returns
+        -------
+        IconBarWidget
+            widget at the specified index or with the specified name.
+        """
         if isinstance(index, str):
             index = self._KeyToIndex(index)
         if isinstance(index, int):
@@ -2144,7 +3376,18 @@ class IconBarViewWidgetCollection(QObject):
             else: raise IndexError('parameter value {} is out of range.'.format(index))
         else: raise TypeError('parameter type {} is not int or str.'.format(type(index)))
 
-    def __setitem__(self, index, value):
+    def __setitem__(self, index: int, value: IconBarWidget):
+        """
+        Special overloaded container setter method.
+        Replaces a widget at a specific index.
+
+        Parameters
+        ----------
+        index : int
+            index at which to replace the widget.
+        value : IconBarWidget
+            new widget to insert.
+        """
         if isinstance(value, IconBarWidget):
             if isinstance(index, int):
                 if 0 <= index < len(self._widgets):
@@ -2154,7 +3397,16 @@ class IconBarViewWidgetCollection(QObject):
             else: raise TypeError('first parameter type {} is not int.'.format(type(index)))
         else: raise TypeError('second parameter type {} is not IconBarWidget.'.format(type(value)))
 
-    def __delitem__(self, index):
+    def __delitem__(self, index: str | int) -> None:
+        """
+        Special overloaded method called by the built-in del() python function.
+        Deletes a widget by its index or name.
+
+        Parameters
+        ----------
+        index : str | int
+            index or name of the widget to delete.
+        """
         if isinstance(index, str):
             index = self._KeyToIndex(index)
         if isinstance(index, int):
@@ -2163,10 +3415,33 @@ class IconBarViewWidgetCollection(QObject):
             else: IndexError('parameter value {} is out of range.'.format(index))
         else: raise TypeError('parameter type {} is not int or str.'.format(index))
 
-    def __len__(self):
+    def __len__(self) -> int:
+        """
+        Special overloaded method called by the built-in len() python function.
+        Returns the number of widgets in the collection.
+
+        Returns
+        -------
+        int
+            number of widgets.
+        """
         return len(self._widgets)
 
-    def __contains__(self, value):
+    def __contains__(self, value: str | IconBarWidget) -> bool:
+        """
+        Special overloaded container method called by the built-in 'in' python operator.
+        Checks if a widget (by name or instance) is in the collection.
+
+        Parameters
+        ----------
+        value : str | IconBarWidget
+            name or instance of the widget to check for.
+
+        Returns
+        -------
+        bool
+            True if the widget is in the collection, False otherwise.
+        """
         if isinstance(value, str):
             keys = [k[0] for k in self._widgets]
             return value in keys
@@ -2175,33 +3450,95 @@ class IconBarViewWidgetCollection(QObject):
             return value in values
         else: raise TypeError('parameter type {} is not str or IconBarWidget.'.format(type(value)))
 
-    def __iter__(self):
+    def __iter__(self) -> Any:
+        """
+        Special overloaded container called by the built-in 'iter()' python iterator method.
+        Returns the iterator for the collection.
+
+        Returns
+        -------
+        Any
+            iterator object.
+        """
         self._index = 0
         return self
 
-    def __next__(self):
+    def __next__(self) -> IconBarWidget:
+        """
+        Special overloaded container called by the built-in 'next()' python iterator method.
+        Returns the next widget in an iteration.
+
+        Returns
+        -------
+        IconBarWidget
+            next widget.
+        """
         if self._index < len(self._widgets):
             n = self._index
             self._index += 1
             return self._widgets[n][1]
-        else:
-            raise StopIteration
+        else: raise StopIteration
 
     # Container public methods
 
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
+        """
+        Check if the collection is empty.
+
+        Returns
+        -------
+        bool
+            True if the collection contains no widgets, False otherwise.
+        """
         return len(self._widgets) == 0
 
-    def count(self):
+    def count(self) -> int:
+        """
+        Return the number of widgets in the collection.
+
+        Returns
+        -------
+        int
+            number of widgets.
+        """
         return len(self._widgets)
 
-    def remove(self, value):
+    def remove(self, value: int) -> None:
+        """
+        Remove a widget by its index.
+
+        Parameters
+        ----------
+        value : int
+            index of the widget to remove.
+        """
         self._widgets.remove(self._widgets[value])
 
-    def keys(self):
+    def keys(self) -> list[str]:
+        """
+        Return a list of all widget names (keys) in the collection.
+
+        Returns
+        -------
+        list[str]
+            list of widget names.
+        """
         return [k[0] for k in self._widgets]
 
-    def index(self, value):
+    def index(self, value: str | IconBarWidget) -> int:
+        """
+        Find the index of a widget by its name or instance.
+
+        Parameters
+        ----------
+        value : str | IconBarWidget
+            name or instance of the widget to find.
+
+        Returns
+        -------
+        int
+            index of the widget.
+        """
         if isinstance(value, IconBarWidget):
             values = [k[1] for k in self._widgets]
             return values.index(value)
@@ -2210,17 +3547,38 @@ class IconBarViewWidgetCollection(QObject):
             return keys.index(value)
         else: raise TypeError('parameter type {} is not str or IconBarWidget.'.format(type(value)))
 
-    def reverse(self):
+    def reverse(self) -> None:
+        """
+        Reverse the order of widgets in the collection in-place.
+        """
         self._widgets.reverse()
 
-    def append(self, value):
+    def append(self, value: IconBarWidget) -> None:
+        """
+        Add a widget to the end of the collection if its name is not already present.
+
+        Parameters
+        ----------
+        value : IconBarWidget
+            widget to add.
+        """
         if isinstance(value, IconBarWidget):
             if value.getName() not in self.keys():
                 self._widgets.append([value.getName(), value])
                 self._widgets[-1][1].NameChanged.connect(self.updateKeys)
         else: raise TypeError('parameter type {} is not IconBarWidget.'.format(type(value)))
 
-    def insert(self, value, index):
+    def insert(self, value: IconBarWidget, index: int) -> None:
+        """
+        Insert a widget at a specific index.
+
+        Parameters
+        ----------
+        value : IconBarWidget
+            widget to insert.
+        index : int
+            index at which to insert the widget.
+        """
         if isinstance(value, IconBarWidget):
             if isinstance(index, int):
                 if 0 <= index < len(self._widgets):
@@ -2230,28 +3588,70 @@ class IconBarViewWidgetCollection(QObject):
             else: raise TypeError('parameter type {} is not int.'.format(type(index)))
         else: raise TypeError('parameter type {} is not IconBarWidget.'.format(type(value)))
 
-    def clear(self):
+    def clear(self) -> None:
+        """
+        Remove all widgets from the collection.
+        """
         self._widgets.clear()
 
-    def sort(self, reverse=False):
+    def sort(self, reverse: bool = False) -> None:
+        """
+        Sort the widgets in the collection in-place.
+
+        Parameters
+        ----------
+        reverse : bool (optional)
+            If True, sorts in descending order (default is False).
+        """
         self._widgets.sort(reverse=reverse)
 
-    def copy(self):
+    def copy(self) -> Any:
+        """
+        Create a shallow copy of the collection.
+
+        Returns
+        -------
+        IconBarViewWidgetCollection
+            new collection containing the same widget instances.
+        """
         widgets = IconBarViewWidgetCollection()
         for widget in self._widgets:
             widgets.append(widget[1])
         return widgets
 
-    def copyToList(self):
+    def copyToList(self) -> list[IconBarWidget]:
+        """
+        Create a list containing all widgets from the collection.
+
+        Returns
+        -------
+        list[IconBarWidget]
+            list of the widget instances.
+        """
         return [k[1] for k in self._widgets]
 
-    def updateKeys(self):
+    def updateKeys(self) -> None:
+        """
+        Update the internal keys (names) based on the current names of the widgets.
+        This is typically called when a widget's name changes.
+        """
         for widget in self._widgets:
             widget[0] = widget[1].getName()
 
     # Volume methods
 
-    def setVolume(self, vol, wait=None):
+    def setVolume(self, vol: SisypheVolume, wait: DialogWait | None = None):
+        """
+        Set a SisypheVolume to display for all widgets in the collection, with optional progress dialog.
+        Handles visibility for widgets based on volume properties (e.g., thick anisotropy).
+
+        Parameters
+        ----------
+        vol : SisypheVolume
+            SisypheVolume to set.
+        wait : DialogWait | None, optional
+            wait dialog to show progress (default is None).
+        """
         if isinstance(vol, SisypheVolume):
             if self.count() > 0:
                 if wait is not None:
@@ -2272,7 +3672,15 @@ class IconBarViewWidgetCollection(QObject):
                     QApplication.processEvents()
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
-    def getVolume(self):
+    def getVolume(self) -> SisypheVolume | None:
+        """
+        Get the SisypheVolume associated to the first widget in the collection that has one.
+
+        Returns
+        -------
+        SisypheVolume | None
+            associated SisypheVolume instance, or None if no widget has a volume.
+        """
         # < Revision 20/02/2025
         # if self.count() > 0: return self[0].getVolume()
         # else: return None
@@ -2284,11 +3692,22 @@ class IconBarViewWidgetCollection(QObject):
         return None
         # Revision 20/02/2025 >
 
-    def hasVolume(self):
+    def hasVolume(self) -> bool:
+        """
+        Check if the first widget in the collection has an associated SisypheVolume.
+
+        Returns
+        -------
+        bool
+            True if the first widget has an associated volume, False otherwise.
+        """
         if self.count() > 0: return self[0].hasVolume()
         else: return False
 
-    def removeVolume(self):
+    def removeVolume(self) -> None:
+        """
+        Remove the associated SisypheVolume instances from all widgets in the collection.
+        """
         if self.count() > 0:
             for widget in self:
                 if widget.hasVolume():
@@ -2296,7 +3715,23 @@ class IconBarViewWidgetCollection(QObject):
 
     # Overlay methods
 
-    def addOverlay(self, vol, wait=None):
+    def addOverlay(self, vol: SisypheVolume, wait: DialogWait | None = None) -> bool:
+        """
+        Add an overlay to all widgets, with optional progress display.
+        Checks for the maximum number of overlays.
+
+        Parameters
+        ----------
+        vol : SisypheVolume
+            SisypheVolume to add as an overlay.
+        wait : DialogWait | None, optional
+            wait dialog to show progress (default is None).
+
+        Returns
+        -------
+        bool
+            True if the overlay was added successfully, False otherwise.
+        """
         if isinstance(vol, SisypheVolume):
             # < Revision 27/05/2025
             # add flag return value
@@ -2325,41 +3760,82 @@ class IconBarViewWidgetCollection(QObject):
             # Revision 27/05/2025 >
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
-    def removeOverlay(self, vol):
+    def removeOverlay(self, vol: SisypheVolume) -> None:
+        """
+        Remove a specific overlay from all widgets in the collection.
+
+        Parameters
+        ----------
+        vol : SisypheVolume
+            overlay volume to remove.
+        """
         if isinstance(vol, SisypheVolume):
             if self.count() > 0:
                 for widget in self:
                     widget.removeOverlay(vol)
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
-    def removeAllOverlays(self):
+    def removeAllOverlays(self) -> None:
+        """
+        Remove all overlays from all widgets in the collection.
+        """
         if self.count() > 0:
             for widget in self:
                 widget.removeAllOverlays()
 
-    def setAlignCenters(self, v: bool):
+    def setAlignCenters(self, v: bool) -> None:
+        """
+        Set the center alignment for all widgets in the collection.
+
+        Parameters
+        ----------
+        v : bool
+            True to enable center alignment, False to disable it.
+        """
         if self.count() > 0:
             for widget in self:
                 widget.setAlignCenters(v)
 
-    def alignCentersOn(self):
+    def alignCentersOn(self) -> None:
+        """
+        Enable center alignment for all widgets in the collection.
+        """
         if self.count() > 0:
             for widget in self:
                 widget.setAlignCentersOn()
 
-    def alignCentersOff(self):
+    def alignCentersOff(self) -> None:
+        """
+        Disable center alignment for all widgets in the collection.
+        """
         if self.count() > 0:
             for widget in self:
                 widget.setAlignCentersOff()
 
-    def getAlignCenters(self):
+    def getAlignCenters(self) -> bool:
+        """
+        Get the center alignment state in the collection.
+
+        Returns
+        -------
+        bool
+            The center alignment state.
+        """
         return self._widgets[0].getAlignCenters()
 
     # ROI methods
 
     # < Revision 20/02/2025
     # add canDisplayROI method
-    def canDisplayROI(self):
+    def canDisplayROI(self) -> bool:
+        """
+        Checks if any widget in the collection can display ROIs and has a SisypheVolume displayed.
+
+        Returns
+        -------
+        bool
+            True if at least one widget can display ROIs, False otherwise.
+        """
         r = False
         if self.count() > 0:
             for widget in self:
@@ -2374,7 +3850,15 @@ class IconBarViewWidgetCollection(QObject):
         return r
     # Revision 20/02/2025 >
 
-    def getROICollection(self):
+    def getROICollection(self) -> SisypheROICollection | None:
+        """
+        Get the associated SisypheROICollection.
+
+        Returns
+        -------
+        SisypheROICollection | None
+            associated ROI collection instance, or None if not found.
+        """
         # noinspection PyInconsistentReturns
         if self.count() > 0:
             for widget in self:
@@ -2384,7 +3868,15 @@ class IconBarViewWidgetCollection(QObject):
                     else: return None
         return None
 
-    def getROIDraw(self):
+    def getROIDraw(self) -> SisypheROIDraw | None:
+        """
+        Gets the associated SisypheROIDraw instance.
+
+        Returns
+        -------
+        SisypheROIDraw | None
+            associated ROI drawing helper instance, or None if not found.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
@@ -2393,7 +3885,15 @@ class IconBarViewWidgetCollection(QObject):
                     else: return None
         return None
 
-    def getCurrentSliceIndex(self):
+    def getCurrentSliceIndex(self) -> int | None:
+        """
+        Gets the current slice index from the first suitable widget.
+
+        Returns
+        -------
+        int | None
+            current slice index, or None if not applicable.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
@@ -2402,7 +3902,15 @@ class IconBarViewWidgetCollection(QObject):
                     else: return None
         return None
 
-    def getSelectedSliceIndex(self):
+    def getSelectedSliceIndex(self) -> int | None:
+        """
+        Get the slice index of the selected view from the first suitable widget.
+
+        Returns
+        -------
+        int | None
+            The selected slice index, or None if no view is selected.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
@@ -2411,7 +3919,15 @@ class IconBarViewWidgetCollection(QObject):
                     else: return None
         return None
 
-    def getCurrentOrientation(self):
+    def getCurrentOrientation(self) -> int | None:
+        """
+        Get the current orientation from the first suitable widget.
+
+        Returns
+        -------
+        int | None
+            The current orientation, or None if not applicable.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
@@ -2420,39 +3936,72 @@ class IconBarViewWidgetCollection(QObject):
                     else: return None
         return None
 
-    def updateROIDisplay(self):
+    def updateROIDisplay(self) -> None:
+        """
+        Update the ROI display in all suitable widgets.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.updateROIDisplay(signal=True)
 
-    def updateROIAttributes(self):
+    def updateROIAttributes(self) -> None:
+        """
+        Update the ROI attributes (e.g., color, opacity) in all suitable widgets.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.updateROIAttributes(signal=True)
 
-    def updateROIName(self, old, name):
+    def updateROIName(self, old: str, name: str) -> None:
+        """
+        Update the name of a ROI across all suitable widgets.
+
+        Parameters
+        ----------
+        old : str
+            old name of the ROI.
+        name : str
+            new name for the ROI.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     widget().updateROIName(old, name)
 
-    def setUndoOn(self):
+    def setUndoOn(self) -> None:
+        """
+        Enable the undo functionality for ROI drawing.
+        """
         draw = self.getROIDraw()
         if draw is not None: draw.setUndoOn()
 
-    def setUndoOff(self):
+    def setUndoOff(self) -> None:
+        """
+        Disable the undo functionality for ROI drawing.
+        """
         draw = self.getROIDraw()
         if draw is not None: draw.setUndoOff()
 
-    def clearUndo(self):
+    def clearUndo(self) -> None:
+        """
+        Clear the undo history for ROI drawing.
+        """
         draw = self.getROIDraw()
         if draw is not None: draw.clearLIFO()
 
-    def setROIVisibility(self, v):
+    def setROIVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of all ROIs in suitable widgets.
+
+        Parameters
+        ----------
+        v : bool
+            True to show ROIs, False to hide them.
+        """
         if isinstance(v, bool):
             if self.count() > 0:
                 for widget in self:
@@ -2461,7 +4010,15 @@ class IconBarViewWidgetCollection(QObject):
                         if sliceview is not None: sliceview.setROIVisibility(v, signal=True)
         else: raise TypeError('parameter type {} is not bool.'.format(v))
 
-    def setActiveROI(self, roiname):
+    def setActiveROI(self, roiname: str) -> None:
+        """
+        Set the active ROI for drawing in suitable widgets.
+
+        Parameters
+        ----------
+        roiname : str
+            name of the ROI to set as active.
+        """
         if isinstance(roiname, str):
             if self.count() > 0:
                 for widget in self:
@@ -2472,7 +4029,15 @@ class IconBarViewWidgetCollection(QObject):
                                 sliceview.setActiveROI(roiname, signal=True)
         else: raise TypeError('parameter type {} is not str.'.format(type(roiname)))
 
-    def setBrushRadiusROI(self, radius=10):
+    def setBrushRadiusROI(self, radius: int = 10) -> None:
+        """
+        Set the radius for the ROI drawing brush in suitable widgets.
+
+        Parameters
+        ----------
+        radius : int (optional)
+            brush radius in pixels (default is 10).
+        """
         if isinstance(radius, int):
             if self.count() > 0:
                 for widget in self:
@@ -2481,14 +4046,25 @@ class IconBarViewWidgetCollection(QObject):
                         if sliceview is not None: sliceview.setBrushRadius(radius, signal=True)
         else: raise TypeError('parameter type {} is not int.'.format(type(radius)))
 
-    def setNoROIFlag(self):
+    def setNoROIFlag(self) -> None:
+        """
+        Deactivate all ROI drawing and editing tool flags in suitable widgets.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.setNoROIFlag(signal=True)
 
-    def getBrushFlag(self):
+    def getBrushFlag(self) -> int | None:
+        """
+        Get the currently active brush flag/type in suitable widgets.
+
+        Returns
+        -------
+        int | None
+            1 for solid 2D, 2 for threshold 2D, 3 for solid 3D, 4 for threshold 3D, 0 for none.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
@@ -2496,7 +4072,15 @@ class IconBarViewWidgetCollection(QObject):
                     if sliceview is not None: return sliceview.getBrushFlag()
         return None
 
-    def setBrushROIFlag(self, brushtype=0):
+    def setBrushROIFlag(self, brushtype: int = 0) -> None:
+        """
+        Set the active ROI brush tool in suitable widgets.
+
+        Parameters
+        ----------
+        brushtype : int, optional
+            The type of brush to activate (0: Solid 2D, 1: Threshold 2D, 2: Solid 3D, 3: Threshold 3D). Default is 0.
+        """
         if isinstance(brushtype, int):
             if self.count() > 0:
                 for widget in self:
@@ -2512,7 +4096,15 @@ class IconBarViewWidgetCollection(QObject):
                             else: sliceview.setSolidBrushFlag(False, signal=True)
                             # Revision 20/03/2025 >
 
-    def setFillHolesROIFlag(self, f):
+    def setFillHolesROIFlag(self, f: bool) -> None:
+        """
+        Set the flag for filling holes in ROIs in suitable widgets.
+
+        Parameters
+        ----------
+        f : bool
+            True to enable hole filling, False to disable it.
+        """
         if self.count() > 0:
             if isinstance(f, bool):
                 for widget in self:
@@ -2521,7 +4113,15 @@ class IconBarViewWidgetCollection(QObject):
                         if sliceview is not None: sliceview.setFillHolesFlag(f, signal=True)
             else: raise TypeError('parameter type {} is not bool.'.format(type(f)))
 
-    def getFillHolesROIFlag(self):
+    def getFillHolesROIFlag(self) -> bool | None:
+        """
+        Get the current state of the hole filling flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
@@ -2529,231 +4129,392 @@ class IconBarViewWidgetCollection(QObject):
                     if sliceview is not None: return sliceview.getFillHolesFlag()
         return None
 
-    def set2DBlobDilateROIFlag(self):
+    def set2DBlobDilateROIFlag(self) -> None:
+        """
+        Activate the 2D blob dilation tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked blob undergoes a 2D morphological dilatation.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobDilateFlagOn(signal=True)
 
-    def set2DBlobErodeROIFlag(self):
+    def set2DBlobErodeROIFlag(self) -> None:
+        """
+        Activate the 2D blob erosion tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked blob undergoes a 2D morphological erosion.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobErodeFlagOn(signal=True)
 
-    def set2DBlobCloseROIFlag(self):
+    def set2DBlobCloseROIFlag(self) -> None:
+        """
+        Activate the 2D blob closing tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked blob undergoes a 2D morphological closing.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobCloseFlagOn(signal=True)
 
-    def set2DBlobOpenROIFlag(self):
+    def set2DBlobOpenROIFlag(self) -> None:
+        """
+        Activate the 2D blob opening tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked blob undergoes a 2D morphological opening.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobOpenFlagOn(signal=True)
 
-    def set2DBlobCopyROIFlag(self):
+    def set2DBlobCopyROIFlag(self) -> None:
+        """
+        Activate the 2D blob copy tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked blob is copied to the clipboard.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobCopyFlagOn(signal=True)
 
-    def set2DBlobCutROIFlag(self):
+    def set2DBlobCutROIFlag(self) -> None:
+        """
+        Activate the 2D blob cut tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked blob is cut to the clipboard.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobCutFlagOn(signal=True)
 
-    def set2DBlobPasteROIFlag(self):
+    def set2DBlobPasteROIFlag(self) -> None:
+        """
+        Activate the 2D blob paste tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the blob on the clipboard is copied wherever the cross-shaped cursor is positioned.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobPasteFlagOn(signal=True)
 
-    def set2DBlobRemoveROIFlag(self):
+    def set2DBlobRemoveROIFlag(self) -> None:
+        """
+        Activate the 2D blob removal tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked blob is removed.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobRemoveFlagOn(signal=True)
 
-    def set2DBlobKeepROIFlag(self):
+    def set2DBlobKeepROIFlag(self) -> None:
+        """
+        Activate the 2D keep blob tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, all the blobs are removed except for the blob that is left-clicked.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobKeepFlagOn(signal=True)
 
-    def set2DBlobThresholdROIFlag(self):
+    def set2DBlobThresholdROIFlag(self) -> None:
+        """
+        Activate the 2D blob thresholding tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, a threshold is apllied in the left-clicked blob.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobThresholdFlagOn(signal=True)
 
-    def set2DFillROIFlag(self):
+    def set2DFillROIFlag(self) -> None:
+        """
+        Activate the 2D flood fill tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked hole is filled.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DFillFlagOn(signal=True)
 
-    def set2DRegionGrowingROIFlag(self):
+    def set2DRegionGrowingROIFlag(self) -> None:
+        """
+        Activate the 2D region growing tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked pixel is used as the seed for the region growing processing.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DRegionGrowingFlagOn(signal=True)
 
-    def set2DRegionConfidenceROIFlag(self):
+    def set2DRegionConfidenceROIFlag(self) -> None:
+        """
+        Activate the 2D confidence-connected region growing tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked pixel is used as the seed for the region confidence processing.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DRegionConfidenceFlagOn(signal=True)
 
-    def set2DBlobRegionGrowingROIFlag(self):
+    def set2DBlobRegionGrowingROIFlag(self) -> None:
+        """
+        Activate the 2D blob-based region growing tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked pixel of a blob is used as the seed. The region growing processing is restricted
+        to the blob area.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobRegionGrowingFlagOn(signal=True)
 
-    def set2DBlobRegionConfidenceROIFlag(self):
+    def set2DBlobRegionConfidenceROIFlag(self) -> None:
+        """
+        Activate the 2D blob-based confidence-connected region growing tool in suitable widgets.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked pixel of a blob is used as the seed. The region confidence processing is
+        restricted to the blob area.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobRegionConfidenceFlagOn(signal=True)
 
-    def set3DBlobDilateROIFlag(self):
+    def set3DBlobDilateROIFlag(self) -> None:
+        """
+        Activate the 3D blob dilation tool in suitable widgets.
+        In this mode, the left-clicked blob undergoes a 3D morphological dilatation.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobDilateFlagOn(signal=True)
 
-    def set3DBlobErodeROIFlag(self):
+    def set3DBlobErodeROIFlag(self) -> None:
+        """
+        Activate the 3D blob erosion tool in suitable widgets.
+        In this mode, the left-clicked blob undergoes a 3D morphological erosion.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobErodeFlagOn(signal=True)
 
-    def set3DBlobCloseROIFlag(self):
+    def set3DBlobCloseROIFlag(self) -> None:
+        """
+        Activate the 3D blob closing tool in suitable widgets.
+        In this mode, the left-clicked blob undergoes a 3D morphological closing.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobCloseFlagOn(signal=True)
 
-    def set3DBlobOpenROIFlag(self):
+    def set3DBlobOpenROIFlag(self) -> None:
+        """
+        Activate the 3D blob opening tool in suitable widgets.
+        In this mode, the left-clicked blob undergoes a 3D morphological opening.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobOpenFlagOn(signal=True)
 
-    def set3DBlobCopyROIFlag(self):
+    def set3DBlobCopyROIFlag(self) -> None:
+        """
+        Activate the 3D blob copy tool in suitable widgets.
+        In this mode, the left-clicked blob is copied to the clipboard.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobCopyFlagOn(signal=True)
 
-    def set3DBlobCutROIFlag(self):
+    def set3DBlobCutROIFlag(self) -> None:
+        """
+        Activate the 3D blob cut tool in suitable widgets.
+        In this mode, the left-clicked blob is cut to the clipboard.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobCutFlagOn(signal=True)
 
-    def set3DBlobPasteROIFlag(self):
+    def set3DBlobPasteROIFlag(self) -> None:
+        """
+        Activate the 3D blob paste tool in suitable widgets.
+        In this mode, the blob on the clipboard is copied wherever the cross-shaped cursor is positioned.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobPasteFlagOn(signal=True)
 
-    def set3DBlobRemoveROIFlag(self):
+    def set3DBlobRemoveROIFlag(self) -> None:
+        """
+        Activate the 3D blob removal tool in suitable widgets.
+        In this mode, the left-clicked blob is removed.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobRemoveFlagOn(signal=True)
 
-    def set3DBlobKeepROIFlag(self):
+    def set3DBlobKeepROIFlag(self) -> None:
+        """
+        Activate the 3D keep blob tool in suitable widgets.
+        In this mode, all the blobs are removed except for the blob that is left-clicked.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobKeepFlagOn(signal=True)
 
-    def set3DBlobExpandFlagOn(self, v):
+    def set3DBlobExpandFlagOn(self, v: float) -> None:
+        """
+        Activate the 3D blob expansion tool in suitable widgets.
+        In this mode, the left-clicked blob is expanded with a margin.
+
+        Parameters
+        ----------
+        v : float
+            The expansion distance.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobExpandFlagOn(v, signal=True)
 
-    def set3DBlobShrinkFlagOn(self, v):
+    def set3DBlobShrinkFlagOn(self, v: float) -> None:
+        """
+        Activate the 3D blob shrinking tool in suitable widgets.
+        In this mode, the left-clicked blob is shrinked with a margin.
+
+        Parameters
+        ----------
+        v : float
+            The shrinking distance.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobShrinkFlagOn(v, signal=True)
 
-    def set3DBlobThresholdROIFlag(self):
+    def set3DBlobThresholdROIFlag(self) -> None:
+        """
+        Activate the 3D blob thresholding tool in suitable widgets.
+        In this mode, a threshold is apllied in the left-clicked blob.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobThresholdFlagOn(signal=True)
 
-    def set3DFillROIFlag(self):
+    def set3DFillROIFlag(self) -> None:
+        """
+        Activate the 3D flood fill tool in suitable widgets.
+        In this mode, the left-clicked hole is filled.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DFillFlagOn(signal=True)
 
-    def set3DRegionGrowingROIFlag(self):
+    def set3DRegionGrowingROIFlag(self) -> None:
+        """
+        Activate the 3D region growing tool in suitable widgets.
+        In this mode, the left-clicked voxel is used as the seed for the region growing processing.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DRegionGrowingFlagOn(signal=True)
 
-    def set3DRegionConfidenceROIFlag(self):
+    def set3DRegionConfidenceROIFlag(self) -> None:
+        """
+        Activate the 3D confidence-connected region growing tool in suitable widgets.
+        In this mode, the left-clicked pixel is used as the seed for the region confidence processing.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DRegionConfidenceFlagOn(signal=True)
 
-    def set3DBlobRegionGrowingROIFlag(self):
+    def set3DBlobRegionGrowingROIFlag(self) -> None:
+        """
+        Activate the 3D blob-based region growing tool in suitable widgets.
+        In this mode, the left-clicked voxel of a blob is used as the seed. The region growing processing is restricted
+        to the blob area.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobRegionGrowingFlagOn(signal=True)
 
-    def set3DBlobRegionConfidenceROIFlag(self):
+    def set3DBlobRegionConfidenceROIFlag(self) -> None:
+        """
+        Activate the 3D blob-based confidence-connected region growing tool in suitable widgets.
+        In this mode, the left-clicked voxel of a blob is used as the seed. The region confidence processing is
+        restricted to the blob area.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobRegionConfidenceFlagOn(signal=True)
 
-    def setActiveContourROIFlag(self):
+    def setActiveContourROIFlag(self) -> None:
+        """
+        Activate the active contour (snake) segmentation tool in suitable widgets.
+        In this mode, the left-clicked voxel is used to initialize the active contour.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
@@ -2762,7 +4523,15 @@ class IconBarViewWidgetCollection(QObject):
 
     # Mesh/Tools methods
 
-    def getVolumeView(self):
+    def getVolumeView(self) -> IconBarOrthogonalSliceVolumeViewWidget | IconBarOrthogonalSliceTrajectoryViewWidget | None:
+        """
+        Find and return the first 3D volume view widget in the collection.
+
+        Returns
+        -------
+        IconBarOrthogonalSliceVolumeViewWidget | IconBarOrthogonalSliceTrajectoryViewWidget | None
+            3D volume view widget, or None if not found.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarOrthogonalSliceVolumeViewWidget,
@@ -2770,28 +4539,60 @@ class IconBarViewWidgetCollection(QObject):
                     return widget().getFirstVolumeViewWidget()
         return None
 
-    def getFirstSliceView(self):
+    def getFirstSliceView(self) -> SliceViewWidget | None:
+        """
+        Get the first slice view widget from in the collection.
+
+        Returns
+        -------
+        SliceViewWidget | None
+            slice view widget, or None if the collection is empty.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, IconBarWidget):
                     return widget().getFirstSliceViewWidget()
         return None
 
-    def getOrthogonalSliceTrajectoryViewWidget(self):
+    def getOrthogonalSliceTrajectoryViewWidget(self) -> SliceTrajectoryViewWidget | None:
+        """
+        Find and return the first trajectory view widget in the collection.
+
+        Returns
+        -------
+        SliceTrajectoryViewWidget | None
+            trajectory view widget, or None if not found.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, IconBarOrthogonalSliceTrajectoryViewWidget):
                     return widget()
         return None
 
-    def getMultiSliceGridViewWidget(self):
+    def getMultiSliceGridViewWidget(self) -> MultiSliceGridViewWidget | None:
+        """
+        Find and return the first multi-slice grid view widget in the collection.
+
+        Returns
+        -------
+        MultiSliceGridViewWidget | None
+            multi-slice grid view widget, or None if not found.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, IconBarMultiSliceGridViewWidget):
                     return widget()
         return None
 
-    def getSynchronisedGridViewWidget(self):
+    def getSynchronisedGridViewWidget(self) -> SynchronisedGridViewWidget | None:
+        """
+        Find and return the first synchronized grid view widget in the collection.
+
+        Returns
+        -------
+        SynchronisedGridViewWidget | None
+            synchronized grid view widget, or None if not found.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, IconBarSynchronisedGridViewWidget):
@@ -2800,7 +4601,15 @@ class IconBarViewWidgetCollection(QObject):
 
     # < Revision 15/10/2024
     # add getProjectionViewWidget method
-    def getProjectionViewWidget(self):
+    def getProjectionViewWidget(self) -> MultiProjectionViewWidget | None:
+        """
+        Find and return the first multi-projection view widget in the collection.
+
+        Returns
+        -------
+        MultiProjectionViewWidget | None
+            multi-projection view widget, or None if not found.
+        """
         if self.count() > 0:
             from Sisyphe.widgets.projectionViewWidget import IconBarMultiProjectionViewWidget
             for widget in self:
@@ -2811,7 +4620,15 @@ class IconBarViewWidgetCollection(QObject):
 
     # < Revision 11/12/2024
     # add getMultiComponentViewWidget method
-    def getMultiComponentViewWidget(self):
+    def getMultiComponentViewWidget(self) -> MultiComponentViewWidget | None:
+        """
+        Find and return the first multi-component view widget in the collection.
+
+        Returns
+        -------
+        MultiComponentViewWidget | None
+            multi-component view widget, or None if not found.
+        """
         if self.count() > 0:
             from Sisyphe.widgets.multiComponentViewWidget import IconBarMultiComponentViewWidget
             for widget in self:
@@ -2820,7 +4637,15 @@ class IconBarViewWidgetCollection(QObject):
         return None
     # Revision 11/12/2024 >
 
-    def getMeshCollection(self):
+    def getMeshCollection(self) -> SisypheMeshCollection | None:
+        """
+        Get the associated mesh collection.
+
+        Returns
+        -------
+        SisypheMeshCollection | None
+            mesh collection, or None if not found.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarOrthogonalSliceVolumeViewWidget,
@@ -2829,7 +4654,15 @@ class IconBarViewWidgetCollection(QObject):
                     if view is not None: return view.getMeshCollection()
         return None
 
-    def getToolCollection(self):
+    def getToolCollection(self) -> ToolWidgetCollection | None:
+        """
+        Get the associated 3D tool collection.
+
+        Returns
+        -------
+        ToolWidgetCollection | None
+            tool collection, or None if not found.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarOrthogonalSliceVolumeViewWidget,
@@ -2838,7 +4671,15 @@ class IconBarViewWidgetCollection(QObject):
                     if view is not None: return view.getToolCollection()
         return None
 
-    def getTractCollection(self):
+    def getTractCollection(self) -> SisypheTractCollection | None:
+        """
+        Gets the associated streamlines collection.
+
+        Returns
+        -------
+        SisypheTractCollection | None
+            streamlines collection, or None if not found.
+        """
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarOrthogonalSliceVolumeViewWidget,
@@ -2847,7 +4688,10 @@ class IconBarViewWidgetCollection(QObject):
                     if view is not None: return view.getTractCollection()
         return None
 
-    def updateRender(self):
+    def updateRender(self) -> None:
+        """
+        Trigger a render update in all view widgets in the collection.
+        """
         if self.count() > 0:
             for widget in self:
                 widget.updateRender()

@@ -58,17 +58,17 @@ class ThresholdViewWidget(QWidget):
 
     QWidget -> ThresholdViewWidget
 
-    Last revision: 29/08/2025
+    Last revision: 20/10/2025
     """
 
     # Class methods
 
     @classmethod
-    def isDarkMode(cls):
+    def isDarkMode(cls) -> bool:
         return darkdetect.isDark()
 
     @classmethod
-    def isLightMode(cls):
+    def isLightMode(cls) -> bool:
         return darkdetect.isLight()
 
     # Special method
@@ -102,7 +102,10 @@ class ThresholdViewWidget(QWidget):
         _on_move_right_span_flag    bool, right span movement availability, upper thrshold can be modified if True
         """
 
-    def __init__(self, volume=None, size=512, parent=None):
+    def __init__(self,
+                 volume: SisypheVolume | None = None,
+                 size: int = 512,
+                 parent: QWidget | None = None) -> None:
         super().__init__(parent)
         if volume is None or isinstance(volume, SisypheVolume):
             self._volume = volume
@@ -618,14 +621,14 @@ class ThresholdViewWidget(QWidget):
     # fix vtkWin32OpenGLRenderWindow error:
     # wglMakeCurrent failed in MakeCurrent()
     # finalize method must be explicitely called before class destruction
-    def finalize(self):
+    def finalize(self) -> None:
         self._view.finalize()
     # < Revision 10/03/2025
 
-    def getVolume(self):
+    def getVolume(self) -> SisypheVolume:
         return self._volume
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
         if isinstance(volume, SisypheVolume):
             self._view.removeVolume()
             self._view.setVolume(volume)
@@ -639,13 +642,13 @@ class ThresholdViewWidget(QWidget):
             self._drawImage()
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
-    def hasVolume(self):
+    def hasVolume(self) -> bool:
         return self._volume is not None
 
-    def getViewWidget(self):
+    def getViewWidget(self) -> IconBarSliceViewWidget:
         return self._view
 
-    def setThreshold(self, tmin, tmax):
+    def setThreshold(self, tmin: float | int, tmax: float | int) -> None:
         if tmin > tmax:
             tmax = tmin
         if tmin < self._volume.display.getRangeMin():
@@ -675,7 +678,7 @@ class ThresholdViewWidget(QWidget):
         self._thresholdinftext.xyann = (tmin, self._histaxe.get_ylim()[1] / 2)
         self._thresholdsuptext.xyann = (tmax, self._histaxe.get_ylim()[1] / 2)
 
-    def setMinThreshold(self, tmin):
+    def setMinThreshold(self, tmin: float | int) -> None:
         if tmin < self._volume.display.getRangeMin(): tmin = self._volume.display.getRangeMin()
         if self._volume.getDatatype() in _INTDATATYPES:
             self._editmin.setValue(int(tmin))
@@ -686,7 +689,7 @@ class ThresholdViewWidget(QWidget):
         self._set_span_left(tmin)
         self._thresholdinftext.xyann = (tmin, self._histaxe.get_ylim()[1] / 2)
 
-    def setMaxThreshold(self, tmax):
+    def setMaxThreshold(self, tmax: float | int) -> None:
         if tmax > self._volume.display.getRangeMax(): tmax = self._volume.display.getRangeMax()
         if self._volume.getDatatype() in _INTDATATYPES:
             self._editmax.setValue(int(tmax))
@@ -697,45 +700,45 @@ class ThresholdViewWidget(QWidget):
         self._set_span_right(tmax)
         self._thresholdsuptext.xyann = (tmax, self._histaxe.get_ylim()[1] / 2)
 
-    def getThresholds(self):
+    def getThresholds(self) -> tuple[float, float]:
         # < Revision 23/07/2024
         # return float(self._editmin.text()), float(self._editmax.text())
         return self._editmin.value(), self._editmax.value()
         # Revision 23/07/2024 >
 
-    def getMinThreshold(self):
+    def getMinThreshold(self) -> float:
         # < Revision 23/07/2024
         # return float(self._editmin.text())
         return self._editmin.value()
         # Revision 23/07/2024 >
 
-    def getMaxThreshold(self):
+    def getMaxThreshold(self) -> float:
         # < Revision 23/07/2024
         # return float(self._editmax.text())
         return self._editmax.value()
         # Revision 23/07/2024 >
 
-    def setAutoButtonVisibility(self, v):
+    def setAutoButtonVisibility(self, v: bool) -> None:
         if isinstance(v, bool): self._autobutton.setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getAutoButtonVisibility(self):
+    def getAutoButtonVisibility(self) -> bool:
         return self._autobutton.isVisible()
 
     # < Revision 29/08/2025
     # add setResetButtonVisibility() method
-    def setResetButtonVisibility(self, v):
+    def setResetButtonVisibility(self, v: bool) -> None:
         if isinstance(v, bool): self._resetbutton.setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
     # Revision 29/08/2025 >
 
     # < Revision 29/08/2025
     # add getResetButtonVisibility() method
-    def getResetButtonVisibility(self):
+    def getResetButtonVisibility(self) -> bool:
         return self._resetbutton.isVisible()
     # Revision 29/08/2025 >
 
-    def setThresholdFlag(self, v):
+    def setThresholdFlag(self, v: int) -> None:
         if isinstance(v, int):
             if 0 <= v > 3:
                 if v == 0: self.setThresholdFlagToMinimum()
@@ -744,12 +747,12 @@ class ThresholdViewWidget(QWidget):
             else: raise ValueError('parameter value {} is not between 0 and 2.'.format(v))
         else: raise TypeError('parameter type {} is not int.'.format(type(v)))
 
-    def getThresholdFlag(self):
+    def getThresholdFlag(self) -> int:
         if self._minflag.isChecked(): return 0
         elif self._maxflag.isChecked(): return 1
         else: return 2
 
-    def setThresholdFlagToMinimum(self):
+    def setThresholdFlagToMinimum(self) -> None:
         if self._volume is not None:
             tmax = self._volume.getDisplay().getRangeMax()
             self.setMaxThreshold(tmax)
@@ -765,7 +768,7 @@ class ThresholdViewWidget(QWidget):
         self._editmin.setToolTip('Threshold')
         self._editmin.setAlignment(Qt.AlignHCenter)
 
-    def setThresholdFlagToMaximum(self):
+    def setThresholdFlagToMaximum(self) -> None:
         if self._volume is not None:
             tmin = self._volume.getDisplay().getRangeMin()
             self.setMinThreshold(tmin)
@@ -781,7 +784,7 @@ class ThresholdViewWidget(QWidget):
         self._editmax.setToolTip('Threshold')
         self._editmax.setAlignment(Qt.AlignHCenter)
 
-    def setThresholdFlagToTwo(self):
+    def setThresholdFlagToTwo(self) -> None:
         self._twoflag.setChecked(True)
         self._editmin.setVisible(True)
         self._editmax.setVisible(True)
@@ -790,7 +793,7 @@ class ThresholdViewWidget(QWidget):
         self._editmin.setAlignment(Qt.AlignLeft)
         self._editmax.setAlignment(Qt.AlignRight)
 
-    def setThresholdFlagButtonsVisibility(self, v):
+    def setThresholdFlagButtonsVisibility(self, v: bool) -> None:
         if isinstance(v, bool):
             self._minflag.setVisible(v)
             self._maxflag.setVisible(v)
@@ -798,7 +801,7 @@ class ThresholdViewWidget(QWidget):
         else:
             raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getThresholdFlagButtonsVisibility(self):
+    def getThresholdFlagButtonsVisibility(self) -> bool:
         return self._minflag.isVisible()
 
 
@@ -810,12 +813,17 @@ class GradientThresholdViewWidget(ThresholdViewWidget):
     ~~~~~~~~~~~
 
     QWidget -> ThresholdViewWidget -> GradientThresholdViewWidget
+
+    Last revision: 20/10/2025
     """
 
-    def __init__(self, volume, size=512, parent=None):
+    def __init__(self,
+                 volume: SisypheVolume,
+                 size: int = 512,
+                 parent: QWidget | None = None) -> None:
         super().__init__(self._calcGradient(volume), size, parent)
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
         super().setVolume(self._calcGradient(volume))
 
     @staticmethod

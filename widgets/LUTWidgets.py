@@ -9,6 +9,9 @@ External packages/modules
     - SimpleITK, Medical image processing, https://simpleitk.org/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
 from sys import platform
 
 from os import getcwd
@@ -85,6 +88,10 @@ from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.multiViewWidgets import MultiViewWidget
 from Sisyphe.widgets.volumeViewWidget import VolumeViewWidget
 
+if TYPE_CHECKING:
+    from Sisyphe.widgets.iconBarViewWidgets import IconBarWidget
+    from Sisyphe.widgets.iconBarViewWidgets import IconBarViewWidgetCollection
+
 if platform == 'win32':
     # noinspection PyUnresolvedReferences
     from qdarktheme import load_palette
@@ -99,6 +106,21 @@ Functions
 
 
 def drawLutToQImage(lut: SisypheLut | Colormap | ListedColormap | LinearSegmentedColormap, h: int = 32) -> QImage:
+    """
+    Draw a color lookup table (LUT) to a QImage.
+
+    Parameters
+    ----------
+    lut : SisypheLut | Colormap | ListedColormap | LinearSegmentedColormap
+        The input LUT to draw.
+    h : int, optional
+        The height of the output image in pixels.
+
+    Returns
+    -------
+    QImage
+        A QImage representation of the LUT.
+    """
     imglut = QImage(256, h, QImage.Format_RGB888)
     painter = QPainter(imglut)
     pen = QPen()
@@ -117,6 +139,21 @@ def drawLutToQImage(lut: SisypheLut | Colormap | ListedColormap | LinearSegmente
 
 
 def drawLutToPixmap(lut: SisypheLut | Colormap | ListedColormap | LinearSegmentedColormap, h: int = 32) -> QPixmap:
+    """
+    Draw a color lookup table (LUT) to a QPixmap.
+
+    Parameters
+    ----------
+    lut : SisypheLut | Colormap | ListedColormap | LinearSegmentedColormap
+        The input LUT to draw.
+    h : int, optional
+        The height of the output pixmap in pixels.
+
+    Returns
+    -------
+    QPixmap
+        A QPixmap representation of the LUT.
+    """
     imglut = QPixmap(256, h)
     painter = QPainter(imglut)
     pen = QPen()
@@ -154,16 +191,25 @@ class LutWidget(QWidget):
     Description
     ~~~~~~~~~~~
 
-    Custom QWidget to control lut (colormap selection, window settings)
+    Custom QWidget to control LUT (colormap selection, window settings)
 
     Functionalities:
-    - Displaying the histogram of the image data.
-    - Providing a visual representation of the current lut and colormap.
-    - Allowing the user to select a lut from a predefined list or from a file on disk.
-    - Enabling the user to reverse the current lut.
+
+    - Displaying the histogram of the associate SisypheVolume.
+    - Providing a visual representation of the current Lut and colormap.
+    - Allowing the user to select a Lut from a predefined list or from a file on disk.
+    - Enabling the user to reverse the current Lut.
     - Providing a range slider to adjust the image windowing settings.
     - Displaying the current windowing settings (min and max values) in editable text boxes.
     - Handling mouse events for adjusting the windowing settings and moving the windowing range.
+
+    This widget consists of the following elements:
+
+    - Figure, histogram and Lut display, interactive left and right span to change window
+    - QDoubleSpinBox, minimum range value
+    - QDoubleSpinBox, maximum range value
+    - ComboBoxLut, Lut selection
+    - QCheckBox, reverse Lut
 
     Inheritance
     ~~~~~~~~~~~
@@ -171,7 +217,7 @@ class LutWidget(QWidget):
     QWidget -> LutWidget
 
     Creation: 01/11/2022
-    Last revision: 25/03/2025
+    Last revision: 20/10/2025
     """
 
     # Custom Qt Signal
@@ -183,45 +229,52 @@ class LutWidget(QWidget):
 
     @classmethod
     def isDarkMode(cls) -> bool:
+        """
+        Check if the system is currently in dark mode.
+
+        Returns
+        -------
+        bool
+            True if dark mode is detected, False otherwise.
+        """
         return darkdetect.isDark()
 
     @classmethod
     def isLightMode(cls) -> bool:
+        """
+        Check if the system is currently in light mode.
+
+        Returns
+        -------
+        bool
+            True if light mode is detected, False otherwise.
+        """
         return darkdetect.isLight()
 
     # Special method
 
-    """
-    Private attributes
-
-    _view               Display widget to update when Lut settings changed
-    _fig                Figure, Matplotlib figure
-    _canvas             FigureCanvas, QWidget canvas
-    _ratio              float, Dimension of the lut axes (percent of the figure)
-    _axe                Axes, Histogram display
-    _lutaxe             Axes, Central lut display
-    _rect1axe           Axes, Left lut display, values under window
-    _rect2axe           Axes, Right lut display, values above window
-    _imglut             AxesImage, Lut image
-    _span               avxspan, Span artist (polygon patches instance)
-    _cursor             QCursor, Mouse cursor
-    _thresholdinftext   Annotation, Window inf. value displayed on the span
-    _thresholdsuptext   Annotation, Window sup. value displayed on the span
-    _editmin            QLineEdit, Widget to edit inferior range value
-    _editmax            QLineEdit, Widget to edit superior range value
-    _xpos               float, Cursor position before mouse event start
-    _xleft              float, Left span position before mouse event start
-    _xright             float, Right span position before mouse event start
-    _decimals           int, number of decimals after point in QLineEdit _editmin and _editmax
-    _format             str, float representation in QLineEdit _editmin and _editmax
-    """
-
     def __init__(self,
                  volume: SisypheVolume | None = None,
-                 view=None,
+                 view: IconBarViewWidgetCollection | IconBarWidget | MultiViewWidget | AbstractViewWidget | None = None,
                  size: int = 512,
                  ratio: float = 0.1,
-                 parent: QWidget | None = None):
+                 parent: QWidget | None = None) -> None:
+        """
+        LutWidget instance constructor.
+
+        Parameters
+        ----------
+        volume : SisypheVolume | None (optional)
+            The volume to associate with the widget.
+        view : IconBarViewWidgetCollection | IconBarWidget | MultiViewWidget | AbstractViewWidget | None (optional)
+            The view widget to update when settings change.
+        size : int (optional)
+            The initial size hint for the Matplotlib figure (default 512).
+        ratio : float (optional)
+            The height ratio of the LUT display area to the total widget height (default 0.1).
+        parent : QWidget | None (optional)
+            The parent widget.
+        """
         super().__init__(parent)
 
         self._view = view
@@ -375,9 +428,37 @@ class LutWidget(QWidget):
             self._editmax.setStyleSheet('font-size: 8pt')
             self._combo.setStyleSheet('font-size: 8pt')
 
+    """
+    Private attributes
+
+    _view               Display widget to update when Lut settings changed
+    _fig                Figure, Matplotlib figure
+    _canvas             FigureCanvas, QWidget canvas
+    _ratio              float, Dimension of the lut axes (percent of the figure)
+    _axe                Axes, Histogram display
+    _lutaxe             Axes, Central lut display
+    _rect1axe           Axes, Left lut display, values under window
+    _rect2axe           Axes, Right lut display, values above window
+    _imglut             AxesImage, Lut image
+    _span               avxspan, Span artist (polygon patches instance)
+    _cursor             QCursor, Mouse cursor
+    _thresholdinftext   Annotation, Window inf. value displayed on the span
+    _thresholdsuptext   Annotation, Window sup. value displayed on the span
+    _editmin            QLineEdit, Widget to edit inferior range value
+    _editmax            QLineEdit, Widget to edit superior range value
+    _xpos               float, Cursor position before mouse event start
+    _xleft              float, Left span position before mouse event start
+    _xright             float, Right span position before mouse event start
+    _decimals           int, number of decimals after point in QLineEdit _editmin and _editmax
+    _format             str, float representation in QLineEdit _editmin and _editmax
+    """
+
     # Private methods
 
-    def _draw(self):
+    def _draw(self) -> None:
+        """
+        Redraws the widget's canvas and updates the associated view.
+        """
         rmin, rmax = self._volume.display.getRange()
         wmin, wmax = self._volume.display.getWindow()
         if self._volume.display.isDefaultWindow():
@@ -396,7 +477,10 @@ class LutWidget(QWidget):
         self._canvas.draw()
         self._updateViewWidget()
 
-    def _initDecimals(self):
+    def _initDecimals(self) -> None:
+        """
+        Initializes the number of decimals for display based on the volume's data type.
+        """
         if self._volume is not None:
             if self._volume.isFloatDatatype():
                 m = self._volume.getMax()
@@ -412,8 +496,10 @@ class LutWidget(QWidget):
                     self._decimals = 1
                     self._format = '{:.1f}'
 
-    def _initHistAxes(self):
-
+    def _initHistAxes(self) -> None:
+        """
+        Initializes the histogram plot, the span selector, and the window value annotations.
+        """
         if self.isDarkMode(): spancolor = 'white'
         else: spancolor = 'black'
 
@@ -468,7 +554,10 @@ class LutWidget(QWidget):
                                                 rotation='vertical', verticalalignment='center',
                                                 horizontalalignment='center')
 
-    def _initLutImage(self):
+    def _initLutImage(self) -> None:
+        """
+        Initializes the LUT display image and the rectangles for out-of-window values.
+        """
         # Init central AxesImage of the lut axes
         self._lutaxe.clear()
         self._lutaxe.set_xmargin(0)
@@ -493,7 +582,10 @@ class LutWidget(QWidget):
         self._rect1axe.add_patch(r1)
         self._rect2axe.add_patch(r2)
 
-    def _initEdit(self):
+    def _initEdit(self) -> None:
+        """
+        Configures the QDoubleSpinBox widgets for min/max range editing.
+        """
         datatype = self._volume.getNumpy().dtype
         if self._volume.getDatatype() in getIntStdDatatypes():
             if iinfo(datatype).min < iinfo('int32').min: datatype = 'int32'
@@ -549,13 +641,37 @@ class LutWidget(QWidget):
         self._editmin.setAlignment(Qt.AlignHCenter)
         self._editmax.setAlignment(Qt.AlignHCenter)
 
-    def _get_span_left(self):
+    def _get_span_left(self) -> float:
+        """
+        Gets the left coordinate of the windowing span.
+
+        Returns
+        -------
+        float
+            left coordinate of the windowing span.
+        """
         return self._span.xy[0][0]
 
-    def _get_span_right(self):
+    def _get_span_right(self) -> float:
+        """
+        Gets the right coordinate of the windowing span.
+
+        Returns
+        -------
+        float
+            right coordinate of the windowing span.
+        """
         return self._span.xy[2][0]
 
-    def _set_span_left(self, x):
+    def _set_span_left(self, x: float) -> float:
+        """
+        Sets the left coordinate of the windowing span with boundary checks.
+
+        Returns
+        -------
+        float
+            adjusted coordinate.
+        """
         if x < self._volume.display.getRangeMin():
             x = self._volume.display.getRangeMin()
         if x > self._volume.display.getWindowMax():
@@ -565,7 +681,15 @@ class LutWidget(QWidget):
         self._span.xy[4][0] = x
         return x
 
-    def _set_span_right(self, x):
+    def _set_span_right(self, x: float) -> float:
+        """
+        Sets the right coordinate of the windowing span with boundary checks.
+
+        Returns
+        -------
+        float
+            adjusted coordinate.
+        """
         if x < self._volume.display.getWindowMin():
             x = self._volume.display.getWindowMin()
         if x > self._volume.display.getRangeMax():
@@ -574,10 +698,21 @@ class LutWidget(QWidget):
         self._span.xy[3][0] = x
         return x
 
-    def _is_in_span(self, x):
+    def _is_in_span(self, x: float) -> bool:
+        """
+        Checks if a given x-coordinate is within the windowing span.
+
+        Returns
+        -------
+        bool
+            True if the coordinate is inside the span, False otherwise.
+        """
         return self._get_span_left() <= x <= self._get_span_right()
 
-    def _updateViewWidget(self):
+    def _updateViewWidget(self) -> None:
+        """
+        Triggers a render update on the associated view widget.
+        """
         if self._view is not None:
             from Sisyphe.widgets.iconBarViewWidgets import IconBarWidget
             from Sisyphe.widgets.iconBarViewWidgets import IconBarViewWidgetCollection
@@ -587,7 +722,10 @@ class LutWidget(QWidget):
 
     # Qt events
 
-    def _onMouseClickEvent(self, event):
+    def _onMouseClickEvent(self, event) -> None:
+        """
+        Handles mouse clicks on the histogram to initiate window/level dragging.
+        """
         if event.inaxes == self._histaxe:
             if self._is_in_span(event.xdata):
                 tol = (self._volume.display.getRangeMax() -
@@ -617,7 +755,10 @@ class LutWidget(QWidget):
                     self._canvas.setCursor(self._cursor)
                 self._xpos = float(event.xdata)
 
-    def _onMouseMoveEvent(self, event):
+    def _onMouseMoveEvent(self, event) -> None:
+        """
+        Handles mouse movement to adjust the window/level based on the drag operation.
+        """
         if event.inaxes == self._histaxe:
             if self._on_move_span_flag or self._on_move_left_span_flag or self._on_move_right_span_flag:
                 dx = event.xdata - self._xpos
@@ -683,14 +824,20 @@ class LutWidget(QWidget):
                     self._canvas.setCursor(self._cursor)
 
     # noinspection PyUnusedLocal
-    def _onMouseReleaseEvent(self, event):
+    def _onMouseReleaseEvent(self, event) -> None:
+        """
+        Handles mouse release to end the drag operation.
+        """
         self._cursor.setShape(Qt.ArrowCursor)
         self._canvas.setCursor(self._cursor)
         self._on_move_span_flag = False
         self._on_move_left_span_flag = False
         self._on_move_right_span_flag = False
 
-    def _onRangeChangedEvent(self):
+    def _onRangeChangedEvent(self) -> None:
+        """
+        Handles the editingFinished Qt signal from the range spin boxes.
+        """
         # < Revision 23/07/2024
         # replace QLineEdit by QDoubleSpinBox
         # rmin = float(self._editmin.text())
@@ -726,7 +873,10 @@ class LutWidget(QWidget):
         # Update display
         self._draw()
 
-    def _onLutChangedEvent(self, index):
+    def _onLutChangedEvent(self, index: int) -> None:
+        """
+        Handles the currentIndexChanged Qt signal from the LUT combo box.
+        """
         if self._combo.itemText(index) == 'from disk...':
             self.loadLut()
             self._combo.setCurrentIndex(0)
@@ -751,7 +901,10 @@ class LutWidget(QWidget):
 
     # Public methods
 
-    def loadLut(self):
+    def loadLut(self)  -> None:
+        """
+        Opens a file dialog to load a LUT from disk.
+        """
         name = QFileDialog.getOpenFileName(self, caption='Open Lut', directory=getcwd(),
                                            filter='XML Lut (*.xlut);;Binary Lut (*.lut);;Txt Lut (*.txt)',
                                            initialFilter='XML Lut (*.xlut)')
@@ -759,45 +912,136 @@ class LutWidget(QWidget):
             chdir(dirname(name[0]))
             self._combo.insertFileLut(0, name[0])
 
-    def reverseLut(self):
+    def reverseLut(self)  -> None:
+        """
+        Reverses the current LUT and updates the display.
+        """
         self._volume.display.getLUT().reverseLut()
         self._initLutImage()
         self._draw()
 
-    def getVolume(self):
+    def getVolume(self) -> SisypheVolume:
+        """
+        Get the Sisyphevolume associated with the widget.
+
+        Returns
+        -------
+        SisypheVolume
+            associated Sisyphevolume.
+        """
         return self._volume
 
-    def hasVolume(self):
+    def hasVolume(self) -> bool:
+        """
+        Check if a SisypheVolume is associated with the widget.
+
+        Returns
+        -------
+        bool
+            True if a SisypheVolume is associated, False otherwise.
+        """
         return self._volume is not None
 
     def getDisplay(self):
+        """
+        Get the SisypheDisplay attribute of the associated Sisyphevolume.
+
+        Returns
+        -------
+        SisypheDisplay
+            SisypheDisplay instance.
+        """
         return self._volume.display
 
     # < Revision 17/10/2024
     # add getLut method
-    def getLut(self):
+    def getLut(self) -> SisypheLut:
+        """
+        Get the SisypheLut instanvce from the associated Sisyphevolume.
+
+        Returns
+        -------
+        SisypheLut
+            SisypheLut instance.
+        """
         return self._volume.display.getLUT()
     # Revision 17/10/2024 >
 
-    def getWindow(self):
+    def getWindow(self) -> tuple[float, float] | tuple[int, int]:
+        """
+        Get the current windowing settings (min, max).
+
+        Returns
+        -------
+        tuple[float, float] | tuple[int, int]
+            minimum and maximum window values.
+        """
         return self._volume.display.getWindow()
 
-    def getWindowMin(self):
+    def getWindowMin(self) -> float | int:
+        """
+        Get the minimum value of the current window.
+
+        Returns
+        -------
+        float | int
+            minimum window value.
+        """
         return self._volume.display.getWindowMin()
 
-    def getWindowMax(self):
+    def getWindowMax(self) -> float | int:
+        """
+        Get the maximum value of the current window.
+
+        Returns
+        -------
+        float | int
+            maximum window value.
+        """
         return self._volume.display.getWindowMax()
 
-    def getRange(self):
+    def getRange(self) -> tuple[float, float] | tuple[int, int]:
+        """
+        Get the current display range settings (min, max).
+
+        Returns
+        -------
+        tuple[float, float] | tuple[int, int]
+            minimum and maximum range values.
+        """
         return self._volume.display.getRange()
 
-    def getRangeMin(self):
+    def getRangeMin(self) -> float | int:
+        """
+        Get the minimum value of the current display range.
+
+        Returns
+        -------
+        float | int
+            minimum range value.
+        """
         return self._volume.display.getRangeMin()
 
-    def getRangeMax(self):
+    def getRangeMax(self) -> float | int:
+        """
+        Get the maximum value of the current display range.
+
+        Returns
+        -------
+        float | int
+            maximum range value.
+        """
         return self._volume.display.getRangeMin()
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
+        """
+        Associate a Sisyphevolume with the widget and re-initializes the display.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            SisypheVolume instance to associate.
+        """
         if isinstance(volume, SisypheVolume):
             self._volume = volume
             self._initDecimals()
@@ -813,12 +1057,23 @@ class LutWidget(QWidget):
             self.setEnabled(True)
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
-    def removeVolume(self):
+    def removeVolume(self) -> None:
+        """
+        Remove the current SisypheVolume and disables the widget.
+        """
         self._volume = None
         self.setEnabled(False)
         # self.setVisible(False)
 
-    def setDisplay(self, display):
+    def setDisplay(self, display: SisypheDisplay) -> None:
+        """
+        Set new SisypheDisplay attribute.
+
+        Parameters
+        ----------
+        display : SisypheDisplay
+            SisypheDisplay instance.
+        """
         if isinstance(display, SisypheDisplay):
             self._volume.display = display
             self._initHistAxes()
@@ -829,7 +1084,17 @@ class LutWidget(QWidget):
             self._draw()
         else: raise TypeError('parameter type {} is not SisypheDisplay.'.format(type(display)))
 
-    def setWindow(self, wmin, wmax):
+    def setWindow(self, wmin: float | int, wmax: float | int) -> None:
+        """
+        Set the windowing values.
+
+        Parameters
+        ----------
+        wmin : float | int
+            minimum window value.
+        wmax : float | int
+            maximum window value.
+        """
         self._volume.display.setWindow(wmin, wmax)
         self._set_span_left(wmin)
         self._set_span_right(wmax)
@@ -837,14 +1102,30 @@ class LutWidget(QWidget):
         # noinspection PyUnresolvedReferences
         self.lutWindowChanged.emit()
 
-    def setWindowMin(self, wmin):
+    def setWindowMin(self, wmin: float | int) -> None:
+        """
+        Set the minimum windowing value.
+
+        Parameters
+        ----------
+        wmin : float | int
+            minimum window value.
+        """
         self._volume.display.setWindowMin(wmin)
         self._set_span_left(wmin)
         self._draw()
         # noinspection PyUnresolvedReferences
         self.lutWindowChanged.emit()
 
-    def setWindowMax(self, wmax):
+    def setWindowMax(self, wmax: float | int) -> None:
+        """
+        Set the maximum windowing value.
+
+        Parameters
+        ----------
+        wmax : float | int
+            maximum window value.
+        """
         self._volume.display.setWindowMax(wmax)
         self._set_span_right(wmax)
         self._draw()
@@ -854,6 +1135,16 @@ class LutWidget(QWidget):
     # < Revision 24/10/2024
     # add autoWindow method
     def autoWindow(self, cmin: int = 1, cmax: int = 99) -> None:
+        """
+        Automatically adjust the window based on intensity percentiles.
+
+        Parameters
+        ----------
+        cmin : int, optional
+            lower percentile (1-99).
+        cmax : int, optional
+            upper percentile (1-99).
+        """
         self._volume.display.autoWindow(cmin, cmax)
         wmin, wmax = self._volume.display.getWindow()
         self._set_span_left(wmin)
@@ -866,6 +1157,9 @@ class LutWidget(QWidget):
     # < Revision 24/10/2024
     # add autoWindow method
     def defaultWindow(self) -> None:
+        """
+        Reset the window to the full intensity range of the volume.
+        """
         self._volume.display.setDefaultWindow()
         wmin, wmax = self._volume.display.getWindow()
         self._set_span_left(wmin)
@@ -878,6 +1172,9 @@ class LutWidget(QWidget):
     # < Revision 24/10/2024
     # add setCTBrainWindow method
     def setCTBrainWindow(self) -> None:
+        """
+        Apply a preset windowing for CT brain visualization.
+        """
         self._volume.display.setCTBrainWindow()
         wmin, wmax = self._volume.display.getWindow()
         self._set_span_left(wmin)
@@ -890,6 +1187,9 @@ class LutWidget(QWidget):
     # < Revision 24/10/2024
     # add setCTBoneWindow method
     def setCTBoneWindow(self) -> None:
+        """
+        Apply a preset windowing for CT bone visualization.
+        """
         self._volume.display.setCTBoneWindow()
         wmin, wmax = self._volume.display.getWindow()
         self._set_span_left(wmin)
@@ -902,6 +1202,9 @@ class LutWidget(QWidget):
     # < Revision 24/10/2024
     # add setCTMetallicWindow method
     def setCTMetallicWindow(self) -> None:
+        """
+        Apply a preset windowing for CT metallic implant visualization.
+        """
         self._volume.display.setCTMetallicWindow()
         wmin, wmax = self._volume.display.getWindow()
         self._set_span_left(wmin)
@@ -911,32 +1214,82 @@ class LutWidget(QWidget):
         self.lutWindowChanged.emit()
     # Revision 24/10/2024 >
 
-    def setRange(self, rmin, rmax):
+    def setRange(self, rmin: float, rmax: float) -> None:
+        """
+        Set the display range values.
+
+        Parameters
+        ----------
+        rmin : float
+            minimum range value.
+        rmax : float
+            maximum range value.
+        """
         self._volume.display.setRange(rmin, rmax)
         self._initEdit()
         self._onRangeChangedEvent()  # Automatic call ?
 
-    def setRangeMin(self, rmin):
+    def setRangeMin(self, rmin: float) -> None:
+        """
+        Set the minimum display range value.
+
+        Parameters
+        ----------
+        rmin : float
+            minimum range value.
+        """
         self._volume.display.setRangeMin(rmin)
         self._initEdit()
         self._onRangeChangedEvent()  # Automatic call ?
 
-    def setRangeMax(self, rmax):
+    def setRangeMax(self, rmax: float) -> None:
+        """
+        Set the maximum display range value.
+
+        Parameters
+        ----------
+        rmax : float
+            maximum range value.
+        """
         self._volume.display.setWindowMax(rmax)
         self._initEdit()
         self._onRangeChangedEvent()  # Automatic call ?
 
-    def setViewWidget(self, view):
+    def setViewWidget(self, view: IconBarViewWidgetCollection | IconBarWidget | MultiViewWidget | AbstractViewWidget) -> None:
+        """
+        Set the associated view widget to be updated.
+
+        Parameters
+        ----------
+        view : IconBarViewWidgetCollection | IconBarWidget | MultiViewWidget | AbstractViewWidget
+            view widget to associate.
+        """
         from Sisyphe.widgets.iconBarViewWidgets import IconBarWidget
         from Sisyphe.widgets.iconBarViewWidgets import IconBarViewWidgetCollection
         viewtypes = (IconBarViewWidgetCollection, IconBarWidget, MultiViewWidget, AbstractViewWidget)
         if isinstance(view, viewtypes): self._view = view
         else: raise TypeError('View widget type {} is not supported.'.format(type(view)))
 
-    def getViewWidget(self):
+    def getViewWidget(self) -> IconBarViewWidgetCollection | IconBarWidget | MultiViewWidget | AbstractViewWidget | None:
+        """
+        Get the associated view widget.
+
+        Returns
+        -------
+        IconBarViewWidgetCollection | IconBarWidget | MultiViewWidget | AbstractViewWidget | None
+            associated view widget, or None.
+        """
         return self._view
 
     def hasViewWidget(self) -> bool:
+        """
+        Check if a view widget is associated.
+
+        Returns
+        -------
+        bool
+            True if a view widget is associated, False otherwise.
+        """
         return self._view is not None
 
 
@@ -947,8 +1300,9 @@ class LutEditWidget(QWidget):
     Description
     ~~~~~~~~~~~
 
-    Custom QWidget to edit lut.
-    It provides a graphical user interface for users to interactively add, remove, and modify color points in the lut.
+    Custom QWidget to edit Lut.
+
+    It provides a graphical user interface for users to interactively add, remove, and modify color points in the Lut.
 
     Inheritance
     ~~~~~~~~~~~
@@ -956,40 +1310,39 @@ class LutEditWidget(QWidget):
     QWidget -> LutEditWidget
 
     Creation: 08/11/2022
-    Last revision: 18/03/2025
+    Last revision: 20/10/2025
     """
 
     # Class method
 
     @classmethod
-    def getDefaultLutDirectory(cls):
+    def getDefaultLutDirectory(cls) -> str:
+        """
+        Get the path to the default Lut directory.
+
+        Returns
+        ~~~~~~~
+        str
+            The absolute path to the Lut directory.
+        """
         import Sisyphe.gui
         return join(dirname(abspath(Sisyphe.gui.__file__)), 'lut')
 
     # Special method
 
-    """
-    Private attributes
+    def __init__(self,
+                 size: int = 512,
+                 parent: QWidget | None = None) -> None:
+        """
+        LutEditWidget instance constructor.
 
-    _fig                    Figure, Matplotlib figure
-    _canvas                 FigureCanvas, Widget canvas
-    _axe                    Axes, Matplotlib axes
-    _xlist                  list, Index list of points
-    _rgblist                list, RGB color List of point
-    _scatter                PathCollection, Matplotlib PathCollection
-    _selected               int, Selected point index
-    _xpos                   int, Selected point x
-    _popup                  QMenu, Popup menu
-    _action_new             QAction, New point menu
-    _action_color           QAction, Change selected point color menu
-    _action_swap_next       QAction, Swap color with next point menu
-    _action_swap_previous   QAction, Swap color with previous point menu
-    _action_remove          QAction, Remove selected point menu
-    _action_clear           QAction, Clear axe menu
-    _action_save            QAction, Save lut menu
-    """
-
-    def __init__(self, size=512, parent=None):
+        Parameters
+        ----------
+        size : int (optional)
+            widget size (default 512).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         # Init matplotlib figure
@@ -1082,9 +1435,33 @@ class LutEditWidget(QWidget):
 
         self._draw()
 
+    """
+    Private attributes
+
+    _fig                    Figure, Matplotlib figure
+    _canvas                 FigureCanvas, Widget canvas
+    _axe                    Axes, Matplotlib axes
+    _xlist                  list, Index list of points
+    _rgblist                list, RGB color List of point
+    _scatter                PathCollection, Matplotlib PathCollection
+    _selected               int, Selected point index
+    _xpos                   int, Selected point x
+    _popup                  QMenu, Popup menu
+    _action_new             QAction, New point menu
+    _action_color           QAction, Change selected point color menu
+    _action_swap_next       QAction, Swap color with next point menu
+    _action_swap_previous   QAction, Swap color with previous point menu
+    _action_remove          QAction, Remove selected point menu
+    _action_clear           QAction, Clear axe menu
+    _action_save            QAction, Save lut menu
+    """
+
     # Private method
 
     def _draw(self):
+        """
+        Redraws the LUT editor canvas, including the colormap gradient and control points.
+        """
         lut = self.getMatplotlibLut()
         # Draw colormap in axes
         self._axe.clear()
@@ -1101,7 +1478,15 @@ class LutEditWidget(QWidget):
 
     # Public methods
 
-    def getMatplotlibLut(self):
+    def getMatplotlibLut(self) -> LinearSegmentedColormap:
+        """
+        Get a Matplotlib colormap from the current control points.
+
+        Returns
+        -------
+        LinearSegmentedColormap
+            generated colormap instance.
+        """
         # Create rgb dict from points and rgb lists
         rgbdict = {}
         red, green, blue = [], [], []
@@ -1119,24 +1504,46 @@ class LutEditWidget(QWidget):
         cmap.set_under(cmap(0))
         return cmap
 
-    def getSisypheLut(self):
+    def getSisypheLut(self) -> SisypheLut:
+        """
+        Get a SisypheLut from the current control points.
+
+        Returns
+        -------
+        SisypheLut
+           generated SisypheLut instance.
+        """
         lut = SisypheLut()
         cmap = self.getMatplotlibLut()
         lut.copyFromMatplotlibColormap(cmap)
         return lut
 
-    def copyTo(self, display):
+    def copyTo(self, display: SisypheDisplay) -> None:
+        """
+        Copy the created SisypheLut to a SisypheDisplay instance.
+
+        Parameters
+        ----------
+        display : SisypheDisplay
+            target SisypheDisplay instance to update.
+        """
         if isinstance(display, SisypheDisplay):
             display.setLUT(self.getSisypheLut())
         else:
             raise TypeError('parameter functype is not SisypheDisplay')
 
-    def save(self):
+    def save(self) -> None:
+        """
+        Open a file dialog to save the current SisypheLut.
+        """
         self._onMenuSave()
 
     # Matplotlib event
 
     def _onMouseClickEvent(self, event):
+        """
+        Handles mouse clicks for adding points, showing the context menu, and selecting points.
+        """
         if event.inaxes == self._axe:
             if event.dblclick and self._selected is None:
                 self._xpos = int(event.xdata)
@@ -1194,10 +1601,16 @@ class LutEditWidget(QWidget):
             self._selected = None
 
     def _onPickEvent(self, event):
+        """
+        Handles the selection of a control point.
+        """
         self._selected = event.ind[0]
         # automatic _onMouseClickEvent call after _onPickEvent
 
     def _onMouseMoveEvent(self, event):
+        """
+        Handles dragging a selected control point.
+        """
         if event.inaxes == self._axe:
             if self._selected is not None and event.xdata is not None:
                 if self._xlist[self._selected - 1] < event.xdata < self._xlist[self._selected + 1]:
@@ -1205,6 +1618,9 @@ class LutEditWidget(QWidget):
                 self._canvas.draw()
 
     def _onMouseReleaseEvent(self, event):
+        """
+        Finalizes the position of a dragged point and redraws the widget.
+        """
         if self._selected is not None and event.xdata is not None:
             self._xlist[self._selected] = int(event.xdata)
             self._cursor.setShape(Qt.ArrowCursor)
@@ -1215,6 +1631,9 @@ class LutEditWidget(QWidget):
     # Qt events
 
     def _onMenuNew(self):
+        """
+        Handles the 'Add new point' context menu action.
+        """
         if self._xpos is not None:
             # < Revision 18/03/2025
             # dialog = QColorDialog()
@@ -1238,6 +1657,9 @@ class LutEditWidget(QWidget):
                     parent.colorDialogClosed.emit()
 
     def _onMenuRemove(self):
+        """
+        Handles the 'Remove point' context menu action.
+        """
         if self._selected is not None:
             if 0 < self._selected < len(self._xlist) - 1:
                 del self._xlist[self._selected]
@@ -1246,6 +1668,9 @@ class LutEditWidget(QWidget):
                 self._selected = None
 
     def _onMenuColor(self):
+        """
+        Handles the 'Change point color' context menu action.
+        """
         if self._selected is not None:
             # < Revision 18/03/2025
             # dialog = QColorDialog()
@@ -1264,6 +1689,9 @@ class LutEditWidget(QWidget):
                     parent.colorDialogClosed.emit()
 
     def _onMenuSwapNext(self):
+        """
+        Handles the 'Swap color with next point' context menu action.
+        """
         if self._selected is not None:
             if self._selected < len(self._xlist) - 1:
                 buff = self._rgblist[self._selected]
@@ -1273,6 +1701,9 @@ class LutEditWidget(QWidget):
                 self._selected = None
 
     def _onMenuSwapPrevious(self):
+        """
+        Handles the 'Swap color with previous point' context menu action.
+        """
         if self._selected is not None:
             if self._selected > 0:
                 buff = self._rgblist[self._selected]
@@ -1282,12 +1713,18 @@ class LutEditWidget(QWidget):
                 self._selected = None
 
     def _onMenuClear(self):
+        """
+        Handles the 'Clear all' context menu action, resetting to a default black-to-white gradient.
+        """
         self._xlist = [0, 255]
         self._rgblist = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]]
         self._draw()
         self._selected = None
 
     def _onMenuSave(self):
+        """
+        Handles the 'Save...' context menu action, opening a file dialog.
+        """
         name = QFileDialog.getSaveFileName(self, caption='Save Lut', directory=self.getDefaultLutDirectory(),
                                            filter='XML Lut (*.xlut);;Binary Lut (*.lut);;Txt Lut (*.txt)',
                                            initialFilter='XML Lut (*.xlut)')
@@ -1311,6 +1748,7 @@ class ColorTransferWidget(LutEditWidget):
     ~~~~~~~~~~~
 
     Custom QWidget to edit and control color transfer function for volume rendering.
+
     It provides a user-friendly interface for editing color transfer functions, including adding, removing, and
     modifying color points, as well as saving and loading color transfer functions in various formats.
 
@@ -1320,6 +1758,7 @@ class ColorTransferWidget(LutEditWidget):
     QWidget - > LutEditWidget - > ColorTransferWidget
 
     Creation: 10/11/2022
+    Last revision: 20/10/2025
     """
 
     # Custom Qt signal
@@ -1328,16 +1767,28 @@ class ColorTransferWidget(LutEditWidget):
 
     # Special method
 
-    """
-    Private attributes
+    def __init__(self,
+                 volume: SisypheVolume,
+                 view:  VolumeViewWidget | None = None,
+                 transfer: SisypheColorTransfer | None = None,
+                 size: int = 512,
+                 parent: QWidget | None = None) -> None:
+        """
+        ColorTransferWidget instance constructor.
 
-    _view           Display widget to update when Lut settings changed
-    _volume         SisypheVolume
-    _transfer       SisypheColorTransfer
-    _action_load    QAction, Load color transfer menu
-    """
-
-    def __init__(self, volume, view=None, transfer=None, size=512, parent=None):
+        Parameters
+        ----------
+        volume : SisypheVolume
+            SisypheVolume to associate with the widget (default None).
+        view : VolumeViewWidget | None (optional)
+            VolumeViewWidget to associate with the widget (default None).
+        transfer : SisypheColorTransfer | None (optional)
+            SisypheColorTransfer to edit with the widget (default None).
+        size : int (optional)
+            widget size (default 512).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(size, parent)
 
         if transfer is None or not isinstance(transfer, SisypheColorTransfer):
@@ -1363,9 +1814,21 @@ class ColorTransferWidget(LutEditWidget):
 
         self.setToolTip('Color transfer function\n\n' + self.toolTip())
 
+    """
+    Private attributes
+
+    _view           Display widget to update when Lut settings changed
+    _volume         SisypheVolume
+    _transfer       SisypheColorTransfer
+    _action_load    QAction, Load color transfer menu
+    """
+
     # Private methods
 
     def _updateTransfer(self):
+        """
+        Updates the SisypheColorTransfer object from the widget's control points.
+        """
         r = self._volume.display.getRange()
         w = r[1] - r[0]
         self._transfer.clearColorTransfer()
@@ -1376,10 +1839,16 @@ class ColorTransferWidget(LutEditWidget):
         self.colorTransferChanged.emit()
 
     def _updateViewWidget(self):
+        """
+        Triggers a render update on the associated volume view widget.
+        """
         if self._view is not None:
             self._view.updateRender()
 
     def _copyFromColorTransfer(self):
+        """
+        Populates the widget's control points from a SisypheColorTransfer instance.
+        """
         self._xlist = []
         self._rgblist = []
         rmin, rmax = self._transfer.getRange()
@@ -1391,23 +1860,65 @@ class ColorTransferWidget(LutEditWidget):
 
     # Public methods
 
-    def getVolume(self):
+    def getVolume(self) -> SisypheVolume:
+        """
+        Get the SisypheVolume associated with the widget.
+
+        Returns
+        -------
+        SisypheVolume
+            associated SisypheVolume instance.
+        """
         return self._volume
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
+        """
+        Associate a new SisypheVolume and resets the color transfer function to its default for that volume.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            SisypheVolume associated to.
+        """
         if isinstance(volume, SisypheVolume):
             self._volume = volume
             self._transfer.setDefaultColor(volume)
             self._copyFromColorTransfer()
             self._draw()
 
-    def hasVolume(self):
+    def hasVolume(self) -> bool:
+        """
+        Check if a SisypheVolume is associated with the widget.
+
+        Returns
+        -------
+        bool
+            True if a SisypheVolume is associated, False otherwise.
+        """
         return self._volume is not None
 
-    def getViewWidget(self):
+    def getViewWidget(self) ->  VolumeViewWidget:
+        """
+        Get the associated VolumeViewWidget.
+
+        Returns
+        -------
+        VolumeViewWidget
+            associated VolumeViewWidget.
+        """
         return self._view
 
-    def setViewWidget(self, view, getinfos=True):
+    def setViewWidget(self, view: VolumeViewWidget, getinfos: bool = True) -> None:
+        """
+        Set the VolumeViewWidget and optionally syncs its SisypheVolume and transfer function.
+
+        Parameters
+        ----------
+        view : VolumeViewWidget
+            VolumeViewWidget to associate.
+        getinfos : bool (optional)
+            If True, the widget's SisypheVolume and transfer function are updated from the VolumeViewWidget.
+        """
         # GetInfo = False, if it has TransferWidget parent
         if isinstance(view, VolumeViewWidget):
             self._view = view
@@ -1416,13 +1927,37 @@ class ColorTransferWidget(LutEditWidget):
                 self.setTransfer(view.getTransfer())
         else: raise TypeError('parameter type {} is not VolumeViewWidget.'.format(type(view)))
 
-    def hasViewWidget(self):
+    def hasViewWidget(self) -> bool:
+        """
+        Check if a VolumeViewWidget is associated to the widget.
+
+        Returns
+        -------
+        bool
+            True if a VolumeViewWidget is associated, False otherwise.
+        """
         return self._view is not None
 
-    def getTransfer(self):
+    def getTransfer(self) -> SisypheColorTransfer:
+        """
+        Get the SisypheColorTransfer instance edited with the widget.
+
+        Returns
+        -------
+        SisypheColorTransfer
+            edited SisypheColorTransfer instance.
+        """
         return self._transfer
 
-    def setTransfer(self, transfer):
+    def setTransfer(self, transfer: SisypheColorTransfer) -> None:
+        """
+        Set a new SisypheColorTransfer instance to be edited and updates the widget.
+
+        Parameters
+        ----------
+        transfer : SisypheColorTransfer
+            SisypheColorTransfer instance to edit
+        """
         if isinstance(transfer, SisypheColorTransfer):
             self._transfer = transfer
             self._copyFromColorTransfer()
@@ -1432,38 +1967,62 @@ class ColorTransferWidget(LutEditWidget):
 
     # Matplotlib events
 
-    def _onMouseReleaseEvent(self, event):
+    def _onMouseReleaseEvent(self, event) -> None:
+        """
+        Updates the transfer function and the associated view after a point is moved.
+        """
         super()._onMouseReleaseEvent(event)
         self._updateTransfer()
         self._updateViewWidget()
 
     # Qt events
 
-    def _onMenuNew(self):
+    def _onMenuNew(self) -> None:
+        """
+        Updates the transfer function after adding a new point.
+        """
         super()._onMenuNew()
         self._updateTransfer()
 
-    def _onMenuColor(self):
+    def _onMenuColor(self) -> None:
+        """
+        Updates the transfer function after changing a point's color.
+        """
         super()._onMenuColor()
         self._updateTransfer()
 
-    def _onMenuSwapNext(self):
+    def _onMenuSwapNext(self) -> None:
+        """
+        Updates the transfer function after swapping colors.
+        """
         super()._onMenuSwapNext()
         self._updateTransfer()
 
-    def _onMenuSwapPrevious(self):
+    def _onMenuSwapPrevious(self) -> None:
+        """
+        Updates the transfer function after swapping colors.
+        """
         super()._onMenuSwapPrevious()
         self._updateTransfer()
 
-    def _onMenuRemove(self):
+    def _onMenuRemove(self) -> None:
+        """
+        Updates the transfer function after removing a point.
+        """
         super()._onMenuRemove()
         self._updateTransfer()
 
-    def _onMenuClear(self):
+    def _onMenuClear(self) -> None:
+        """
+        Updates the transfer function after clearing all points.
+        """
         super()._onMenuClear()
         self._updateTransfer()
 
-    def _onMenuSave(self):
+    def _onMenuSave(self) -> None:
+        """
+        Handles saving the color transfer function to an XML file (.xtfer).
+        """
         name = QFileDialog.getSaveFileName(self, caption='Save color transfer function', directory=getcwd(),
                                            filter='XML Color transfer (*.xtfer)',
                                            initialFilter='XML Color transfer (*.xtfer)')
@@ -1473,7 +2032,10 @@ class ColorTransferWidget(LutEditWidget):
             self._transfer.saveToXML(name[0])
         self._selected = None
 
-    def _onMenuLoad(self):
+    def _onMenuLoad(self) -> None:
+        """
+        Handles loading a color transfer function from an XML file (.xtfer).
+        """
         if self._parent is not None and isinstance(self._parent, TransferWidget):
             self._parent.load()
         else:
@@ -1502,8 +2064,10 @@ class AlphaTransferWidget(QWidget):
     ~~~~~~~~~~~
 
     Custom QWidget to edit and control alpha transfer function for volume rendering.
+
     It provides a visual representation of the alpha transfer function, allowing users to interactively add, remove,
     and modify alpha transfer elements. It also includes features to save, load, and clear the alpha transfer function.
+
     The widget displays a histogram of the volume's intensity values, along with markers representing the alpha
     transfer elements. Users can add new alpha transfer elements by double-clicking on the background of the histogram,
     remove existing elements by right-clicking on the markers, and modify the alpha values by dragging the markers
@@ -1515,6 +2079,7 @@ class AlphaTransferWidget(QWidget):
     QWidget -> AlphaTransferWidget
 
     Creation: 12/11/2022
+    Last revision: 20/10/2025
     """
 
     # Custom Qt signals
@@ -1525,7 +2090,19 @@ class AlphaTransferWidget(QWidget):
     # Class method
 
     @staticmethod
-    def _calcGradient(volume):
+    def _calcGradient(volume: SisypheVolume) -> SisypheVolume:
+        """
+        Calc the gradient magnitude of a SisyspheVolume.
+
+        Parameters
+        ----------
+        volume: SisypheVolume
+
+        Returns
+        -------
+        SisypheVolume
+            gradient magnitude volume.
+        """
         if isinstance(volume, SisypheVolume):
             simg = volume.getSITKImage()
             fimg = GradientMagnitude(simg)
@@ -1537,37 +2114,31 @@ class AlphaTransferWidget(QWidget):
 
     # Special method
 
-    """
-    Private attributes
+    def __init__(self,
+                 volume: SisypheVolume | None = None,
+                 view: VolumeViewWidget | None = None,
+                 transfer: SisypheColorTransfer | None = None,
+                 functype: str = 'alpha',
+                 size: int = 512,
+                 parent: QWidget | None = None) -> None:
+        """
+        AlphaTransferWidget instance constructor.
 
-    _parent         TransferWidget parent
-    _view           Display widget to update when Lut settings changed
-    _fig            Figure, Matplotlib figure
-    _canvas         FigureCanvas, Widget canvas
-    _axe            Axes, Histogram display
-    _volume         SisypheVolume
-    _transfer       SisypheColorTransfer
-    _type           str, alpha transfer ('alpha') or gradient transfer (gradient)
-    _lines          Line2D
-    _selected       int
-    _xpos           float
-    _ypos           float
-    _xlist          list
-    _ylist          list
-    _clist          list
-    _info           list
-    _h              float
-    _margin         float
-    _popup          QMenu, Popup menu
-    _action_new     QAction, New point menu
-    _action_remove  QAction, Remove selected point menu
-    _action_clear   QAction, Clear axe menu
-    _action_save    QAction, Save color transfer menu
-    _action_load    QAction, Load color transfer menu
-    _cursor         QCursor, Mouse cursor
-    """
-
-    def __init__(self, volume=None, view=None, transfer=None, functype='alpha', size=512, parent=None):
+        Parameters
+        ----------
+        volume : SisypheVolume | None (optional)
+            SisypheVolume to associate with the widget (default None).
+        view : VolumeViewWidget | None (optional)
+            VolumeViewWidget to associate with the widget (default None).
+        transfer : SisypheColorTransfer | None (optional)
+            SisypheColorTransfer to edit with the widget (default None).
+        functype : str (optional)
+            'alpha' alpha transfer function (default) or 'gradient' gradient transfer function.
+        size : int (optional)
+            widget size (default 512).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         if transfer is None or not isinstance(transfer, SisypheColorTransfer):
@@ -1690,9 +2261,42 @@ class AlphaTransferWidget(QWidget):
 
         self._canvas.draw()
 
+    """
+    Private attributes
+
+    _parent         TransferWidget parent
+    _view           Display widget to update when Lut settings changed
+    _fig            Figure, Matplotlib figure
+    _canvas         FigureCanvas, Widget canvas
+    _axe            Axes, Histogram display
+    _volume         SisypheVolume
+    _transfer       SisypheColorTransfer
+    _type           str, alpha transfer ('alpha') or gradient transfer (gradient)
+    _lines          Line2D
+    _selected       int
+    _xpos           float
+    _ypos           float
+    _xlist          list
+    _ylist          list
+    _clist          list
+    _info           list
+    _h              float
+    _margin         float
+    _popup          QMenu, Popup menu
+    _action_new     QAction, New point menu
+    _action_remove  QAction, Remove selected point menu
+    _action_clear   QAction, Clear axe menu
+    _action_save    QAction, Save color transfer menu
+    _action_load    QAction, Load color transfer menu
+    _cursor         QCursor, Mouse cursor
+    """
+
     # Private methods
 
-    def _initHist(self):
+    def _initHist(self) -> None:
+        """
+        Initializes the background histogram display.
+        """
         self._axe.clear()
         self._axe.set_axis_off()
 
@@ -1715,7 +2319,10 @@ class AlphaTransferWidget(QWidget):
                                  self._volume.display.getRangeMax(), 0, self._h))
         self._axe.set_xlim(xl[0], xl[1])
 
-    def _initLines(self):
+    def _initLines(self) -> None:
+        """
+        Initializes the transfer function line, control points, and text annotations.
+        """
         self._copyFromTransfer()
 
         # Lines
@@ -1743,7 +2350,10 @@ class AlphaTransferWidget(QWidget):
                                      verticalalignment='bottom', horizontalalignment='center')
             self._text.append(txt)
 
-    def _updateLines(self):
+    def _updateLines(self) -> None:
+        """
+        Updates the visual representation of the line, points, and text annotations.
+        """
         offset = list(zip(self._xlist, self._ylist))
         self._lines.set_xdata(self._xlist)
         self._lines.set_ydata(self._ylist)
@@ -1762,13 +2372,17 @@ class AlphaTransferWidget(QWidget):
             self._text[i].set_text('{}\n{}\n'.format(v1, v2))
         self._canvas.draw()
 
-    def _updateTransfer(self):
-        if self._type == 'alpha':
-            self._updateAlphaTransfer()
-        else:
-            self._updateGradientTransfer()
+    def _updateTransfer(self) -> None:
+        """
+        Dispatches to update either the alpha or gradient transfer function.
+        """
+        if self._type == 'alpha': self._updateAlphaTransfer()
+        else: self._updateGradientTransfer()
 
-    def _updateAlphaTransfer(self):
+    def _updateAlphaTransfer(self) -> None:
+        """
+        Updates the alpha transfer function in the SisypheColorTransfer object.
+        """
         self._transfer.clearAlphaTransfer()
         for i in range(0, len(self._xlist)):
             va = [self._xlist[i], self._ylist[i] / self._h]
@@ -1776,7 +2390,10 @@ class AlphaTransferWidget(QWidget):
         # noinspection PyUnresolvedReferences
         self.alphaTransferChanged.emit()
 
-    def _updateGradientTransfer(self):
+    def _updateGradientTransfer(self) -> None:
+        """
+        Updates the gradient transfer function in the SisypheColorTransfer object.
+        """
         self._transfer.clearGradientTransfer()
         for i in range(0, len(self._xlist)):
             va = [self._xlist[i], self._ylist[i] / self._h]
@@ -1784,15 +2401,24 @@ class AlphaTransferWidget(QWidget):
         # noinspection PyUnresolvedReferences
         self.gradientTransferChanged.emit()
 
-    def _updateViewWidget(self):
+    def _updateViewWidget(self) -> None:
+        """
+        Triggers a render update on the associated VolumeViewWidget.
+        """
         if self._view is not None:
             self._view.updateRender()
 
-    def _copyFromTransfer(self):
+    def _copyFromTransfer(self) -> None:
+        """
+        Dispatches to copy points from either the alpha or gradient transfer function.
+        """
         if self._type == 'alpha': self._copyFromAlphaTransfer()
         else: self._copyFromGradientTransfer()
 
-    def _copyFromAlphaTransfer(self):
+    def _copyFromAlphaTransfer(self) -> None:
+        """
+        Populates widget points from the alpha transfer function.
+        """
         self._xlist = []
         self._ylist = []
         self._clist = []
@@ -1802,7 +2428,10 @@ class AlphaTransferWidget(QWidget):
             self._ylist.append(av[1] * self._h)
             self._clist.append(self._transfer.getColorFromValue(av[0]))
 
-    def _copyFromGradientTransfer(self):
+    def _copyFromGradientTransfer(self) -> None:
+        """
+        Populates widget points from the gradient transfer function.
+        """
         self._xlist = []
         self._ylist = []
         self._clist = []
@@ -1814,8 +2443,17 @@ class AlphaTransferWidget(QWidget):
 
     # Public methods
 
-    def setTransfer(self, transfer):
+    def setTransfer(self, transfer: SisypheColorTransfer) -> None:
+        """
+        Associate SisypheColorTransfer instance and updates the widget.
+
+        Parameters
+        ----------
+        transfer : SisypheColorTransfer
+            SisypheColorTransfer to associate.
+        """
         if isinstance(transfer, SisypheColorTransfer):
+
             self._transfer = transfer
             self._copyFromTransfer()
             del self._lines
@@ -1826,10 +2464,26 @@ class AlphaTransferWidget(QWidget):
             self._initLines()
             self._canvas.draw()
 
-    def getTransfer(self):
+    def getTransfer(self) -> SisypheColorTransfer:
+        """
+        Get the associated SisypheColorTransfer instance.
+
+        Returns
+        -------
+        SisypheColorTransfer
+            Associated SisypheColorTransfer.
+        """
         return self._transfer
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
+        """
+        Associate a new SisypheVolume.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            SisypheVolume associated to.
+        """
         if isinstance(volume, SisypheVolume):
             if self._type == 'alpha':
                 self._volume = volume
@@ -1843,17 +2497,50 @@ class AlphaTransferWidget(QWidget):
             self._initLines()
         else: raise TypeError('volume parameter type {} is not SisypheVolume.'.format(type(volume)))
 
-    def getVolume(self):
+    def getVolume(self) -> SisypheVolume:
+        """
+        Get the SisypheVolume associated with the widget.
+
+        Returns
+        -------
+        SisypheVolume
+            associated SisypheVolume instance.
+        """
         return self._volume
 
-    def hasVolume(self):
+    def hasVolume(self) -> bool:
+        """
+        Check if a SisypheVolume is associated with the widget.
+
+        Returns
+        -------
+        bool
+            True if a SisypheVolume is associated, False otherwise.
+        """
         return self._volume is not None
 
-    def getViewWidget(self):
+    def getViewWidget(self) -> VolumeViewWidget:
+        """
+        Get the associated VolumeViewWidget.
+
+        Returns
+        -------
+        VolumeViewWidget
+            associated VolumeViewWidget.
+        """
         return self._view
 
-    def setViewWidget(self, view, getinfos=True):
-        # GetInfo = False, if it has TransferWidget parent
+    def setViewWidget(self, view:  VolumeViewWidget, getinfos: bool = True):
+        """
+        Associate VolumeViewWidget and optionally syncs its SisypheVolume and transfer function.
+
+        Parameters
+        ----------
+        view : VolumeViewWidget
+            VolumeViewWidget to associate.
+        getinfos : bool (optional)
+            If True, the widget's SisypheVolume and transfer function are updated from the VolumeViewWidget.
+        """
         if isinstance(view, VolumeViewWidget):
             self._view = view
             if getinfos:
@@ -1861,15 +2548,29 @@ class AlphaTransferWidget(QWidget):
                 self.setTransfer(view.getTransfer())
         else: raise TypeError('parameter type {} is not VolumeViewWidget.'.format(type(view)))
 
-    def hasViewWidget(self):
+    def hasViewWidget(self) -> bool:
+        """
+        Check if a VolumeViewWidget is associated to the widget.
+
+        Returns
+        -------
+        bool
+            True if a VolumeViewWidget is associated, False otherwise.
+        """
         return self._view is not None
 
-    def save(self):
+    def save(self) -> None:
+        """
+        Open a file dialog to save the current transfer function.
+        """
         self._onMenuSave()
 
     # Matplotlib events
 
-    def _onMouseClickEvent(self, event):
+    def _onMouseClickEvent(self, event) -> None:
+        """
+        Handles clicks for adding points and showing the context menu.
+        """
         if event.inaxes == self._axe:
             if event.dblclick and self._selected is None:
                 self._xpos = int(event.xdata)
@@ -1909,11 +2610,17 @@ class AlphaTransferWidget(QWidget):
                     self._cursor.setShape(Qt.ClosedHandCursor)
                     self._canvas.setCursor(self._cursor)
 
-    def _onPickEvent(self, event):
+    def _onPickEvent(self, event) -> None:
+        """
+        Handles the selection of a control point.
+        """
         self._selected = event.ind[0]
         # automatic _onMouseClickEvent call after _onPickEvent
 
-    def _onMouseMoveEvent(self, event):
+    def _onMouseMoveEvent(self, event) -> None:
+        """
+        Handles dragging a selected control point.
+        """
         if event.inaxes == self._axe:
             if self._selected is not None and event.xdata is not None:
                 if self._selected == 0 or self._selected == len(self._xlist) - 1:
@@ -1944,7 +2651,10 @@ class AlphaTransferWidget(QWidget):
                 self._text[self._selected].xyann = (self._xlist[self._selected], self._ylist[self._selected])
                 self._canvas.draw()
 
-    def _onMouseReleaseEvent(self, event):
+    def _onMouseReleaseEvent(self, event) -> None:
+        """
+        Finalizes a drag operation, updating the transfer function and view.
+        """
         if self._selected is not None and event.xdata is not None:
             self._cursor.setShape(Qt.ArrowCursor)
             self._canvas.setCursor(self._cursor)
@@ -1954,7 +2664,10 @@ class AlphaTransferWidget(QWidget):
 
     # Qt events
 
-    def _onMenuNew(self):
+    def _onMenuNew(self) -> None:
+        """
+        Handles adding a new control point.
+        """
         for index, x in enumerate(self._xlist):
             if self._xpos < x:
                 self._xlist.insert(index, self._xpos)
@@ -1979,7 +2692,10 @@ class AlphaTransferWidget(QWidget):
         self._Ypos = None
         self._selected = None
 
-    def _onMenuRemove(self):
+    def _onMenuRemove(self) -> None:
+        """
+        Handles removing a selected control point.
+        """
         if self._selected is not None:
             if 0 < self._selected < len(self._xlist) - 1:
                 del self._xlist[self._selected]
@@ -1996,7 +2712,10 @@ class AlphaTransferWidget(QWidget):
                 self._canvas.draw()
                 self._updateTransfer()
 
-    def _onMenuClear(self):
+    def _onMenuClear(self) -> None:
+        """
+        Handles clearing all control points and resetting to the default.
+        """
         self._xlist = [self._volume.display.getRangeMin(), self._volume.display.getRangeMax()]
         self._ylist = [0, self._h]
         if self._type == 'alpha':
@@ -2011,7 +2730,10 @@ class AlphaTransferWidget(QWidget):
         self._initLines()
         self._canvas.draw()
 
-    def _onMenuSave(self):
+    def _onMenuSave(self) -> None:
+        """
+        Handles saving the transfer function to an XML file.
+        """
         name = QFileDialog.getSaveFileName(self, caption='Save color transfer function', directory=getcwd(),
                                            filter='XML Color transfer (*.xtfer)',
                                            initialFilter='XML Color transfer (*.xtfer)')
@@ -2021,7 +2743,10 @@ class AlphaTransferWidget(QWidget):
             self._transfer.saveToXML(name[0])
         self._selected = None
 
-    def _onMenuLoad(self):
+    def _onMenuLoad(self) -> None:
+        """
+        Handles loading a transfer function from an XML file.
+        """
         if self._parent is not None and isinstance(self._parent, TransferWidget):
             self._parent.load()
         else:
@@ -2059,7 +2784,7 @@ class TransferWidget(QWidget):
     QWidget - > TransferWidget
 
     Creation: 12/11/2022
-    Last revision: 01/05/2025
+    Last revision: 20/10/2025
     """
 
     # Custom Qt signals
@@ -2069,18 +2794,31 @@ class TransferWidget(QWidget):
 
     # Special method
 
-    """
-    Private attributes
+    def __init__(self,
+                 volume: SisypheVolume | None = None,
+                 view: VolumeViewWidget | None = None,
+                 transfer: SisypheColorTransfer | None = None,
+                 gradient: bool = True,
+                 size: int = 512,
+                 parent: QWidget | None = None) -> None:
+        """
+        TransferWidget instance constructor.
 
-    _view       Display widget to update when Lut settings changed
-    _volume     SisypheVolume
-    _transfer   SisypheColorTransfer
-    _color      ColorTransferWidget
-    _alpha      AlphaTransferWidget
-    _gradient   AlphaTransferWidget
-    """
-
-    def __init__(self, volume=None, view=None, transfer=None, gradient=True, size=512, parent=None):
+        Parameters
+        ----------
+        volume : SisypheVolume | None (optional)
+            volume to associate with the widget.
+        view : VolumeViewWidget | None (optional)
+           VolumeViewWidget to associate.
+        transfer : SisypheColorTransfer | None (optional)
+            SisypheColorTransfer to associate.
+        gradient : bool (optional)
+            If True, includes the gradient opacity transfer function editor.
+        size : int (optional)
+            initial size hint for the child editor widgets.
+        parent : QWidget | None (optional)
+            parent widget.
+        """
         super().__init__(parent)
 
         self._volume = volume
@@ -2149,16 +2887,33 @@ class TransferWidget(QWidget):
         vlyout.setSizeConstraint(QVBoxLayout.SetFixedSize)
         self.setLayout(vlyout)
 
+    """
+    Private attributes
+
+    _view       Display widget to update when Lut settings changed
+    _volume     SisypheVolume
+    _transfer   SisypheColorTransfer
+    _color      ColorTransferWidget
+    _alpha      AlphaTransferWidget
+    _gradient   AlphaTransferWidget
+    """
+
     # Private method
 
-    def _updateColorTransfer(self):
+    def _updateColorTransfer(self) -> None:
+        """
+        Updates the alpha transfer widget's point colors when the color transfer function changes.
+        """
         # Update color in markers when color transfer function changes
         # noinspection PyProtectedMember
         self._alpha._copyFromAlphaTransfer()
         # noinspection PyProtectedMember
         self._alpha._updateLines()
 
-    def _checkBoxChanged(self):
+    def _checkBoxChanged(self) -> None:
+        """
+        Handles the state change of the gradient transfer function visibility checkbox.
+        """
         if self._gradient is not None:
             if self._labelgrad.isChecked():
                 self._gradient.setEnabled(True)
@@ -2181,10 +2936,28 @@ class TransferWidget(QWidget):
 
     # Public methods
 
-    def getVolume(self):
+    def getVolume(self) -> SisypheVolume:
+        """
+        Get the SisypheVolume associated with the widget.
+
+        Returns
+        -------
+        SisypheVolume
+            associated SisypheVolume instance.
+        """
         return self._volume
 
-    def setVolume(self, volume, gradient=True):
+    def setVolume(self, volume: SisypheVolume, gradient: bool = True) -> None:
+        """
+        Associate a new SisypheVolume for all child editor widgets.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            SisypheVolume to associate.
+        gradient : bool (optional)
+            Flag to indicate if gradient-related components should be updated.
+        """
         if isinstance(volume, SisypheVolume):
             self._volume = volume
             self._color.setVolume(volume)
@@ -2196,13 +2969,39 @@ class TransferWidget(QWidget):
                 else: self._view.gradientOpacityOff()
                 # Revision 01/05/2025 >
 
-    def hasVolume(self):
+    def hasVolume(self) -> bool:
+        """
+        Check if a SisypheVolume is associated with the widget.
+
+        Returns
+        -------
+        bool
+            True if a SisypheVolume is associated, False otherwise.
+        """
         return self._volume is not None
 
-    def getViewWidget(self):
+    def getViewWidget(self) -> VolumeViewWidget:
+        """
+        Get the associated VolumeViewWidget.
+
+        Returns
+        -------
+        VolumeViewWidget
+            associated VolumeViewWidget.
+        """
         return self._view
 
-    def setViewWidget(self, view, gradient=True):
+    def setViewWidget(self, view: VolumeViewWidget, gradient: bool = True):
+        """
+        Associate a new VolumeViewWidget for all child editor widgets.
+
+        Parameters
+        ----------
+        view : VolumeViewWidget
+            VolumeViewWidget to associate.
+        gradient : bool, optional
+            Flag to indicate if gradient-related components should be updated.
+        """
         if isinstance(view, VolumeViewWidget):
             self._view = view
             self.setVolume(self._view.getVolume())
@@ -2213,13 +3012,39 @@ class TransferWidget(QWidget):
                 self._gradient.setViewWidget(self._view, getinfos=False)
         else: raise TypeError('parameter type {} is not VolumeViewWidget.'.format(type(view)))
 
-    def hasViewWidget(self):
+    def hasViewWidget(self) -> bool:
+        """
+        Check if a VolumeViewWidget is associated to the widget.
+
+        Returns
+        -------
+        bool
+            True if a VolumeViewWidget is associated, False otherwise.
+        """
         return self._view is not None
 
-    def getTransfer(self):
+    def getTransfer(self) -> SisypheColorTransfer:
+        """
+        Get the associated SisypheColorTransfer instance.
+
+        Returns
+        -------
+        SisypheColorTransfer
+            Associated SisypheColorTransfer.
+        """
         return self._transfer
 
-    def setTransfer(self, transfer, gradient=True):
+    def setTransfer(self, transfer: SisypheColorTransfer, gradient: bool = True) -> None:
+        """
+        Associate a new SisypheColorTransfer instance for all child editor widgets.
+
+        Parameters
+        ----------
+        transfer : SisypheColorTransfer
+            SisypheColorTransfer to associate.
+        gradient : bool, optional
+            Flag to indicate if gradient-related components should be updated.
+        """
         if isinstance(transfer, SisypheColorTransfer):
             self._transfer = transfer
             self._color.setTransfer(transfer)
@@ -2227,7 +3052,10 @@ class TransferWidget(QWidget):
             if gradient is not None and self._gradient is not None:
                 self._gradient.setTransfer(transfer)
 
-    def load(self):
+    def load(self) -> None:
+        """
+        Open a file dialog to load a transfer function from an XML file.
+        """
         name = QFileDialog.getOpenFileName(self,
                                            caption='Open color transfer function',
                                            directory=getcwd(),
@@ -2247,7 +3075,10 @@ class TransferWidget(QWidget):
         # noinspection PyUnresolvedReferences
         self.colorDialogClosed.emit()
 
-    def save(self):
+    def save(self) -> None:
+        """
+        Save the current color transfer function to a file.
+        """
         self._color.save()
         # noinspection PyUnresolvedReferences
         self.colorDialogClosed.emit()
@@ -2260,9 +3091,9 @@ class ComboBoxLut(QComboBox):
     Description
     ~~~~~~~~~~~
 
-    Custom ComboBox to select lut for visualization purposes.
-    It provides a user-friendly interface for selecting and displaying different LUTs, both internal and
-    external files.
+    Custom ComboBox to select Lut for visualization purposes.
+
+    It provides a user-friendly interface for selecting and displaying different Lut, both internal and external files.
 
     Inheritance
     ~~~~~~~~~~~
@@ -2270,28 +3101,56 @@ class ComboBoxLut(QComboBox):
     QComboBox -> ComboBoxLut
 
     Creation: 20/11/2022
-    Last revision: 02/06/2025
+    Last revision: 20/10/2025
     """
 
     # Class methods
 
     @staticmethod
-    def _setPath(pathname):
+    def _setPath(pathname: str) -> str:
+        """
+        Get a valid path name (i.e. path to an existing directory).
+        Parameters
+        ----------
+        pathname : str
+            path name to validate.
+
+        Returns
+        -------
+        str
+            valid path name.
+        """
         if pathname is not None and exists(pathname):
-            if not isdir(pathname):
-                pathname = dirname(pathname)
-        else:
-            pathname = getcwd()
+            if not isdir(pathname): pathname = dirname(pathname)
+        else: pathname = getcwd()
         return pathname
 
     @classmethod
-    def getDefaultLutDirectory(cls):
+    def getDefaultLutDirectory(cls) -> str:
+        """
+        Get the path to the default Lut directory.
+
+        Returns
+        ~~~~~~~
+        str
+            The absolute path to the Lut directory.
+        """
         import Sisyphe.gui
         return join(dirname(abspath(Sisyphe.gui.__file__)), 'lut')
 
     # Special method
 
-    def __init__(self, pathname=None, parent=None):
+    def __init__(self, pathname: str | None = None, parent: QWidget | None = None) -> None:
+        """
+        ComboBoxLut instance constructor.
+
+        Parameters
+        ----------
+        pathname : str | None (optional)
+            directory path to search for LUT files.
+        parent : QWidget | None (optional)
+            parent widget.
+        """
         super().__init__(parent)
         self.setIconSize(QSize(32, 20))
         self._addInternalLut()  # Add internal lut items
@@ -2303,12 +3162,23 @@ class ComboBoxLut(QComboBox):
 
     # Private methods
 
-    def _addInternalLut(self):
+    def _addInternalLut(self) -> None:
+        """
+        Populates the combo box with built-in Matplotlib colormaps.
+        """
         for name in SisypheLut.getColormapList():
             lut = get_cmap(name, 256)
             self.addItem(QIcon(drawLutToPixmap(lut, 128)), SisypheLut.getColormapFromName(name), userData=name)
 
-    def _getLutFiles(self, pathname=None):
+    def _getLutFiles(self, pathname: str | None = None) -> list[str]:
+        """
+        Get a list of LUT files from a directory.
+
+        Returns
+        -------
+        list
+            list of file paths.
+        """
         pathname = self._setPath(pathname)
         filelist = []
         for i in getLutExt():
@@ -2318,7 +3188,15 @@ class ComboBoxLut(QComboBox):
 
     # Public methods
 
-    def addLut(self, lut):
+    def addLut(self, lut: ListedColormap |  LinearSegmentedColormap | SisypheLut) -> None:
+        """
+        Add a Lut instance to the combo box.
+
+        Parameters
+        ----------
+        lut : ListedColormap | LinearSegmentedColormap | SisypheLut
+            Lut instance to add.
+        """
         self.blockSignals(True)
         try:
             if isinstance(lut, (ListedColormap, LinearSegmentedColormap)):
@@ -2335,7 +3213,15 @@ class ComboBoxLut(QComboBox):
         finally:
             self.blockSignals(False)
 
-    def addFileLut(self, name):
+    def addFileLut(self, name: str) -> None:
+        """
+        Add a Lut from a file path to the combo box.
+
+        Parameters
+        ----------
+        name : str
+            The file path of the Lut.
+        """
         if exists(name):
             path, ext = splitext(name)
             ext = ext.lower()
@@ -2349,7 +3235,17 @@ class ComboBoxLut(QComboBox):
                     raise IOError('file extension {} is not Lut.'.format(ext))
                 self.addLut(lut)
 
-    def insertLut(self, index, lut):
+    def insertLut(self, index: int, lut: ListedColormap |  LinearSegmentedColormap | SisypheLut) -> None:
+        """
+        Insert a Lut instance at a specific index in the combo box.
+
+        Parameters
+        ----------
+        index : int
+            index at which to insert the item.
+        lut : ListedColormap | LinearSegmentedColormap | SisypheLut
+            Lut instance to insert.
+        """
         self.blockSignals(True)
         try:
             if isinstance(lut, (ListedColormap, LinearSegmentedColormap)):
@@ -2367,7 +3263,17 @@ class ComboBoxLut(QComboBox):
         finally:
             self.blockSignals(False)
 
-    def insertFileLut(self, index, name):
+    def insertFileLut(self, index: int, name: str) -> None:
+        """
+        Inserts a Lut from a file path at a specific index.
+
+        Parameters
+        ----------
+        index : int
+            index at which to insert the item.
+        name : str
+            file path of the Lut.
+        """
         if exists(name):
             path, ext = splitext(name)
             ext = ext.lower()
@@ -2381,7 +3287,15 @@ class ComboBoxLut(QComboBox):
                     raise IOError('file extension {} is not Lut.'.format(ext))
                 self.insertLut(index, lut)
 
-    def addFilesLut(self, pathname):
+    def addFilesLut(self, pathname: str) -> None:
+        """
+        Add all supported Lut files from a given directory to the combo box.
+
+        Parameters
+        ----------
+        pathname : str
+            directory path to search for Lut files.
+        """
         self.blockSignals(True)
         try:
             filelist = self._getLutFiles(pathname)
@@ -2397,7 +3311,15 @@ class ComboBoxLut(QComboBox):
                     self.addItem(QIcon(drawLutToPixmap(lut, 128)), path, userData=file)
         finally: self.blockSignals(False)
 
-    def getCurrentAsMatplotlibColormap(self):
+    def getCurrentAsMatplotlibColormap(self) -> ListedColormap:
+        """
+        Get the currently selected Lut as a Matplotlib colormap.
+
+        Returns
+        -------
+        ListedColormap
+            selected colormap instance.
+        """
         name = self.currentData()
         # Internal
         if name in SisypheLut().getColormapList():
@@ -2415,11 +3337,18 @@ class ComboBoxLut(QComboBox):
                 else:
                     raise IOError('file extension {} is not Lut.'.format(ext))
                 lut = SisypheLut().copyToMatplotlibColormap()
-            else:
-                raise IOError('No such file {}.'.format(name))
+            else: raise IOError('No such file {}.'.format(name))
         return lut
 
-    def getCurrentAsSisypheLut(self):
+    def getCurrentAsSisypheLut(self) -> SisypheLut:
+        """
+        Gets the currently selected Lut as a SisypheLut object.
+
+        Returns
+        -------
+        SisypheLut
+            selected Lut instance.
+        """
         lut = SisypheLut()
         name = self.currentData()
         # Internal
@@ -2448,31 +3377,56 @@ class PopupMenuLut(QMenu):
     Description
     ~~~~~~~~~~~
 
-    PopupMenu to select lut for visualization purposes.
-    It provides a user-friendly interface for selecting and displaying different LUTs, both internal and
-    external files.
+    PopupMenu to select Lut for visualization purposes.
+
+    It provides a user-friendly interface for selecting and displaying different LUTs, both internal and external files.
 
     Inheritance
     ~~~~~~~~~~~
 
     QMenu -> PopupMenuLut
 
-    Creation: 20/11/2022
+    Creation: 20/10/2022
+    Last revision: 20/10/2025
     """
 
     # Class methods
 
     @staticmethod
-    def _setPath(pathname):
+    def _setPath(pathname: str) -> str:
+        """
+        Get a valid path name (i.e. path to an existing directory).
+
+        Parameters
+        ----------
+        pathname : str
+            path name to validate.
+
+        Returns
+        -------
+        str
+            valid path name.
+        """
         if pathname is not None and exists(pathname):
-            if not isdir(pathname):
-                pathname = dirname(pathname)
-        else:
-            pathname = getcwd()
+            if not isdir(pathname): pathname = dirname(pathname)
+        else: pathname = getcwd()
         return pathname
 
     @staticmethod
-    def getCurrentAsMatplotlibColormap(action):
+    def getCurrentAsMatplotlibColormap(action: QAction) -> ListedColormap:
+        """
+        Get the Lut from a QAction menu item.
+
+        Parameters
+        ----------
+        action : QAction
+            QAction instance of a menu item.
+
+        Returns
+        -------
+        ListedColormap
+            Lut as Matplotlib colormap instance.
+        """
         if isinstance(action, QAction):
             name = action.data()
             # Internal
@@ -2492,7 +3446,20 @@ class PopupMenuLut(QMenu):
             raise TypeError('parameter functype is not QAction.')
 
     @staticmethod
-    def getCurrentAsSisypheLut(action):
+    def getCurrentAsSisypheLut(action: QAction) -> SisypheLut:
+        """
+        Get the Lut from a QAction menu item.
+
+        Parameters
+        ----------
+        action : QAction
+            QAction instance of a menu item.
+
+        Returns
+        -------
+        SisypheLut
+            Lut as SisypheLut instance.
+        """
         if isinstance(action, QAction):
             lut = SisypheLut()
             name = action.data()
@@ -2512,7 +3479,17 @@ class PopupMenuLut(QMenu):
 
     # Special method
 
-    def __init__(self, pathname=None, parent=None):
+    def __init__(self, pathname: str | None = None, parent: QWidget | None = None) -> None:
+        """
+        PopupMenuLut instance constructor.
+
+        Parameters
+        ----------
+        pathname : str | None (optional)
+            directory path to search for LUT files.
+        parent : QWidget | None (optional)
+            parent widget.
+        """
         super().__init__(parent)
         self.setIconSize(QSize(32, 20))
         self._addInternalLut()  # Add internal lut items
@@ -2521,14 +3498,25 @@ class PopupMenuLut(QMenu):
 
     # Private methods
 
-    def _addInternalLut(self):
+    def _addInternalLut(self) -> None:
+        """
+        Populates the menu with actions for built-in Matplotlib colormaps.
+        """
         for name in SisypheLut.getColormapList():
             lut = get_cmap(name, 256)
             action = QAction(QIcon(drawLutToPixmap(lut, 128)), SisypheLut.getColormapFromName(name), self)
             action.setData(name)
             self.addAction(action)
 
-    def _getLutFiles(self, pathname=None):
+    def _getLutFiles(self, pathname: str | None = None) -> list[str]:
+        """
+        Get a list of Lut files from a directory.
+
+        Returns
+        -------
+        list
+            list of file paths.
+        """
         pathname = self._setPath(pathname)
         filelist = []
         for i in getLutExt():
@@ -2538,7 +3526,15 @@ class PopupMenuLut(QMenu):
 
     # Public methods
 
-    def addLut(self, lut):
+    def addLut(self, lut: SisypheLut) -> None:
+        """
+        Add a Lut instance as a menu action.
+
+        Parameters
+        ----------
+        lut : SisypheLut
+            Lut instance to add.
+        """
         self.blockSignals(True)
         try:
             if isinstance(lut, (ListedColormap, LinearSegmentedColormap)):
@@ -2553,7 +3549,15 @@ class PopupMenuLut(QMenu):
         finally:
             self.blockSignals(False)
 
-    def addFileLut(self, name):
+    def addFileLut(self, name: str) -> None:
+        """
+        Add a Lut from a file path as a menu action.
+
+        Parameters
+        ----------
+        name : str
+            file path of the LUT.
+        """
         if exists(name):
             path, ext = splitext(name)
             if ext in getLutExt():
@@ -2562,7 +3566,15 @@ class PopupMenuLut(QMenu):
                 else: lut.loadFromXML(name)
                 self.addLut(lut)
 
-    def addFilesLut(self, pathname):
+    def addFilesLut(self, pathname: str) -> None:
+        """
+        Add all supported Lut files from a given directory as menu actions.
+
+        Parameters
+        ----------
+        pathname : str
+            directory path to search for Lut files.
+        """
         self.blockSignals(True)
         try:
             filelist = self._getLutFiles(pathname)

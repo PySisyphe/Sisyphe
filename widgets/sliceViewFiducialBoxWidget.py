@@ -5,6 +5,9 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from typing import Any
+from typing import TYPE_CHECKING
+
 from sys import platform
 
 from PyQt5.QtCore import Qt
@@ -18,6 +21,10 @@ from Sisyphe.core.sisypheFiducialBox import SisypheFiducialBox
 from Sisyphe.widgets.sliceViewWidgets import SliceViewWidget
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.iconBarViewWidgets import IconBarWidget
+
+if TYPE_CHECKING:
+    from PyQt5.QtWidgets import QWidget
+    from Sisyphe.core.sisypheVolume import SisypheVolume
 
 __all__ = ['SliceViewFiducialBoxWidget',
            'IconBarSliceViewFiducialBoxWidget']
@@ -50,7 +57,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
 
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceViewFiducialBoxWidget
 
-    Last revision: 05/09/2025
+    Last revision: 10/10/2025
     """
 
     # Special method
@@ -61,7 +68,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
     _fid    SisypheFiducialBox
     """
 
-    def __init__(self, fid: SisypheFiducialBox, parent=None):
+    def __init__(self, fid: SisypheFiducialBox, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self._dz = 0.0
@@ -151,7 +158,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
             return r
         else: raise AttributeError('No volume.')
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
         super().setVolume(volume)
         # < Revision 21/05/2025
         # self._dz = - 0.6 * volume.getSpacing()[2]
@@ -167,17 +174,17 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
             self.getTool(8).setVisibility(True)
         self._updateDisplayedMarkers()
 
-    def sliceMinus(self):
+    def sliceMinus(self) -> None:
         self._updateMarkersFromDisplay()
         super().sliceMinus()
         self._updateDisplayedMarkers()
 
-    def slicePlus(self):
+    def slicePlus(self) -> None:
         self._updateMarkersFromDisplay()
         super().slicePlus()
         self._updateDisplayedMarkers()
 
-    def zoomOnMarker(self, n):
+    def zoomOnMarker(self, n: int) -> None:
         if not self._fid.isEmpty():
             if n < self._fid.getMarkersCount():
                 if self.getZoom() != 10.0: self._scale = self.getZoom()
@@ -187,7 +194,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
                 self.setCameraPlanePosition(f)
                 self.setZoom(10.0)
 
-    def zoomDefault(self):
+    def zoomDefault(self) -> None:
         super().zoomDefault()
         if self.hasVolume():
             p = self._volume.getCenter()
@@ -195,20 +202,20 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
             f[0], f[1] = p[0], p[1]
             self.setCameraPlanePosition(f)
 
-    def calcTransform(self):
+    def calcTransform(self) -> None:
         if not self._fid.isEmpty():
             self._fid.calcTransform()
             self._fid.calcErrors()
 
-    def addTransformToVolume(self):
+    def addTransformToVolume(self) -> None:
         if not self._fid.isEmpty():
             self._fid.addTransformToVolume()
 
-    def removeTransformFromVolume(self):
+    def removeTransformFromVolume(self) -> None:
         if not self._fid.isEmpty():
             self._fid.removeTransformFromVolume()
 
-    def showErrorStatistics(self):
+    def showErrorStatistics(self) -> None:
         if self._fid.hasErrors():
             self._dialog = DialogGenericResults()
             if platform == 'win32':
@@ -264,10 +271,10 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
             self._dialog.setTreeWidgetDict(1, data)
             self._dialog.exec()
 
-    def getFiducialBoxDict(self):
+    def getFiducialBoxDict(self) -> SisypheFiducialBox:
         return self._fid
 
-    def removeCurrentSliceMarkers(self):
+    def removeCurrentSliceMarkers(self) -> None:
         if not self._fid.isEmpty():
             sz = self._volume.getSpacing()[2]
             z = round(self._getFocalDepth() // sz)
@@ -275,7 +282,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
             self._updateDisplayedMarkers()
             self.updateRender()
 
-    def removeFrontPlateMarkers(self):
+    def removeFrontPlateMarkers(self) -> None:
         if not self._fid.isEmpty():
             if self._fid.getMarkersCount() == 9:
                 self._fid.removeFrontPlateMarkers()
@@ -296,9 +303,11 @@ class IconBarSliceViewFiducialBoxWidget(IconBarWidget):
     ~~~~~~~~~~~
 
     QWidget -> IconBarWidget -> IconBarSliceViewFiducialBoxWidget
+
+    Last revision: 10/10/2025
     """
 
-    def __init__(self, fid: SisypheFiducialBox, parent=None):
+    def __init__(self, fid: SisypheFiducialBox, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self._markermenu = QMenu()
@@ -393,7 +402,7 @@ class IconBarSliceViewFiducialBoxWidget(IconBarWidget):
 
     # Public methods
 
-    def setVolume(self, vol):
+    def setVolume(self, vol: SisypheVolume) -> None:
         super().setVolume(vol)
         self.timerEnabled()
         fid = self._widget.getFiducialBoxDict()
@@ -406,11 +415,11 @@ class IconBarSliceViewFiducialBoxWidget(IconBarWidget):
             self._markermenu.actions()[7].setVisible(True)
             self._markermenu.actions()[8].setVisible(True)
 
-    def removeVolume(self):
+    def removeVolume(self) -> None:
         super().removeVolume()
         self.timerDisabled()
 
-    def timerEvent(self, event):
+    def timerEvent(self, event: Any) -> None:
         w = self._widget
         # Icon bar visibility management
         if not self._icons['pin'].isChecked():

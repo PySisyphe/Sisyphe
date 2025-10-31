@@ -7,6 +7,10 @@ External packages/modules
     - vtk, Visualization, https://vtk.org/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from typing import Any
+
 from sys import platform
 
 from os import getcwd
@@ -84,6 +88,12 @@ from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import colorDialog
 from Sisyphe.widgets.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
+if TYPE_CHECKING:
+    from vtk import vtkObject
+    from vtk import vtkRenderWindow
+    from vtk import vtkRenderWindowInteractor
+    from vtk import vtkCamera
+    from vtk import vtk3DWidget
 
 __all__ = ['AbstractViewWidget']
 
@@ -102,10 +112,17 @@ class AbstractViewWidget(QFrame):
     Description
     ~~~~~~~~~~~
 
-    Abstract class designed to provide common methods and functionalities that are shared among different types of
-    display widgets. The class is responsible for handling common tasks such as displaying data, managing user
-    interactions, and providing a consistent user interface. It encapsulates functionality related to displaying
-    data, such as zooming, panning, and navigating through the data.
+    This abstract class is designed to provide a set of common methods and functionalities for all view widgets.
+
+    The main features are as follows:
+
+    - Rendering Pipeline: establishes a multi-layered VTK rendering setup, separating the primary data display (i.e. SisyppheVolume display) from 2D information overlays.
+    - User Interaction: implements handling for mouse and keyboard events, enabling standard viewport navigation like zooming, panning, and window/level adjustments.
+    - Informational overlays: manages a set of configurable 2D VTK actors for displaying contextual information, such as a color bar, scale ruler, orientation marker, cross-shaped cursor, and detailed text attributes about the patient and image.
+    - Tool management: provides a framework for adding, managing, and interacting with a variety of 2D and 3D tools, including distance, angle, target (point), and trajectory (line) widgets.
+    - Context menus: features a right-click popup menu system that offers easy access to viewport actions, visibility settings, and tool-specific operations.
+    - Synchronization: uses a Qt signal and slot mechanism to enable the synchronization of cursor position, zoom, and tool manipulations across multiple linked viewports.
+    - Configuration and export: supports user settings (e.g. colors, fonts...) and includes functionality to save the current view to a bitmap image file or copy it to the system clipboard.
 
     Inheritance
     ~~~~~~~~~~~
@@ -113,7 +130,7 @@ class AbstractViewWidget(QFrame):
     QWidget -> AbstractViewWidget
 
     Creation: 20/03/2022
-    Last Revision: 02/05/2025
+    Last Revision: 20/10/2025
     """
 
     _DEFAULTZOOM = 128.0  # Default zoom (vtk parallel scale) = conventional FOV of head imaging / 2
@@ -133,54 +150,15 @@ class AbstractViewWidget(QFrame):
 
     # Special method
 
-    """
-    Private attributes
+    def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        AbstractViewWidget instance constructor.
 
-    _window                 QVTKRenderWindowInteractor
-    _renderwindow           vtkRenderWindow
-    _interactor             vtkRenderWindowInteractor
-    _renderer               vtkRenderer, world display
-    _renderer2D             vtkRenderer, text info, cross, colorbar, ruler display
-    _colorbar               vtkScalarBarActor
-    _ruler                  vtkDistanceWidget
-    _volume                 SisypheVolume, reference volume
-    _title                  str, view title
-    _name                   str, widget name
-    _scale                  float, default zoom scale
-    _fontsize               int
-    _fontcolor              list[float, float, float]
-    _info                   dict[str, vtkTextActor], volume attributes displayed on renderer2D
-    _cross                  vtkActor2D, cross marker in the center of the view
-    _cursor                 vtkCursor2D, two orthogonal lines
-    _cursoractor            vtkActor, cursor actor
-    _orientmarker           vtkOrientationMarkerWidget
-    _tools                  ToolWidgetCollection
-    _accepttools            bool, accept or not to display ToolWidget
-    _dialog                 QDialog, text editor for TextWidget tool
-    _axisconstraint         int, cursor axis constraint 0 = unconstrained, 1 = x axis, 2 = y axis, 3 = z axis
-    _cursorenabled          bool, cursor enabled flag
-    _roundedenabled         bool, rounded cursor coordinates enabled flag
-    _selected               bool, view selection
-    _frame                  bool, frame visibility if selected
-    _action                 dict[str, QActions] 
-    _menuflag               bool, popup menu enabled or disabled
-    _popup                  QMenu, popup menu
-    _menuActions            QMenu, popup submenu for actions
-    _menuVisibility         QMenu, popup submenu for visibility
-    _menuColorbarPos        QMenu, popup submenu for colorbar position
-    _tooltip                vtkBalloonWidget, tooltip for vtkWidgets
-    _tooltipstr             str, viewport tooltip text
-    _lwidth                 int, default line width, default 2.0
-    _lcolor                 tuple[int, int, int], font color, default white (1.0, 1.0, 1.0)
-    _slcolor                tuple[int, int, int], selected color, default red (1.0, 0.0, 0.0)
-    _lalpha                 float, default line opacity, default 1.0
-    _fsize                  int, font size, default 12
-    _ffamily                str, font family, default 'Arial'
-    _fscale                 float, scale factor applied to font size (default 1.0, no scale factor)
-    _fopacity               float, default font opacity, default 1.0
-    """
-
-    def __init__(self, parent=None):
+        Parameters
+        ----------
+        parent : QWidget | None
+            parent widget
+        """
         super().__init__(parent)
 
         self._volume = None
@@ -269,7 +247,7 @@ class AbstractViewWidget(QFrame):
             Centered cursor (self._action['centeredflag'])
         Visibility (self._menuVisibility)
             Show cursor (self._action['showcursor'])
-            Show informations (self._action['showinfo'])
+            Show information (self._action['showinfo'])
             Show orientation marker (self._action['showmarker'])
             Show colorbar (self._action['showcolorbar'])
             Show ruler (self._action['showruler')
@@ -790,13 +768,59 @@ class AbstractViewWidget(QFrame):
         self._interactor.Initialize()
         self._interactor.Start()
 
+    """
+    Private attributes
+
+    _window                 QVTKRenderWindowInteractor
+    _renderwindow           vtkRenderWindow
+    _interactor             vtkRenderWindowInteractor
+    _renderer               vtkRenderer, world display
+    _renderer2D             vtkRenderer, text info, cross, colorbar, ruler display
+    _colorbar               vtkScalarBarActor
+    _ruler                  vtkDistanceWidget
+    _volume                 SisypheVolume, reference volume
+    _title                  str, view title
+    _name                   str, widget name
+    _scale                  float, default zoom scale
+    _fontsize               int
+    _fontcolor              list[float, float, float]
+    _info                   dict[str, vtkTextActor], volume attributes displayed on renderer2D
+    _cross                  vtkActor2D, cross marker in the center of the view
+    _cursor                 vtkCursor2D, two orthogonal lines
+    _cursoractor            vtkActor, cursor actor
+    _orientmarker           vtkOrientationMarkerWidget
+    _tools                  ToolWidgetCollection
+    _accepttools            bool, accept or not to display ToolWidget
+    _dialog                 QDialog, text editor for TextWidget tool
+    _axisconstraint         int, cursor axis constraint 0 = unconstrained, 1 = x axis, 2 = y axis, 3 = z axis
+    _cursorenabled          bool, cursor enabled flag
+    _roundedenabled         bool, rounded cursor coordinates enabled flag
+    _selected               bool, view selection
+    _frame                  bool, frame visibility if selected
+    _action                 dict[str, QActions] 
+    _menuflag               bool, popup menu enabled or disabled
+    _popup                  QMenu, popup menu
+    _menuActions            QMenu, popup submenu for actions
+    _menuVisibility         QMenu, popup submenu for visibility
+    _menuColorbarPos        QMenu, popup submenu for colorbar position
+    _tooltip                vtkBalloonWidget, tooltip for vtkWidgets
+    _tooltipstr             str, viewport tooltip text
+    _lwidth                 int, default line width, default 2.0
+    _lcolor                 tuple[int, int, int], font color, default white (1.0, 1.0, 1.0)
+    _slcolor                tuple[int, int, int], selected color, default red (1.0, 0.0, 0.0)
+    _lalpha                 float, default line opacity, default 1.0
+    _fsize                  int, font size, default 12
+    _ffamily                str, font family, default 'Arial'
+    _fscale                 float, scale factor applied to font size (default 1.0, no scale factor)
+    _fopacity               float, default font opacity, default 1.0
+    """
+
     # Private methods
 
-    def _initSettings(self):
+    def _initSettings(self) -> None:
         """
-            Settings -> private attributes
-            Revision 17/04/2023, addBundle devicePixelRation to manage font size
-                                 self._fsize *= self.getDisplayScaleFactor()
+        Initialize widget attributes from the SisypheSettings instance.
+        Loads user preferences for line styles, font styles, and default visibilities.
         """
         self._lwidth = self._settings.getFieldValue('Viewport', 'LineWidth')
         self._lcolor = self._settings.getFieldValue('Viewport', 'LineColor')
@@ -892,7 +916,11 @@ class AbstractViewWidget(QFrame):
         elif v == 'Top': self._action['topruler'].setChecked(True)
         else: self._action['bottomruler'].setChecked(True)
 
-    def _initInfoLabels(self):
+    def _initInfoLabels(self)  -> None:
+        """
+        Initialize the vtkTextActor instances used to display SisypheVolume information.
+        Sets up text properties, positions, and content for identity, image, and acquisition attributes.
+        """
         if self.hasVolume():
             # Top Left identity attributes
 
@@ -1019,7 +1047,11 @@ class AbstractViewWidget(QFrame):
             info.SetInput(txt)
             info.SetVisibility(False)
 
-    def _initColorbar(self):
+    def _initColorbar(self) -> None:
+        """
+        Initialize the vtkScalarBarActor.
+        Sets the lookup table from the SisypheVolume, and configures font, size, and format.
+        """
         if self.hasVolume():
             self._colorbar.SetLookupTable(self._volume.display.getVTKLUT())
             self._colorbar.UnconstrainedFontSizeOn()
@@ -1038,7 +1070,11 @@ class AbstractViewWidget(QFrame):
             else: self._colorbar.SetLabelFormat('%5.2f')
             self._colorbar.SetVisibility(False)
 
-    def _initCentralCross(self):
+    def _initCentralCross(self) -> None:
+        """
+        Initialize the central cross vtkActor2D.
+        The cross indicates the center of the viewport.
+        """
         s = self._renderer.GetSize()
         t0 = 0.05
         r = 2 * s[1] / s[0]
@@ -1068,7 +1104,20 @@ class AbstractViewWidget(QFrame):
         self._cross.SetVisibility(False)
         self._renderer2D.AddActor2D(self._cross)
 
-    def _getRoundedCoordinate(self, p):
+    def _getRoundedCoordinate(self, p:  list[float] | tuple[float, float, float]) -> list[float]:
+        """
+        Round world coordinates to the nearest voxel coordinate based on SisypheVolume spacing.
+
+        Parameters
+        ----------
+        p : list[float] or tuple[float, float, float]
+            world coordinates (x, y, z).
+
+        Returns
+        -------
+        list[float]
+            World coordinates rounded to the volume's voxel grid.
+        """
         if self._volume is not None:
             if self._roundedenabled:
                 s = self._volume.getSpacing()
@@ -1080,7 +1129,20 @@ class AbstractViewWidget(QFrame):
             else: return p
         else: raise AttributeError('Volume attribute is None.')
 
-    def _getWorldToMatrixCoordinate(self, p):
+    def _getWorldToMatrixCoordinate(self, p: list[float] | tuple[float, float, float]) -> list[int]:
+        """
+        Convert world coordinates to matrix (voxel) coordinates.
+
+        Parameters
+        ----------
+        p : list[float] or tuple[float, float, float]
+            world coordinates (x, y, z).
+
+        Returns
+        -------
+        list[int]
+            matrix coordinates (i, j, k).
+        """
         if self._volume is not None:
             s = self._volume.getSpacing()
             r = list()
@@ -1090,20 +1152,69 @@ class AbstractViewWidget(QFrame):
             return r
         else: raise AttributeError('Volume attribute is None.')
 
-    def _getWorldFromDisplay(self, x, y):
+    def _getWorldFromDisplay(self, x: float, y: float) -> tuple[float, float, float]:
+        """
+        Convert 2D display coordinates to 3D world coordinates.
+
+        Parameters
+        ----------
+        x : int
+            2D display x-coordinate.
+        y : int
+            2D display y-coordinate.
+
+        Returns
+        -------
+        tuple[float, float, float]
+            3D world coordinates (x, y, z).
+        """
         self._renderer.SetDisplayPoint(x, y, 0.0)
         # noinspection PyArgumentList
         self._renderer.DisplayToWorld()
         p = self._renderer.GetWorldPoint()
+        # noinspection PyTypeChecker
         return p[:3]
 
-    def _getDisplayFromWorld(self, x, y, z):
+    def _getDisplayFromWorld(self, x: float, y: float, z: float) -> tuple[float, float]:
+        """
+        Convert 3D world coordinates to 2D display coordinates.
+
+        Parameters
+        ----------
+        x : float
+            world x-coordinate.
+        y : float
+            world y-coordinate.
+        z : float
+            world z-coordinate.
+
+        Returns
+        -------
+        tuple[int, int]
+            2D display coordinates (x, y).
+        """
         self._renderer.SetWorldPoint(x, y, z, 1.0)
         self._renderer.WorldToDisplay()
         p = self._renderer.GetDisplayPoint()
+        # noinspection PyTypeChecker
         return p[:2]
 
-    def _getDisplayFromNormalizedViewport(self, x, y):
+    def _getDisplayFromNormalizedViewport(self, x: float, y: float) -> tuple[float, float]:
+        """
+        Convert normalized viewport coordinates to display coordinates.
+
+        Parameters
+        ----------
+        x : float
+            normalized viewport x-coordinate (0.0 to 1.0).
+        y : float
+            normalized viewport y-coordinate (0.0 to 1.0).
+
+        Returns
+        -------
+        tuple[int, int]
+            2D display coordinates (in pixels).
+        """
         xr = vtkReference(x)
         yr = vtkReference(y)
         # noinspection PyTypeChecker
@@ -1115,7 +1226,22 @@ class AbstractViewWidget(QFrame):
         # noinspection PyTypeChecker
         return float(xr), float(yr)
 
-    def _getNormalizedViewportFromDisplay(self, x, y):
+    def _getNormalizedViewportFromDisplay(self, x: float, y: float) -> tuple[float, float]:
+        """
+        Convert display coordinates to normalized viewport coordinates.
+
+        Parameters
+        ----------
+        x : float
+            2D display x-coordinate (in pixels).
+        y : float
+            2D display y-coordinate (in pixels).
+
+        Returns
+        -------
+        tuple[float, float]
+            normalized viewport coordinates (0.0 to 1.0).
+        """
         xr = vtkReference(x)
         yr = vtkReference(y)
         # noinspection PyTypeChecker
@@ -1127,7 +1253,23 @@ class AbstractViewWidget(QFrame):
         # noinspection PyTypeChecker
         return float(xr), float(yr)
 
-    def _getScreenFromDisplay(self, x, y):
+    def _getScreenFromDisplay(self, x: float, y: float) -> QPoint:
+        """
+        Convert display coordinates to global screen coordinates.
+        This is used to position Qt widgets (like popup menus) over the VTK window.
+
+        Parameters
+        ----------
+        x : float
+            2D display x-coordinate (in pixels).
+        y : float
+            2D display y-coordinate (in pixels).
+
+        Returns
+        -------
+        QPoint
+            Global screen coordinates.
+        """
         # < Revision 14/03/2025
         if platform == 'darwin':
             scale = 1.0
@@ -1144,7 +1286,15 @@ class AbstractViewWidget(QFrame):
         return r
         # Revision 14/03/2025 >
 
-    def _moveToTool(self, name):
+    def _moveToTool(self, name: str) -> None:
+        """
+        Move the viewport's cross-sahped cursor to the position of a specified tool.
+
+        Parameters
+        ----------
+        name : str
+            name of the target tool (HandleWidget or LineWidget).
+        """
         tool = self._tools[name]
         if tool is not None:
             if isinstance(tool, HandleWidget): p = tool.getPosition()
@@ -1152,7 +1302,11 @@ class AbstractViewWidget(QFrame):
             else: raise TypeError('parameter type {} is not str.'.format(type(tool)))
             self.setCursorWorldPosition(p[0], p[1], p[2], signal=True)
 
-    def _removePickedTool(self):
+    def _removePickedTool(self) -> None:
+        """
+        Remove the tool currently selected by the interactor's picker.
+        Emits the ToolRemoved signal.
+        """
         rep = self._interactor.GetPicker().GetViewProp()
         if rep.GetClassName() in ('vtkDistanceRepresentation2D',
                                   'vtkBiDimensionalRepresentation2D',
@@ -1185,7 +1339,10 @@ class AbstractViewWidget(QFrame):
                     self._updateToolMenu()
                     break
 
-    def _editPickedText(self):
+    def _editPickedText(self) -> None:
+        """
+        Open a dialog to edit the text of a picked TextWidget tool.
+        """
         rep = self._interactor.GetPicker().GetViewProp()
         if rep.GetClassName() == 'vtkTextRepresentation':
             for widget in self._tools:
@@ -1200,14 +1357,21 @@ class AbstractViewWidget(QFrame):
                         widget.setInformationText(self._edit.text())
                     break
 
-    def _textProperties(self):
+    def _textProperties(self) -> None:
+        """
+        Placeholder method for editing the properties of a picked TextWidget.
+        """
         rep = self._interactor.GetPicker().GetViewProp()
         if rep.GetClassName() == 'vtkTextRepresentation':
             for widget in self._tools:
                 if widget.GetRepresentation() == rep:
                     pass
 
-    def _toolColor(self):
+    def _toolColor(self) -> None:
+        """
+        Open a color dialog to change the color and opacity of a picked tool.
+        Emits the ToolColorChanged signal for 3D tools.
+        """
         rep = self._interactor.GetPicker().GetViewProp()
         if rep.GetClassName() == 'vtkOpenGLBillboardTextActor3D':
             name = ''.join(rep.GetInput().split(sep='\n')[1])
@@ -1232,11 +1396,23 @@ class AbstractViewWidget(QFrame):
                             # noinspection PyUnresolvedReferences
                             self.ToolColorChanged.emit(self, widget)
 
-    def _textEditFinished(self):
+    def _textEditFinished(self) -> None:
+        """
+        Handle the editingFinished signal from the QLineEdit dialog used for TextWidget.
+        Accepts or rejects the dialog based on whether text was entered.
+        """
         if self._edit.text() == '': self._dialog.reject()
         else: self._dialog.accept()
 
-    def _updateRuler(self, signal=True):
+    def _updateRuler(self, signal: bool = True) -> None:
+        """
+        Update the ruler's scale to reflect the current zoom level of the camera.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if self.getRulerVisibility():
             p1 = self._ruler.GetPoint1Coordinate().GetValue()
             p2 = self._ruler.GetPoint2Coordinate().GetValue()
@@ -1252,7 +1428,11 @@ class AbstractViewWidget(QFrame):
                 # noinspection PyUnresolvedReferences
                 self.ViewMethodCalled.emit(self, '_updateRuler', None)
 
-    def _updateToolMenu(self):
+    def _updateToolMenu(self) -> None:
+        """
+        Update the 'Move to target' submenu in the popup menu.
+        Populates the menu with actions to move the cursor to each existing 3D tool.
+        """
         v = False
         if self.hasTools():
             self._menuMoveTarget.clear()
@@ -1273,15 +1453,57 @@ class AbstractViewWidget(QFrame):
 
     # Public synchronisation event methods
 
-    def synchroniseCursorPositionChanged(self, obj, x, y, z):
+    def synchroniseCursorPositionChanged(self, obj: QWidget, x: float, y: float, z: float) -> None:
+        """
+        Method of synchronisation between AbstractViewWidget instances.
+        This method is called by CursorPositionChanged PyQt signal.
+        It is responsible for synchronizing the cross-shaped cursor position between AbstractViewWidget instances.
+
+        Parameters
+        ----------
+        obj : QWidget
+            AbstractViewWidget instances that emit CursorPositionChanged signal.
+        x : float
+            x-axis world coordinate of the cross-shaped cursor.
+        y : float
+            y-axis world coordinate of the cross-shaped cursor.
+        z : float
+            z-axis world coordinate of the cross-shaped cursor.
+        """
         if self != obj and self.hasVolume():
             self.setCursorWorldPosition(x, y, z, signal=False)
 
-    def synchroniseZoomChanged(self, obj, z):
+    def synchroniseZoomChanged(self, obj: QWidget, z: float) -> None:
+        """
+        Method of synchronisation between AbstractViewWidget instances.
+        This method is called by ZoomChanged PyQt signal.
+        It is responsible for synchronizing zoom factor between AbstractViewWidget instances.
+
+        Parameters
+        ----------
+        obj : QWidget
+            AbstractViewWidget instances that emit ZoomChanged signal.
+        z : float
+            zoom factor.
+        """
         if self != obj and self.hasVolume():
             self.setZoom(z, signal=False)
 
-    def synchroniseToolRemoved(self, obj, tool, alltools=False):
+    def synchroniseToolRemoved(self, obj: QWidget, tool: HandleWidget | LineWidget | None, alltools: bool = False) -> None:
+        """
+        Method of synchronisation between AbstractViewWidget instances.
+        This method is called by ToolRemoved PyQt signal.
+        It is responsible for synchronizing tool removal between AbstractViewWidget instances.
+
+        Parameters
+        ----------
+        obj : QWidget
+            AbstractViewWidget instances that emit ToolRemoved signal.
+        tool : HandleWidget | LineWidget | None
+            tool to remove.
+        alltools : bool (optional)
+            remove all tools if True (default False).
+        """
         if self != obj and self.hasVolume():
             # < Revision 02/05/2025
             if alltools: self.removeAllTools(signal=False)
@@ -1296,7 +1518,19 @@ class AbstractViewWidget(QFrame):
                 # else: raise TypeError('parameter type {} is not HandleWidget or LineWidget.'.format(type(tool)))
             # Revision 02/05/2025 >
 
-    def synchroniseToolMoved(self, obj, tool):
+    def synchroniseToolMoved(self, obj: QWidget, tool: HandleWidget | LineWidget) -> None:
+        """
+        Method of synchronisation between AbstractViewWidget instances.
+        This method is called by ToolMoved PyQt signal.
+        It is responsible for synchronizing tool movement between AbstractViewWidget instances.
+
+        Parameters
+        ----------
+        obj : QWidget
+            AbstractViewWidget instances that emit ToolMoved signal
+        tool : HandleWidget | LineWidget
+            tool to move
+        """
         if self != obj and self.hasVolume():
             if isinstance(tool, (HandleWidget, LineWidget)):
                 if tool.getName() in self._tools:
@@ -1311,7 +1545,19 @@ class AbstractViewWidget(QFrame):
                 else: raise ValueError('tool name {} is not in SisypheToolCollection.'.format(tool.getName()))
             else: raise TypeError('parameter type {} is not HandleWidget or LineWidget.'.format(type(tool)))
 
-    def synchroniseToolColorChanged(self, obj, tool):
+    def synchroniseToolColorChanged(self, obj: QWidget, tool: HandleWidget | LineWidget) -> None:
+        """
+        Method of synchronisation between AbstractViewWidget instances.
+        This method is called by ToolColorChanged PyQt signal.
+        It is responsible for synchronizing tool color between AbstractViewWidget instances.
+
+        Parameters
+        ----------
+        obj : QWidget
+            AbstractViewWidget instances that emit ToolColorChanged signal.
+        tool : HandleWidget | LineWidget
+            synchronize the color of this tool.
+        """
         if self != obj and self.hasVolume():
             if isinstance(tool, (HandleWidget, LineWidget)):
                 if tool.getName() in self._tools:
@@ -1322,7 +1568,24 @@ class AbstractViewWidget(QFrame):
                 else: raise ValueError('tool name {} is not in SisypheToolCollection.'.format(tool.getName()))
             else: raise TypeError('parameter type {} is not HandleWidget or LineWidget.'.format(type(tool)))
 
-    def synchroniseToolAttributesChanged(self, obj, tool):
+    def synchroniseToolAttributesChanged(self, obj: QWidget, tool: HandleWidget | LineWidget) -> None:
+        """
+        Method of synchronisation between AbstractViewWidget instances.
+        This method is called by ToolAttributesChanged PyQt signal.
+        It is responsible for synchronizing tool attributes between AbstractViewWidget instances.
+
+        Tool attributes are as follows: text, text visbility, text offset, font size, font style (bold, italic),
+        font family, color, selected color, opacity, point size, line width, handle size, tolerance, rendering
+        attributes (render points as spheres, render lines as tube, interpolation, tube radius, metallic, roughness,
+        ambient, specular, specular power).
+
+        Parameters
+        ----------
+        obj : QWidget
+            AbstractViewWidget instances that emit ToolAttributesChanged signal.
+        tool : HandleWidget | LineWidget
+            synchronize attributes of this tool.
+        """
         if self != obj and self.hasVolume():
             if isinstance(tool, (HandleWidget, LineWidget)):
                 if tool.getName() in self._tools:
@@ -1333,7 +1596,19 @@ class AbstractViewWidget(QFrame):
                 else: raise ValueError('tool name {} is not in SisypheToolCollection.'.format(tool.getName()))
             else: raise TypeError('parameter type {} is not HandleWidget or LineWidget.'.format(type(tool)))
 
-    def synchroniseToolAdded(self, obj, tool):
+    def synchroniseToolAdded(self, obj: QWidget, tool: HandleWidget | LineWidget) -> None:
+        """
+        Method of synchronisation between AbstractViewWidget instances.
+        This method is called by ToolAdded PyQt signal.
+        It is responsible for synchronizing tool creation between AbstractViewWidget instances.
+
+        Parameters
+        ----------
+        obj : QWidget
+            AbstractViewWidget instances that emit ToolAdded signal.
+        tool : HandleWidget | LineWidget
+            synchronize the creation of this tool.
+        """
         if self != obj and self.hasVolume() and self.getAcceptTools():
             if isinstance(tool, HandleWidget):
                 self.addTarget(tool.getPosition(), tool.getName(), signal=False)
@@ -1343,7 +1618,21 @@ class AbstractViewWidget(QFrame):
             # noinspection PyUnresolvedReferences
             self._tools[tool.getName()].copyAttributesFrom(tool)
 
-    def synchroniseToolRenamed(self, obj, tool, name):
+    def synchroniseToolRenamed(self, obj: QWidget, tool: HandleWidget | LineWidget, name: str) -> None:
+        """
+        Method of synchronisation between AbstractViewWidget instances.
+        This method is called by ToolRenamed PyQt signal.
+        It is responsible for synchronizing tool name between AbstractViewWidget instances.
+
+        Parameters
+        ----------
+        obj : QWidget
+            AbstractViewWidget instances that emit ToolRenamed signal.
+        tool : HandleWidget | LineWidget
+            synchronize the name of this tool.
+        name : str
+            tool name.
+        """
         if obj != self and self.hasVolume():
             if isinstance(tool, (HandleWidget, LineWidget)):
                 if tool.getName() in self._tools:
@@ -1351,7 +1640,20 @@ class AbstractViewWidget(QFrame):
                 else: raise ValueError('tool name {} is not in SisypheToolCollection.'.format(tool.getName()))
             else: raise TypeError('parameter type {} is not HandleWidget or LineWidget.'.format(type(tool)))
 
-    def synchroniseViewMethodCalled(self, obj, function, param):
+    def synchroniseViewMethodCalled(self, obj: QWidget, function: str, param: Any) -> None:
+        """
+        Method of synchronisation between AbstractViewWidget instances.
+        This method is called by ViewMethodCalled PyQt signal.
+
+        Parameters
+        ----------
+        obj : QWidget
+            AbstractViewWidget instances that emit ViewMethodCalled signal.
+        function : str
+            name of the synchronisation function.
+        param : Any
+            parameter of the synchronisation function.
+        """
         if obj != self and self.hasVolume():
             if hasattr(self, function):
                 f = getattr(self, function)
@@ -1363,14 +1665,38 @@ class AbstractViewWidget(QFrame):
     # < Revision 08/03/2025
     # fix vtkWin32OpenGLRenderWindow error: wglMakeCurrent failed in MakeCurrent()
     # finalize method must be called before destruction
-    def finalize(self):
+    def finalize(self) -> None:
+        """
+        Method to be called before AbstractViewWidget instance destruction.
+        It is used to avoid vtk error on windows platform (vtkWin32OpenGLRenderWindow error: 'wglMakeCurrent failed in
+        MakeCurrent()')
+        """
         self._window.Finalize()
     # Revision 08/03/2025 >
 
-    def getDisplayScaleFactor(self):
+    def getDisplayScaleFactor(self) -> float:
+        """
+        Get the scale (i.e. zoom) factor applied to the display of all QWidgets.
+
+        Returns
+        -------
+        float
+            scale factor
+        """
         return self.screen().devicePixelRatio()
 
-    def displayOn(self):
+    def displayOn(self) -> None:
+        """
+        Show the following items of the AbstractViewWidget instance:
+
+        - information (top left, top right, bottom left, bottom right)
+        - colorbar
+        - orientation maker (bottom right)
+        - ruler
+        - cross-shaped cursor
+
+        Items are displayed only if their individual visibility attribute is True.
+        """
         if self._volume is not None:
             # Info
             self._initInfoLabels()
@@ -1394,7 +1720,16 @@ class AbstractViewWidget(QFrame):
             if self._cursor is not None: self._cursor.SetVisibility(self._action['showcursor'].isChecked())
             self._renderwindow.Render()
 
-    def displayOff(self):
+    def displayOff(self) -> None:
+        """
+        Hide the following items of the AbstractViewWidget instance:
+
+        - information (top left, top right, bottom left, bottom right)
+        - colorbar
+        - orientation maker (bottom right)
+        - ruler
+        - cross-shaped cursor
+        """
         # Info
         self._info['topright'].SetVisibility(False)
         self._info['topleft'].SetVisibility(False)
@@ -1410,17 +1745,47 @@ class AbstractViewWidget(QFrame):
         # Revision 24/07/2025 >
         self._renderwindow.Render()
 
-    def setSelectable(self, v):
+    def setSelectable(self, v: bool) -> None:
+        """
+        Choose if the AbstractViewWidget instance is selectable.
+        An AbstractViewWidget instance is selected by left-click.
+        Selection is indicated by a white frame.
+        """
         if isinstance(v, bool): self._frame = v
         else: raise TypeError('parameter type {} is not bool.'.format(v))
 
-    def isSelectable(self):
+    def isSelectable(self) -> bool:
+        """
+        Check whether the AbstractViewWidget instance is selectable.
+
+        Returns
+        -------
+        bool
+            True if the AbstractViewWidget instance is selectable, False otherwise
+        """
         return self._frame
 
-    def isSelected(self):
+    def isSelected(self) -> bool:
+        """
+        Check whether the AbstractViewWidget instance is selected.
+
+        Returns
+        -------
+        bool
+            True if the AbstractViewWidget instance is selected, False otherwise
+        """
         return self.frameShape() > 0
 
-    def select(self, signal=True):
+    def select(self, signal: bool = True) -> None:
+        """
+        Select the AbstractViewWidget instance.
+        Selection is indicated by a white frame.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            emit a selected PyQt signal if True (default True).
+        """
         # < Revision 16/03/2025
         # noinspection PyTypeChecker
         self.setFrameShape(QFrame.Box)
@@ -1430,171 +1795,535 @@ class AbstractViewWidget(QFrame):
             # noinspection PyUnresolvedReferences
             self.Selected.emit(self)
 
-    def unselect(self):
+    def unselect(self) -> None:
+        """
+        Unselect the AbstractViewWidget instance.
+        """
         # < Revision 16/03/2025
         # noinspection PyTypeChecker
         self.setFrameShape(QFrame.NoFrame)
         if platform == 'win32': self.setStyleSheet('border-color: #000000')
         # Revision 16/03/2025 >
 
-    def setName(self, name):
+    def setName(self, name: str) -> None:
+        """
+        Set the name attribute of the AbstractViewWidget instance.
+
+        Parameters
+        ----------
+        name : str
+            name attribute of the AbstractViewWidget instance
+        """
         if isinstance(name, str): self._name = name
         else: raise TypeError('parameter type {} is not str.'.format(type(name)))
 
-    def getName(self):
+    def getName(self) -> str:
+        """
+        Get the name attribute of the AbstractViewWidget instance.
+
+        Returns
+        -------
+        str
+            name attribute of the AbstractViewWidget instance
+        """
         return self._name
 
     # < Revision 12/12/2024
-    def setTitle(self, title):
+    def setTitle(self, title: str) -> None:
+        """
+        Set the title attribute of the AbstractViewWidget instance.
+        This title is displayed in the middle of the top part of the view area.
+
+        Parameters
+        ----------
+        title : str
+            title attribute of the AbstractViewWidget instance
+        """
         self._title = title
     # Revision 12/12/2024 >
 
     # < Revision 12/12/2024
-    def getTitle(self):
+    def getTitle(self) -> str:
+        """
+        Get the title attribute of the AbstractViewWidget instance.
+        This title is displayed in the middle of the top part of the view area.
+
+        Returns
+        -------
+        str
+            title attribute of the AbstractViewWidget instance
+        """
         return self._title
     # Revision 12/12/2024 >
 
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
+        """
+        Check whether the volume attribute of the AbstractViewWidget instance is empty.
+
+        Returns
+        -------
+        bool
+            True if no SisypheVolume is displayed in the AbstractViewWidget instance, False otherwise
+        """
         return self._volume is None
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
+        """
+        Set the volume attribute of the AbstractViewWidget instance.
+        This attribute is the SisypheVolume displayed in the AbstractViewWidget instance.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            SisypheVolume to display in the AbstractViewWidget instance.
+        """
         if isinstance(volume, SisypheVolume):
             self._volume = volume
             self.displayOn()
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
-    def removeVolume(self):
+    def removeVolume(self) -> None:
+        """
+        Clear the volume attribute of the AbstractViewWidget instance.
+        No volume is displayed in the AbstractViewWidget instance.
+        """
         if self.hasVolume():
             self._volume = None
             self.removeAllTools(signal=False)
             self.displayOff()
 
-    def getVolume(self):
+    def getVolume(self) -> SisypheVolume:
+        """
+        Get the volume attribute of the AbstractViewWidget instance.
+        This attribute is the SisypheVolume displayed in the AbstractViewWidget instance.
+
+        Returns
+        -------
+        SisypheVolume
+            SisypheVolume displayed in the AbstractViewWidget instance.
+        """
         return self._volume
 
-    def hasVolume(self):
+    def hasVolume(self) -> bool:
+        """
+        Check whether the volume attribute of the AbstractViewWidget instance is not empty.
+
+        Returns
+        -------
+        bool
+            True if a SisypheVolume is defined and displayed in the AbstractViewWidget instance, False otherwise
+        """
         return self._volume is not None
 
-    def getRenderWindow(self):
+    def getRenderWindow(self) -> vtkRenderWindow:
+        """
+        Get the vtkRenderWindow attribute of the AbstractViewWidget instance.
+        Rendering window class where renderers draw their images.
+        https://vtk.org/doc/nightly/html/classvtkRenderWindow.html
+
+        Returns
+        -------
+        vtkRenderWindow
+        """
         return self._renderwindow
 
-    def getRenderer(self):
+    def getRenderer(self) -> vtkRenderer:
+        """
+        Get the vtkRenderer attribute of the AbstractViewWidget instance that manages the volume display.
+        https://vtk.org/doc/nightly/html/classvtkRenderer.html
+
+        Returns
+        -------
+        vtkRenderer
+        """
         return self._renderer
 
-    def get2DRenderer(self):
+    def get2DRenderer(self) -> vtkRenderer:
+        """
+        Get the vtkRenderer attribute of the AbstractViewWidget instance that manages the 2D display (information,
+        colorbar, orientation maker, ruler, cross-shaped cursor) in front of the volume.
+        https://vtk.org/doc/nightly/html/classvtkRenderer.html
+
+        Returns
+        -------
+        vtkRenderer
+        """
         return self._renderer2D
 
-    def getObjectRenderer(self):
-        return self._objetrenderer
+    # < Revision 20/10/2025
+    # def getObjectRenderer(self):
+    #    return self._objetrenderer
+    # Revision 20/10/2025 >
 
-    def getWindowInteractor(self):
+    def getWindowInteractor(self) -> vtkRenderWindowInteractor:
+        """
+        Get the vtkRenderWindowInteractor attribute of the AbstractViewWidget instance.
+        Platform-independent class that handle routing of mouse/key/timer messages.
+        https://vtk.org/doc/nightly/html/classvtkRenderWindowInteractor.html
+
+        Returns
+        -------
+        vtkRenderWindowInteractor
+        """
         return self._interactor
 
-    def getAction(self):
+    def getAction(self) -> dict[str, QAction]:
+        """
+        Get a dict of all the available QActions defined in the AbstractViewWidget instance.
+        A str key is used to address each QAction.
+        https://doc.qt.io/qt-6/qaction.html
+
+        Returns
+        -------
+            dict[str, QAction]
+                key str, QAction name
+        """
         return self._action
 
-    def getPopup(self):
+    def getPopup(self) -> QMenu:
+        """
+        Get the popup menu of the AbstractViewWidget instance.
+        https://doc.qt.io/qt-6/qmenu.html
+
+        Returns
+        -------
+            QMenu
+        """
         return self._popup
 
-    def getPopupVisibility(self):
+    def getPopupVisibility(self) -> bool:
+        """
+        Get the popup submenu **Visibility** of the AbstractViewWidget instance.
+        This submenu provides the following options:
+
+        - show cursor
+        - show information
+        - show orientation marker
+        - show colorbar
+        - show ruler
+        - show tooltip
+        - show all
+        - hide all
+
+        https://doc.qt.io/qt-6/qmenu.html
+
+        Returns
+        -------
+            QMenu
+        """
         return self._menuVisibility
 
-    def getPopupActions(self):
+    def getPopupActions(self) -> QMenu:
+        """
+        Get the popup submenu **Actions** of the AbstractViewWidget instance.
+        This submenu provides the following options:
+
+        - no action
+        - zoom: left press + drag to change image zoom
+        - move: left press + drag to change image position
+        - windowing level: left press + drag to change windowing level
+        - cursor follows mouse: the cross-shaped cursor follows the mouse pointer
+        - centered cursor: the cross-shaped cursor always remains centered in the view
+
+        https://doc.qt.io/qt-6/qmenu.html
+
+        Returns
+        -------
+            QMenu
+        """
         return self._menuActions
 
-    def getPopupInformation(self):
+    def getPopupInformation(self) -> QMenu:
+        """
+        Get the popup submenu **Information** of the AbstractViewWidget instance.
+        This submenu provides the following options:
+
+        - Identity (displayed at the top left of the view)
+        - Image attributes (displayed at the top right of the view)
+        - Acquisition attributes (displayed at the bottom left of the view)
+        - Orientation marker shape:
+
+            - Cube
+            - Head
+            - Bust
+            - Body
+            - Axes
+            - Brain
+
+        https://doc.qt.io/qt-6/qmenu.html
+
+        Returns
+        -------
+            QMenu
+        """
         return self._menuInformation
 
-    def getPopupColorbarPosition(self):
+    def getPopupColorbarPosition(self) -> QMenu:
+        """
+        Get the popup submenu **Colorbar position** of the AbstractViewWidget instance.
+        This submenu provides the following options:
+
+        - Left colorbar
+        - Right colorbar
+        - Top colorbar
+        - Bottom colorbar
+
+        https://doc.qt.io/qt-6/qmenu.html
+
+        Returns
+        -------
+            QMenu
+        """
         return self._menuColorbarPos
 
-    def getPopupRulerPosition(self):
+    def getPopupRulerPosition(self) -> QMenu:
+        """
+        Get the popup submenu **Ruler position** of the AbstractViewWidget instance.
+        This submenu provides the following options:
+
+        - Left ruler
+        - Right ruler
+        - Top ruler
+        - Bottom ruler
+
+        https://doc.qt.io/qt-6/qmenu.html
+
+        Returns
+        -------
+            QMenu
+        """
         return self._menuRulerPos
 
-    def getPopupTools(self):
+    def getPopupTools(self) -> QMenu:
+        """
+        Get the popup submenu **Tools** of the AbstractViewWidget instance.
+        This submenu provides the following options:
+
+        - Distance
+        - Orthogonal distances
+        - Angle
+        - Box
+        - Text
+        - Remove all
+        - Target
+        - Trajectory
+
+        https://doc.qt.io/qt-6/qmenu.html
+
+        Returns
+        -------
+            QMenu
+        """
         return self._menuTools
 
-    def popupMenuEnabled(self):
+    def popupMenuEnabled(self) -> None:
+        """
+        Enable the popup menu of the AbstractViewWidget instance.
+        """
         self._menuflag = True
 
-    def popupMenuDisabled(self):
+    def popupMenuDisabled(self) -> None:
+        """
+        Disable the popup menu of the AbstractViewWidget instance.
+        """
         self._menuflag = False
 
-    def popupVisibilityEnabled(self):
+    def popupVisibilityEnabled(self) -> None:
+        """
+        Enable the popup submenu **Visibility** of the AbstractViewWidget instance.
+        """
         self._menuVisibility.menuAction().setVisible(True)
 
-    def popupVisibilityDisabled(self):
+    def popupVisibilityDisabled(self) -> None:
+        """
+        Disable the popup submenu **Visibility** of the AbstractViewWidget instance.
+        """
         self._menuVisibility.menuAction().setVisible(False)
 
-    def popupActionsEnabled(self):
+    def popupActionsEnabled(self) -> None:
+        """
+        Enable the popup submenu **Actions** of the AbstractViewWidget instance.
+        """
         self._menuActions.menuAction().setVisible(True)
 
-    def popupActionsDisabled(self):
+    def popupActionsDisabled(self) -> None:
+        """
+        Disable the popup submenu **Actions** of the AbstractViewWidget instance.
+        """
         self._menuActions.menuAction().setVisible(False)
 
-    def popupColorbarPositionEnabled(self):
+    def popupColorbarPositionEnabled(self) -> None:
+        """
+        Enable the popup submenu **Colorbar position** of the AbstractViewWidget instance.
+        """
         self._menuColorbarPos.menuAction().setVisible(True)
 
-    def popupColorbarPositionDisabled(self):
+    def popupColorbarPositionDisabled(self) -> None:
+        """
+        Disable the popup submenu **Colorbar position** of the AbstractViewWidget instance.
+        """
         self._menuColorbarPos.menuAction().setVisible(False)
 
-    def popupToolsEnabled(self):
+    def popupToolsEnabled(self) -> None:
+        """
+        Enable the popup submenu **Tools** of the AbstractViewWidget instance.
+        """
         self._menuTools.menuAction().setVisible(True)
 
-    def popupToolsDisabled(self):
+    def popupToolsDisabled(self) -> None:
+        """
+        Disable the popup submenu **Tools** of the AbstractViewWidget instance.
+        """
         self._menuTools.menuAction().setVisible(False)
 
-    def getCamera(self):
+    def getCamera(self) -> vtkCamera:
+        """
+        Get the vtkCamera attribute of the AbstractViewWidget instance.
+        A camera class for 3D rendering that provides methods for positioning and orienting the viewpoint and focal
+        point. https://vtk.org/doc/nightly/html/classvtkCamera.html
+
+        Returns
+        -------
+            vtkCamera
+        """
         return self._renderer.GetActiveCamera()
 
-    def getTools(self):
+    def getTools(self) -> ToolWidgetCollection:
+        """
+        Get the ToolWidgetCollection associated with this viewport.
+
+        Returns
+        -------
+        ToolWidgetCollection
+            collection managing all tool widgets.
+        """
         return self._tools
 
-    def setNoActionFlag(self, signal=True):
+    def setNoActionFlag(self, signal: bool = True) -> None:
+        """
+        Set the mouse action to 'No action'. Disables move, zoom, and level/window actions.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self._action['noflag'].setChecked(True)
         if signal:
             # noinspection PyUnresolvedReferences
             self.ViewMethodCalled.emit(self, 'setNoActionFlag', None)
 
-    def setZoomFlag(self, signal=True):
+    def setZoomFlag(self, signal: bool = True) -> None:
+        """
+        Set the mouse action to 'Zoom'. Left-click and drag will zoom the viewport.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self._action['zoomflag'].setChecked(True)
         if signal:
             # noinspection PyUnresolvedReferences
             self.ViewMethodCalled.emit(self, 'setZoomFlag', None)
 
-    def getZoomFlag(self):
+    def getZoomFlag(self) -> bool:
+        """
+        Check if the current mouse action is 'Zoom'.
+
+        Returns
+        -------
+        bool
+            True if the zoom flag is set, False otherwise.
+        """
         return self._action['zoomflag'].isChecked()
 
-    def setMoveFlag(self, signal=True):
+    def setMoveFlag(self, signal: bool = True) -> None:
+        """
+        Set the mouse action to 'Move'. Left-click and drag will pan the viewport.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self._action['moveflag'].setChecked(True)
         if signal:
             # noinspection PyUnresolvedReferences
             self.ViewMethodCalled.emit(self, 'setMoveFlag', None)
 
-    def getMoveFlag(self):
+    def getMoveFlag(self) -> bool:
+        """
+        Check if the current mouse action is 'Move'.
+
+        Returns
+        -------
+        bool
+            True if the move flag is set, False otherwise.
+        """
         return self._action['moveflag'].isChecked()
 
-    def setLevelFlag(self, signal=True):
+    def setLevelFlag(self, signal: bool = True) -> None:
+        """
+        Set the mouse action to 'Level/Window'. Left-click and drag will adjust the windowing.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self._action['levelflag'].setChecked(True)
         if signal:
             # noinspection PyUnresolvedReferences
             self.ViewMethodCalled.emit(self, 'setLevelFlag', None)
 
-    def getLevelFlag(self):
+    def getLevelFlag(self) -> bool:
+        """
+        Check if the current mouse action is 'Level/Window'.
+
+        Returns
+        -------
+        bool
+            True if the level/window flag is set, False otherwise.
+        """
         return self._action['levelflag'].isChecked()
 
-    def setFollowFlag(self, signal=True):
+    def setFollowFlag(self, signal: bool = True) -> None:
+        """
+        Set the mouse action to 'Cursor follows mouse'. The cross-shaped cursor will track the mouse pointer.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self._action['followflag'].setChecked(True)
         if signal:
             # noinspection PyUnresolvedReferences
             self.ViewMethodCalled.emit(self, 'setFollowFlag', None)
 
-    def getFollowFlag(self):
+    def getFollowFlag(self) -> bool:
+        """
+        Check if the 'Cursor follows mouse' action is active.
+
+        Returns
+        -------
+        bool
+            True if the follow flag is set, False otherwise.
+        """
         return self._action['followflag'].isChecked()
 
     # < Revision 09/01/2025
     # add getCenteredCursorFlag method
-    def setCenteredCursorFlag(self, signal=True):
+    def setCenteredCursorFlag(self, signal: bool = True) -> None:
+        """
+        Set the mouse action to 'Centered cursor'. The cross-shaped cursor remains at the viewport's center.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self._action['centeredflag'].setChecked(True)
         p = self.getCursorWorldPosition()
         self.setCursorWorldPosition(p[0], p[1], p[2])
@@ -1605,28 +2334,76 @@ class AbstractViewWidget(QFrame):
 
     # < Revision 09/01/2025
     # add getCenteredCursorFlag method
-    def getCenteredCursorFlag(self):
+    def getCenteredCursorFlag(self) -> bool:
+        """
+        Check if the 'Centered cursor' action is active. The cross-shaped cursor remains at the viewport's center.
+
+        Returns
+        -------
+        bool
+            True if the centered cursor flag is set, False otherwise.
+        """
         return self._action['centeredflag'].isChecked()
     # Revision 09/01/2025 >
 
-    def setSynchronisation(self, v):
+    def setSynchronisation(self, v: bool) -> None:
+        """
+        Set the synchronization state of the viewport.
+
+        Parameters
+        ----------
+        v : bool
+            True to enable synchronization with other viewports, False to disable.
+        """
         if isinstance(v, bool):
             self._action['synchronisation'].setChecked(v)
         else: raise TypeError('parameter type {} is not bool'.format(type(v)))
 
-    def synchronisationOn(self):
+    def synchronisationOn(self) -> None:
+        """
+        Enable synchronization with other viewports.
+        """
         self.setSynchronisation(True)
 
-    def synchronisationOff(self):
+    def synchronisationOff(self) -> None:
+        """
+        Disable synchronization with other viewports.
+        """
         self.setSynchronisation(False)
 
-    def getSynchronisation(self):
+    def getSynchronisation(self) -> bool:
+        """
+        Get the current synchronization state.
+
+        Returns
+        -------
+        bool
+            True if synchronization is enabled, False otherwise.
+        """
         return self._action['synchronisation'].isChecked()
 
-    def isSynchronised(self):
+    def isSynchronised(self) -> bool:
+        """
+        Check if the viewport is synchronized with other viewports.
+
+        Returns
+        -------
+        bool
+            True if synchronization is enabled, False otherwise.
+        """
         return self._action['synchronisation'].isChecked()
 
-    def setInfoVisibility(self, v, signal=True):
+    def setInfoVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of the information text overlays.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the information, False to hide it.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             self._info['topleft'].SetVisibility(v and self._action['showident'].isChecked())
             self._info['topright'].SetVisibility(v and self._action['showimg'].isChecked())
@@ -1639,16 +2416,50 @@ class AbstractViewWidget(QFrame):
                 self.ViewMethodCalled.emit(self, 'setInfoVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setInfoVisibilityOn(self, signal=True):
+    def setInfoVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Show the information text actors.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setInfoVisibility(True, signal)
 
-    def setInfoVisibilityOff(self, signal=True):
+    def setInfoVisibilityOff(self, signal: bool = True) -> None:
+        """
+         Hide the information text actors.
+
+         Parameters
+         ----------
+         signal : bool (optional)
+             If True, emits the ViewMethodCalled signal for synchronization (default True).
+         """
         self.setInfoVisibility(False, signal)
 
-    def getInfoVisibility(self):
+    def getInfoVisibility(self) -> bool:
+        """
+        Check if the information text overlays are visible.
+
+        Returns
+        -------
+        bool
+            True if information is visible, False otherwise.
+        """
         return self._action['showinfo'].isChecked()
 
-    def setInfoIdentityVisibility(self, v, signal=True):
+    def setInfoIdentityVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of the identity information (top-left).
+
+        Parameters
+        ----------
+        v : bool
+            True to show the identity information, False to hide it.
+        signal : bool
+            If True, emits the ViewMethodCalled signal for synchronization.
+        """
         if isinstance(v, bool):
             self._action['showident'].setChecked(v)
             self._info['topleft'].SetVisibility(v and self._action['showinfo'].isChecked())
@@ -1658,16 +2469,50 @@ class AbstractViewWidget(QFrame):
                 self.ViewMethodCalled.emit(self, 'setInfoIdentityVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setInfoIdentityVisibilityOn(self, signal=True):
+    def setInfoIdentityVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Show the identity information text (top-left).
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setInfoVisibility(True, signal)
 
-    def setInfoIdentityVisibilityOff(self, signal=True):
+    def setInfoIdentityVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the identity information text (top-left).
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setInfoVisibility(False, signal)
 
-    def getInfoIdentityVisibility(self):
+    def getInfoIdentityVisibility(self) -> bool:
+        """
+        Check if the identity information is visible.
+
+        Returns
+        -------
+        bool
+            True if identity information is visible, False otherwise.
+        """
         return self._action['showident'].isChecked()
 
-    def setInfoVolumeVisibility(self, v, signal=True):
+    def setInfoVolumeVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of the volume attributes information (top-right).
+
+        Parameters
+        ----------
+        v : bool
+            True to show the volume information, False to hide it.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             self._action['showimg'].setChecked(v)
             self._info['topright'].SetVisibility(v and self._action['showinfo'].isChecked())
@@ -1677,16 +2522,50 @@ class AbstractViewWidget(QFrame):
                 self.ViewMethodCalled.emit(self, 'setInfoVolumeVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setInfoVolumeVisibilityOn(self, signal=True):
+    def setInfoVolumeVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Show the volume attributes information text (top-right).
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setInfoVisibility(True, signal)
 
-    def setInfoVolumeVisibilityOff(self, signal=True):
+    def setInfoVolumeVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the volume attributes information text (top-right).
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setInfoVisibility(False, signal)
 
-    def getInfoVolumeVisibility(self):
+    def getInfoVolumeVisibility(self) -> bool:
+        """
+        Check if the volume attributes information is visible.
+
+        Returns
+        -------
+        bool
+            True if volume information is visible, False otherwise.
+        """
         return self._action['showimg'].isChecked()
 
-    def setInfoAcquisitionVisibility(self, v, signal=True):
+    def setInfoAcquisitionVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+         Set the visibility of the acquisition information (bottom-left).
+
+         Parameters
+         ----------
+         v : bool
+             True to show the acquisition information, False to hide it.
+         signal : bool (optional)
+             If True, emits the ViewMethodCalled signal for synchronization (default True).
+         """
         if isinstance(v, bool):
             self._action['showacq'].setChecked(v)
             self._info['bottomleft'].SetVisibility(v and self._action['showinfo'].isChecked())
@@ -1696,16 +2575,50 @@ class AbstractViewWidget(QFrame):
                 self.ViewMethodCalled.emit(self, 'setInfoAcquisitionVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setInfoAcquisitionVisibilityOn(self, signal=True):
+    def setInfoAcquisitionVisibilityOn(self, signal: bool = True) -> None:
+        """
+         Show the acquisition information text (bottom-left).
+
+         Parameters
+         ----------
+         signal : bool (optional)
+             If True, emits the ViewMethodCalled signal for synchronization (default True).
+         """
         self.setInfoVisibility(True, signal)
 
-    def setInfoAcquisitionVisibilityOff(self, signal=True):
+    def setInfoAcquisitionVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the acquisition information text (bottom-left).
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setInfoVisibility(False, signal)
 
-    def getInfoAcquisitionVisibility(self):
+    def getInfoAcquisitionVisibility(self) -> bool:
+        """
+        Check if the acquisition information is visible.
+
+        Returns
+        -------
+        bool
+            True if acquisition information is visible, False otherwise.
+        """
         return self._action['showacq'].isChecked()
 
-    def setColorbarVisibility(self, v, signal=True):
+    def setColorbarVisibility(self, v, signal: bool = True) -> None:
+        """
+        Set the visibility of the colorbar.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the colorbar, False to hide it.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             self._colorbar.SetVisibility(v)
             self._action['showcolorbar'].setChecked(v)
@@ -1715,19 +2628,61 @@ class AbstractViewWidget(QFrame):
                 self.ViewMethodCalled.emit(self, 'setColorbarVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
         
-    def setColorbarVisibilityOn(self, signal=True):
+    def setColorbarVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Show the colorbar.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setColorbarVisibility(True, signal)
         
-    def setColorbarVisibilityOff(self, signal=True):
+    def setColorbarVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the colorbar.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setColorbarVisibility(False, signal)
 
-    def getColorbarVisibility(self):
+    def getColorbarVisibility(self) -> bool:
+        """
+        Check if the colorbar is visible.
+
+        Returns
+        -------
+        bool
+            True if the colorbar is visible, False otherwise.
+        """
         return self._action['showcolorbar'].isChecked()
 
-    def getColorbar(self):
+    def getColorbar(self) -> vtkScalarBarActor:
+        """
+        Get the vtkScalarBarActor instance.
+
+        Returns
+        -------
+        vtkScalarBarActor
+            colorbar actor.
+        """
         return self._colorbar
 
-    def setColorbarPosition(self, pos='Left', signal=True):
+    def setColorbarPosition(self, pos: str = 'Left', signal: bool = True) -> None:
+        """
+        Set the position of the colorbar in the viewport.
+
+        Parameters
+        ----------
+        pos : str (optional)
+            position, one of 'Left', 'Right', 'Top', 'Bottom' (default 'Left').
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         pos = pos.lower()
         if pos == 'left':
             self._colorbar.SetMaximumWidthInPixels(150)
@@ -1770,19 +2725,59 @@ class AbstractViewWidget(QFrame):
             # noinspection PyUnresolvedReferences
             self.ViewMethodCalled.emit(self, 'setColorbarPosition', pos)
 
-    def setColorbarPositionToLeft(self, signal=True):
+    def setColorbarPositionToLeft(self, signal: bool = True) -> None:
+        """
+        Move the colorbar to the left side of the viewport.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setColorbarPosition('left', signal)
 
-    def setColorbarPositionToRight(self, signal=True):
+    def setColorbarPositionToRight(self, signal: bool = True) -> None:
+        """
+        Move the colorbar to the right side of the viewport.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setColorbarPosition('right', signal)
 
-    def setColorbarPositionToTop(self, signal=True):
+    def setColorbarPositionToTop(self, signal: bool = True) -> None:
+        """
+        Move the colorbar to the top of the viewport.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setColorbarPosition('top', signal)
 
-    def setColorbarPositionToBottom(self, signal=True):
+    def setColorbarPositionToBottom(self, signal: bool = True) -> None:
+        """
+        Move the colorbar to the bottom of the viewport.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setColorbarPosition('bottom', signal)
 
-    def getColorbarPosition(self):
+    def getColorbarPosition(self) -> str:
+        """
+        Get the current position of the colorbar.
+
+        Returns
+        -------
+        str
+            current colorbar position ('Left', 'Right', 'Top', or 'Bottom').
+        """
         if self._action['leftcolorbar'].isChecked(): return 'Left'
         elif self._action['rightcolorbar'].isChecked(): return 'Right'
         elif self._action['topcolorbar'].isChecked(): return 'Top'
@@ -1790,19 +2785,45 @@ class AbstractViewWidget(QFrame):
 
     # < Revision 03/12/2024
     # add hasHorizontalColorbar method
-    def hasHorizontalColorbar(self):
+    def hasHorizontalColorbar(self) -> bool:
+        """
+        Check if the colorbar has a horizontal orientation.
+
+        Returns
+        -------
+        bool
+            True if the colorbar is on the left or right, False otherwise.
+        """
         return self._action['leftcolorbar'].isChecked() or \
             self._action['rightcolorbar'].isChecked()
     # Revision 03/12/2024 >
 
     # < Revision 03/12/2024
     # add hasVerticalColorbar method
-    def hasVerticalColorbar(self):
+    def hasVerticalColorbar(self) -> bool:
+        """
+        Check if the colorbar has a vertical orientation.
+
+        Returns
+        -------
+        bool
+            True if the colorbar is on the top or bottom, False otherwise.
+        """
         return self._action['topcolorbar'].isChecked() or \
             self._action['bottomcolorbar'].isChecked()
     # Revision 03/12/2024 >
 
-    def setTooltipVisibility(self, v, signal=True):
+    def setTooltipVisibility(self, v, signal: bool = True) -> None:
+        """
+        Set the visibility of tooltips for VTK widgets.
+
+        Parameters
+        ----------
+        v : bool
+            True to enable tooltips, False to disable them.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             if v is True: self.setToolTip(self._tooltipstr)
             else: self.setToolTip('')
@@ -1813,16 +2834,50 @@ class AbstractViewWidget(QFrame):
                 self.ViewMethodCalled.emit(self, 'setTooltipVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setTooltipVisibilityOn(self, signal=True):
+    def setTooltipVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Enable tooltips for VTK widgets.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setTooltipVisibility(True, signal)
 
-    def setTooltipVisibilityOff(self, signal=True):
+    def setTooltipVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Disable tooltips for VTK widgets.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setTooltipVisibility(False, signal)
 
-    def getTooltipVisibility(self):
+    def getTooltipVisibility(self) -> bool:
+        """
+        Check if tooltips are visible.
+
+        Returns
+        -------
+        bool
+            True if tooltips are visible, False otherwise.
+        """
         return self._action['showtooltip'].isChecked()
 
-    def setRulerVisibility(self, v, signal=True):
+    def setRulerVisibility(self, v, signal: bool = True) -> None:
+        """
+        Set the visibility of the ruler.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the ruler, False to hide it.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             self._ruler.SetVisibility(v)
             self._action['showruler'].setChecked(v)
@@ -1833,19 +2888,61 @@ class AbstractViewWidget(QFrame):
                 self.ViewMethodCalled.emit(self, 'setRulerVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setRulerVisibilityOn(self, signal=True):
+    def setRulerVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Show the ruler.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setRulerVisibility(True, signal)
 
-    def setRulerVisibilityOff(self, signal=True):
+    def setRulerVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the ruler.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setRulerVisibility(False, signal)
 
-    def getRulerVisibility(self):
+    def getRulerVisibility(self) -> bool:
+        """
+        Check if the ruler is visible.
+
+        Returns
+        -------
+        bool
+            True if the ruler is visible, False otherwise.
+        """
         return self._action['showruler'].isChecked()
 
-    def getRuler(self):
+    def getRuler(self) -> vtkAxisActor2D:
+        """
+        Get the vtkAxisActor2D instance used as a ruler.
+
+        Returns
+        -------
+        vtkAxisActor2D
+            ruler actor.
+        """
         return self._ruler
 
-    def setRulerPosition(self, pos='Left', signal=True):
+    def setRulerPosition(self, pos: str = 'Left', signal: bool = True) -> None:
+        """
+        Set the position of the ruler in the viewport.
+
+        Parameters
+        ----------
+        pos : str (optional)
+            position, one of 'Left', 'Right', 'Top', 'Bottom' (default 'left').
+        signal : bool
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         pos = pos.lower()
         if pos == 'left':
             self._ruler.GetPoint1Coordinate().SetValue(0.01, 0.3)
@@ -1868,32 +2965,90 @@ class AbstractViewWidget(QFrame):
             # noinspection PyUnresolvedReferences
             self.ViewMethodCalled.emit(self, 'setRulerPosition', pos)
 
-    def setRulerPositionToLeft(self, signal=True):
+    def setRulerPositionToLeft(self, signal: bool = True) -> None:
+        """
+        Move the ruler to the left side of the viewport.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setRulerPosition('left', signal)
 
-    def setRulerPositionToRight(self, signal=True):
+    def setRulerPositionToRight(self, signal: bool = True) -> None:
+        """
+        Move the ruler to the right side of the viewport.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setRulerPosition('right', signal)
 
-    def setRulerPositionToTop(self, signal=True):
+    def setRulerPositionToTop(self, signal: bool = True) -> None:
+        """
+         Move the ruler to the top of the viewport.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setRulerPosition('top', signal)
 
-    def setRulerPositionToBottom(self, signal=True):
+    def setRulerPositionToBottom(self, signal: bool = True) -> None:
+        """
+        Move the ruler to the bottom of the viewport.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setRulerPosition('bottom', signal)
 
-    def getRulerPosition(self):
+    def getRulerPosition(self) -> str:
+        """
+        Get the current position of the ruler.
+
+        Returns
+        -------
+        str
+            current ruler position ('Left', 'Right', 'Top', or 'Bottom').
+        """
         if self._action['leftruler'].isChecked(): return 'Left'
         elif self._action['rightruler'].isChecked(): return 'Right'
         elif self._action['topruler'].isChecked(): return 'Top'
         else: return 'Bottom'
 
-    def getOrientationMarker(self):
+    def getOrientationMarker(self) -> str:
+        """
+        Get the current shape of the orientation marker.
+
+        Returns
+        -------
+        str
+            marker shape ('Cube', 'Head', 'Bust', 'Body', or 'Axes').
+        """
         if self._action['shapecube'].isChecked(): return 'Cube'
         elif self._action['shapehead'].isChecked(): return 'Head'
         elif self._action['shapebust'].isChecked(): return 'Bust'
         elif self._action['shapebody'].isChecked(): return 'Body'
         else: return 'Axes'
 
-    def setOrientationMarker(self, markertype, signal=True):
+    def setOrientationMarker(self, markertype: str, signal: bool = True) -> None:
+        """
+        Set the shape and actor for the orientation marker widget.
+
+        Parameters
+        ----------
+        markertype : str
+            shape of marker to use ('cube', 'head', 'bust', 'body', 'brain', 'axes').
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if self._orientmarker is not None:
             self._orientmarker.SetEnabled(False)
             del self._orientmarker
@@ -1964,25 +3119,83 @@ class AbstractViewWidget(QFrame):
             # noinspection PyUnresolvedReferences
             self.ViewMethodCalled.emit(self, 'setOrientationMarker', markertype)
 
-    def setOrientationMarkerToBody(self, signal=True):
+    def setOrientationMarkerToBody(self, signal: bool = True) -> None:
+        """
+        Set the orientation marker to a body shape.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setOrientationMarker('body', signal)
 
-    def setOrientationMarkerToHead(self, signal=True):
+    def setOrientationMarkerToHead(self, signal: bool = True) -> None:
+        """
+        Set the orientation marker to a head shape.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setOrientationMarker('head', signal)
 
-    def setOrientationMarkerToBust(self, signal=True):
+    def setOrientationMarkerToBust(self, signal: bool = True) -> None:
+        """
+        Set the orientation marker to a bust shape.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setOrientationMarker('bust', signal)
 
-    def setOrientationMarkerToBrain(self, signal=True):
+    def setOrientationMarkerToBrain(self, signal: bool = True) -> None:
+        """
+        Set the orientation marker to a brain shape.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setOrientationMarker('brain', signal)
 
-    def setOrientationMarkerToCube(self, signal=True):
+    def setOrientationMarkerToCube(self, signal: bool = True) -> None:
+        """
+        Set the orientation marker to an annotated cube.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setOrientationMarker('cube', signal)
 
-    def setOrientationMarkerToAxes(self, signal=True):
+    def setOrientationMarkerToAxes(self, signal: bool = True) -> None:
+        """
+        Set the orientation marker to a 3D axes actor.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setOrientationMarker('axes', signal)
 
-    def setOrientationMakerVisibility(self, v, signal=True):
+    def setOrientationMakerVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of the orientation marker.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the marker, False to hide it.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, bool) and self._orientmarker is not None:
             self._orientmarker.SetEnabled(v)
             self._action['showmarker'].setChecked(v)
@@ -1992,40 +3205,112 @@ class AbstractViewWidget(QFrame):
                 self.ViewMethodCalled.emit(self, 'setOrientationMakerVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setOrientationMarkerVisibilityOn(self, signal=True):
+    def setOrientationMarkerVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Show the orientation marker.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setOrientationMakerVisibility(True, signal)
 
-    def setOrientationMarkerVisibilityOff(self, signal=True):
+    def setOrientationMarkerVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the orientation marker.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setOrientationMakerVisibility(False, signal)
 
-    def getOrientationMarkerVisibility(self):
+    def getOrientationMarkerVisibility(self) -> bool:
+        """
+        Check if the orientation marker is visible.
+
+        Returns
+        -------
+        bool
+            True if the marker is visible, False otherwise.
+        """
         return self._action['showmarker'].isChecked()
 
-    def setCentralCrossVisibility(self, v):
+    def setCentralCrossVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the central cross.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the cross, False to hide it.
+        """
         if isinstance(v, bool) and self._cross is not None:
             self._cross.SetVisibility(v)
         else: raise TypeError('parameter functype is not bool or int.')
 
-    def setCentralCrossVisibilityOn(self):
+    def setCentralCrossVisibilityOn(self) -> None:
+        """
+        Show the central cross.
+        """
         self.setCentralCrossVisibility(True)
 
-    def setCentralCrossVisibilityOff(self):
+    def setCentralCrossVisibilityOff(self) -> None:
+        """
+        Hide the central cross.
+        """
         self.setCentralCrossVisibility(False)
 
-    def getCentralCrossVisibility(self):
+    def getCentralCrossVisibility(self) -> bool:
+        """
+        Check if the central cross is visible.
+
+        Returns
+        -------
+        bool
+            True if the cross is visible, False otherwise.
+        """
         return self._cross.GetVisibility() > 0
 
-    def setCentralCrossOpacity(self, v):
+    def setCentralCrossOpacity(self, v: float):
+        """
+        Set the opacity of the central cross.
+
+        Parameters
+        ----------
+        v : float
+            Opacity value between 0.0 (transparent) and 1.0 (opaque).
+        """
         if isinstance(v, float):
             if 0.0 <= v <= 1.0:
                 self._cross.GetProperty().SetOpacity(v)
             else: raise ValueError('parameter value is not between 0.0 and 1.0.')
         else: raise TypeError('parameter functype is not float.')
 
-    def getCentralCrossOpacity(self):
+    def getCentralCrossOpacity(self) -> float:
+        """
+        Get the opacity of the central cross.
+
+        Returns
+        -------
+        float
+            opacity value.
+        """
         return self._cross.GetProperty().GetOpacity()
 
-    def setCursorVisibility(self, v, signal=True):
+    def setCursorVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of the cross-shaped cursor.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the cursor, False to hide it.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             if self._cursor is not None: self._cursor.SetVisibility(v)
             self._action['showcursor'].setChecked(v)
@@ -2035,18 +3320,52 @@ class AbstractViewWidget(QFrame):
                 self.ViewMethodCalled.emit(self, 'setCursorVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setCursorVisibilityOn(self, signal=True):
+    def setCursorVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Show the cross-shaped cursor.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setCursorVisibility(True, signal)
 
-    def setCursorVisibilityOff(self, signal=True):
+    def setCursorVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the cross-shaped cursor.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setCursorVisibility(False, signal)
 
-    def getCursorVisibility(self):
+    def getCursorVisibility(self) -> bool:
+        """
+        Check if the cross-shaped cursor is visible.
+
+        Returns
+        -------
+        bool
+            True if the cursor is visible, False otherwise.
+        """
         return self._action['showcursor'].isChecked()
 
     # < Revision 19/12/2024
     # add setCursorOpacity method
-    def setCursorOpacity(self, v: float, signal=True):
+    def setCursorOpacity(self, v: float, signal: bool = True) -> None:
+        """
+        Set the opacity of the cross-shaped cursor.
+
+        Parameters
+        ----------
+        v : float
+            Opacity value between 0.0 (transparent) and 1.0 (opaque).
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, float):
             if 0.0 <= v <= 1.0:
                 # < Revision 07/01/2025
@@ -2062,7 +3381,15 @@ class AbstractViewWidget(QFrame):
 
     # < Revision 19/12/2024
     # add getCursorOpacity method
-    def getCursorOpacity(self):
+    def getCursorOpacity(self) -> float:
+        """
+        Get the opacity of the cross-shaped cursor.
+
+        Returns
+        -------
+        float
+            opacity value.
+        """
         # < Revision 07/01/2025
         # return self._cross.GetProperty().GetOpacity()
         return self._cursor.GetProperty().GetOpacity()
@@ -2071,13 +3398,31 @@ class AbstractViewWidget(QFrame):
 
     # < Revision 17/03/2025
     # add getFontFamily method
-    def getFontFamily(self):
+    def getFontFamily(self) -> str:
+        """
+        Get the current font family used for text overlays.
+
+        Returns
+        -------
+        str
+            font family name or path.
+        """
         return self._ffamily
     # Revision 17/03/2025 >
 
     # < Revision 17/03/2025
     # add setFontFamily method
-    def setFontFamily(self, s, signal=True):
+    def setFontFamily(self, s: str, signal: bool = True) -> None:
+        """
+        Set the font family for all text overlays in the viewport.
+
+        Parameters
+        ----------
+        s : str
+            Font family name ('Arial', 'Courier', 'Times') or path to a .ttf/.otf file.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(s, str):
             if s in ('Arial', 'Courier', 'Times'):
                 self._ffamily = s
@@ -2134,13 +3479,32 @@ class AbstractViewWidget(QFrame):
 
     # < Revision 17/03/2025
     # add getFontSize method
-    def getFontSize(self):
+    def getFontSize(self) -> int:
+        """
+        Get the base font size for text overlays.
+
+        Returns
+        -------
+        int
+            The base font size.
+        """
         return self._fsize
     # Revision 17/03/2025 >
 
     # < Revision 17/03/2025
     # add setFontSize method
-    def setFontSize(self, s, signal=True):
+    def setFontSize(self, s: int, signal: bool = True) -> None:
+        """
+        Set the base font size for all text overlays.
+        The final size is `s * font_scale`.
+
+        Parameters
+        ----------
+        s : int
+            base font size.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(s, int):
             self._fsize = s
             s = int(self._fsize * self._fscale)
@@ -2164,7 +3528,18 @@ class AbstractViewWidget(QFrame):
 
     # < Revision 17/03/2025
     # add setFontScale method
-    def setFontScale(self, s, signal=True):
+    def setFontScale(self, s: float, signal: bool = True) -> None:
+        """
+        Set the scale factor for all text overlays.
+        The final size is `font_size * s`.
+
+        Parameters
+        ----------
+        s : float
+            font scale factor (clamped between 0.5 and 2.0).
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(s, float):
             if s < 0.5: s = 0.5
             elif s > 2.0: s = 2.0
@@ -2190,13 +3565,31 @@ class AbstractViewWidget(QFrame):
 
     # < Revision 17/03/2025
     # add getFontScale method
-    def getFontScale(self):
+    def getFontScale(self) -> float:
+        """
+        Get the current font scale factor.
+
+        Returns
+        -------
+        float
+            font scale factor.
+        """
         return self._fscale
     # Revision 17/03/2025 >
 
     # < Revision 17/03/2025
     # add setFontSizeScale method
-    def setFontSizeScale(self, s: tuple[int, float], signal=True):
+    def setFontSizeScale(self, s: tuple[int, float], signal: bool = True) -> None:
+        """
+        Set both the base font size and scale factor simultaneously.
+
+        Parameters
+        ----------
+        s : tuple[int, float]
+            A tuple containing the base font size and the scale factor.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(s, tuple):
             if isinstance(s[0], int): self._fsize = s[0]
             if isinstance(s[1], float): self._fscale = s[1]
@@ -2221,7 +3614,17 @@ class AbstractViewWidget(QFrame):
 
     # < Revision 17/03/2025
     # add setFontProperties method
-    def setFontProperties(self, s: tuple[str, int, float], signal=True):
+    def setFontProperties(self, s: tuple[str | None, int | None, float | None], signal: bool = True) -> None:
+        """
+        Set the font family, base size, and scale factor simultaneously.
+
+        Parameters
+        ----------
+        s : tuple[str | None, int | None, float | None]
+            A tuple containing font family, base size, and scale factor. None values are ignored.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(s, tuple):
             if isinstance(s[0], str): self._ffamily = s[0]
             if isinstance(s[1], int): self._fsize = s[1]
@@ -2235,7 +3638,17 @@ class AbstractViewWidget(QFrame):
         else: raise TypeError('parameter type {} is not tuple.'.format(type(s)))
     # Revision 17/03/2025 >
 
-    def setLineOpacity(self, v, signal=True):
+    def setLineOpacity(self, v: float, signal: bool = True) -> None:
+        """
+        Set the opacity for all line-based overlays (text, cursors, tools).
+
+        Parameters
+        ----------
+        v : float
+            Opacity value between 0.0 (transparent) and 1.0 (opaque).
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, float):
             if 0.0 <= v <= 1.0:
                 self._lalpha = v
@@ -2259,10 +3672,28 @@ class AbstractViewWidget(QFrame):
             else: raise ValueError('parameter value is not between 0.0 and 1.0.')
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getLineOpacity(self):
+    def getLineOpacity(self) -> float:
+        """
+        Get the current line opacity for overlays.
+
+        Returns
+        -------
+        float
+            opacity value.
+        """
         return self._lalpha
 
-    def setLineWidth(self, v, signal=True):
+    def setLineWidth(self, v: float, signal: bool = True) -> None:
+        """
+        Set the line width for all line-based overlays (cursors, tools).
+
+        Parameters
+        ----------
+        v : float
+            line width in pixels.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, float):
             self._lwidth = v
             if self._cursor is not None: self._cursor.GetProperty().SetLineWidth(v)
@@ -2275,10 +3706,28 @@ class AbstractViewWidget(QFrame):
                 self.ViewMethodCalled.emit(self, 'setLineWidth', v)
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getLineWidth(self):
+    def getLineWidth(self) -> float:
+        """
+        Get the current line width for overlays.
+
+        Returns
+        -------
+        float
+            line width in pixels.
+        """
         return self._lwidth
 
-    def setLineColor(self, c, signal=True):
+    def setLineColor(self, c: list[float] | tuple[float, float, float], signal: bool = True) -> None:
+        """
+        Set the color for all non-selected line-based overlays (text, cursors, tools).
+
+        Parameters
+        ----------
+        c : list[float] | tuple[float, float, float]
+            color as an (r, g, b) tuple with values from 0.0 to 1.0.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(c, (list, tuple)):
             r = c[0]
             g = c[1]
@@ -2305,7 +3754,17 @@ class AbstractViewWidget(QFrame):
             else: self._lcolor = (1.0, 1.0, 1.0)
         else: TypeError('parameter type {} is not tuple or list.'.format(type(c)))
 
-    def setLineSelectedColor(self, c, signal=True):
+    def setLineSelectedColor(self, c: list[float] | tuple[float, float, float], signal: bool = True) -> None:
+        """
+        Set the color for selected tools.
+
+        Parameters
+        ----------
+        c : list[float] | tuple[float, float, float]
+            color as an (r, g, b) tuple with values from 0.0 to 1.0.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(c, (list, tuple)):
             r = c[0]
             g = c[1]
@@ -2319,13 +3778,43 @@ class AbstractViewWidget(QFrame):
             else: self._lcolor = (1.0, 1.0, 1.0)
         else: TypeError('parameter type {} is not tuple or list.'.format(type(c)))
 
-    def getLineColor(self):
+    def getLineColor(self) -> tuple[float, float, float]:
+        """
+        Get the current color for non-selected overlays.
+
+        Returns
+        -------
+        tuple[float, float, float]
+            (r, g, b) color tuple.
+        """
         return self._lcolor
 
-    def getLineSelectedColor(self):
+    def getLineSelectedColor(self) -> tuple[float, float, float]:
+        """
+        Get the current color for selected tools.
+
+        Returns
+        -------
+        tuple[float, float, float]
+            (r, g, b) color tuple.
+        """
         return self._slcolor
 
-    def setCursorWorldPosition(self, x, y, z, signal=True):
+    def setCursorWorldPosition(self, x: float, y: float, z: float, signal: bool = True) -> None:
+        """
+        Set the 3D world position of the cross-shaped cursor.
+
+        Parameters
+        ----------
+        x : float
+            world x-coordinate.
+        y : float
+            world y-coordinate.
+        z : float
+            world z-coordinate.
+        signal : bool (optional)
+            If True and synchronization is on, emits the CursorPositionChanged signal (default True).
+        """
         if self._volume is not None:
             p = self._getRoundedCoordinate([x, y, z])
             if self._axisconstraint > 0:
@@ -2337,12 +3826,29 @@ class AbstractViewWidget(QFrame):
                 # noinspection PyUnresolvedReferences
                 self.CursorPositionChanged.emit(self, p[0], p[1], p[2])
 
-    def getCursorWorldPosition(self):
+    def getCursorWorldPosition(self) -> tuple[float, float, float]:
+        """
+        Get the 3D world position of the cross-shaped cursor.
+
+        Returns
+        -------
+        tuple[float, float, float]
+            (x, y, z) world coordinates of the cross-shaped cursor.
+        """
         return self._cursor.GetPosition()
 
     # < Revision 12/12/2024
     # add getCursorArrayPosition method
-    def getCursorArrayPosition(self):
+    def getCursorArrayPosition(self) -> tuple[int, int, int]:
+
+        """
+        Get the cross-shaped cursor position in array (voxel) coordinates.
+
+        Returns
+        -------
+        tuple[int, int, int]
+            (i, j, k) array coordinates of the cursor.
+        """
         p = self._cursor.GetPosition()
         size = self._volume.getSize()
         spacing = self._volume.getSpacing()
@@ -2358,25 +3864,63 @@ class AbstractViewWidget(QFrame):
         return x, y, z
     # Revision 12/12/2024 >
 
-    def setCursorEnabled(self):
+    def setCursorEnabled(self) -> None:
+        """
+        Enable cross-shaped cursor updates.
+        """
         self._cursorenabled = True
 
-    def setCursorDisabled(self):
+    def setCursorDisabled(self) -> None:
+        """
+        Disable cross-shaped cursor updates.
+        """
         self._cursorenabled = False
 
-    def isCursorEnabled(self):
+    def isCursorEnabled(self) -> bool:
+        """
+        Check if the cross-shaped cursor is enabled.
+
+        Returns
+        -------
+        bool
+            True if the cursor is enabled, False otherwise.
+        """
         return self._cursorenabled is True
 
-    def setRoundedCursorCoordinatesEnabled(self):
+    def setRoundedCursorCoordinatesEnabled(self) -> None:
+        """
+        Enable rounding of cross-shaped cursor coordinates to the nearest voxel.
+        """
         self._roundedenabled = True
 
-    def setRoundedCursorCoordinatesDisabled(self):
+    def setRoundedCursorCoordinatesDisabled(self) -> None:
+        """
+        Disable rounding of cross-shaped cursor coordinates. Coordinates will be continuous.
+        """
         self._roundedenabled = False
 
-    def isRoundedCursorCoordinatesEnabled(self):
+    def isRoundedCursorCoordinatesEnabled(self) -> bool:
+        """
+        Check if cross-shaped cursor coordinate rounding is enabled.
+
+        Returns
+        -------
+        bool
+            True if rounding is enabled, False otherwise.
+        """
         return self._roundedenabled is True
 
-    def setAxisConstraintToCursor(self, v, signal=True):
+    def setAxisConstraintToCursor(self, v: int, signal: bool = True) -> None:
+        """
+        Constrain cross-shaped cursor movement to a specific axis.
+
+        Parameters
+        ----------
+        v : int
+            axis constraint: 0=None, 1=x-axis, 2=y-axis, 3=z-axis.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, int):
             if 0 <= v < 5:
                 self._axisconstraint = v
@@ -2386,19 +3930,61 @@ class AbstractViewWidget(QFrame):
             else: raise ValueError('parameter value {} is out of range (0 to 3).'.format(v))
         else: raise TypeError('parameter type {} is not int.'.format(type(v)))
 
-    def setNoAxisConstraintToCursor(self, signal=True):
+    def setNoAxisConstraintToCursor(self, signal: bool = True) -> None:
+        """
+        Remove any axis constraint from the cross-shaped cursor movement.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setAxisConstraintToCursor(0, signal)
 
-    def setXAxisConstraintToCursor(self, signal=True):
+    def setXAxisConstraintToCursor(self, signal: bool = True) -> None:
+        """
+        Constrain cross-shaped cursor movement to the x-axis.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setAxisConstraintToCursor(1, signal)
 
-    def setYAxisConstraintToCursor(self, signal=True):
+    def setYAxisConstraintToCursor(self, signal: bool = True) -> None:
+        """
+        Constrain cross-shaped cursor movement to the y-axis.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setAxisConstraintToCursor(2, signal)
 
-    def setZAxisConstraintToCursor(self, signal=True):
+    def setZAxisConstraintToCursor(self, signal: bool = True) -> None:
+        """
+        Constrain cross-shaped cursor movement to the z-axis.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setAxisConstraintToCursor(3, signal)
 
-    def setMouseCursor(self, shape, signal=True):
+    def setMouseCursor(self, shape: int, signal: bool = True) -> None:
+        """
+        Set the shape of the mouse pointer in the render window.
+
+        Parameters
+        ----------
+        shape : int
+            VTK mouse pointer shape constant (e.g., VTK_CURSOR_ARROW).
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(shape, int):
             self._renderwindow.SetCurrentCursor(shape)
             if signal:
@@ -2406,25 +3992,81 @@ class AbstractViewWidget(QFrame):
                 self.ViewMethodCalled.emit(self, 'setMouseCursor', shape)
         else: raise TypeError('parameter type {} is not int'.format(type(shape)))
 
-    def setDefaultMouseCursor(self, signal=True):
+    def setDefaultMouseCursor(self, signal: bool = True) -> None:
+        """
+        Set the mouse pointer to the default shape.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setMouseCursor(VTK_CURSOR_DEFAULT, signal)
 
-    def setArrowMouseCursor(self, signal=True):
+    def setArrowMouseCursor(self, signal: bool = True) -> None:
+        """
+        Set the mouse pointer to an arrow shape.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setMouseCursor(VTK_CURSOR_ARROW, signal)
 
-    def setHandMouseCursor(self, signal=True):
+    def setHandMouseCursor(self, signal: bool = True) -> None:
+        """
+        Set the mouse pointer to a hand shape.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setMouseCursor(VTK_CURSOR_HAND, signal)
 
-    def setCrossHairMouseCursor(self, signal=True):
+    def setCrossHairMouseCursor(self, signal: bool = True) -> None:
+        """
+        Set the mouse pointer to a crosshair shape.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setMouseCursor(VTK_CURSOR_CROSSHAIR, signal)
 
-    def setSizeAllMouseCursor(self, signal=True):
+    def setSizeAllMouseCursor(self, signal: bool = True) -> None:
+        """
+        Set the mouse pointer to a 'size all' shape.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setMouseCursor(VTK_CURSOR_SIZEALL, signal)
 
-    def getMouseCursor(self):
+    def getMouseCursor(self) -> int:
+        """
+        Get the current shape of the mouse pointer.
+
+        Returns
+        -------
+        int
+            VTK cursor shape constant.
+        """
         return self._renderwindow.GetCurrentCursor()
 
-    def hideAll(self, signal=True):
+    def hideAll(self, signal: bool = True) -> None:
+        """
+        Hide all optional overlays (cursor, info, colorbar, ruler, etc.).
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits ViewMethodCalled signals for synchronization (default True).
+        """
         self.setCursorVisibilityOff(signal)
         self.setInfoVisibilityOff(signal)
         self.setColorbarVisibilityOff(signal)
@@ -2433,7 +4075,15 @@ class AbstractViewWidget(QFrame):
         self.setOrientationMarkerVisibilityOff(signal)
         self.setTooltipVisibilityOff(signal)
 
-    def showAll(self, signal=True):
+    def showAll(self, signal: bool = True) -> None:
+        """
+        Show all optional overlays (cursor, info, colorbar, ruler, etc.).
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits ViewMethodCalled signals for synchronization (default True).
+        """
         self.setCursorVisibilityOn(signal)
         self.setInfoVisibilityOn(signal)
         self.setColorbarVisibilityOn(signal)
@@ -2442,19 +4092,59 @@ class AbstractViewWidget(QFrame):
         self.setOrientationMarkerVisibilityOn(signal)
         self.setTooltipVisibilityOn(signal)
 
-    def getTopLeftInfo(self):
+    def getTopLeftInfo(self) -> vtkTextActor:
+        """
+        Get the text actor for the top-left information display.
+
+        Returns
+        -------
+        vtkTextActor
+            The top-left text actor.
+        """
         return self._info['topleft']
 
-    def getTopRightInfo(self):
+    def getTopRightInfo(self) -> vtkTextActor:
+        """
+        Get the text actor for the top-right information display.
+
+        Returns
+        -------
+        vtkTextActor
+            The top-right text actor.
+        """
         return self._info['topright']
 
-    def getBottomLeftInfo(self):
+    def getBottomLeftInfo(self) -> vtkTextActor:
+        """
+        Get the text actor for the bottom-left information display.
+
+        Returns
+        -------
+        vtkTextActor
+            The bottom-left text actor.
+        """
         return self._info['bottomleft']
 
-    def getBottomRightInfo(self):
+    def getBottomRightInfo(self) -> vtkTextActor:
+        """
+        Get the text actor for the bottom-right information display.
+
+        Returns
+        -------
+        vtkTextActor
+            The bottom-right text actor.
+        """
         return self._info['bottomright']
 
-    def getPixmapCapture(self):
+    def getPixmapCapture(self) -> QPixmap:
+        """
+        Capture the current viewport content as a QPixmap.
+
+        Returns
+        -------
+        QPixmap
+            pixmap of the current render window content.
+        """
         if self.hasVolume():
             c = vtkWindowToImageFilter()
             c.SetInput(self._renderwindow)
@@ -2468,7 +4158,11 @@ class AbstractViewWidget(QFrame):
             return QPixmap.fromImage(cap)
         else: raise AttributeError('Volume attribute is None.')
 
-    def saveCapture(self):
+    def saveCapture(self) -> None:
+        """
+        Open a file dialog to save the current viewport content to an image file.
+        Supported formats are BMP, JPG, PNG, and TIFF.
+        """
         if self.hasVolume():
             name = QFileDialog.getSaveFileName(self, caption='Save view capture', directory=getcwd(),
                                                filter='BMP (*.bmp);;JPG (*.jpg);;PNG (*.png);;TIFF (*.tiff)',
@@ -2487,7 +4181,10 @@ class AbstractViewWidget(QFrame):
                 except Exception as err:
                     messageBox(self, 'Save view capture', text='error : {}'.format(err))
 
-    def copyToClipboard(self):
+    def copyToClipboard(self) -> None:
+        """
+        Copy the current viewport content to the system clipboard as an image.
+        """
         if self.hasVolume():
             # Quick and dirty with temporary disk file
             c = vtkWindowToImageFilter()
@@ -2506,7 +4203,10 @@ class AbstractViewWidget(QFrame):
             finally:
                 if exists(temp): remove(temp)
 
-    def zoomIn(self):
+    def zoomIn(self) -> None:
+        """
+        Zoom in on the viewport by a fixed factor (1.1).
+        """
         if self._renderer.GetActiveCamera().GetParallelScale() > 1:
             self._renderer.GetActiveCamera().Zoom(1.1)
             self._updateRuler()
@@ -2514,7 +4214,10 @@ class AbstractViewWidget(QFrame):
             # noinspection PyUnresolvedReferences
             self.ZoomChanged.emit(self, self._renderer.GetActiveCamera().GetParallelScale())
 
-    def zoomOut(self):
+    def zoomOut(self) -> None:
+        """
+        Zoom out of the viewport by a fixed factor (0.9).
+        """
         if self._renderer.GetActiveCamera().GetParallelScale() < 1000:
             self._renderer.GetActiveCamera().Zoom(0.9)
             self._updateRuler()
@@ -2522,14 +4225,27 @@ class AbstractViewWidget(QFrame):
             # noinspection PyUnresolvedReferences
             self.ZoomChanged.emit(self, self._renderer.GetActiveCamera().GetParallelScale())
 
-    def zoomDefault(self):
+    def zoomDefault(self) -> None:
+        """
+        Reset the viewport to the default zoom level.
+        """
         self._renderer.GetActiveCamera().SetParallelScale(self._DEFAULTZOOM)
         self._updateRuler()
         self._renderwindow.Render()
         # noinspection PyUnresolvedReferences
         self.ZoomChanged.emit(self, self._DEFAULTZOOM)
 
-    def setZoom(self, z, signal=True):
+    def setZoom(self, z: float, signal: bool = True) -> None:
+        """
+        Set the zoom level of the viewport to a specific value.
+
+        Parameters
+        ----------
+        z : float
+            parallel scale value for the camera. Smaller values mean more zoom.
+        signal : bool (optional)
+            If True, emits the ZoomChanged signal for synchronization (default True).
+        """
         if isinstance(z, float):
             self._renderer.GetActiveCamera().SetParallelScale(z)
             self._updateRuler()
@@ -2539,34 +4255,83 @@ class AbstractViewWidget(QFrame):
                 self.ZoomChanged.emit(self, z)
         else: raise TypeError('parameter type {} is not float.'.format(type(z)))
 
-    def getZoom(self):
+    def getZoom(self) -> float:
+        """
+        Get the current zoom level of the viewport.
+
+        Returns
+        -------
+        float
+            parallel scale value of the camera.
+        """
         return self._renderer.GetActiveCamera().GetParallelScale()
 
-    def updateRender(self):
+    def updateRender(self) -> None:
+        """
+        Force a re-render of the vtkRenderWindow.
+        """
         self._renderwindow.Render()
 
     # Public tools methods
 
-    def getToolCollection(self):
+    def getToolCollection(self) -> ToolWidgetCollection:
+        """
+        Get the collection of all tool widgets associated with this viewport.
+
+        Returns
+        -------
+        ToolWidgetCollection
+            collection managing all tool widgets.
+        """
         return self._tools
 
     # 2D Tools methods
 
-    def setAcceptTools(self, v):
+    def setAcceptTools(self, v: bool) -> None:
+        """
+        Set whether the viewport can accept new tool widgets.
+
+        Parameters
+        ----------
+        v : bool
+            True to allow adding new tools, False to prevent it.
+        """
         if isinstance(v, bool):
             self._accepttools = v
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setAcceptToolsOn(self):
+    def setAcceptToolsOn(self) -> None:
+        """
+        Allow the viewport to accept new tool widgets.
+        """
         self.setAcceptTools(True)
 
-    def setAcceptToolsOff(self):
+    def setAcceptToolsOff(self) -> None:
+        """
+        Prevent the viewport from accepting new tool widgets.
+        """
         self.setAcceptTools(False)
 
-    def getAcceptTools(self):
+    def getAcceptTools(self) -> bool:
+        """
+        Check if the viewport is currently accepting new tool widgets.
+
+        Returns
+        -------
+        bool
+            True if new tools can be added, False otherwise.
+        """
         return self._accepttools
 
-    def addDistanceTool(self, name=''):
+    def addDistanceTool(self, name: str = '') -> None:
+        """
+        Add a new 2D distance measurement tool to the viewport.
+
+        Parameters
+        ----------
+        name : str (optional)
+            optional name for the new tool (default '').
+        """
         if self._accepttools:
             widget = self._tools.newDistanceWidget(name)
             # < Revision 16/03/2025
@@ -2578,7 +4343,15 @@ class AbstractViewWidget(QFrame):
             # Revision 16/03/2025 >
             widget.EnabledOn()
 
-    def addOrthogonalDistanceTool(self, name=''):
+    def addOrthogonalDistanceTool(self, name: str = '') -> None:
+        """
+        Add a new 2D orthogonal distance (bi-dimensional) measurement tool to the viewport.
+
+        Parameters
+        ----------
+        name : str (optional)
+            optional name for the new tool (default '').
+        """
         if self._accepttools:
             widget = self._tools.newOrthogonalDistanceWidget(name)
             # < Revision 16/03/2025
@@ -2590,7 +4363,15 @@ class AbstractViewWidget(QFrame):
             # Revision 16/03/2025 >
             widget.EnabledOn()
 
-    def addAngleTool(self, name=''):
+    def addAngleTool(self, name: str = '') -> None:
+        """
+        Add a new 2D angle measurement tool to the viewport.
+
+        Parameters
+        ----------
+        name : str (optional)
+            optional name for the new tool (default '').
+        """
         if self._accepttools:
             widget = self._tools.newAngleWidget(name)
             # < Revision 16/03/2025
@@ -2602,7 +4383,17 @@ class AbstractViewWidget(QFrame):
             # Revision 16/03/2025 >
             widget.EnabledOn()
 
-    def addBoxTool(self, p=None, name=''):
+    def addBoxTool(self, p: list[float] | tuple[float, float, float] | None = None, name: str = '') -> None:
+        """
+        Add a new 2D box widget tool to the viewport.
+
+        Parameters
+        ----------
+        p : list[float] | tuple[float, float, float] | None (optional)
+            initial world position for the tool. If None, the cross-shaped cursor position is used.
+        name : str (optional)
+            optional name for the new tool (default '').
+        """
         if not p: p = self.getCursorWorldPosition()
         x, y = self._getDisplayFromWorld(p[0], p[1], p[2])
         x, y = self._getNormalizedViewportFromDisplay(x, y)
@@ -2617,7 +4408,16 @@ class AbstractViewWidget(QFrame):
         widget.AddObserver('EndInteractionEvent', self._onBoxEndInteractionEvent)
         widget.EnabledOn()
 
-    def addTextTool(self, p=None):
+    def addTextTool(self, p: list[float] | tuple[float, float, float] | None = None) -> None:
+        """
+        Add a new 2D text annotation tool to the viewport.
+        Opens a dialog to enter the text.
+
+        Parameters
+        ----------
+        p : list[float] | tuple[float, float, float] | None (optional)
+            initial world position for the tool. If None, the cursor position is used.
+        """
         if not p: p = self.getCursorWorldPosition()
         x, y = self._getDisplayFromWorld(p[0], p[1], p[2])
         p = self._getScreenFromDisplay(x, y)
@@ -2636,7 +4436,15 @@ class AbstractViewWidget(QFrame):
             # Revision 16/03/2025 >
             widget.EnabledOn()
 
-    def removeAll2DTools(self, signal=True):
+    def removeAll2DTools(self, signal: bool = True) -> None:
+        """
+        Remove all 2D measurement tools (Distance, OrthogonalDistance, Angle) from the viewport.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         n = self._tools.count()
         if n > 0:
             for i in range(n-1, -1, -1):
@@ -2650,7 +4458,27 @@ class AbstractViewWidget(QFrame):
 
     # 3D Tools methods
 
-    def addTarget(self, p=None, name='', signal=True):
+    def addTarget(self,
+                  p: list[float] | tuple[float, float, float] | None = None,
+                  name: str = '',
+                  signal: bool = True) -> HandleWidget:
+        """
+        Add a 3D target (handle) widget to the viewport.
+
+        Parameters
+        ----------
+        p : list[float] | tuple[float, float, float] | None (optional)
+            initial world position for the target. If None, the cross-shaped cursor position is used.
+        name : str (optional)
+            optional name for the new target (default '').
+        signal : bool (optional)
+            If True, emits the ToolAdded signal for synchronization (default True).
+
+        Returns
+        -------
+        HandleWidget
+            The newly created handle widget.
+        """
         if self._accepttools:
             from Sisyphe.widgets.volumeViewWidget import VolumeViewWidget
             if p is None: p = self.getCursorWorldPosition()
@@ -2682,7 +4510,36 @@ class AbstractViewWidget(QFrame):
             return widget
         else: raise AttributeError('accepttools attribute is False.')
 
-    def addTrajectory(self, p1=None, p2=None, angles=None, length: float = 50.0, name='', signal=True):
+    def addTrajectory(self,
+                      p1: list[float] | tuple[float, float, float] | None = None,
+                      p2: list[float] | tuple[float, float, float] | None = None,
+                      angles: list[float] | tuple[float, float] | None = None,
+                      length: float = 50.0,
+                      name: str = '',
+                      signal: bool = True) -> LineWidget:
+        """
+        Add a 3D trajectory (line) widget to the viewport.
+
+        Parameters
+        ----------
+        p1 : list[float] | tuple[float, float, float] | None (optional)
+            world position of the entry point.
+        p2 : list[float] | tuple[float, float, float] | None (optional)
+            world position of the target point. If None, the cursor position is used.
+        angles : list[float] | tuple[float, float] | None (optional)
+            Azimuth and elevation angles to define the trajectory from the target.
+        length : float (optional)
+            length in mm of the trajectory (default 50.0).
+        name : str (optional)
+            optional name for the new trajectory (default '').
+        signal : bool (optional)
+            If True, emits the ToolAdded signal for synchronization (default True).
+
+        Returns
+        -------
+        LineWidget
+            The newly created line widget.
+        """
         if self._accepttools:
             from Sisyphe.widgets.volumeViewWidget import VolumeViewWidget
             if p2 is None: p2 = self.getCursorWorldPosition()  # Target
@@ -2717,13 +4574,42 @@ class AbstractViewWidget(QFrame):
             return widget
         else: raise AttributeError('accepttools attribute is False.')
 
-    def hasTools(self):
+    def hasTools(self) -> bool:
+        """
+        Check if the viewport contains any tool widgets.
+
+        Returns
+        -------
+        bool
+            True if at least one tool exists, False otherwise.
+        """
         return len(self._tools) > 0
 
-    def getToolCount(self):
+    def getToolCount(self) -> int:
+        """
+        Get the number of tool widgets in the viewport.
+
+        Returns
+        -------
+        int
+            total number of tools.
+        """
         return len(self._tools)
 
-    def getTool(self, key):
+    def getTool(self, key: int | str) -> NamedWidget | HandleWidget | LineWidget:
+        """
+        Get a specific tool by its index or name.
+
+        Parameters
+        ----------
+        key : int | str
+            index or name of the tool to retrieve.
+
+        Returns
+        -------
+        NamedWidget | HandleWidget | LineWidget
+            requested tool widget.
+        """
         if isinstance(key, int):
             if 0 <= key < self._tools.count(): return self._tools[key]
             else: ValueError('tool index {} is out of range.'.format(key))
@@ -2732,7 +4618,31 @@ class AbstractViewWidget(QFrame):
             else: raise ValueError('tool name {} not in SisypheToolCollection.'.format(key))
         else: raise TypeError('parameter type {} is not int, str, HandleWidget or LineWidget.'.format(type(key)))
 
-    def moveTool(self, key, target, entry=None, angles=None, length=None, signal=True):
+    def moveTool(self,
+                 key: int | str | HandleWidget | LineWidget,
+                 target: list[float] | tuple[float, float, float],
+                 entry: list[float] | tuple[float, float, float] | None = None,
+                 angles: list[float] | tuple[float, float] | None = None,
+                 length: float | None = None,
+                 signal: bool = True) -> None:
+        """
+        Move a specified tool to a new position.
+
+        Parameters
+        ----------
+        key : int | str | HandleWidget | LineWidget
+            tool to move, identified by index, name, or instance.
+        target : list[float] | tuple[float, float, float]
+            new target world position.
+        entry : list[float] | tuple[float, float, float] | None, optional
+            new entry world position (for LineWidget).
+        angles : list[float] | tuple[float, float] | None, optional
+            new angles to define the trajectory (for LineWidget).
+        length : float | None, optional
+            new length in mm for the trajectory (for LineWidget).
+        signal : bool (optional)
+            If True, emits the ToolMoved signal for synchronization (default True).
+        """
         if isinstance(key, int):
             if 0 <= key < self._tools.count(): key = self._tools[key]
             else: ValueError('tool index {} is out of range.'.format(key))
@@ -2760,7 +4670,22 @@ class AbstractViewWidget(QFrame):
             else: raise ValueError('tool name {} is not in SisypheToolCollection.'.format(key.getName()))
         else: raise TypeError('parameter type {} is not int, str, HandleWidget or LineWidget.'.format(type(key)))
 
-    def renameTool(self, key, name, signal=True):
+    def renameTool(self,
+                   key: int | str | HandleWidget | LineWidget,
+                   name: str,
+                   signal: bool = True) -> None:
+        """
+        Rename a specified tool.
+
+        Parameters
+        ----------
+        key : int | str | HandleWidget | LineWidget
+            tool to rename, identified by index, name, or instance.
+        name : str
+            new name for the tool.
+        signal : bool (optional)
+            If True, emits the ToolRenamed signal for synchronization (default True).
+        """
         if isinstance(key, int):
             if 0 <= key < self._tools.count(): key = self._tools[key]
             else: ValueError('tool index {} is out of range.'.format(key))
@@ -2776,7 +4701,22 @@ class AbstractViewWidget(QFrame):
             else: raise ValueError('tool name {} is not in SisypheToolCollection.'.format(key.getName()))
         else: raise TypeError('parameter type {} is not int, str, HandleWidget or LineWidget.'.format(type(key)))
 
-    def copyToolAttributes(self, key, tool, signal=True):
+    def copyToolAttributes(self,
+                           key: int | str | HandleWidget | LineWidget,
+                           tool: HandleWidget | LineWidget,
+                           signal: bool = True) -> None:
+        """
+        Copy attributes from one tool to another.
+
+        Parameters
+        ----------
+        key : int | str | HandleWidget | LineWidget
+            source tool, identified by index, name, or instance.
+        tool : HandleWidget | LineWidget
+            destination tool.
+        signal : bool (optional)
+            If True, emits the ToolAttributesChanged signal for synchronization (default True).
+        """
         if isinstance(key, int):
             if 0 <= key < self._tools.count(): key = self._tools[key]
             else: ValueError('tool index {} is out of range.'.format(key))
@@ -2792,7 +4732,19 @@ class AbstractViewWidget(QFrame):
             else: raise ValueError('tool {} is not in SisypheToolCollection.'.format(key.getName()))
         else: raise TypeError('parameter type {} is not HandleWidget or LineWidget.'.format(type(key)))
 
-    def removeTool(self, key, signal=True):
+    def removeTool(self,
+                   key: int | str | HandleWidget | LineWidget,
+                   signal: bool = True) -> None:
+        """
+        Remove a specified tool from the viewport.
+
+        Parameters
+        ----------
+        key : int | str | HandleWidget | LineWidget
+            tool to remove, identified by index, name, or instance.
+        signal : bool (optional)
+            If True, emits the ToolRemoved signal for synchronization (default True).
+        """
         if isinstance(key, int):
             if 0 <= key < self._tools.count(): key = self._tools[key]
             else: ValueError('tool index {} is out of range.'.format(key))
@@ -2819,7 +4771,15 @@ class AbstractViewWidget(QFrame):
             else: raise ValueError('tool {} is not in SisypheToolCollection.'.format(key.getName()))
         else: raise TypeError('parameter type {} is not int, str, HandleWidget or LineWidget.'.format(type(key)))
 
-    def removeAllTools(self, signal=True):
+    def removeAllTools(self, signal: bool = True) -> None:
+        """
+        Remove all tool widgets (2D and 3D) from the viewport.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits a ToolRemoved signal for each 3D tool for synchronization (default True).
+        """
         if len(self._tools) > 0:
             keys = self._tools.keys()
             for k in keys:
@@ -2833,7 +4793,22 @@ class AbstractViewWidget(QFrame):
                 self.removeTool(self._tools[k].getName())
             self._tools.clear()
 
-    def setToolInteractive(self, key, v, signal=True):
+    def setToolInteractive(self,
+                           key: int | str | HandleWidget | LineWidget,
+                           v: bool,
+                           signal: bool = True) -> None:
+        """
+        Set the interactive state of a specified tool.
+
+        Parameters
+        ----------
+        key : int | str | HandleWidget | LineWidget
+            tool to modify, identified by index, name, or instance.
+        v : bool
+            True to make the tool interactive, False to make it non-interactive.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(key, int):
             if 0 <= key < self._tools.count(): key = self._tools[key]
             else: ValueError('tool index {} is out of range.'.format(key))
@@ -2859,13 +4834,49 @@ class AbstractViewWidget(QFrame):
             else: raise ValueError('tool {} is not in SisypheToolCollection.'.format(key.getName()))
         else: raise TypeError('parameter type {} is not int, str, HandleWidget or LineWidget.'.format(type(key)))
 
-    def setToolInteractiveOn(self, key, signal=True):
+    def setToolInteractiveOn(self,
+                             key: int | str | HandleWidget | LineWidget,
+                             signal: bool = True) -> None:
+        """
+        Make a specified tool interactive.
+
+        Parameters
+        ----------
+        key : int | str | HandleWidget | LineWidget
+            tool to modify, identified by index, name, or instance.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setToolInteractive(key, True, signal)
 
-    def setToolInteractiveOff(self, key, signal=True):
+    def setToolInteractiveOff(self,
+                              key: int | str | HandleWidget | LineWidget,
+                              signal: bool = True) -> None:
+        """
+        Make a specified tool non-interactive.
+
+        Parameters
+        ----------
+        key : int | str | HandleWidget | LineWidget
+            tool to modify, identified by index, name, or instance.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setToolInteractive(key, False, signal)
 
-    def lockTool(self, key, signal=True):
+    def lockTool(self,
+                 key: int | str | HandleWidget | LineWidget,
+                 signal: bool = True) -> None:
+        """
+        Lock a tool, preventing it from being moved or modified by user interaction.
+
+        Parameters
+        ----------
+        key : int | str | HandleWidget | LineWidget
+            tool to lock, identified by index, name, or instance.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(key, int):
             if 0 <= key < self._tools.count(): key = self._tools[key]
             else: ValueError('tool index {} is out of range.'.format(key))
@@ -2885,7 +4896,19 @@ class AbstractViewWidget(QFrame):
             else: raise ValueError('tool {} is not in SisypheToolCollection.'.format(key.getName()))
         else: raise TypeError('parameter type {} is not int, str, HandleWidget or LineWidget.'.format(type(key)))
 
-    def unlockTool(self, key, signal=True):
+    def unlockTool(self,
+                   key: int | str | HandleWidget | LineWidget,
+                   signal: bool = True) -> None:
+        """
+        Unlock a tool, allowing it to be moved or modified by user interaction.
+
+        Parameters
+        ----------
+        key : int | str | HandleWidget | LineWidget
+            tool to unlock, identified by index, name, or instance.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(key, int):
             if 0 <= key < self._tools.count(): key = self._tools[key]
             else: ValueError('tool index {} is out of range.'.format(key))
@@ -2905,7 +4928,20 @@ class AbstractViewWidget(QFrame):
             else: raise ValueError('tool {} is not in SisypheToolCollection.'.format(key.getName()))
         else: raise TypeError('parameter type {} is not int, str, HandleWidget or LineWidget.'.format(type(key)))
 
-    def isToolLocked(self, key):
+    def isToolLocked(self, key: int | str | HandleWidget | LineWidget) -> bool:
+        """
+        Check if a tool is locked.
+
+        Parameters
+        ----------
+        key : int | str | HandleWidget | LineWidget
+            tool to check, identified by index, name, or instance.
+
+        Returns
+        -------
+        bool
+            True if the tool is locked, False otherwise.
+        """
         if isinstance(key, int):
             if 0 <= key < self._tools.count(): key = self._tools[key]
             else: ValueError('tool index {} is out of range.'.format(key))
@@ -2921,35 +4957,127 @@ class AbstractViewWidget(QFrame):
 
     # Abstract tool VTK event methods
 
-    def _onBoxInteractionEvent(self, widget, event):
+    def _onBoxInteractionEvent(self, widget: vtk3DWidget, event: Any) -> None:
+        """
+        Abstract callback for vtkBoxWidget interaction VTK events.
+
+        Parameters
+        ----------
+        widget : vtk3DWidget
+            caller vtkObject.
+        event : Any
+            event parameter.
+        """
         pass
 
-    def _onBoxStartInteractionEvent(self, widget, event):
+    def _onBoxStartInteractionEvent(self, widget: vtk3DWidget, event: Any) -> None:
+        """
+        Abstract callback for vtkBoxWidget start interaction VTK events.
+
+        Parameters
+        ----------
+        widget : vtk3DWidget
+            caller vtkObject.
+        event : Any
+            event parameter.
+        """
         pass
 
-    def _onBoxEndInteractionEvent(self, widget, event):  # to do
+    def _onBoxEndInteractionEvent(self, widget: vtk3DWidget, event: Any) -> None:
+        """
+        Abstract callback for vtkBoxWidget end interaction VTK events.
+
+        Parameters
+        ----------
+        widget : vtk3DWidget
+            caller vtkObject.
+        event : Any
+            event parameter.
+        """
         pass
 
-    def _onTargetInteractionEvent(self, widget, event):
+    def _onTargetInteractionEvent(self, widget: vtk3DWidget, event: Any) -> None:
+        """
+        Abstract callback for HandleWidget interaction VTK events.
+
+        Parameters
+        ----------
+        widget : vtk3DWidget
+            caller vtkObject.
+        event : Any
+            event parameter.
+        """
         pass
 
-    def _onTargetStartInteractionEvent(self, widget, event):
+    def _onTargetStartInteractionEvent(self, widget: vtk3DWidget, event: Any) -> None:
+        """
+        Abstract callback for HandleWidget start interaction VTK events.
+
+        Parameters
+        ----------
+        widget : vtk3DWidget
+            caller vtkObject.
+        event : Any
+            event parameter.
+        """
         pass
 
     # noinspection PyUnusedLocal
-    def _onTargetEndInteractionEvent(self, widget, event):
+    def _onTargetEndInteractionEvent(self, widget: vtk3DWidget, event: Any) -> None:
+        """
+        Callback for HandleWidget end interaction VTK events.
+        Updates the cursor position and emits the ToolMoved signal.
+
+        Parameters
+        ----------
+        widget : vtk3DWidget
+            caller vtkObject.
+        event : Any
+            event parameter.
+        """
         p = widget.getPosition()
         self.setCursorWorldPosition(p[0], p[1], p[2], signal=True)
         # noinspection PyUnresolvedReferences
         self.ToolMoved.emit(self, widget)
 
-    def _onTrajectoryInteractionEvent(self, widget, event):
+    def _onTrajectoryInteractionEvent(self, widget: vtk3DWidget, event: Any) -> None:
+        """
+        Abstract callback for LineWidget interaction VTK events.
+
+        Parameters
+        ----------
+        widget : vtk3DWidget
+            caller vtkObject.
+        event : Any
+            event parameter.
+        """
         pass
 
-    def _onTrajectoryStartInteractionEvent(self, widget, event):
+    def _onTrajectoryStartInteractionEvent(self, widget: vtk3DWidget, event: Any) -> None:
+        """
+        Abstract callback for LineWidget start interaction VTK events.
+
+        Parameters
+        ----------
+        widget : vtk3DWidget
+            caller vtkObject.
+        event : Any
+            event parameter.
+        """
         pass
 
-    def _onTrajectoryEndInteractionEvent(self, widget, event):
+    def _onTrajectoryEndInteractionEvent(self, widget: vtk3DWidget, event: Any) -> None:
+        """
+        Callback for LineWidget end interaction VTK events.
+        Updates the cross-sahep cursor position to the target point and emits the ToolMoved signal.
+
+        Parameters
+        ----------
+        widget : vtk3DWidget
+            caller vtkObject.
+        event : Any
+            event parameter.
+        """
         p = widget.getPosition2()  # Target point position
         self.setCursorWorldPosition(p[0], p[1], p[2], signal=True)
         # noinspection PyUnresolvedReferences
@@ -2957,12 +5085,27 @@ class AbstractViewWidget(QFrame):
 
     # Abstract private method
 
-    def _initCursor(self):
+    def _initCursor(self) -> None:
+        """
+        Abstract method for cursor initialization.
+        Subclasses must implement this to create their specific cursor actor.
+        """
         pass
 
     # Private VTK event method
 
-    def _onRightPressEvent(self, obj, evt_name):
+    def _onRightPressEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handle the right mouse button press VTK event.
+        Shows the appropriate popup menu (main or tool-specific) at the mouse pointer location.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (RightButtonPressEvent).
+        """
         x, y = self._window.GetInteractorStyle().GetLastPos()
         p = self._getScreenFromDisplay(x, y)
         picker = self._interactor.GetPicker()
@@ -2987,29 +5130,110 @@ class AbstractViewWidget(QFrame):
                 tag = False
         if tag and self._menuflag: self._popup.popup(p)
 
-    def _onLeftPressEvent(self, obj, evt_name):
+    def _onLeftPressEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handle the left mouse button press VTK event.
+        Selects the widget if it is selectable.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (LeftButtonPressEvent).
+        """
         if self.isSelectable():
             if not self.isSelected(): self.select()
 
     # Abstract private VTK event methods
 
-    def _onWheelForwardEvent(self, obj, evt_name):
+    def _onWheelForwardEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Abstract callback for mouse wheel forward VTK events. To be implemented by subclasses.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (MouseWheelForwardEvent).
+        """
         pass
 
-    def _onWheelBackwardEvent(self, obj, evt_name):
+    def _onWheelBackwardEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Abstract callback for mouse wheel backward VTK events. To be implemented by subclasses.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (MouseWheelBackwardEvent).
+        """
         pass
 
-    def _onLeftReleaseEvent(self, obj, evt_name):
+    def _onLeftReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Abstract callback for left mouse button release VTK events. To be implemented by subclasses.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            The VTK object that triggered the event.
+        evt_name : str
+            The name of the event (LeftButtonReleaseEvent).
+        """
         pass
 
-    def _onMiddlePressEvent(self, obj, evt_name):
+    def _onMiddlePressEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Abstract callback for middle mouse button press VTK events. To be implemented by subclasses.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            The VTK object that triggered the event.
+        evt_name : str
+            The name of the event (MiddleButtonPressEvent).
+        """
         pass
 
-    def _onMouseMoveEvent(self, obj, evt_name):
+    def _onMouseMoveEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Abstract callback for mouse move VTK events. To be implemented by subclasses.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            The VTK object that triggered the event.
+        evt_name : str
+            The name of the event (MouseMoveEvent).
+        """
         pass
 
-    def _onKeyPressEvent(self, obj, evt_name):
+    def _onKeyPressEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Abstract callback for key press VTK events. To be implemented by subclasses.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            The VTK object that triggered the event.
+        evt_name : str
+            The name of the event (KeyPressEvent).
+        """
         pass
 
-    def _onKeyReleaseEvent(self, obj, evt_name):
+    def _onKeyReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Abstract callback for key release VTK events. To be implemented by subclasses.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            The VTK object that triggered the event.
+        evt_name : str
+            The name of the event (KeyReleaseEvent).
+        """
         pass

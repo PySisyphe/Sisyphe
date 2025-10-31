@@ -6,6 +6,8 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from typing import Any
+
 from os import getcwd
 from os import chdir
 
@@ -70,6 +72,19 @@ Class hierarchy
 class QDoubleSpinBox2(QDoubleSpinBox):
 
     def textFromValue(self, v: float) -> str:
+        """
+        Convert a float value to its text representation, removing trailing zeros.
+
+        Parameters
+        ----------
+        v : float
+            The value to convert.
+
+        Returns
+        -------
+        str
+            The formatted string representation of the value.
+        """
         # noinspection PyTypeChecker
         f = QLocale(QLocale.English, QLocale.UnitedStates)
         f.setNumberOptions(QLocale.OmitGroupSeparator)
@@ -83,7 +98,41 @@ class SettingsWidget(QWidget):
     Description
     ~~~~~~~~~~~
 
-    Widget to manage application settings from XML file (settings.xml).
+    Widget to manage application settings from an XML file (settings.xml).
+    This widget displays a list of the parameters of a function/section, i.e. first level node of the XML file.
+
+    It has a main button that toggles the visibility of the parameters, as well as four IO buttons:
+
+    - 'Reset': Reset the settings to their default values from a settings file.
+    - 'Load': load settings from a custom XML file.
+    - 'Save': save the current settings to the user's default settings file (~/.PySisyphe/settings.xml)
+    - 'Save As': save the current settings to a custom XML file.
+
+    Parameter types in the settings.xml are as follows:
+
+    - str, represented by a QLineEdit widget
+    - int, represented by a QSpinBox widget
+    - float, represented by a QDoubleSpinBox2 widget
+    - percent, percent parameter (0 to 100), represented by a QSlider widget
+    - bool, represented by a QCheckBox widget
+    - visibility, two states parameter i.e. show/hide, represented by a VisibilityLabel widget
+    - lstr, list of str, represented by QComboBox widgets
+    - lint, list of int, represented by multiple QSpinBox widgets
+    - lfloat,list of float, represented by multiple QDoubleSpinBox widgets
+    - lbool, list of bool, represented by multiple QComboBox (True/False items) widgets
+    - color, represented by a ColorSelectPushButton widget
+    - lut, lut name, represented by a ComboBoxLut widget
+    - font, font name, represented by a FontSelect widget
+    - date, date str, represented by a QDateEdit widget
+    - vol, PySisyphe volume file name, represented by a FileSelectionWidget
+    - roi, PySisyphe ROI file name, represented by a FileSelectionWidget
+    - dcm, Dicom file name, represented by a FileSelectionWidget
+    - dir, Path, represented by a FileSelectionWidget
+    - vols, list of PySisyphe volume file names, represented by a FilesSelectionWidget
+    - rois, list of PySisyphe ROI file names, represented by a FilesSelectionWidget
+    - dcms, list of Dicom file names, represented by a FilesSelectionWidget
+    - dirs, list of paths, represented by a FilesSelectionWidget
+    - txt, text file name, represented by a FileSelectionWidget
 
     Inheritance
     ~~~~~~~~~~~
@@ -91,7 +140,7 @@ class SettingsWidget(QWidget):
     QWidget -> SettingsWidget -> FunctionSettingsWidget
 
     Creation: 11/08/2022
-    Last revision: 07/10/2025
+    Last revision: 23/10/2025
     """
 
     _VSIZE = 24
@@ -106,33 +155,86 @@ class SettingsWidget(QWidget):
     # Class methods
 
     @classmethod
-    def isDarkMode(cls):
+    def isDarkMode(cls) -> bool:
+        """
+        Checks if the system is currently in dark mode.
+
+        Returns
+        -------
+        bool
+            True if dark mode is detected, False otherwise.
+        """
         return darkdetect.isDark()
 
     @classmethod
-    def isLightMode(cls):
+    def isLightMode(cls) -> bool:
+        """
+        Checks if the system is currently in light mode.
+
+        Returns
+        -------
+        bool
+            True if light mode is detected, False otherwise.
+        """
         return darkdetect.isLight()
 
     @classmethod
-    def getDefaultIconDirectory(cls):
+    def getDefaultIconDirectory(cls) -> str:
+        """
+        Get the path to the default icon directory based on the current system theme (dark/light).
+
+        Returns
+        -------
+        str
+            The absolute path to the icon directory.
+        """
         import Sisyphe.gui
         if cls.isDarkMode(): return join(dirname(abspath(Sisyphe.gui.__file__)), 'darkroi')
         else: return join(dirname(abspath(Sisyphe.gui.__file__)), 'lightroi')
 
     @classmethod
-    def getDefaultToolbarIconDirectory(cls):
+    def getDefaultToolbarIconDirectory(cls) -> str:
+        """
+        Get the path to the default toolbar icon directory based on the current system theme (dark/light).
+
+        Returns
+        -------
+        str
+            The absolute path to the toolbar icon directory.
+        """
         import Sisyphe.gui
         if cls.isDarkMode(): return join(dirname(abspath(Sisyphe.gui.__file__)), 'darkicons')
         else: return join(dirname(abspath(Sisyphe.gui.__file__)), 'lighticons')
 
     @classmethod
     def getDefaultIconSize(cls) -> int:
+        """
+        Get the default icon size based on the current display DPI.
+
+        Returns
+        -------
+        int
+            Icon size in pixels.
+        """
         dpi = QApplication.primaryScreen().logicalDotsPerInch()
         if dpi > 100: return int(cls._VSIZE * dpi / 800) * 8
         else: return cls._VSIZE
 
     @classmethod
-    def formatLabel(cls, label):
+    def formatLabel(cls, label: str) -> str:
+        """
+        Reformat a str label: split words using capital letters as separators.
+
+        Parameters
+        ----------
+        label : str
+            The label to be formatted.
+
+        Returns
+        -------
+        str
+            reformatted label
+        """
         if isinstance(label, str):
             if label.isupper(): r = label
             else:
@@ -155,7 +257,20 @@ class SettingsWidget(QWidget):
         else: raise TypeError('parameter type {} is not str.'.format(type(label)))
 
     @classmethod
-    def getNumberOfDecimals(cls, v):
+    def getNumberOfDecimals(cls, v: float) -> int:
+        """
+        Get the number of decimal places in a floating-point number.
+
+        Parameters
+        ----------
+        v : float
+            The floating-point number.
+
+        Returns
+        -------
+        int
+            The number of decimal places.
+        """
         if v == 0.0: return 1
         elif abs(v) < 1e-8: return 8
         else:
@@ -165,14 +280,17 @@ class SettingsWidget(QWidget):
 
     # Special method
 
-    """
-    Private attributes
+    def __init__(self, function: str, parent: QWidget | None = None) -> None:
+        """
+        SettingsWidget instance constructor.
 
-    _parameters     dict[str, QWidget], keyword = name of function parameters
-    _funcname       str, function name
-    """
-
-    def __init__(self, function, parent=None):
+        Parameters
+        ----------
+        function : str
+            The name of the function for which to create the settings widget.
+        parent : QWidget | None
+            The parent widget.
+        """
         QWidget.__init__(self, parent)
 
         self._function = function
@@ -233,14 +351,37 @@ class SettingsWidget(QWidget):
         # noinspection PyUnresolvedReferences
         self._saveas.clicked.connect(self.saveAsSettings)
 
+    """
+    Private attributes
+
+    _parameters     dict[str, QWidget], keyword = name of function parameters
+    _funcname       str, function name
+    """
+
     # Private methods
 
     # noinspection PyUnusedLocal
     def _parameterChanged(self, value):
+        """
+        Slot for handling parameter changes. Emits the ParameterChanged signal.
+
+        Parameters
+        ----------
+        value : Any
+            The new value of the parameter (unused).
+        """
         # noinspection PyUnresolvedReferences
         self.ParameterChanged.emit(self)
 
     def _initSettingsLayout(self, function):
+        """
+        Initialize the settings layout based on the function's parameters from the XML settings file.
+
+        Parameters
+        ----------
+        function : str
+            The name of the function.
+        """
         # < Revision 19/03/2025
         size = self.getDefaultIconSize()
         # Revision 19/03/2025 >
@@ -685,10 +826,26 @@ class SettingsWidget(QWidget):
 
     # Public methods
 
-    def getFontSize(self):
+    def getFontSize(self) -> int:
+        """
+        Get the font size of the widget.
+
+        Returns
+        -------
+        int
+            The font point size.
+        """
         return self.font().pointSize()
 
-    def setFontSize(self, v):
+    def setFontSize(self, v: int) -> None:
+        """
+        Set the font size for the widget and its children.
+
+        Parameters
+        ----------
+        v : int
+            The font point size.
+        """
         self.font().setPointSize(v)
         self._button.font().setPointSize(v)
         self._reset.font().setPointSize(v)
@@ -698,7 +855,10 @@ class SettingsWidget(QWidget):
         for k in self._parameters:
             self._parameters[k].font().setPointSize(v)
 
-    def toggleSettingsVisibility(self):
+    def toggleSettingsVisibility(self) -> None:
+        """
+        Toggle the visibility of the settings box.
+        """
         if self._settingsbox.isVisible():
             self._settingsbox.setVisible(False)
             self._button.setIcon(self._icondown)
@@ -725,21 +885,61 @@ class SettingsWidget(QWidget):
         # noinspection PyUnresolvedReferences
         self.VisibilityToggled.emit(self)
 
-    def settingsVisibilityOn(self):
+    def settingsVisibilityOn(self) -> None:
+        """
+        Show the settings box if it is not visible.
+        """
         if not self._settingsbox.isVisible():
             self.toggleSettingsVisibility()
 
-    def settingsVisibilityOff(self):
+    def settingsVisibilityOff(self) -> None:
+        """
+        Hide the settings box if it is visible.
+        """
         if self._settingsbox.isVisible():
             self.toggleSettingsVisibility()
 
-    def getFunctionName(self):
+    def getFunctionName(self) -> str:
+        """
+        Get the name of the function associated with this settings widget.
+
+        Returns
+        -------
+        str
+            The function name.
+        """
         return self._function
 
-    def getParameterWidget(self, parameter):
+    def getParameterWidget(self, parameter: str) -> QWidget:
+        """
+        Get the widget associated with a specific parameter.
+
+        Parameters
+        ----------
+        parameter : str
+            The name of the parameter.
+
+        Returns
+        -------
+        QWidget
+            The widget for the given parameter.
+        """
         return self._parameters[parameter]
 
-    def getParameterValue(self, parameter):
+    def getParameterValue(self, parameter: str) -> Any:
+        """
+        Get the current value of a specific parameter.
+
+        Parameters
+        ----------
+        parameter : str
+            The name of the parameter.
+
+        Returns
+        -------
+        Any
+            The value of the parameter.
+        """
         # noinspection PyInconsistentReturns
         if isinstance(self._parameters[parameter], QLineEdit):
             # vartype str
@@ -805,7 +1005,17 @@ class SettingsWidget(QWidget):
 
     # < Revision 13/02/2025
     # add setParameterValue method
-    def setParameterValue(self, parameter, v):
+    def setParameterValue(self, parameter: str, v: Any) -> None:
+        """
+        Set the value of a specific parameter widget.
+
+        Parameters
+        ----------
+        parameter : str
+            The name of the parameter.
+        v : Any
+            The new value to set.
+        """
         widget = self.getParameterWidget(parameter)
         if isinstance(widget, QLineEdit): widget.setText(v)
         elif isinstance(widget, QSpinBox): widget.setValue(int(v))
@@ -848,6 +1058,7 @@ class SettingsWidget(QWidget):
             # vartype lbool
             if isinstance(widget[0], QComboBox):
                 if isinstance(v, str): v = v.split(' ')
+                # noinspection PyTypeChecker
                 for i in range(len(widget)):
                     widget[i].setCurrentText(v[i])
             # vartype lint, lfloat
@@ -855,11 +1066,22 @@ class SettingsWidget(QWidget):
                 if isinstance(v, str):
                     if isinstance(widget[0], QSpinBox): v = [int(i) for i in v.split(' ')]
                     elif isinstance(widget[0], QDoubleSpinBox): v = [float(i) for i in v.split(' ')]
+                # noinspection PyTypeChecker
                 for i in range(len(widget)):
                     widget[i].setValue(v[i])
     # Revision 13/02/2025 >
 
-    def setParameterVisibility(self, parameter, v):
+    def setParameterVisibility(self, parameter: str, v: bool) -> None:
+        """
+        Set the visibility of a specific parameter widget and its label.
+
+        Parameters
+        ----------
+        parameter : str
+            The name of the parameter.
+        v : bool
+            True to show the widget, False to hide it.
+        """
         ws = self._parameters[parameter]
         if isinstance(ws, list): ws = ws[0]
         lyout = self._settingsbox.layout()
@@ -873,17 +1095,46 @@ class SettingsWidget(QWidget):
                 lyout.itemAtPosition(i, 0).widget().setVisible(v)
                 break
 
-    def getParameterVisibility(self, parameter):
+    def getParameterVisibility(self, parameter: str) -> bool:
+        """
+        Get the visibility of a specific parameter widget.
+
+        Parameters
+        ----------
+        parameter : str
+            The name of the parameter.
+
+        Returns
+        -------
+        bool
+            True if the widget is visible, False otherwise.
+        """
         ws = self._parameters[parameter]
         if isinstance(ws, list):
             if len(ws) > 0: return ws[0].isVisible()
             else: raise AttributeError('No parameter.')
         else: return self._parameters[parameter].isVisible()
 
-    def getParametersList(self):
+    def getParametersList(self) -> list[str]:
+        """
+        Get a list of all parameter names.
+
+        Returns
+        -------
+        list[str]
+            A list containing the names of all parameters.
+        """
         return list(self._parameters.keys())
 
-    def getParametersDict(self):
+    def getParametersDict(self) -> dict[str, Any]:
+        """
+        Get a dictionary of all parameters and their current values.
+
+        Returns
+        -------
+        dict[str, Any]
+            A dictionary with parameter names as keys and their values.
+        """
         r = dict()
         for parameter in self._parameters:
             r[parameter] = self.getParameterValue(parameter)
@@ -891,17 +1142,32 @@ class SettingsWidget(QWidget):
 
     # < Revision 13/02/2025
     # add setParametersFromDict method
-    def setParametersFromDict(self, d):
+    def setParametersFromDict(self, d: dict[str, Any]) -> None:
+        """
+        Set parameter values from a dictionary.
+
+        Parameters
+        ----------
+        d : dict[str, Any]
+            A dictionary with parameter names as keys and their new values.
+        """
         params = self.getParametersList()
         for k in list(d.keys()):
             if k in params:
                 self.setParameterValue(k, d[k])
     # Revision 13/02/2025 >
 
-    def resetSettings(self, filename='', default=False):
+    def resetSettings(self, filename: str = '', default: bool = False) -> None:
         """
-            default=False, xml user settings
-            default=True, xml default settings
+        Reset the settings to their default values from a settings file.
+
+        Parameters
+        ----------
+        filename : str
+            Path to a custom settings file. If empty, uses the user's default settings (~/.PySisyphe/settings.xml).
+        default : bool
+            If True, loads from the application's default settings file, ignoring `filename`.
+            If False (default), loads from the user's settings file (~/.PySisyphe/settings.xml) or the custom `filename`.
         """
         xml = self.classSisypheSettings()
         if filename == '':
@@ -982,13 +1248,19 @@ class SettingsWidget(QWidget):
                 QApplication.processEvents()
                 # self._parameters[parameter].repaint()
 
-    def saveSettings(self):
+    def saveSettings(self) -> None:
+        """
+        Save the current settings to the user's default settings file (~/.PySisyphe/settings.xml).
+        """
         xml = self.classSisypheSettings()
         for parameter in self._parameters.keys():
             xml.setFieldValue(self._function, parameter, self.getParameterValue(parameter))
         xml.save()
 
-    def saveAsSettings(self):
+    def saveAsSettings(self) -> None:
+        """
+        Open a dialog to save the current settings to a custom XML file.
+        """
         filename = QFileDialog().getSaveFileName(self, 'Save custom settings file', getcwd(), 'XML (*.xml)')
         filename = filename[0]
         if filename:
@@ -998,14 +1270,26 @@ class SettingsWidget(QWidget):
                 xml.setFieldValue(self._function, parameter, self.getParameterValue(parameter))
             xml.saveAs(filename)
 
-    def loadSettings(self):
+    def loadSettings(self) -> None:
+        """
+        Open a dialog to load settings from a custom XML file.
+        """
         filename = QFileDialog.getOpenFileName(self, 'Load custom settings file', getcwd(), 'XML (*.xml)')
         filename = filename[0]
         if filename:
             chdir(dirname(filename))
             self.resetSettings(filename)
 
-    def setSettingsButtonText(self, txt):
+    def setSettingsButtonText(self, txt: str) -> None:
+        """
+        Set the text of the settings button.
+        This button is used to toggle visibility of the parameters.
+
+        Parameters
+        ----------
+        txt : str
+            The new text for the button.
+        """
         if isinstance(txt, str):
             v = self._button.toolTip()[:5]
             self._button.setToolTip('{}{}'.format(v, txt))
@@ -1013,18 +1297,34 @@ class SettingsWidget(QWidget):
             self._button.setText(txt)
         else: raise TypeError('parameter type {} is not str.'.format(type(txt)))
 
-    def setSettingsButtonDefaultText(self):
+    def setSettingsButtonDefaultText(self) -> None:
+        """
+        Reset the settings button text to its default value ('Settings...').
+        This button is used to toggle visibility of the parameters.
+        """
         v = self._button.toolTip()[:5]
         self._button.setToolTip('{} settings'.format(v))
         self._button.setText('Settings...')
 
-    def setSettingsButtonFunctionText(self):
+    def setSettingsButtonFunctionText(self) -> None:
+        """
+        Set the settings button text based on the function name.
+        This button is used to toggle visibility of the parameters.
+        """
         v = self._button.toolTip()[:5]
         self._button.setToolTip('{}{} settings'.format(v, self._function))
         txt = self.formatLabel(self._function) + '...'
         self._button.setText(txt)
 
-    def setButtonsVisibility(self, v):
+    def setButtonsVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of all buttons.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the buttons, False to hide them.
+        """
         if isinstance(v, bool):
             self._button.setVisible(v)
             self._reset.setVisible(v)
@@ -1034,16 +1334,38 @@ class SettingsWidget(QWidget):
             if v is False: self._settingsbox.setVisible(True)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getButtonsVisibility(self):
+    def getButtonsVisibility(self) -> bool:
+        """
+        Get the visibility state of all buttons.
+
+        Returns
+        -------
+        bool
+            True if the reset button is visible, False otherwise.
+        """
         return self._reset.isVisible()
 
-    def showButtons(self):
+    def showButtons(self) -> None:
+        """
+        Show all buttons.
+        """
         self.setButtonsVisibility(True)
 
-    def hideButtons(self):
+    def hideButtons(self) -> None:
+        """
+        Hide all buttons.
+        """
         self.setButtonsVisibility(False)
 
-    def setIOButtonsVisibility(self, v):
+    def setIOButtonsVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the settings I/O buttons (Reset, Load, Save, Save As).
+
+        Parameters
+        ----------
+        v : bool
+            True to show the I/O buttons, False to hide them.
+        """
         if isinstance(v, bool):
             self._reset.setVisible(v)
             self._load.setVisible(v)
@@ -1052,13 +1374,27 @@ class SettingsWidget(QWidget):
             self._iovisibility = v
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getIOButtonsVisibility(self):
+    def getIOButtonsVisibility(self) -> bool:
+        """
+        Get the visibility state of the settings I/O buttons.
+
+        Returns
+        -------
+        bool
+            True if the reset button is visible, False otherwise.
+        """
         return self._reset.isVisible()
 
-    def showIOButtons(self):
+    def showIOButtons(self) -> None:
+        """
+        Show the settings I/O buttons.
+        """
         self.setIOButtonsVisibility(True)
 
-    def hideIOButtons(self):
+    def hideIOButtons(self) -> None:
+        """
+        Hide the settings I/O buttons.
+        """
         self.setIOButtonsVisibility(False)
 
 
@@ -1069,7 +1405,7 @@ class FunctionSettingsWidget(SettingsWidget):
     Description
     ~~~~~~~~~~~
 
-    Widget to manage application function settings from XML file (functions.xml).
+    Widget to manage function settings from an XML file (functions.xml).
 
     Inheritance
     ~~~~~~~~~~~
@@ -1089,7 +1425,7 @@ class DialogSettingsWidget(SettingsWidget):
     Description
     ~~~~~~~~~~~
 
-    Widget to manage dialog window from XML file (functions.xml).
+    Widget to manage dialog window from an XML file (dialog.xml).
 
     Inheritance
     ~~~~~~~~~~~

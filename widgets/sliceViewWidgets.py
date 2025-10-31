@@ -8,6 +8,11 @@ External packages/modules
     - vtk, Visualization, https://vtk.org/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from typing import Optional
+from typing import Any
+
 from os import mkdir
 from os import chdir
 from os import getcwd
@@ -90,6 +95,10 @@ from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.abstractViewWidget import AbstractViewWidget
 from Sisyphe.gui.dialogWait import DialogWait
 
+if TYPE_CHECKING:
+    from vtk import vtkObject
+    from PyQt5.QtGui import QShowEvent
+
 """
 Class hierarchy
 ~~~~~~~~~~~~~~~
@@ -106,11 +115,21 @@ class SliceViewWidget(AbstractViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Base class used to display a single slice from a 3D volume.
+    Base class used for displaying and interacting with 2D orthogonal slices (axial, coronal, and sagittal) from a
+    SisypheVolume. It is specialized subclass of the AbstractViewWidget class.
 
-    It is designed to be flexible and customizable, allowing users to modify various aspects of the slice view,
-    such as the color mapping, opacity, and visibility of different components. It also supports synchronization
-    with other views, allowing for multi-view interactions and comparisons.
+    The main features are as follows:
+
+    - Orthogonal slice viewing: allows users to dynamically switch between axial, coronal, and sagittal orientations, automatically reconfiguring the camera and orientation labels.
+    - Interactive slice navigation: implements controls for scrolling through the volume's slices using the mouse wheel or keyboard shortcuts.
+    - Advanced information display: enhances the standard information overlays with slice-specific information, including orientation markers (e.g., A/P, L/R), the voxel value at the cursor, and multiple coordinate systems (world, AC-PC, Leksell Frame, ICBM).
+    - Slice and Camera Control: manages a vtkImageResliceMapper to extract and render the current slice, with the camera's focal point controlling the slice position. It also manages a narrow clipping range around the slice to optimize rendering performance.
+    - Display properties: provides methods to control the visibility and opacity of the slice.
+    - Synchronization: emits and receives Qt signals to synchronize the slice position (cursor), zoom/pan, and display properties across multiple linked viewports.
+    - Export: includes a utility to save a series of captures, stepping through the volume along the current orientation and saving each slice as a bitmap image file.
+
+    This widget serves as the base class for more specialized viewers, such as those for overlays, reorientation, and
+    ROI editing.
 
     Inheritance
     ~~~~~~~~~~~
@@ -118,7 +137,7 @@ class SliceViewWidget(AbstractViewWidget):
     QWidget -> AbstractViewWidget -> SliceViewWidget
 
     Creation: 30/03/2022
-    Last revision: 24/07/2025
+    Last revision: 20/10/2025
     """
 
     # Class constants
@@ -137,28 +156,15 @@ class SliceViewWidget(AbstractViewWidget):
 
     # Special method
 
-    """
-    Private attributes
+    def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        SliceViewWidget instance constructor.
 
-    _volumeslice    vtkImageSlice, slice actor of the volume
-    _stack          vtkImageStack, stack of reference (layer 0) and overlays (layer > 0) volumes
-    _scale          float, default zoom factor
-    _lineh          vtkLineSource, horizontal line of the cursor
-    _linev          vtkLineSource, vertical line of the cursor
-    _lines          vtkPolyData, cursor
-    _slicenav       bool, slice navigation enable flag
-    _scale0         float, zoom factor before event start
-    _mousepos0      tuple[float, float, float], mouse coordinate before event start
-    _campos0        tuple[float, float, float], camera coordinate before event start
-    _camfocal0      float, focal depth before event start
-    _cursor0        bool, cursor visibility before event start
-    _win0           tuple[float, float], mouse position of previous event
-    _orient         int, plane orientation (0 axial, 1 coronal, 2 sagittal)
-    _offset         int, current slice index = first slice index + offset in multiview tool
-    _clipfactor     float, clipping before and after slice plane (distance = slice thickness x _clipfactor)
-    """
-
-    def __init__(self, parent=None):
+        Parameters
+        ----------
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         self._orient = self._DIM0
 
         super().__init__(parent)
@@ -352,9 +358,35 @@ class SliceViewWidget(AbstractViewWidget):
         if self._action['showtooltip'].isChecked(): self.setToolTip(self._tooltipstr)
         else: self.setToolTip('')
 
+    """
+    Private attributes
+
+    _volumeslice    vtkImageSlice, slice actor of the volume
+    _stack          vtkImageStack, stack of reference (layer 0) and overlays (layer > 0) volumes
+    _scale          float, default zoom factor
+    _lineh          vtkLineSource, horizontal line of the cursor
+    _linev          vtkLineSource, vertical line of the cursor
+    _lines          vtkPolyData, cursor
+    _slicenav       bool, slice navigation enable flag
+    _scale0         float, zoom factor before event start
+    _mousepos0      tuple[float, float, float], mouse coordinate before event start
+    _campos0        tuple[float, float, float], camera coordinate before event start
+    _camfocal0      float, focal depth before event start
+    _cursor0        bool, cursor visibility before event start
+    _win0           tuple[float, float], mouse position of previous event
+    _orient         int, plane orientation (0 axial, 1 coronal, 2 sagittal)
+    _offset         int, current slice index = first slice index + offset in multiview tool
+    _clipfactor     float, clipping before and after slice plane (distance = slice thickness x _clipfactor)
+    """
+
     # Private methods
 
     def _initCursor(self):
+        """
+        Initializes the cross-shaped cursor actor.
+        The cursor consists of two orthogonal lines (`_lineh` and `_linev`) combined into a single `vtkPolyData` and
+        rendered by a `vtkFollower`. Currently, this method overrides superclass's implementation.
+        """
         self._lineh = vtkLineSource()
         self._linev = vtkLineSource()
         self._lineh.SetPoint1(-500, 0, 1)
@@ -378,7 +410,23 @@ class SliceViewWidget(AbstractViewWidget):
         self._cursor.SetVisibility(False)
         self._renderer.AddActor(self._cursor)
 
-    def _addSlice(self, volume, alpha):
+    def _addSlice(self, volume: SisypheVolume, alpha: float) -> vtkImageSlice:
+        """
+        Creates a new vtkImageSlice from a SisypheVolume.
+        vtkImageSlice instances are internally added to a vtkImageStack.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            volume from which to extract the slice.
+        alpha : float
+            opacity of the slice (0.0 to 1.0).
+
+        Returns
+        -------
+        vtkImageSlice
+            created vtkImageSlice actor.
+        """
         mapper = vtkImageResliceMapper()
         mapper.BorderOff()
         mapper.SliceAtFocalPointOn()
@@ -395,7 +443,11 @@ class SliceViewWidget(AbstractViewWidget):
         self._stack.AddImage(slc)
         return slc
 
-    def _updateCameraOrientation(self):
+    def _updateCameraOrientation(self) -> None:
+        """
+        Updates the camera's position and view-up vector based on the current slice orientation.
+        Also updates the orientation labels displayed in the viewport.
+        """
         p = self._getRoundedCoordinate(self._stack.GetMapper().GetCenter())
         p = self._getRoundedCoordinate(p)
         camera = self._renderer.GetActiveCamera()
@@ -441,7 +493,20 @@ class SliceViewWidget(AbstractViewWidget):
         self._updateRuler(signal=False)
         self._renderwindow.Render()
 
-    def _setCameraFocalDepth(self, p, signal=True):
+    def _setCameraFocalDepth(self, p: list[float] | tuple[float, float, float] | int, signal: bool = True) -> None:
+        """
+        Sets the camera's focal depth, effectively moving the slice plane.
+
+        Parameters
+        ----------
+        p : list[float] | tuple[float, float, float] | int
+
+            - If a list/tuple, it's the new absolute world coordinates for the focal point.
+            - If an int, it's a relative step to move the focal point along the current slice normal.
+
+        signal : bool (optional)
+            If True, emits the `CursorPositionChanged` signal for synchronization (default True).
+        """
         camera = self._renderer.GetActiveCamera()
         d = 2 - self._orient
         s = self._volume.getSpacing()[d]
@@ -478,7 +543,11 @@ class SliceViewWidget(AbstractViewWidget):
                     tool.updateContourActor(self._volumeslice.GetMapper().GetSlicePlane())
         self._updateBottomRightInfo()
 
-    def _updateCameraClipping(self):
+    def _updateCameraClipping(self) -> None:
+        """
+        Updates the camera's clipping range based on the slice thickness and '_clipfactor'.
+        This ensures that only a specific depth around the current slice is rendered.
+        """
         # clipping distance
         # near = slice distance to camera - (slice thickness * _clipfactor)
         # far = slice distance to camera + (slice thickness * _clipfactor)
@@ -490,10 +559,13 @@ class SliceViewWidget(AbstractViewWidget):
         # Revision 17/10/2024 >
         camera.SetClippingRange(d - n, d + n)
 
-    def _initSliceSettings(self):
+    def _initSliceSettings(self) -> None:
         """
-            Settings -> actions
+        Initializes slice-specific settings from the SisypheSettings instance.
+        Loads user preferences for voxel value visibility, coordinate system visibility,
+        and orientation label visibility.
         """
+        # Settings -> actions
         # Voxel value
         v = self._settings.getFieldValue('Viewport', 'VoxelValueVisibility')
         if v is None: v = False
@@ -527,7 +599,11 @@ class SliceViewWidget(AbstractViewWidget):
         if v is None: v = False
         self._action['showorientation'].setChecked(v)
 
-    def _initOrientationLabels(self):
+    def _initOrientationLabels(self) -> None:
+        """
+        Initializes the 'vtkTextActor' instances used to display orientation labels (A, P, L, R, T, B) in the viewport.
+        Sets up text properties, positions, and initial visibility.
+        """
         # Top
         info = self._info['topcenter']
         prop = info.GetTextProperty()
@@ -604,6 +680,21 @@ class SliceViewWidget(AbstractViewWidget):
     # add _getFormattedValue method
     @classmethod
     def _getFormattedValue(cls, v: int | float) -> str:
+        """
+        Formats a numerical value (int or float) into a string.
+        For floats, it attempts to use a concise decimal format, falling back to scientific notation for very small
+        numbers.
+
+        Parameters
+        ----------
+        v : int | float
+            numerical value to format.
+
+        Returns
+        -------
+        str
+            formatted string representation of the value.
+        """
         if isinstance(v, float):
             v2 = abs(v)
             if 0.0 < v2 <= 1.0:
@@ -620,7 +711,21 @@ class SliceViewWidget(AbstractViewWidget):
         return f.format(v)
     # Revision 30/07/2024 >
 
-    def _getInfoValuesText(self, p):
+    def _getInfoValuesText(self, p: list[float] | tuple[float, float, float]) -> str:
+        """
+        Generates the text string for the bottom-right information display, including voxel value and various
+        coordinate systems.
+
+        Parameters
+        ----------
+        p : list[float]
+            world coordinates (x, y, z) of the mouse position.
+
+        Returns
+        -------
+        str
+            formatted text containing voxel value and coordinate information.
+        """
         txt = ''
         if self._action['showvalue'].isChecked():
             x, y, z = p[0], p[1], p[2]
@@ -687,10 +792,16 @@ class SliceViewWidget(AbstractViewWidget):
                 p2 = acpc.getRelativeDistanceFromAC(p)
                 txt += '\nAC reference LAT {:.1f} AP {:.1f} H {:.1f}'.format(p2[0], p2[1], p2[2])
             if self._action['showpc'].isChecked():
-                p2 = acpc.getACPC().getRelativeDistanceFromPC(p)
+                # < Revision 20/10/2025
+                # p2 = acpc.getACPC().getRelativeDistanceFromPC(p)
+                p2 = acpc.getRelativeDistanceFromPC(p)
+                # Revision 20/10/2025 >
                 txt += '\nPC reference LAT {:.1f} AP {:.1f} H {:.1f}'.format(p2[0], p2[1], p2[2])
             if self._action['showacpc'].isChecked():
-                p2 = acpc.getRelativeDistanceFromACPC(p)
+                # < Revision 20/10/2025
+                # p2 = acpc.getRelativeDistanceFromACPC(p)
+                p2 = acpc.getRelativeDistanceFromMidACPC(p)
+                # Revision 20/10/2025 >
                 txt += '\nMid AC-PC reference LAT {:.1f} AP {:.1f} H {:.1f}'.format(p2[0], p2[1], p2[2])
         if self._action['showframe'].isVisible():
             p2 = self._volume.getLEKSELLfromWorld(p)
@@ -700,7 +811,12 @@ class SliceViewWidget(AbstractViewWidget):
             txt += '\nICBM {:.1f} x {:.1f} x {:.1f}'.format(p2[0], p2[1], p2[2])
         return txt
 
-    def _updateBottomRightInfo(self):
+    def _updateBottomRightInfo(self) -> None:
+        """
+        Updates the content of the bottom-right information text actor.
+        This includes mouse pointer world coordinates, voxel value, and other relevant information based on user
+        settings.
+        """
         if self._volume is not None:
             interactorstyle = self._window.GetInteractorStyle()
             p = interactorstyle.GetLastPos()
@@ -723,24 +839,89 @@ class SliceViewWidget(AbstractViewWidget):
 
     # Public synchronisation event methods
 
-    def synchroniseTransformApplied(self, obj, tx, ty, tz, rx, ry, rz):
+    def synchroniseTransformApplied(self, obj: QWidget,
+                                    tx: float, ty: float, tz: float,
+                                    rx: float, ry: float, rz: float) -> None:
+        """
+        Synchronizes the application of a transformation (translation and rotation) from another AbstractViewWidget
+        instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            AbstractViewWidget instance that emitted the signal.
+        tx : float
+            translation along the X-axis.
+        ty : float
+            translation along the Y-axis.
+        tz : float
+            translation along the Z-axis.
+        rx : float
+            rotation around the X-axis (in degrees).
+        ry : float
+            rotation around the Y-axis (in degrees).
+        rz : float
+            rotation around the Z-axis (in degrees).
+        """
         if self != obj and self.hasVolume():
             self.applyTransform(tx, ty, tz, rx, ry, rz, signal=False)
 
-    def synchroniseCameraPositionChanged(self, obj, x, y, z):
+    def synchroniseCameraPositionChanged(self, obj: QWidget, x: float, y: float, z: float) -> None:
+        """
+        Synchronizes the camera's focal point (plane position) from another AbstractViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            AbstractViewWidget instance that emitted the signal.
+        x : float
+            x-coordinate of the camera's focal point.
+        y : float
+            y-coordinate of the camera's focal point.
+        z : float
+            z-coordinate of the camera's focal point.
+        """
         if self != obj and self.hasVolume():
             if self.getOrientation() == obj.getOrientation():
                 self.setCameraPlanePosition([x, y, z], signal=False)
 
-    def synchroniseRenderUpdated(self, obj):
+    def synchroniseRenderUpdated(self, obj: QWidget) -> None:
+        """
+        Synchronizes a render update from another AbstractViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            AbstractViewWidget instance that emitted the signal.
+        """
         if self != obj and self.hasVolume():
             self._renderwindow.Render()
 
-    def synchronisedOpacityChanged(self, obj, alpha):
+    def synchronisedOpacityChanged(self, obj: QWidget, alpha: float) -> None:
+        """
+        Synchronizes the volume's opacity change from another AbstractViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            AbstractViewWidget instance that emitted the signal.
+        alpha : float
+            new opacity value (0.0 to 1.0).
+        """
         if self != obj and self.hasVolume():
             self.setVolumeOpacity(alpha, signal=False)
 
-    def synchronisedVisibilityChanged(self, obj, v):
+    def synchronisedVisibilityChanged(self, obj: QWidget, v: bool) -> None:
+        """
+        Synchronizes the volume's visibility change from another AbstractViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            AbstractViewWidget instance that emitted the signal.
+        v : bool
+            True if the volume is visible, False otherwise.
+        """
         if self != obj and self.hasVolume():
             self.setVolumeVisibility(v, signal=False)
 
@@ -748,22 +929,56 @@ class SliceViewWidget(AbstractViewWidget):
 
     # < Revision 12/12/2024
     # add setTitle method
-    def setTitle(self, title):
+    def setTitle(self, title: str) -> None:
+        """
+        Set the title attribute of the SliceViewWidget instance.
+        This title is displayed in the middle of the top part of the view area, along with the current slice
+        orientation. Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        title : str
+            title attribute of the SliceViewWidget instance.
+        """
         super().setTitle(title)
         if self._orient == self._DIM0: self._info['topcenter'].SetInput('\n{}\nA'.format(self._title))
         else: self._info['topcenter'].SetInput('\n{}\nT'.format(self._title))
     # Revision 12/12/2024 >
 
-    def setClippingFactor(self, v: float = 2.0):
+    def setClippingFactor(self, v: float = 2.0) -> None:
+        """
+        Set the clipping factor used to determine the camera's clipping range.
+        The clipping range is calculated as slice thickness * _clipfactor.
+        This ensures that only a specific depth around the current slice is rendered.
+
+        Parameters
+        ----------
+        v : float (optional)
+            new clipping factor (default 2.0).
+        """
         if isinstance(v, float):
             self._clipfactor = v
             self._updateCameraClipping()
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
     def getClippingFactor(self) -> float:
+        """
+        Get the current clipping factor.
+        The clipping range is calculated as slice thickness * _clipfactor.
+        This ensures that only a specific depth around the current slice is rendered.
+
+        Returns
+        -------
+        float
+            current clipping factor.
+        """
         return self._clipfactor
 
-    def displayOn(self):
+    def displayOn(self) -> None:
+        """
+        Shows the slice-specific display elements, including orientation labels and updates the visibility of
+        information based on current settings. Currently, this method calls the superclass's implementation.
+        """
         if self._volume is not None:
             # < Revision 31/07/2024
             # moving displayOn() from the end to the start
@@ -784,7 +999,11 @@ class SliceViewWidget(AbstractViewWidget):
             self._info['rightcenter'].SetVisibility(self._action['showorientation'].isChecked())
             self._info['bottomcenter'].SetVisibility(self._action['showorientation'].isChecked())
 
-    def displayOff(self):
+    def displayOff(self) -> None:
+        """
+        Hide the slice-specific display elements.
+        Currently, this method calls the superclass's implementation.
+        """
         # < Revision 31/07/2024
         # moving displayOff() from the end to the start
         super().displayOff()
@@ -798,16 +1017,40 @@ class SliceViewWidget(AbstractViewWidget):
         # Ruler
         self._ruler.SetVisibility(False)
 
-    def getPopupOrientation(self):
+    def getPopupOrientation(self) -> QMenu:
+        """
+        Get the 'Orientation' submenu of the popup menu.
+
+        Returns
+        -------
+        QMenu
+            'Orientation' submenu.
+        """
         return self._menuOrientation
 
-    def popupOrientationEnabled(self):
+    def popupOrientationEnabled(self) -> None:
+        """
+        Enable the 'Orientation' submenu in the popup menu.
+        """
         self._menuOrientation.menuAction().setVisible(True)
 
-    def popupOrientationDisabled(self):
+    def popupOrientationDisabled(self) -> None:
+        """
+        Disable the 'Orientation' submenu in the popup menu.
+        """
         self._menuOrientation.menuAction().setVisible(False)
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
+        """
+        Set the SisypheVolume to be displayed in the widget.
+        Initializes the VTK image stack and slice actor, and updates the camera orientation.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            Sisyphevolume to display.
+        """
         super().setVolume(volume)
         if self._stack is not None:
             self._renderer.RemoveActor(self._stack)
@@ -831,7 +1074,16 @@ class SliceViewWidget(AbstractViewWidget):
 
     # < Revision 18/10/2024
     # add replaceVolume method
-    def replaceVolume(self, volume):
+    def replaceVolume(self, volume: SisypheVolume) -> None:
+        """
+        Replace the current displayed SisypheVolume with a new one, preserving display properties if the new volume has
+        the same dimensions.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            new SisypheVolume to display.
+        """
         if self.hasVolume():
             if volume.hasSameSize(self._volume):
                 # Copy previous display properties
@@ -850,7 +1102,12 @@ class SliceViewWidget(AbstractViewWidget):
             else: raise ValueError('Invalid volume size.')
     # Revision 18/10/2024
 
-    def removeVolume(self):
+    def removeVolume(self) -> None:
+        """
+        Remove the currently displayed volume from the slice view.
+        Clears the VTK image stack and slice actor.
+        Currently, this method calls the superclass's implementation.
+        """
         if self.hasVolume():
             if self._stack is not None:
                 self._renderer.RemoveActor(self._stack)
@@ -860,7 +1117,17 @@ class SliceViewWidget(AbstractViewWidget):
                 self._volumeslice = None
         super().removeVolume()
 
-    def setVolumeOpacity(self, alpha, signal=True):
+    def setVolumeOpacity(self, alpha: float, signal: bool = True) -> None:
+        """
+        Set the opacity of the displayed SisypheVolume.
+
+        Parameters
+        ----------
+        alpha : float
+            new opacity value (0.0 to 1.0).
+        signal : bool (optional)
+            If True, emits the OpacityChanged signal for synchronization (default True).
+        """
         if isinstance(alpha, float):
             if self.hasVolume():
                 self._volumeslice.GetProperty().SetOpacity(alpha)
@@ -870,7 +1137,15 @@ class SliceViewWidget(AbstractViewWidget):
             else: raise AttributeError('No volume')
         else: raise TypeError('parameter type {} is not float.'.format(type(alpha)))
 
-    def getVolumeOpacity(self):
+    def getVolumeOpacity(self) -> float:
+        """
+        Gets the current opacity of the displayed SisypheVolume.
+
+        Returns
+        -------
+        float
+            current opacity value (0.0 to 1.0).
+        """
         # < Revision 13/10/2024
         # bugfix no return value
         # if self.hasVolume(): self._volumeslice.GetProperty().GetOpacity()
@@ -878,7 +1153,17 @@ class SliceViewWidget(AbstractViewWidget):
         # Revision 13/10/2024 >
         else: raise AttributeError('No volume')
 
-    def setVolumeVisibility(self, v, signal=True):
+    def setVolumeVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of the displayed SisypheVolume.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the SisypheVolume visible, False to hide it.
+        signal : bool, optional
+            If True, emits the VisibilityChanged signal for synchronization (default True).
+        """
         # < Revision 28/10/2024
         # bugfix, vtk GetVisibility method returns int, not bool
         if isinstance(v, int): v = v > 0
@@ -892,13 +1177,27 @@ class SliceViewWidget(AbstractViewWidget):
             else: raise AttributeError('No volume')
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setVolumeVisibilityOn(self):
+    def setVolumeVisibilityOn(self) -> None:
+        """
+        Show the displayed SisypheVolume visible.
+        """
         self.setVolumeVisibility(True)
 
-    def setVolumeVisibilityOff(self):
+    def setVolumeVisibilityOff(self) -> None:
+        """
+        Hide the displayed SisypheVolume.
+        """
         self.setVolumeVisibility(False)
 
-    def getVolumeVisibility(self):
+    def getVolumeVisibility(self) -> bool:
+        """
+        Get the current visibility state of the displayed SisypheVolume.
+
+        Returns
+        -------
+        bool
+            True if the volume is visible, False otherwise.
+        """
         # < Revision 13/10/2024
         # bugfix
         # if self.hasVolume(): return self._volumeslice.GetProperty().GetVisibility()
@@ -906,7 +1205,30 @@ class SliceViewWidget(AbstractViewWidget):
         # Revision 13/10/2024 >
         else: raise AttributeError('No volume')
 
-    def applyTransformToVolume(self, tx, ty, tz, rx, ry, rz, signal=True):
+    def applyTransformToVolume(self,
+                               tx: float, ty: float, tz: float,
+                               rx: float, ry: float, rz: float,
+                               signal: bool = True) -> None:
+        """
+        Applies a rigid transformation (translation and rotation) to the displayed SisypheVolume.
+
+        Parameters
+        ----------
+        tx : float
+            translation along the X-axis.
+        ty : float
+            translation along the Y-axis.
+        tz : float
+            translation along the Z-axis.
+        rx : float
+            rotation around the X-axis (in degrees).
+        ry : float
+            rotation around the Y-axis (in degrees).
+        rz : float
+            rotation around the Z-axis (in degrees).
+        signal : bool (optional)
+            If True, emits the `TransformApplied` signal for synchronization (default to True).
+        """
         if self.hasVolume():
             self._volumeslice.SetOrigin(self._volume.getCenter())
             self._volumeslice.SetPosition(tx, ty, tz)
@@ -917,37 +1239,63 @@ class SliceViewWidget(AbstractViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.TransformApplied.emit(self, tx, ty, tz, rx, ry, rz)
 
-    def setAxialOrientation(self):
+    def setAxialOrientation(self) -> None:
+        """
+        Set the slice orientation to Axial.
+        """
         if self._volume.getOrientation() == self._AXIAL: self.setDim0Orientation()
         elif self._volume.getOrientation() == self._CORONAL: self.setDim1Orientation()
         else: self.setDim2Orientation()
         self._action['axial'].setChecked(True)
 
-    def setCoronalOrientation(self):
+    def setCoronalOrientation(self) -> None:
+        """
+        Set the slice orientation to Coronal.
+        """
         if self._volume.getOrientation() == self._AXIAL: self.setDim1Orientation()
         elif self._volume.getOrientation() == self._CORONAL: self.setDim0Orientation()
         else: self.setDim2Orientation()
         self._action['coronal'].setChecked(True)
 
-    def setSagittalOrientation(self):
+    def setSagittalOrientation(self) -> None:
+        """
+        Set the slice orientation to Sagittal.
+        """
         if self._volume.getOrientation() == self._AXIAL: self.setDim2Orientation()
         elif self._volume.getOrientation() == self._CORONAL: self.setDim1Orientation()
         else: self.setDim0Orientation()
         self._action['sagittal'].setChecked(True)
 
-    def setDim0Orientation(self):
+    def setDim0Orientation(self) -> None:
+        """
+        Set the slice orientation to the first dimension (DIM0).
+        """
         self._orient = self._DIM0
         self._updateCameraOrientation()
 
-    def setDim1Orientation(self):
+    def setDim1Orientation(self) -> None:
+        """
+        Set the slice orientation to the second dimension (DIM1).
+        """
         self._orient = self._DIM1
         self._updateCameraOrientation()
 
-    def setDim2Orientation(self):
+    def setDim2Orientation(self) -> None:
+        """
+        Set the slice orientation to the third dimension (DIM2).
+        """
         self._orient = self._DIM2
         self._updateCameraOrientation()
 
-    def setOrientation(self, orient):
+    def setOrientation(self, orient: int) -> None:
+        """
+        Set the slice orientation to a specific dimension.
+
+        Parameters
+        ----------
+        orient : int
+            dimension to set as orientation (0 for DIM0, 1 for DIM1, 2 for DIM2).
+        """
         if isinstance(orient, int):
             if 0 <= orient < 3:
                 self._orient = orient
@@ -958,10 +1306,27 @@ class SliceViewWidget(AbstractViewWidget):
             else: raise ValueError('parameter value is out of range.')
         else: raise TypeError('parameter type {} is not int.'.format(type(orient)))
 
-    def getOrientation(self):
+    def getOrientation(self) -> int:
+        """
+        Get the current slice orientation (0 for DIM0, 1 for DIM1, 2 for DIM2).
+
+        Returns
+        -------
+        int
+             current slice orientation.
+        """
         return self._orient
 
-    def getOrientationAsString(self):
+    def getOrientationAsString(self) -> str:
+        """
+        Get the current slice orientation as a descriptive string (e.g., 'axial', 'coronal', 'sagittal').
+        The mapping depends on the original orientation of the loaded volume.
+
+        Returns
+        -------
+        str
+            current slice orientation as a string.
+        """
         if self._volume.getOrientation() == self._AXIAL:
             if self._orient == self._DIM0: return 'axial'
             elif self._orient == self._DIM1: return 'coronal'
@@ -975,7 +1340,20 @@ class SliceViewWidget(AbstractViewWidget):
             elif self._orient == self._DIM1: return 'axial'
             else: return 'coronal'
 
-    def isCurrentOrientationIsotropic(self, tol=0.25):
+    def isCurrentOrientationIsotropic(self, tol: float = 0.25) -> bool:
+        """
+        Check if the current slice orientation has approximately isotropic pixel spacing.
+
+        Parameters
+        ----------
+        tol : float (optional)
+            Tolerance for checking isotropy (default 0.25).
+
+        Returns
+        -------
+        bool
+            True if the current orientation is isotropic within the given tolerance, False otherwise.
+        """
         if isinstance(tol, float):
             tolsup = 1 + tol
             tolinf = 1 - tol
@@ -989,7 +1367,17 @@ class SliceViewWidget(AbstractViewWidget):
         else:
             raise TypeError('parameter functype is not float.')
 
-    def setCameraPlanePosition(self, p, signal=True):
+    def setCameraPlanePosition(self, p: list[float] | tuple[float, float, float], signal: bool = True) -> None:
+        """
+        Set the camera's position and focal point, effectively moving the slice plane to a new world coordinate.
+
+        Parameters
+        ----------
+        p : list[float] | tuple[float, float, float]
+            new world coordinates (x, y, z) for the camera's focal point.
+        signal : bool, optional
+            If True, emits the CameraPositionChanged signal for synchronization (default True).
+        """
         if isinstance(p, (list, tuple)):
             camera = self._renderer.GetActiveCamera()
             s = self._volume.getSpacing()
@@ -1019,11 +1407,25 @@ class SliceViewWidget(AbstractViewWidget):
                 self.CameraPositionChanged.emit(self, p[0], p[1], p[2])
         else: raise TypeError('parameter type {} is not list or tuple.'.format(type(p)))
 
-    def setDefaultCursorPosition(self):
+    def setDefaultCursorPosition(self) -> None:
+        """
+        Set the cross-shaped cursor's world position to the current camera's focal point.
+        """
         p = self._renderer.GetActiveCamera().GetFocalPoint()
         self.setCursorWorldPosition(p[0], p[1], p[2])
 
-    def setCursorFromDisplayPosition(self, x, y):
+    def setCursorFromDisplayPosition(self, x: float, y: float)  -> None:
+        """
+        Set the cross-shaped cursor's world position based on 2D display coordinates.
+        The depth of the cursor is aligned with the current slice plane.
+
+        Parameters
+        ----------
+        x : float
+            x-coordinate in display pixels.
+        y : float
+            y-coordinate in display pixels.
+        """
         p = list(self._getWorldFromDisplay(x, y))
         f = self._renderer.GetActiveCamera().GetFocalPoint()
         d = 2 - self._orient
@@ -1036,7 +1438,22 @@ class SliceViewWidget(AbstractViewWidget):
         # self._cursor.SetPosition(p)
         self._renderwindow.Render()
 
-    def setCursorWorldPosition(self, x, y, z, signal=True):
+    def setCursorWorldPosition(self, x: float, y: float, z: float, signal: bool = True) -> None:
+        """
+        Set the 3D world position of the cross-shaped cursor and updates the camera's focal depth to match the cursor's
+        depth along the current slice normal. Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        x : float
+            world X-coordinate.
+        y : float
+            world Y-coordinate.
+        z : float
+            world Z-coordinate.
+        signal : bool, optional
+            If True, emits the CursorPositionChanged signal for synchronization (default True).
+        """
         if self._volume is not None:
             super().setCursorWorldPosition(x, y, z, signal)
             p = self.getCursorWorldPosition()  # Rounded coordinates
@@ -1045,7 +1462,11 @@ class SliceViewWidget(AbstractViewWidget):
             f[d] = p[d]
             self._setCameraFocalDepth(f, signal=False)
 
-    def updateCursorDepthFromFocal(self):
+    def updateCursorDepthFromFocal(self) -> None:
+        """
+        Update the depth of the cross-shaped cursor to match the camera's focal depth, adjusted by any multi-view
+        offset.
+        """
         p = list(self._cursor.GetPosition())
         f = self._renderer.GetActiveCamera().GetFocalPoint()
         d = 2 - self._orient
@@ -1055,11 +1476,32 @@ class SliceViewWidget(AbstractViewWidget):
         # noinspection PyArgumentList
         self._cursor.SetPosition(p)  # cursor depth = focal depth - offset
 
-    def setCursorVisibility(self, v, signal=True):
+    def setCursorVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of the cross-shaped cursor. If an offset is applied (multi-view mode), the cursor is always
+        hidden. Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the cursor visible, False to hide it.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (defaults True).
+        """
         if self._offset > 0: v = False
         super().setCursorVisibility(v, signal)
 
-    def setOrientationLabelsVisibility(self, v, signal=True):
+    def setOrientationLabelsVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of the orientation labels (A, P, L, R, T, B) in the viewport.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the labels visible, False to hide them.
+        signal : bool (optional)
+            If True, emits the `ViewMethodCalled` signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             self._info['topcenter'].SetVisibility(v)
             self._info['leftcenter'].SetVisibility(v)
@@ -1070,18 +1512,53 @@ class SliceViewWidget(AbstractViewWidget):
             if signal: self.ViewMethodCalled.emit(self, 'setOrientationLabelsVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setOrientationLabelsVisibilityOn(self, signal=True):
+    def setOrientationLabelsVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Make the orientation labels visible.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setOrientationLabelsVisibility(True, signal)
 
-    def setOrientationLabelsVisibilityOff(self, signal=True):
+    def setOrientationLabelsVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the orientation labels.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setOrientationLabelsVisibility(False, signal)
 
-    def getOrientationLabelsVisibility(self):
+    def getOrientationLabelsVisibility(self) -> bool:
+        """
+        Get the current visibility state of the orientation labels.
+
+        Returns
+        -------
+        bool
+            True if the labels are visible, False otherwise.
+        """
         return self._action['showorientation'].isChecked()
 
     # < Revision 03/12/2024
     # override setColorbarVisibility method to display volume unit
-    def setColorbarVisibility(self, v, signal=True):
+    def setColorbarVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Sets the visibility of the colorbar and updates its title with the SisypheVolume's unit.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the colorbar, False to hide it.
+        signal : bool, optional
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         unit = ''
         if self._volume is not None:
             if self._volume.acquisition.hasUnit():
@@ -1090,150 +1567,460 @@ class SliceViewWidget(AbstractViewWidget):
         super().setColorbarVisibility(v, signal)
     # Revision 03/12/2024 >
 
-    def setInfoValueVisibility(self, v, signal=True):
+    def setInfoValueVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of the voxel value information in the bottom-right information display.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the voxel value, False to hide it.
+        signal : bool, optional
+            If True, emits the ViewMethodCalled signal for synchronization (default to True).
+        """
         if isinstance(v, bool):
             self._action['showvalue'].setChecked(v)
             self._updateBottomRightInfo()
             if signal: self.ViewMethodCalled.emit(self, 'setInfoValueVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setInfoValueVisibilityOn(self, signal=True):
+    def setInfoValueVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Make the voxel value information visible.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setInfoValueVisibility(True, signal)
 
-    def setInfoValueVisibilityOff(self, signal=True):
+    def setInfoValueVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the voxel value information.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setInfoValueVisibility(False, signal)
 
-    def getInfoValueVisibility(self):
+    def getInfoValueVisibility(self) -> bool:
+        """
+        Get the current visibility state of the voxel value information.
+
+        Returns
+        -------
+        bool
+            True if voxel value is visible, False otherwise.
+        """
         return self._action['showvalue'].isChecked()
 
-    def setInfoPositionVisibility(self, v, signal=True):
+    def setInfoPositionVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Sets the visibility of the mouse pointer world coordinates in the bottom-right information display.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the coordinates, False to hide them.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             self._action['showpos'].setChecked(v)
             self._updateBottomRightInfo()
             if signal: self.ViewMethodCalled.emit(self, 'setInfoPositionVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setInfoPositionVisibilityOn(self, signal=True):
+    def setInfoPositionVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Make the mouse pointer world coordinates visible.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setInfoVisibility(True, signal)
 
-    def setInfoPositionVisibilityOff(self, signal=True):
+    def setInfoPositionVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the mouse pointer world coordinates.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the `ViewMethodCalled` signal for synchronization (default True).
+        """
         self.setInfoVisibility(False, signal)
 
-    def getInfoPositionVisibility(self):
+    def getInfoPositionVisibility(self) -> bool:
+        """
+        Get the current visibility state of the mouse pointer world coordinates.
+
+        Returns
+        -------
+        bool
+            True if coordinates are visible, False otherwise.
+        """
         return self._action['showpos'].isChecked()
 
-    def setRelativeACCoordinatesVisibility(self, v, signal=True):
+    def setRelativeACCoordinatesVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of coordinates relative to the Anterior Commissure (AC) in the bottom-right information
+        display.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the AC-relative coordinates, False to hide them.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             self._action['showac'].setChecked(v)
             self._updateBottomRightInfo()
             if signal: self.ViewMethodCalled.emit(self, 'setRelativeACCoordinatesVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setRelativeACCoordinatesVisibilityOn(self, signal=True):
+    def setRelativeACCoordinatesVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Make the AC-relative coordinates visible.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setRelativeACCoordinatesVisibility(True, signal)
 
-    def setRelativeACCoordinatesVisibilityOff(self, signal=True):
+    def setRelativeACCoordinatesVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the AC-relative coordinates.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (defaults True).
+        """
         self.setRelativeACCoordinatesVisibility(False, signal)
 
-    def getRelativeACCoordinatesVisibility(self):
+    def getRelativeACCoordinatesVisibility(self) -> bool:
+        """
+        Get the current visibility state of the AC-relative coordinates.
+
+        Returns
+        -------
+        bool
+            True if AC-relative coordinates are visible, False otherwise.
+        """
         return self._action['showac'].isChecked()
 
-    def setRelativePCCoordinatesVisibility(self, v, signal=True):
+    def setRelativePCCoordinatesVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of coordinates relative to the Posterior Commissure (PC) in the bottom-right information
+        display.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the PC-relative coordinates, False to hide them.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             self._action['showpc'].setChecked(v)
             self._updateBottomRightInfo()
             if signal: self.ViewMethodCalled.emit(self, 'setRelativePCCoordinatesVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setRelativePCCoordinatesVisibilityOn(self, signal=True):
+    def setRelativePCCoordinatesVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Make the PC-relative coordinates visible.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setRelativePCCoordinatesVisibility(True, signal)
 
-    def setRelativePCCoordinatesVisibilityOff(self, signal=True):
+    def setRelativePCCoordinatesVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the PC-relative coordinates.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (defaults True).
+        """
         self.setRelativePCCoordinatesVisibility(False, signal)
 
-    def getRelativePCCoordinatesVisibility(self):
+    def getRelativePCCoordinatesVisibility(self) -> bool:
+        """
+        Get the current visibility state of the PC-relative coordinates.
+
+        Returns
+        -------
+        bool
+            True if PC-relative coordinates are visible, False otherwise.
+        """
         return self._action['showpc'].isChecked()
 
-    def setRelativeACPCCoordinatesVisibility(self, v, signal=True):
+    def setRelativeACPCCoordinatesVisibility(self, v, signal: bool = True) -> None:
+        """
+        Set the visibility of coordinates relative to the mid AC-PC point in the bottom-right information
+        display.
+
+        Parameters
+        ----------
+        v : bool
+            True to show themid AC-PC point relative coordinates, False to hide them.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             self._action['showacpc'].setChecked(v)
             self._updateBottomRightInfo()
             if signal: self.ViewMethodCalled.emit(self, 'setRelativeACPCCoordinatesVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setRelativeACPCCoordinatesVisibilityOn(self, signal=True):
+    def setRelativeACPCCoordinatesVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Make the mid AC-PC point relative coordinates visible.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setRelativeACPCCoordinatesVisibility(True, signal)
 
-    def setRelativeACPCCoordinatesVisibilityOff(self, signal=True):
+    def setRelativeACPCCoordinatesVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the mid AC-PC point relative coordinates.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (defaults True).
+        """
         self.setRelativeACPCCoordinatesVisibility(False, signal)
 
-    def getRelativeACPCCoordinatesVisibility(self):
+    def getRelativeACPCCoordinatesVisibility(self) -> bool:
+        """
+        Get the current visibility state of the mid AC-PC point relative coordinates.
+
+        Returns
+        -------
+        bool
+            True if mid AC-PC point relative coordinates are visible, False otherwise.
+        """
         return self._action['showacpc'].isChecked()
 
-    def setFrameCoordinatesVisibility(self, v, signal=True):
+    def setFrameCoordinatesVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of stereotactic frame coordinates (e.g., Leksell) in the bottom-right information display.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the frame coordinates, False to hide them.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             self._action['showframe'].setChecked(v)
             self._updateBottomRightInfo()
             if signal: self.ViewMethodCalled.emit(self, 'setFrameCoordinatesVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setFrameCoordinatesVisibilityOn(self, signal=True):
+    def setFrameCoordinatesVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Make the stereotactic frame coordinates visible.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setFrameCoordinatesVisibility(True, signal)
 
-    def setFrameCoordinatesVisibilityOff(self, signal=True):
+    def setFrameCoordinatesVisibilityOff(self, signal: bool =True) -> None:
+        """
+        Hide the stereotactic frame coordinates.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setFrameCoordinatesVisibility(False, signal)
 
-    def getFrameCoordinatesVisibility(self):
+    def getFrameCoordinatesVisibility(self) -> bool:
+        """
+        Get the current visibility state of the stereotactic frame coordinates.
+
+        Returns
+        -------
+        bool
+            True if frame coordinates are visible, False otherwise.
+        """
         return self._action['showframe'].isChecked()
 
-    def setICBMCoordinatesVisibility(self, v, signal=True):
+    def setICBMCoordinatesVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Sets the visibility of ICBM space coordinates in the bottom-right information display.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the ICBM coordinates, False to hide them.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             self._action['showicbm'].setChecked(v)
             self._updateBottomRightInfo()
             if signal: self.ViewMethodCalled.emit(self, 'setICBMCoordinatesVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setICBMCoordinatesVisibilityOn(self, signal=True):
+    def setICBMCoordinatesVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Make the ICBM coordinates visible.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (defaults True).
+        """
         self.setICBMCoordinatesVisibility(True, signal)
 
-    def setICBMCoordinatesVisibilityOff(self, signal=True):
+    def setICBMCoordinatesVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the ICBM coordinates.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (defaults True).
+        """
         self.setICBMCoordinatesVisibility(False, signal)
 
-    def getICBMCoordinatesVisibility(self):
+    def getICBMCoordinatesVisibility(self) -> bool:
+        """
+        Get the current visibility state of the ICBM coordinates.
+
+        Returns
+        -------
+        bool
+            True if ICBM coordinates are visible, False otherwise.
+        """
         return self._action['showicbm'].isChecked()
 
-    def setOffset(self, v=0):
+    def setOffset(self, v: int = 0) -> None:
+        """
+        Sets the offset for multi-view display, which determines the current slice index relative to the first slice in
+        a series. If the offset is non-zero, the cursor visibility is turned off.
+
+        Parameters
+        ----------
+        v : int (optional)
+            new offset value (default 0, no offset).
+        """
         if isinstance(v, int):
             self._offset = v
             if self._offset != 0:
                 self.setCursorVisibilityOff()
         else: raise TypeError('parameter type {} is not int.'.format(type(v)))
 
-    def getOffset(self):
+    def getOffset(self) -> int:
+        """
+        Get the current offset for multi-view display, which determines the current slice index relative to the first
+        slice in a series. If the offset is non-zero, the cursor visibility is turned off.
+
+        Returns
+        -------
+        int
+            current offset value.
+        """
         return self._offset
 
-    def sliceMinus(self):
+    def sliceMinus(self) -> None:
+        """
+        Navigate to the previous slice in the SisypheVolume, if slice navigation is enabled.
+        Currently, this method calls the superclass's implementation.
+        """
         if self._slicenav: self._setCameraFocalDepth(-1)
 
-    def slicePlus(self):
+    def slicePlus(self) -> None:
+        """
+        Navigate to the next slice in the SisypheVolume, if slice navigation is enabled.
+        Currently, this method calls the superclass's implementation.
+        """
         if self._slicenav: self._setCameraFocalDepth(1)
 
-    def setSliceNavigationEnabled(self):
+    def setSliceNavigationEnabled(self) -> None:
+        """
+        Enable slice navigation using mouse wheel or keyboard.
+        """
         self._slicenav = True
 
-    def setSliceNavigationDisabled(self):
+    def setSliceNavigationDisabled(self) -> None:
+        """
+        Disable slice navigation using mouse wheel or keyboard.
+        """
         self._slicenav = False
 
-    def isSliceNavigationEnabled(self):
+    def isSliceNavigationEnabled(self) -> bool:
+        """
+        Check if slice navigation is currently enabled.
+
+        Returns
+        -------
+        bool
+            True if slice navigation is enabled, False otherwise.
+        """
         return self._slicenav is True
 
-    def getVtkImageSliceVolume(self):
+    def getVtkImageSliceVolume(self) -> vtkImageSlice:
+        """
+        Get the vtkImageSlice actor representing the current SisypheVolume slice.
+
+        Returns
+        -------
+        vtkImageSlice
+            vtkImageSlice actor.
+        """
         return self._volumeslice
 
-    def getVtkPlane(self):
+    def getVtkPlane(self) ->  vtkPlane:
+        """
+        Get the vtkPlane instance that defines the current slice plane.
+
+        Returns
+        -------
+        vtkPlane
+            current slice plane.
+        """
         return self._volumeslice.GetMapper().GetSlicePlane()
 
-    def getDistanceFromSliceToPoint(self, p):
+    def getDistanceFromSliceToPoint(self, p: list[float] | tuple[float, float, float]) -> float:
+        """
+        Calculate the signed distance from the current slice plane to a given 3D world point.
+
+        Parameters
+        ----------
+        p : list[float] | tuple[float, float, float]
+            3D world coordinates (x, y, z) of the point.
+
+        Returns
+        -------
+        float
+            signed distance from the slice plane to the point.
+        """
         if isinstance(p, (list, tuple)):
             if len(p) == 3 and all([isinstance(i, float) for i in p]):
                 plane = self.getVtkPlane()
@@ -1241,7 +2028,23 @@ class SliceViewWidget(AbstractViewWidget):
             else: raise TypeError('invalid list/tuple item count or item type is not float.')
         else: raise TypeError('parameter type {} is not list or tuple.'.format(type(p)))
 
-    def getDistanceFromSliceToTool(self, key):
+    def getDistanceFromSliceToTool(self, key: int | str | HandleWidget |LineWidget) -> list[float]:
+        """
+        Calculate the signed distance from the current slice plane to the position(s) of a given tool.
+
+        Parameters
+        ----------
+        key : int | str | HandleWidget | LineWidget
+            tool to measure distance to, identified by index, name, or instance.
+
+        Returns
+        -------
+        list[float]
+
+            - A list of signed distances.
+            - For HandleWidget, it's a single distance.
+            - For LineWidget, it's distances to both its start and end points.
+        """
         r = list()
         if isinstance(key, (int, str)):
             if key in self._tools:
@@ -1255,7 +2058,16 @@ class SliceViewWidget(AbstractViewWidget):
                 r.append(plane.DistanceToPlane(key.getPosition2()))
         return r
 
-    def saveSeriesCaptures(self, step=2):
+    def saveSeriesCaptures(self, step: int = 2) -> None:
+        """
+        Saves a series of slice captures from the current SisypheVolume along the current orientation.
+        The captures are saved to a user-specified directory, with each slice saved as an image file.
+
+        Parameters
+        ----------
+        step : int (optional)
+            step size (in number of slices) between consecutive captures (default 2).
+        """
         if self.hasVolume():
             title = 'Save all slices capture'
             name = QFileDialog.getSaveFileName(self, caption=title, directory=getcwd(),
@@ -1307,14 +2119,38 @@ class SliceViewWidget(AbstractViewWidget):
 
     # Private vtk event methods
 
-    def _onWheelForwardEvent(self,  obj, evt_name):
+    def _onWheelForwardEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the mouse wheel forward VTK event.
+        Zooms out if Ctrl key is pressed, otherwise navigates to the previous slice.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (MouseWheelForwardEvent).
+        """
         super()._onWheelForwardEvent(obj, evt_name)
         if self.hasVolume():
             # if interactorstyle.GetKeySym() == 'Control_L': self.zoomOut()
             if self._interactor.GetControlKey(): self.zoomOut()
             else: self.sliceMinus()
 
-    def _onWheelBackwardEvent(self,  obj, evt_name):
+    def _onWheelBackwardEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the mouse wheel backward VTK event.
+        Zooms in if Ctrl key is pressed, otherwise navigates to the next slice.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event 'MouseWheelBackwardEvent).
+        """
         super()._onWheelBackwardEvent(obj, evt_name)
         if self.hasVolume():
             # interactorstyle = self._window.GetInteractorStyle()
@@ -1322,7 +2158,19 @@ class SliceViewWidget(AbstractViewWidget):
             if self._interactor.GetControlKey(): self.zoomIn()
             else: self.slicePlus()
 
-    def _onLeftPressEvent(self,  obj, evt_name):
+    def _onLeftPressEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the left mouse button press VTK event.
+        Manages zoom, pan, windowing, and cursor position updates based on modifier keys.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (LeftButtonPressEvent).
+        """
         super()._onLeftPressEvent(obj, evt_name)
         if self.hasVolume():
             interactorstyle = self._window.GetInteractorStyle()
@@ -1351,10 +2199,33 @@ class SliceViewWidget(AbstractViewWidget):
             # Display information
             self._updateBottomRightInfo()
 
-    def _onMiddlePressEvent(self, obj, evt_name):
+    def _onMiddlePressEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the middle mouse button press VTK event.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (MiddleButtonPressEvent).
+        """
         super()._onMiddlePressEvent(obj, evt_name)
 
-    def _onMouseMoveEvent(self,  obj, evt_name):
+    def _onMouseMoveEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the mouse move VTK event.
+        Performs zoom, pan, or windowing operations if a button is pressed and modifier keys are active. Updates cursor
+        position and information display. Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (MouseMoveEvent).
+        """
         super()._onMouseMoveEvent(obj, evt_name)
         if self.hasVolume():
             try:
@@ -1411,7 +2282,19 @@ class SliceViewWidget(AbstractViewWidget):
                     self._updateBottomRightInfo()
             except: pass
 
-    def _onLeftReleaseEvent(self,  obj, evt_name):
+    def _onLeftReleaseEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the left mouse button release VTK event.
+        Resets mouse cursor and visibility states after interaction.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (LeftButtonReleaseEvent).
+        """
         super()._onLeftReleaseEvent(obj, evt_name)
         if self.hasVolume():
             # interactorstyle = self._window.GetInteractorStyle()
@@ -1438,7 +2321,19 @@ class SliceViewWidget(AbstractViewWidget):
                 QCursor.setPos(c)
             # Revision 27/01/2025 >
 
-    def _onKeyPressEvent(self,  obj, evt_name):
+    def _onKeyPressEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the key press VTK event.
+        Performs zoom or slice navigation based on modifier keys.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (KeyPressEvent).
+        """
         super()._onKeyPressEvent(obj, evt_name)
         if self.hasVolume():
             interactorstyle = self._window.GetInteractorStyle()
@@ -1450,7 +2345,19 @@ class SliceViewWidget(AbstractViewWidget):
                 if k == 'Up' or k == 'Left': self.sliceMinus()
                 elif k == 'Down' or k == 'Right': self.slicePlus()
 
-    def _onKeyReleaseEvent(self, obj, evt_name):
+    def _onKeyReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the key release VTK event.
+        Resets mouse cursor and visibility states after interaction.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (KeyReleaseEvent).
+        """
         super()._onKeyReleaseEvent(obj, evt_name)
         if self.hasVolume():
             interactorstyle = self._window.GetInteractorStyle()
@@ -1468,11 +2375,15 @@ class SliceReorientViewWidget(SliceViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Subclass of the SliceViewWidget base class.
+    Specialized subclass of the SliceViewWidget base class to provide interactive tools for reorienting a SisypheVolume.
 
-    It is designed to provide additional functionality for reorienting a 3D volume in a 2D slice view. This class
-    extends the capabilities of the SliceViewWidget by adding the ability to apply rigid transformations, display a box
-    widget to show and manipulate the field of view, and provide synchronization events for transformations.
+    The main features are as follows:
+
+    - Interactive geometric transformation: it introduces a reslice cursor that users can manipulate with the mouse to apply rigid transformations. Dragging the cursor's center translates the volume, while dragging its edges applies rotations.
+    - Field of View (FOV) Visualization: a wireframe box is rendered to represent the volume's current field of view. This box dynamically updates with every transformation, providing clear visual feedback on the volume's alignment in 3D space.
+    - Resampling space control: the widget allows users to modify the target resampling space by adjusting the output volume's size (dimensions) and spacing (voxel size).
+    - Synchronization: it uses Qt signals and slots to synchronize transformations, resampling parameters, and cursor state across multiple linked SliceReorientViewWidget instances.
+    - Export: the geometric transformation can be retrieved as a SisypheTransform instance, which encapsulates the translations, rotations, and resampling parameters needed to perform the final resampling operation.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1480,7 +2391,7 @@ class SliceReorientViewWidget(SliceViewWidget):
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceReorientViewWidget
 
     Creation: 05/04/2022
-    Last revision: 04/09/2024
+    Last revision: 20/10/2025
     """
 
     # Custom Qt signals
@@ -1493,27 +2404,15 @@ class SliceReorientViewWidget(SliceViewWidget):
 
     # Special method
 
-    """
-     Private attributes
+    def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        SliceReorientViewWidget instance constructor.
 
-    _cursorpos0             tuple[float, float, float]
-    _rotations0             tuple[float, float, float]
-    _rotations              tuple[float, float, float]
-    _moveResliceCursorFlag  bool
-    _rotationsFlag          bool
-    _rotationxFlag          bool
-    _rotationyFlag          bool
-    _rotationzFlag          bool
-    _translationsFlag       bool
-    _size                   tuple[int, int, int]
-    _spacing                tuple[float, float, float]
-    _resliceCursor          vtkResliceCursor
-    _resliceCursorActor     vtkActor
-    _boxFov                 vtkBox
-    _boxFovActor            vtkActor
-    """
-
-    def __init__(self, parent=None):
+        Parameters
+        ----------
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         self._rotations0 = None
@@ -1565,35 +2464,141 @@ class SliceReorientViewWidget(SliceViewWidget):
         if self._action['showtooltip'].isChecked(): self.setToolTip(self._tooltipstr)
         else: self.setToolTip('')
 
+    """
+     Private attributes
+
+    _cursorpos0             tuple[float, float, float]
+    _rotations0             tuple[float, float, float]
+    _rotations              tuple[float, float, float]
+    _moveResliceCursorFlag  bool
+    _rotationsFlag          bool
+    _rotationxFlag          bool
+    _rotationyFlag          bool
+    _rotationzFlag          bool
+    _translationsFlag       bool
+    _size                   tuple[int, int, int]
+    _spacing                tuple[float, float, float]
+    _resliceCursor          vtkResliceCursor
+    _resliceCursorActor     vtkActor
+    _boxFov                 vtkBox
+    _boxFovActor            vtkActor
+    """
+
     # Public synchronisation event methods
 
-    def synchroniseResliceCursorChanged(self, obj, x, y, z, rx, ry, rz):
+    def synchroniseResliceCursorChanged(self, obj: QWidget,
+                                        x: float, y: float, z: float,
+                                        rx: float, ry: float, rz: float) -> None:
+        """
+        Synchronizes the reslice cursor's position and orientation from another SliceReorientViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceReorientViewWidget instance that emitted the signal.
+        x : float
+            x-coordinate of the reslice cursor.
+        y : float
+            y-coordinate of the reslice cursor.
+        z : float
+            z-coordinate of the reslice cursor.
+        rx : float
+            rotation around the x-axis (in degrees).
+        ry : float
+            rotation around the y-axis (in degrees).
+        rz : float
+            rotation around the z-axis (in degrees).
+        """
         if self != obj and self.hasVolume():
             self._rotations = [rx, ry, rz]
             self._updateResliceCursor(x, y, z, rx, ry, rz, signal=False)
 
-    def synchroniseSpacingChanged(self, obj, sx, sy, sz):
+    def synchroniseSpacingChanged(self, obj: QWidget, sx: float, sy: float, sz: float) -> None:
+        """
+        Synchronizes the volume's spacing from another SliceReorientViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceReorientViewWidget instance that emitted the signal.
+        sx : float
+            spacing along the x-axis.
+        sy : float
+            spacing along the y-axis.
+        sz : float
+            spacing along the z-axis.
+        """
         if self != obj and self.hasVolume():
             self.setSpacing([sx, sy, sz], signal=False)
 
-    def synchroniseSizeChanged(self, obj, sx, sy, sz):
+    def synchroniseSizeChanged(self, obj: QWidget, sx: int, sy: int, sz: int) -> None:
+        """
+        Synchronizes the volume's size (dimensions) from another SliceReorientViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceReorientViewWidget instance that emitted the signal.
+        sx : int
+            size along the x-dimension.
+        sy : int
+            size along the y-dimension.
+        sz : int
+            size along the z-dimension.
+        """
         if self != obj and self.hasVolume():
             self.setSize([sx, sy, sz], signal=False)
 
-    def synchroniseTranslationsChanged(self, obj, tx, ty, tz):
+    def synchroniseTranslationsChanged(self, obj: QWidget, tx: float, ty: float, tz: float) -> None:
+        """
+        Synchronizes the volume's translations from another SliceReorientViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceReorientViewWidget instance that emitted the signal.
+        tx : float
+            translation along the x-axis.
+        ty : float
+            translation along the y-axis.
+        tz : float
+            translation along the z-axis.
+        """
         if self != obj and self.hasVolume():
             self.setTranslations(tx, ty, tz, signal=False)
 
-    def synchroniseRotationsChanged(self, obj, rx, ry, rz):
+    def synchroniseRotationsChanged(self, obj: QWidget, rx: float, ry: float, rz: float) -> None:
+        """
+        Synchronizes the volume's rotations from another SliceReorientViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceReorientViewWidget instance that emitted the signal.
+        rx : float
+            rotation around the x-axis (in degrees).
+        ry : float
+            rotation around the y-axis (in degrees).
+        rz : float
+            rotation around the z-axis (in degrees).
+        """
         if self != obj and self.hasVolume():
             self.setRotations(rx, ry, rz, signal=False)
 
     # Private method
 
-    def _updateCameraClipping(self):
+    def _updateCameraClipping(self) -> None:
+        """
+        Overrides the base class method. Clipping is not applied in SliceReorientViewWidget.
+        Currently, this method overrides the superclass's implementation.
+        """
         pass
 
-    def _applyTransform(self):
+    def _applyTransform(self) -> None:
+        """
+        Applies the current rotations to the displayed volume slice.
+        The center of rotation is set to the reslice cursor's position.
+        """
         if self.hasVolume():
             r = self._rotations
             # < Revision 27/08/2024
@@ -1607,7 +2612,11 @@ class SliceReorientViewWidget(SliceViewWidget):
             else: self._volumeslice.SetOrientation(0.0, r[1], r[2])
             self._volume.getVTKImage().Modified()
 
-    def _initResliceCursor(self):
+    def _initResliceCursor(self) -> None:
+        """
+        Initializes the vtkFollower actor that represents the reslice cursor.
+        This cursor indicates the current slice plane and its orientation.
+        """
         hline = vtkLineSource()
         vline = vtkLineSource()
         hline.SetPoint1(-500, 0, 1)
@@ -1632,11 +2641,33 @@ class SliceReorientViewWidget(SliceViewWidget):
         self._resliceCursor.SetVisibility(False)
         self._renderer.AddActor(self._resliceCursor)
 
-    def _updateResliceCursor(self, x, y, z, rx, ry, rz, signal=True):
+    def _updateResliceCursor(self,
+                             x: float, y: float, z: float,
+                             rx: float, ry: float, rz: float,
+                             signal: bool = True) -> None:
         """
-            Translations
-            SetOrigin() for boxFovActor, set coordinates of vtkActor barycenter
+        Updates the position and orientation of the reslice cursor and the FOV box.
+        Applies the corresponding transformation to the volume slice.
+
+        Parameters
+        ----------
+        x : float
+            x-coordinate for the reslice cursor.
+        y : float
+            y-coordinate for the reslice cursor.
+        z : float
+            z-coordinate for the reslice cursor.
+        rx : float
+            rotation around the x-axis (in degrees).
+        ry : float
+            rotation around the y-axis (in degrees).
+        rz : float
+            rotation around the z-axis (in degrees).
+        signal : bool (optional)
+            If True, emits the ResliceCursorChanged signal for synchronization (default True).
         """
+        # Translations
+        # SetOrigin() for boxFovActor, set coordinates of vtkActor barycenter
         self._resliceCursor.SetPosition(x, y, z)
         self._boxFov.SetCenter(x, y, z)
         # noinspection PyArgumentList
@@ -1668,7 +2699,18 @@ class SliceReorientViewWidget(SliceViewWidget):
             # noinspection PyUnresolvedReferences
             self.ResliceCursorChanged.emit(self, x, y, z, rx, ry, rz)
 
-    def _setCameraFocalDepth(self, f, signal=True):
+    def _setCameraFocalDepth(self, f, signal: bool = True) -> None:
+        """
+        Overrides the base class method to also update the reslice cursor's position when the camera's focal depth
+        changes. Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        f : list[float] | tuple[float, float, float] | int
+            new focal point coordinates or a relative step.
+        signal : bool (optional)
+            If True, emits the ResliceCursorChanged signal for synchronization (default True).
+        """
         super()._setCameraFocalDepth(f, signal)
         # < Revision 27/08/2024
         # p = self.getCursorWorldPosition()
@@ -1688,7 +2730,17 @@ class SliceReorientViewWidget(SliceViewWidget):
 
     # Public method
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
+        """
+        Set the SisypheVolume to be displayed and reoriented.
+        Initialize the FOV box and reslice cursor actors based on the volume's properties.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            SisypheVolume to display.
+        """
         self._size = volume.getSize()
         self._spacing = volume.getSpacing()
         # Add reslice cursor actor
@@ -1710,7 +2762,10 @@ class SliceReorientViewWidget(SliceViewWidget):
         self._renderer.GetActiveCamera().SetClippingRange(0.1, 1000)
         self._renderer.GetActiveCamera().SetFocalPoint(c)
 
-    def reset(self):
+    def reset(self) -> None:
+        """
+        Reset the reslice cursor's position and orientation to the volume's center and zero rotations, respectively.
+        """
         c = self._volume.getCenter()
         self._rotations = [0.0, 0.0, 0.0]
         # < Revision 04/09/2024
@@ -1719,7 +2774,15 @@ class SliceReorientViewWidget(SliceViewWidget):
         # Revision 04/09/2024 >
         self._updateResliceCursor(c[0], c[1], c[2], 0.0, 0.0, 0.0)
 
-    def getTranslations(self):
+    def getTranslations(self) -> tuple[float, float, float]:
+        """
+        Gets the current translations of the reslice cursor relative to the volume's center.
+
+        Returns
+        -------
+        tuple[float, float, float]
+            translations (tx, ty, tz) in world coordinates.
+        """
         if self.hasVolume():
             c0 = self._volume.getCenter()
             # < Revision 27/08/2024
@@ -1729,11 +2792,33 @@ class SliceReorientViewWidget(SliceViewWidget):
             return c1[0] - c0[0], c1[1] - c0[1], c1[2] - c0[2]
         else: raise AttributeError('Volume attribute is None.')
 
-    def getRotations(self):
+    def getRotations(self) -> list[float]:
+        """
+        Gets the current rotations applied to the reslice cursor.
+
+        Returns
+        -------
+        list[float]
+            rotations (rx, ry, rz) in degrees.
+        """
         if self.hasVolume(): return self._rotations
         else: raise AttributeError('Volume attribute is None.')
 
-    def setTranslations(self, tx, ty, tz, signal=True):
+    def setTranslations(self, tx: float, ty: float, tz: float, signal: bool = True) -> None:
+        """
+        Sets the translations of the reslice cursor relative to the volume's center.
+
+        Parameters
+        ----------
+        tx : float
+            translation along the x-axis.
+        ty : float
+            translation along the y-axis.
+        tz : float
+            translation along the z-axis.
+        signal : bool (optional)
+            If True, emits the `TranslationsChanged` signal for synchronization (default True).
+        """
         c = list(self._volume.getCenter())
         c[0] += tx
         c[1] += ty
@@ -1747,7 +2832,21 @@ class SliceReorientViewWidget(SliceViewWidget):
                                   self._rotations[2],
                                   signal)
 
-    def setRotations(self, rx, ry, rz, signal=True):
+    def setRotations(self, rx: float, ry: float, rz: float, signal: bool = True) -> None:
+        """
+        Set the rotations of the reslice cursor.
+
+        Parameters
+        ----------
+        rx : float
+            rotation around the x-axis (in degrees).
+        ry : float
+            rotation around the y-axis (in degrees).
+        rz : float
+            rotation around the z-axis (in degrees).
+        signal : bool (optional)
+            If True, emits the `RotationsChanged` signal for synchronization (default True).
+        """
         # < Revision 27/08/2024
         # c = self.getCursorWorldPosition()
         c = self._resliceCursor.GetPosition()
@@ -1763,10 +2862,17 @@ class SliceReorientViewWidget(SliceViewWidget):
                                   self._rotations[2],
                                   signal)
 
-    def getTransform(self):
+    def getTransform(self) -> SisypheTransform:
         """
-            Forward centered transform (center of rotation = volume center)
+        Get the SisypheTransform instancve representing the current geometric transformation (translations and
+        rotations) applied to the SisypheVolume.
+
+        Returns
+        -------
+        SisypheTransform
+            current geometric transformation.
         """
+        # Forward centered transform (center of rotation = volume center)
         t = self.getTranslations()
         trf = SisypheTransform()
         trf.setAttributesFromFixedVolume(self._volume)
@@ -1784,17 +2890,43 @@ class SliceReorientViewWidget(SliceViewWidget):
         trf.setRotations(self.getRotations(), deg=True)
         return trf
 
-    def getFOV(self):
+    def getFOV(self) -> tuple[float, float, float]:
+        """
+        Get the current Field of View (FOV) of the SisypheVolume, calculated from its size and spacing.
+
+        Returns
+        -------
+        tuple[float, float, float]
+            FOV dimensions (x, y, z) in world coordinates (mm)
+        """
         if self.hasVolume():
             return (self._size[0] * self._spacing[0],
                     self._size[1] * self._spacing[1],
                     self._size[2] * self._spacing[2])
         else: raise AttributeError('Volume attribute is None.')
 
-    def getSpacing(self):
+    def getSpacing(self) -> tuple[float, float, float]:
+        """
+        Get the current spacing (voxel dimensions) of the volume.
+
+        Returns
+        -------
+        tuple[float, float, float]
+            spacing (sx, sy, sz) in world units (mm).
+        """
         return self._spacing
 
-    def setSpacing(self, spacing, signal=True):
+    def setSpacing(self, spacing: list[float] | tuple[float, float, float], signal: bool = True) -> None:
+        """
+        Set the spacing (voxel dimensions) of the SisypheVolume and updates the FOV box accordingly.
+
+        Parameters
+        ----------
+        spacing : list[float] | tuple[float, float, float]
+            new spacing (sx, sy, sz) in world units (mm).
+        signal : bool, optional
+            If True, emits the SpacingChanged signal for synchronization (default True).
+        """
         if self.hasVolume():
             self._spacing = spacing
             fov = self.getFOV()
@@ -1811,10 +2943,28 @@ class SliceReorientViewWidget(SliceViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.SpacingChanged.emit(self, self._spacing[0], self._spacing[1], self._spacing[2])
 
-    def getSize(self):
+    def getSize(self) -> tuple[int, int, int]:
+        """
+        Get the current size (number of voxels) of the SisypehVolume.
+
+        Returns
+        -------
+        tuple[int, int, int]
+            size (nx, ny, nz) in voxels.
+        """
         return self._size
 
-    def setSize(self, size, signal=True):
+    def setSize(self, size: list[int] | tuple[int, int, int], signal: bool = True) -> None:
+        """
+        Sets the size (number of voxels) of the SisypheVolume and updates the FOV box accordingly.
+
+        Parameters
+        ----------
+        size : list[int] | tuple[int, int, int]
+            new size (nx, ny, nz) in voxels.
+        signal : bool (optional)
+            If True, emits the SizeChanged signal for synchronization (default True).
+        """
         if self.hasVolume():
             self._size = size
             fov = self.getFOV()
@@ -1831,7 +2981,16 @@ class SliceReorientViewWidget(SliceViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.SizeChanged.emit(self, self._size[0], self._size[1], self._size[2])
 
-    def setDefaultFOV(self, signal=True):
+    def setDefaultFOV(self, signal: bool = True) -> None:
+        """
+        Resets the SisypheVolume's size and spacing to its default values (from the original `SisypheVolume`). Updates
+        the FOV box accordingly.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits SizeChanged and SpacingChanged signals for synchronization (default True).
+        """
         if self.hasVolume():
             self._size = self._volume.getSize()
             self._spacing = self._volume.getSpacing()
@@ -1852,110 +3011,293 @@ class SliceReorientViewWidget(SliceViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.SpacingChanged.emit(self, self._spacing[0], self._spacing[1], self._spacing[2])
 
-    def setFOVBoxVisibility(self, v):
+    def setFOVBoxVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the Field of View (FOV) box.
+
+        Parameters
+        ----------
+        v : bool
+            True to make the FOV box visible, False to hide it.
+        """
         if isinstance(v, bool): self._boxFovActor.SetVisibility(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getFOVBoxVisibility(self):
-        return self._boxFovActor.GetVisibility()
+    def getFOVBoxVisibility(self) -> bool:
+        """
+        Get the current visibility state of the Field of View (FOV) box.
 
-    def setResliceCursorPosition(self, p):
+        Returns
+        -------
+        bool
+            True if the FOV box is visible, False otherwise.
+        """
+        # < Revision 20/10/2025
+        return self._boxFovActor.GetVisibility() > 0
+        # Revision 20/10/2025 >
+
+    def setResliceCursorPosition(self, p: list[float] | tuple[float, float, float]) -> None:
+        """
+        Set the world position of the reslice cursor.
+
+        Parameters
+        ----------
+        p : list[float] | tuple[float, float, float]
+            new world coordinates (x, y, z) for the reslice cursor.
+        """
         r = self.getRotations()
         self._updateResliceCursor(p[0], p[1], p[2], r[0], r[1], r[2])
 
-    def getResliceCursorPosition(self):
+    def getResliceCursorPosition(self) -> tuple[float, float, float]:
+        """
+        Get the current world position of the reslice cursor.
+
+        Returns
+        -------
+        tuple[float, float, float]
+            world coordinates (x, y, z) of the reslice cursor.
+        """
         return self._resliceCursor.GetPosition()
 
-    def translationsEnabled(self):
+    def translationsEnabled(self) -> None:
+        """
+        Enable translations of the reslice cursor via user interaction.
+        """
         self._translationsFlag = True
 
-    def translationsDisabled(self):
+    def translationsDisabled(self) -> None:
+        """
+        Disable translations of the reslice cursor via user interaction.
+        """
         self._translationsFlag = False
 
-    def rotationsEnabled(self):
+    def rotationsEnabled(self) -> None:
+        """
+        Enable rotations of the reslice cursor via user interaction.
+        """
         self._rotationsFlag = True
 
-    def rotationsDisabled(self):
+    def rotationsDisabled(self) -> None:
+        """
+        Disable rotations of the reslice cursor via user interaction.
+        """
         self._rotationsFlag = False
 
-    def rotationXEnabled(self):
+    def rotationXEnabled(self) -> None:
+        """
+        Enable rotation around the x-axis for the reslice cursor.
+        """
         self._rotationsFlag = True
         self._rotationxFlag = True
 
-    def rotationXDisabled(self):
+    def rotationXDisabled(self) -> None:
+        """
+        Disable rotation around the x-axis for the reslice cursor.
+        """
         self._rotationxFlag = False
 
-    def rotationYEnabled(self):
+    def rotationYEnabled(self) -> None:
+        """
+        Enable rotation around the y-axis for the reslice cursor.
+        """
         self._rotationsFlag = True
         self._rotationyFlag = True
 
-    def rotationYDisabled(self):
+    def rotationYDisabled(self) -> None:
+        """
+        Disable rotation around the y-axis for the reslice cursor.
+        """
         self._rotationzFlag = False
 
-    def rotationZEnabled(self):
+    def rotationZEnabled(self) -> None:
+        """
+        Enable rotation around the z-axis for the reslice cursor.
+        """
         self._rotationsFlag = True
         self._rotationzFlag = True
 
-    def rotationZDisabled(self):
+    def rotationZDisabled(self) -> None:
+        """
+        Disable rotation around the z-axis for the reslice cursor.
+        """
         self._rotationzFlag = False
 
-    def setResliceCursorColor(self, rgb):
+    def setResliceCursorColor(self, rgb: list[float] | tuple[float, float, float]) -> None:
+        """
+        Set the color of the reslice cursor.
+
+        Parameters
+        ----------
+        rgb : list[float] | tuple[float, float, float]
+            color as an (r, g, b) tuple with values from 0.0 to 1.0.
+        """
         self._resliceCursor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2])
         self._renderwindow.Render()
 
-    def getResliceCursorColor(self):
+    def getResliceCursorColor(self) -> tuple[float, float, float]:
+        """
+        Get the current color of the reslice cursor.
+
+        Returns
+        -------
+        tuple[float, float, float]
+            color as an (r, g, b) tuple.
+        """
         return self._resliceCursor.GetProperty().GetColor()
 
-    def setResliceCursorOpacity(self, v):
+    def setResliceCursorOpacity(self, v: float) -> None:
+        """
+        Set the opacity of the reslice cursor.
+
+        Parameters
+        ----------
+        v : float
+            opacity value (0.0 to 1.0).
+        """
         if isinstance(v, float):
             self._resliceCursor.GetProperty().SetOpacity(v)
             self._renderwindow.Render()
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getResliceCursorOpacity(self):
+    def getResliceCursorOpacity(self) -> float:
+        """
+        Get the current opacity of the reslice cursor.
+
+        Returns
+        -------
+        float
+            opacity value.
+        """
         return self._resliceCursor.GetProperty().GetOpacity()
 
-    def setResliceCursorLineWidth(self, v):
+    def setResliceCursorLineWidth(self, v: float) -> None:
+        """
+        Set the line width of the reslice cursor.
+
+        Parameters
+        ----------
+        v : float
+            line width in pixels.
+        """
         if isinstance(v, float):
             self._resliceCursor.GetProperty().SetLineWidth(v)
             self._renderwindow.Render()
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getResliceCursorLineWidth(self):
+    def getResliceCursorLineWidth(self) -> float:
+        """
+        Get the current line width of the reslice cursor.
+
+        Returns
+        -------
+        float
+            line width in pixels.
+        """
         return self._resliceCursor.GetProperty().GetLineWidth()
 
-    def setFovBoxColor(self, rgb):
+    def setFovBoxColor(self, rgb: list[float] | tuple[float, float, float]) -> None:
+        """
+        Set the color of the Field of View (FOV) box.
+
+        Parameters
+        ----------
+        rgb : list[float] | tuple[float, float, float]
+            color as an (r, g, b) tuple with values from 0.0 to 1.0.
+        """
         self._boxFovActor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2])
         self._renderwindow.Render()
 
-    def getFovBoxColor(self):
+    def getFovBoxColor(self) -> tuple[float, float, float]:
+        """
+        Get the current color of the Field of View (FOV) box.
+
+        Returns
+        -------
+        tuple[float, float, float]
+            color as an (r, g, b) tuple.
+        """
         return self._boxFovActor.GetProperty().GetColor()
 
-    def setFovBoxOpacity(self, v):
+    def setFovBoxOpacity(self, v: float) -> None:
+        """
+        Set the opacity of the Field of View (FOV) box.
+
+        Parameters
+        ----------
+        v : float
+            opacity value (0.0 to 1.0).
+        """
         if isinstance(v, float):
             self._boxFovActor.GetProperty().SetOpacity(v)
             self._renderwindow.Render()
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getFovBoxOpacity(self):
+    def getFovBoxOpacity(self) -> float:
+        """
+        Get the current opacity of the Field of View (FOV) box.
+
+        Returns
+        -------
+        float
+            opacity value.
+        """
         return self._boxFovActor.GetProperty().GetOpacity()
 
-    def setFovBoxLineWidth(self, v):
+    def setFovBoxLineWidth(self, v: float) -> None:
+        """
+        Set the line width of the Field of View (FOV) box.
+
+        Parameters
+        ----------
+        v : float
+            line width in pixels.
+        """
         if isinstance(v, float):
             self._boxFovActor.GetProperty().SetLineWidth(v)
             self._renderwindow.Render()
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getFovBoxLineWidth(self):
+    def getFovBoxLineWidth(self) -> float:
+        """
+        Get the current line width of the Field of View (FOV) box.
+
+        Returns
+        -------
+        float
+            line width in pixels.
+        """
         return self._boxFovActor.GetProperty().GetLineWidth()
 
-    def setLineOpacity(self, v, signal=True):
+    def setLineOpacity(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the opacity for all line-based overlays, including the reslice cursor.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        v : bool
+            opacity value (0.0 to 1.0).
+        signal : bool, optional
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         super().setLineOpacity(v, signal)
         self._resliceCursor.GetProperty().SetOpacity(v)
 
     # Private vtk event methods
 
-    def _onLeftPressEvent(self, obj, evt_name):
+    def _onLeftPressEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the left mouse button press VTK event for reorientation.
+        Determines whether to perform a translation or rotation of the reslice cursor based on the mouse click position
+        relative to the cursor's center. Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (LeftButtonPressEvent).
+        """
         if self.hasVolume():
             if self._action['resliceflag'].isChecked():
                 interactorstyle = self._window.GetInteractorStyle()
@@ -1994,7 +3336,19 @@ class SliceReorientViewWidget(SliceViewWidget):
                     self._moveResliceCursorFlag = 0
                     self.setCursorDisabled()
 
-    def _onMouseMoveEvent(self, obj, evt_name):
+    def _onMouseMoveEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the mouse move VTK event for reorientation.
+        Performs translations or rotations of the reslice cursor based on the _moveResliceCursorFlag and
+        mouse movement. Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (MouseMoveEvent).
+        """
         super()._onMouseMoveEvent(obj, evt_name)
         if self.hasVolume():
             interactorstyle = self._window.GetInteractorStyle()
@@ -2034,7 +3388,19 @@ class SliceReorientViewWidget(SliceViewWidget):
                                               self._rotations[1],
                                               self._rotations[2])
 
-    def _onLeftReleaseEvent(self, obj, evt_name):
+    def _onLeftReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the left mouse button release VTK event for reorientation.
+        Resets interaction flags and re-enables the cursor.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (LeftButtonReleaseEvent).
+        """
         super()._onLeftReleaseEvent(obj, evt_name)
         if self.hasVolume():
             if self._action['resliceflag'].isChecked():
@@ -2050,9 +3416,14 @@ class SliceOverlayViewWidget(SliceViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Subclass of the SliceViewWidget base class.
+    Specialized subclass of the SliceViewWidget base class that displays two-dimensional, orthogonal slices of one or
+    more SisypheVolume instances as overlays on a primary reference volume.
 
-    It is designed to add the ability to handle the display and manipulation of overlays.
+    Additional features are as follows:
+
+    - mesh management: ability to display 2D cross-sections of SisypheMesh instances and to generate contour lines (isolines) for any displayed volume (reference or overlay).
+    - Enhanced information display: voxel values from a selected overlay.
+    - Synchronization: it uses Qt signals and slots to synchronize transformations, mesh visibility, and isoline settings across multiple linked SliceOverlayViewWidget.
 
     Inheritance
     ~~~~~~~~~~~
@@ -2060,7 +3431,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget
 
     Creation: 07/04/2022
-    Last revision: 27/05/2025
+    Last revision: 20/10/2025
     """
 
     # Custom Qt signals
@@ -2077,28 +3448,22 @@ class SliceOverlayViewWidget(SliceViewWidget):
 
     # Special method
 
-    """
-    Private attributes (Non-GUI)
+    def __init__(self,
+                 overlays: SisypheVolumeCollection | None = None,
+                 meshes: SisypheMeshCollection | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        SliceOverlayViewWidget instance constructor.
 
-    _ovl                SisypheVolumeCollection
-    _ovlslices          list[vtkImageSlice]
-    _cutplane           vtkPlane
-    _meshcutter         vtkPlaneCutter
-    _meshes             SisypheMeshesCollection
-    _meshslices         dict[str, vtkImageSlice], key = mesh name
-    _isocutter          vtkPlaneCutter
-    _isolines           vtkActor, isolines
-    _isolabels          vtkActor2D, label value of isolines
-    _isoindex           int, isolines of wich volume (-1 no isoline, 0 reference volume, >0 overlay volume
-    _ovlvalue           SisypheVolume, overlay for which voxel value is displayed
-    _ovlvaluetrf        SisypheTransform, applied to overlay for which voxel value is displayed
-    _aligncenters       bool, align centers of reference volume and overlays
-    _moveOverlayFlag    int
-    _isovalues          list[float]
-    _isoindex           int | None, None hide iso, int show iso (0 volume, > overlay volume index)
-    """
-
-    def __init__(self, overlays=None, meshes=None, parent=None):
+        Parameters
+        ----------
+        overlays : SisypheVolumeCollection | None (optional)
+            collection of SisypheVolume displayed in the viewport as overlays (default None).
+        meshes : SisypheMeshCollection | None (optional)
+            collection SisypheMesh displayed in the viewport (default None).
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         if overlays is not None and isinstance(overlays, SisypheVolumeCollection): self._ovl = overlays
@@ -2233,9 +3598,46 @@ class SliceOverlayViewWidget(SliceViewWidget):
             lambda: self.setMeshVisibility(self._action['showMesh'].isChecked()))
         self._menuVisibility.insertAction(self._menuVisibility.actions()[4], self._action['showMesh'])
 
+    """
+    Private attributes (Non-GUI)
+
+    _ovl                SisypheVolumeCollection
+    _ovlslices          list[vtkImageSlice]
+    _cutplane           vtkPlane
+    _meshcutter         vtkPlaneCutter
+    _meshes             SisypheMeshCollection
+    _meshslices         dict[str, vtkImageSlice], key = mesh name
+    _isocutter          vtkPlaneCutter
+    _isolines           vtkActor, isolines
+    _isolabels          vtkActor2D, label value of isolines
+    _isoindex           int, isolines of wich volume (-1 no isoline, 0 reference volume, >0 overlay volume
+    _ovlvalue           SisypheVolume, overlay for which voxel value is displayed
+    _ovlvaluetrf        SisypheTransform, applied to overlay for which voxel value is displayed
+    _aligncenters       bool, align centers of reference volume and overlays
+    _moveOverlayFlag    int
+    _isovalues          list[float]
+    _isoindex           int | None, None hide iso, int show iso (0 volume, > overlay volume index)
+    """
+
     # Private method
 
-    def _addReslice(self, volume, alpha):
+    def _addReslice(self, volume: SisypheVolume, alpha: float) -> vtkImageSlice:
+        """
+        Creates a new vtkImageSlice actor from a SisypheVolume and add it to the vtkImageStack as an overlay.
+        Applies co-registration transforms or aligns origins/centers if necessary.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            volume from which to extract the slice.
+        alpha : float
+            opacity of the slice (0.0 to 1.0).
+
+        Returns
+        -------
+        vtkImageSlice
+            created vtkImageSlice actor for the overlay.
+        """
         mapper = vtkImageResliceMapper()
         mapper.BorderOff()
         mapper.SliceAtFocalPointOn()
@@ -2309,7 +3711,15 @@ class SliceOverlayViewWidget(SliceViewWidget):
         self._stack.AddImage(slc)
         return slc
 
-    def _removeSlice(self, volume):
+    def _removeSlice(self, volume: SisypheVolume) -> None:
+        """
+        Removes a slice corresponding to a given SisypheVolume from the vtkImageStack.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            SisypheVolume whose slice is to be removed.
+        """
         # < Revision 27/05/2025
         # bug fix, vtkv == vtks not working to select the slc to remove
         # vtkv = volume.getVTKImage()
@@ -2329,7 +3739,21 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 break
         # Revision 27/05/2025 >
 
-    def _getInfoValuesText(self, p):
+    def _getInfoValuesText(self, p: list[float] | tuple[float, float, float]) -> str:
+        """
+        Overrides the base class method to include voxel value information from the currently selected overlay volume.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        p : list[float] | tuple[float, float, float]
+            world coordinates (x, y, z) of the mouse position.
+
+        Returns
+        -------
+        str
+            Formatted text containing voxel value and coordinate information, including overlay voxel value if active.
+        """
         txt = super()._getInfoValuesText(p)
         if self._ovlvalue is not None:
             # < Revision 19/10/2024
@@ -2368,7 +3792,15 @@ class SliceOverlayViewWidget(SliceViewWidget):
             txt = txt + '\n{} voxel {} x {} x {}'.format(val, x, y, z)
         return txt
 
-    def _addToMenuVoxelOverlayValue(self, volume):
+    def _addToMenuVoxelOverlayValue(self, volume: SisypheVolume) -> None:
+        """
+        Adds an action to the 'Overlay voxel value at mouse position' submenu for a given overlay volume.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            overlay volume to add to the menu.
+        """
         if isinstance(volume, SisypheVolume):
             self._ovlvalue = volume
             # < Revision 19/10/2024
@@ -2382,7 +3814,15 @@ class SliceOverlayViewWidget(SliceViewWidget):
             self._menuOverlayVoxel.addAction(action)
             self._menuOverlayVoxel.menuAction().setVisible(True)
 
-    def _removeFromMenuVoxelOverlayValue(self, volume):
+    def _removeFromMenuVoxelOverlayValue(self, volume: SisypheVolume) -> None:
+        """
+        Removes an action from the 'Overlay voxel value at mouse position' submenu for a given overlay volume.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            overlay volume to remove from the menu.
+        """
         if isinstance(volume, SisypheVolume):
             actions = self._group_menuOverlayVoxel.actions()
             n = len(actions)
@@ -2401,7 +3841,11 @@ class SliceOverlayViewWidget(SliceViewWidget):
                         break
             self._menuOverlayVoxel.menuAction().setVisible(n > 1)
 
-    def _clearMenuVoxelOverlayValue(self):
+    def _clearMenuVoxelOverlayValue(self) -> None:
+        """
+        Clears all overlay-specific actions from the 'Overlay voxel value at mouse position' submenu, leaving only the
+        'No' option.
+        """
         actions = self._group_menuOverlayVoxel.actions()
         n = len(actions)
         if n > 1:
@@ -2415,13 +3859,29 @@ class SliceOverlayViewWidget(SliceViewWidget):
         self._ovlvaluetrf = None
         self._menuOverlayVoxel.menuAction().setVisible(False)
 
-    def _menuOverlayVoxelTriggered(self, action):
+    def _menuOverlayVoxelTriggered(self, action) -> None:
+        """
+        Callback for when an action in the 'Overlay voxel value at mouse position' submenu is triggered.
+        Sets the active overlay for voxel value display.
+
+        Parameters
+        ----------
+        action : QAction
+            triggered QAction.
+        """
         self.setInfoOverlayValueVisibility(action.text())
 
-    def _updateTooltip(self):
+    def _updateTooltip(self) -> None:
+        """
+        Updates the viewport's tooltip string, typically with information about the current overlay transformations.
+        """
         pass
 
-    def _initIsoLines(self):
+    def _initIsoLines(self) -> None:
+        """
+        Initializes the vtkContourFilter and vtkActor for displaying isolines from the active isoline volume. Also sets
+        up vtkLabeledDataMapper for isoline labels.
+        """
         if self._volume is not None:
             if self._isoindex > -1:
                 if self._isolines is not None:
@@ -2491,7 +3951,10 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 self._renderer.AddActor(self._isolabels)
                 self._renderwindow.Render()
 
-    def _updateIsoLines(self):
+    def _updateIsoLines(self) -> None:
+        """
+        Updates the display of isolines and their labels based on the current slice plane.
+        """
         if self._volume is not None:
             if self._isoindex > -1:
                 if self._isolines.GetVisibility():
@@ -2517,7 +3980,10 @@ class SliceOverlayViewWidget(SliceViewWidget):
                     self._isolabels.GetMapper().Update()
                     self._renderwindow.Render()
 
-    def _updateMeshes(self):
+    def _updateMeshes(self) -> None:
+        """
+        Updates the display of mesh slices based on the current slice plane and mesh visibility settings.
+        """
         if self._volume is not None:
             if self._action['showMesh'].isChecked():
                 n = self._meshes.count()
@@ -2546,77 +4012,215 @@ class SliceOverlayViewWidget(SliceViewWidget):
                             prop.SetOpacity(mesh.getOpacity())
                 self._renderwindow.Render()
 
-    def _setCameraFocalDepth(self, p, signal=True):
+    def _setCameraFocalDepth(self, p: list[float] | tuple[float, float, float] | int, signal: bool = True):
+        """
+        Overrides the base class method to also update isolines and mesh slices when the camera's focal depth changes.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        p : list[float] | tuple[float, float, float] | int
+            new focal point coordinates or a relative step.
+        signal : bool (optional)
+            If True, emits the `CursorPositionChanged` signal for synchronization (default True).
+        """
         super()._setCameraFocalDepth(p, signal)
         if self._isoindex > -1: self._updateIsoLines()
         if self._meshes is not None: self._updateMeshes()
 
     # Public synchronisation event methods
 
-    def synchroniseViewOverlayMethodCalled(self, obj, function, param1, param2):
+    def synchroniseViewOverlayMethodCalled(self, obj: QWidget, function: str, param1: Any, param2: Any) -> None:
+        """
+        Synchronize a method call related to overlays from another SliceOverlayViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceOverlayViewWidget instance that emitted the signal.
+        function : str
+            name of the method called.
+        param1 : Any
+            first parameter passed to the method.
+        param2 : Any
+            second parameter passed to the method.
+        """
         if obj != self and self.hasVolume():
             f = getattr(self, function)
             if param1 is None and param2 is None: f(signal=False)
             elif param2 is None: f(param1, signal=False)
             else: f(param1, param2, signal=False)
 
-    def synchroniseTranslationsChanged(self, obj, t, index):
+    def synchroniseTranslationsChanged(self, obj: QWidget, t: tuple[float, float, float], index: int) -> None:
+        """
+        Synchronize an overlay's translations from another SliceOverlayViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceOverlayViewWidget instance that emitted the signal.
+        t : tuple[float, float, float]
+            new translation (tx, ty, tz) of the overlay.
+        index : int
+            index of the affected overlay.
+        """
         if obj != self and self.hasVolume():
             self.setTranslations(t, index, signal=False)
 
-    def synchroniseRotationsChanged(self, obj, r, index):
+    def synchroniseRotationsChanged(self, obj: QWidget, r: tuple[float, float, float], index: int) -> None:
+        """
+        Synchronize an overlay's rotations from another `SliceOverlayViewWidget` instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceOverlayViewWidget instance that emitted the signal.
+        r : tuple[float, float, float]
+            new rotation (rx, ry, rz) of the overlay (in degrees).
+        index : int
+            index of the affected overlay.
+        """
         if obj != self and self.hasVolume():
             self.setRotations(r, index, deg=True, signal=False)
 
-    def synchroniseIsoIndexChanged(self, obj, index):
+    def synchroniseIsoIndexChanged(self, obj: QWidget, index: int) -> None:
+        """
+        Synchronize the active isoline volume index from another SliceOverlayViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            TSliceOverlayViewWidget instance that emitted the signal.
+        index : int
+            index of the volume for isolines (-1 for none, 0 for reference, >0 for overlay).
+        """
         if obj != self and self.hasVolume():
             self.setIsoIndex(index, signal=False)
 
-    def synchroniseIsoValuesChanged(self, obj, v):
+    def synchroniseIsoValuesChanged(self, obj: QWidget, v: list[float]) -> None:
+        """
+        Synchronize the isoline values from another SliceOverlayViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceOverlayViewWidget instance that emitted the signal.
+        v : list[float]
+            list of float values defining the isolines.
+        """
         if obj != self and self.hasVolume():
             self.setIsoValues(v, signal=False)
 
-    def synchroniseIsoLinesColorChanged(self, obj, c):
+    def synchroniseIsoLinesColorChanged(self, obj: QWidget, c: list[float]) -> None:
+        """
+        Synchronize the isoline color from another SliceOverlayViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceOverlayViewWidget instance that emitted the signal.
+        c : list[float]
+            RGB color (tuple of r, g, b floats) of the isolines (0.0 to 1.0).
+        """
         if obj != self and self.hasVolume():
             self.setIsoLinesColor(c, signal=False)
 
-    def synchroniseIsoLinesOpacityChanged(self, obj, v):
+    def synchroniseIsoLinesOpacityChanged(self, obj: QWidget, v: float) -> None:
+        """
+        Synchronize the isoline opacity from another SliceOverlayViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceOverlayViewWidget instance that emitted the signal.
+        v : float
+            opacity of the isolines (0.0 to 1.0).
+        """
         if obj != self and self.hasVolume():
             self.setIsoLinesOpacity(v, signal=False)
 
-    def synchroniseMeshVisibilityChanged(self, obj, v):
+    def synchroniseMeshVisibilityChanged(self, obj: QWidget, v: bool) -> None:
+        """
+        Synchronize the visibility of meshes from another SliceOverlayViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            TSliceOverlayViewWidget instance that emitted the signal.
+        v : bool
+            True if meshes are visible, False otherwise.
+        """
         if obj != self and self.hasVolume():
             self.setMeshVisibility(v, signal=False)
 
     # Public methods
 
-    def updateRender(self):
+    def updateRender(self) -> None:
+        """
+        Force a re-render of the VTK window, updating mesh displays if present.
+        Currently, this method calls the superclass's implementation.
+        """
         if self._meshes is not None: self._updateMeshes()
         super().updateRender()
 
-    def displayOff(self):
+    def displayOff(self) -> None:
+        """
+        Hide all display elements, including overlay-specific voxel value menus.
+        Currently, this method calls the superclass's implementation.
+        """
         super().displayOff()
         self._clearMenuVoxelOverlayValue()
 
-    def setAlignCenters(self, v):
+    def setAlignCenters(self, v: bool) -> None:
+        """
+        Enable automatic alignment of new overlays by their centers.
+        """
         if isinstance(v, bool): self._aligncenters = v
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def alignCentersOn(self):
+    def alignCentersOn(self) -> None:
+        """
+        Disable automatic alignment of new overlays by their centers.
+        """
         self.setAlignCenters(True)
 
-    def alignCentersOff(self):
+    def alignCentersOff(self) -> None:
+        """
+        Disables automatic alignment of new overlays by their centers.
+        """
         self.setAlignCenters(False)
 
-    def getAlignCenters(self):
+    def getAlignCenters(self) -> bool:
+        """
+        Check if automatic alignment of new overlays by their centers is enabled.
+
+        Returns
+        -------
+        bool
+            True if alignment is enabled, False otherwise.
+        """
         return self._aligncenters
 
-    def removeVolume(self):
+    def removeVolume(self) -> None:
+        """
+        Remove the main SisypheVolume, all overlays, and isolines from the viewport.
+        Currently, this method calls the superclass's implementation.
+        """
         self.removeAllOverlays()
         self.removeIsoLines()
         super().removeVolume()
 
-    def addOverlay(self, volume, alpha=0.5):
+    def addOverlay(self, volume: SisypheVolume, alpha: float = 0.5) -> None:
+        """
+        Adds a SisypheVolume as an overlay to the current viewport.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            volume to add as an overlay.
+        alpha : float, optional
+            opacity of the overlay (0.0 to 1.0). Defaults to 0.5.
+        """
         if self._volume is not None:
             if volume not in self._ovl:
                 self._ovl.append(volume)
@@ -2632,13 +4236,37 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 # self.OverlayListChanged.emit()
         else: raise ValueError('reference volume must be set before overlay.')
 
-    def getOverlayCount(self):
+    def getOverlayCount(self) -> int:
+        """
+        Get the number of overlays currently displayed.
+
+        Returns
+        -------
+        int
+            total number of overlays.
+        """
         return len(self._ovl)
 
-    def hasOverlay(self):
+    def hasOverlay(self) -> bool:
+        """
+        Check if there are any overlays currently displayed.
+
+        Returns
+        -------
+        bool
+            True if at least one overlay exists, False otherwise.
+        """
         return len(self._ovl) > 0
 
-    def removeOverlay(self, o):
+    def removeOverlay(self, o: int | SisypheVolume) -> None:
+        """
+        Remove a specific overlay from the viewport.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            overlay to remove, identified by its index or SisypheVolume instance.
+        """
         if self.hasOverlay():
             if isinstance(o, int):
                 if 0 <= o < len(self._ovl):
@@ -2660,7 +4288,10 @@ class SliceOverlayViewWidget(SliceViewWidget):
                     # noinspection PyUnresolvedReferences
                     # self.OverlayListChanged.emit()
 
-    def removeAllOverlays(self):
+    def removeAllOverlays(self) -> None:
+        """
+        Removes all overlays from the viewport.
+        """
         if self.hasOverlay():
             # Remove isolines
             if self._isoindex > 0:
@@ -2682,7 +4313,20 @@ class SliceOverlayViewWidget(SliceViewWidget):
         # self.OverlayListChanged.emit()
         self._clearMenuVoxelOverlayValue()
 
-    def getOverlayIndex(self, o):
+    def getOverlayIndex(self, o: SisypheVolume) -> int | None:
+        """
+        Gets the index of a given overlay volume in the collection.
+
+        Parameters
+        ----------
+        o : SisypheVolume
+            overlay volume to find.
+
+        Returns
+        -------
+        int | None
+            index of the overlay, or None if not found.
+        """
         if self.hasOverlay():
             if isinstance(o, SisypheVolume):
                 if o in self._ovl: return self._ovl.index(o)
@@ -2690,31 +4334,98 @@ class SliceOverlayViewWidget(SliceViewWidget):
             else: raise TypeError('Parameter type {} is not SisypheVolume.'.format(type(o)))
         else: raise AttributeError('No overlay.')
 
-    def getOverlayFromIndex(self, index):
+    def getOverlayFromIndex(self, index: int) -> SisypheVolume:
+        """
+        Get an overlay volume by its index.
+
+        Parameters
+        ----------
+        index : int
+            index of the overlay to retrieve.
+
+        Returns
+        -------
+        SisypheVolume
+            SisypheVolume instance at the specified index.
+        """
         if self.hasOverlay():
             if 0 <= index < len(self._ovl): return self._ovl[index]
             else: raise ValueError('Index parameter is out of range.')
         else: raise AttributeError('No overlay')
 
-    def getVtkImageSliceOverlayList(self):
+    def getVtkImageSliceOverlayList(self) -> list[vtkImageSlice]:
+        """
+        Get a list of all vtkImageSlice actors representing the overlays.
+
+        Returns
+        -------
+        list[vtkImageSlice]
+            list of VTK image slice actors.
+        """
         return self._ovlslices
 
-    def getVtkImageSliceOverlay(self, index):
+    def getVtkImageSliceOverlay(self, index: int) -> vtkImageSlice:
+        """
+        Get a specific vtkImageSlice actor for an overlay by its index.
+
+        Parameters
+        ----------
+        index : int
+            index of the overlay slice to retrieve.
+
+        Returns
+        -------
+        vtkImageSlice
+            vtkImageSlice actor.
+        """
         if self.hasOverlay():
             if 0 <= index < len(self._ovlslices): return self._ovlslices[index]
             else: raise ValueError('Index parameter is out of range.')
         else: raise AttributeError('No overlay')
 
-    def hasVtkImageSliceOverlay(self, o):
+    def hasVtkImageSliceOverlay(self, o: vtkImageSlice) -> int | None:
+        """
+        Check if a given vtkImageSlice is present in the list of overlay slices.
+
+        Parameters
+        ----------
+        o : vtkImageSlice
+            vtkImageSlice to check for.
+
+        Returns
+        -------
+        int | None
+            index of the slice if found, otherwise None.
+        """
         if isinstance(o, vtkImageSlice):
             if o in self._ovlslices: return self._ovlslices.index(o)
             else: return None
         else: raise TypeError('Parameter type {} is not vtkImageSlice.'.format(type(o)))
 
-    def getOverlayCollection(self):
+    def getOverlayCollection(self) -> SisypheVolumeCollection:
+        """
+        Get the collection of SisypheVolume instances representing the overlays.
+
+        Returns
+        -------
+        SisypheVolumeCollection
+            collection of overlay volumes.
+        """
         return self._ovl
 
-    def setOverlayOpacity(self, o, alpha, signal=True):
+    def setOverlayOpacity(self, o: int | SisypheVolume, alpha: float, signal: bool = True) -> None:
+        """
+        Set the opacity of a specific overlay.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            overlay to modify, identified by its index or SisypheVolume instance.
+        alpha : float
+            new opacity value (0.0 to 1.0).
+        signal : bool (optional)
+            If True, emits the `ViewOverlayMethodCalled` signal for synchronization (default True).
+        """
         if isinstance(alpha, float):
             if self.hasOverlay():
                 if isinstance(o, SisypheVolume):
@@ -2728,7 +4439,20 @@ class SliceOverlayViewWidget(SliceViewWidget):
                     self.ViewOverlayMethodCalled.emit(self, 'setOverlayOpacity', o, alpha)
         else: raise TypeError('second parameter type {} is not float.'.format(type(alpha)))
 
-    def getOverlayOpacity(self, o):
+    def getOverlayOpacity(self, o: int | SisypheVolume) -> float | None:
+        """
+        Get the current opacity of a specific overlay.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            overlay to query, identified by its index or SisypheVolume instance.
+
+        Returns
+        -------
+        float | None
+            opacity value (0.0 to 1.0), or None if the overlay is not found.
+        """
         if self.hasOverlay():
             if isinstance(o, int):
                 if 0 <= o < len(self._ovl):
@@ -2739,7 +4463,19 @@ class SliceOverlayViewWidget(SliceViewWidget):
                     self._ovlslices[index].GetProperty().GetOpacity()
         else: raise AttributeError('No overlay')
 
-    def setOverlayVisibility(self, o, v, signal=True):
+    def setOverlayVisibility(self, o: int | SisypheVolume, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of a specific overlay.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            overlay to modify, identified by its index or SisypheVolume instance.
+        v : bool
+            True to make the overlay visible, False to hide it.
+        signal : bool (optional)
+            If True, emits the `ViewOverlayMethodCalled` signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             if self.hasOverlay():
                 if isinstance(o, SisypheVolume):
@@ -2753,13 +4489,42 @@ class SliceOverlayViewWidget(SliceViewWidget):
                     self.ViewOverlayMethodCalled.emit(self, 'setOverlayVisibility', o, v)
         else: raise TypeError('second parameter type {} is not bool.'.format(type(v)))
 
-    def setOverlayVisibilityOn(self, o):
+    def setOverlayVisibilityOn(self, o: int | SisypheVolume) -> None:
+        """
+        Make a specific overlay visible.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            overlay to make visible identified by its index or SisypheVolume instance.
+        """
         self.setOverlayVisibility(o, True)
 
-    def setOverlayVisibilityOff(self, o):
+    def setOverlayVisibilityOff(self, o: int | SisypheVolume) -> None:
+        """
+        Hide a specific overlay.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            overlay to hide identified by its index or SisypheVolume instance.
+        """
         self.setOverlayVisibility(o, False)
 
-    def getOverlayVisibility(self, o):
+    def getOverlayVisibility(self, o: int | SisypheVolume) -> bool | None:
+        """
+        Get the current visibility state of a specific overlay.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            overlay to query, identified by its index or SisypheVolume instance.
+
+        Returns
+        -------
+        bool | None
+            True if the overlay is visible, False otherwise, or None if not found.
+        """
         if self.hasOverlay():
             if isinstance(o, int):
                 if 0 <= o < len(self._ovl):
@@ -2772,7 +4537,18 @@ class SliceOverlayViewWidget(SliceViewWidget):
             else: raise TypeError('Parameter type {} is not int or SisypheVolume.'.format(type(o)))
         else: raise AttributeError('No overlay')
 
-    def setInfoOverlayValueVisibility(self, name, signal=True):
+    def setInfoOverlayValueVisibility(self, name: str, signal: bool = True) -> None:
+        """
+        Set which overlay's voxel value should be displayed in the information area.
+
+        Parameters
+        ----------
+        name : str
+            name of the overlay volume whose voxel value should be displayed. Use 'No' to hide overlay voxel value
+            information.
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         if isinstance(name, str):
             self._ovlvalue = None
             # Update checked item in menu
@@ -2795,13 +4571,37 @@ class SliceOverlayViewWidget(SliceViewWidget):
             if signal: self.ViewMethodCalled.emit(self, 'setInfoOverlayValueVisibility', name)
         else: raise TypeError('parameter type {} is not str.'.format(type(name)))
 
-    def setInfoOverlayValueVisibilityOff(self, signal=True):
+    def setInfoOverlayValueVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide the overlay voxel value information from the display viewport.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         self.setInfoOverlayValueVisibility('No', signal)
 
-    def getInfoOverlayValueVisibility(self):
+    def getInfoOverlayValueVisibility(self) -> str:
+        """
+        Get the name of the overlay whose voxel value is currently displayed in the viewport.
+
+        Returns
+        -------
+        str
+            name of the active overlay for voxel value display, or 'No' if none.
+        """
         return self._group_menuOverlayVoxel.checkedAction().text()
 
-    def setOverlayColorbar(self, index=0):
+    def setOverlayColorbar(self, index: int = 0) -> None:
+        """
+        Set the colorbar to display the lookup table of a specific overlay.
+
+        Parameters
+        ----------
+        index : int (optional)
+            index of the overlay whose colorbar should be displayed (default 0).
+        """
         # < Revision 05/09/2024
         n = self.getOverlayCount()
         if index < 0: index = n + index
@@ -2813,13 +4613,33 @@ class SliceOverlayViewWidget(SliceViewWidget):
             else: self._colorbar.SetLabelFormat('%5.2f')
         else: raise IndexError('index parameter value {} is out of range.'.format(index))
 
-    def setVolumeColorbar(self):
+    def setVolumeColorbar(self) -> None:
+        """
+        Set the colorbar to display the lookup table of the main reference volume.
+        """
         if self.hasVolume():
             self._colorbar.SetLookupTable(self._volume.display.getVTKLUT())
             if self._volume.isIntegerDatatype(): self._colorbar.SetLabelFormat('%5.0f')
             else: self._colorbar.SetLabelFormat('%5.2f')
 
-    def setTransform(self, trf, index=0):
+    def setTransform(self, trf: SisypheTransform, index: int = 0) -> None:
+        """
+        Apply a SisypheTransform geomatric transformation to a specific overlay.
+
+        Parameters
+        ----------
+        trf : SisypheTransform
+            geometric transformation to apply.
+        index : int (optional)
+            index of the overlay to transform (default 0).
+
+        Raises
+        ------
+        TypeError
+            If `trf` is not a `SisypheTransform`.
+        IndexError
+            If the index is out of range.
+        """
         # < Revision 05/09/2024
         n = self.getOverlayCount()
         if index < 0: index = n + index
@@ -2833,7 +4653,20 @@ class SliceOverlayViewWidget(SliceViewWidget):
             else: raise TypeError('parameter type {} is not SisypheTransform.'.format(type(trf)))
         else: raise IndexError('index parameter value {} is out of range.'.format(index))
 
-    def getTransform(self, index=0):
+    def getTransform(self, index: int = 0) -> SisypheTransform:
+        """
+        Get the SisypheTransform representing the current geometric transformation applied to a specific overlay.
+
+        Parameters
+        ----------
+        index : int (optional)
+            index of the overlay to query (default 0).
+
+        Returns
+        -------
+        SisypheTransform
+            geometric transformation applied to specified overlay.
+        """
         # < Revision 05/09/2024
         n = self.getOverlayCount()
         if index < 0: index = n + index
@@ -2851,7 +4684,17 @@ class SliceOverlayViewWidget(SliceViewWidget):
             return trf
         else: raise IndexError('index parameter value {} is out of range.'.format(index))
 
-    def setVTKTransform(self, trf, index=0):
+    def setVTKTransform(self, trf: vtkTransform, index: int = 0) -> None:
+        """
+        Apply a vtkTransform geomatric transformation to a specific overlay.
+
+        Parameters
+        ----------
+        trf : vtkTransform
+            geometric transformation to apply.
+        index : int (optional)
+            index of the overlay to transform (default 0).
+        """
         # < Revision 05/09/2024
         n = self.getOverlayCount()
         if index < 0: index = n + index
@@ -2865,7 +4708,20 @@ class SliceOverlayViewWidget(SliceViewWidget):
             else: raise TypeError('parameter type {} is not vtkTransform.'.format(type(trf)))
         else: raise IndexError('index parameter value {} is out of range.'.format(index))
 
-    def getVTKTransform(self, index=0):
+    def getVTKTransform(self, index: int = 0) -> vtkTransform:
+        """
+        Get the vtkTransform representing the current geometric transformation applied to a specific overlay.
+
+        Parameters
+        ----------
+        index : int (optional)
+            index of the overlay to query (default 0).
+
+        Returns
+        -------
+        vtkTransform
+            geometric transformation applied to specified overlay.
+        """
         # < Revision 05/09/2024
         n = self.getOverlayCount()
         if index < 0: index = n + index
@@ -2879,7 +4735,23 @@ class SliceOverlayViewWidget(SliceViewWidget):
             return trf
         else: raise IndexError('index parameter value {} is out of range.'.format(index))
 
-    def setTranslations(self, t, index: int | None = 0, signal=True):
+    def setTranslations(self,
+                        t: list[float] | tuple[float, float, float],
+                        index: int | None = 0,
+                        signal: bool = True) -> None:
+        """
+        Set the translations for one or all overlays.
+
+        Parameters
+        ----------
+        t : list[float] | tuple[float, float, float]
+            new translations (tx, ty, tz).
+        index : int | None (optional)
+            index of the overlay to translate. If None, all overlays with the same FOV as the first overlay are
+            translated (default 0).
+        signal : bool (optional)
+            If True, emits the TranslationsChanged signal for synchronization (default True).
+        """
         if isinstance(t, list): t = tuple(t)
         if isinstance(t, tuple):
             n = self.getOverlayCount()
@@ -2903,7 +4775,20 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 self.TranslationsChanged.emit(self, t, index)
         else: raise TypeError('parameter type {} is not list or tuple.'.format(type(t)))
 
-    def getTranslations(self, index=0):
+    def getTranslations(self, index: int = 0) -> tuple[float, float, float]:
+        """
+        Get the current translations applied to a specific overlay.
+
+        Parameters
+        ----------
+        index : int (optional)
+            index of the overlay to query (default 0).
+
+        Returns
+        -------
+        tuple[float, float, float]
+            translations (tx, ty, tz) applied to specified overlay.
+        """
         # < Revision 05/09/2024
         n = self.getOverlayCount()
         if index < 0: index = n + index
@@ -2912,7 +4797,26 @@ class SliceOverlayViewWidget(SliceViewWidget):
             return self._ovlslices[index].GetPosition()
         else: raise IndexError('index parameter value {} is out of range.'.format(index))
 
-    def setRotations(self, r, index: int | None = 0, deg=True, signal=True):
+    def setRotations(self,
+                     r: list[float] | tuple[float, float, float],
+                     index: int | None = 0,
+                     deg: bool = True,
+                     signal: bool = True) -> None:
+        """
+        Set the rotations for one or all overlays.
+
+        Parameters
+        ----------
+        r : list[float] | tuple[float, float, float]
+            new rotations (rx, ry, rz).
+        index : int | None (optional)
+            index of the overlay to rotate. If None, all overlays with the same FOV as the first overlay are
+            translated (default 0).
+        deg : bool (optional)
+            If True, rotations are in degrees; otherwise, in radians (default True).
+        signal : bool (optional)
+            If True, emits the RotationsChanged signal for synchronization (default True).
+        """
         if isinstance(r, list): r = tuple(r)
         if isinstance(r, tuple):
             n = self.getOverlayCount()
@@ -2937,7 +4841,22 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 self.RotationsChanged.emit(self, r, index)
         else: raise TypeError('parameter type {} is not list or tuple.'.format(type(r)))
 
-    def getRotations(self, index=0, deg=True):
+    def getRotations(self, index: int = 0, deg: bool = True) -> tuple[float, float, float]:
+        """
+        Get the current rotations applied to a specific overlay.
+
+        Parameters
+        ----------
+        index : int (optional)
+            index of the overlay to query (default 0).
+        deg : bool (optional)
+            If True, rotations are in degrees; otherwise, in radians (default True).
+
+        Returns
+        -------
+        tuple[float, float, float]
+            rotations (tx, ty, tz) applied to specified overlay.
+        """
         # < Revision 05/09/2024
         n = self.getOverlayCount()
         if index < 0: index = n + index
@@ -2949,7 +4868,16 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 return radians(rx), radians(ry), radians(rz)
         else: raise IndexError('index parameter value {} is out of range.'.format(index))
 
-    def setMoveOverlayFlag(self, signal=True):
+    def setMoveOverlayFlag(self, signal: bool = True) -> None:
+        """
+        Activate the 'Move overlay' interaction mode.
+        In this mode, overlay volume can be moved or rotated with mouse.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewOverlayMethodCalled signal for synchronization (default True).
+        """
         if self.hasOverlay():
             self._action['moveoverlayflag'].setChecked(True)
             if signal:
@@ -2957,44 +4885,122 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 self.ViewOverlayMethodCalled.emit(self, 'setMoveOverlayFlag', None, None)
         else: raise AttributeError('No overlay')
 
-    def setMoveOverlayToTranslate(self, signal=True):
+    def setMoveOverlayToTranslate(self, signal: bool = True) -> None:
+        """
+        Set the 'Move overlay' mode to allow translation of overlays.
+        In this mode, overlay volume can be moved with mouse.
+
+        Parameters
+        ----------
+        signal : bool, optional
+            If True, emits the ViewOverlayMethodCalled signal for synchronization (default True).
+        """
         self._moveOverlayFlag = 1
         self._action['moveoverlayflag'].setChecked(True)
         if signal:
             # noinspection PyUnresolvedReferences
             self.ViewOverlayMethodCalled.emit(self, 'setMoveOverlayToTranslate', None, None)
 
-    def setMoveOverlayToRotate(self, signal=True):
+    def setMoveOverlayToRotate(self, signal: bool = True) -> None:
+        """
+        Set the 'Move overlay' mode to allow rotation of overlays.
+        In this mode, overlay volume can be rotated with mouse.
+
+        Parameters
+        ----------
+        signal : bool, optional
+            If True, emits the ViewOverlayMethodCalled signal for synchronization (default True).
+        """
         self._moveOverlayFlag = 2
         self._action['moveoverlayflag'].setChecked(True)
         if signal:
             # noinspection PyUnresolvedReferences
             self.ViewOverlayMethodCalled.emit(self, 'setMoveOverlayToRotate', None, None)
 
-    def setMoveOverlayOff(self, signal=True):
+    def setMoveOverlayOff(self, signal: bool = True) -> None:
+        """
+        Disable the 'Move overlay' interaction mode.
+
+        Parameters
+        ----------
+        signal : bool, optional
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+
+        """
         self.setNoActionFlag(signal)
 
-    def getMoveOverlayFlag(self):
+    def getMoveOverlayFlag(self) -> bool:
+        """
+        Check if the 'Move overlay' interaction mode is currently active.
+        In this mode, overlay volume can be moved or rotated with mouse.
+
+        Returns
+        -------
+        bool
+            True if 'Move overlay' is active, False otherwise.
+        """
         return self._action['moveoverlayflag'].isChecked()
 
     # Public mesh methods
 
-    def getMeshCollection(self):
+    def getMeshCollection(self) -> SisypheMeshCollection:
+        """
+        Get the collection of SisypheMesh instances associated with this widget.
+
+        Returns
+        -------
+        SisypheMeshCollection
+            collection of meshes.
+        """
         return self._meshes
 
-    def setMeshCollection(self, mesh):
+    def setMeshCollection(self, mesh: SisypheMeshCollection) -> None:
+        """
+        Set the collection of SisypheMesh instances for this widget.
+
+        Parameters
+        ----------
+        mesh : SisypheMeshCollection
+            new collection of meshes.
+        """
         if isinstance(mesh, SisypheMeshCollection):
             self._meshes = mesh
             self._action['showMesh'].setVisible(True)
         else: raise TypeError('parameter type {} is not SisypheMeshCollection'.format(type(mesh)))
 
-    def hasMesh(self):
+    def hasMesh(self) -> bool:
+        """
+        Check if there are any SisypheMesh instances associated with this widget.
+
+        Returns
+        -------
+        bool
+            True if at least one SisypheMesh instance exists, False otherwise.
+        """
         return not self._meshes.isEmpty()
 
-    def getNumberOfMeshes(self):
+    def getNumberOfMeshes(self) -> int:
+        """
+        Get the number of SisypheMesh instances associated with this widget.
+
+        Returns
+        -------
+        int
+            total number of SisypheMesh instances.
+        """
         return len(self._meshes)
 
-    def setMeshVisibility(self, v, signal=True):
+    def setMeshVisibility(self, v: bool, signal: bool = True)-> None:
+        """
+        Set the visibility of all SisypheMesh instances associated with this widget.
+
+        Parameters
+        ----------
+        v : bool
+            True to make meshes visible, False to hide them.
+        signal : bool (optional)
+            If True, emits the MeshVisibilityChanged signal for synchronization (default True).
+        """
         self._action['showMesh'].setChecked(v)
         if self._meshes is not None:
             if self._meshslices is not None and len(self._meshslices) > 0:
@@ -3006,11 +5012,22 @@ class SliceOverlayViewWidget(SliceViewWidget):
             # noinspection PyUnresolvedReferences
             self.MeshVisibilityChanged.emit(self, v)
 
-    def getMeshVisibility(self):
+    def getMeshVisibility(self) -> bool:
+        """
+        Check if SisypheMesh instances associated with this widget are currently visible.
+
+        Returns
+        -------
+        bool
+            True if SisypheMesh instances are visible, False otherwise.
+        """
         return self._action['showMesh'].isChecked()
 
     # < Revision 23/03/2025
-    def removeAllMeshes(self):
+    def removeAllMeshes(self) -> None:
+        """
+        Remove all SisypheMesh instances from the widget.
+        """
         if self._meshes is not None:
             if len(self._meshslices) > 0:
                 keys = list(self._meshslices.keys())
@@ -3023,7 +5040,15 @@ class SliceOverlayViewWidget(SliceViewWidget):
     # Revision 23/03/2025 >
 
     # < Revision 23/03/2025
-    def removeMesh(self, mesh):
+    def removeMesh(self, mesh: SisypheMesh) -> None:
+        """
+        Remove a specific SisypheMesh instances from the widget.
+
+        Parameters
+        ----------
+        mesh : SisypheMesh
+            SisypheMesh instance to remove.
+        """
         if self._meshes is not None:
             k = mesh.getName()
             if k in self._meshslices:
@@ -3036,7 +5061,15 @@ class SliceOverlayViewWidget(SliceViewWidget):
     # Revision 23/03/2025 >
 
     # < Revision 27/03/2025
-    def addMesh(self, mesh):
+    def addMesh(self, mesh: SisypheMesh) -> None:
+        """
+        Add a new SisypheMesh instance to the widget.
+
+        Parameters
+        ----------
+        mesh : SisypheMesh
+            SisypheMesh instance to add.
+        """
         if isinstance(mesh, SisypheMesh):
             if mesh.getReferenceID() == self._volume.getID():
                 if mesh not in self._meshes:
@@ -3079,9 +5112,34 @@ class SliceOverlayViewWidget(SliceViewWidget):
     # Public iso-value methods
 
     def getIsoIndex(self) -> int:
+        """
+        Get the index of the SisypheVolume currently used for displaying isolines.
+
+        Returns
+        -------
+        int
+
+            - -1 if no isolines are displayed.
+            - 0 if isolines are from the reference SisypheVolume.
+            - >0 if isolines are from an overlay SisypheVolume (index + 1).
+        """
         return self._isoindex
 
     def setIsoIndex(self, v: int, signal: bool = True) -> None:
+        """
+        Set the SisypheVolume to be used for displaying isolines.
+
+        Parameters
+        ----------
+        v : int
+
+            - -1 to hide isolines.
+            - 0 to display isolines from the reference volume.
+            - >0 to display isolines from an overlay volume (index + 1).
+
+        signal : bool (optional)
+            If True, emits the IsoIndexChanged signal for synchronization (default True).
+        """
         if self.hasVolume():
             if v < 0:
                 self._isoindex = -1
@@ -3106,6 +5164,16 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 self.IsoIndexChanged.emit(self, self._isoindex)
 
     def setIsoValues(self, iso: list[float], signal: bool = True) -> None:
+        """
+        Set the specific values at which isolines should be generated.
+
+        Parameters
+        ----------
+        iso : list[float]
+            list of float values defining the isolines.
+        signal : bool (optional)
+            If True, emits the IsoValuesChanged signal for synchronization (default True).
+        """
         if len(iso) > 0:
             n = len(iso)
             self._isocontour.SetNumberOfContours(n)
@@ -3116,6 +5184,16 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 self.IsoValuesChanged.emit(self, iso)
 
     def setIsoLinesColor(self, c: list[float], signal: bool = True) -> None:
+        """
+        Set the color of the isolines and their labels.
+
+        Parameters
+        ----------
+        c : list[float]
+            RGB color as a list of 3 floats (0.0 to 1.0).
+        signal : bool, optional
+            If True, emits the IsoLinesColorChanged signal for synchronization (default True).
+        """
         self._isolines.GetProperty().SetColor(c)
         self._isolabels.GetMapper().GetLabelTextProperty().SetColor(c)
         self._isolabels.GetMapper().Update()
@@ -3125,9 +5203,27 @@ class SliceOverlayViewWidget(SliceViewWidget):
             self.IsoLinesColorChanged.emit(self, c)
 
     def getIsoLinesColor(self) -> list[float]:
+        """
+        Get the current color of the isolines.
+
+        Returns
+        -------
+        list[float]
+            RGB color as a list of 3 floats.
+        """
         return self._isolines.GetProperty().GetColor()
 
     def setIsoLinesOpacity(self, v: float, signal: bool = True) -> None:
+        """
+        Set the opacity of the isolines and their labels.
+
+        Parameters
+        ----------
+        v : float
+            opacity value (0.0 to 1.0).
+        signal : bool (optional)
+            If True, emits the IsoLinesOpacityChanged signal for synchronization (default True).
+        """
         self._isolines.GetProperty().SetOpacity(v)
         self._isolabels.GetMapper().GetLabelTextProperty().SetOpacity(v)
         self._isolabels.GetMapper().Update()
@@ -3137,9 +5233,25 @@ class SliceOverlayViewWidget(SliceViewWidget):
             self.IsoLinesOpacityChanged.emit(self, v)
 
     def getIsoLinesOpacity(self) -> float:
+        """
+        Get the current opacity of the isolines.
+
+        Returns
+        -------
+        float
+            opacity value.
+        """
         return self._isolines.GetProperty().GetOpacity()
 
     def getIsoValues(self) -> list[float]:
+        """
+        Get the current values at which isolines are generated.
+
+        Returns
+        -------
+        list[float]
+            list of float values.
+        """
         r = list()
         n = self._isocontour.GetNumberOfContours()
         if n > 0:
@@ -3147,10 +5259,21 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 r.append(self._isocontour.GetValue(i))
         return r
 
-    def getIsoLinesVisibility(self):
+    def getIsoLinesVisibility(self) -> bool:
+        """
+        Check if isolines are currently visible.
+
+        Returns
+        -------
+        bool
+            True if isolines are visible, False otherwise.
+        """
         return self._isoindex > -1
 
-    def removeIsoLines(self):
+    def removeIsoLines(self) -> None:
+        """
+        Remove all isolines and their labels from the viewport.
+        """
         if self._isolines is not None:
             self._renderer.RemoveActor(self._isolines)
             del self._isolines
@@ -3163,7 +5286,19 @@ class SliceOverlayViewWidget(SliceViewWidget):
 
     # Private vtk event methods
 
-    def _onLeftPressEvent(self, obj, evt_name):
+    def _onLeftPressEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the left mouse button press VTK event for overlay manipulation.
+        Determines whether to translate or rotate an overlay based on mouse click position.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (LeftButtonPressEvent).
+        """
         if self.hasOverlay() and self.getMoveOverlayFlag():
             interactorstyle = self._window.GetInteractorStyle()
             self._mousepos0 = interactorstyle.GetLastPos()
@@ -3187,7 +5322,19 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 self._moveOverlayFlag = 2
         else: super()._onLeftPressEvent(obj, evt_name)
 
-    def _onMouseMoveEvent(self, obj, evt_name):
+    def _onMouseMoveEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the mouse move VTK event for overlay manipulation.
+        Performs translations or rotations of the active overlay based on the _moveOverlayFlag and mouse movement.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (MouseMoveEvent).
+        """
         if self.hasOverlay() and self.getMoveOverlayFlag() and self._mousepos0 is not None:
             interactorstyle = self._window.GetInteractorStyle()
             if interactorstyle.GetButton() == 1:
@@ -3226,11 +5373,23 @@ class SliceOverlayViewWidget(SliceViewWidget):
                     r2 = list(self._rotations0)
                     # r2[2 - self._orient] += degrees(r)
                     r2[2 - self._orient] += r
+                    # noinspection PyTypeChecker
                     self.setRotations(tuple(r2), deg=True, index=0)
             else: super()._onMouseMoveEvent(obj, evt_name)
         else: super()._onMouseMoveEvent(obj, evt_name)
 
-    def _onLeftReleaseEvent(self, obj, evt_name):
+    def _onLeftReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the left mouse button release event for overlay manipulation.
+        Resets interaction flags after interaction. Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (LeftButtonReleaseEvent).
+        """
         super()._onLeftReleaseEvent(obj, evt_name)
         if self.hasOverlay() and self.getMoveOverlayFlag():
             self._mousepos0 = None
@@ -3246,11 +5405,20 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Subclass of the SliceOverlayViewWidget class. Displays a box widget to crop overlay.
+    Specialized subclass of the SliceOverlayViewWidget class designed to facilitate the visual assessment of image
+    coregistration quality.
 
-    It is designed to add specific features for evaluating registration quality between two volumes. The class includes
-    a BoxWidget for cropping the overlay within the volume (overlay displayed inside box and reference volume outside).
-    The user can drag and resize the box.
+    The main features are as follows:
+
+    - Interactive crop box: a BoxWidget that creates a "spyglass" effect. The moving volume is displayed exclusively inside this box, while the reference volume is shown outside. Users can drag and resize the box to closely inspect alignment at various locations.
+    - Multiple display modes: the moving volume can be displayed in several ways:
+
+        - 'Native' original moving volume.
+        - 'Edge' edge-detected (gradient) version of the moving volume.
+        - 'Edge and Native' combining both the original and edge-detected images.
+
+    - Registration area aefinition: a BoxWidget allows the user to define a specific sub-region (area of interest) for registration. The coordinates and size of this area can be retrieved for use in registration algorithms.
+    - Synchronization: it uses Qt signals and slots to synchronize registration-specific properties, such as the crop box state, registration area, and display modes, across linked SliceRegistrationViewWidget.
 
     Inheritance
     ~~~~~~~~~~~
@@ -3258,7 +5426,7 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> SliceRegistrationViewWidget
 
     Creation: 12/04/2022
-    Last revision: 18/04/2025
+    Last revision: 20/10/2025
     """
     _NATIVE = 0
     _EDGE = 1
@@ -3271,17 +5439,19 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
 
     # Special method
 
-    """
-    Private attributes
+    def __init__(self,
+                 overlays: SisypheVolumeCollection | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        SliceRegistrationViewWidget instance constructor.
 
-    _cropbox        BoxWidget, overlay inside box and volume outside
-    _regbox         BoxWidget, registration area (default FOV area)
-    _regarea        [float] * 6, registration area in world coordinates (x, y, z, width, height, depth)
-    _crop           bool, crop _volumeslice volume vtkImageSlice with _cropbox BoxWidget
-    _gradient       SisypheVolume, edge overlay
-    """
-
-    def __init__(self, overlays=None, parent=None):
+        Parameters
+        ----------
+        overlays : SisypheVolumeCollection | None (optional)
+            collection of SisypheVolume displayed in the viewport as overlays (default None).
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(overlays, meshes=None, parent=parent)
 
         self._crop = False
@@ -3440,9 +5610,23 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
         if self._action['showtooltip'].isChecked(): self.setToolTip(self._tooltipstr)
         else: self.setToolTip('')
 
+    """
+    Private attributes
+
+    _cropbox        BoxWidget, overlay inside box and volume outside
+    _regbox         BoxWidget, registration area (default FOV area)
+    _regarea        [float] * 6, registration area in world coordinates (x, y, z, width, height, depth)
+    _crop           bool, crop _volumeslice volume vtkImageSlice with _cropbox BoxWidget
+    _gradient       SisypheVolume, edge overlay
+    """
+
     # Private method
 
-    def _initRegistrationBox(self):
+    def _initRegistrationBox(self) -> None:
+        """
+        Initializes the BoxWidget used to define the registration area.
+        Sets up its appearance, interaction properties, and event handling.
+        """
         self._regbox = BoxWidget('RegAreaBox')
         self._regbox.CreateDefaultRepresentation()
         r = self._regbox.GetBorderRepresentation()
@@ -3467,7 +5651,24 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
         self._regbox.GetEventTranslator().SetTranslation(vtkCommand.LeftButtonReleaseEvent, vtkWidgetEvent.EndSelect)
         self._regbox.SetEnabled(False)
 
-    def _addReslice(self, volume, alpha):
+    def _addReslice(self, volume: SisypheVolume, alpha: float) -> vtkImageSlice:
+        """
+        Creates a new vtkImageSlice actor from a SisypheVolume and add it to the vtkImageStack as an overlay.
+        Applies co-registration transforms or aligns origins/centers if necessary.
+        This method is overridden to use vtkImageSliceMapper instead of vtkImageResliceMapper.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            SisypheVolume instance from which to extract the slice.
+        alpha : float
+            opacity of the slice (0.0 to 1.0).
+
+        Returns
+        -------
+        vtkImageSlice
+            created vtkImageSlice actor for the overlay.
+        """
         mapper = vtkImageResliceMapper()
         mapper.BorderOff()
         mapper.SliceAtFocalPointOn()
@@ -3517,11 +5718,26 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
         return slc
 
     def _updateCameraOrientation(self):
+        """
+        Overrides the base class method to also update the cropping box when the camera orientation changes.
+        Currently, this method calls the superclass's implementation.
+        """
         super()._updateCameraOrientation()
         self._cropboxChanged(None, None)
 
     # noinspection PyUnusedLocal
-    def _cropboxChanged(self, widget, event):
+    def _cropboxChanged(self, widget: QWidget | None, event: Any) -> None:
+        """
+        Callback method triggered when the cropping box is manipulated.
+        Updates the cropping region of the reference Sisyphevolume slice based on the box's position and size.
+
+        Parameters
+        ----------
+        widget : QWidget
+            widget that triggered the event (e.g., BoxWidget).
+        event : bool | None
+            event parameter.
+        """
         if self._crop and len(self._ovlslices) > 0:
             # < Revision 18/04/2025
             # Bug fix, parameters of SetCroppingRegion method are voxel coordinates and not world coordinates.
@@ -3558,7 +5774,18 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
             except: pass
 
     # noinspection PyUnusedLocal
-    def _regboxChanged(self, widget, event):
+    def _regboxChanged(self, widget: QWidget | None, event: Any) -> None:
+        """
+        Callback method triggered when the registration area box is manipulated.
+        Updates the _regarea attribute with the new world coordinates of the box.
+
+        Parameters
+        ----------
+        widget : QWidget | None
+            widget that triggered the event (e.g., BoxWidget).
+        event : Any
+            event parameter.
+        """
         a1, b1 = self._regbox.GetBorderRepresentation().GetPosition()
         a2, b2 = self._regbox.GetBorderRepresentation().GetPosition2()
         """
@@ -3594,7 +5821,24 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
         # noinspection PyUnresolvedReferences
         self.RegistrationBoxChanged.emit(self, self._regarea)
 
-    def _addSlice(self, volume, alpha):
+    def _addSlice(self, volume: SisypheVolume, alpha: float) -> vtkImageSlice:
+        """
+        Creates a new vtkImageSlice from a SisypheVolume.
+        This method overrides the base class implementation to use vtkImageSliceMapper, which is suitable for
+        registration visualization where the slice orientation is managed differently.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            SisypheVolume instance from which to extract the slice.
+        alpha : float
+            opacity of the slice (0.0 to 1.0).
+
+        Returns
+        -------
+        vtkImageSlice
+            created vtkImageSlice actor.
+        """
         mapper = vtkImageSliceMapper()
         mapper.BorderOff()
         mapper.SliceAtFocalPointOn()
@@ -3610,7 +5854,11 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
         self._stack.AddImage(slc)
         return slc
 
-    def _updateTooltip(self):
+    def _updateTooltip(self) -> None:
+        """
+        Updates the viewport's tooltip to display the current translation and rotation values of the overlay.
+        Currently, this method overrides the superclass's implementation.
+        """
         r = self.getRotations(deg=True)
         tr = self.getTranslations()
         self._tooltipstr = self._trftooltip.format(tr[0], tr[1], tr[2], r[0], r[1], r[2])
@@ -3619,63 +5867,161 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
 
     # Public synchronisation event method
 
-    def synchroniseCropChanged(self, obj, v):
+    def synchroniseCropChanged(self, obj: QWidget, v: bool) -> None:
+        """
+        Synchronizes the crop state from another SliceRegistrationViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceRegistrationViewWidget instance that emitted the signal.
+        v : bool
+            new crop state (True for cropped, False otherwise).
+        """
         if obj != self and self.hasVolume():
             self.setCrop(v, signal=False)
 
-    def synchroniseRegistrationBoxVisibilityChanged(self, obj, v):
+    def synchroniseRegistrationBoxVisibilityChanged(self, obj: QWidget, v: bool) -> None:
+        """
+        Synchronizes the registration box visibility from another SliceRegistrationViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceRegistrationViewWidget instance that emitted the signal.
+        v : bool
+            new visibility state (True for visible, False otherwise).
+        """
         if self != obj and self.hasVolume():
             self.setRegistrationBoxVisibility(v, signal=False)
 
-    def synchroniseRegistrationBoxChanged(self, obj, area):
+    def synchroniseRegistrationBoxChanged(self, obj: QWidget, area: list) -> None:
+        """
+        Synchronizes the registration box area from another SliceRegistrationViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceRegistrationViewWidget instance that emitted the signal.
+        area : list
+            new registration area as a list of world coordinates [x, y, z, width, height, depth].
+        """
         if self != obj and self.hasVolume():
             self.setRegistrationBoxArea(area, signal=False)
 
     # Overridden methods to update registration box area when viewport changes
 
-    def zoomIn(self):
+    def zoomIn(self) -> None:
+        """
+        Overrides the base class method to update the registration box area after zooming in.
+        Currently, this method calls the superclass's implementation.
+        """
         super().zoomIn()
         if self.getRegistrationBoxVisibility():
             self.setRegistrationBoxArea(self._regarea, signal=False)
 
-    def zoomOut(self):
+    def zoomOut(self) -> None:
+        """
+        Overrides the base class method to update the registration box area after zooming out.
+        Currently, this method calls the superclass's implementation.
+        """
         super().zoomOut()
         if self.getRegistrationBoxVisibility():
             self.setRegistrationBoxArea(self._regarea, signal=False)
 
-    def zoomDefault(self):
+    def zoomDefault(self) -> None:
+        """
+        Overrides the base class method to update the registration box area after resetting to default zoom.
+        Currently, this method calls the superclass's implementation.
+        """
         super().zoomDefault()
         if self.getRegistrationBoxVisibility():
             self.setRegistrationBoxArea(self._regarea, signal=False)
 
-    def setZoom(self, z, signal=True):
+    def setZoom(self, z: float, signal: bool = True) -> None:
+        """
+        Overrides the base class method to update the registration box area after setting a new zoom level.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        z : float
+            new zoom factor.
+        signal : bool, optional
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
+        """
         super().setZoom(z, signal)
         if self.getRegistrationBoxVisibility():
             self.setRegistrationBoxArea(self._regarea, signal=False)
 
-    def setCameraPlanePosition(self, p, signal=True):
+    def setCameraPlanePosition(self, p: list[float] | tuple[float, float, float], signal: bool = True) -> None:
+        """
+        Overrides the base class method to update the registration box area after changing the camera plane position.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        p : list[float] | tuple[float, float, float]
+            new world coordinates (x, y, z) for the camera's focal point.
+        signal : bool, optional
+            If True, emits the CameraPositionChanged signal for synchronization (default True).
+        """
         super().setCameraPlanePosition(p, signal)
         if self.getRegistrationBoxVisibility():
             self.setRegistrationBoxArea(self._regarea, signal=False)
 
-    def sliceMinus(self):
+    def sliceMinus(self) -> None:
+        """
+        Overrides the base class method to update the registration box area after navigating to the previous slice.
+        Currently, this method calls the superclass's implementation.
+        """
         super().sliceMinus()
         if self.getRegistrationBoxVisibility():
             self.setRegistrationBoxArea(self._regarea, signal=False)
 
-    def slicePlus(self):
+    def slicePlus(self) -> None:
+        """
+        Overrides the base class method to update the registration box area after navigating to the next slice.
+        Currently, this method calls the superclass's implementation.
+        """
         super().slicePlus()
         if self.getRegistrationBoxVisibility():
             self.setRegistrationBoxArea(self._regarea, signal=False)
 
     # Public methods
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
+        """
+        Set the reference SisypheVolume and initializes the registration area to the volume's full field of view.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            reference SisypheVolume to display.
+        """
         super().setVolume(volume)
         fov = volume.getFieldOfView()
         self._regarea = [0.0, 0.0, 0.0, fov[0], fov[1], fov[2]]
 
-    def addOverlay(self, volume, gradient=None, alpha=0.5):
+    def addOverlay(self,
+                   volume: SisypheVolume,
+                   gradient: SisypheVolume | None = None,
+                   alpha: float = 0.5) -> None:
+        """
+        Adds a moving SisypheVolume as an overlay, along with its edge-detected version (gradient).
+        If no gradient is provided, it is computed automatically. The native and edge overlays are managed for
+        registration-specific display modes. Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            moving SisypheVolume to add as an overlay.
+        gradient : SisypheVolume | None (optional)
+            pre-computed edge-detected version of the volume. If None, it is computed automatically (default None).
+        alpha : float (optional)
+            opacity of the overlay (0.0 to 1.0, Default 0.5).
+        """
         super().addOverlay(volume, alpha)
         if gradient is None or not isinstance(gradient, SisypheVolume):
             img = GradientMagnitudeRecursiveGaussian(self._volume.getSITKImage())
@@ -3697,15 +6043,40 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
         self._action['crop'].setVisible(True)
         self._updateTooltip()
 
-    def removeOverlay(self, o):
+    def removeOverlay(self, o: int | SisypheVolume) -> None:
+        """
+        Remove a specific overlay and hide the crop action if no overlays remain.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            overlay to remove, identified by its index or SisypheVolume instance.
+        """
         super().removeOverlay(o)
         self._action['crop'].setVisible(len(self._ovl) > 0)
 
-    def removeAllOverlays(self):
+    def removeAllOverlays(self) -> None:
+        """
+        Remove all overlays and hides the crop action.
+        Currently, this method calls the superclass's implementation.
+        """
         super().removeAllOverlays()
         self._action['crop'].setVisible(False)
 
-    def setCrop(self, crop, signal=True):
+    def setCrop(self, crop: bool, signal: bool = True) -> None:
+        """
+        Enable or disable the registration crop mode.
+        In crop mode, the reference SisypheVolume is displayed only outside a user-interactive box, while the overlay
+        is displayed inside.
+
+        Parameters
+        ----------
+        crop : bool
+            True to enable crop mode, False to disable it.
+        signal : bool (optional)
+            If True, emits the CropChanged signal for synchronization (default True).
+        """
         if isinstance(crop, bool):
             self._crop = crop
             if crop and len(self._ovlslices) > 0:
@@ -3766,16 +6137,53 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
                 self.CropChanged.emit(self, crop)
         else: raise TypeError('parameter type {} is not bool'.format(type(crop)))
 
-    def getCrop(self):
+    def getCrop(self) -> bool:
+        """
+        Get the current state of the registration crop mode. In crop mode, the reference SisypheVolume is displayed
+        only outside a user-interactive box, while the overlay is displayed inside.
+
+        Returns
+        -------
+        bool
+            True if crop mode is enabled, False otherwise.
+        """
         return self._crop
 
-    def cropOn(self, signal=True):
+    def cropOn(self, signal: bool = True) -> None:
+        """
+        Enable the registration crop mode. In crop mode, the reference SisypheVolume is displayed only outside a
+        user-interactive box, while the overlay is displayed inside.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the CropChanged signal for synchronization (default True).
+        """
         self.setCrop(True, signal)
 
-    def cropOff(self, signal=True):
+    def cropOff(self, signal: bool = True) -> None:
+        """
+        Disable the registration crop mode. In crop mode, the reference SisypheVolume is displayed only outside a
+        user-interactive box, while the overlay is displayed inside.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the CropChanged signal for synchronization (default True).
+        """
         self.setCrop(False, signal)
 
-    def setRegistrationBoxVisibility(self, v, signal=True):
+    def setRegistrationBoxVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of the registration area box.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the registration box, False to hide it.
+        signal : bool (optional)
+            If True, emits the RegistrationBoxVisibilityChanged signal for synchronization (default True).
+        """
         if isinstance(v, bool):
             self._action['regarea'].setChecked(True)
             if v:
@@ -3789,19 +6197,50 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
                 self.RegistrationBoxVisibilityChanged.emit(self, v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getRegistrationBoxVisibility(self):
+    def getRegistrationBoxVisibility(self) -> bool:
+        """
+        Get the current visibility of the registration area box.
+
+        Returns
+        -------
+        bool
+            True if the registration box is visible, False otherwise.
+        """
         return self._regbox.GetEnabled()
 
-    def registrationBoxOn(self):
+    def registrationBoxOn(self) -> None:
+        """
+        Show the registration area box.
+        """
         self.setRegistrationBoxVisibility(True)
 
-    def registrationBoxOff(self):
+    def registrationBoxOff(self) -> None:
+        """
+        Hide the registration area box.
+        """
         self.setRegistrationBoxVisibility(False)
 
-    def getRegistrationBoxWorldArea(self):
+    def getRegistrationBoxWorldArea(self) -> list[float]:
+        """
+        Get the registration area defined by the box in world coordinates.
+
+        Returns
+        -------
+        list[float]
+            list [x, y, z, width, height, depth] representing the box's position and size in world coordinates.
+        """
         return self._regarea
 
-    def getRegistrationBoxMatrixArea(self):
+    def getRegistrationBoxMatrixArea(self) -> list[float] | tuple[float, float, float, float, float, float]:
+        """
+        Get the registration area defined by the box in matrix (voxel) coordinates.
+
+        Returns
+        -------
+        list[float] | tuple[float, float, float, float, float, float]
+            list or tuple [x, y, z, width, height, depth] representing the box's position and size in voxel coordinates.
+             If the box covers the full volume, it returns the volume's dimensions.
+        """
         if self.hasVolume():
             fov = self._volume.getFieldOfView()
             if self._regarea != [0.0, 0.0, 0.0, fov[0], fov[1], fov[2]]:
@@ -3838,13 +6277,22 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
             else: return [0, 0, 0] + list(self._volume.getSize())
         else: raise ValueError('No fixed volume.')
 
-    def getRegistrationBoxMaskArea(self):
+    def getRegistrationBoxMaskArea(self) -> SisypheVolume | None:
+        """
+        Generate a SisypheVolume binary mask corresponding to the registration area box.
+
+        Returns
+        -------
+        SisypheVolume | None
+            new SisypheVolume instance representing the binary mask, or None if the box covers the full volume.
+        """
         if self.hasVolume():
             r = self.getRegistrationBoxMatrixArea()
             default = [0, 0, 0] + list(self._volume.getSize())
             if r != default:
                 s = self._volume.getSize()
                 mask = zeros((s[2], s[1], s[0]), 'unit8')
+                # noinspection PyTypeChecker
                 area = ones((r[5], r[4], r[3]), 'unit8')
                 mask[r[2]:r[2]+r[5], r[1]:r[1]+r[4], r[0]:r[0]+r[3]] = area
                 v = SisypheVolume()
@@ -3855,8 +6303,20 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
             else: return None
         else: raise ValueError('No fixed volume.')
 
-    def setRegistrationBoxArea(self, area, signal=True):
-        self._regarea = area
+    def setRegistrationBoxArea(self,
+                               area: list[float] | tuple[float, float, float, float, float, float],
+                               signal: bool = True) -> None:
+        """
+        Set the registration area box from world coordinates.
+
+        Parameters
+        ----------
+        area : list[float] | tuple[float, float, float, float, float, float]
+            new registration area as [x, y, z, width, height, depth] in world coordinates.
+        signal : bool, optional
+            If True, emits the RegistrationBoxChanged signal for synchronization (default True).
+        """
+        self._regarea = list(area)
         p = self._getDisplayFromWorld(self._regarea[0],
                                       self._regarea[1],
                                       self._regarea[2])
@@ -3874,13 +6334,23 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.RegistrationBoxChanged.emit(self, self._regarea)
 
-    def popupCropEnabled(self):
+    def popupCropEnabled(self) -> None:
+        """
+        Enable the 'Box crop' action in the popup menu.
+        """
         self._action['crop'].setVisible(True)
 
-    def popupCropDisabled(self):
+    def popupCropDisabled(self) -> None:
+        """
+        Disable the 'Box crop' action in the popup menu.
+        """
         self._action['crop'].setVisible(False)
 
-    def displayEdge(self):
+    def displayEdge(self) -> None:
+        """
+        Sets the display mode to show only the edge-detected (gradient) overlay.
+        The reference SisypheVolume is hidden.
+        """
         if self.hasVolume():
             self._action['displayedge'].setChecked(True)
             # volume OFF
@@ -3892,7 +6362,11 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
             self.setOverlayOpacity(self._EDGE, 1.0, signal=True)
             # Revision 05/09/2024 >
 
-    def displayNative(self):
+    def displayNative(self) -> None:
+        """
+        Set the display mode to show the reference SisypheVolume and the native overlay.
+        The edge-detected overlay is hidden.
+        """
         if self.hasVolume():
             self._action['displaynative'].setChecked(True)
             # volume ON
@@ -3900,7 +6374,11 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
             # Edge volume OFF
             self.setOverlayVisibility(self._EDGE, False, signal=True)
 
-    def displayEdgeAndNative(self):
+    def displayEdgeAndNative(self) -> None:
+        """
+        Sets the display mode to show the reference SisypheVolume, the native overlay, and the edge-detected overlay
+        blended together.
+        """
         if self.hasVolume():
             self._action['displayall'].setChecked(True)
             # volume ON
@@ -3914,13 +6392,34 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
 
     # Qt event
 
-    def showEvent(self, event):
-        super().showEvent(event)
+    def showEvent(self, a0: Optional[QShowEvent]):
+        """
+        Handles the Qt show event.
+        Overrides the base class method to ensure the registration box area is correctly set when the widget is shown.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        a0 : QShowEvent
+            show event.
+        """
+        super().showEvent(a0)
         self.setRegistrationBoxArea(self._regarea, signal=False)
 
     # Private event method
 
-    def _onRightPressEvent(self, obj, evt_name):  # Override AbstractViewWidget method
+    def _onRightPressEvent(self, obj: vtkObject, evt_name: str):
+        """
+        Handles the right mouse button press VTK event to display the popup menu.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (RightButtonPressEvent).
+        """
         if self._menuflag:
             interactorstyle = self._window.GetInteractorStyle()
             x, y = interactorstyle.GetLastPos()
@@ -3935,11 +6434,26 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Subclass of the SliceOverlayViewWidget class.
+    Specialized subclass of the SliceOverlayViewWidget class that adds comprehensive Region of Interest (ROI)
+    management and editing capabilities.
 
-    It is designed to add region-of-interest (ROI) management functionalities to the 2D slice viewer. This class
-    extends the capabilities of the SliceOverlayViewWidget by providing tools for creating, editing, and analyzing ROIs
-    within the 2D slices.
+    The main features are as follows:
+
+    - ROI management: supports creating new ROIs, loading from and saving to files, and removing individual or all ROIs. It manages a collection of SisypheROI instances, allowing users to easily switch the active ROI for editing.
+    - Interactive drawing and editing:
+
+        - Advanced brush tools: features multiple brush types, including a solid disk (2D) or sphere (3D) for painting, and a threshold-based brush that applies the ROI only to voxels within a specific intensity range under the mouse pointer.
+        - Adjustable brush size: the brush radius can be changed interactively using the mouse wheel combined with a modifier key, with a circular mouse pointer providing real-time visual feedback.
+        - Eraser: Simple right-click functionality to erase parts of a ROI.
+
+    - 2D and 3D processing functions: algorithms that can be applied to the current slice (2D) or the entire volume (3D).
+
+        - Morphological operations: erode, dilate, opening, and closing.
+        - Blob-based editing: allows users to select individual connected components (blobs) within a ROI and apply operations like copy, cut, paste, remove, or keep-only.
+        - Segmentation algorithms: includes region growing (standard and confidence-based), active contours, and simple object/background segmentation based on intensity.
+
+    - Undo/Redo functionality: maintains a history of modifications, allowing users to undo and redo drawing and processing steps for non-destructive editing.
+    - Synchronization: it uses Qt signals and slots to synchronize all ROI-related actions, such as ROI selection, data modifications, attribute changes (e.g., color, opacity), tool settings (brush size, active tool), across linked SliceOverlayViewWidget.
 
     Inheritance
     ~~~~~~~~~~~
@@ -3947,7 +6461,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> SliceROIViewWidget
 
     Creation: 12/04/2022
-    Last revision: 02/11/2024
+    Last revision: 20/10/2025
     """
 
     # Custom Qt signals
@@ -3962,22 +6476,28 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
 
     # Special method
 
-    """
-    Private attributes
+    def __init__(self,
+                 overlays: SisypheVolumeCollection | None = None,
+                 rois: SisypheROICollection | None = None,
+                 draw: SisypheROIDraw | None = None,
+                 meshes: SisypheMeshCollection | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        SliceROIViewWidget instance constructor.
 
-    _rois           SisypheROICollection
-    _activeroi      str, name of active SisypheROI
-    _roimapper      vtkImageSliceMapper, active roi vtkImageSlice instance
-    _activesliceroi vtkImageSlice, active roi
-    _slicerois      vtkImageSlice, inactive rois
-    _draw           SisypheROIDraw
-    _circle         vtkRegularPolygonSource, brush circle source
-    _brush          vtkActor, circle brush representation
-    _brushFlag      bool, brush flag (active/inactive) for mouse event
-    _fsettings      SisypheSettings
-    """
-
-    def __init__(self, overlays=None, rois=None, draw=None, meshes=None, parent=None):
+        Parameters
+        ----------
+        overlays : SisypheVolumeCollection | None (optional)
+            collection of SisypheVolume displayed in the viewport as overlays (default None).
+        rois : SisypheROICollection | None (optional)
+            collection of SisypheROI displayed in the viewport (default None).
+        draw : SisypheROIDraw | None (optional)
+            instance for ROI drawing and processing operations (default None).
+        meshes : SisypheMeshCollection | None (optional)
+            collection SisypheMesh displayed in the viewport (default None).
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(overlays, meshes, parent)
 
         # Class attributes
@@ -4457,9 +6977,28 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         # noinspection PyUnresolvedReferences
         self._timer.timeout.connect(self._onTimer)
 
+    """
+    Private attributes
+
+    _rois           SisypheROICollection
+    _activeroi      str, name of active SisypheROI
+    _roimapper      vtkImageSliceMapper, active roi vtkImageSlice instance
+    _activesliceroi vtkImageSlice, active roi
+    _slicerois      vtkImageSlice, inactive rois
+    _draw           SisypheROIDraw
+    _circle         vtkRegularPolygonSource, brush circle source
+    _brush          vtkActor, circle brush representation
+    _brushFlag      bool, brush flag (active/inactive) for mouse event
+    _fsettings      SisypheSettings
+    """
+
     # Private methods
 
-    def _initBrushActor(self):
+    def _initBrushActor(self) -> None:
+        """
+        Initializes the vtkActor used to represent the circular brush cursor.
+        Sets up its geometry, mapper, and visual properties.
+        """
         r = self._draw.getBrushRadius()  # + 0.5
         self._circle = vtkRegularPolygonSource()
         self._circle.GeneratePolygonOff()
@@ -4480,7 +7019,11 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         self._brush.GetProperty().SetColor(1.0, 1.0, 1.0)
         self._renderer.AddActor(self._brush)
 
-    def _updateActiveSliceROI(self):
+    def _updateActiveSliceROI(self) -> None:
+        """
+        Updates the vtkImageSlice for the currently active ROI.
+        Replaces the existing active ROI slice with a new one based on the current active ROI's data and properties.
+        """
         if self._activeroi is not None:
             # delete previous self._activesliceroi vtkImageSlice
             if self._activesliceroi is not None:
@@ -4513,7 +7056,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
 
     # < Revision 02/11/2024
     # add blended parameter
-    def _updateSliceROI(self, blended=None):
+    def _updateSliceROI(self, blended: int | None = None) -> None:
+        """
+        Updates the vtkImageSlice for the inactive ROIs.
+        Blends all visible, inactive ROIs into a single vtkImageSlice for efficient rendering.
+
+        Parameters
+        ----------
+        blended : vtkImageBlend | None (optional)
+            pre-blended image to use, for synchronization purposes (default None).
+        """
         if self._slicerois is not None:
             # delete previous non active rois vtkImageSlice (self._slicerois)
             if self._stack.HasImage(self._slicerois):
@@ -4563,7 +7115,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self._stack.AddImage(self._slicerois)
     # Revision 02/11/2024 >
 
-    def _updateBrush(self):
+    def _updateBrush(self) -> None:
+        """
+        Updates the brush actor's properties (size, orientation, color) based on the current settings.
+        """
         if self._volume is not None:
             r = self._draw.getBrushRadius()  # + 0.5
             self._circle.SetNumberOfSides(int(10 * r))
@@ -4577,7 +7132,15 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # else: self._brush.SetVisibility(False)
             self._brush.SetVisibility(False)
 
-    def _updateExclusiveFlags(self, flag=''):
+    def _updateExclusiveFlags(self, flag: str = '') -> None:
+        """
+        Manages the check state of mutually exclusive ROI tool actions in the popup menu.
+
+        Parameters
+        ----------
+        flag : str (optional)
+            name of the flag to be set as active. If empty, all flags are deactivated.
+        """
         if isinstance(flag, str):
             flags = ['brushflag', 'thresholdbrush', 'brushflag3', 'thresholdbrush3', '2dblobdilate',
                      '2dbloberode', '2dblobopen', '2dblobclose', '2dblobcopy', '2dblobcut', '2dblobpaste',
@@ -4603,7 +7166,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self.setDefaultMouseCursor()
         else: raise TypeError('parameter type {} is not str.'.format(type(flag)))
 
-    def _updateROIMenu(self):
+    def _updateROIMenu(self) -> None:
+        """
+        Rebuilds the 'Set active ROI' submenu based on the current list of ROIs.
+        """
         self._currentroi.clear()
         if len(self._rois) > 0:
             self.setROIMenuVisibilityOn()
@@ -4619,13 +7185,25 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self._currentroi.addAction(r)
         else: self.setROIMenuVisibilityOff()
 
-    def _updateCameraOrientation(self):
+    def _updateCameraOrientation(self) -> None:
+        """
+        Overrides the base class method to update the brush and ROI visibility based on the new orientation.
+        Currently, this method calls the superclass's implementation.
+        """
         super()._updateCameraOrientation()
         self._updateBrush()
         if not self.isCurrentOrientationIsotropic(): self.setROIVisibilityOff()
         else: self.setROIVisibilityOn()
 
-    def _getClickedMatrixCoordinate(self):
+    def _getClickedMatrixCoordinate(self) -> list[int]:
+        """
+        Converts the last clicked display coordinates to matrix (voxel) coordinates.
+
+        Returns
+        -------
+        list[int]
+            (x, y, z) matrix coordinates corresponding to the last mouse click.
+        """
         last = self._window.GetInteractorStyle().GetLastPos()
         p = list(self._getWorldFromDisplay(last[0], last[1]))
         f = self._renderer.GetActiveCamera().GetFocalPoint()
@@ -4636,7 +7214,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
 
     # Public synchronisation event methods
 
-    def synchroniseROISelectionChanged(self, obj, r):
+    def synchroniseROISelectionChanged(self, obj: QWidget, r: str) -> None:
+        """
+        Synchronizes the active ROI selection from another SliceROIViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceROIViewWidget instance that emitted the signal.
+        r : str
+            name of the new active ROI.
+        """
         if obj != self and self.hasVolume():
             # < Revision 02/11/2024
             # noinspection PyProtectedMember
@@ -4646,7 +7234,15 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # Revision 02/11/2024 >
             self.setActiveROI(r, blended=blended, signal=False)
 
-    def synchroniseROIAttributesChanged(self, obj):
+    def synchroniseROIAttributesChanged(self, obj: QWidget) -> None:
+        """
+        Synchronizes ROI attribute changes (e.g., color, visibility) from another SliceROIViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceROIViewWidget instance that emitted the signal.
+        """
         if obj != self and self.hasVolume():
             # < Revision 02/11/2024
             # noinspection PyProtectedMember
@@ -4656,15 +7252,45 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # Revision 02/11/2024 >
             self.updateROIAttributes(blended=blended, signal=False)
 
-    def synchroniseROIModified(self, obj):
+    def synchroniseROIModified(self, obj: QWidget) -> None:
+        """
+        Synchronizes ROI data modifications from another SliceROIViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceROIViewWidget instance that emitted the signal.
+        """
         if obj != self and self.hasVolume():
             self.updateROIDisplay()
 
-    def synchroniseBrushRadiusChanged(self, obj, radius):
+    def synchroniseBrushRadiusChanged(self, obj: QWidget, radius: int) -> None:
+        """
+        Synchronizes the brush radius from another SliceROIViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceROIViewWidget instance that emitted the signal.
+        radius : int
+            new brush radius in voxels.
+        """
         if obj != self and self.hasVolume():
             self.setBrushRadius(radius, signal=False)
 
-    def synchroniseROIFlagChanged(self, obj, function, param):
+    def synchroniseROIFlagChanged(self, obj: QWidget, function: str, param: Any) -> None:
+        """
+        Synchronizes a generic ROI-related flag or method call from another SliceROIViewWidget instance.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceROIViewWidget instance that emitted the signal.
+        function : str
+            name of the method to call.
+        param : Any
+            parameter to pass to the method.
+        """
         if obj != self and self.hasVolume():
             f = getattr(self, function)
             if param is None: f(signal=False)
@@ -4672,33 +7298,73 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
 
     # Public methods
 
-    def getSliceIndex(self):
+    def getSliceIndex(self) -> int:
+        """
+        Get the integer index of the currently displayed slice.
+
+        Returns
+        -------
+        int
+            current slice index.
+        """
         f = self._renderer.GetActiveCamera().GetFocalPoint()
         d = 2 - self._orient
         s = self._volume.getSpacing()
         return int(round(f[d] / s[d]))
 
-    def removeVolume(self):
+    def removeVolume(self) -> None:
+        """
+        Remove the reference SisypheVolume and all associated ROIs.
+        Currently, this method calls the superclass's implementation.
+        """
         self.removeAllROI()
         super().removeVolume()
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
+        """
+        Set the reference SisypheVolume and configures ROI-related components.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            reference SisypheVolume to display.
+        """
         super().setVolume(volume)
         self._draw.setVolume(volume)
         self._rois.setReferenceID(volume)
         self._updateBrush()
         self._brush.SetVisibility(False)
 
-    def setROICollection(self, rois):
+    def setROICollection(self, rois: SisypheROICollection) -> None:
+        """
+        Set the SisypheROICollection instance for the widget and activates the first ROI.
+
+        Parameters
+        ----------
+        rois : SisypheROICollection
+            collection of ROIs to manage.
+        """
         if isinstance(rois, SisypheROICollection):
             self._rois = rois
             self.setActiveROI(self._rois[0].getName(), signal=False)
         else: raise TypeError('parameter type {} is not SisypheROICollection.'.format(type(rois)))
 
-    def getROICollection(self):
+    def getROICollection(self) -> SisypheROICollection:
+        """
+        Get the SisypheROICollection instance of the widget.
+
+        Returns
+        -------
+        SisypheROICollection
+            managed ROI collection.
+        """
         return self._rois
 
-    def newROI(self):
+    def newROI(self) -> None:
+        """
+        Create a new, empty SisypheROI instance, adds it to the collection, and sets it as active.
+        """
         roi = SisypheROI(self._volume)
         roi.setAlpha(0.5)
         roi.setName('ROI' + str(len(self._rois)))
@@ -4708,7 +7374,15 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         self.ROIListChanged.emit(roi.getName())
         if not self._action['showROI'].isChecked(): self._action['showROI'].setChecked(True)
 
-    def addROI(self, roi):
+    def addROI(self, roi: SisypheROI) -> None:
+        """
+        Add a pre-existing SisypheROI instance to the collection and sets it as active.
+
+        Parameters
+        ----------
+        roi : SisypheROI
+            SisypheROI instance to add.
+        """
         if isinstance(roi, SisypheROI):
             roi.setOrigin(self._volume.getOrigin())
             if roi.getName() == '': roi.setName('ROI' + str(len(self._rois)))
@@ -4719,7 +7393,15 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             if not self._action['showROI'].isChecked(): self._action['showROI'].setChecked(True)
         else: raise TypeError('parameter type {} is not SisypheROI.'.format(type(roi)))
 
-    def loadROI(self, filenames=None):
+    def loadROI(self, filenames: str | list[str] | None = None) -> None:
+        """
+        Load one or more SisypheROI instances from files (.xroi) and adds them to the collection.
+
+        Parameters
+        ----------
+        filenames : str | list[str] | None, optional
+            single path or list of paths to SisypheROI files (.xroi). If None, a file dialog is shown.
+        """
         if isinstance(filenames, str): filenames = [filenames]
         if filenames is None:
             filt = 'SisypheROI (*{})'.format(SisypheROI.getFileExt())
@@ -4745,7 +7427,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 except Exception as msg:
                     messageBox(self, title='Load {} error'.format(basename(filename)), text='{}'.format(msg))
 
-    def removeROI(self):
+    def removeROI(self) -> None:
+        """
+        Remove the currently active SisypheROI instance from the collection.
+        """
         if self.hasROI():
             if self._activeroi in self._rois: del self._rois[self._activeroi]
             if self._rois.count() > 0:
@@ -4760,7 +7445,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIListChanged.emit('')
 
-    def removeAllROI(self):
+    def removeAllROI(self) -> None:
+        """
+        Removes all SisypheROI instance from the collection.
+        """
         if self.hasROI():
             self._rois.clear()
             self.updateROIAttributes()
@@ -4770,7 +7458,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIListChanged.emit('')
 
-    def saveROI(self):
+    def saveROI(self) -> None:
+        """
+        Save the currently active SisypheROI instance to its file. If no file is associated, a save dialog is shown.
+        """
         if self.hasROI():
             roi = self._rois[self._activeroi]
             try:
@@ -4782,7 +7473,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             except Exception as msg:
                 messageBox(self, title='Save {} error'.format(basename(roi.getFilename())), text='{}'.format(msg))
 
-    def saveAllROI(self):
+    def saveAllROI(self) -> None:
+        """
+        Save all SisypheROI instances in the collection to their respective files.
+        """
         if self.hasROI():
             for roi in self._rois:
                 try:
@@ -4796,15 +7490,46 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     return
             if self._draw.getUndo(): self._draw.clearLIFO()
 
-    def getNumberOfROI(self):
+    def getNumberOfROI(self) -> int:
+        """
+        Gets the total number of SisypheROI instance in the collection.
+
+        Returns
+        -------
+        int
+            number of SisypheROI instance.
+        """
         return len(self._rois)
 
-    def hasROI(self):
+    def hasROI(self) -> bool:
+        """
+        Check if the widget contains any SisypheROI instances.
+
+        Returns
+        -------
+        bool
+            True if at least one SisypheROI instance exists, False otherwise.
+        """
         return len(self._rois) > 0
 
     # < Revision 02/11/2024
     # add blended parameter
-    def setActiveROI(self, r, blended=None, signal=True):
+    def setActiveROI(self,
+                     r: str | SisypheROI,
+                     blended: int | None = None,
+                     signal: bool = True) -> None:
+        """
+        Set the specified SisypheROI instance as the active one for drawing and editing.
+
+        Parameters
+        ----------
+        r : str | SisypheROI
+            SisypheROI instance to activate, identified by its name or instance.
+        blended : vtkImageBlend | None (optional)
+            pre-blended image of non-active SisypheROI instances for synchronization (default None).
+        signal : bool, optional
+            If True, emits the ROISelectionChanged signal (default True).
+        """
         if self.hasROI():
             if isinstance(r, SisypheROI): r = r.getName()
             if isinstance(r, str):
@@ -4821,31 +7546,96 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                             self.ROISelectionChanged.emit(self, r)
     # Revision 02/11/2024 >
 
-    def getActiveROI(self):
+    def getActiveROI(self) -> SisypheROI | None:
+        """
+        Get the currently active SisypheROI instance.
+
+        Returns
+        -------
+        SisypheROI | None
+            active SisypheROI instance, or None if no ROI is active.
+        """
         if self.hasROI():
             if self._activeroi is not None: return self._rois[self._activeroi]
             else: return None
         else: raise AttributeError('No ROI.')
 
-    def getROI(self, name):
+    def getROI(self, name: str) -> SisypheROI:
+        """
+        Get a specific SisypheROI instance by its name.
+
+        Parameters
+        ----------
+        name : str
+            name of the ROI to retrieve.
+
+        Returns
+        -------
+        SisypheROI
+            SisypheROI instance with the specified name.
+        """
         if isinstance(name, str): return self._rois[name]
         else: raise TypeError('parameter type {} is not str.'.format(type(name)))
 
-    def getROINames(self):
+    def getROINames(self) -> list[str]:
+        """
+        Get a list of all SisypheROI instance names in the collection.
+
+        Returns
+        -------
+        list[str]
+            list of SisypheROI instance names.
+        """
         return self._rois.keys()
 
-    def updateROIName(self, old, name):
+    def updateROIName(self, old: str, name: str) -> None:
+        """
+        Update the internal active SisypheROI instance name if it has been changed externally.
+
+        Parameters
+        ----------
+        old : str
+            old name of the SisypheROI instance.
+        name : str
+            new name of the SisypheROI instance.
+        """
         if self._activeroi == old:
             self._activeroi = name
 
-    def getDrawInstance(self):
+    def getDrawInstance(self) -> SisypheROIDraw:
+        """
+        Get the SisypheROIDraw instance used for drawing operations.
+
+        Returns
+        -------
+        SisypheROIDraw
+            current drawing utility instance.
+        """
         return self._draw
 
-    def setDrawInstance(self, draw):
+    def setDrawInstance(self, draw: SisypheROIDraw) -> None:
+        """
+        Set the SisypheROIDraw instance to be used for drawing operations.
+
+        Parameters
+        ----------
+        draw : SisypheROIDraw
+            new drawing utility instance.
+        """
         if isinstance(draw, SisypheROIDraw): self._draw = draw
         else: raise TypeError('parameter type {} is not SisypheROIDraw'.format(type(draw)))
 
-    def setBrushRadius(self, r, signal=True):
+    def setBrushRadius(self, r: int, signal: bool = True) -> None:
+        """
+        Sets the radius of the drawing brush.
+
+        Parameters
+        ----------
+        r : int
+            new brush radius in pixels.
+        signal : bool, optional
+            If True, emits the BrushRadiusChanged signal (default True).
+        """
         if isinstance(r, int):
             self._draw.setBrushRadius(r)
             self._updateBrush()
@@ -4854,17 +7644,49 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self.BrushRadiusChanged.emit(self, r)
         else: raise TypeError('parameter type {} is not int.'.format(type(r)))
 
-    def getBrushRadius(self):
+    def getBrushRadius(self) -> int:
+        """
+        Get the current radius of the drawing brush.
+
+        Returns
+        -------
+        int
+            current brush radius in pixels.
+        """
         return self._draw.getBrushRadius()
 
-    def setMorphologyRadius(self, r):
+    def setMorphologyRadius(self, r: int | float) -> None:
+        """
+        Set the radius for morphological operations (e.g., erode, dilate).
+
+        Parameters
+        ----------
+        r : int | float
+            new radius for morphological kernels.
+        """
         if isinstance(r, (int, float)): self._draw.setMorphologyRadius(r)
         else: raise TypeError('parameter type {} is not int or float.'.format(type(r)))
 
-    def getMorphologyRadius(self):
+    def getMorphologyRadius(self) -> int:
+        """
+        Get the current radius for morphological operations.
+
+        Returns
+        -------
+        int
+            current morphological kernel radius.
+        """
         return self._draw.getMorphologyRadius()
 
-    def setBrushVisibility(self, v):
+    def setBrushVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the brush cursor.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the brush, False to hide it.
+        """
         if isinstance(v, bool):
             self._brush.SetVisibility(v)
             if v:
@@ -4873,16 +7695,40 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             self._renderwindow.Render()
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getBrushVisibility(self):
+    def getBrushVisibility(self) -> bool:
+        """
+        Get the current visibility of the brush cursor.
+
+        Returns
+        -------
+        bool
+            True if the brush is visible, False otherwise.
+        """
         return self._brush.GetVisibility()
 
-    def setBrushVisibilityOn(self):
+    def setBrushVisibilityOn(self) -> None:
+        """
+        Show the brush cursor.
+        """
         self.setBrushVisibility(True)
 
-    def setBrushVisibilityOff(self):
+    def setBrushVisibilityOff(self) -> None:
+        """
+        Hide the brush cursor.
+        """
         self.setBrushVisibility(False)
 
-    def setROIVisibility(self, v, signal=True):
+    def setROIVisibility(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the visibility of all ROI layers.
+
+        Parameters
+        ----------
+        v : bool
+            True to show ROIs, False to hide them.
+        signal : bool, optional
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self._activesliceroi is not None:
             if isinstance(v, bool):
                 if self._slicerois is not None: self._slicerois.SetVisibility(v)
@@ -4896,17 +7742,49 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     self.ROIFlagChanged.emit(self, 'setROIVisibility', v)
             else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setROIVisibilityOn(self, signal=True):
+    def setROIVisibilityOn(self, signal: bool = True) -> None:
+        """
+        Show all ROI layers.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         self.setROIVisibility(True, signal)
 
-    def setROIVisibilityOff(self, signal=True):
+    def setROIVisibilityOff(self, signal: bool = True) -> None:
+        """
+        Hide all ROI layers.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         self.setROIVisibility(False, signal)
 
-    def getROIVisibility(self):
+    def getROIVisibility(self) -> bool:
+        """
+        Get the visibility state of the active ROI layer.
+
+        Returns
+        -------
+        bool
+            True if the active ROI is visible, False otherwise.
+        """
         if self._activesliceroi is not None: return self._activesliceroi.GetVisibility() > 0
         else: return False
 
-    def setROIMenuVisibility(self, v):
+    def setROIMenuVisibility(self, v: bool) -> None:
+        """
+        Enable or disable the ROI tools in the popup menu.
+
+        Parameters
+        ----------
+        v : bool
+            True to enable the menu, False to disable it.
+        """
         if isinstance(v, bool):
             self._2d.setEnabled(v)
             self._3d.setEnabled(v)
@@ -4925,22 +7803,54 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             self._action['showROI'].setEnabled(self.hasROI())
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setROIMenuVisibilityOn(self):
+    def setROIMenuVisibilityOn(self) -> None:
+        """
+        Enable the ROI tools in the popup menu.
+        """
         self.setROIMenuVisibility(True)
 
-    def setROIMenuVisibilityOff(self):
+    def setROIMenuVisibilityOff(self) -> None:
+        """
+        Disable the ROI tools in the popup menu.
+        """
         self.setROIMenuVisibility(False)
 
-    def getROIMenuVisibility(self):
+    def getROIMenuVisibility(self) -> bool:
+        """
+        Get the enabled state of the ROI tools menu.
+
+        Returns
+        -------
+        bool
+            True if the menu is enabled, False otherwise.
+        """
         return self._roitools.isEnabled()
 
-    def setNoROIFlag(self, signal=True):
+    def setNoROIFlag(self, signal: bool = True) -> None:
+        """
+        Deactivate all ROI drawing and editing tool flags.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         self._updateExclusiveFlags()
         if signal:
             # noinspection PyUnresolvedReferences
             self.ROIFlagChanged.emit(self, 'setNoROIFlag', None)
 
-    def setSolidBrushFlag(self, f, signal=True):
+    def setSolidBrushFlag(self, f: bool, signal: bool = True) -> None:
+        """
+        Activate or deactivate the solid 2D disk brush tool.
+
+        Parameters
+        ----------
+        f : bool
+            True to activate the tool, False to deactivate.
+        signal : bool, optional
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if isinstance(f, bool):
             if self.hasROI() and self.getROIVisibility() and f:
                 self._updateExclusiveFlags('brushflag')
@@ -4951,16 +7861,50 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self.ROIFlagChanged.emit(self, 'setSolidBrushFlag', f)
         else: raise TypeError('parameter type {} is not bool.'.format(f))
 
-    def setSolidBrushFlagOn(self, signal=True):
+    def setSolidBrushFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the solid 2D disk brush tool.
+
+        Parameters
+        ----------
+        signal : bool, optional
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         self.setSolidBrushFlag(True, signal)
 
-    def setSolidBrushFlagOff(self, signal=True):
+    def setSolidBrushFlagOff(self, signal: bool = True) -> None:
+        """
+        Deactivate the solid 2D disk brush tool.
+
+        Parameters
+        ----------
+        signal : bool, optional
+            If True, emits the `ROIFlagChanged` signal (default True).
+        """
         self.setSolidBrushFlag(False, signal)
 
-    def getSolidBrushFlag(self):
+    def getSolidBrushFlag(self) -> bool:
+        """
+        Get the active state of the solid 2D disk brush tool.
+
+        Returns
+        -------
+        bool
+            True if the tool is active, False otherwise.
+        """
         return self._action['brushflag'].isChecked()
 
-    def setSolidBrush3Flag(self, f, signal=True):
+    def setSolidBrush3Flag(self, f: bool, signal: bool = True) -> None:
+        """
+        Activate or deactivate the solid 3D sphere brush tool.
+
+        Parameters
+        ----------
+        f : bool
+            True to activate the tool, False to deactivate.
+        signal : bool, optional
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if isinstance(f, bool):
             if self.hasROI() and self.getROIVisibility() and f:
                 self._updateExclusiveFlags('brushflag3')
@@ -4971,16 +7915,50 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self.ROIFlagChanged.emit(self, 'setSolidBrush3Flag', f)
         else: raise TypeError('parameter type {} is not bool.'.format(f))
 
-    def setSolidBrush3FlagOn(self, signal=True):
+    def setSolidBrush3FlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the solid 3D sphere brush tool.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         self.setSolidBrush3Flag(True, signal)
 
-    def setSolidBrush3FlagOff(self, signal=True):
+    def setSolidBrush3FlagOff(self, signal: bool = True) -> None:
+        """
+        Deactivate the solid 3D sphere brush tool.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         self.setSolidBrush3Flag(False, signal)
 
-    def getSolidBrush3Flag(self):
+    def getSolidBrush3Flag(self) -> bool:
+        """
+        Get the active state of the solid 3D sphere brush tool.
+
+        Returns
+        -------
+        bool
+            True if the tool is active, False otherwise.
+        """
         return self._action['brushflag3'].isChecked()
 
-    def setThresholdBrushFlag(self, f, signal=True):
+    def setThresholdBrushFlag(self, f: bool, signal: bool = True) -> None:
+        """
+        Activate or deactivate the threshold-based 2D disk brush tool.
+
+        Parameters
+        ----------
+        f : bool
+            True to activate the tool, False to deactivate.
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if isinstance(f, bool):
             if self.hasROI() and self.getROIVisibility() and f:
                 self._updateExclusiveFlags('thresholdbrush')
@@ -4991,16 +7969,50 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self.ROIFlagChanged.emit(self, 'setThresholdBrushFlag', f)
         else: raise TypeError('parameter type {} is not bool.'.format(f))
 
-    def setThresholdBrushFlagOn(self, signal=True):
+    def setThresholdBrushFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the threshold-based 2D disk brush tool.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         self.setSolidBrushFlag(True, signal)
 
-    def setThresholdBrushFlagOff(self, signal=True):
+    def setThresholdBrushFlagOff(self, signal: bool = True) -> None:
+        """
+        Deactivate the threshold-based 2D disk brush tool.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         self.setSolidBrushFlag(False, signal)
 
-    def getThresholdBrushFlag(self):
+    def getThresholdBrushFlag(self) -> bool:
+        """
+        Get the active state of the threshold-based 2D disk brush tool.
+
+        Returns
+        -------
+        bool
+            True if the tool is active, False otherwise.
+        """
         return self._action['thresholdbrush'].isChecked()
 
-    def setThresholdBrush3Flag(self, f, signal=True):
+    def setThresholdBrush3Flag(self, f: bool, signal: bool = True) -> None:
+        """
+        Activate or deactivate the threshold-based 3D sphere brush tool.
+
+        Parameters
+        ----------
+        f : bool
+            True to activate the tool, False to deactivate.
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if isinstance(f, bool):
             if self.hasROI() and self.getROIVisibility() and f:
                 self._updateExclusiveFlags('thresholdbrush3')
@@ -5011,31 +8023,89 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self.ROIFlagChanged.emit(self, 'setThresholdBrush3Flag', f)
         else: raise TypeError('parameter type {} is not bool.'.format(f))
 
-    def setThresholdBrush3FlagOn(self, signal=True):
+    def setThresholdBrush3FlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the threshold-based 3D sphere brush tool.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         self.setSolidBrush3Flag(True, signal)
 
-    def setThresholdBrush3FlagOff(self, signal=True):
+    def setThresholdBrush3FlagOff(self, signal: bool = True) -> None:
+        """
+        Deactivate the threshold-based 3D sphere brush tool.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         self.setSolidBrush3Flag(False, signal)
 
-    def getThresholdBrush3Flag(self):
+    def getThresholdBrush3Flag(self) -> bool:
+        """
+        Gets the active state of the threshold-based 3D sphere brush tool.
+
+        Returns
+        -------
+        bool
+            True if the tool is active, False otherwise.
+        """
         return self._action['thresholdbrush3'].isChecked()
 
-    def getBrushFlag(self):
+    def getBrushFlag(self) -> int:
+        """
+        Get an integer code representing the currently active brush tool.
+
+        Returns
+        -------
+        int
+            1 for solid 2D, 2 for threshold 2D, 3 for solid 3D, 4 for threshold 3D, 0 for none.
+        """
         if self._action['brushflag'].isChecked(): return 1
         elif self._action['thresholdbrush'].isChecked(): return 2
         elif self._action['brushflag3'].isChecked(): return 3
         elif self._action['thresholdbrush3'].isChecked(): return 4
         else: return 0
 
-    def get2DBrushFlag(self):
+    def get2DBrushFlag(self) -> bool:
+        """
+        Check if any 2D brush tool is active.
+
+        Returns
+        -------
+        bool
+            True if a 2D brush is active, False otherwise.
+        """
         return self._action['brushflag'].isChecked() or \
                self._action['thresholdbrush'].isChecked()
 
-    def get3DBrushFlag(self):
+    def get3DBrushFlag(self) -> bool:
+        """
+        Check if any 3D brush tool is active.
+
+        Returns
+        -------
+        bool
+            True if a 3D brush is active, False otherwise.
+        """
         return self._action['brushflag3'].isChecked() or \
                self._action['thresholdbrush3'].isChecked()
 
-    def setFillHolesFlag(self, f, signal=True):
+    def setFillHolesFlag(self, f: bool, signal: bool = True) -> None:
+        """
+        Activate or deactivate automatic hole filling after a brush stroke.
+
+        Parameters
+        ----------
+        f : bool
+            True to activate hole filling, False to deactivate.
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if isinstance(f, bool):
             self._action['fillholesflag'].setChecked(f)
             if signal:
@@ -5043,16 +8113,50 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self.ROIFlagChanged.emit(self, 'setFillHolesFlag', f)
         else: raise TypeError('parameter type {} is not bool.'.format(type(f)))
 
-    def setFillHolesFlagOn(self, signal=True):
+    def setFillHolesFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate automatic hole filling.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         self.setFillHolesFlag(True, signal)
 
-    def setFillHolesFlagOff(self, signal=True):
+    def setFillHolesFlagOff(self, signal: bool = True) -> None:
+        """
+        Deactivate automatic hole filling.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         self.setFillHolesFlag(False, signal)
 
-    def getFillHolesFlag(self):
+    def getFillHolesFlag(self) -> bool:
+        """
+        Get the state of the automatic hole filling feature.
+
+        Returns
+        -------
+        bool
+            True if hole filling is active, False otherwise.
+        """
         return self._action['fillholesflag'].isChecked()
 
-    def set2DBlobDilateFlagOn(self, signal=True):
+    def set2DBlobDilateFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '2D Dilate Selected Blob' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked blob undergoes a 2D morphological dilatation.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2dblobdilate'].setChecked(True)
             self._updateExclusiveFlags('2dblobdilate')
@@ -5060,7 +8164,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DBlobDilateFlagOn', None)
 
-    def set2DBlobErodeFlagOn(self, signal=True):
+    def set2DBlobErodeFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '2D Erode Selected Blob' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked blob undergoes a 2D morphological erosion.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2dbloberode'].setChecked(True)
             self._updateExclusiveFlags('2dbloberode')
@@ -5068,7 +8182,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DBlobErodeFlagOn', None)
 
-    def set2DBlobCloseFlagOn(self, signal=True):
+    def set2DBlobCloseFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '2D Closing on Selected Blob' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked blob undergoes a 2D morphological closing.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2dblobclose'].setChecked(True)
             self._updateExclusiveFlags('2dblobclose')
@@ -5076,7 +8200,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DBlobCloseFlagOn', None)
 
-    def set2DBlobOpenFlagOn(self, signal=True):
+    def set2DBlobOpenFlagOn(self, signal: bool = True) -> None:
+        """
+        Activates the '2D Opening on Selected Blob' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked blob undergoes a 2D morphological opening.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2dblobopen'].setChecked(True)
             self._updateExclusiveFlags('2dblobopen')
@@ -5084,7 +8218,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DBlobOpenFlagOn', None)
 
-    def set2DBlobCopyFlagOn(self, signal=True):
+    def set2DBlobCopyFlagOn(self, signal: bool = True) -> None:
+        """
+        Activates the '2D Copy Selected Blob' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked blob is copied to the clipboard.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2dblobcopy'].setChecked(True)
             self._updateExclusiveFlags('2dblobcopy')
@@ -5092,7 +8236,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DBlobCopyFlagOn', None)
 
-    def set2DBlobCutFlagOn(self, signal=True):
+    def set2DBlobCutFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '2D Cut Selected Blob' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked blob is cut to the clipboard.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2dblobcut'].setChecked(True)
             self._updateExclusiveFlags('2dblobcut')
@@ -5100,7 +8254,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DBlobCutFlagOn', None)
 
-    def set2DBlobPasteFlagOn(self, signal=True):
+    def set2DBlobPasteFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '2D Paste Selected Blob' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the blob on the clipboard is copied wherever the cross-shaped cursor is positioned.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2dblobpaste'].setChecked(True)
             self._updateExclusiveFlags('2dblobpaste')
@@ -5108,7 +8272,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DBlobPasteFlagOn', None)
 
-    def set2DBlobRemoveFlagOn(self, signal=True):
+    def set2DBlobRemoveFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '2D Remove Selected Blob' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked blob is removed.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2dblobremove'].setChecked(True)
             self._updateExclusiveFlags('2dblobremove')
@@ -5116,7 +8290,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DBlobRemoveFlagOn', None)
 
-    def set2DBlobKeepFlagOn(self, signal=True):
+    def set2DBlobKeepFlagOn(self, signal: bool = True) -> None:
+        """
+        Activates the '2D Keep Only Selected Blob' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, all the blobs are removed except for the blob that is left-clicked.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2dblobkeep'].setChecked(True)
             self._updateExclusiveFlags('2dblobkeep')
@@ -5124,7 +8308,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DBlobKeepFlagOn', None)
 
-    def set2DBlobThresholdFlagOn(self, signal=True):
+    def set2DBlobThresholdFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '2D Thresholding in Selected Blob' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, a threshold is apllied in the left-clicked blob.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2dblobthreshold'].setChecked(True)
             self._updateExclusiveFlags('2dblobthreshold')
@@ -5132,7 +8326,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DBlobThresholdFlagOn', None)
 
-    def set2DFillFlagOn(self, signal=True):
+    def set2DFillFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '2D Fill from Seed' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked hole is filled.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2dfill'].setChecked(True)
             self._updateExclusiveFlags('2dfill')
@@ -5140,7 +8344,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DFillFlagOn', None)
 
-    def set2DRegionGrowingFlagOn(self, signal=True):
+    def set2DRegionGrowingFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '2D Region Growing' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked pixel is used as the seed for the region growing processing.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2drgrowing'].setChecked(True)
             self._updateExclusiveFlags('2drgrowing')
@@ -5148,7 +8362,18 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DRegionGrowingFlagOn', None)
 
-    def set2DBlobRegionGrowingFlagOn(self, signal=True):
+    def set2DBlobRegionGrowingFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '2D Region Growing in Selected Blob' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked pixel of a blob is used as the seed. The region growing processing is restricted
+        to the blob area.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2dblobrgrowing'].setChecked(True)
             self._updateExclusiveFlags('2dblobrgrowing')
@@ -5156,7 +8381,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DBlobRegionGrowingFlagOn', None)
 
-    def set2DRegionConfidenceFlagOn(self, signal=True):
+    def set2DRegionConfidenceFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '2D Confidence Connected Region Growing' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked pixel is used as the seed for the region confidence processing.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2drconfidence'].setChecked(True)
             self._updateExclusiveFlags('2drconfidence')
@@ -5164,7 +8399,18 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DRegionConfidenceFlagOn', None)
 
-    def set2DBlobRegionConfidenceFlagOn(self, signal=True):
+    def set2DBlobRegionConfidenceFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '2D Confidence Connected Region Growing in Selected Blob' tool.
+        The processing of this 2D tool is limited to the current displayed slice.
+        In this mode, the left-clicked pixel of a blob is used as the seed. The region confidence processing is
+        restricted to the blob area.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['2dblobrconfidence'].setChecked(True)
             self._updateExclusiveFlags('2dblobrconfidence')
@@ -5172,7 +8418,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set2DBlobRegionConfidenceFlagOn', None)
 
-    def set3DBlobDilateFlagOn(self, signal=True):
+    def set3DBlobDilateFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '3D Dilate Selected Blob' tool.
+        In this mode, the left-clicked blob undergoes a 3D morphological dilatation.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dblobdilate'].setChecked(True)
             self._updateExclusiveFlags('3dblobdilate')
@@ -5180,7 +8435,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DBlobDilateFlagOn', None)
 
-    def set3DBlobErodeFlagOn(self, signal=True):
+    def set3DBlobErodeFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '3D Erode Selected Blob' tool.
+        In this mode, the left-clicked blob undergoes a 3D morphological erosion.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dbloberode'].setChecked(True)
             self._updateExclusiveFlags('3dbloberode')
@@ -5188,7 +8452,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DBlobErodeFlagOn', None)
 
-    def set3DBlobCloseFlagOn(self, signal=True):
+    def set3DBlobCloseFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '3D Closing on Selected Blob' tool.
+        In this mode, the left-clicked blob undergoes a 3D morphological closing.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dblobclose'].setChecked(True)
             self._updateExclusiveFlags('3dblobclose')
@@ -5196,7 +8469,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DBlobCloseFlagOn', None)
 
-    def set3DBlobOpenFlagOn(self, signal=True):
+    def set3DBlobOpenFlagOn(self, signal: bool = True) -> None:
+        """
+        Activates the '3D Opening on Selected Blob' tool.
+        In this mode, the left-clicked blob undergoes a 3D morphological opening.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dblobopen'].setChecked(True)
             self._updateExclusiveFlags('3dblobopen')
@@ -5204,7 +8486,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DBlobOpenFlagOn', None)
 
-    def set3DBlobCopyFlagOn(self, signal=True):
+    def set3DBlobCopyFlagOn(self, signal: bool = True) -> None:
+        """
+        Activates the '3D Copy Selected Blob' tool.
+        In this mode, the left-clicked blob is copied to the clipboard.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dblobcopy'].setChecked(True)
             self._updateExclusiveFlags('3dblobcopy')
@@ -5212,7 +8503,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DBlobCopyFlagOn', None)
 
-    def set3DBlobCutFlagOn(self, signal=True):
+    def set3DBlobCutFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '3D Cut Selected Blob' tool.
+        In this mode, the left-clicked blob is cut to the clipboard.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dblobcut'].setChecked(True)
             self._updateExclusiveFlags('3dblobcut')
@@ -5220,7 +8520,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DBlobCutFlagOn', None)
 
-    def set3DBlobPasteFlagOn(self, signal=True):
+    def set3DBlobPasteFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '3D Paste Selected Blob' tool.
+        In this mode, the blob on the clipboard is copied wherever the cross-shaped cursor is positioned.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dblobpaste'].setChecked(True)
             self._updateExclusiveFlags('3dblobpaste')
@@ -5228,7 +8537,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DBlobPasteFlagOn', None)
 
-    def set3DBlobRemoveFlagOn(self, signal=True):
+    def set3DBlobRemoveFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '3D Remove Selected Blob' tool.
+        In this mode, the left-clicked blob is removed.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dblobremove'].setChecked(True)
             self._updateExclusiveFlags('3dblobremove')
@@ -5236,7 +8554,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DBlobRemoveFlagOn', None)
 
-    def set3DBlobKeepFlagOn(self, signal=True):
+    def set3DBlobKeepFlagOn(self, signal: bool = True) -> None:
+        """
+        Activates the '3D Keep Only Selected Blob' tool.
+        In this mode, all the blobs are removed except for the blob that is left-clicked.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dblobkeep'].setChecked(True)
             self._updateExclusiveFlags('3dblobkeep')
@@ -5244,7 +8571,18 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DBlobKeepFlagOn', None)
 
-    def set3DBlobExpandFlagOn(self, v, signal=True):
+    def set3DBlobExpandFlagOn(self, v: float, signal: bool = True) -> None:
+        """
+        Activate the '3D Expand Selected Blob' tool.
+        In this mode, the left-clicked blob is expanded with a margin.
+
+        Parameters
+        ----------
+        v : float
+            margin, in mm, to expand the blob.
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dblobexpand'].setChecked(True)
             self._draw.setThickness(v)
@@ -5253,7 +8591,18 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DBlobExpandFlagOn', v)
 
-    def set3DBlobShrinkFlagOn(self, v, signal=True):
+    def set3DBlobShrinkFlagOn(self, v: float, signal: bool = True) -> None:
+        """
+        Activates the '3D Shrink Selected Blob' tool.
+        In this mode, the left-clicked blob is shrinked with a margin.
+
+        Parameters
+        ----------
+        v : float
+            margin, in mm, to shrink the blob.
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dblobshrink'].setChecked(True)
             self._draw.setThickness(v)
@@ -5262,7 +8611,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DBlobShrinkFlagOn', v)
 
-    def set3DBlobThresholdFlagOn(self, signal=True):
+    def set3DBlobThresholdFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '3D Thresholding in Selected Blob' tool.
+        In this mode, a threshold is apllied in the left-clicked blob.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dblobthreshold'].setChecked(True)
             self._updateExclusiveFlags('3dblobthreshold')
@@ -5270,7 +8628,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DBlobThresholdFlagOn', None)
 
-    def set3DFillFlagOn(self, signal=True):
+    def set3DFillFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '3D Fill from Seed' tool.
+        In this mode, the left-clicked hole is filled.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dfill'].setChecked(True)
             self._updateExclusiveFlags('3dfill')
@@ -5278,7 +8645,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DFillFlagOn', None)
 
-    def set3DRegionGrowingFlagOn(self, signal=True):
+    def set3DRegionGrowingFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '3D Region Growing' tool.
+        In this mode, the left-clicked voxel is used as the seed for the region growing processing.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3drgrowing'].setChecked(True)
             self._updateExclusiveFlags('3drgrowing')
@@ -5286,7 +8662,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DRegionGrowingFlagOn', None)
 
-    def set3DBlobRegionGrowingFlagOn(self, signal=True):
+    def set3DBlobRegionGrowingFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '3D Region Growing in Selected Blob' tool.
+        In this mode, the left-clicked voxel of a blob is used as the seed. The region growing processing is restricted
+        to the blob area.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dblobrgrowing'].setChecked(True)
             self._updateExclusiveFlags('3dblobrgrowing')
@@ -5294,7 +8680,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DBlobRegionGrowingFlagOn', None)
 
-    def set3DRegionConfidenceFlagOn(self, signal=True):
+    def set3DRegionConfidenceFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '3D Confidence Connected Region Growing' tool.
+        In this mode, the left-clicked pixel is used as the seed for the region confidence processing.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3drconfidence'].setChecked(True)
             self._updateExclusiveFlags('3drconfidence')
@@ -5302,7 +8697,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DRegionConfidenceFlagOn', None)
 
-    def set3DBlobRegionConfidenceFlagOn(self, signal=True):
+    def set3DBlobRegionConfidenceFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the '3D Confidence Connected Region Growing in Selected Blob' tool.
+        In this mode, the left-clicked voxel of a blob is used as the seed. The region confidence processing is
+        restricted to the blob area.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['3dblobrconfidence'].setChecked(True)
             self._updateExclusiveFlags('3dblobrconfidence')
@@ -5310,7 +8715,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'set3DBlobRegionConfidenceFlagOn', None)
 
-    def setActiveContourFlagOn(self, signal=True):
+    def setActiveContourFlagOn(self, signal: bool = True) -> None:
+        """
+        Activate the 'Active Contour' segmentation tool.
+        In this mode, the left-clicked voxel is used to initialize the active contour.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if self.hasROI() and self.getROIVisibility():
             self._action['activecontour'].setChecked(True)
             self._updateExclusiveFlags('activecontour')
@@ -5318,13 +8732,39 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'setActiveContourFlagOn', None)
 
-    def setUndoOn(self, signal=True):
+    def setUndoOn(self, signal: bool = True) -> None:
+        """
+        Enable the undo/redo functionality.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         self.setUndo(True, signal)
 
-    def setUndoOff(self, signal=True):
+    def setUndoOff(self, signal: bool = True) -> None:
+        """
+        Disable the undo/redo functionality.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         self.setUndo(False, signal)
 
-    def setUndo(self, v, signal=True):
+    def setUndo(self, v: bool, signal: bool = True) -> None:
+        """
+        Set the state of the undo/redo functionality.
+
+        Parameters
+        ----------
+        v : bool
+            True to enable undo/redo, False to disable.
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
         if isinstance(v, bool):
             self._draw.setUndo(v)
             self._action['undo'].setEnabled(v)
@@ -5334,10 +8774,22 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self.ROIFlagChanged.emit(self, 'setUndo', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getUndo(self):
+    def getUndo(self) -> bool:
+        """
+        Get the current state of the undo/redo functionality.
+
+        Returns
+        -------
+        bool
+            True if undo/redo is enabled, False otherwise.
+        """
         return self._draw.getUndo()
 
-    def sliceMinus(self):
+    def sliceMinus(self) -> None:
+        """
+        Navigate to the previous slice and updates the brush position.
+        Currently, this method calls the superclass's implementation.
+        """
         super().sliceMinus()
         if self.hasROI() and self.getROIVisibility() and self.getBrushFlag() > 0:
             p = list(self._brush.GetPosition())
@@ -5347,7 +8799,11 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             self._brush.SetPosition(p)
             self._renderwindow.Render()
 
-    def slicePlus(self):
+    def slicePlus(self) -> None:
+        """
+        Navigate to the next slice and updates the brush position.
+        Currently, this method calls the superclass's implementation.
+        """
         super().slicePlus()
         if self.hasROI() and self.getROIVisibility() and self.getBrushFlag() > 0:
             p = list(self._brush.GetPosition())
@@ -5357,21 +8813,35 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             self._brush.SetPosition(p)
             self._renderwindow.Render()
 
-    def undo(self):
+    def undo(self) -> None:
+        """
+        Perform an undo operation on the active ROI.
+        """
         self._draw.popUndoLIFO()
         self._roimapper.GetInput().Modified()
         self._renderwindow.Render()
         # noinspection PyUnresolvedReferences
         self.ROIModified.emit(self)
 
-    def redo(self):
+    def redo(self) -> None:
+        """
+        Perform a redo operation on the active ROI.
+        """
         self._draw.popRedoLIFO()
         self._roimapper.GetInput().Modified()
         self._renderwindow.Render()
         # noinspection PyUnresolvedReferences
         self.ROIModified.emit(self)
 
-    def updateROIDisplay(self, signal=False):
+    def updateROIDisplay(self, signal: bool = False) -> None:
+        """
+        Force a modification and re-render of the ROI data.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ROIModified signal (default False).
+        """
         if self._volume is not None:
             if self._roimapper is not None:  self._roimapper.GetInput().Modified()
             if signal:
@@ -5381,7 +8851,19 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
 
     # < Revision 02/11/2024
     # add blended parameter
-    def updateROIAttributes(self, blended=None, signal=False):
+    def updateROIAttributes(self,
+                            blended: int | None = None,
+                            signal: bool = False):
+        """
+        Perform a full update of all ROI-related visual components.
+
+        Parameters
+        ----------
+        blended : vtkImageBlend | None (optional)
+            pre-blended image of non-active ROIs for synchronization (default None).
+        signal : bool (optional)
+            If True, emits the ROIAttributesChanged signal (default False).
+        """
         if self._volume is not None:
             self._updateSliceROI(blended)
             self._updateActiveSliceROI()
@@ -5395,18 +8877,42 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self.ROIAttributesChanged.emit(self)
     # Revision 02/11/2024 >
 
-    def getPopupROI(self):
+    def getPopupROI(self) -> QMenu:
+        """
+        Get the 'ROI' tools submenu from the popup menu.
+
+        Returns
+        -------
+        QMenu
+            'ROI' submenu.
+        """
         return self._roitools
 
-    def popupROIEnabled(self):
+    def popupROIEnabled(self) -> None:
+        """
+        Enable the 'ROI' tools submenu in the popup menu.
+        """
         self._roitools.menuAction().setVisible(True)
 
-    def popupROIDisabled(self):
+    def popupROIDisabled(self) -> None:
+        """
+        Disable the 'ROI' tools submenu in the popup menu.
+        """
         self._roitools.menuAction().setVisible(False)
 
     # 2D ROI functions
 
-    def sliceFlip(self, flipx, flipy):
+    def sliceFlip(self, flipx: bool, flipy: bool) -> None:
+        """
+        Flip the current slice of the active ROI horizontally and/or vertically.
+
+        Parameters
+        ----------
+        flipx : bool
+            True to flip horizontally.
+        flipy : bool
+            True to flip vertically.
+        """
         if self.hasROI() and self.getROIVisibility():
             index = self.getSliceIndex()
             self._draw.flipSlice(index, self._orient, flipx, flipy)
@@ -5415,7 +8921,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def sliceMove(self, movex, movey):
+    def sliceMove(self, movex: int, movey: int) -> None:
+        """
+        Shift the current slice of the active ROI by a given offset.
+
+        Parameters
+        ----------
+        movex : int
+            shift amount in the x-direction (in voxels).
+        movey : int
+            shift amount in the y-direction (in voxels).
+        """
         if self.hasROI() and self.getROIVisibility():
             index = self.getSliceIndex()
             self._draw.shiftSlice(index, self._orient, movex, movey)
@@ -5424,7 +8940,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def sliceDilate(self):
+    def sliceDilate(self) -> None:
+        """
+        Apply a 2D morphological dilation to the current slice of the active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             index = self.getSliceIndex()
             self._draw.morphoSliceDilate(index, self._orient)
@@ -5433,7 +8952,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def sliceErode(self):
+    def sliceErode(self) -> None:
+        """
+        Apply a 2D morphological erosion to the current slice of the active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             index = self.getSliceIndex()
             self._draw.morphoSliceErode(index, self._orient)
@@ -5442,7 +8964,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def sliceOpen(self):
+    def sliceOpen(self) -> None:
+        """
+        Apply a 2D morphological opening to the current slice of the active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             index = self.getSliceIndex()
             self._draw.morphoSliceOpening(index, self._orient)
@@ -5451,7 +8976,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def sliceClose(self):
+    def sliceClose(self) -> None:
+        """
+        Apply a 2D morphological closing to the current slice of the active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             index = self.getSliceIndex()
             self._draw.morphoSliceClosing(index, self._orient)
@@ -5460,7 +8988,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def sliceBackground(self):
+    def sliceBackground(self) -> None:
+        """
+        Segment the background of the reference SisypheVolume on the current slice and adds it to the active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             index = self.getSliceIndex()
             self._draw.backgroundSegmentSlice(index, self._orient)
@@ -5469,7 +9000,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def sliceObject(self):
+    def sliceObject(self) -> None:
+        """
+        Segment the foreground object of the reference SisypheVolume on the current slice and adds it to the active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             index = self.getSliceIndex()
             self._draw.objectSegmentSlice(index, self._orient)
@@ -5478,7 +9012,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def sliceInvert(self):
+    def sliceInvert(self) -> None:
+        """
+        Invert the binary values of the current slice of the active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             index = self.getSliceIndex()
             self._draw.binaryNotSlice(index, self._orient)
@@ -5487,7 +9024,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def sliceClear(self):
+    def sliceClear(self) -> None:
+        """
+        Clear all voxels on the current slice of the active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             index = self.getSliceIndex()
             self._draw.clearSlice(index, self._orient)
@@ -5498,7 +9038,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
 
     # 3D ROI functions
 
-    def roiDilate(self):
+    def roiDilate(self) -> None:
+        """
+        Apply a 3D morphological dilation to the entire active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             self._draw.morphoDilate()
             self._roimapper.GetInput().Modified()
@@ -5506,7 +9049,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def roiErode(self):
+    def roiErode(self) -> None:
+        """
+        Apply a 3D morphological erosion to the entire active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             self._draw.morphoErode()
             self._roimapper.GetInput().Modified()
@@ -5514,7 +9060,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def roiOpen(self):
+    def roiOpen(self) -> None:
+        """
+        Apply a 3D morphological opening to the entire active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             self._draw.morphoOpening()
             self._roimapper.GetInput().Modified()
@@ -5522,7 +9071,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def roiClose(self):
+    def roiClose(self) -> None:
+        """
+        Apply a 3D morphological closing to the entire active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             self._draw.morphoClosing()
             self._roimapper.GetInput().Modified()
@@ -5530,7 +9082,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def roiBackground(self):
+    def roiBackground(self) -> None:
+        """
+        Segment the background of the entire reference volume and adds it to the active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             self._draw.backgroundSegment()
             self._roimapper.GetInput().Modified()
@@ -5538,7 +9093,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def roiObject(self):
+    def roiObject(self) -> None:
+        """
+        Segment the foreground object of the entire reference volume and adds it to the active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             self._draw.objectSegment()
             self._roimapper.GetInput().Modified()
@@ -5546,7 +9104,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def roiInvert(self):
+    def roiInvert(self) -> None:
+        """
+        Invert the binary values of the entire active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             self._draw.binaryNOT()
             self._roimapper.GetInput().Modified()
@@ -5554,7 +9115,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def roiClear(self):
+    def roiClear(self) -> None:
+        """
+        Clear all voxels in the entire active ROI.
+        """
         if self.hasROI() and self.getROIVisibility():
             self._draw.clear()
             self._roimapper.GetInput().Modified()
@@ -5562,13 +9126,28 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
-    def updateRender(self):
+    def updateRender(self) -> None:
+        """
+        Force a modification of the ROI data and re-renders the scene.
+        Currently, this method calls the superclass's implementation.
+        """
         self._roimapper.GetInput().Modified()
         super().updateRender()
 
     # Private event methods
 
-    def _onWheelForwardEvent(self,  obj, evt_name):
+    def _onWheelForwardEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the mouse wheel forward VTK event to decrease brush size when Alt is pressed.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event.
+        """
         # interactorstyle = self._window.GetInteractorStyle()
         # k = interactorstyle.GetKeySym()
         # Brush radius Alt + Wheel
@@ -5580,7 +9159,18 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         else: super()._onWheelForwardEvent(obj, evt_name)
         self._renderwindow.Render()
 
-    def _onWheelBackwardEvent(self,  obj, evt_name):
+    def _onWheelBackwardEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the mouse wheel backward VTK event to increase brush size when Alt is pressed.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event.
+        """
         # interactorstyle = self._window.GetInteractorStyle()
         # k = interactorstyle.GetKeySym()
         # Brush radius Alt + Wheel
@@ -5592,7 +9182,19 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         else: super()._onWheelBackwardEvent(obj, evt_name)
         self._renderwindow.Render()
 
-    def _onMouseMoveEvent(self, obj, evt_name):
+    def _onMouseMoveEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles mouse move VTK events for ROI drawing.
+        Updates brush position and performs drawing/erasing if a mouse button is pressed.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event.
+        """
         if self.hasROI() and self.getROIVisibility() and self.getBrushFlag() > 0:
             interactorstyle = self._window.GetInteractorStyle()
             k = self._interactor.GetKeySym()
@@ -5625,7 +9227,18 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self._renderwindow.Render()
         else: super()._onMouseMoveEvent(obj, evt_name)
 
-    def _onLeftPressEvent(self, obj, evt_name):
+    def _onLeftPressEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles left mouse press VTK events to trigger the active ROI tool.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event.
+        """
         if self.hasROI() and self.getROIVisibility():
             k = self._interactor.GetKeySym()
             # < Revision 20/03/2025
@@ -5843,7 +9456,19 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self.ROIModified.emit(self)
         else: super()._onLeftPressEvent(obj, evt_name)
 
-    def _onLeftReleaseEvent(self,  obj, evt_name):
+    def _onLeftReleaseEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles left mouse release VTK events, finalizing brush strokes.
+        Triggers hole filling and adds the operation to the undo stack if enabled.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event.
+        """
         if self._brushFlag0 is not None:
             self._brush.SetVisibility(self._brushFlag0 > 0)
             self._brushFlag0 = None
@@ -5863,12 +9488,34 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 else: self._draw.appendVolumeToLIFO()
         super()._onLeftReleaseEvent(obj, evt_name)
 
-    def _onMiddlePressEvent(self, obj, evt_name):
+    def _onMiddlePressEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles middle mouse press VTK events to temporarily hide the brush.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event.
+        """
         self._brush.SetVisibility(False)
         self._renderwindow.Render()
         super()._onMiddlePressEvent(obj, evt_name)
 
-    def _onRightPressEvent(self, obj, evt_name):
+    def _onRightPressEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles right mouse press VTK events for erasing or showing the context menu.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event.
+        """
         interactorstyle = self._window.GetInteractorStyle()
         if self.hasROI() and self.getROIVisibility() and self.getBrushFlag() > 0:
             last = interactorstyle.GetLastPos()
@@ -5889,7 +9536,18 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             self._interactor.RightButtonReleaseEvent()
             self._interactor.KeyReleaseEvent()
 
-    def _onKeyPressEvent(self,  obj, evt_name):
+    def _onKeyPressEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles key press VTK events for undo/redo shortcuts.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event.
+        """
         if self.hasROI():
             interactorstyle = self._window.GetInteractorStyle()
             k = interactorstyle.GetKeySym()
@@ -5898,7 +9556,11 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 elif k == 'y': self.redo()
         super()._onKeyPressEvent(obj, evt_name)
 
-    def _onTimer(self):
+    def _onTimer(self) -> None:
+        """
+        Timer callback to hide the brush cursor if the mouse leaves the widget area.
+        To fix a Qt bug, a leaveEvent is not always sent to the widget when the mouse cursor leaves the viewport.
+        """
         p = self.mapFromGlobal(QCursor.pos())
         if not self.rect().contains(p):
             self._brush.SetVisibility(False)

@@ -9,6 +9,9 @@ External packages/modules
     - vtk, Visualization, https://vtk.org/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
 from os import getcwd
 from os import chdir
 from os import remove
@@ -55,6 +58,11 @@ from Sisyphe.widgets.sliceViewWidgets import SliceROIViewWidget
 from Sisyphe.widgets.volumeViewWidget import VolumeViewWidget
 from Sisyphe.widgets.sliceTrajectoryViewWidget import SliceTrajectoryViewWidget
 
+if TYPE_CHECKING:
+    from Sisyphe.core.sisypheMesh import SisypheMesh
+    from Sisyphe.core.sisypheROI import SisypheROICollection
+    from Sisyphe.core.sisypheROI import SisypheROIDraw
+
 """
 Class hierarchy
 ~~~~~~~~~~~~~~~
@@ -67,7 +75,7 @@ Class hierarchy
 Description
 ~~~~~~~~~~~
 
-Classes to display multiple synchronised slices, container of SliceViewWidget derived classes.
+Classes to display multiple synchronized slices, container of SliceViewWidget derived classes.
 """
 
 # noinspection SpellCheckingInspection
@@ -78,11 +86,26 @@ class MultiViewWidget(QWidget):
     Description
     ~~~~~~~~~~~
 
-    Base class to display and interact with multiple slices.
+    Base class that serves as a container for managing and displaying multiple, synchronized viewports in a grid layout.
+    It provides the core infrastructure for creating complex, interactive multi-view displays by arranging instances of
+    AbstractViewWidget subclasses.
 
-    It serves as a container for multiple instances of SliceViewWidget derived classes, allowing for the display of
-    synchronised slices. This class provides methods for managing and interacting with the displayed slices. It also
-    includes methods for controlling the layout and appearance of the displayed slices
+    The main features are as follows:
+
+    - Grid-based Layout: arranges child widgets in a configurable grid of up to 4x4. It dynamically manages the visibility of widgets based on the specified number of rows and columns.
+    - Comprehensive widget management: provides a full API for adding, removing, retrieving, moving, and swapping widgets within the grid. Widgets can be accessed by their coordinates or through helper methods like getFirstViewWidget() and getSelectedViewWidget().
+    - View synchronization and control:
+
+        - Ensures that only one view can be selected at a time across the entire grid.
+        - Offers centralized methods to propagate settings—such as line colors, font styles, and popup menu states—to all contained views simultaneously.
+
+    - Interactive display modes:
+
+        - Expand View: allows a single widget to be temporarily expanded to fill the entire grid area, hiding all others for focused inspection.
+        - Fullscreen mode: Toggles the entire widget container between normal and fullscreen display.
+
+    - Grid capture functionality: built-in functionality to capture all visible views as a single montage image. The resulting image can be saved to a bitmap file or copied directly to the system clipboard.
+    - VTK Finalization: provides an explicit finalize() method to ensure proper cleanup of VTK resources, preventing common rendering errors upon window closure, particularly on the Windows platform.
 
     Inheritance
     ~~~~~~~~~~~
@@ -90,21 +113,24 @@ class MultiViewWidget(QWidget):
     QWidget -> MultiViewWidget
 
     Creation: 03/04/2022
-    Last revision: 18/03/2025
+    Last revision: 20/10/2025
     """
 
     # Special methods
 
-    """
-    Private attributes
+    def __init__(self, r: int = 1, c: int = 1, parent: QWidget | None = None) -> None:
+        """
+        MultiViewWidget instance constructor.
 
-    _rows       int, number of visible rows in the grid layout
-    _cols       int, number of visible columns in the grid layout
-    _n          int, view index for colorbar, orientation, cursor visibility
-    _views      dict[tuple[int, int], abstractViewWidget]
-    """
-
-    def __init__(self, r=1, c=1, parent=None):
+        Parameters
+        ----------
+        r : int (optional)
+            number of rows in the grid layout (default 1).
+        c : int (optional)
+            number of columns in the grid layout (default 1).
+        parent : QWidget | None, optional
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         if r > 4: r = 4
@@ -123,24 +149,75 @@ class MultiViewWidget(QWidget):
         self._layout.setSpacing(0)
         self.setLayout(self._layout)
 
-    def __getitem__(self, key):
+    """
+    Private attributes
+
+    _rows       int, number of visible rows in the grid layout
+    _cols       int, number of visible columns in the grid layout
+    _n          int, view index for colorbar, orientation, cursor visibility
+    _views      dict[tuple[int, int], abstractViewWidget]
+    """
+
+    def __getitem__(self, key: tuple[int, int]) -> AbstractViewWidget:
+        """
+        Get the view widget at a specified grid coordinate.
+
+        Parameters
+        ----------
+        key : tuple[int, int]
+            (row, column) coordinate of the widget to retrieve.
+
+        Returns
+        -------
+        AbstractViewWidget
+            view widget at the specified coordinate.
+        """
         # < Revision 18/03/2025
         # return self._views.get(key, None)
         return self._views[key]
         # Revision 18/03/2025 >
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: tuple[int, int], value: AbstractViewWidget) -> None:
+        """
+        Set or replace the view widget at a specified grid coordinate.
+
+        Parameters
+        ----------
+        key : tuple[int, int]
+            (row, column) coordinate where the widget will be placed.
+        value : AbstractViewWidget
+            view widget to place in the grid.
+        """
         self.setViewWidget(key[0], key[1], value)
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: tuple[int, int]) -> None:
+        """
+        Remove the view widget from a specified grid coordinate.
+
+        Parameters
+        ----------
+        key : tuple[int, int]
+            (row, column) coordinate of the widget to remove.
+        """
         self.removeViewWidgetFromCoordinate(key[0], key[1])
 
-    def __len__(self):
+    def __len__(self) -> int:
+        """
+        Get the total number of view widgets in the container.
+
+        Returns
+        -------
+        int
+            number of view widgets.
+        """
         return len(self._views)
 
     # Private method
 
-    def _updateVisibility(self):
+    def _updateVisibility(self) -> None:
+        """
+        Updates view widgets visbility from _rows and _cols attributes.
+        """
         if self.isNotEmpty():
             r = self._rows - 1
             c = self._cols - 1
@@ -150,7 +227,10 @@ class MultiViewWidget(QWidget):
 
     # Private synchronisation event method
 
-    def _synchroniseSelection(self, obj):
+    def _synchroniseSelection(self, obj: QWidget) -> None:
+        """
+        Updates widget selection to ensure that only one widget is selected.
+        """
         if not self.isEmpty():
             for w in self._views.values():
                 if w != obj: w.unselect()
@@ -160,12 +240,30 @@ class MultiViewWidget(QWidget):
     # < Revision 08/03/2025
     # fix vtkWin32OpenGLRenderWindow error: wglMakeCurrent failed in MakeCurrent()
     # finalize method must be explicitely called before destruction
-    def finalize(self):
+    def finalize(self) -> None:
+        """
+        Method to be called before MultiViewWidget instance destruction.
+        It is used to avoid vtk error on windows platform (vtkWin32OpenGLRenderWindow error: 'wglMakeCurrent failed in
+        MakeCurrent()').
+        """
         for w in self._views.values():
             w.finalize()
     # Revision 08/03/2025 >
 
-    def setViewWidget(self, r, c, widget):
+    def setViewWidget(self, r: int, c: int, widget: AbstractViewWidget) -> None:
+        """
+        Add a view widget to the grid at a specified coordinate.
+        This method also configures the widget's popup menu for grid-specific actions like capturing the entire grid.
+
+        Parameters
+        ----------
+        r : int
+            row index for the widget.
+        c : int
+            column index for the widget.
+        widget : AbstractViewWidget
+            view widget to add to the grid.
+        """
         if 0 <= r < 4 and 0 <= c < 4:
             if (r, c) in self._views: self.removeViewWidgetFromCoordinate(r, c)
             action = widget.getAction()
@@ -213,39 +311,107 @@ class MultiViewWidget(QWidget):
             self._layout.addWidget(widget, r, c)
         else: raise IndexError('row and/or column parameter is out of range.')
 
-    def getViewWidgetAt(self, r, c):
+    def getViewWidgetAt(self, r: int, c: int) -> AbstractViewWidget | None:
+        """
+        Get the view widget at a specific row and column.
+
+        Parameters
+        ----------
+        r : int
+            row index.
+        c : int
+            column index.
+
+        Returns
+        -------
+        AbstractViewWidget | None
+            view widget at the specified coordinate, or None if no widget is present.
+        """
         return self._views.get((r, c), None)
 
-    def getFirstViewWidget(self):
+    def getFirstViewWidget(self) -> AbstractViewWidget | None:
+        """
+        Get the view widget at the top-left position (0, 0).
+
+        Returns
+        -------
+        AbstractViewWidget | None
+            view widget at coordinate (0, 0), or None if it does not exist.
+        """
         return self._views.get((0, 0), None)
 
-    def getFirstSliceViewWidget(self):
+    def getFirstSliceViewWidget(self) -> SliceViewWidget | None:
+        """
+        Get the first instance of a SliceViewWidget found in the grid.
+
+        Returns
+        -------
+        SliceViewWidget | None
+            first SliceViewWidget instance, or None if none are present.
+        """
         for w in self._views.values():
             if isinstance(w, SliceViewWidget):
                 return w
         return None
 
-    def getFirstVolumeViewWidget(self):
+    def getFirstVolumeViewWidget(self) -> VolumeViewWidget | None:
+        """
+        Get the first instance of a VolumeViewWidget found in the grid.
+
+        Returns
+        -------
+        VolumeViewWidget | None
+            first VolumeViewWidget instance, or None if none are present.
+        """
         for w in self._views.values():
             if isinstance(w, VolumeViewWidget):
                 return w
         return None
 
-    def getSliceViewWidgets(self):
+    def getSliceViewWidgets(self) -> list[SliceViewWidget]:
+        """
+        Get a list of all SliceViewWidget instances in the grid.
+
+        Returns
+        -------
+        list[SliceViewWidget]
+            list of all SliceViewWidget instances.
+        """
         ws = list()
         for w in self._views.values():
             if isinstance(w, SliceViewWidget):
                 ws.append(w)
         return ws
 
-    def getVolumeViewWidgets(self):
+    def getVolumeViewWidgets(self) -> list[VolumeViewWidget]:
+        """
+        Get a list of all VolumeViewWidget instances in the grid.
+
+        Returns
+        -------
+        list[VolumeViewWidget]
+            list of all VolumeViewWidget instances.
+        """
         ws = list()
         for w in self._views.values():
             if isinstance(w, VolumeViewWidget):
                 ws.append(w)
         return ws
 
-    def getViewWidgetCoordinate(self, widget):
+    def getViewWidgetCoordinate(self, widget: AbstractViewWidget) -> tuple[int, int] | tuple[None, None]:
+        """
+        Get the grid coordinate (row, column) of a specific view widget.
+
+        Parameters
+        ----------
+        widget : AbstractViewWidget
+            view widget to locate.
+
+        Returns
+        -------
+        tuple[int, int] | tuple[None, None]
+            (row, column) coordinate of the widget, or (None, None) if not found.
+        """
         if isinstance(widget, AbstractViewWidget):
             v = list(self._views.values())
             if widget in v:
@@ -254,22 +420,64 @@ class MultiViewWidget(QWidget):
             else: return None, None
         else: raise TypeError('tool parameter type {} is not AbstractViewWidget.'.format(type(widget)))
 
-    def getSelectedViewWidget(self):
+    def getSelectedViewWidget(self) -> AbstractViewWidget | None:
+        """
+        Get the currently selected view widget in the grid.
+
+        Returns
+        -------
+        AbstractViewWidget | None
+            selected view widget, or None if no widget is selected.
+        """
         if not self.isEmpty():
             for w in self._views.values():
                 if w.isSelected(): return w
         return None
 
-    def getViewWidgetCount(self):
+    def getViewWidgetCount(self) -> int:
+        """
+        Get the total number of view widgets in the grid.
+
+        Returns
+        -------
+        int
+            total count of view widgets.
+        """
         return len(self._views)
 
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
+        """
+        Check if the grid contains any view widgets.
+
+        Returns
+        -------
+        bool
+            True if the grid is empty, False otherwise.
+        """
         return len(self._views) == 0
 
-    def isNotEmpty(self):
+    def isNotEmpty(self) -> bool:
+        """
+        Check if the grid contains at least one view widget.
+
+        Returns
+        -------
+        bool
+            True if the grid is not empty, False otherwise.
+        """
         return len(self._views) > 0
 
-    def removeViewWidgetFromCoordinate(self, r, c):
+    def removeViewWidgetFromCoordinate(self, r: int, c: int) -> None:
+        """
+        Remove a view widget from the grid at a specified coordinate.
+
+        Parameters
+        ----------
+        r : int
+            row index of the widget to remove.
+        c : int
+            column index of the widget to remove.
+        """
         if 0 <= r < 4 and 0 <= c < 4:
             if (r, c) in self._views:
                 self._layout.removeWidget(self._views[(r, c)])
@@ -277,12 +485,35 @@ class MultiViewWidget(QWidget):
             else: raise IndexError('invalid row or column.')
         else: raise IndexError('row or column parameter is out of range.')
 
-    def removeViewWidget(self, widget):
+    def removeViewWidget(self, widget: AbstractViewWidget) -> None:
+        """
+        Remove a specific view widget instance from the grid.
+
+        Parameters
+        ----------
+        widget : AbstractViewWidget
+            view widget instance to remove.
+        """
         r, c = self.getViewWidgetCoordinate(widget)
         if r is not None:
             self.removeViewWidgetFromCoordinate(r, c)
 
-    def moveViewWidget(self, r1, c1, r2, c2):
+    def moveViewWidget(self, r1: int, c1: int, r2: int, c2: int) -> None:
+        """
+        Move a view widget from one grid coordinate to another.
+        If the destination is occupied, the widgets are swapped.
+
+        Parameters
+        ----------
+        r1 : int
+            source row index.
+        c1 : int
+            source column index.
+        r2 : int
+            destination row index.
+        c2 : int
+            destination column index.
+        """
         if 0 <= r1 < 4 and 0 <= c1 < 4 and 0 <= r2 < 4 and 0 <= c2 < 4:
             if (r1, c1) in self._views and (r2, c2) in self._views:
                 self.swapViewWidgets(r1, c1, r2, c2)
@@ -295,7 +526,21 @@ class MultiViewWidget(QWidget):
                 self._updateVisibility()
         else: raise IndexError('row or column parameter is out of range.')
 
-    def swapViewWidgets(self, r1, c1, r2, c2):
+    def swapViewWidgets(self, r1: int, c1:int, r2:int, c2:int) -> None:
+        """
+        Swap the positions of two view widgets in the grid.
+
+        Parameters
+        ----------
+        r1 : int
+            row index of the first widget.
+        c1 : int
+            column index of the first widget.
+        r2 : int
+            row index of the second widget.
+        c2 : int
+            column index of the second widget.
+        """
         if 0 <= r1 < 4 and 0 <= c1 < 4 and 0 <= r2 < 4 and 0 <= c2 < 4:
             if (r1, c1) in self._views and (r2, c2) in self._views:
                 v1 = self._views[(r1, c1)]
@@ -312,53 +557,140 @@ class MultiViewWidget(QWidget):
                 self.moveViewWidget(r2, c2, r1, c1)
         else: raise IndexError('row or column parameter is out of range.')
 
-    def setRows(self, r):
+    def setRows(self, r: int) -> None:
+        """
+        Set the number of visible rows in the grid.
+
+        Parameters
+        ----------
+        r : int
+            number of rows to display (0-3).
+        """
         if 0 <= r < 4:
             self._rows = r
             self._updateVisibility()
         else: raise ValueError('row parameter value {} is out of range.'.format(r))
 
-    def setCols(self, c):
+    def setCols(self, c: int) -> None:
+        """
+        Set the number of visible columns in the grid.
+
+        Parameters
+        ----------
+        c : int
+            number of columns to display (0-3).
+        """
         if 0 <= c < 4:
             self._cols = c
             self._updateVisibility()
         else: raise ValueError('column parameter value {} is out of range.'.format(c))
 
-    def setRowsAndCols(self, r, c):
+    def setRowsAndCols(self, r: int, c: int) -> None:
+        """
+        Set the number of visible rows and columns in the grid.
+
+        Parameters
+        ----------
+        r : int
+            number of rows to display (0-3).
+        c : int
+            number of columns to display (0-3).
+        """
         if 0 <= r < 4 and 0 <= c < 4:
             self._rows = r
             self._cols = c
             self._updateVisibility()
         else: raise ValueError('row and/or column parameter is out of range.')
 
-    def getRows(self):
+    def getRows(self) -> int:
+        """
+        Get the number of visible rows in the grid.
+
+        Returns
+        -------
+        int
+            current number of visible rows.
+        """
         return self._rows
 
-    def getCols(self):
+    def getCols(self) -> int:
+        """
+        Get the number of visible columns in the grid.
+
+        Returns
+        -------
+        int
+            current number of visible columns.
+        """
         return self._cols
 
-    def getRowsAndCols(self):
+    def getRowsAndCols(self) -> tuple[int, int]:
+        """
+        Get the number of visible rows and columns in the grid.
+
+        Returns
+        -------
+        tuple[int, int]
+            (rows, columns) currently visible.
+        """
         return self._rows, self._cols
 
-    def setVisibilityControlToView(self, r, c):
+    def setVisibilityControlToView(self, r: int, c: int) -> None:
+        """
+        Set a specific view to be the master for visibility-related synchronizations (e.g., colorbar, cursor).
+
+        Parameters
+        ----------
+        r : int
+            row index of the master view.
+        c : int
+            column index of the master view.
+        """
         if 0 <= r < 4 and 0 <= c < 4:
             if (r, c) in self._views: self._n = (r, c)
             else: raise ValueError('No abstractViewWidget at ({},{}) coordinate.'.format(r, c))
         else: raise IndexError('row and/or column is out of range.')
 
-    def setVisibilityControlToAll(self):
+    def setVisibilityControlToAll(self) -> None:
+        """
+        Set visibility control to apply to all views, rather than a single master view.
+        """
         self._n = None
 
-    def getVisibilityControl(self):
+    def getVisibilityControl(self) -> int:
+        """
+        Get the master view index for visibility-related synchronizations (e.g., colorbar, cursor)
+
+        Returns
+        -------
+        int
+            index of the master view, or None if control applies to all views.
+        """
         return self._n
 
-    def getNumberOfVisibleViews(self):
+    def getNumberOfVisibleViews(self) -> int:
+        """
+        Get the number of currently visible view widgets.
+
+        Returns
+        -------
+        int
+            count of visible views.
+        """
         n = 0
         for view in self._views:
             if view.isVisible(): n += 1
         return n
 
-    def expandViewWidget(self, widget):
+    def expandViewWidget(self, widget: AbstractViewWidget) -> None:
+        """
+        Expand a single view widget to fill the entire grid area, hiding all others.
+
+        Parameters
+        ----------
+        widget : AbstractViewWidget
+            view widget to expand.
+        """
         if isinstance(widget, AbstractViewWidget):
             expand = widget.getAction()['expand'].isChecked()
             for i in range(self._rows):
@@ -374,6 +706,14 @@ class MultiViewWidget(QWidget):
         else: raise TypeError('parameter type {} is not AbstractViewWidget.'.format(type(widget)))
 
     def isExpanded(self) -> bool:
+        """
+        Check if any view widget is currently expanded.
+
+        Returns
+        -------
+        bool
+            True if a view is expanded, False otherwise.
+        """
         for i in range(self._rows):
             for j in range(self._cols):
                 # noinspection PyUnresolvedReferences
@@ -381,6 +721,14 @@ class MultiViewWidget(QWidget):
         return False
 
     def getExpandedViewWidget(self) -> AbstractViewWidget | None:
+        """
+        Get the currently expanded view widget.
+
+        Returns
+        -------
+        AbstractViewWidget | None
+            expanded view widget, or None if no view is expanded.
+        """
         for i in range(self._rows):
             for j in range(self._cols):
                 # noinspection PyNoneFunctionAssignment
@@ -390,18 +738,27 @@ class MultiViewWidget(QWidget):
         return None
 
     def setFullScreenDisplay(self) -> None:
+        """
+        Set the multi-view widget to fullscreen display mode.
+        """
         if not self.isEmpty():
             self.showFullScreen()
             for w in self._views.values():
                 w.getAction()['screen'].setChecked(True)
 
     def setNormalDisplay(self) -> None:
+        """
+        Restore the multi-view widget to its normal (non-fullscreen) display mode.
+        """
         if not self.isEmpty():
             self.showNormal()
             for w in self._views.values():
                 w.getAction()['screen'].setChecked(False)
 
     def toggleDisplay(self) -> None:
+        """
+        Toggle the display mode between fullscreen and normal.
+        """
         # noinspection PyNoneFunctionAssignment
         w = self.getFirstViewWidget()
         # noinspection PyUnresolvedReferences
@@ -409,51 +766,99 @@ class MultiViewWidget(QWidget):
         else: self.setNormalDisplay()
 
     def isFullScreenDisplay(self) -> bool:
+        """
+        Check if the widget is currently in fullscreen display mode.
+
+        Returns
+        -------
+        bool
+            True if in fullscreen mode, False otherwise.
+        """
         if not self.isEmpty():
             return self._views[0, 0].getAction()['screen'].isChecked()
         else: raise AttributeError('View is empty.')
 
-    def popupMenuEnabled(self):
+    def popupMenuEnabled(self) -> None:
+        """
+        Enable the popup context menu for all view widgets in the grid.
+        """
         for w in self._views.values():
             w.popupMenuEnabled()
 
-    def popupMenuDisabled(self):
+    def popupMenuDisabled(self) -> None:
+        """
+        Disable the popup context menu for all view widgets in the grid.
+        """
         for w in self._views.values():
             w.popupMenuDisabled()
 
-    def popupMenuActionsEnabled(self):
+    def popupMenuActionsEnabled(self) -> None:
+        """
+        Enable the 'Actions' submenu in the popup menu for all view widgets.
+        """
         for w in self._views.values():
             w.popupActionsEnabled()
 
-    def popupMenuActionsDisabled(self):
+    def popupMenuActionsDisabled(self) -> None:
+        """
+        Disable the 'Actions' submenu in the popup menu for all view widgets.
+        """
         for w in self._views.values():
             w.popupActionsDisabled()
 
-    def popupMenuVisibilityEnabled(self):
+    def popupMenuVisibilityEnabled(self) -> None:
+        """
+        Enable the 'Visibility' submenu in the popup menu for all view widgets.
+        """
         for w in self._views.values():
             w.popupVisibilityEnabled()
 
-    def popupMenuVisibilityDisabled(self):
+    def popupMenuVisibilityDisabled(self) -> None:
+        """
+        Disable the 'Visibility' submenu in the popup menu for all view widgets.
+        """
         for w in self._views.values():
             w.popupVisibilityDisabled()
 
-    def popupMenuColorbarPositionEnabled(self):
+    def popupMenuColorbarPositionEnabled(self) -> None:
+        """
+        Enable the 'Colorbar position' submenu in the popup menu for all view widgets.
+        """
         for w in self._views.values():
             w.popupColorbarPositionEnabled()
 
-    def popupMenuColorbarPositionDisabled(self):
+    def popupMenuColorbarPositionDisabled(self) -> None:
+        """
+        Disable the 'Colorbar position' submenu in the popup menu for all view widgets.
+        """
         for w in self._views.values():
             w.popupColorbarPositionDisabled()
 
-    def popupMenuToolsEnabled(self):
+    def popupMenuToolsEnabled(self) -> None:
+        """
+        Enable the 'Tools' submenu in the popup menu for all view widgets.
+        """
         for w in self._views.values():
             w.popupToolsEnabled()
 
-    def popupMenuToolsDisabled(self):
+    def popupMenuToolsDisabled(self) -> None:
+        """
+        Disable the 'Tools' submenu in the popup menu for all view widgets.
+        """
         for w in self._views.values():
             w.popupToolsDisabled()
 
-    def setActionVisibility(self, name, v):
+    def setActionVisibility(self, name: str, v: bool) -> None:
+        """
+        Set the visibility of a specific action in the popup menu for all view widgets.
+
+        Parameters
+        ----------
+        name : str
+            name of the action to modify.
+        v : bool
+            True to make the action visible, False to hide it.
+        """
         if isinstance(name, str):
             if isinstance(v, bool):
                 for i in range(0, self._rows):
@@ -465,39 +870,91 @@ class MultiViewWidget(QWidget):
             else: raise TypeError('second parameter type {} is not bool.'.format(type(v)))
         else: raise TypeError('first parameter type {} is not str.'.format(type(name)))
 
-    def showAction(self, name):
+    def showAction(self, name: str) -> None:
+        """
+        Show a specific action in the popup menu for all view widgets.
+
+        Parameters
+        ----------
+        name : str
+            name of the action to show.
+        """
         self.setActionVisibility(name, True)
 
-    def hideAction(self, name):
+    def hideAction(self, name: str) -> None:
+        """
+        Hide a specific action in the popup menu for all view widgets.
+
+        Parameters
+        ----------
+        name : str
+            name of the action to hide.
+        """
         self.setActionVisibility(name, False)
 
-    def setRoundedCursorCoordinatesEnabled(self):
+    def setRoundedCursorCoordinatesEnabled(self) -> None:
+        """
+        Enable rounding of cross-shaped cursor coordinates to the nearest voxel for all view widgets.
+        """
         for i in range(0, self._rows):
             for j in range(0, self._cols):
                 self._views[i, j].setRoundedCursorCoordinatesEnabled()
 
-    def setRoundedCursorCoordinatesDisabled(self):
+    def setRoundedCursorCoordinatesDisabled(self) -> None:
+        """
+        Disable rounding of cross-shaped cursor coordinates for all view widgets.
+        """
         for i in range(0, self._rows):
             for j in range(0, self._cols):
                 self._views[i, j].setRoundedCursorCoordinatesDisabled()
 
-    def isRoundedCursorCoordinatesEnabled(self):
+    def isRoundedCursorCoordinatesEnabled(self) -> bool:
+        """
+        Check if cross-shaped cursor coordinate rounding is enabled.
+
+        Returns
+        -------
+        bool
+            True if rounding is enabled, False otherwise.
+        """
         return self._views[0, 0].isRoundedCursorCoordinatesEnabled()
 
-    def setAlignCenters(self, v: bool):
+    def setAlignCenters(self, v: bool) -> None:
+        """
+        Set the automatic center alignment policy for overlays in all applicable view widgets.
+
+        Parameters
+        ----------
+        v : bool
+            True to enable automatic alignment, False to disable.
+        """
         if len(self._views) > 0:
             for k in self._views:
                 w = self._views[k]
                 if isinstance(w, SliceOverlayViewWidget):
                     w.setAlignCenters(v)
 
-    def alignCentersOn(self):
+    def alignCentersOn(self) -> None:
+        """
+        Enable automatic center alignment for overlays in all applicable view widgets.
+        """
         self.setAlignCenters(True)
 
-    def alignCentersOff(self):
+    def alignCentersOff(self) -> None:
+        """
+        Disable automatic center alignment for overlays in all applicable view widgets.
+        """
         self.setAlignCenters(False)
 
-    def getAlignCenters(self):
+    def getAlignCenters(self) -> bool | None:
+        """
+        Get the automatic center alignment policy.
+
+        Returns
+        -------
+        bool | None
+            True if alignment is enabled, False if disabled, or None if no applicable views exist.
+        """
         if len(self._views) > 0:
             for i in range(0, self._rows):
                 for j in range(0, self._cols):
@@ -507,7 +964,10 @@ class MultiViewWidget(QWidget):
                         return w.getAlignCenters()
         return None
 
-    def updateRender(self):
+    def updateRender(self) -> None:
+        """
+        Trigger a render update for all view widgets in the grid.
+        """
         if len(self._views) > 0:
             for i in range(0, self._rows):
                 for j in range(0, self._cols):
@@ -520,54 +980,130 @@ class MultiViewWidget(QWidget):
 
     # Display setting methods
 
-    def setLineColor(self, c: tuple[float, float, float]):
+    def setLineColor(self, c: list[float] | tuple[float, float, float]) -> None:
+        """
+        Set the line color for all view widgets.
+
+        Parameters
+        ----------
+        c : list[float] | tuple[float, float, float]
+            RGB color values (0.0-1.0).
+        """
         if self.isNotEmpty():
             for w in self._views.values():
                 w.setLineColor(c, signal=False)
 
-    def setLineSelectedColor(self, c: tuple[float, float, float]):
+    def setLineSelectedColor(self, c: list[float] | tuple[float, float, float]) -> None:
+        """
+        Set the selected line color for all view widgets.
+
+        Parameters
+        ----------
+        c : list[float] | tuple[float, float, float]
+            RGB color values (0.0-1.0).
+        """
         if self.isNotEmpty():
             for w in self._views.values():
                 w.setLineSelectedColor(c, signal=False)
 
-    def setLineWidth(self, v):
+    def setLineWidth(self, v: float) -> None:
+        """
+        Set the line width for all view widgets.
+
+        Parameters
+        ----------
+        v : float
+            line width in pixels.
+        """
         if self.isNotEmpty():
             for w in self._views.values():
                 w.setLineWidth(v, signal=False)
 
-    def setLineOpacity(self, v):
+    def setLineOpacity(self, v: float) -> None:
+        """
+        Set the line opacity for all view widgets.
+
+        Parameters
+        ----------
+        v : float
+            opacity value (0.0-1.0).
+        """
         if self.isNotEmpty():
             for w in self._views.values():
                 w.setLineOpacity(v, signal=False)
 
-    def setFontFamily(self, s):
+    def setFontFamily(self, s: str) -> None:
+        """
+        Set the font family for text in all view widgets.
+
+        Parameters
+        ----------
+        s : str
+            font family name.
+        """
         if self.isNotEmpty():
             for w in self._views.values():
                 w.setFontFamily(s, signal=False)
 
-    def setFontSize(self, s):
+    def setFontSize(self, s: int) -> None:
+        """
+        Set the font size for text in all view widgets.
+
+        Parameters
+        ----------
+        s : int
+            font size in points.
+        """
         if self.isNotEmpty():
             for w in self._views.values():
                 w.setFontSize(s, signal=False)
 
-    def setFontScale(self, s):
+    def setFontScale(self, s: float) -> None:
+        """
+        Set the font scaling factor for all view widgets.
+
+        Parameters
+        ----------
+        s : float
+            font scaling factor.
+        """
         if self.isNotEmpty():
             for w in self._views.values():
                 w.setFontScale(s)
 
-    def setFontSizeScale(self, s: tuple[int, float]):
+    def setFontSizeScale(self, s: tuple[int, float]) -> None:
+        """
+        Set both the font size and scaling factor for all view widgets.
+
+        Parameters
+        ----------
+        s : tuple[int, float]
+            tuple containing the font size and scaling factor.
+        """
         if self.isNotEmpty():
             for w in self._views.values():
                 w.setFontSizeScale(s)
 
-    def setFontProperties(self, s: tuple[str, int, float]):
+    def setFontProperties(self, s: tuple[str | None, int | None, float | None]) -> None:
+        """
+        Set multiple font properties (family, size, scale) for all view widgets.
+
+        Parameters
+        ----------
+        s : tuple[str | None, int | None, float | None]
+            tuple containing font family, size, and scale.
+        """
         if self.isNotEmpty():
             for w in self._views.values():
                 w.setFontProperties(s)
 
     # Capture methods
 
-    def saveCapture(self):
+    def saveCapture(self) -> None:
+        """
+        Save a montage of all visible views as a single image file.
+        A file dialog is shown to select the destination and format (supported formats: BMP, JPG, PNG, TIFF).
+        """
         if self.isNotEmpty():
             # noinspection PyUnresolvedReferences
             if self.getFirstViewWidget().hasVolume():
@@ -619,7 +1155,10 @@ class MultiViewWidget(QWidget):
                                        'Save grid capture error: ',
                                        text='{}\n{}.'.format(type(err), str(err)))
 
-    def copyToClipboard(self):
+    def copyToClipboard(self) -> None:
+        """
+        Copy a montage of all visible views to the system clipboard.
+        """
         if self.isNotEmpty():
             # noinspection PyUnresolvedReferences
             if self.getFirstViewWidget().hasVolume():
@@ -679,7 +1218,15 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Class designed to display synchronised axial, coronal, and sagittal slices from the same 3D volume.
+    Specialized subclass of the MultiViewWidget base class designed to display three synchronized orthogonal views of
+    a SisypheVolume. It displays the axial, coronal, and sagittal planes side-by-side in a 1x3 grid.
+
+    The main features are as follows:
+
+    - Standard orthogonal layout: provides three SliceOverlayViewWidget instances, pre-configured for axial, coronal, and sagittal orientations.
+    - Full synchronization: all interactions are seamlessly synchronized across the three views. Changes to the cross-shaped cursor position, zoom level, window/level settings, or any added tools in one view are reflected in the others.
+    - Centralized data management: providing a single API to load a primary SisypheVolume, add and manage overlay volumes, and display SisypheMeshCollection instances across all three views at once.
+    - Direct view access: offers convenient helper methods (getAxialView, getCoronalView, getSagittalView) for direct access to each individual slice view widget, allowing for fine control when needed.
 
     Inheritance
     ~~~~~~~~~~~
@@ -687,19 +1234,30 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
     QWidget -> MultiViewWidget -> OrthogonalSliceViewWidget
 
     Creation: 03/04/2022
-    Last revision: 18/10/2024
+    Last revision: 20/10/2025
     """
 
     # Special method
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        OrthogonalSliceViewWidget instance constructor.
+
+        Parameters
+        ----------
+        parent : QWidget | Non (optional)
+            parent widget (default None).
+        """
         super().__init__(1, 3, parent)
         self._initViews()
         self._initSynchronisationSignalConnect()
 
     # Private methods
 
-    def _initViews(self):
+    def _initViews(self) -> None:
+        """
+        Initializes the 1x3 grid of SliceOverlayViewWidget instances.
+        """
         for i in range(3):
             widget = SliceOverlayViewWidget()
             self.setViewWidget(0, i, widget)
@@ -711,7 +1269,10 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
         self[0, 2].setName('Sagittal view')
         self.setVisibilityControlToAll()
 
-    def _initSynchronisationSignalConnect(self):
+    def _initSynchronisationSignalConnect(self) -> None:
+        """
+        Initializes synchronization signal connections between view widgets.
+        """
         for i in range(3):
             # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(0, i)
@@ -754,7 +1315,15 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
 
     # Public methods
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
+        """
+        Set the SisypheVolume to be displayed in the three orthogonal view widgets.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            volume to display.
+        """
         if isinstance(volume, SisypheVolume):
             self[0, 0].setVolume(volume)
             self[0, 0].setDim0Orientation()
@@ -766,29 +1335,63 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
 
     # < Revision 18/10/2024
     # add replaceVolume method
-    def replaceVolume(self, volume):
+    def replaceVolume(self, volume: SisypheVolume) -> None:
+        """
+        Replace the currently displayed SisypheVolume with a new one in all three view widgets.
+        The new volume must have the same dimensions as the old one.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            new volume to display.
+        """
         if self.hasVolume():
             self[0, 0].replaceVolume(volume)
             self[0, 1].replaceVolume(volume)
             self[0, 2].replaceVolume(volume)
     # Revision 18/10/2024
 
-    def removeVolume(self):
+    def removeVolume(self) -> None:
         """
-        self.removeAllOverlays() not called
-        already deleted by self.removeVolume()
+        Remove the currently displayed SisypheVolume from all three view widgets.
         """
         self[0, 0].removeVolume()
         self[0, 1].removeVolume()
         self[0, 2].removeVolume()
 
-    def getVolume(self):
+    def getVolume(self) -> SisypheVolume:
+        """
+        Get the currently displayed SisypheVolume.
+
+        Returns
+        -------
+        SisypheVolume
+            currently displayed volume.
+        """
         return self[0, 0].getVolume()
 
-    def hasVolume(self):
+    def hasVolume(self) -> bool:
+        """
+        Check if a SisypheVolume is currently displayed in the views.
+
+        Returns
+        -------
+        bool
+            True if a SisypheVolume is displayed, False otherwise.
+        """
         return self[0, 0].hasVolume()
 
-    def addOverlay(self, volume, alpha=0.5):
+    def addOverlay(self, volume: SisypheVolume, alpha: float = 0.5) -> None:
+        """
+        Add a SisypheVolume as an overlay to all three orthogonal view widgets.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            volume to add as an overlay.
+        alpha : float, optional
+            opacity of the overlay (0.0-1.0, default 0.5).
+        """
         if isinstance(volume, SisypheVolume):
             if self.hasVolume():
                 self[0, 0].addOverlay(volume, alpha)
@@ -797,47 +1400,143 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
             else: raise ValueError('reference volume must be set before overlay.')
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
-    def getOverlayCount(self):
+    def getOverlayCount(self) -> int:
+        """
+        Get the number of overlays.
+
+        Returns
+        -------
+        int
+            number of overlays.
+        """
         return self[0, 0].getOverlayCount()
 
-    def hasOverlay(self):
+    def hasOverlay(self) -> bool:
+        """
+        Check if any overlays are present.
+
+        Returns
+        -------
+        bool
+            True if at least one overlay exists, False otherwise.
+        """
         return self[0, 0].hasOverlay()
 
-    def getOverlayIndex(self, o):
+    def getOverlayIndex(self, o: int | SisypheVolume) -> None:
+        """
+        Get the index of a specific overlay.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            overlay to find, by index or instance.
+
+        Returns
+        -------
+        int
+            index of the overlay.
+        """
         return self[0, 0].hasOverlayVolume(o)
 
-    def removeOverlay(self, o):
+    def removeOverlay(self, o: int | SisypheVolume) -> None:
+        """
+        Remove a specific overlay from all three view widgets.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            overlay to remove, by index or instance.
+        """
         self[0, 0].removeOverlay(o)
         self[0, 1].removeOverlay(o)
         self[0, 2].removeOverlay(o)
 
-    def removeAllOverlays(self):
+    def removeAllOverlays(self) -> None:
+        """
+        Remove all overlays from all three view widgets.
+        """
         self[0, 0].removeAllOverlays()
         self[0, 1].removeAllOverlays()
         self[0, 2].removeAllOverlays()
 
-    def getOverlayFromIndex(self, index):
+    def getOverlayFromIndex(self, index: int) -> None:
+        """
+        Get an overlay by its index.
+
+        Parameters
+        ----------
+        index : int
+            index of the overlay to retrieve.
+
+        Returns
+        -------
+        SisypheVolume
+            overlay volume at the specified index.
+        """
         return self[0, 0].getOverlayFromIndex(index)
 
-    def setMeshCollection(self, meshes):
+    def setMeshCollection(self, meshes: SisypheMeshCollection) -> None:
+        """
+        Set a SisypheMeshCollection for all three views.
+
+        Parameters
+        ----------
+        meshes : SisypheMeshCollection
+            collection of meshes to display.
+        """
         if isinstance(meshes, SisypheMeshCollection):
             self[0, 0].setMeshCollection(meshes)
             self[0, 1].setMeshCollection(meshes)
             self[0, 2].setMeshCollection(meshes)
         else: raise TypeError('parameter type {} is not SisypheMeshCollection.'.format(type(meshes)))
 
-    def getMeshCollection(self):
-        self[0, 0].getMeshCollection()
+    def getMeshCollection(self) -> SisypheMeshCollection:
+        """
+        Get the current SisypheMeshCollection.
+
+        Returns
+        -------
+        SisypheMeshCollection
+            current collection of meshes.
+        """
+        # < Revision 20/10/2025
+        # self[0, 0].getMeshCollection()
+        return self[0, 0].getMeshCollection()
+        # Revision 20/10/2025 >
 
     # View methods
 
-    def getAxialView(self):
+    def getAxialView(self) -> SliceViewWidget:
+        """
+        Get the axial SliceViewWidget instance.
+
+        Returns
+        -------
+        SliceViewWidget
+            axial view widget.
+        """
         return self[0, 0]
 
-    def getCoronalView(self):
+    def getCoronalView(self) -> SliceViewWidget:
+        """
+        Get the coronal SliceViewWidget instance.
+
+        Returns
+        -------
+        SliceViewWidget
+            coronal view widget.
+        """
         return self[0, 1]
 
-    def getSagittalView(self):
+    def getSagittalView(self) -> SliceViewWidget:
+        """
+        Get the sagittal SliceViewWidget instance.
+
+        Returns
+        -------
+        SliceViewWidget
+            sagittal view widget.
+        """
         return self[0, 2]
 
 
@@ -848,11 +1547,17 @@ class OrthogonalRegistrationViewWidget(OrthogonalSliceViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Subclass of the OrthogonalSliceViewWidget class.
+    Specialized subclass of the OrthogonalSliceViewWidget class designed for the visual assessment and manual
+    refinement of image coregistration. It arranges three synchronized SliceRegistrationViewWidget instances in the
+    standard axial, coronal, and sagittal layout, providing a comprehensive toolset for comparing a fixed and a moving
+    volume.
 
-    It is designed to provide functionalities for evaluating registration quality between two volumes. The class allows
-    users to apply rigid transformations to the volume being viewed. It also includes a synchronised box widget that
-    can be used to crop the overlays in the three orientations.
+    The main features are as follows:
+
+    - Interactive spyglass tool: a synchronized BoxWidget provides a "spyglass" effect across all three views. The moving volume is displayed exclusively inside the box, while the fixed volume is shown outside.
+    - Manual registration tools: it enables interactive rigid transformations (translation and rotation) of the moving volume, allowing users to manually adjust the alignment in real-time. The moveoverlayflag is enabled by default for this purpose.
+    - Automatic edge overlay: when adding an overlay (moving) volume, the widget automatically computes a gradient (edge) map of the fixed volume. This edge map is displayed as an additional overlay, providing an additional visual guide for aligning anatomical structures.
+    - Synchronization: all registration-related properties—including the spyglass position, overlay transformations, and display modes—are fully synchronized across the three orthogonal views.
 
     Inheritance
     ~~~~~~~~~~~
@@ -860,15 +1565,26 @@ class OrthogonalRegistrationViewWidget(OrthogonalSliceViewWidget):
     QWidget -> MultiViewWidget -> OrthogonalSliceViewWidget -> OrthogonalRegistrationViewWidget
 
     Creation: 03/04/2022
-    Last revision:
+    Last revision: 20/10/2025
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        OrthogonalRegistrationViewWidget instance constructor.
+
+        Parameters
+        ----------
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
     # Private method
 
-    def _initViews(self):
+    def _initViews(self) -> None:
+        """
+        Initializes the 1x3 grid of SliceRegistrationViewWidget instances.
+        """
         for i in range(3):
             widget = SliceRegistrationViewWidget()
             self.setViewWidget(0, i, widget)
@@ -883,7 +1599,10 @@ class OrthogonalRegistrationViewWidget(OrthogonalSliceViewWidget):
         self[0, 2].setName('Sagittal view')
         self.setVisibilityControlToAll()
 
-    def _initSynchronisationSignalConnect(self):
+    def _initSynchronisationSignalConnect(self) -> None:
+        """
+        Initializes synchronization signal connections between view widgets.
+        """
         super()._initSynchronisationSignalConnect()
         for i in range(3):
             # noinspection PyNoneFunctionAssignment
@@ -897,7 +1616,19 @@ class OrthogonalRegistrationViewWidget(OrthogonalSliceViewWidget):
 
     # Public method
 
-    def addOverlay(self, volume, alpha=0.5):
+    def addOverlay(self, volume: SisypheVolume, alpha: float = 0.5) -> None:
+        """
+        Add a SisypheVolume as an overlay for registration evaluation.
+        This method also computes and adds a gradient (edge) version of the SisypheVolume for display.
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            volume to add as an overlay.
+        alpha : float, optional
+            opacity of the overlay (0.0-1.0, default 0.5).
+        """
         if isinstance(volume, SisypheVolume):
             if self.hasVolume():
                 img = GradientMagnitudeRecursiveGaussian(self.getVolume().getSITKImage())
@@ -923,10 +1654,17 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Subclass of the OrthogonalSliceViewWidget class.
+    Specialized subclass of the OrthogonalSliceViewWidget designed for interactively reorienting and reslicing a
+    SisypheVolume. It provides a synchronized three-view layout (axial, coronal, and sagittal) with a set of tools for
+    applying rigid transformations and/or defining a new field of view (FOV).
 
-    The class allows users to apply rigid transformations to the volume being viewed. It also includes a synchronised
-    box widget to show and manipulate field of view in the three orientations.
+    The main features are as follows:
+
+    - Interactive reorientation: allows user to apply translations and rotations to the volume's viewing planes in real-time. The effects of these transformations are visible across all three orthogonal views.
+    - Field of view (FOV) manipulation: features a synchronized BoxWidget that visually represents the Field of View. User can interactively translate and resize this box to define a new volume orientation, size, and spacing for reslicing operations.
+    - Synchronized reslice cursor: a reslice cursor visually represents the current orientation and intersection of the three planes, providing a consistent frame of reference during manipulation.
+    - Customizable tools: offers full control over the appearance of the reslice cursor and the FOV box, including their color, opacity, and line width.
+    - Synchronization: all transformations—including translations, rotations, and changes to the FOV box—are seamlessly synchronized across the axial, coronal, and sagittal views.
 
     Inheritance
     ~~~~~~~~~~~
@@ -934,17 +1672,28 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
     QWidget -> MultiViewWidget -> OrthogonalSliceViewWidget -> OrthogonalReorientViewWidget
 
     Creation: 03/04/2022
-    Last revision:
+    Last revision: 20/10/2025
     """
 
     # Special method
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        OrthogonalReorientViewWidget instance constructor.
+
+        Parameters
+        ----------
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
     # Private methods
 
-    def _initViews(self):
+    def _initViews(self) -> None:
+        """
+        Initializes the 1x3 grid of SliceReorientViewWidget instances.
+        """
         for i in range(3):
             widget = SliceReorientViewWidget()
             self.setViewWidget(0, i, widget)
@@ -956,7 +1705,10 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         self[0, 2].setName('Sagittal view')
         self.setVisibilityControlToAll()
 
-    def _initSynchronisationSignalConnect(self):
+    def _initSynchronisationSignalConnect(self) -> None:
+        """
+        Initializes synchronization signal connections between view widgets.
+        """
         for i in range(3):
             # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(0, i)
@@ -989,114 +1741,280 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
 
     # Public methods
 
-    def translationsEnabled(self):
+    def translationsEnabled(self) -> None:
+        """
+        Enable translation interaction mode for all three reorient view widgets.
+        """
         for i in range(3):
             self[0, i].translationsEnabled()
 
-    def translationsDisabled(self):
+    def translationsDisabled(self) -> None:
+        """
+        Disnable translation interaction mode for all three reorient view widgets.
+        """
         for i in range(3):
             self[0, i].translationsDisabled()
 
-    def rotationsEnabled(self):
+    def rotationsEnabled(self) -> None:
+        """
+        Enable rotation interaction mode for all three reorient view widgets.
+        """
         for i in range(3):
             self[0, i].rotationsEnabled()
 
-    def rotationsDisabled(self):
+    def rotationsDisabled(self) -> None:
+        """
+        Disable rotation interaction mode for all three reorient view widgets.
+        """
         for i in range(3):
             self[0, i].rotationsDisabled()
 
-    def rotationXEnabled(self):
+    def rotationXEnabled(self) -> None:
+        """
+        Enable rotation around the x-axis for all three reorient view widgets.
+        """
         for i in range(3):
             self[0, i].rotationXEnabled()
 
-    def rotationXDisabled(self):
+    def rotationXDisabled(self) -> None:
+        """
+        Disable rotation around the x-axis for all three reorient view widgets.
+        """
         for i in range(3):
             self[0, i].rotationXDisabled()
 
-    def rotationYEnabled(self):
+    def rotationYEnabled(self) -> None:
+        """
+        Enable rotation around the y-axis for all three reorient view widgets.
+        """
         for i in range(3):
             self[0, i].rotationYEnabled()
 
-    def rotationYDisabled(self):
+    def rotationYDisabled(self) -> None:
+        """
+        Disable rotation around the y-axis for all three reorient view widgets.
+        """
         for i in range(3):
             self[0, i].rotationYDisabled()
 
-    def rotationZEnabled(self):
+    def rotationZEnabled(self) -> None:
+        """
+        Enable rotation around the z-axis for all three reorient view widgets.
+        """
         for i in range(3):
             self[0, i].rotationZEnabled()
 
-    def rotationZDisabled(self):
+    def rotationZDisabled(self) -> None:
+        """
+        Disable rotation around the z-axis for all three reorient view widgets.
+        """
         for i in range(3):
             self[0, i].rotationZDisabled()
 
-    def setFOVBoxVisibility(self, v):
+    def setFOVBoxVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the Field of View (FOV) box in all three reorient view widgets.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the FOV box, False to hide it.
+        """
         if isinstance(v, bool):
             for i in range(3):
                 self[0, i].setFOVBoxVisibility(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getFOVBoxVisibility(self):
+    def getFOVBoxVisibility(self) -> bool:
+        """
+        Get the visibility of the Field of View (FOV) box in all three reorient view widgets.
+
+        Returns
+        -------
+        bool
+            True if the FOV box is visible, False otherwise.
+        """
         return self[0, 0].getFOVBoxVisibility()
 
-    def setResliceCursorColor(self, rgb):
+    def setResliceCursorColor(self, rgb: list[float] | tuple[float, float, float]) -> None:
+        """
+        Set the color of the reslice cursor in all three reorient view widgets.
+
+        Parameters
+        ----------
+        rgb : list[float] | tuple[float, float, float]
+            RGB color values (0.0-1.0).
+        """
         for i in range(3):
             self[0, i].setResliceCursorColor(rgb)
 
-    def getResliceCursorColor(self):
+    def getResliceCursorColor(self) -> tuple[float, float, float]:
+        """
+        Get the color of the reslice cursor in all three reorient view widgets.
+
+        Returns
+        -------
+        tuple[float, float, float]
+            current RGB color of the reslice cursor.
+        """
         return self[0, 0].getResliceCursorColor()
 
-    def setResliceCursorOpacity(self, v):
+    def setResliceCursorOpacity(self, v: float) -> None:
+        """
+        Set the opacity of the reslice cursor in all three reorient view widgets.
+
+        Parameters
+        ----------
+        v : float
+            opacity value (0.0-1.0).
+        """
         if isinstance(v, float):
             for i in range(3):
                 self[0, i].setResliceCursorOpacity(v)
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getResliceCursorOpacity(self):
+    def getResliceCursorOpacity(self) -> float:
+        """
+        Get the opacity of the reslice cursor in all three reorient view widgets.
+
+        Returns
+        -------
+        float
+            current opacity of the reslice cursor.
+        """
         return self[0, 0].getResliceCursorOpacity()
 
-    def setResliceCursorLineWidth(self, v):
+    def setResliceCursorLineWidth(self, v: float) -> None:
+        """
+        Set the line width of the reslice cursor in all three reorient view widgets.
+
+        Parameters
+        ----------
+        v : float
+            line width in pixels.
+        """
         if isinstance(v, float):
             for i in range(3):
                 self[0, i].setResliceCursorLineWidth(v)
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getResliceCursorLineWidth(self):
+    def getResliceCursorLineWidth(self) -> float:
+        """
+        Get the line width of the reslice cursor in all three reorient view widgets.
+
+        Returns
+        -------
+        float
+            current line width of the reslice cursor.
+        """
         return self[0, 0].getResliceCursorLineWidth()
 
-    def setFovBoxColor(self, rgb):
+    def setFovBoxColor(self, rgb: list[float] | tuple[float, float, float]) -> None:
+        """
+        Set the color of the FOV box in all three reorient view widgets.
+
+        Parameters
+        ----------
+        rgb : list[float] | tuple[float, float, float]
+            RGB color values (0.0-1.0).
+        """
         for i in range(3):
             self[0, i].setFovBoxColor(rgb)
 
-    def getFovBoxColor(self):
+    def getFovBoxColor(self) -> tuple[float, float, float]:
+        """
+        Get the color of the FOV box in all three reorient view widgets.
+
+        Returns
+        -------
+        tuple[float, float, float]
+            current RGB color of the FOV box.
+        """
         return self[0, 0].getFovBoxColor()
 
-    def setFovBoxOpacity(self, v):
+    def setFovBoxOpacity(self, v: float) -> None:
+        """
+        Set the opacity of the FOV box in all three reorient view widgets.
+
+        Parameters
+        ----------
+        v : float
+            opacity value (0.0-1.0).
+
+        Raises
+        ------
+        TypeError
+            If the `v` parameter is not a float.
+        """
         if isinstance(v, float):
             for i in range(3):
                 self[0, i].setFovBoxOpacity(v)
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getFovBoxOpacity(self):
+    def getFovBoxOpacity(self) -> float:
+        """
+        Get the opacity of the FOV box in all three reorient view widgets.
+
+        Returns
+        -------
+        float
+            current opacity of the FOV box.
+        """
         return self[0, 0].getFovBoxOpacity()
 
-    def setFovBoxLineWidth(self, v):
+    def setFovBoxLineWidth(self, v: float) -> None:
+        """
+        Set the line width of the FOV box in all three reorient view widgets.
+
+        Parameters
+        ----------
+        v : float
+            line width in pixels.
+
+        Raises
+        ------
+        TypeError
+            If the `v` parameter is not a float.
+        """
         if isinstance(v, float):
             for i in range(3):
                 self[0, i].setFovBoxLineWidth(v)
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getFovBoxLineWidth(self):
+    def getFovBoxLineWidth(self) -> float:
+        """
+        Get the line width of the FOV box in all three reorient view widgets.
+
+        Returns
+        -------
+        float
+            current line width of the FOV box.
+        """
         return self[0, 0].getFovBoxLineWidth()
 
-    def setSliceNavigationEnabled(self):
+    def setSliceNavigationEnabled(self) -> None:
+        """
+        Enable slice navigation (scrolling) in all three reorient view widgets.
+        """
         for i in range(3):
             self[0, i].setSliceNavigationEnabled()
 
-    def setSliceNavigationDisabled(self):
+    def setSliceNavigationDisabled(self) -> None:
+        """
+        Disable slice navigation (scrolling) in all three reorient view widgets.
+        """
         for i in range(3):
             self[0, i].setSliceNavigationDisabled()
 
-    def isSliceNavigationEnabled(self):
+    def isSliceNavigationEnabled(self) -> None:
+        """
+        Check if slice navigation is enabled.
+
+        Returns
+        -------
+        bool
+            True if slice navigation is enabled, False otherwise.
+        """
         return self[0, 0].isSliceNavigationEnabled
 
 
@@ -1107,7 +2025,17 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Class designed to display a 2x2 grid of axial, coronal, and sagittal slices, along with a 3D volume rendering.
+    Specialized subclass of the MultiViewWidget base class, which is a composite widget that provides an integrated 2D
+    and 3D visualization environment. It arranges four synchronized viewports in a 2x2 grid, combining three orthogonal
+    slice views (axial, coronal, and sagittal) with a full 3D volume rendering view.
+
+    The main features are as follows:
+
+    - Combined 2D/3D layout: displays a VolumeViewWidget alongside three SliceOverlayViewWidget instances.
+    - Synchronization: all views are tightly coupled. The 3D cursor position is linked across all four views, and interactions like zooming are synchronized between the 2D slice views.
+    - Unified data management: a single API for loading a primary SisypheVolume, which is simultaneously rendered in the 3D view and displayed in the three slice views. It also supports adding overlay volumes to the 2D views.
+    - Integrated mesh and tractography Display: manages and displays SisypheMeshCollection (3D models) across all four views and SisypheTractCollection (streamlines) within the 3D volume view.
+    - Direct view access: affers helper methods (getVolumeView, getAxialView, getCoronalView, getSagittalView) for direct access and control over each individual viewport.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1115,19 +2043,30 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
     QWidget -> MultiViewWidget -> OrthogonalSliceVolumeViewWidget
 
     Creation: 03/04/2022
-    Last revision: 27/03/2025
+    Last revision: 20/10/2025
     """
 
     # Special method
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        OrthogonalSliceVolumeViewWidget instance constructor.
+
+        Parameters
+        ----------
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(2, 2, parent)
         self._initViews()
         self._initSynchronisationSignalConnect()
 
     # Private methods
 
-    def _initViews(self):
+    def _initViews(self) -> None:
+        """
+        Initializes the 2x2 grid of 3 SliceTrajectoryViewWidget instances and 1 VolumeViewWidget instance.
+        """
         meshes = None
         for i in range(2):
             for j in range(2):
@@ -1147,7 +2086,10 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
         self[1, 1].setName('Sagittal view')
         self.setVisibilityControlToAll()
 
-    def _initSynchronisationSignalConnect(self):
+    def _initSynchronisationSignalConnect(self) -> None:
+        """
+        Initializes synchronization signal connections between view widgets.
+        """
         for i in range(4):
             # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(i // 2, i % 2)
@@ -1193,7 +2135,15 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
 
     # Public methods
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
+        """
+        Set the SisypheVolume to be displayed in all four view widgets (3 slice, 1 volume rendering).
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            volume to display.
+        """
         if isinstance(volume, SisypheVolume):
             self[0, 0].setVolume(volume)
             self[0, 0].setCameraToLeft()
@@ -1208,7 +2158,16 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
 
     # < Revision 18/10/2024
     # add replaceVolume method
-    def replaceVolume(self, volume):
+    def replaceVolume(self, volume: SisypheVolume) -> None:
+        """
+        Replace the currently displayed SisypheVolume with a new one in all four view widgets.
+        The new volume must have the same dimensions as the old one.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            new volume to display.
+        """
         if self.hasVolume():
             self[0, 0].replaceVolume(volume)
             self[0, 1].replaceVolume(volume)
@@ -1216,25 +2175,50 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
             self[1, 1].replaceVolume(volume)
     # Revision 18/10/2024
 
-    def removeVolume(self):
+    def removeVolume(self) -> None:
         """
-            self.removeAllOverlays()
-            already deleted by self.removeVolume()
+        Remove the currently displayed SisypheVolume from all four view widgets.
         """
         self[0, 0].removeVolume()
         self[0, 1].removeVolume()
         self[1, 0].removeVolume()
         self[1, 1].removeVolume()
 
-    def getVolume(self):
+    def getVolume(self) -> SisypheVolume:
+        """
+        Get the currently displayed SisypheVolume.
+
+        Returns
+        -------
+        SisypheVolume
+            currently displayed volume.
+        """
         return self[0, 0].getVolume()
 
-    def hasVolume(self):
+    def hasVolume(self) -> bool:
+        """
+        Check if a volume is currently displayed.
+
+        Returns
+        -------
+        bool
+            True if a volume is displayed, False otherwise.
+        """
         return self[0, 0].hasVolume()
 
     # Overlay methods
 
-    def addOverlay(self, volume, alpha=0.5):
+    def addOverlay(self, volume: SisypheVolume, alpha: float = 0.5) -> None:
+        """
+        Add a SisypheVolume as an overlay to the three slice view widgets.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            volume to add as an overlay.
+        alpha : float, optional
+            opacity of the overlay (0.0-1.0, default 0.5).
+        """
         if isinstance(volume, SisypheVolume):
             if self.hasVolume():
                 self[0, 1].addOverlay(volume, alpha)
@@ -1243,46 +2227,118 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
             else: raise ValueError('reference volume must be set before overlay.')
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
-    def getOverlayCount(self):
+    def getOverlayCount(self) -> int:
+        """
+        Get the number of overlays in the slice views.
+
+        Returns
+        -------
+        int
+            number of overlays.
+        """
         return self[0, 1].getOverlayCount()
 
-    def hasOverlay(self):
+    def hasOverlay(self) -> bool:
+        """
+        Check if any overlays are present in the slice views.
+
+        Returns
+        -------
+        bool
+            True if at least one overlay exists, False otherwise.
+        """
         return self[0, 1].hasOverlay()
 
-    def getOverlayIndex(self, o):
+    def getOverlayIndex(self, o: int | SisypheVolume) -> int:
+        """
+        Get the index of a specific overlay.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            overlay to find, by index or instance.
+
+        Returns
+        -------
+        int
+            index of the overlay.
+        """
         return self[0, 1].hasOverlayVolume(o)
 
-    def removeOverlay(self, o):
+    def removeOverlay(self, o: int | SisypheVolume) -> None:
+        """
+        Remove a specific overlay from the three slice view widgets.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            overlay to remove, by index or instance.
+        """
         self[0, 1].removeOverlay(o)
         self[1, 0].removeOverlay(o)
         self[1, 1].removeOverlay(o)
 
-    def removeAllOverlays(self):
+    def removeAllOverlays(self) -> None:
+        """
+        Remove all overlays from the three slice view widgets.
+        """
         self[0, 1].removeAllOverlays()
         self[1, 0].removeAllOverlays()
         self[1, 1].removeAllOverlays()
 
-    def getOverlayFromIndex(self, index):
+    def getOverlayFromIndex(self, index: int) -> SisypheVolume:
+        """
+        Get an overlay by its index from the slice view widgets.
+
+        Parameters
+        ----------
+        index : int
+            index of the overlay to retrieve.
+
+        Returns
+        -------
+        SisypheVolume
+            overlay volume at the specified index.
+        """
         return self[0, 1].getOverlayFromIndex(index)
 
     # Mesh methods
 
     # < Revision 23/03/2025
-    def removeAllMeshes(self):
+    def removeAllMeshes(self) -> None:
+        """
+        Remove all SisypheMesh instances from all view widgets.
+        """
         if self.isNotEmpty():
             for w in self._views.values():
                 w.removeAllMeshes()
     # Revision 23/03/2025 >
 
     # < Revision 23/03/2025
-    def removeMesh(self, mesh):
+    def removeMesh(self, mesh: SisypheMesh) -> None:
+        """
+        Remove a specific SisypheMesh instance from all view widgets.
+
+        Parameters
+        ----------
+        mesh : SisypheMesh
+            mesh instance to remove.
+        """
         if self.isNotEmpty():
             for w in self._views.values():
                 w.removeMesh(mesh)
     # Revision 23/03/2025 >
 
     # < Revision 27/03/2025
-    def addMesh(self, mesh):
+    def addMesh(self, mesh: SisypheMesh)-> None:
+        """
+        Add a SisypheMesh instance to all view widgets.
+
+        Parameters
+        ----------
+        mesh : SisypheMesh
+            mesh instance to add.
+        """
         for w in self._views.values():
             w.addMesh(mesh)
     # Revision 27/03/2025 >
@@ -1290,26 +2346,82 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
     # Tracts methods
 
     def getTractCollection(self) -> SisypheTractCollection:
+        """
+        Get the SisypheTractCollection instance (streamlines collection) from the 3D volume view widget.
+
+        Returns
+        -------
+        SisypheTractCollection
+            current streamlines collection.
+        """
         return self[0, 0].getTractCollection()
 
     def setTractCollection(self, tracts: SisypheTractCollection) -> None:
+        """
+        Set the SisypheTractCollection instance (streamlines collection) for the 3D volume view widget.
+
+        Parameters
+        ----------
+        tracts : SisypheTractCollection
+            streamlines collection to display.
+        """
         self[0, 0].setTractCollection(tracts)
 
-    def hasTracts(self):
+    def hasTracts(self) -> bool:
+        """
+        Check if there are any streamlines (tracts) in the collection of the 3D volume view widget
+
+        Returns
+        -------
+        bool
+            True if streamlines (tracts) are present, False otherwise.
+        """
         return self[0, 0].hasTracts()
 
     # View methods
 
-    def getVolumeView(self):
+    def getVolumeView(self) -> VolumeViewWidget:
+        """
+        Get the 3D volume view widget.
+
+        Returns
+        -------
+        VolumeViewWidget
+            3D volume view widget.
+        """
         return self[0, 0]
 
-    def getAxialView(self):
+    def getAxialView(self) -> SliceViewWidget:
+        """
+        Get the axial slice view widget.
+
+        Returns
+        -------
+        SliceViewWidget
+            axial view widget.
+        """
         return self[0, 1]
 
-    def getCoronalView(self):
+    def getCoronalView(self) -> SliceViewWidget:
+        """
+        Get the coronal slice view widget.
+
+        Returns
+        -------
+        SliceViewWidget
+            coronal view widget.
+        """
         return self[1, 0]
 
-    def getSagittalView(self):
+    def getSagittalView(self) -> SliceViewWidget:
+        """
+        Get the sagittal slice view widget.
+
+        Returns
+        -------
+        SliceViewWidget
+            sagittal view widget.
+        """
         return self[1, 1]
 
 
@@ -1320,13 +2432,16 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Subclass of the OrthogonalSliceVolumeViewWidget class.
+    Advanced subclass of the OrthogonalSliceVolumeViewWidget class that introduces trajectory-based navigation and
+    visualization.It replaces the standard 2D slice viewers with SliceTrajectoryViewWidget instances, enabling the
+    display of slices oriented along arbitrary paths within the SisypheVolume.
 
-    It extends the functionality of the OrthogonalSliceVolumeViewWidget by adding trajectory management.
-    It includes methods for adding, removing, and manipulating trajectories, as well as for aligning the trajectories
-    with specific anatomical orientations (e.g., axial, coronal, sagittal), with the camera view or with specific
-    anatomical landmarks. It also provides methods for customizing the appearance and behavior of the trajectories,
-    such as changing their color, opacity, and visibility.
+    The main features are as follows:
+
+    - Trajectory-based slicing: the three 2D views (axial, coronal, and sagittal) can be reoriented to display slices that are perpendicular to a user-defined trajectory, offering non-orthogonal views of the data.
+    - Dynamic camera alignment: ability to align the 2D slice views with the camera's orientation in the 3D viewport. This creates a real-time "oblique slicer" that updates as the user rotates and navigates the 3D scene.
+    - Multiple alignment modes, trajectories can be aligned in several ways: to the 3D view's camera, to specific anatomical landmarks (e.g. AC-PC line), to other interactive tools or vectors, to the default axial, coronal, or sagittal planes.
+    - Synchronization: in addition to inheriting all synchronization from its parent (cursor position, zoom, etc.), this widget ensures that all trajectory-specific properties—such as alignment mode, slab thickness, and step size—are seamlessly synchronized across all slice views and the 3D view.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1334,17 +2449,28 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
     QWidget -> MultiViewWidget -> OrthogonalSliceVolumeViewWidget -> OrthogonalTrajectoryViewWidget
 
     Creation: 03/04/2022
-    Last Revision: 02/10/2023
+    Last Revision: 20/10/2025
     """
 
     # Special method
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        OrthogonalTrajectoryViewWidget instance constructor.
+
+        Parameters
+        ----------
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
     # Private methods
 
-    def _initViews(self):
+    def _initViews(self) -> None:
+        """
+        Initializes the 2x2 grid of 3 SliceTrajectoryViewWidget instances and 1 VolumeViewWidget instance.
+        """
         meshes = None
         for i in range(2):
             for j in range(2):
@@ -1366,7 +2492,10 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
         self[1, 1].setName('Sagittal view')
         self.setVisibilityControlToAll()
 
-    def _initSynchronisationSignalConnect(self):
+    def _initSynchronisationSignalConnect(self) -> None:
+        """
+        Initializes synchronization signal connections between view widgets.
+        """
         super()._initSynchronisationSignalConnect()
         for i in range(4):
             # noinspection PyNoneFunctionAssignment
@@ -1389,24 +2518,48 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
 
     # Public methods
 
-    def popupAlignmentEnabled(self):
+    def popupAlignmentEnabled(self) -> None:
+        """
+        Enable the 'Alignment' submenu in the popup menu for all trajectory slice view widgets.
+        """
         for w in self._views.values():
             if isinstance(w, SliceTrajectoryViewWidget):
                 w.popupAlignmentEnabled()
 
-    def popupAlignmentDisabled(self):
+    def popupAlignmentDisabled(self) -> None:
+        """
+        Disable the 'Alignment' submenu in the popup menu for all trajectory slice view widgets.
+        """
         for w in self._views.values():
             if isinstance(w, SliceTrajectoryViewWidget):
                 w.popupAlignmentDisabled()
 
     # Public synchronisation event methods
 
-    def synchroniseCameraChanged(self, obj):
+    def synchroniseCameraChanged(self, obj: QWidget):
+        """
+        Synchronizes the trajectory alignment when the 3D view camera changes.
+        This is called if any slice view widget is in camera-aligned mode.
+
+        Parameters
+        ----------
+        obj : QWidget
+            VolumeViewWidget that emitted the signal.
+        """
         view = self.getFirstSliceViewWidget()
         if view.isCameraAligned(): self.synchroniseTrajectoryCameraAligned(obj)
 
     # noinspection PyUnusedLocal
-    def synchroniseTrajectoryCameraAligned(self, obj):
+    def synchroniseTrajectoryCameraAligned(self, obj: QWidget):
+        """
+        Align all slice view widgets to the camera of the 3D view.
+        This is typically triggered when one slice view widget aligns its trajectory to the camera.
+
+        Parameters
+        ----------
+        obj : QWidget
+            view widget that emitted the signal.
+        """
         camera = self.getFirstVolumeViewWidget().getRenderer().GetActiveCamera()
         views = self.getSliceViewWidgets()
         for view in views:
@@ -1420,7 +2573,17 @@ class GridViewWidget(MultiViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Base class designed to display a 3x3 grid of slices.
+    Specialized subclass of the MultiViewWidget class designed for the simultaneous display of multiple slice views,
+    with a primary focus on synchronized Region of Interest (ROI) editing. It arranges up to nine SliceROIViewWidget
+    instances in a configurable grid. This widget serves as the base class for more specialized
+    MultiSliceGridViewWidget and SynchronisedGridViewWidget classes.
+
+    The main features are as follows:
+
+    - Unified volume display: the widget is designed to display a single SisypheVolume, with each view widget showing a slice from that volume. It provides a single API to set or replace the volume for all views simultaneously.
+    - Integrated ROI editing: populates a 3x3 grid with SliceROIViewWidget instances that all share the same SisypheROICollection and SisypheROIDraw objects. This architecture ensures that any ROI creation, modification, or selection in one view is automatically reflected in all others.
+    - Dynamic grid layout: manages a 3x3 grid internally, it provides a user-friendly popup menu to dynamically change the number of visible views. This allows user to adjust the layout to focus on a specific number of slices as needed.
+    - Synchronization: it offers centralized control to set the anatomical orientation (axial, coronal, or sagittal) for all visible views at once. Standard navigation controls like zoom and cursor position are also fully synchronized across the grid.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1428,7 +2591,7 @@ class GridViewWidget(MultiViewWidget):
     QWidget -> MultiViewWidget -> GridViewWidget
 
     Creation: 03/04/2022
-    Last revision: 14/10/2024
+    Last revision: 20/10/2025
     """
 
     # Special method
@@ -1439,7 +2602,22 @@ class GridViewWidget(MultiViewWidget):
     _menuNumberOfVisibleViews   QMenu
     """
 
-    def __init__(self, rois=None, draw=None, parent=None):
+    def __init__(self,
+                 rois: SisypheROICollection | None = None,
+                 draw: SisypheROIDraw | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        GridViewWidget instance constructor.
+
+        Parameters
+        ----------
+        rois : SisypheROICollection | None (optional)
+            collection of ROIs to be shared among the view widgets (default None).
+        draw : SisypheROIDraw | None (optional)
+            drawing utility instance to be shared among the view widgets (default None).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(3, 3, parent)
 
         self._menuNumberOfVisibleViews = None
@@ -1450,7 +2628,10 @@ class GridViewWidget(MultiViewWidget):
 
     # Private methods
 
-    def _initViews(self, rois, draw):
+    def _initViews(self, rois: SisypheROICollection | None, draw: SisypheROIDraw | None) -> None:
+        """
+        Initializes the 3x3 grid of SliceROIViewWidget instances.
+        """
         for i in range(9):
             if i == 0:
                 if rois is not None and draw is not None: w = SliceROIViewWidget(rois=rois, draw=draw)
@@ -1462,7 +2643,13 @@ class GridViewWidget(MultiViewWidget):
             self.setViewWidget(i // 3, i % 3, w)
         self.setVisibilityControlToAll()
 
-    def _initActions(self):
+    def _initActions(self) -> None:
+        """
+        Initializes specific QAction instances for each view widget and connects them to their respective slots.
+
+        - orientation ('axial', 'coronal', 'sagittal')
+        - number of views ('1x1', '1x2', '1x3', '2x2', '2x3', '3x3')
+        """
         for i in range(9):
             # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
@@ -1526,7 +2713,10 @@ class GridViewWidget(MultiViewWidget):
             popup.insertMenu(popup.actions()[2], menuNumberOfVisibleViews)
             if i == 0: self._menuNumberOfVisibleViews = menuNumberOfVisibleViews
 
-    def _initSynchronisationSignalConnect(self):
+    def _initSynchronisationSignalConnect(self) -> None:
+        """
+        Initializes synchronization signal connections between view widgets.
+        """
         for i in range(9):
             # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(i // 3, i % 3)
@@ -1563,13 +2753,31 @@ class GridViewWidget(MultiViewWidget):
 
     # Public methods
 
-    def updateROIName(self, old, name):
+    def updateROIName(self, old: str, name: str) -> None:
+        """
+        Update the name of a ROI across all view widgets in the grid.
+
+        Parameters
+        ----------
+        old : str
+            old name of the ROI.
+        name : str
+            new name for the ROI.
+        """
         if self.isNotEmpty():
             for w in self._views.values():
                 if isinstance(w, SliceROIViewWidget):
                     if w.hasROI(): w.updateROIName(old, name)
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
+        """
+        Set the SisypheVolume for all view widgets in the grid.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            volume to display.
+        """
         if isinstance(volume, SisypheVolume):
             for i in range(0, 9):
                 self[i // 3, i % 3].setVolume(volume)
@@ -1577,27 +2785,61 @@ class GridViewWidget(MultiViewWidget):
 
     # < Revision 14/10/2024
     # add replaceVolume method
-    def replaceVolume(self, volume):
+    def replaceVolume(self, volume: SisypheVolume) -> None:
+        """
+        Replace the currently displayed SisypheVolume with a new one in all view widgets.
+        The new volume must have the same dimensions as the old one.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            new volume to display.
+        """
         if self.hasVolume():
             for i in range(0, 9):
                 self[i // 3, i % 3].replaceVolume(volume)
     # Revision 14/10/2024 >
 
-    def removeVolume(self):
+    def removeVolume(self) -> None:
         """
-            self.removeAllOverlays()
-            already deleted by self.removeVolume()
+        Remove the currently displayed SisypheVolume from all view widgets in the grid.
         """
         for i in range(0, 9):
             self[i // 3, i % 3].removeVolume()
 
-    def getVolume(self):
+    def getVolume(self) -> SisypheVolume:
+        """
+        Get the SisypheVolume displayed in the grid.
+
+        Returns
+        -------
+        SisypheVolume
+            currently displayed volume.
+        """
         return self[0, 0].getVolume()
 
-    def hasVolume(self):
+    def hasVolume(self) -> bool:
+        """
+        Check if a SisypheVolume is displayed in the grid.
+
+        Returns
+        -------
+        bool
+            True if a volume is displayed False otherwise.
+        """
         return self[0, 0].hasVolume()
 
-    def setNumberOfVisibleViews(self, r, c):
+    def setNumberOfVisibleViews(self, r: int, c: int) -> None:
+        """
+        Set the number of visible view widgets by specifying the grid arrangement (rows and columns).
+
+        Parameters
+        ----------
+        r : int
+            number of rows to display.
+        c : int
+            number of columns to display.
+        """
         k = '{}{}'.format(r, c)
         if r == c == 2:
             n = 0
@@ -1620,7 +2862,15 @@ class GridViewWidget(MultiViewWidget):
             self.setRows(r)
             self.setCols(c)
 
-    def getViewsArrangement(self):
+    def getViewsArrangement(self) -> tuple[int, int]:
+        """
+        Get the current grid arrangement (rows, columns) of visible view widgets.
+
+        Returns
+        -------
+        tuple[int, int]
+            (rows, columns) of the visible grid.
+        """
         action = self.getFirstSliceViewWidget().getAction()
         if action['11'].isChecked(): r = (1, 1)
         elif action['12'].isChecked(): r = (1, 2)
@@ -1630,57 +2880,116 @@ class GridViewWidget(MultiViewWidget):
         else: r = (3, 3)
         return r
 
-    def setAxialOrientation(self):
+    def setAxialOrientation(self) -> None:
+        """
+        Set the orientation of all view widgets in the grid to axial.
+        """
         self.setOrientation(0)
 
-    def setCoronalOrientation(self):
+    def setCoronalOrientation(self) -> None:
+        """
+        Set the orientation of all view widgets in the grid to coronal.
+        """
         self.setOrientation(1)
 
-    def setSagittalOrientation(self):
+    def setSagittalOrientation(self) -> None:
+        """
+        Set the orientation of all view widgets in the grid to sagittal.
+        """
         self.setOrientation(2)
 
-    def setOrientation(self, orient):
+    def setOrientation(self, orient: int) -> None:
+        """
+        Set the orientation for all view widgets in the grid.
+
+        Parameters
+        ----------
+        orient : int
+            orientation index (0 for axial, 1 for coronal, 2 for sagittal).
+        """
         if self.isNotEmpty():
             for w in self._views.values():
                 if isinstance(w, AbstractViewWidget):
                     if w.hasVolume(): w.setOrientation(orient)
 
-    def getOrientation(self):
+    def getOrientation(self) -> int:
+        """
+        Get the orientation in the view widgets in the grid.
+
+        Returns
+        -------
+        int
+            current orientation index.
+        """
         return self._views[(0, 0)].getOrientation()
 
-    def getOrientationAsString(self):
+    def getOrientationAsString(self) -> str:
+        """
+        Get the orientation in the view widgets as a string.
+
+        Returns
+        -------
+        str
+            current orientation ('axial', 'coronal', or 'sagittal').
+        """
         return self._views[(0, 0)].getOrientationAsString()
 
-    def getPopupMenuNumberOfVisibleViews(self):
+    def getPopupMenuNumberOfVisibleViews(self) -> QMenu:
+        """
+        Get the popup submenu for changing the number of visible views.
+
+        Returns
+        -------
+        QMenu
+            'Number of views' submenu.
+        """
         return self._menuNumberOfVisibleViews
 
-    def popupMenuOrientationEnabled(self):
+    def popupMenuOrientationEnabled(self) -> None:
+        """
+        Enable the 'Orientation' submenu in the popup menu for all view widgets.
+        """
         for w in self._views.values():
             w.popupOrientationEnabled()
 
-    def popupMenuOrientationDisabled(self):
+    def popupMenuOrientationDisabled(self) -> None:
+        """
+        Disable the 'Orientation' submenu in the popup menu for all view widgets.
+        """
         for w in self._views.values():
             w.popupOrientationDisabled()
 
-    def popupMenuNumberOfVisibleViewsShow(self):
+    def popupMenuNumberOfVisibleViewsShow(self) -> None:
+        """
+        Show the 'Number of views' submenu in the popup menu for all view widgets.
+        """
         for i in range(9):
             # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
             # noinspection PyUnresolvedReferences
             w.getPopup().actions()[2].setVisible(True)
 
-    def popupMenuNumberOfVisibleViewsHide(self):
+    def popupMenuNumberOfVisibleViewsHide(self) -> None:
+        """
+        Hide the 'Number of views' submenu in the popup menu for all view widgets.
+        """
         for i in range(9):
             # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
             # noinspection PyUnresolvedReferences
             w.getPopup().actions()[2].setVisible(False)
 
-    def popupMenuROIEnabled(self):
+    def popupMenuROIEnabled(self) -> None:
+        """
+        Enable the 'ROI' tools submenu in the popup menu for all view widgets.
+        """
         for w in self._views.values():
             w.popupROIEnabled()
 
-    def popupMenuROIDisabled(self):
+    def popupMenuROIDisabled(self) -> None:
+        """
+        Disable the 'ROI' tools submenu in the popup menu for all view widgets.
+        """
         for w in self._views.values():
             w.popupROIDisabled()
 
@@ -1692,10 +3001,16 @@ class MultiSliceGridViewWidget(GridViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Subclass of the GridViewWidget class.
+    Specialized subclass of the GridViewWidget class designed for the simultaneous visualization of multiple,
+    consecutive slices from a single SisypheVolume. It arranges up to nine SliceROIViewWidget instances in a grid,
+    where each view automatically displays a slice adjacent to its neighbors.
 
-    It is designed to display multiple adjacent slices in a 3 x 3 grid layout. This class provides additional
-    functionalities such as overlay support and ROI support.
+    The main features are as follows:
+
+    - Consecutive slice display: each view in the grid is automatically assigned an offset, allowing the widget to display a sequence of adjacent slices. This provides a "filmstrip" style view, ideal for inspecting a region of interest across several slices at once.
+    - Full ROI integration: inheriting from GridViewWidget, it offers fully synchronized ROI editing capabilities. All views share the same ROI collection, enabling users to draw and modify a single 3D ROI across multiple 2D slices seamlessly.
+    - Overlay functionality: supports the addition of one or more overlay volumes, which are displayed consistently across all slice views.
+    - Synchronization: all navigation controls, including zoom, pan, and cursor position, are synchronized across all visible views. The cursor is typically shown only on the first view to provide a clear reference point.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1703,12 +3018,27 @@ class MultiSliceGridViewWidget(GridViewWidget):
     QWidget -> MultiViewWidget -> GridViewWidget -> MultiSliceGridViewWidget
 
     Creation: 03/04/2022
-    Last revision: 12/08/2023
+    Last revision: 20/10/2025
     """
 
     # Special method
 
-    def __init__(self, rois=None, draw=None, parent=None):
+    def __init__(self,
+                 rois: SisypheROICollection | None = None,
+                 draw: SisypheROIDraw | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        MultiSliceGridViewWidget instance constructor.
+
+        Parameters
+        ----------
+        rois : SisypheROICollection | None (optional)
+            collection of ROIs to be shared among the view widgets (default None).
+        draw : SisypheROIDraw | Noneb(optional)
+            drawing utility instance to be shared among the view widgets (default None).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
 
         super().__init__(rois, draw, parent)
 
@@ -1726,7 +3056,15 @@ class MultiSliceGridViewWidget(GridViewWidget):
 
     # Overlay public methods
 
-    def getFirstVisibleView(self):
+    def getFirstVisibleView(self) -> AbstractViewWidget | None:
+        """
+        Get the first visible view widget in the grid.
+
+        Returns
+        -------
+        AbstractViewWidget | None
+            first visible view widget, or None if no views are visible.
+        """
         for i in range(9):
             r = i // 3
             c = i % 3
@@ -1735,7 +3073,15 @@ class MultiSliceGridViewWidget(GridViewWidget):
                 return view
         return None
 
-    def getLastVisibleView(self):
+    def getLastVisibleView(self) -> AbstractViewWidget | None:
+        """
+        Get the last visible view widget in the grid.
+
+        Returns
+        -------
+        AbstractViewWidget | None
+            last visible view widget, or None if no views are visible.
+        """
         for i in range(8, -1, -1):
             r = i // 3
             c = i % 3
@@ -1744,17 +3090,43 @@ class MultiSliceGridViewWidget(GridViewWidget):
                 return view
         return None
 
-    def getFirstVisibleSliceIndex(self):
+    def getFirstVisibleSliceIndex(self) -> int | None:
+        """
+        Get the slice index of the first visible view widget.
+
+        Returns
+        -------
+        int | None
+            slice index, or None if no view widget is visible.
+        """
         view = self.getFirstVisibleView()
         if isinstance(view, SliceROIViewWidget): return view.getSliceIndex()
         else: return None
 
-    def getLastVisibleSliceIndex(self):
+    def getLastVisibleSliceIndex(self) -> int | None:
+        """
+        Get the slice index of the last visible view.
+
+        Returns
+        -------
+        int | None
+            slice index, or None if no view widget is visible.
+        """
         view = self.getLastVisibleView()
         if isinstance(view, SliceROIViewWidget): return view.getSliceIndex()
         else: return None
 
-    def addOverlay(self, volume, alpha=0.5):
+    def addOverlay(self, volume: SisypheVolume, alpha: float = 0.5) -> None:
+        """
+        Add a SisypheVolume as an overlay to all view widgets in the grid.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            volume to add as an overlay.
+        alpha : float (optional)
+            opacity of the overlay (0.0-1.0, default 0.5).
+        """
         if isinstance(volume, SisypheVolume):
             if self.hasVolume():
                 for i in range(0, 9):
@@ -1762,24 +3134,77 @@ class MultiSliceGridViewWidget(GridViewWidget):
             else: raise ValueError('reference volume must be set before overlay.')
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
-    def getOverlayCount(self):
+    def getOverlayCount(self) -> int:
+        """
+        Get the number of overlays.
+
+        Returns
+        -------
+        int
+            number of overlays.
+        """
         return self[0, 0].getOverlayCount()()
 
-    def hasOverlay(self):
+    def hasOverlay(self) -> bool:
+        """
+        Check if any overlays are present.
+
+        Returns
+        -------
+        bool
+            True if at least one overlay exists, False otherwise.
+        """
         return self[0, 0].hasOverlay()
 
-    def getOverlayIndex(self, o):
+    def getOverlayIndex(self, o: int | SisypheVolume) -> int:
+        """
+        Get the index of a specific overlay.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            overlay to find, by index or instance.
+
+        Returns
+        -------
+        int
+            index of the overlay.
+        """
         return self[0, 0].getOverlayIndex(o)
 
-    def removeOverlay(self, o):
+    def removeOverlay(self, o:  int | SisypheVolume) -> None:
+        """
+        Remove a specific overlay from all view widgets.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            overlay to remove, by index or instance.
+        """
         for i in range(0, 9):
             self[i // 3, i % 3].removeOverlay(o)
 
-    def removeAllOverlays(self):
+    def removeAllOverlays(self) -> None:
+        """
+        Remove all overlays from all view widgets.
+        """
         for i in range(0, 9):
             self[i // 3, i % 3].removeAllOverlays()
 
-    def getOverlayFromIndex(self, index):
+    def getOverlayFromIndex(self, index: int) -> SisypheVolume:
+        """
+        Get an overlay by its index.
+
+        Parameters
+        ----------
+        index : int
+            index of the overlay to retrieve.
+
+        Returns
+        -------
+        SisypheVolume
+            overlay volume at the specified index.
+        """
         return self[0, 0].getOverlayFromIndex(index)
 
 
@@ -1790,8 +3215,15 @@ class SynchronisedGridViewWidget(GridViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Class designed to display the same slices from multiple volumes in a 3 x 3 grid layout. It provides additional
-    functionalities such as overlay support and ROI support.
+    Specialized subclass of the GridViewWidget class designed for the side-by-side comparison of multiple, distinct
+    SisypheVolume instances within a single, synchronized environment.
+
+    The main features are as follows:
+
+    - Multi-Volume comparison: it operates on a reference-plus-synchronized model. A primary reference volume is set, and each additional SisypheVolume is added as a "synchronized" volume, displayed in its own dedicated view within the grid. This allows for direct visual comparison of corresponding slices from different datasets.
+    - Dynamic grid layout: the number of visible views and the grid's dimensions automatically adapt as synchronized volumes are added or removed, ensuring an optimal layout for comparison.
+    - Unified ROI editing: as a GridViewWidget subclass, it provides fully integrated and synchronized ROI tools. Any ROI created or modified in one view is instantly updated across all other views, allowing for consistent analysis across different volumes.
+    - Synchronization: all interactions, including cursor movement, zoom/pan, and slice/orientation changes, are mirrored across all views.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1799,7 +3231,7 @@ class SynchronisedGridViewWidget(GridViewWidget):
     QWidget -> MultiViewWidget -> GridViewWidget -> SynchronisedGridViewWidget
 
     Creation: 03/04/2022
-    Last revision: 27/05/2025
+    Last revision: 20/10/2025
     """
 
     # Special method
@@ -1810,7 +3242,22 @@ class SynchronisedGridViewWidget(GridViewWidget):
     _nbv    int, volume count
     """
 
-    def __init__(self, rois=None, draw=None, parent=None):
+    def __init__(self,
+                 rois: SisypheROICollection | None = None,
+                 draw: SisypheROIDraw | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        SynchronisedGridViewWidget instance constructor.
+
+        Parameters
+        ----------
+        rois : SisypheROICollection | None (optional)
+            collection of ROIs to be shared among the view widgets (default None).
+        draw : SisypheROIDraw | None (optional)
+            drawing utility instance to be shared among the view widgets (default None).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(rois, draw, parent)
 
         for i in range(9):
@@ -1824,8 +3271,17 @@ class SynchronisedGridViewWidget(GridViewWidget):
 
     # Private methods
 
-    def _updateVisibleViews(self):
-        # update visible views
+    def _updateVisibleViews(self) -> None:
+        """
+        Updates grid geometry based on the number of visible view widgets.
+
+        - 1 visible view widget: grid 1 x 1
+        - 2 visible view widgets: grid 1 x 2
+        - 3 visible view widgets: grid 1 x 3
+        - 4 visible view widgets: grid 2 x 2
+        - 5, 6 visible view widgets: grid 2 x 3
+        - > 6 visible view widgets: grid 3 x 3
+        """
         nbv = self[0, 0].getOverlayCount()
         if nbv < 3: self.setRowsAndCols(nbv // 3 + 1, nbv % 3 + 1)
         elif nbv == 3: self.setRowsAndCols(2, 2)
@@ -1860,7 +3316,17 @@ class SynchronisedGridViewWidget(GridViewWidget):
 
     # Public methods
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
+        """
+        Set the reference SisypheVolume for the grid.
+        This volume is displayed in the first view widget, and other views are configured to show synchronized volumes.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            reference SisypheVolume to display.
+        """
         super().setVolume(volume)
         for i in range(9):
             r = i // 3
@@ -1869,7 +3335,16 @@ class SynchronisedGridViewWidget(GridViewWidget):
         # Reference volume is in the first view
         self._updateVisibleViews()
 
-    def addSynchronisedVolume(self, volume):
+    def addSynchronisedVolume(self, volume: SisypheVolume) -> None:
+        """
+        Add a synchronized SisypheVolume to the grid.
+        Each synchronized volume is displayed in a separate view widget, overlaid on the reference volume.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            volume to add for synchronized display.
+        """
         if isinstance(volume, SisypheVolume):
             if self.hasVolume():
                 for i in range(0, 9):
@@ -1878,7 +3353,15 @@ class SynchronisedGridViewWidget(GridViewWidget):
             else: raise ValueError('reference volume must be set before overlay.')
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
-    def removeSynchronisedVolume(self, v):
+    def removeSynchronisedVolume(self, v: SisypheVolume) -> None:
+        """
+        Remove a synchronized SisypheVolume from the grid.
+
+        Parameters
+        ----------
+        v : SisypheVolume
+            synchronized volume to remove.
+        """
         if isinstance(v, SisypheVolume):
             if self.hasVolume():
                 for i in range(0, 9):
@@ -1887,23 +3370,68 @@ class SynchronisedGridViewWidget(GridViewWidget):
             else: raise ValueError('reference volume must be set before overlay.')
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(v)))
 
-    def removeAllSynchronisedVolumes(self):
+    def removeAllSynchronisedVolumes(self) -> None:
+        """
+        Remove all synchronized SisypheVolume instance from the grid, leaving only the reference volume.
+        """
         if self.hasVolume():
             if self.hasOverlay():
                 for i in range(0, 9):
                     self[i // 3, i % 3].removeAllOverlays()
                 self._updateVisibleViews()
 
-    def getSynchronisedVolumeCount(self):
+    def getSynchronisedVolumeCount(self) -> int:
+        """
+        Get the number of synchronized volumes.
+
+        Returns
+        -------
+        int
+            number of synchronized volumes.
+        """
         return self[0, 0].getOverlayCount()()
 
-    def hasSynchronisedVolume(self):
+    def hasSynchronisedVolume(self) -> bool:
+        """
+        Check if any synchronized volumes are present.
+
+        Returns
+        -------
+        bool
+            True if at least one synchronized volume exists, False otherwise.
+        """
         return self[0, 0].hasOverlay()
 
-    def getSynchronisedVolumeIndex(self, o):
+    def getSynchronisedVolumeIndex(self, o: int | SisypheVolume):
+        """
+        Get the index of a specific synchronized volume.
+
+        Parameters
+        ----------
+        o : int | SisypheVolume
+            synchronized volume to find, by index or instance.
+
+        Returns
+        -------
+        int
+            index of the synchronized volume.
+        """
         return self[0, 0].getOverlayIndex(o)
 
-    def getSynchronisedVolumeFromIndex(self, index):
+    def getSynchronisedVolumeFromIndex(self, index: int) -> SisypheVolume:
+        """
+        Get a synchronized volume by its index.
+
+        Parameters
+        ----------
+        index : int
+            index of the synchronized volume to retrieve.
+
+        Returns
+        -------
+        SisypheVolume
+            synchronized volume at the specified index.
+        """
         return self[0, 0].getOverlayFromIndex(index)
 
     #  Public method aliases

@@ -6,6 +6,10 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from typing import Optional
+
 from sys import platform
 
 from os import chdir
@@ -64,6 +68,12 @@ from Sisyphe.gui.dialogWait import DialogWait
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import IconLabel
 
+if TYPE_CHECKING:
+    from PyQt5.QtGui import QDragEnterEvent
+    from PyQt5.QtGui import QDropEvent
+    from Sisyphe.widgets.toolBarThumbnail import ToolBarThumbnail
+
+
 __all__ = ['SelectionFilter',
            'FileSelectionWidget',
            'FilesSelectionWidget',
@@ -89,68 +99,69 @@ class SelectionFilter(object):
     Description
     ~~~~~~~~~~~
 
-    Base class for file selection widgets (FileSelectionWidget & FilesSelectionWidget).
-    Filter management (directory, file extension, DICOM, Nifti, Minc, Nrrd, Vtk, numpy, SisypheVolume, SisypheROI,
-    identity fields, ID, template ICBM152, FOV, size, modality, sequence, datatype, single component, multi component,
-    orientation, scalar range, frame, filename prefix, filename suffix, str in filename, registered to a reference file)
+    Base class for file selection widgets (FileSelectionWidget, FilesSelectionWidget, MultiExtFilesSelectionWidget and
+    SynchronizedFilesSelectionWidget).
+
+    This class manages the filters used to define criteria for selecting files. The criteria are as follows: directory,
+    file extension(s), DICOM, Nifti, Minc, Nrrd, Vtk, numpy, PySisyphe volume (.xvol), PySisyphe ROI (.xroi),
+    PySisypheMesh (.xmesh), PySisyphe streamlines (.xtracts), identity fields, ID, template, ICBM152, FOV,
+    matrtix size, modality, sequence, datatype, single component, multi component, orientation, scalar range, frame,
+    filename prefix, filename suffix, filename contains a string, registered to a reference file.
 
     Inheritance
     ~~~~~~~~~~~
 
     object -> SelectionFilter
 
-    Last Revision: 15/04/2025
+    Last Revision: 20/10/2025
     """
 
     # Class methods
 
     @classmethod
-    def isDarkMode(cls):
+    def isDarkMode(cls) -> bool:
+        """
+        Checks if the system is currently in dark mode.
+
+        Returns
+        -------
+        bool
+            True if in dark mode, False otherwise.
+        """
         return darkdetect.isDark()
 
     @classmethod
-    def isLightMode(cls):
+    def isLightMode(cls) -> bool:
+        """
+        Checks if the system is currently in light mode.
+
+        Returns
+        -------
+        bool
+            True if in light mode, False otherwise.
+        """
         return darkdetect.isLight()
 
     @classmethod
-    def getDefaultIconDirectory(cls):
+    def getDefaultIconDirectory(cls) -> str:
+        """
+        Get the path to the default icon directory based on the current system theme (dark/light).
+
+        Returns
+        ~~~~~~~
+        str
+            The absolute path to the icon directory.
+        """
         import Sisyphe.gui
         if cls.isDarkMode(): return join(dirname(abspath(Sisyphe.gui.__file__)), 'darkroi')
         else: return join(dirname(abspath(Sisyphe.gui.__file__)), 'lightroi')
 
     # Special method
 
-    """
-    Private attributes
-
-    _name           str, basename of file
-    _path           str, abspath of file
-    _volume         SisypheVolume, reference volume
-    _refExt         list[str], reference extension(s)
-    _refID          str, reference ID
-    _refRange       tuple[float, float], reference range
-    _refICBM        bool, reference ICBM
-    _refdicom       bool, reference dicom file extension
-    _refxvol        bool, reference xvol file extension
-    _refxroi        bool, reference xroi file extension
-    _refxmesh       bool, reference xmesh file extension
-    _refxtracts     bool, reference xtracts file extension
-    _refidentity    SisypheIdentity, reference identity
-    _refFOV         tuple[float, float, float], reference FOV
-    _refSize        tuple[int, int, int], reference matrix size
-    _refmodality    str, reference modality
-    _refsequence    str, reference sequence
-    _refdatatype    str, reference datatype
-    _reforientation int, reference orientation
-    _refsuffix      str, filename suffix reference
-    _refprefix      srr, filename prefix reference
-    _refcontains    str, filename contains _refcontains substring
-    _refframe       bool, reference stereotactic frame
-    _refcomponent   int, reference number of components
-    _reftofirst     bool, reference volume is the first
-    """
-
-    def __init__(self):
+    def __init__(self) -> None:
+        """
+        SelectionFilter instance constructor.
+        """
         super().__init__()
 
         self._volume = None
@@ -189,43 +200,156 @@ class SelectionFilter(object):
         self._refcentroid = False
         self._refnotcentroid = False
 
+    """
+    Private attributes
+
+    _name           str, basename of file
+    _path           str, abspath of file
+    _volume         SisypheVolume, reference volume
+    _refExt         list[str], reference extension(s)
+    _refID          str, reference ID
+    _refRange       tuple[float, float], reference range
+    _refICBM        bool, reference ICBM
+    _refdicom       bool, reference dicom file extension
+    _refxvol        bool, reference xvol file extension
+    _refxroi        bool, reference xroi file extension
+    _refxmesh       bool, reference xmesh file extension
+    _refxtracts     bool, reference xtracts file extension
+    _refidentity    SisypheIdentity, reference identity
+    _refFOV         tuple[float, float, float], reference FOV
+    _refSize        tuple[int, int, int], reference matrix size
+    _refmodality    str, reference modality
+    _refsequence    str, reference sequence
+    _refdatatype    str, reference datatype
+    _reforientation int, reference orientation
+    _refsuffix      str, filename suffix reference
+    _refprefix      srr, filename prefix reference
+    _refcontains    str, filename contains _refcontains substring
+    _refframe       bool, reference stereotactic frame
+    _refcomponent   int, reference number of components
+    _reftofirst     bool, reference volume is the first
+    """
+
     # Public method
 
-    def getFilename(self):
+    def getFilename(self) -> str:
+        """
+        Get the full absolute path of the currently selected file or directory.
+
+        Returns
+        -------
+        str
+            The absolute path of the selected file or directory.
+        """
         if self._refDir: return self._path
         else: return join(self._path, self._name)
 
-    def getPath(self):
+    def getPath(self) -> str:
+        """
+        Get the full absolute directory path of the currently selected file.
+
+        Returns
+        ~~~~~~~
+        str
+            The absolute directory path of the selected file or directory.
+        """
         return self._path
 
-    def getBasename(self):
+    def getBasename(self) -> str:
+        """
+        Get the base name (filename with extension) of the currently selected file.
+
+        Returns
+        -------
+        str
+            The base name of the file.
+        """
         return self._name
 
-    def setReferenceVolume(self, v):
+    def setReferenceVolume(self, v: SisypheVolume) -> None:
+        """
+        Set a SisypheVolume instance as a reference for subsequent filtering operations.
+
+        Parameters
+        ~~~~~~~~~~
+        v: SisypheVolume
+            SisypheVolume instance to be used as a reference.
+        """
         if isinstance(v, SisypheVolume):
             self._volume = v
 
-    def getReferenceVolume(self):
+    def getReferenceVolume(self) -> SisypheVolume:
+        """
+        Get the reference SisypheVolume.
+
+        Returns
+        -------
+        SisypheVolume
+            Reference SisypheVolume instance, or None if not set.
+        """
         return self._volume
 
-    def setReferenceVolumeToFirst(self):
+    def setReferenceVolumeToFirst(self) -> None:
+        """
+        Set a flag indicating that the first selected volume should be used as a reference for subsequent filtering.
+        """
         self._reftofirst = True
 
-    def isReferenceVolumeToFirst(self):
+    def isReferenceVolumeToFirst(self) -> bool:
+        """
+        Checks if the flag to use the first selected volume as a reference is set.
+
+        Returns
+        -------
+        bool
+            True if the first selected volume is used as a reference, False otherwise.
+        """
         return self._reftofirst
 
-    def setToolbarThumbnail(self, t):
+    def setToolbarThumbnail(self, t: ToolBarThumbnail) -> None:
+        """
+        Set the ToolBarThumbnail widget for accessing volumes with the IconLabel '<' widget.
+
+        Parameters
+        ----------
+        t : ToolBarThumbnail)
+            ToolBarThumbnail instance.
+        """
         from Sisyphe.widgets.toolBarThumbnail import ToolBarThumbnail
         if isinstance(t, ToolBarThumbnail): self._thumbnail = t
         else: raise TypeError('parameter type {} is not toolBarThumbnail.'.format(type(t)))
 
-    def getToolbarThumbnail(self):
+    def getToolbarThumbnail(self) -> ToolBarThumbnail:
+        """
+        Get the associated ToolBarThumbnail widget for accessing volumes with the IconLabel '<' widget.
+
+        Returns
+        -------
+        ToolBarThumbnail
+            Associated ToolBarThumbnail widget, or None if not set.
+        """
         return self._thumbnail
 
-    def hasToolbarThumbnail(self):
+    def hasToolbarThumbnail(self) -> bool:
+        """
+        Check if a ToolBarThumbnail widget is defined.
+
+        Returns
+        -------
+        bool
+            True if a ToolBarThumbnail is set, False otherwise.
+        """
         return self._thumbnail is not None
 
-    def setFiltersToDefault(self, ext=True):
+    def setFiltersToDefault(self, ext: bool = True) -> None:
+        """
+        Resets all filters to their default state (no filter).
+
+        Parameters
+        ----------
+        ext : bool (optional)
+            If True, clears extension filters as well. Defaults to True.
+        """
         self._refDir = False
         self._refID = None
         self._refICBM = False
@@ -250,24 +374,55 @@ class SelectionFilter(object):
         self._refcomponent = 0
         if ext: self._refExt = list()
 
-    def clearExtensionFilter(self):
+    def clearExtensionFilter(self) -> None:
+        """
+        Clears all currently set file extension filters.
+        """
         self._refExt = list()
 
-    def getExtensionFilter(self):
+    def getExtensionFilter(self) -> list[str]:
+        """
+        Get the list of currently active file extension filters.
+
+        Returns
+        -------
+        list[str]
+            list of file extensions (e.g., ['.nii', '.gz']).
+        """
         return self._refExt
 
-    def filterDirectory(self):
+    def filterDirectory(self) -> None:
+        """
+        Sets the filter to allow only directory selection.
+        """
         # self.setFiltersToDefault(True)
         self._refDir = True
 
-    def filterExtensions(self, exts):
+    def filterExtensions(self, exts: list[str] | tuple[str, ...]) -> None:
+        """
+        Adds multiple file extensions to the filter list.
+
+        Parameters
+       -----------
+        exts : list[str] | tuple[str, ...]
+            list or tuple of file extensions to add.
+        """
         if isinstance(exts, (list, tuple)):
             if len(exts) > 0:
                 for ext in exts:
                     self.filterExtension(ext)
         else: raise TypeError('parameter type {} is not list or tuple.'.format(type(exts)))
 
-    def filterExtension(self, ext):
+    def filterExtension(self, ext: str) -> None:
+        """
+        Add a single file extension to the filter list.
+        Automatically handles Sisyphe-specific file types (.xvol, .xroi, etc.).
+
+        Parameters
+        ----------
+        ext : str
+            file extension to add (e.g., '.nii' or 'nii').
+        """
         if isinstance(ext, str):
             if ext[0] != '.': ext = '.' + ext
             if ext == SisypheVolume.getFileExt(): self._refxvol = True
@@ -281,7 +436,10 @@ class SelectionFilter(object):
             # Revision 06/02/2025 >
         else: raise TypeError('parameter type {} is not str.'.format(type(ext)))
 
-    def filterDICOM(self):
+    def filterDICOM(self) -> None:
+        """
+        Add Dicom file extensions and Sisyphe XML DICOM extension to the filter list.
+        """
         # self.setFiltersToDefault(True)
         # < Revision 23/12/2024
         # self._refExt.append('.dcm')
@@ -300,72 +458,132 @@ class SelectionFilter(object):
         # Revision 23/12/2024 >
         self._refdicom = True
 
-    def filterSisypheVolume(self):
+    def filterSisypheVolume(self) -> None:
+        """
+        Add the SisypheVolume file extension (.xvol) to the filter list.
+        """
         # self.setFiltersToDefault(True)
         self.filterExtension(SisypheVolume.getFileExt())
         # self._refxvol = True
 
-    def filterSisypheROI(self):
+    def filterSisypheROI(self) -> None:
+        """
+        Adds the SisypheROI file extension (.xroi) to the filter list.
+        """
         # self.setFiltersToDefault(True)
         self.filterExtension(SisypheROI.getFileExt())
         # self._refxroi = True
 
-    def filterSisypheMesh(self):
+    def filterSisypheMesh(self) -> None:
+        """
+        Add the SisypheMesh file extension (.xmesh) to the filter list.
+        """
         # self.setFiltersToDefault(True)
         self.filterExtension(SisypheMesh.getFileExt())
         # self._refxmesh = True
 
-    def filterSisypheStreamlines(self):
+    def filterSisypheStreamlines(self) -> None:
+        """
+        Add the SisypheStreamlines file extension (.xtracts) to the filter list.
+        """
         # self.setFiltersToDefault(True)
         self.filterExtension(SisypheStreamlines.getFileExt())
         # self._refxtracts = True
 
-    def filterNifti(self):
+    def filterNifti(self) -> None:
+        """
+        Add common Nifti file extensions to the filter list.
+        """
         # self.setFiltersToDefault(True)
         self.filterExtensions(getNiftiExt())
         # self._refExt += getNiftiExt()
 
-    def filterMinc(self):
+    def filterMinc(self) -> None:
+        """
+        Add common Minc file extensions to the filter list.
+        """
         # self.setFiltersToDefault(True)
         self.filterExtensions(getMincExt())
         # self._refExt += getMincExt()
 
-    def filterNrrd(self):
+    def filterNrrd(self) -> None:
+        """
+        Add common Nrrd file extensions to the filter list.
+        """
         # self.setFiltersToDefault(True)
         self.filterExtensions(getNrrdExt())
         # self._refExt += getNrrdExt()
 
-    def filterVtk(self):
+    def filterVtk(self) -> None:
+        """
+        Add common VTK file extensions to the filter list.
+        """
         # self.setFiltersToDefault(True)
         self.filterExtensions(getVtkExt())
         # self._refExt += getVtkExt()
 
-    def filterNumpy(self):
+    def filterNumpy(self) -> None:
+        """
+        Add common NumPy file extensions to the filter list.
+        """
         # self.setFiltersToDefault(True)
         self.filterExtensions(getNumpyExt())
         # self._refExt += getNumpyExt()
 
-    def filterRange(self, v=None):
+    def filterRange(self, v: SisypheVolume | SisypheDisplay | tuple[float, float] | None = None) -> None:
+        """
+        Set a scalar range filter for PySisyphe volumes (.xvol). Only volumes with scalar values within the specified
+        range will be allowed.
+
+        Parameters
+        ----------
+        v : SisypheVolume | SisypheDisplay | tuple[float, float] | None (optional)
+            SisypheVolume, SisypheDisplay, or a tuple (min, max) defining the range. If None, clears the range filter.
+        """
         if v is None: self._refRange = None
         if isinstance(v, SisypheVolume): v = v.display
         if isinstance(v, SisypheDisplay): v = v.getRange()
         if isinstance(v, tuple):
             self._refRange = (float(v[0]), float(v[1]))
 
-    def filterMultiComponent(self):
+    def filterMultiComponent(self) -> None:
+        """
+        Set the filter to allow only multi-component PySisyphe volumes (.xvol).
+        """
         self._refcomponent = 2
 
-    def filterSingleComponent(self):
+    def filterSingleComponent(self) -> None:
+        """
+        Set the filter to allow only single-component PySisyphe volumes (.xvol).
+        """
         self._refcomponent = 1
 
-    def filterSameIdentity(self, v=None):
+    def filterSameIdentity(self, v: SisypheVolume | SisypheIdentity | None = None) -> None:
+        """
+        Set an identity filter. Only PySisyphe volumes (.xvol) with an identity matching the provided SisypheVolume or
+        SisypheIdentity will be allowed.
+
+        Parameters
+        ----------
+        v : SisypheVolume | SisypheIdentity | None (optional)
+            SisypheVolume, SisypheIdentity, or None to clear the filter.
+        """
         if v is None: v = self._volume
         if isinstance(v, SisypheVolume): v = v.getIdentity()
         if isinstance(v, SisypheIdentity): self._refidentity = v
         elif v is None: self._refidentity = ''
         else: raise TypeError('parameter type {} is not SisypheIdentity or SisypheVolume.'.format(type(v)))
 
-    def filterSameFOV(self, v=None):
+    def filterSameFOV(self, v: SisypheVolume | SisypheROI | list[float] | tuple[float, float, float] | None = None) -> None:
+        """
+        Set a Field of View (FOV) filter. Only PySisyphe volumes (.xvol) or ROI (.xroi) with an FOV matching the
+        provided SisypheVolume, SisypheROI, or a (x, y, z) tuple will be allowed.
+
+        Parameters
+        ----------
+        v : SisypheVolume | SisypheROI | list[float] | tuple[float, float, float] | None (optional)
+            SisypheVolume, SisypheROI, a list/tuple representing FOV (x, y, z), or None to clear the filter.
+        """
         if v is None: v = self._volume
         if isinstance(v, (SisypheVolume, SisypheROI)):
             self._refFOV = v.getFieldOfView(decimals=1)
@@ -378,7 +596,16 @@ class SelectionFilter(object):
         elif v is None: self._refFOV = 0
         else: raise TypeError('parameter type {} is not SisypheROI, SisypheVolume, list or tuple.'.format(type(v)))
 
-    def filterSameSize(self, v=None):
+    def filterSameSize(self, v: SisypheVolume | SisypheROI | list[int] | tuple[int, int, int] | None = None) -> None:
+        """
+        Set a matrix size filter. Only PySisyphe volumes (.xvol) or ROI (.xroi) with dimensions matching the provided
+        SisypheVolume, SisypheROI, or a (x, y, z) tuple will be allowed.
+
+        Parameters
+        ----------
+        v : SisypheVolume | SisypheROI | list[int] | tuple[int, int, int] | None (optional)
+            SisypheVolume, SisypheROI, a list/tuple representing size (x, y, z), or None to clear the filter.
+        """
         if v is None: v = self._volume
         if isinstance(v, (SisypheVolume, SisypheROI)):
             self._refSize = v.getSize()
@@ -391,7 +618,17 @@ class SelectionFilter(object):
         elif v is None: self._refSize = 0
         else: raise TypeError('parameter type {} is not SisypheROI, SisypheVolume, list or tuple.'.format(type(v)))
 
-    def filterSameModality(self, v=None):
+    def filterSameModality(self, v: SisypheVolume | str | list[str] | tuple[str, ...] |None = None) -> None:
+        """
+        Set a modality filter. Only PySisyphe volumes (.xvol) with a modality matching the provided SisypheVolume,
+        modality name (str), or list/tuple of strings will be allowed.
+
+        Parameters
+        ----------
+        v : SisypheVolume | str | list[str] | tuple[str, ...] | None (optional)
+            SisypheVolume, a string representing a modality code, a list/tuple of modality codes, or None to clear the
+            filter.
+        """
         if v is None: v = self._volume
         if isinstance(v, SisypheVolume):
             v = v.getAcquisition().getModality()
@@ -406,14 +643,26 @@ class SelectionFilter(object):
         # < Revision 10/10/2024
         # add multi modality filter
         elif isinstance(v, (list, tuple)):
-            if all([i in SisypheAcquisition.getModalityToCodeDict() for i in v]): self._refmodality = v
+            # < Revision 20/10/2025
+            # if all([i in SisypheAcquisition.getModalityToCodeDict() for i in v]): self._refmodality = v
+            if all([i in SisypheAcquisition.getModalityToCodeDict() for i in v]): self._refmodality = list(v)
             else: raise ValueError('parameter value {} are not valid modality code.'.format(v))
+            # Revision 20/10/2025 >
         # Revision 10/10/2024 >
         elif v is None:
             self._refmodality = ''
         else: raise TypeError('parameter type {} is not str or SisypheVolume.'.format(type(v)))
 
-    def filterSameSequence(self, v=None):
+    def filterSameSequence(self, v: SisypheVolume | str | list[str] | tuple[str, ...] | None = None) -> None:
+        """
+        Set a sequence filter. Only PySisyphe volumes (.xvol) with a sequence matching the provided SisypheVolume,
+        sequence name (str), or list/tuple of strings will be allowed.
+
+        Parameters
+        ----------
+        v : SisypheVolume | str | list[str] | tuple[str, ...] | None  (optional)
+            SisypheVolume, a string representing a sequence, a list/tuple of sequences, or None to clear the filter.
+        """
         if v is None: v = self._volume
         if isinstance(v, SisypheVolume):
             v = v.getAcquisition().getSequence()
@@ -423,13 +672,25 @@ class SelectionFilter(object):
             # self._refsequence = v
             self._refsequence = [v]
         elif isinstance(v, (list, tuple)):
-            self._refsequence = v
+            # < Revision 20/10/2025
+            # self._refsequence = v
+            self._refsequence = list(v)
+            # Revision 20/10/2025 >
         # Revision 10/10/2024 >
         elif v is None:
             self._refsequence = ''
         else: raise TypeError('parameter type {} is not str or SisypheVolume.'.format(type(v)))
 
-    def filterSameDatatype(self, v=None):
+    def filterSameDatatype(self, v: SisypheVolume | str | None = None) -> None:
+        """
+        Set a datatype filter. Only PySisyphe volumes (.xvol) with a datatype matching the provided SisypheVolume or
+        datatype name (str) will be allowed.
+
+        Parameters
+        ----------
+        v : SisypheVolume | str | None (optional)
+            SisypheVolume, a string representing a datatype, or None to clear the filter.
+        """
         if v is None: v = self._volume
         if isinstance(v, SisypheVolume):
             v = v.getDatatype()
@@ -441,7 +702,16 @@ class SelectionFilter(object):
             self._refdatatype = ''
         else: raise TypeError('parameter type {} is not str or SisypheVolume.'.format(type(v)))
 
-    def filterSameOrientation(self, v=None):
+    def filterSameOrientation(self, v: SisypheVolume | str | None = None) -> None:
+        """
+        Set an orientation filter. Only PySisyphe volumes (.xvol) with an orientation matching the provided
+        SisypheVolume or orientation name (str; 'axial', 'coronal', 'sagittal') will be allowed.
+
+        Parameters
+        ----------
+        v : SisypheVolume | str | None (optional)
+            SisypheVolume, a string representing an orientation, or None to clear the filter.
+        """
         if v is None: v = self._volume
         if isinstance(v, SisypheVolume):
             v = v.getOrientationAsString().lower()
@@ -454,19 +724,56 @@ class SelectionFilter(object):
             self._reforientation = ''
         else: raise TypeError('parameter type {} is not str or SisypheVolume.'.format(type(v)))
 
-    def filterSuffix(self, suffix):
+    def filterSuffix(self, suffix: str) -> None:
+        """
+        Set a filename suffix filter. Only files whose basename ends with the specified suffix (case-insensitive) will
+        be allowed.
+
+        Parameters
+        ----------
+        suffix : str
+            suffix string to filter by.
+        """
         if isinstance(suffix, str): self._refsuffix = suffix.lower()
         else: raise TypeError('parameter type {} is not str.'.format(type(suffix)))
 
-    def filterPrefix(self, prefix):
+    def filterPrefix(self, prefix: str) -> None:
+        """
+        Set a filename prefix filter. Only files whose basename starts with the specified prefix (case-insensitive)
+        will be allowed.
+
+        Parameters
+        ----------
+        prefix : str
+            prefix string to filter by.
+        """
         if isinstance(prefix, str): self._refprefix = prefix.lower()
         else: raise TypeError('parameter type {} is not str.'.format(type(prefix)))
 
-    def filterFilenameContains(self, string):
+    def filterFilenameContains(self, string: str) -> None:
+        """
+        Set a filename substring filter. Only files whose basename contains the specified substring (case-insensitive)
+        will be allowed.
+
+        Parameters
+        ----------
+        string : str
+            substring to filter by.
+        """
         if isinstance(string, str): self._refcontains = string.lower()
         else: raise TypeError('parameter type {} is not str.'.format(type(string)))
 
-    def filterRegisteredToReference(self, v=None):
+    def filterRegisteredToReference(self, v: SisypheVolume | SisypheROI | str | None = None) -> None:
+        """
+        Set a filter for files coregistered to a specific reference space/transform ID. Only PySisyphe volumes (.xvol)
+        or ROI (.xroi) that have a geometric transformation to the specified ID will be allowed.
+
+        Parameters
+        ----------
+        v : SisypheVolume | SisypheROI | str | None (optional)
+            SisypheVolume, SisypheROI, a string representing the reference space/transform ID, or None to clear the
+            filter.
+        """
         if v is None: v = self._volume
         if isinstance(v, SisypheROI): v = v.getReferenceID()
         elif isinstance(v, SisypheVolume): v = v.getID()
@@ -474,7 +781,16 @@ class SelectionFilter(object):
         elif v is None: self._refID = ''
         else: raise TypeError('parameter type {} is not str, SisypheROI or SisypheVolume.'.format(type(v)))
 
-    def filterSameID(self, v=None):
+    def filterSameID(self, v: SisypheVolume | SisypheROI | str | None = None) -> None:
+        """
+        Set a filter for files with a specific space/transform ID. Only files whose ID matches the provided
+        SisypheVolume, SisypheROI, or space/transform ID (str) will be allowed.
+
+        Parameters
+        ----------
+        v : SisypheVolume | SisypheROI | str | None (optional)
+            SisypheVolume, SisypheROI, a string representing the ID, or None to clear the filter.
+        """
         if v is None: v = self._volume
         if isinstance(v, SisypheROI): v = v.getReferenceID()
         elif isinstance(v, SisypheVolume): v = v.getID()
@@ -482,61 +798,174 @@ class SelectionFilter(object):
         elif v is None: self._refSpaceID = ''
         else: raise TypeError('parameter type {} is not str, SisypheROI or SisypheVolume.'.format(type(v)))
 
-    def filterFrame(self):
+    def filterFrame(self) -> None:
+        """
+        Set a filter to allow only PySisyphe volumes (.xvol) that have a stereotactic frame.
+        """
         self._refframe = True
 
-    def filterICBM(self):
+    def filterICBM(self) -> None:
+        """
+        Set a filter to allow only PySisyphe volumes (.xvol) that are in ICBM152 space.
+        """
         self._refICBM = True
 
-    def filterDisplacementField(self):
+    def filterDisplacementField(self) -> None:
+        """
+        Set a filter to allow only PySisyphe volumes (.xvol) that are displacement fields (float datatype,
+        3 components, and marked as displacement field sequence).
+        """
         self._refField = True
 
-    def filterWhole(self):
+    def filterWhole(self) -> None:
+        """
+        Set a filter to allow only PySisyphe streamlines (.xtracts) declared as whole brain tractograms.
+        """
         self._refwhole = True
 
-    def filterNotWhole(self):
+    def filterNotWhole(self) -> None:
+        """
+        Set a filter to allow only PySisyphe streamlines (.xtracts) not declared as whole brain tractograms.
+        """
         self._refnotwhole = True
 
-    def filterCentroid(self):
+    def filterCentroid(self) -> None:
+        """
+        Set a filter to allow only PySisyphe streamlines (.xtracts) declared as centroid streamline.
+        """
         self._refcentroid = True
 
-    def filterNotCentroid(self):
+    def filterNotCentroid(self) -> None:
+        """
+        Set a filter to allow only PySisyphe streamlines (.xtracts) not declared as centroid streamline.
+        """
         self._refnotcentroid = True
 
-    def getFOVFilter(self):
+    def getFOVFilter(self) -> tuple[float, float, float] | float | None:
+        """
+        Get the current Field of View (FOV) filter value.
+
+        Returns
+        -------
+        tuple[float, float, float] | float | None
+            FOV filter value, or None if not set.
+        """
         return self._refFOV
 
-    def getSizeFilter(self):
+    def getSizeFilter(self) -> tuple[int, int, int] | int | None:
+        """
+        Get the current matrix size filter value.
+
+        Returns
+        ~~~~~~~
+        tuple[int, int, int] | int | None
+            size filter value, or None if not set.
+        """
         return self._refSize
 
-    def getModalityFilter(self):
+    def getModalityFilter(self) -> list[str] | str | None:
+        """
+        Get the current modality filter value.
+
+        Returns
+        -------
+        list[str] | str | None
+            modality filter value, or None if not set.
+        """
         return self._refmodality
 
-    def getSequenceFilter(self):
+    def getSequenceFilter(self) -> list[str] | str | None:
+        """
+        Get the current sequence filter value.
+
+        Returns
+        -------
+        list[str] | str | None
+            sequence filter value, or None if not set.
+        """
         return self._refsequence
 
-    def getDatatypeFilter(self):
+    def getDatatypeFilter(self) -> str | None:
+        """
+        Get the current datatype filter value.
+
+        Returns
+        -------
+        str | None
+            datatype filter value, or None if not set.
+        """
         return self._refdatatype
 
-    def getOrientationFilter(self):
+    def getOrientationFilter(self) -> str | None:
+        """
+        Get the current orientation filter value.
+
+        Returns
+        -------
+        str | None
+            orientation filter value, or None if not set.
+        """
         return self._reforientation
 
-    def getSuffixFilter(self):
+    def getSuffixFilter(self) -> str | None:
+        """
+        Get the current filename suffix filter value.
+
+        Returns
+        -------
+        str | None
+            suffix filter value, or None if not set.
+        """
         return self._refsuffix
 
-    def getPrefixFilter(self):
+    def getPrefixFilter(self) -> str | None:
+        """
+        Get the current filename prefix filter value.
+
+        Returns
+        -------
+        str | None
+            prefix filter value, or None if not set.
+        """
         return self._refprefix
 
-    def getRangeFilter(self):
+    def getRangeFilter(self) -> tuple[float, float] | None:
+        """
+        Gets the current scalar range filter values.
+
+        Returns
+        -------
+        tuple[float, float] | None
+            range filter values (min, max), or None if not set.
+        """
         return self._refRange
 
-    def getIDFilter(self):
+    def getIDFilter(self) -> str:
+        """
+        Get the current ID filter value.
+
+        Returns
+        -------
+        str
+            ID filter value, or an empty string if not set.
+        """
         return self._refSpaceID
 
-    def getFilenameContainsFilter(self):
+    def getFilenameContainsFilter(self) -> str | None:
+        """
+        Get the current filename contains substring filter value.
+
+        Returns
+        -------
+        str | None
+            substring filter value, or None if not set.
+        """
         return self._refcontains
 
-    def clearFilters(self):
+    def clearFilters(self) -> None:
+        """
+        Clears all active filters and resets the internal state of the filter.
+        """
         self._volume = None
 
         self._name = ''
@@ -578,17 +1007,22 @@ class FileSelectionWidget(QWidget, SelectionFilter):
     Description
     ~~~~~~~~~~~
 
-    Widget that manages single file selection and filtering.
-    Available filters: directory, file extension, DICOM, Nifti, Minc, Nrrd, Vtk, numpy, SisypheVolume, SisypheROI,
-    identity fields, ID, template ICBM152, FOV, size, modality, sequence, datatype, single component, multi component,
-    orientation, scalar range, frame, filename prefix, filename suffix, str in filename, registered to a reference file
+    Widget that manages single file selection.
+
+    This widget consists of the following elements, which are displayed from left to right.
+
+    - QLabel widget, descriptive text label
+    - QLineEdit widget, selected file name
+    - IconLabel widget with '<' icon, to select a PySisypheVolume from the thumbnail bar (optional widget)
+    - IconLabel widget with folder icon, to select a file from a dialog
+    - IconLabel widget with 'X' icon, to clear the selected file name
 
     Inheritance
     ~~~~~~~~~~~
 
     QWidget, SelectionFilter -> FileSelectionWidget
 
-    Last revision: 15/04/2025
+    Last revision: 20/10/2025
     """
 
     # Custom Qt Signal
@@ -598,17 +1032,15 @@ class FileSelectionWidget(QWidget, SelectionFilter):
 
     # Special method
 
-    """
-    Private attributes
+    def __init__(self, parent: QWidget | None = None)  -> None:
+        """
+        FileSelectionWidget instance constructor.
 
-    _label          QLabel
-    _field          QLineEdit
-    _current        QPushbutton
-    _open           QPushbutton
-    _clear          QPushbutton
-    """
-
-    def __init__(self, parent=None):
+        Parameters
+        ----------
+        parent : QWidget | None (optional)
+            parent widget.
+        """
         QWidget.__init__(self, parent)
         SelectionFilter.__init__(self)
 
@@ -679,9 +1111,23 @@ class FileSelectionWidget(QWidget, SelectionFilter):
         # noinspection PyUnresolvedReferences
         self._clear.clicked.connect(lambda: self.clear())
 
+    """
+    Private attributes
+
+    _label          QLabel
+    _field          QLineEdit
+    _current        QPushbutton
+    _open           QPushbutton
+    _clear          QPushbutton
+    """
+
     # Private methods
 
     def _onMenuThumbnailShow(self):
+        """
+        Displays the context menu for selecting volumes from the thumbnail toolbar.
+        If only one volume is available, it is directly opened. If multiple, a popup menu is shown.
+        """
         if self.hasToolbarThumbnail():
             n = self._thumbnail.getWidgetsCount()
             if n == 1:
@@ -700,87 +1146,222 @@ class FileSelectionWidget(QWidget, SelectionFilter):
                 # Revision 27/10/2024 >
 
     def _onMenuThumbnailSelect(self, action):
+        """
+        Handles the selection of a volume from the thumbnail menu.
+
+        Parameters
+        ----------
+        action : QAction
+            QAction that was triggered, containing the filename.
+        """
         self.open(str(action.data()))
 
     # Public methods
 
-    def setToolbarThumbnail(self, t):
+    def setToolbarThumbnail(self, t: ToolBarThumbnail) -> None:
+        """
+        Set the ToolBarThumbnail widget for accessing volumes and makes the current volume '<' button visible if a
+        thumbnail toolbar is provided.
+
+        Parameters
+        ----------
+        t : ToolBarThumbnail
+            ToolBarThumbnail instance.
+        """
         super().setToolbarThumbnail(t)
         self._current.setVisible(True)
 
-    def setCurrentVolumeButtonVisibility(self, v):
+    def setCurrentVolumeButtonVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the button that allows adding the current thumbnail volume to the field.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the button, False to hide it.
+        """
         if isinstance(v, bool):
             v = v and self.hasToolbarThumbnail()
             self._current.setVisible(v)
         else: raise TypeError('parameter {} is not bool.'.format(type(v)))
 
-    def getCurrentVolumeButtonVisibility(self):
+    def getCurrentVolumeButtonVisibility(self) -> bool:
+        """
+        Get the visibility state of the current volume '<' button.
+
+        Returns
+        -------
+        bool
+            True if the button is visible, False otherwise.
+        """
         return self._current.isVisible()
 
-    def setClearButtonVisibility(self, v):
+    def setClearButtonVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the clear button.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the button, False to hide it.
+        """
         if isinstance(v, bool): self._clear.setVisible(v)
         else: raise TypeError('parameter {} is not bool.'.format(type(v)))
 
-    def getClearButtonVisibility(self):
+    def getClearButtonVisibility(self) -> bool:
+        """
+        Get the visibility state of the clear button.
+
+        Returns
+        -------
+        bool
+            True if the button is visible, False otherwise.
+        """
         return self._clear.isVisible()
 
-    def setLabelVisibility(self, v):
+    def setLabelVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the descriptive label.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the label, False to hide it.
+        """
         if isinstance(v, bool): self._label.setVisible(v)
         else: raise TypeError('parameter {} is not bool.'.format(type(v)))
 
-    def showLabel(self):
+    def showLabel(self) -> None:
+        """
+        Show the descriptive label.
+        """
         self._label.setVisible(True)
 
-    def hideLabel(self):
+    def hideLabel(self) -> None:
+        """
+        Hide the descriptive label.
+        """
         self._label.setVisible(False)
 
-    def getLabelVisibility(self):
+    def getLabelVisibility(self) -> bool:
+        """
+        Get the visibility state of the descriptive label.
+
+        Returns
+        -------
+        bool
+            True if the label is visible, False otherwise.
+        """
         return self._label.isVisible()
 
-    def setTextLabel(self, txt):
+    def setTextLabel(self, txt: str) -> None:
+        """
+        Set the text of the descriptive label and makes it visible.
+
+        Parameters
+        ----------
+        txt : str
+            text to set for the label.
+        """
         if isinstance(txt, str):
             self._label.setText(txt)
             self._label.setVisible(True)
         else:
             raise TypeError('parameter type {} is not str'.format(type(txt)))
 
-    def getTextLabel(self):
+    def getTextLabel(self) -> str:
+        """
+        Get the current text of the descriptive label.
+
+        Returns
+        -------
+        str
+            text of the label.
+        """
         return self._label.text()
 
-    def getLabel(self):
+    def getLabel(self) -> QLabel:
+        """
+        Get the QLabel widget used as the descriptive label.
+
+        Returns
+        -------
+        QLabel
+            QLabel instance.
+        """
         return self._label
 
-    def alignLabels(self, w):
+    def alignLabels(self, w: QWidget) -> None:
+        """
+        Align the labels of this widget and another FileSelectionWidget to ensure consistent width and right alignment.
+
+        Parameters
+       -----------
+        w : QWidget
+            another FileSelectionWidget instance to align with.
+        """
         if isinstance(w, FileSelectionWidget):
             fm = QFontMetrics(self._label.font())
             w1 = fm.horizontalAdvance(self._label.text())
+            # noinspection PyProtectedMember
             w2 = fm.horizontalAdvance(w._label.text())
             w1 = max(w1, w2)
             self._label.setAlignment(Qt.AlignRight)
+            # noinspection PyTypeChecker
             w.getLabel().setAlignment(Qt.AlignRight)
             self._label.setFixedWidth(w1 + 20)
             w.getLabel().setFixedWidth(w1 + 20)
         else: raise TypeError('Parameter type {} is not FileSelectionWidget.'.format(type(w)))
 
-    def setButtonsVisibility(self, v):
+    def setButtonsVisibility(self, v: bool) -> None:
+        """
+        Sets the visibility of all control buttons (open, clear, current volume).
+
+        Parameters
+        ----------
+        v : bool
+            True to show buttons, False to hide them.
+        """
         if isinstance(v, bool):
             self._open.setVisible(v)
             self._clear.setVisible(v)
             self.setCurrentVolumeButtonVisibility(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def showButtons(self):
+    def showButtons(self) -> None:
+        """
+        Show all control buttons (open, clear, current volume).
+        """
         self.setButtonsVisibility(True)
 
-    def hideButtons(self):
+    def hideButtons(self) -> None:
+        """
+        Hide all control buttons (open, clear, current volume).
+        """
         self.setButtonsVisibility(False)
 
-    def getButtonsVisibility(self):
+    def getButtonsVisibility(self) -> bool:
+        """
+        Get the visibility state of control buttons.
+
+        Returns
+        -------
+        bool
+            True if buttons are visible, False otherwise.
+        """
         return self._open.isVisible()
 
     # < Revision 23/12/2024
     # add setFieldVisibility method
-    def setFieldVisibility(self, v):
+    def setFieldVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the QLineEdit field where the selected filename is displayed.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the field, False to hide it.
+        """
         if isinstance(v, bool):
             self._field.setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
@@ -788,40 +1369,88 @@ class FileSelectionWidget(QWidget, SelectionFilter):
 
     # < Revision 23/12/2024
     # add showField method
-    def showField(self):
+    def showField(self) -> None:
+        """
+        Show the QLineEdit field where the selected filename is displayed.
+        """
         self.setFieldVisibility(True)
     # Revision 23/12/2024 >
 
     # < Revision 23/12/2024
     # add hideField method
-    def hideField(self):
+    def hideField(self) -> None:
+        """
+        Hide the QLineEdit field where the selected filename is displayed.
+        """
         self.setFieldVisibility(False)
     # Revision 23/12/2024 >
 
     # < Revision 23/12/2024
     # add getFieldVisibility method
-    def getFieldVisibility(self):
+    def getFieldVisibility(self) -> bool:
+        """
+        Get the visibility state of the QLineEdit field where the selected filename is displayed.
+
+        Returns
+        -------
+        bool
+            True if the field is visible, False otherwise.
+        """
         return self._field.isVisible()
     # Revision 23/12/2024 >
 
-    def setRemoveButtonVisibility(self, v):
+    def setRemoveButtonVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the remove button (alias for clear button).
+
+        Parameters
+       -----------
+        v : bool
+            True to show the button, False to hide it.
+        """
         if isinstance(v, bool): self._clear.setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def showRemoveButton(self):
+    def showRemoveButton(self) -> None:
+        """
+        Show the remove button (alias for clear button).
+        """
         self._clear.setVisible(True)
 
-    def hideRemoveButton(self):
+    def hideRemoveButton(self) -> None:
+        """
+        Hide the remove button (alias for clear button).
+        """
         self._clear.setVisible(False)
 
-    def getRemoveButtonVisibility(self):
+    def getRemoveButtonVisibility(self) -> bool:
+        """
+        Get the visibility state of the remove button (alias for clear button).
+
+        Returns
+        -------
+        bool
+            True if the field is visible, False otherwise.
+        """
         return self._clear.isVisible()
 
-    def filterSisypheVolume(self):
+    def filterSisypheVolume(self) -> None:
+        """
+        Set the filter to allow only PySisyphe volume files (.xvol) and updates the visibility of the 'current volume'
+        button based on the presence of a thumbnail toolbar.
+        """
         SelectionFilter.filterSisypheVolume(self)
         self._current.setVisible(self.hasToolbarThumbnail())
 
-    def clear(self, signal=True):
+    def clear(self, signal: bool = True) -> None:
+        """
+        Clear the selected file from the QLineEdit field and resets internal state.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits FieldChanged and FieldCleared signals. Defaults to True.
+        """
         self._field.setText('')
         self._field.setToolTip('')
         self._name = ''
@@ -833,7 +1462,19 @@ class FileSelectionWidget(QWidget, SelectionFilter):
             self.FieldCleared.emit(self)
 
     # noinspection PyInconsistentReturns
-    def open(self, filename='', signal=True):
+    def open(self, filename: str = '', signal: bool = True) -> None:
+        """
+        Open a file dialog to select a file or directory, applying configured filters. If a filename is provided, it
+        attempts to open that file directly. Performs various checks (component, identity, FOV, size, modality, etc.)
+        based on active filters before accepting the file.
+
+        Parameters
+        ~~~~~~~~~~
+        filename : str (optional)
+            pre-selected filename to open directly. Defaults to an empty string.
+        signal : bool (optional)
+            If True, emits FieldChanged signal upon successful selection. Defaults to True.
+        """
         # Extract filepath, filename and ext of parameter if exists
         param = filename != '' and exists(filename)
         if param: paramext = splitext(filename)[1].lower()
@@ -1473,10 +2114,26 @@ class FileSelectionWidget(QWidget, SelectionFilter):
                     # noinspection PyUnresolvedReferences
                     self.FieldChanged.emit(self, filename)
 
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
+        """
+        Checks if the file selection field is empty.
+
+        Returns
+        -------
+        bool
+            True if no file is selected, False otherwise.
+        """
         return self._path == ''
 
-    def getVolume(self):
+    def getVolume(self) -> SisypheVolume:
+        """
+        Load the selected file as a SisypheVolume. This method is intended for use when a SisypheVolume is expected.
+
+        Returns
+        -------
+        SisypheVolume
+            loaded SisypheVolume object.
+        """
         if not self.isEmpty():
             v = SisypheVolume()
             v.load(self.getFilename())
@@ -1485,11 +2142,31 @@ class FileSelectionWidget(QWidget, SelectionFilter):
 
     # Qt Drop events
 
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, event: Optional[QDragEnterEvent]) -> None:
+        """
+        Handles drag enter events, accepting drops if the mime data contains text (e.g., file paths).
+        This is the method used to manage the drag-and-drop of files from Finder on the macOS platform or File Explorer
+        on the Windows platform.
+
+        Parameters
+        ----------
+        event : QDragEnterEvent
+            Qt drag enter event.
+        """
         if event.mimeData().hasText(): event.accept()
         else: event.ignore()
 
-    def dropEvent(self, event):
+    def dropEvent(self, event: Optional[QDropEvent]) -> None:
+        """
+        Handles drop events, attempting to open the dropped file(s).
+        This is the method used to manage the drag-and-drop of files from Finder on the macOS platform or File Explorer
+        on the Windows platform.
+
+        Parameters
+        ----------
+        event ! QDropEvent
+            Qt drop event.
+        """
         if event.mimeData().hasText():
             event.accept()
             self.open(event.mimeData().text()[7:])
@@ -1502,17 +2179,23 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
     Description
     ~~~~~~~~~~~
 
-    Widget that manages files selection and filtering.
-    Available filters: directory, file extension, DICOM, Nifti, Minc, Nrrd, Vtk, numpy, SisypheVolume, SisypheROI,
-    identity fields, ID, template ICBM152, FOV, size, modality, sequence, datatype, single component, multi component,
-    orientation, scalar range, frame, filename prefix, filename suffix, str in filename, registered to a reference file
+    Widget that manages files selection.
+
+    This widget consists of the following elements, which are displayed from left to right.
+
+    - QLabel widget, descriptive text label
+    - QListWidget widget, displays a list of selected files
+    - IconLabel widget with '<' icon, to add a PySisypheVolume from the thumbnail bar (optional widget)
+    - QPushButton 'add', to add a file from a dialog
+    - QPushButton 'remove', to remove the selected file(s) from the list
+    - QPushButton 'remove all', to remove all the files from the list
 
     Inheritance
     ~~~~~~~~~~~
 
     QWidget, SelectionFilter -> FilesSelectionWidget
 
-    Last revision: 19/06/2025
+    Last revision: 20/10/2025
     """
 
     # Custom Qt Signals
@@ -1526,20 +2209,19 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
 
     # Special method
 
-    """
-    Private attributes
+    def __init__(self, maxcount: int = 100, checkbox: bool = False, parent: QWidget | None = None)  -> None:
+        """
+        FilesSelectionWidget instance constructor.
 
-    _label      QLabel
-    _list       QListWidget
-    _current    QPushButton
-    _add        QPushButton
-    _clear      QPushButton
-    _clearall   QPushButton
-    _stop       bool, break files check after failure
-    _refCount   int, maximum number of files
-    """
-
-    def __init__(self, maxcount=100, checkbox=False, parent=None):
+        Parameters
+        ----------
+        maxcount : int
+            maximum number of files allowed in the list
+        checkbox : bool
+            display or not a QCheckbox widget before each file name in the list
+        parent : QWidget | None (optional)
+            parent widget
+        """
         QWidget.__init__(self, parent)
         SelectionFilter.__init__(self)
 
@@ -1608,15 +2290,37 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         self._clearall.clicked.connect(lambda: self.clearall())
         # Revision 19/06/2025 >
 
+    """
+    Private attributes
+
+    _label      QLabel
+    _list       QListWidget
+    _current    QPushButton
+    _add        QPushButton
+    _clear      QPushButton
+    _clearall   QPushButton
+    _stop       bool, break files check after failure
+    _refCount   int, maximum number of files
+    """
+
     # Private method
 
     def _selectionChanged(self):
+        """
+        Slot connected to the itemSelectionChanged signal of the QListWidget.
+        Emits FilesSelectionWidgetSelectionChanged signal with the filename of the first selected item.
+        """
         selecteditems = self._list.selectedItems()
         if len(selecteditems) > 0:
             # noinspection PyUnresolvedReferences
             self.FilesSelectionWidgetSelectionChanged.emit(self, selecteditems[0].data(256))
 
     def _onMenuThumbnailShow(self):
+        """
+        Displays the context menu for selecting PySisyphe (.xvol) volumes from the thumbnail toolbar.
+        If only one volume is available, it's directly added. If multiple, a popup menu is shown.
+        Includes an 'All' option for adding all volumes from the toolbar.
+        """
         if self.hasToolbarThumbnail():
             n = self._thumbnail.getWidgetsCount()
             if n == 1:
@@ -1643,6 +2347,15 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 menu.exec(self._current.mapToGlobal(QPoint(0, self._current.height())))
 
     def _onMenuThumbnailSelect(self, action):
+        """
+        Handles the selection of a PySisyphe volume (.xvol) from the thumbnail menu.
+        If 'All' is selected, it adds all PySisyphe volumes (.xvol) from the thumbnail toolbar.
+
+        Parameters
+        ----------
+        action : QAction
+            QAction that was triggered, containing the filename or 'All'.
+        """
         # < Revision 08/11/2024
         if action.text() == 'All':
             n = self._thumbnail.getWidgetsCount()
@@ -1659,71 +2372,197 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         else: self.add(str(action.data()))
 
     def _onDoubleClicked(self, item):
+        """
+        Slot connected to the itemDoubleClicked signal of the QListWidget.
+        Emits FilesSelectionWidgetDoubleClicked signal with the double-clicked item.
+
+        Parameters
+        ----------
+        item : QListWidgetItem
+            QListWidgetItem that was double-clicked.
+        """
         if item is not None:
             # noinspection PyUnresolvedReferences
             self.FilesSelectionWidgetDoubleClicked.emit(item)
 
     # Public methods
 
-    def setStopCheckAfterFailure(self, stop):
+    def setStopCheckAfterFailure(self, stop: bool) -> None:
+        """
+        Set whether the file checking process should stop after the first file fails a filter check during an 'add' operation.
+
+        Parameters
+        ----------
+        stop : bool
+            True to stop on first failure, False to continue checking other files.
+        """
         if isinstance(stop, bool): self._stop = stop
         else: raise TypeError('parameter type {} is not bool.'.format(type(stop)))
 
-    def getStopCheckAfterFailure(self):
+    def getStopCheckAfterFailure(self) -> bool:
+        """
+        Get the current setting for stopping file checks after a failure.
+
+        Returns
+        -------
+        bool
+            True if checks stop on first failure, False otherwise.
+        """
         return self._stop
 
-    def setMaximumNumberOfFiles(self, n):
+    def setMaximumNumberOfFiles(self, n: int)  -> None:
+        """
+        Set the maximum number of files allowed in the list.
+
+        Parameters
+        ----------
+        n : int
+            maximum number of files.
+        """
         if isinstance(n, int): self._refCount = n
         else: raise TypeError('parameter type {} is not int.'.format(type(n)))
 
-    def getMaximumNumberOfFiles(self):
+    def getMaximumNumberOfFiles(self) -> int:
+        """
+        Get the maximum number of files allowed in the list.
+
+        Returns
+        -------
+        int
+            maximum number of files.
+        """
         return self._refCount
 
-    def setToolbarThumbnail(self, t):
+    def setToolbarThumbnail(self, t: ToolBarThumbnail) -> None:
+        """
+        Set the ToolBarThumbnail widget for accessing volumes and makes the 'current volume' button visible if a
+        thumbnail toolbar is provided.
+
+        Parameters
+        ----------
+        t : ToolBarThumbnail
+            ToolBarThumbnail instance.
+        """
         super().setToolbarThumbnail(t)
         self._current.setVisible(True)
 
-    def setCurrentVolumeButtonVisibility(self, v):
+    def setCurrentVolumeButtonVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the button that allows adding the current thumbnail volume to the list.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the button, False to hide it.
+        """
         if isinstance(v, bool):
             v = v and self.hasToolbarThumbnail()
             self._current.setVisible(v)
         else: raise TypeError('parameter {} is not bool.'.format(type(v)))
 
-    def showCurrentVolumeButton(self):
+    def showCurrentVolumeButton(self) -> None:
+        """
+        Show the 'current volume' button.
+        """
         self.setCurrentVolumeButtonVisibility(True)
 
-    def hideCurrentVolumeButton(self):
+    def hideCurrentVolumeButton(self) -> None:
+        """
+        Hide the 'current volume' button.
+        """
         self.setCurrentVolumeButtonVisibility(False)
 
-    def getCurrentVolumeButtonVisibility(self):
+    def getCurrentVolumeButtonVisibility(self) -> bool:
+        """
+        Get the visibility state of the 'current volume' button.
+
+        Returns
+        -------
+        bool
+            True if the button is visible, False otherwise.
+        """
         return self._current.isVisible()
 
-    def setLabelVisibility(self, v):
+    def setLabelVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the descriptive label for the widget.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the label, False to hide it.
+        """
         if isinstance(v, bool): self._label.setVisible(v)
         else: raise TypeError('parameter {} is not bool.'.format(type(v)))
 
-    def showLabel(self):
+    def showLabel(self) -> None:
+        """
+        Show the descriptive label.
+        """
         self._label.setVisible(True)
 
-    def hideLabel(self):
+    def hideLabel(self) -> None:
+        """
+        Hide the descriptive label.
+        """
         self._label.setVisible(False)
 
-    def getLabelVisibility(self):
+    def getLabelVisibility(self) -> bool:
+        """
+        Get the visibility state of the descriptive label.
+
+        Returns
+        -------
+        bool
+            True if the label is visible, False otherwise.
+        """
         return self._label.isVisible()
 
-    def setTextLabel(self, txt):
+    def setTextLabel(self, txt: str) -> None:
+        """
+        Set the text of the descriptive label and makes it visible.
+
+        Parameters
+        ----------
+        txt : str
+            text to set for the label.
+        """
         if isinstance(txt, str):
             self._label.setText(txt)
             self._label.setVisible(True)
         else: raise TypeError('parameter type {} is not str'.format(type(txt)))
 
-    def getTextLabel(self):
+    def getTextLabel(self) -> str:
+        """
+        Get the current text of the descriptive label.
+
+        Returns
+        -------
+        str
+            text of the label.
+        """
         return self._label.text()
 
-    def getLabel(self):
+    def getLabel(self) -> QLabel:
+        """
+        Get the QLabel widget used as the descriptive label.
+
+        Returns
+        -------
+        QLabel
+            QLabel instance.
+        """
         return self._label
 
-    def setButtonsVisibility(self, v):
+    def setButtonsVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of all control buttons (add, remove, remove all, current volume).
+
+        Parameters
+        ----------
+        v : bool
+            True to show buttons, False to hide them.
+        """
         if isinstance(v, bool):
             self._add.setVisible(v)
             self._clear.setVisible(v)
@@ -1731,45 +2570,119 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             self.setCurrentVolumeButtonVisibility(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def showButtons(self):
+    def showButtons(self) -> None:
+        """
+        Show all control buttons (add, remove, remove all, current volume).
+        """
         self.setButtonsVisibility(True)
 
-    def hideButtons(self):
+    def hideButtons(self) -> None:
+        """
+        Hide all control buttons (add, remove, remove all, current volume).
+        """
         self.setButtonsVisibility(False)
 
-    def getButtonsVisibility(self):
+    def getButtonsVisibility(self) -> bool:
+        """
+        Get the visibility state of control buttons (add, remove, remove all, current volume).
+
+        Returns
+        -------
+        bool
+            True if buttons are visible, False otherwise.
+        """
         return self._add.isVisible()
 
-    def setRemoveButtonVisibility(self, v):
+    def setRemoveButtonVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the 'Remove' button.
+
+        Parameters
+        ~~~~~~~~~~
+        v : bool
+            True to show the button, False to hide it.
+        """
         if isinstance(v, bool): self._clear.setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def showRemoveButton(self):
+    def showRemoveButton(self) -> None:
+        """
+        Show 'remove' button.
+        """
         self._clear.setVisible(True)
 
-    def hideRemoveButton(self):
+    def hideRemoveButton(self) -> None:
+        """
+        Hide 'remove' button.
+        """
         self._clear.setVisible(False)
 
-    def getRemoveButtonVisibility(self):
+    def getRemoveButtonVisibility(self) -> bool:
+        """
+        Get the visibility state of the 'remove' button.
+
+        Returns
+        -------
+        bool
+            True if buttons are visible, False otherwise.
+        """
         return self._clear.isVisible()
 
-    def setRemoveAllButtonVisibility(self, v):
+    def setRemoveAllButtonVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the 'remove all' button.
+
+        Parameters
+        ~~~~~~~~~~
+        v : bool
+            True to show the button, False to hide it.
+        """
         if isinstance(v, bool): self._clearall.setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def showRemoveAllButton(self):
+    def showRemoveAllButton(self) -> None:
+        """
+        Show 'remove all' button.
+        """
         self._clearall.setVisible(True)
 
-    def hideRemoveAllButton(self):
+    def hideRemoveAllButton(self) -> None:
+        """
+        Hide 'remove all' button.
+        """
         self._clearall.setVisible(False)
 
-    def getRemoveAllButtonVisibility(self):
+    def getRemoveAllButtonVisibility(self) -> bool:
+        """
+        Get the visibility state of the 'remove all' button.
+
+        Returns
+        -------
+        bool
+            True if buttons are visible, False otherwise.
+        """
         return self._clearall.isVisible()
 
-    def getCheckBoxVisibility(self):
+    def getCheckBoxVisibility(self) -> bool:
+        """
+        Check whether checkboxes are displayed before each file name in the list.
+
+        Returns
+        -------
+        bool
+            True if checkboxes are visible, False otherwise.
+        """
         return self._checkbox
 
-    def setSelectionTo(self, index):
+    def setSelectionTo(self, index: str | int) -> None:
+        """
+        Select a file in the list by its index or by matching its text.
+
+        Parameters
+        ----------
+        index : str | int
+            index (int) or text (str) of the item to select.
+        """
         if not self.isEmpty():
             if isinstance(index, str):
                 index = self._list.findItems(index, 0)
@@ -1780,7 +2693,15 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                     item.setSelected(True)
             else: raise TypeError('parameter type {} is not int or str.'.format(type(index)))
 
-    def copySelectionFrom(self, widget):
+    def copySelectionFrom(self, widget: QWidget) -> None:
+        """
+        Copy the selection state from another FilesSelectionWidget to this widget.
+
+        Parameters
+        ----------
+        widget : QWidget
+            source FilesSelectionWidget to copy selection from
+        """
         if isinstance(widget, FilesSelectionWidget):
             items = widget.selectedItems()
             for item in items:
@@ -1788,7 +2709,15 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 self._list.item(row).setSelected(True)
         else: raise TypeError('parameter type {} is not FilesSelectionWidget.'.format(type(widget)))
 
-    def copySelectionTo(self, widget):
+    def copySelectionTo(self, widget: QWidget) -> None:
+        """
+        Copy the selection state from this widget to another FilesSelectionWidget.
+
+        Parameters
+        ----------
+        widget : QWidget
+            target FilesSelectionWidget to copy selection to
+        """
         if isinstance(widget, FilesSelectionWidget):
             items = self._list.selectedItems()
             for item in items:
@@ -1796,32 +2725,77 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 widget.item(row).setSelected(True)
         else: raise TypeError('parameter type {} is not FilesSelectionWidget.'.format(type(widget)))
 
-    def clearSelection(self):
+    def clearSelection(self) -> None:
+        """
+        Clear the current selection in the list widget.
+        """
         self._list.clearSelection()
 
-    def hasSelection(self):
+    def hasSelection(self) -> bool:
+        """
+        Checks if any file is currently selected in the list.
+
+        Returns
+        -------
+        bool
+            True if at least one item is selected, False otherwise.
+        """
         return len(self._list.selectedItems()) > 0
 
-    def setSelectionMode(self, v):
+    def setSelectionMode(self, v: int) -> None:
+        """
+        Set the selection mode of the internal QListWidget.
+
+        Parameters
+        ----------
+        v : int
+            QAbstractItemView.selection mode (e.g., QAbstractItemView.SingleSelection,
+            QAbstractItemView.ExtendedSelection).
+        """
         if isinstance(v, int):
             if 0 <= v < 5:
                 self._list.setSelectionMode(v)
             else: raise ValueError('parameter value {} is not between 0 and 4.'.format(v))
         else: raise TypeError('parameter type {} is not int.'.format(type(v)))
 
-    def setSelectionModeToSingle(self):
+    def setSelectionModeToSingle(self) -> None:
+        """
+        Set the selection mode of the list widget to single item selection.
+        """
         self._list.setSelectionMode(1)
 
-    def setSelectionModeToContiguous(self):
+    def setSelectionModeToContiguous(self) -> None:
+        """
+        Set the selection mode of the list widget to contiguous item selection.
+        """
         self._list.setSelectionMode(4)
 
-    def setSelectionModeToExtended(self):
+    def setSelectionModeToExtended(self) -> None:
+        """
+        Set the selection mode of the list widget to extended item selection.
+        """
         self._list.setSelectionMode(3)
 
-    def getSelectionMode(self):
+    def getSelectionMode(self) -> int:
+        """
+        Get the current selection mode of the list widget.
+
+        Returns
+        -------
+        int
+            current selection mode.
+        """
         return self._list.selectionMode()
 
-    def getFilenames(self):
+    def getFilenames(self) -> list[str]:
+        """
+        Get a list of all filenames currently in the widget's list.
+
+        Returns
+        -------
+        list[str]
+            list of absolute file paths, or None if the list is empty.
+        """
         filenames = None
         n = self._list.count()
         if n > 0:
@@ -1830,7 +2804,15 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 filenames.append(self._list.item(i).data(256))
         return filenames
 
-    def getSelectedFilenames(self):
+    def getSelectedFilenames(self) -> list[str]:
+        """
+        Get a list of filenames for all currently selected items in the list.
+
+        Returns
+        -------
+        list[str]
+            list of absolute file paths for selected items, or None if no items are selected.
+        """
         items = self._list.selectedItems()
         filenames = None
         if len(items) > 0:
@@ -1839,7 +2821,16 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 filenames.append(item.data(256))
         return filenames
 
-    def getCheckedFilenames(self):
+    def getCheckedFilenames(self) -> list[str]:
+        """
+        Get a list of filenames for all checked items in the list. If checkboxes are not enabled, it returns all
+        filenames.
+
+        Returns
+        -------
+        list[str]
+            list of absolute file paths for checked items.
+        """
         if not self._checkbox: return self.getFilenames()
         else:
             r = list()
@@ -1847,7 +2838,16 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 if self._list.item(i).checkState() > 0: r.append(self._list.item(i).data(256))
             return r
 
-    def getCheckedIndexes(self):
+    def getCheckedIndexes(self) -> list[int]:
+        """
+        Get a list of indexes for all checked items in the list. If checkboxes are not enabled, it returns indexes for
+        all items.
+
+        Returns
+        -------
+        list[int]
+            list of integer indexes for checked items.
+        """
         if not self._checkbox: return list(range(self._list.count()))
         else:
             r = list()
@@ -1855,7 +2855,16 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 if self._list.item(i).checkState() > 0: r.append(i)
             return r
 
-    def getCheckStateList(self):
+    def getCheckStateList(self) -> list[bool]:
+        """
+        Get a list of boolean check states for all items in the list. If checkboxes are not enabled, it returns a list
+        of True for all items.
+
+        Returns
+        -------
+        list[bool]
+            list where True indicates a checked item, False an unchecked item.
+        """
         if not self._checkbox: return [True] * self._list.count()
         else:
             r = list()
@@ -1863,11 +2872,28 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 r.append(self._list.item(i).checkState() > 0)
             return r
 
-    def filterSisypheVolume(self):
+    def filterSisypheVolume(self) -> None:
+        """
+        Set the filter to allow only PySisyphe volume files (.xvol) and updates the visibility of the 'current volume'
+        button based on the presence of a thumbnail toolbar.
+        """
         SelectionFilter.filterSisypheVolume(self)
         self._current.setVisible(self.hasToolbarThumbnail())
 
-    def containsItem(self, v):
+    def containsItem(self, v: QListWidgetItem) -> bool:
+        """
+        Check if a QListWidgetItem with the same text and data (filename) is already present in the list.
+
+        Parameters
+        ----------
+        v : QListWidgetItem
+            QListWidgetItem to check for
+
+        Returns
+        -------
+        bool
+            True if the item is found, False otherwise.
+        """
         if isinstance(v, QListWidgetItem):
             items = self._list.findItems(v.text(), Qt.MatchExactly)
             if len(items) > 0:
@@ -1877,23 +2903,70 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             return False
         else: raise TypeError('parameter type {} is not QListWidgetItem.'.format(type(v)))
 
-    def getIndexFromItem(self, v):
+    def getIndexFromItem(self, v: QListWidgetItem) -> int:
+        """
+        Get the row index of a given QListWidgetItem in the list.
+
+        Parameters
+        ----------
+        v : QListWidgetItem
+            QListWidgetItem to find the index for.
+
+        Returns
+        -------
+        int
+            row index of the item.
+        """
         if isinstance(v, QListWidgetItem):
             return self._list.row(v)
         else: raise TypeError('parameter type {} is not QListWidgetItem.'.format(type(v)))
 
-    def getItemFromIndex(self, i):
+    def getItemFromIndex(self, i: int) -> str:
+        """
+        Get the filename of the item at a given index.
+
+        Parameters
+        ----------
+        i : int
+            index of the item
+
+        Returns
+        -------
+        str
+            filename associated with the item
+        """
         if isinstance(i, int):
             return self._list.item(i).data(256)
         else: raise TypeError('parameter type {} is not int.'.format(type(i)))
 
-    def getFilenameFromIndex(self, i):
+    def getFilenameFromIndex(self, i: int) -> str:
         if isinstance(i, int):
             return self._list.item(i).data(256)
         else: raise TypeError('parameter type {} is not int.'.format(type(i)))
 
     # noinspection PyUnboundLocalVariable
-    def add(self, filenames='', label='', signal=True, wait: DialogWait | None = None):
+    def add(self,
+            filenames: str = '',
+            label: str = '',
+            signal: bool = True,
+            wait: DialogWait | None = None):
+        """
+        Open a file dialog to select one or more files/directories and adds them to the list. Applies all configured
+        filters and performs checks (component, identity, FOV, size, modality, etc.) before adding each file. Displays
+        a progress dialog for multiple file additions.
+
+        Parameters
+        ----------
+        filenames : str (optional)
+            pre-selected filename or directory to add directly. Defaults to an empty string.
+        label : str (optional)
+            an optional label for the file dialog title. Defaults to an empty string.
+        signal : bool (optional)
+            If True, emits FieldChanged and FilesSelectionChanged signals upon successful addition. Defaults to True.
+        wait : DialogWait | None (optional)
+            an optional DialogWait instance to use for progress reporting. If None, a new one is created for multiple
+            files. Defaults to None.
+        """
         dtag = wait is None
         if label != '': label += ' '
         # Extract filepath, filename and ext of parameter if exists
@@ -3060,7 +4133,17 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                             break
                     if dtag: wait.close()
 
-    def clearItem(self, i, signal=True):
+    def clearItem(self, i: int, signal: bool = True) -> None:
+        """
+        Remove a file from the list at the specified index.
+
+        Parameters
+        ----------
+        i : int
+            index of the item to remove
+        signal : bool (optional)
+            If True, emits FieldCleared signal. Defaults to True.
+        """
         if isinstance(i, int):
             if i < self._list.count():
                 self._list.takeItem(i)
@@ -3071,7 +4154,15 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             else: raise ValueError('parameter index is out of range.')
         else: raise TypeError('parameter type {} is not int.'.format(type(i)))
 
-    def clearLastItem(self, signal=True):
+    def clearLastItem(self, signal: bool = True) -> None:
+        """
+        Remove the last file from the list.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            if True, emits FieldCleared signal. Defaults to True.
+        """
         n = self._list.count()
         if n > 0: self._list.takeItem(n - 1)
         self._add.setEnabled(True)
@@ -3079,7 +4170,15 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             # noinspection PyUnresolvedReferences
             self.FieldCleared.emit(self, [n-1])
 
-    def clear(self, signal=True):
+    def clear(self, signal: bool = True) -> None:
+        """
+        Remove all currently selected files from the list.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            if True, emits FieldCleared and FilesSelectionWidgetCleared signals. Defaults to True.
+        """
         rows = list()
         selecteditems = self._list.selectedItems()
         if len(selecteditems) > 0:
@@ -3096,7 +4195,15 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             # noinspection PyUnresolvedReferences
             self.FilesSelectionWidgetCleared.emit(self)
 
-    def clearall(self, signal=True):
+    def clearall(self, signal: bool = True) -> None:
+        """
+        Remove all files from the list.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            if True, emits FieldCleared and FilesSelectionWidgetCleared signals. Defaults to True.
+        """
         rows = list(range(self._list.count()))
         self._list.clear()
         self._add.setEnabled(True)
@@ -3107,19 +4214,55 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             # noinspection PyUnresolvedReferences
             self.FilesSelectionWidgetCleared.emit(self)
 
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
+        """
+        Check if the list of files is empty.
+
+        Returns
+        -------
+        bool
+            True if the list contains no files, False otherwise.
+        """
         return self._list.count() == 0
 
-    def filenamesCount(self):
+    def filenamesCount(self) -> int:
+        """
+        Get the number of files currently in the list.
+
+        Returns
+        -------
+        int
+            count of files.
+        """
         return self._list.count()
 
     # Qt Drop events
 
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, event: Optional[QDragEnterEvent]) -> None:
+        """
+        Handles drag enter events, accepting drops if the mime data contains text (e.g., file paths).
+        This is the method used to manage the drag-and-drop of files from Finder on the macOS platform or File Explorer
+        on the Windows platform.
+
+        Parameters
+        ----------
+        event : QDragEnterEvent
+            Qt drag enter event.
+        """
         if event.mimeData().hasText(): event.accept()
         else: event.ignore()
 
-    def dropEvent(self, event):
+    def dropEvent(self, event: Optional[QDropEvent]) -> None:
+        """
+        Handles drop events, attempting to open the dropped file(s).
+        This is the method used to manage the drag-and-drop of files from Finder on the macOS platform or File Explorer
+        on the Windows platform.
+
+        Parameters
+        ----------
+        event ! QDropEvent
+            Qt drop event.
+        """
         if event.mimeData().hasText():
             event.accept()
             files = event.mimeData().text().split('\n')
@@ -3141,12 +4284,33 @@ class MultiExtFilesSelectionWidget(FilesSelectionWidget):
 
     QWidget, SelectionFilter -> FilesSelectionWidget -> MultiExtFilesSelectionWidget
 
-    Last revision: 15/04/2025
+    Last revision: 20/10/2025
     """
 
     # Public methods
 
-    def add(self, filenames='', label='', signal=True, wait: DialogWait | None = None):
+    def add(self,
+            filenames: str = '',
+            label: str = '',
+            signal: str = True,
+            wait: DialogWait | None = None):
+        """
+        Opens a file dialog to select one or more files, specifically designed for multiple Sisyphe-specific file types
+        (e.g., .xvol, .xroi, .xmesh, .xtracts). It dynamically constructs the file filter based on the active
+        Sisyphe-specific extension filters.
+
+        Parameters
+        ~~~~~~~~~~
+        filenames : str (optional)
+            pre-selected filename to add directly. Defaults to an empty string.
+        label : str (optional)
+            Aan optional label for the file dialog title. Defaults to an empty string.
+        signal : bool (optional)
+            if True, emits FieldChanged and FilesSelectionChanged signals upon successful addition. Defaults to True.
+        wait : DialogWait | None (optional)
+            an optional DialogWait instance to use for progress reporting. If None, a new one is created for multiple
+            files. Defaults to None.
+        """
         exts = list()
         if self._refxvol: exts.append('*' + SisypheVolume.getFileExt())
         if self._refxroi: exts.append('*' + SisypheROI.getFileExt())
@@ -3215,25 +4379,25 @@ class SynchronizedFilesSelectionWidget(QWidget):
     Description
     ~~~~~~~~~~~
 
-    Multiple synchronized widgets for file selection.
+    A composite widget that manages multiple synchronized FileSelectionWidget and/or FilesSelectionWidget widgets.
+    It ensures consistency across linked widgets, for example, by checking if selected volumes have matching
+    Field of View (FOV).
 
     Inheritance
     ~~~~~~~~~~~
 
     QWidget -> SynchronizedFileSelectionWidget
 
-    Last revision: 22/10/2024
+    Last revision: 20/10/2025
     """
 
     # Special method
 
-    """
-    Private attributes
-
-    _lists      list[FileSelectionWidget]
-    """
-
-    def __init__(self, single, multiple, maxcount=100, parent=None):
+    def __init__(self,
+                 single: list[str] | tuple[str, ...],
+                 multiple: list[str] | tuple[str, ...],
+                 maxcount: int = 100,
+                 parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         # Init QLayout
@@ -3275,7 +4439,13 @@ class SynchronizedFilesSelectionWidget(QWidget):
                 self._multiple[label] = flist
                 self._layout.addWidget(flist)
 
-    def __getitem__(self, key):
+    """
+    Private attributes
+
+    _lists      list[FileSelectionWidget]
+    """
+
+    def __getitem__(self, key: str) -> QWidget:
         if isinstance(key, str):
             if key in self._single: return self._single[key]
             if key in self._multiple: return self._multiple[key]
@@ -3285,6 +4455,18 @@ class SynchronizedFilesSelectionWidget(QWidget):
     # Private method
 
     def _ListChanged(self, widget, filename):
+        """
+        Slot connected to the FieldChanged signal of contained file selection widgets.
+        It checks for Field of View (FOV) consistency among selected volumes.
+        If a discrepancy is found, the newly added file is cleared.
+
+        Parameters
+        ----------
+        widget : QWidget:
+            file selection widget that emitted the signal.
+        filename : str
+            filename that was added/changed.
+        """
         if filename != '':
             fov = list(XmlVolume(filename).getFOV())
             if isinstance(widget, FileSelectionWidget):
@@ -3309,13 +4491,31 @@ class SynchronizedFilesSelectionWidget(QWidget):
 
     # noinspection PyUnusedLocal
     def _ListCleared(self, widget):
+        """
+        Slot connected to the FieldCleared signal of contained file selection widgets.
+        If all widgets are empty, it clears the stored FOV reference.
+
+        Parameters
+        ----------
+        widget : QWidget
+            file selection widget that emitted the signal.
+        """
         if self.isEmpty(): self._FOV = list()
 
     # Public methods
 
     # < Revision 09/10/2024
     # add setToolbarThumbnail method
-    def setToolbarThumbnail(self, t):
+    def setToolbarThumbnail(self, t: ToolBarThumbnail) -> None:
+        """
+        Set the ToolBarThumbnail widget for accessing volumes and makes the 'current volume' button visible if a
+        thumbnail toolbar is provided.
+
+        Parameters
+        ----------
+        t : ToolBarThumbnail
+            ToolBarThumbnail instance.
+        """
         from Sisyphe.widgets.toolBarThumbnail import ToolBarThumbnail
         if isinstance(t, ToolBarThumbnail):
             if self._single is not None:
@@ -3329,7 +4529,15 @@ class SynchronizedFilesSelectionWidget(QWidget):
 
     # < Revision 09/10/2024
     # add getToolbarThumbnail method
-    def getToolbarThumbnail(self):
+    def getToolbarThumbnail(self) -> ToolBarThumbnail:
+        """
+        Get the associated ToolBarThumbnail widget for accessing volumes with the 'current volume' button.
+
+        Returns
+        -------
+        ToolBarThumbnail
+            Associated ToolBarThumbnail widget, or None if not set.
+        """
         if self._single is not None:
             k0 = list(self._single.keys())[0]
             return self._single[k0].getToolbarThumbnail()
@@ -3341,7 +4549,15 @@ class SynchronizedFilesSelectionWidget(QWidget):
 
     # < Revision 09/10/2024
     # add hasToolbarThumbnail method
-    def hasToolbarThumbnail(self):
+    def hasToolbarThumbnail(self) -> bool:
+        """
+        Check if a ToolBarThumbnail widget is defined.
+
+        Returns
+        -------
+        bool
+            True if a ToolBarThumbnail is set, False otherwise.
+        """
         if self._single is not None:
             k0 = list(self._single.keys())[0]
             return self._single[k0].hasToolbarThumbnail()
@@ -3351,22 +4567,67 @@ class SynchronizedFilesSelectionWidget(QWidget):
         raise AttributeError('No single or multiple file selection widget.')
     # Revision 09/10/2024 >
 
-    def getGetNumberOfLists(self):
+    def getGetNumberOfLists(self) -> int:
+        """
+        Get the total number of single (FileSelectionWidget) and multiple file selection widgets (FilesSelectionWidget)
+        that are managed by this synchronized widget.
+
+        Returns
+        -------
+        int
+            total count of file selection widgets.
+        """
         return len(self._single) + len(self._muliple)
 
-    def getTitles(self):
+    def getTitles(self) -> dict[str, list[str]]:
+        """
+        Get a dictionary containing lists of titles for both single (FileSelectionWidget) and multiple file selection
+        (FilesSelectionWidget) widgets.
+
+        Returns
+        -------
+        dict[str, list[str]]
+            dictionary with 'single' and 'multiple' keys, each mapping to a list of widget titles.
+        """
         r = dict()
         r['single'] = list(self._single.keys())
         r['multiple'] = list(self._multiple.keys())
         return r
 
-    def getSingleListTitles(self):
+    def getSingleListTitles(self) -> list[str]:
+        """
+        Get a list of titles for all single file selection widgets (FileSelectionWidget).
+
+        Returns
+        -------
+        list[str]
+            list of titles.
+        """
         return list(self._single.keys())
 
-    def getMultipleListTitles(self):
+    def getMultipleListTitles(self) -> list[str]:
+        """
+        Get a list of titles for all multiple file selection widgets (FilesSelectionWidget).
+
+        Returns
+        -------
+        list[str]
+            list of titles.
+        """
         return list(self._multiple.keys())
 
-    def setSisypheVolumeFilters(self, filters):
+    def setSisypheVolumeFilters(self, filters: dict[str, list[bool] | bool | None]) -> None:
+        """
+        Set PySisyphe volume (.xvol) filters to the contained single and multiple file selection widgets based on the
+        provided filter configuration.
+
+        Parameters
+        ----------
+        filters : dict[str, dict[str, list[bool] | bool | None]
+
+            - dictionary specifying which widgets should filter for SisypheVolumes.
+            - expected format: {'single': [bool, ...], 'multiple': [bool, ...]}
+        """
         if len(self._single) > 0:
             if 'single' in filters:
                 flt = filters['single']
@@ -3386,7 +4647,18 @@ class SynchronizedFilesSelectionWidget(QWidget):
                     else: ValueError('wrong number of elements in multiple file selection {}'.format(type(flt)))
                 else: raise TypeError('parameter type {} is not list or tuple.'.format(type(flt)))
 
-    def setSequenceFilters(self, filters):
+    def setSequenceFilters(self, filters: dict[str, dict[str, list[str] | str | None]]) -> None:
+        """
+        Set sequence filters to the contained single (FileSelectionWidget) and multiple file selection
+        (FilesSelectionWidget) widgets.
+
+        Parameters
+        ----------
+        filters : dict[str, dict[str, list[str] | str | None]
+
+            - dictionary specifying sequence filters for single and multiple widgets, mapped by their labels.
+            - expected format: {'single': [sequence_str | list[str] | None, ...], 'multiple': [sequence_str | list[str] | None, ...]}
+        """
         if isinstance(filters, dict):
             if len(self._single) > 0:
                 if 'single' in filters:
@@ -3407,7 +4679,15 @@ class SynchronizedFilesSelectionWidget(QWidget):
                         else: ValueError('wrong number of elements in multiple file selection {}'.format(type(flt)))
                     else: raise TypeError('parameter type {} is not list or tuple.'.format(type(flt)))
 
-    def getSequenceFilters(self):
+    def getSequenceFilters(self) -> dict[str, dict[str, list[str] | str | None]]:
+        """
+        Get the sequence filters currently applied to the contained widgets.
+
+        Returns
+        -------
+        dict[str, dict[str, list[str] | str | None]]
+            dictionary containing sequence filters for single and multiple widgets, mapped by their labels.
+        """
         r = dict()
         r1 = dict()
         r2 = dict()
@@ -3421,7 +4701,18 @@ class SynchronizedFilesSelectionWidget(QWidget):
         r['multiple'] = r2
         return r
 
-    def setModalityFilters(self, filters):
+    def setModalityFilters(self, filters: dict[str, dict[str, list[str] | str | None]]) -> None:
+        """
+        Set modality filters to the contained single (FileSelectionWidget) and multiple file selection
+        (FilesSelectionWidget) widgets.
+
+        Parameters
+        ----------
+        filters : dict[str, dict[str, list[str] | str | None]
+
+            - dictionary specifying sequence filters for single and multiple widgets, mapped by their labels.
+            - expected format: {'single': [modality_str | list[str] | None, ...], 'multiple': [modality_str | list[str] | None, ...]}
+        """
         if isinstance(filters, dict):
             if len(self._single) > 0:
                 if 'single' in filters:
@@ -3442,7 +4733,15 @@ class SynchronizedFilesSelectionWidget(QWidget):
                         else: ValueError('wrong number of elements in multiple file selection {}'.format(type(flt)))
                     else: raise TypeError('parameter type {} is not list or tuple.'.format(type(flt)))
 
-    def getModalityFilters(self):
+    def getModalityFilters(self) -> dict[str, dict[str, list[str] | str | None]]:
+        """
+        Get the modality filters currently applied to the contained widgets.
+
+        Returns
+        -------
+        dict[str, dict[str, list[str] | str | None]]
+            dictionary containing modality filters for single and multiple widgets, mapped by their labels.
+        """
         r = dict()
         r1 = dict()
         r2 = dict()
@@ -3456,7 +4755,18 @@ class SynchronizedFilesSelectionWidget(QWidget):
         r['multiple'] = r2
         return r
 
-    def setSuffixFilters(self, filters):
+    def setSuffixFilters(self, filters: dict[str, dict[str, str | None]]) -> None:
+        """
+        Set suffix filters to the contained single (FileSelectionWidget) and multiple file selection
+        (FilesSelectionWidget) widgets.
+
+        Parameters
+        ----------
+        filters : dict[str, dict[str, list[str] | str | None]
+
+            - dictionary specifying suffix filters for single and multiple widgets, mapped by their labels.
+            - expected format: {'single': [suffix_str | list[str] | None, ...], 'multiple': [suffix_str | list[str] | None, ...]}
+        """
         if isinstance(filters, dict):
             if len(self._single) > 0:
                 if 'single' in filters:
@@ -3477,7 +4787,15 @@ class SynchronizedFilesSelectionWidget(QWidget):
                         else: ValueError('wrong number of elements in multiple file selection {}'.format(type(flt)))
                     else: raise TypeError('parameter type {} is not list or tuple.'.format(type(flt)))
 
-    def getSuffixFilters(self):
+    def getSuffixFilters(self) -> dict[str, dict[str, str | None]]:
+        """
+        Get the suffix filters currently applied to the contained widgets.
+
+        Returns
+        -------
+        dict[str, dict[str, list[str] | str | None]]
+            dictionary containing suffix filters for single and multiple widgets, mapped by their labels.
+        """
         r = dict()
         r1 = dict()
         r2 = dict()
@@ -3491,7 +4809,18 @@ class SynchronizedFilesSelectionWidget(QWidget):
         r['multiple'] = r2
         return r
 
-    def setPrefixFilters(self, filters):
+    def setPrefixFilters(self, filters: dict[str, dict[str, str | None]]) -> None:
+        """
+        Set prefix filters to the contained single (FileSelectionWidget) and multiple file selection
+        (FilesSelectionWidget) widgets.
+
+        Parameters
+        ----------
+        filters : dict[str, dict[str, list[str] | str | None]
+
+            - dictionary specifying prefix filters for single and multiple widgets, mapped by their labels.
+            - expected format: {'single': [prefix_str | list[str] | None, ...], 'multiple': [prefix_str | list[str] | None, ...]}
+        """
         if isinstance(filters, dict):
             if len(self._single) > 0:
                 if 'single' in filters:
@@ -3512,7 +4841,15 @@ class SynchronizedFilesSelectionWidget(QWidget):
                         else: ValueError('wrong number of elements in multiple file selection {}'.format(type(flt)))
                     else: raise TypeError('parameter type {} is not list or tuple.'.format(type(flt)))
 
-    def getPrefixFilters(self):
+    def getPrefixFilters(self) -> dict[str, dict[str, str | None]]:
+        """
+        Get the prefix filters currently applied to the contained widgets.
+
+        Returns
+        -------
+        dict[str, dict[str, list[str] | str | None]]
+            dictionary containing prefix filters for single and multiple widgets, mapped by their labels.
+        """
         r = dict()
         r1 = dict()
         r2 = dict()
@@ -3526,7 +4863,18 @@ class SynchronizedFilesSelectionWidget(QWidget):
         r['multiple'] = r2
         return r
 
-    def setContainsStringFilters(self, filters):
+    def setContainsStringFilters(self, filters: dict[str, dict[str, str | None]]) -> None:
+        """
+        Set filename substring filters to the contained single (FileSelectionWidget) and multiple file selection
+        (FilesSelectionWidget) widgets.
+
+        Parameters
+        ----------
+        filters : dict[str, dict[str, list[str] | str | None]
+
+            - dictionary specifying filename substring filters for single and multiple widgets, mapped by their labels.
+            - expected format: {'single': [substring_str | list[str] | None, ...], 'multiple': [substring_str | list[str] | None, ...]}
+        """
         if isinstance(filters, dict):
             if len(self._single) > 0:
                 if 'single' in filters:
@@ -3547,7 +4895,15 @@ class SynchronizedFilesSelectionWidget(QWidget):
                         else: ValueError('wrong number of elements in multiple file selection {}'.format(type(flt)))
                     else: raise TypeError('parameter type {} is not list or tuple.'.format(type(flt)))
 
-    def getContainsStringFilters(self):
+    def getContainsStringFilters(self) -> dict[str, dict[str, str | None]]:
+        """
+        Get the filename substring filters currently applied to the contained widgets.
+
+        Returns
+        -------
+        dict[str, dict[str, list[str] | str | None]]
+            dictionary containing filename substring filters for single and multiple widgets, mapped by their labels.
+        """
         r = dict()
         r1 = dict()
         r2 = dict()
@@ -3563,7 +4919,20 @@ class SynchronizedFilesSelectionWidget(QWidget):
 
     # < Revision 10/10/2024
     # add getSelectionWidget method
-    def getSelectionWidget(self, label):
+    def getSelectionWidget(self, label: str) -> QWidget:
+        """
+        Get a specific FileSelectionWidget or FilesSelectionWidget instance by its label.
+
+        Parameters
+        ----------
+        label : str
+            label of the desired file selection widget.
+
+        Returns
+        -------
+        QWidget
+            FileSelectionWidget or FilesSelectionWidget instance.
+        """
         if self._single is not None:
             if label in self._single: return self._single[label]
         if self._multiple is not None:
@@ -3573,7 +4942,15 @@ class SynchronizedFilesSelectionWidget(QWidget):
 
     # < Revision 23/10/2024
     # add getSelectionWidget method
-    def getSelectionWidgets(self):
+    def getSelectionWidgets(self) -> tuple[QWidget, ...]:
+        """
+        Get a tuple of all contained FileSelectionWidget and FilesSelectionWidget instances.
+
+        Returns
+        -------
+        tuple[QWidget, ...]
+            tuple containing all managed file selection widgets.
+        """
         r = list()
         if self._single is not None:
             for label in self._single:
@@ -3584,7 +4961,17 @@ class SynchronizedFilesSelectionWidget(QWidget):
         return tuple(r)
     # Revision 23/10/2024 >
 
-    def getFilenames(self):
+    def getFilenames(self) -> dict[str, dict[str, str]]:
+        """
+        Get a dictionary of all selected filenames from single (FileSelectionWidget) and multiple selection
+        (FilesSelectionWidget) widgets, organized by their labels.
+
+        Returns
+        -------
+        dict[str, dict[str, str]]
+            dictionary with 'single' and 'multiple' keys, each mapping to a dictionary of widget labels and their
+            filenames.
+        """
         r = dict()
         r1 = dict()
         r2 = dict()
@@ -3598,7 +4985,18 @@ class SynchronizedFilesSelectionWidget(QWidget):
         r['multiple'] = r2
         return r
 
-    def setFilenames(self, filenames):
+    def setFilenames(self, filenames: dict[str, dict[str, str]]) -> None:
+        """
+        Set the filenames for the contained single (FileSelectionWidget) and multiple selection (FilesSelectionWidget)
+        widgets.
+
+        Parameters
+        ----------
+        filenames : dict[str, dict[str, str]]
+
+            - dictionary specifying filenames to set.
+            - expected format: {'single': {label: filename_str}, 'multiple': {label: filename_str | list[filename_str]}}
+        """
         if isinstance(filenames, dict):
             if 'single' in filenames:
                 for label, filename in filenames['single'].items():
@@ -3612,7 +5010,18 @@ class SynchronizedFilesSelectionWidget(QWidget):
 
     # < Revision 22/10/2024
     # add setAvailability method
-    def setAvailability(self, flags):
+    def setAvailability(self, flags: dict[str, dict[str, bool]]) -> None:
+        """
+        Set the visibility (availability) of the contained single (FileSelectionWidget) and multiple file selection
+        (FilesSelectionWidget) widgets.
+
+        Parameters
+        ----------
+        flags : dict[str, dict[str, bool]]:
+
+            - dictionary specifying visibility flags for widgets.
+            - expected format: {'single': {label: bool}, 'multiple': {label: bool}}
+        """
         if 'single' in flags:
             if len(flags['single']) > 0:
                 for label, flag in flags['single'].items():
@@ -3625,7 +5034,16 @@ class SynchronizedFilesSelectionWidget(QWidget):
 
     # < Revision 22/10/2024
     # add getAvailability method
-    def getAvailability(self):
+    def getAvailability(self) -> dict[str, dict[str, bool]]:
+        """
+        Get the visibility (availability) state of the contained single (FileSelectionWidget) and multiple file selection
+        (FilesSelectionWidget) widgets.
+
+        Returns
+        -------
+        dict[str, dict[str, bool]]
+            dictionary containing visibility states for single and multiple widgets, mapped by their labels.
+        """
         r = dict()
         r1 = dict()
         r2 = dict()
@@ -3640,7 +5058,17 @@ class SynchronizedFilesSelectionWidget(QWidget):
         return r
     # Revision 22/10/2024 >
 
-    def isReady(self):
+    def isReady(self) -> bool:
+        """
+        Check if the synchronized file selection widget is in a "ready" state. This means all *visible* single
+        selection widgets (FileSelectionWidget) are not empty, and all *visible* multiple selection widgets
+        (FileSelectionWidgets) have the same number of files.
+
+        Returns
+        -------
+        bool
+            True if the widget is ready, False otherwise.
+        """
         if self.isEmpty(): return False
         else:
             if len(self._single) > 0:
@@ -3667,16 +5095,40 @@ class SynchronizedFilesSelectionWidget(QWidget):
                         # revision 20/10/2024 >
         return True
 
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
+        """
+        Check if all contained file selection widgets (both single and multiple) are empty.
+
+        Returns
+        -------
+        bool
+            True if all widgets are empty, False otherwise.
+        """
         return self.isSingleEmpy() and self.isMultipleEmpty()
 
-    def isSingleEmpy(self):
+    def isSingleEmpy(self) -> bool:
+        """
+        Check if all single file selection widgets (FileSelectionWidget) empty.
+
+        Returns
+        -------
+        bool
+            True if all single selection widgets are empty, False otherwise.
+        """
         if len(self._single) > 0:
             for _, flist in self._single.items():
                 if not flist.isEmpty(): return False
         return True
 
-    def isMultipleEmpty(self):
+    def isMultipleEmpty(self) -> bool:
+        """
+        Check if all multiple file selection widgets (FilesSelectionWidget) empty.
+
+        Returns
+        -------
+        bool
+            True if all multiple selection widgets are empty, False otherwise.
+        """
         if len(self._multiple) > 0:
             for _, flist in self._multiple.items():
                 if not flist.isEmpty(): return False
@@ -3684,7 +5136,16 @@ class SynchronizedFilesSelectionWidget(QWidget):
 
     # < Revision 09/10/2024
     # add hasToolbarThumbnail method
-    def clearall(self, signal=True):
+    def clearall(self, signal: bool = True) -> None:
+        """
+        Clear all files from all contained single (FileSelectionWidget) and multiple file selection
+        (FilesSelectionWidget) widgets.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            if True, emits clear signals from the child widgets. Defaults to True.
+        """
         if self._single is not None:
             for k in self._single:
                 self._single[k].clear(signal)

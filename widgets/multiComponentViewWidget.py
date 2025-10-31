@@ -9,6 +9,9 @@ External packages/modules
     - vtk, Visualization, https://vtk.org/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
 from os import getcwd
 from os import chdir
 from os import remove
@@ -49,6 +52,9 @@ from Sisyphe.widgets.multiViewWidgets import MultiViewWidget
 from Sisyphe.widgets.iconBarViewWidgets import IconBarWidget
 from Sisyphe.widgets.screenshotsGridWidget import ScreenshotsGridWidget
 
+if TYPE_CHECKING:
+    from PyQt5.QtWidgets import QWidget
+    from matplotlib.backend_bases import PickEvent
 
 _all__ = ['MultiComponentViewWidget',
           'IconBarMultiComponentViewWidget']
@@ -69,9 +75,28 @@ class MultiComponentViewWidget(MultiViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Class designed to provide a comprehensive interface for visualizing and interacting with multi-component
-    volumetric data, offering both 2D slice views (3 x 3 grid) and a 1D signal chart with various export
-    capabilities.
+    This is a specialized subclass of the MultiViewWidget class, which provides an integrated environment for the
+    visualization and of multi-component (e.g., 4D) Sisyphe volume. It combines a grid of 2D slice views with an
+    interactive 1D signal chart, for exploring datasets like time series.
+
+    The main features are as follows:
+
+    - Multi-Component grid display: displays individual components of a SisypheVolume across a configurable grid (up to 3x3) of SliceViewWidget instances. User can navigate through the components, which are displayed sequentially in the grid.
+    - Interactive signal chart: a Matplotlib chart located below the grid plots the signal intensity profile for the data. Key chart features include:
+
+        - a dynamic curve that updates in real-time to show the signal from the voxel at the cross-shaped cursor's position.
+        - a static curve representing the mean signal across the entire volume.
+        - the ability to "pin" and persist the current voxel's curve on the chart for comparison.
+        - a highlighted span indicating the range of components currently visible in the 2D grid.
+
+    - Bidirectional interaction: the link between the grid and chart is bidirectional. Moving the cursor in a slice view updates the chart, and clicking on a saved voxel curve in the chart moves the cursor to that voxel's location.
+    - Export Capabilities: offers extensive options for exporting both the visual chart and its underlying data, including:
+
+        - saving the chart as a bitmap image file.
+        - copying the chart to the system clipboard.
+        - saving the data from all plotted curves to various formats.
+
+    - Synchronization: all slice views in the grid are fully synchronized for orientation, zoom, and cursor position.
 
     Inheritance
     ~~~~~~~~~~~
@@ -79,24 +104,20 @@ class MultiComponentViewWidget(MultiViewWidget):
     QWidget -> MultiViewWidget -> GridViewWidget -> MultiComponentViewWidget
 
     Creation: 10/12/2024
-    Last revision: 29/04/2025
+    Last revision: 10/10/2025
     """
 
     # Special method
 
-    """
-    Private attributes
-    
-    _first          int, index of the first displayed component
-    _multi          SisypheVolume, multi-component volume
-    _fig            Figure, chart
-    _canvas         FigureCanvas
-    _line           Line2D, signal curve at current cursor position
-    _menuCurves     QMenu, chart management menu
-    _scrshot        ScreenshotsGridWidget
-    """
+    def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        MultiComponentViewWidget instance constructor.
 
-    def __init__(self, parent=None) -> None:
+        Parameters
+        ----------
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(4, 4, parent)
         self._rows = 3
         self._cols = 3
@@ -121,16 +142,35 @@ class MultiComponentViewWidget(MultiViewWidget):
         self._canvas.mpl_connect('pick_event', self._chartClicked)
         self._layout.addWidget(self._canvas, 3, 0, 1, 3)
 
+    """
+    Private attributes
+
+    _first          int, index of the first displayed component
+    _multi          SisypheVolume, multi-component volume
+    _fig            Figure, chart
+    _canvas         FigureCanvas
+    _line           Line2D, signal curve at current cursor position
+    _menuCurves     QMenu, chart management menu
+    _scrshot        ScreenshotsGridWidget
+    """
+
     # Private methods
 
-    def _initViews(self):
+    def _initViews(self) -> None:
+        """
+        Initializes the 3x3 grid of SliceViewWidget instances.
+        """
         for i in range(9):
             w = SliceViewWidget(parent=self)
             w.setName('MultiComponentViewWidget view#{}'.format(i))
             self.setViewWidget(i // 3, i % 3, w)
         self.setVisibilityControlToAll()
 
-    def _initActions(self):
+    def _initActions(self) -> None:
+        """
+        Initializes specific QAction instances for each view widget and connects them to their respective slots.
+        This includes actions for view arrangement, chart visibility, and curve management.
+        """
         for i in range(9):
             w = self.getViewWidgetAt(i // 3, i % 3)
             w.synchronisationOn()
@@ -223,7 +263,10 @@ class MultiComponentViewWidget(MultiViewWidget):
             # Revision 12/12/2024 >
             if i == 0: self._menuCurves = menucurves
 
-    def _initSynchronisationSignalConnect(self):
+    def _initSynchronisationSignalConnect(self) -> None:
+        """
+        Initializes synchronization signal connections between view widgets.
+        """
         for i in range(9):
             w1 = self.getViewWidgetAt(i // 3, i % 3)
             w1.synchronisationOn()
@@ -238,7 +281,11 @@ class MultiComponentViewWidget(MultiViewWidget):
                     w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
 
-    def _cursorPositionChanged(self):
+    def _cursorPositionChanged(self) -> None:
+        """
+        Callback triggered when the cross-shaped cursor position changes in any of the slice view widgets.
+        Updates the 1D signal chart with the component values at the new cross-shaped cursor position.
+        """
         if self._multi is not None:
             if self._axe is not None:
                 p = self[0, 0].getCursorArrayPosition()
@@ -258,7 +305,17 @@ class MultiComponentViewWidget(MultiViewWidget):
                 self._axe.legend()
                 self._canvas.draw()
 
-    def _chartClicked(self, event):
+    def _chartClicked(self, event: PickEvent) -> None:
+        """
+        Callback for 'pick_event' on the Matplotlib chart.
+        If a curve representing voxel data is clicked, it moves the cursor in the slice view widgets  to that voxel's
+        location.
+
+        Parameters
+        ----------
+        event : matplotlib.backend_bases.PickEvent
+            pick event instance containing information about the click.
+        """
         if self._multi is not None:
             artist = event.artist
             if isinstance(artist, Line2D):
@@ -277,6 +334,14 @@ class MultiComponentViewWidget(MultiViewWidget):
     # Public method
 
     def updateLut(self, lut: SisypheLut) -> None:
+        """
+        Update the lookup table (LUT) and window/level for all component view widgets.
+
+        Parameters
+        ----------
+        lut : SisypheLut
+            new lookup table to apply.
+        """
         for k in self._views:
             # update colormap
             lutm = lut.getName()
@@ -287,10 +352,27 @@ class MultiComponentViewWidget(MultiViewWidget):
             w = lut.getWindowRange()
             self._views[k].getVolume().display.setWindow(w[0], w[1])
 
-    def getPopupCurves(self):
+    def getPopupCurves(self) -> QMenu:
+        """
+        Gets the 'Curves' popup menu for chart management.
+
+        Returns
+        -------
+        QMenu
+            'Curves' menu.
+        """
         return self._menuCurves
 
     def setFirstDisplayedComponent(self, first: int) -> None:
+        """
+        Set the first component to be displayed in the top-left viewport of the grid.
+        The subsequent viewports are populated with the following components.
+
+        Parameters
+        ----------
+        first : int
+            index of the first component to display.
+        """
         if self._multi is not None:
             n = self._multi.getNumberOfComponentsPerPixel()
             if n < 10: self._first = 0
@@ -308,9 +390,26 @@ class MultiComponentViewWidget(MultiViewWidget):
             self.updateSpan()
 
     def getFirstDisplayedComponent(self) -> int:
+        """
+        Get the index of the first component currently displayed in the grid.
+
+        Returns
+        -------
+        int
+            index of the first displayed component.
+        """
         return self._first
 
     def setVolume(self, volume: SisypheVolume) -> None:
+        """
+        Set the multi-component SisypheVolume to be displayed.
+        Populates the slice view widgets with individual components and initializes the chart.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            multi-component SisypheVolume to display.
+        """
         n = volume.getNumberOfComponentsPerPixel()
         if n > 1:
             self._first = 0
@@ -336,37 +435,86 @@ class MultiComponentViewWidget(MultiViewWidget):
         else: raise ValueError('{} is not a multi-component volume.')
 
     def getVolume(self) -> SisypheVolume:
+        """
+        Get the currently displayed multi-component SisypheVolume.
+
+        Returns
+        -------
+        SisypheVolume
+            current multi-component SisypheVolume.
+        """
         return self._multi
 
     def hasVolume(self) -> bool:
+        """
+        Check if a multi-component SisypheVolume is currently displayed.
+
+        Returns
+        -------
+        bool
+            True if a SisypheVolume is displayed, False otherwise.
+        """
         return self._multi is not None
 
     def removeVolume(self) -> None:
+        """
+        Remove the multi-component SisypheVolume and clears all view widgets.
+        """
         for k in self._views:
             self._views[k].removeVolume()
         self._multi = None
 
     def setScreenshotsGridWidget(self, widget: ScreenshotsGridWidget):
+        """
+        Set the screenshots manager widget for exporting chart captures.
+
+        Parameters
+        ----------
+        widget : ScreenshotsGridWidget
+            screenshots manager widget.
+        """
         self._scrshot = widget
 
     def getScreenshotsGridWidget(self) -> ScreenshotsGridWidget:
+        """
+        Get the associated screenshots manager widget.
+
+        Returns
+        -------
+        ScreenshotsGridWidget
+            screenshots manager widget.
+        """
         return self._scrshot
 
     # < Revision 29/04/2025
     # add visibleChartOn method
     def visibleChartOn(self) -> None:
+        """
+        Make the chart visible.
+        """
         self.setChartVisibility(True)
     # Revision 29/04/2025 >
 
     # < Revision 29/04/2025
     # add visibleChartOff method
     def visibleChartOff(self) -> None:
+        """
+        Hide the chart.
+        """
         self.setChartVisibility(False)
     # Revision 29/04/2025 >
 
     # < Revision 29/04/2025
     # add setChartVisibility method
     def setChartVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the chart.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the chart, False to hide it.
+        """
         self._canvas.setMinimumHeight(self.height() // 3)
         self._canvas.setVisible(v)
         for i in range(9):
@@ -377,10 +525,21 @@ class MultiComponentViewWidget(MultiViewWidget):
     # < Revision 29/04/2025
     # add getChartVisibility method
     def getChartVisibility(self) -> bool:
+        """
+        Get the visibility state of the chart.
+
+        Returns
+        -------
+        bool
+            True if the chart is visible, False otherwise.
+        """
         return self._canvas.visible()
     # Revision 29/04/2025 >
 
-    def cleanChart(self):
+    def cleanChart(self) -> None:
+        """
+        Clear the chart, removing all plotted curves, and redraws the mean signal curve and the component span.
+        """
         self._fig.clear()
         if self._axe is not None: self._axe.cla()
         self._line = None
@@ -406,7 +565,11 @@ class MultiComponentViewWidget(MultiViewWidget):
                                        facecolor='yellow', edgecolor='black', linewidth=2,
                                        linestyle='--', alpha=0.2)
 
-    def updateSpan(self):
+    def updateSpan(self) -> None:
+        """
+        Update the position and width of the highlighted span on the chart, which indicates the range of currently
+        visible components in the grid.
+        """
         if self._span is not None:
             # noinspection PyUnresolvedReferences
             self._span.xy[0][0] = self._first
@@ -422,7 +585,10 @@ class MultiComponentViewWidget(MultiViewWidget):
             self._span.xy[3][0] = last
             self._canvas.draw()
 
-    def addCurrentCurveToChart(self):
+    def addCurrentCurveToChart(self) -> None:
+        """
+        Add a persistent copy of the current signal curve (at the cross-shaped cursor's position) to the chart.
+        """
         if self._line is not None:
             xdata = self._line.get_xdata()
             ydata = self._line.get_ydata()
@@ -431,7 +597,10 @@ class MultiComponentViewWidget(MultiViewWidget):
             self._axe.legend()
             self._canvas.draw()
 
-    def saveChart(self):
+    def saveChart(self) -> None:
+        """
+        Open a file dialog to save the current chart as a bitmap file (supported formats BMP, JPG, PNG, TIFF, SVG).
+        """
         if self._multi is not None:
             filename = self._multi.getFilename()
             filename = addSuffixToFilename(filename, 'curves')
@@ -447,7 +616,10 @@ class MultiComponentViewWidget(MultiViewWidget):
                 except Exception as err:
                     messageBox(self, 'Save chart', text='{}'.format(err))
 
-    def copyChartToClipboard(self):
+    def copyChartToClipboard(self) -> None:
+        """
+        Copy the current chart to the system clipboard as a bitmap image.
+        """
         if self._multi is not None:
             tmp = join(getcwd(), 'tmp.png')
             try:
@@ -459,13 +631,20 @@ class MultiComponentViewWidget(MultiViewWidget):
             finally:
                 if exists(tmp): remove(tmp)
 
-    def copyChartToScreenshot(self):
+    def copyChartToScreenshot(self) -> None:
+        """
+        Send the current chart to the associated ScreenshotsGridWidget.
+        """
         if self._multi is not None:
             if self._scrshot is not None:
                 self.copyChartToClipboard()
                 self._scrshot.pasteFromClipboard()
 
-    def saveCurveDataset(self):
+    def saveCurveDataset(self) -> None:
+        """
+        Open a file dialog to save the data of all curves currently plotted on the chart to a file.
+        Supported formats include CSV, JSON, Latex, text, Excel XLSX, and PySisyphe Sheet (*.xsheet).
+        """
         if self._multi is not None:
             filename = self._multi.getFilename()
             filename = addSuffixToFilename(filename, 'curves')
@@ -503,7 +682,17 @@ class MultiComponentViewWidget(MultiViewWidget):
                     except Exception as err:
                         messageBox(self, 'Save chart dataset', text='error: {}'.format(err))
 
-    def setNumberOfVisibleViews(self, r, c):
+    def setNumberOfVisibleViews(self, r: int, c: int) -> None:
+        """
+        Change the layout of the view grid.
+
+        Parameters
+        ----------
+        r : int
+            Number of rows.
+        c : int
+            Number of columns.
+        """
         k = '{}{}'.format(r, c)
         if r == c == 2:
             n = 0
@@ -526,7 +715,15 @@ class MultiComponentViewWidget(MultiViewWidget):
             self.setRows(r)
             self.setCols(c)
 
-    def getViewsArrangement(self):
+    def getViewsArrangement(self) -> tuple[int, int]:
+        """
+        Get the current grid arrangement (rows, columns).
+
+        Returns
+        -------
+        tuple[int, int]
+            tuple containing the number of rows and columns.
+        """
         action = self.getFirstSliceViewWidget().getAction()
         if action['11'].isChecked(): r = (1, 1)
         elif action['12'].isChecked(): r = (1, 2)
@@ -536,44 +733,97 @@ class MultiComponentViewWidget(MultiViewWidget):
         else: r = (3, 3)
         return r
 
-    def setAxialOrientation(self):
+    def setAxialOrientation(self) -> None:
+        """
+        Set the orientation of all slice view widgets to axial.
+        """
         self.setOrientation(0)
 
-    def setCoronalOrientation(self):
+    def setCoronalOrientation(self) -> None:
+        """
+         Set the orientation of all slice view widgets to coronal.
+         """
         self.setOrientation(1)
 
-    def setSagittalOrientation(self):
+    def setSagittalOrientation(self) -> None:
+        """
+         Set the orientation of all slice view widgets to sagittal.
+         """
         self.setOrientation(2)
 
-    def setOrientation(self, orient):
+    def setOrientation(self, orient: int) -> None:
+        """
+        Set the orientation for all slice view widgets in the grid.
+
+        Parameters
+        ----------
+        orient : int
+            orientation to set (0 for axial, 1 for coronal, 2 for sagittal).
+        """
         if self.isNotEmpty():
             for w in self._views.values():
                 if isinstance(w, AbstractViewWidget):
                     if w.hasVolume(): w.setOrientation(orient)
 
-    def getOrientation(self):
+    def getOrientation(self) -> int:
+        """
+        Get the current orientation of the slice view widgets.
+
+        Returns
+        -------
+        int
+            current orientation (0 for axial, 1 for coronal, 2 for sagittal).
+        """
         return self._views[(0, 0)].getOrientation()
 
-    def getOrientationAsString(self):
+    def getOrientationAsString(self) -> str:
+        """
+        Get the current orientation of the slice view widgets as a string.
+
+        Returns
+        -------
+        str
+            orientation as 'axial', 'coronal', or 'sagittal'.
+        """
         return self._views[(0, 0)].getOrientationAsString()
 
-    def getPopupMenuNumberOfVisibleViews(self):
+    def getPopupMenuNumberOfVisibleViews(self) -> QMenu:
+        """
+        Get the 'Number of views' popup menu.
+
+        Returns
+        -------
+        QMenu
+            'Number of views' menu.
+        """
         return self._menuNumberOfVisibleViews
 
-    def popupMenuOrientationEnabled(self):
+    def popupMenuOrientationEnabled(self) -> None:
+        """
+        Enable the 'Orientation' menu in all slice view popups.
+        """
         for w in self._views.values():
             w.popupOrientationEnabled()
 
-    def popupMenuOrientationDisabled(self):
+    def popupMenuOrientationDisabled(self) -> None:
+        """
+        Disable the 'Orientation' menu in all slice view popups.
+        """
         for w in self._views.values():
             w.popupOrientationDisabled()
 
-    def popupMenuNumberOfVisibleViewsShow(self):
+    def popupMenuNumberOfVisibleViewsShow(self) -> None:
+        """
+        Show the 'Number of views' menu in all slice view popups.
+        """
         for i in range(9):
             w = self.getViewWidgetAt(i // 3, i % 3)
             w.getPopup().actions()[2].setVisible(True)
 
-    def popupMenuNumberOfVisibleViewsHide(self):
+    def popupMenuNumberOfVisibleViewsHide(self) -> None:
+        """
+        Hide the 'Number of views' menu in all slice view popups.
+        """
         for i in range(9):
             w = self.getViewWidgetAt(i // 3, i % 3)
             w.getPopup().actions()[2].setVisible(False)
@@ -586,9 +836,8 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
     Description
     -----------
 
-    This widget is designed to provide a user-friendly interface for interacting with multi-component volumes,
-    offering various tools for navigation, visualization, and data management through an icon bar.
-
+    This widget encapsulates a MultiComponentViewWidget and extends it by providing a collapsible icon bar that is
+    displayed on the left.
 
     Inheritance
     -----------
@@ -596,12 +845,24 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
     QWidget -> IconBarWidget -> IconBarMultiComponentViewWidget
 
     Creation: 10/12/2024
-    Last revision: 12/12/2024
+    Last revision: 10/10/2025
     """
 
     # Special method
 
-    def __init__(self, widget=None, parent=None) -> None:
+    def __init__(self,
+                 widget: MultiComponentViewWidget | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        IconBarMultiComponentViewWidget instance constructor
+
+        Parameters
+        ----------
+        widget: MultiComponentViewWidget | None (optional)
+            MultiComponentViewWidget instance to encapsulate (default None).
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         self._shcutg = QShortcut('g', self)  # Show graph shortcut
@@ -613,7 +874,16 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
 
     # Public methods
 
-    def setViewWidget(self, widget):
+    def setViewWidget(self, widget: MultiComponentViewWidget):
+        """
+        Set the main MultiComponentViewWidget instance and connects its actions to the icon bar buttons.
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        widget : MultiComponentViewWidget
+            view widget to be controlled by this icon bar.
+        """
         if isinstance(widget, MultiComponentViewWidget):
             self._widget = widget
             self._widget.setParent(self)
@@ -774,6 +1044,14 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
         else: raise TypeError('parameter type {} is not MultiComponentViewWidget.'.format(type(widget)))
 
     def setVolume(self, multi: SisypheVolume) -> None:
+        """
+        Set the multi-component SisypeVolume for the managed view widget.
+
+        Parameters
+        ----------
+        multi : SisypheVolume
+            multi-component SisypheVolume to display.
+        """
         n = multi.getNumberOfComponentsPerPixel()
         if n > 1:
             super().setVolume(multi)
@@ -789,6 +1067,9 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
         else: raise ValueError('{} is a single-component volume.'.format(multi.getBasename()))
 
     def removeVolume(self) -> None:
+        """
+        Remove the SisypheVolume from the managed view widget.
+        """
         if self._widget is not None:
             super().removeVolume()
             # < Revision 13/12/2024
@@ -797,19 +1078,43 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
             # Revision 13/12/2024 >
 
     def setFirstDisplayedComponent(self, first: int) -> None:
+        """
+        Set the first component to be displayed in the grid view.
+
+        Parameters
+        ----------
+        first : int
+            Index of the first component.
+        """
         self().setFirstDisplayedComponent(first)
 
     def getFirstDisplayedComponent(self) -> int:
+        """
+        Get the index of the first component currently displayed in the grid view.
+
+        Returns
+        -------
+        int
+            index of the first component.
+        """
         return self().getFirstDisplayedComponent()
 
-    def nextComponent(self):
+    def nextComponent(self) -> None:
+        """
+        Navigate to the next component in the sequence, updating the grid view.
+        Wraps around to the beginning if at the end.
+        """
         n = self().getVolume().getNumberOfComponentsPerPixel()
         if n > 9:
             c = self.getFirstDisplayedComponent()
             if c < n - 9: self.setFirstDisplayedComponent(c + 1)
             else: self.setFirstDisplayedComponent(0)
 
-    def previousComponent(self):
+    def previousComponent(self) -> None:
+        """
+        Navigate to the previous component in the sequence, updating the grid view.
+        Wraps around to the end if at the beginning.
+        """
         n = self().getVolume().getNumberOfComponentsPerPixel()
         if n > 9:
             c = self.getFirstDisplayedComponent()
@@ -820,28 +1125,56 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
 
     # override addOverlay (inherited from IconBarWidget class) as dummy method, no overlay in projection
     def addOverlay(self, volume: SisypheVolume) -> None:
+        """
+        Dummy method, overlays are not available in this widget.
+        Currently, this method overrides the superclass's implementation.
+        """
         pass
 
     # override getOverlayCount (inherited from IconBarWidget class) as dummy method, no overlay in projection, always 0
     def getOverlayCount(self) -> int:
+        """
+        Dummy method, overlays are not available in this widget.
+        Currently, this method overrides the superclass's implementation.
+        """
         return 0
 
     # override hasOverlay (inherited from IconBarWidget class) as dummy method, no overlay in projection, always False
     def hasOverlay(self) -> bool:
+        """
+        Dummy method, overlays are not available in this widget.
+        Currently, this method overrides the superclass's implementation.
+        """
         return False
 
     # mandatory method for compatibility with IconBarViewWidgetCollection
-    def getOverlayIndex(self, o) -> int | None:
+    def getOverlayIndex(self, o: SisypheVolume) -> int | None:
+        """
+        Dummy method, overlays are not available in this widget.
+        Currently, this method overrides the superclass's implementation.
+        """
         raise NotImplementedError
 
     # mandatory method for compatibility with IconBarViewWidgetCollection
-    def removeOverlay(self, o) -> None:
+    def removeOverlay(self, o: int | SisypheVolume) -> None:
+        """
+        Dummy method, overlays are not available in this widget.
+        Currently, this method overrides the superclass's implementation.
+        """
         pass
 
     # mandatory method for compatibility with IconBarViewWidgetCollection
     def removeAllOverlays(self) -> None:
+        """
+        Dummy method, overlays are not available in this widget.
+        Currently, this method overrides the superclass's implementation.
+        """
         pass
 
     # mandatory method for compatibility with IconBarViewWidgetCollection
     def getOverlayFromIndex(self, index: int) -> None:
+        """
+        Dummy method, overlays are not available in this widget.
+        Currently, this method overrides the superclass's implementation.
+        """
         raise NotImplementedError

@@ -7,6 +7,10 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from typing import Any
+
 from os import getcwd
 from os import chdir
 
@@ -70,6 +74,12 @@ from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import MenuPushButton
 from Sisyphe.gui.dialogWait import DialogWait
 
+if TYPE_CHECKING:
+    from PyQt5.QtCore import QObject
+    from PyQt5.QtCore import QModelIndex
+    from PyQt5.QtCore import QAbstractItemModel
+    from PyQt5.QtWidgets import QStyleOptionViewItem
+
 """
 Function
 ~~~~~~~~
@@ -88,7 +98,7 @@ Classes hierarchy
 """
 
 
-def dicomDateToStr(date, separator='/'):
+def dicomDateToStr(date: str, separator: str = '/') -> str:
     if date == '': return date
     else: return separator.join([date[:4], date[4:6], date[6:]])
 
@@ -97,12 +107,12 @@ class DateValidator(QValidator):
 
     # Special method
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QObject | None = None) -> None:
         super(DateValidator, self).__init__(parent)
 
     # Public method
 
-    def validate(self, value, pos):
+    def validate(self, value: str, pos: int) -> tuple[int, str, int]:
         try:
             datetime.strptime(value, '%Y%m%d').date()
             return 2, value, pos
@@ -114,12 +124,12 @@ class DateTimeValidator(QValidator):
 
     # Special method
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QObject | None = None) -> None:
         super(DateTimeValidator, self).__init__(parent)
 
     # Public method
 
-    def validate(self, value, pos):
+    def validate(self, value: str, pos: int) -> tuple[int, str, int]:
         if DateValidator().validate(value[:8], 0)[0] == 2 and \
                 TimeValidator().validate(value[6:], 0)[0] == 2:
             return 2, value, pos
@@ -131,12 +141,12 @@ class TimeValidator(QValidator):
 
     # Special method
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QObject | None = None) -> None:
         super(TimeValidator, self).__init__(parent)
 
     # Public method
 
-    def validate(self, value, pos):
+    def validate(self, value: str, pos: int) -> tuple[int, str, int]:
         h = int(value[0:2])
         m = int(value[2:4])
         se = int(value[4:])
@@ -150,7 +160,11 @@ class MultiIntValidator(QValidator):
 
     # Special method
 
-    def __init__(self, nbmin, nbmax, n, parent=None):
+    def __init__(self,
+                 nbmin: int,
+                 nbmax: int,
+                 n: int,
+                 parent: QObject | None = None) -> None:
         super(MultiIntValidator, self).__init__(parent)
         self._min = nbmin
         self._max = nbmax
@@ -158,7 +172,7 @@ class MultiIntValidator(QValidator):
 
     # Public method
 
-    def validate(self, value, pos):
+    def validate(self, value: str, pos: int) -> tuple[int, str, int]:
         value = value.strip()
         valuelist = value.split(' ')
         r1 = len(valuelist) == self._n
@@ -180,13 +194,15 @@ class MultiDoubleValidator(QValidator):
 
     # Special method
 
-    def __init__(self, n, parent=None):
+    def __init__(self,
+                 n: int,
+                 parent: QObject | None = None) -> None:
         super(MultiDoubleValidator, self).__init__(parent)
         self._n = n
 
     # Public method
 
-    def validate(self, value, pos):
+    def validate(self, value: str, pos: int) -> tuple[int, str, int]:
         value = value.strip()
         valuelist = value.split(' ')
         r1 = len(valuelist) == self._n
@@ -207,24 +223,26 @@ class LineEditDelegate(QStyledItemDelegate):
 
     # Special method
 
-    def __init__(self, dataset=None, parent=None):
+    def __init__(self,
+                 dataset: Dataset | None = None,
+                 parent: QObject | None = None) -> None:
         super(LineEditDelegate, self).__init__(parent)
         self._dataset = dataset
 
     # Public methods
 
-    def createEditor(self, parent, option, index):
+    def createEditor(self, parent: QWidget | None, option:  QStyleOptionViewItem | None, index: QModelIndex) -> QLineEdit:
         index0 = index.model().index(index.row(), 0)
         # noinspection PyUnresolvedReferences
         item0 = index.model().itemFromIndex(index0)
         de = self._dataset[item0.data()]
         return DicomVRLineEdit(de, parent)
 
-    def setEditorData(self, editor, index):
+    def setEditorData(self, editor: QWidget, index: QModelIndex) -> None:
         # noinspection PyUnresolvedReferences
         editor.setText(index.model().itemFromIndex(index).text())
 
-    def setModelData(self, editor, model, index):
+    def setModelData(self, editor: QWidget, model: QAbstractItemModel | None, index: QModelIndex) -> None:
         index0 = model.index(index.row(), 0)
         # noinspection PyUnresolvedReferences
         item0 = model.itemFromIndex(index0)
@@ -265,6 +283,8 @@ class DicomVRLineEdit(QLineEdit):
     ~~~~~~~~~~~
 
     QLineEdit -> DicomVRLineEdit
+
+    Last revision: 20/10/2025
     """
 
     # Special method
@@ -275,7 +295,9 @@ class DicomVRLineEdit(QLineEdit):
     _de     pydicom.DataElement
     """
 
-    def __init__(self, de=None, parent=None):
+    def __init__(self,
+                 de: DataElement | None = None,
+                 parent: QWidget | None = None) -> None:
         super(DicomVRLineEdit, self).__init__(parent)
         if isinstance(de, DataElement):
             if de.VR in self._INITVR:
@@ -427,7 +449,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
 
     QTreeView -> DicomHeaderTreeViewWidget
 
-    Last revision: 26/06/2025
+    Last revision: 20/10/2025
     """
 
     _EDITFLAG = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
@@ -448,7 +470,15 @@ class DicomHeaderTreeViewWidget(QTreeView):
     _dataset    pydicom.dataset, dataset of the dicom file
     """
 
-    def __init__(self, dataset=None, private=True, tag=True, name=True, vr=True, vm=True, value=True, parent=None):
+    def __init__(self,
+                 dataset: Dataset | None = None,
+                 private: bool = True,
+                 tag: bool = True,
+                 name: bool = True,
+                 vr: bool = True,
+                 vm: bool = True,
+                 value: bool = True,
+                 parent: QWidget | None = None) -> None:
         super(DicomHeaderTreeViewWidget, self).__init__(parent)
         self._tag = tag
         self._name = name
@@ -558,7 +588,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
 
     # Public methods
 
-    def setDicomDataset(self, dataset):
+    def setDicomDataset(self, dataset: Dataset) -> None:
         if isinstance(dataset, FileDataset) or isinstance(dataset, Dataset):
             # noinspection PyUnresolvedReferences
             self.model().clear()
@@ -567,10 +597,10 @@ class DicomHeaderTreeViewWidget(QTreeView):
             self._updateModel()
         else: raise TypeError('parameter type {} is not pydicom.FileDataset.'.format(dataset))
 
-    def getDicomDataset(self):
+    def getDicomDataset(self) -> Dataset:
         return self._dataset
 
-    def setDicomFile(self, filename):
+    def setDicomFile(self, filename: str) -> None:
         if exists(filename):
             if isDicom(filename):
                 dataset = read_file(filename)
@@ -578,23 +608,23 @@ class DicomHeaderTreeViewWidget(QTreeView):
             else: raise IOError('{} is not a valid DICOM file.'.format(basename(filename)))
         else: raise IOError('{} no such file.'.format(basename(filename)))
 
-    def setPrivateTagVisibility(self, v):
+    def setPrivateTagVisibility(self, v: bool) -> None:
         self._private = v
         self._updateModel()
 
-    def setTagCodeVisibility(self, v):
+    def setTagCodeVisibility(self, v: bool) -> None:
         self._setSectionVisibility(0, v)
 
-    def setTagNameVisibility(self, v):
+    def setTagNameVisibility(self, v: bool) -> None:
         self._setSectionVisibility(1, v)
 
-    def setVRVisibility(self, v):
+    def setVRVisibility(self, v: bool) -> None:
         self._setSectionVisibility(2, v)
 
-    def setVMVisibility(self, v):
+    def setVMVisibility(self, v: bool) -> None:
         self._setSectionVisibility(3, v)
 
-    def setValueVisibility(self, v):
+    def setValueVisibility(self, v: bool) -> None:
         self._setSectionVisibility(4, v)
 
     def getSelectedDicomDataElements(self):
@@ -609,7 +639,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
                     de.append(self._dataset[item.data()])  # get DICOM Tag in key.data()
         return de
 
-    def getSelectedDicomTags(self):
+    def getSelectedDicomTags(self) -> list[int | str | tuple[int, int] | BaseTag]:
         # return list of selected dicom tags
         de = self.getSelectedDicomDataElements()
         taglist = []
@@ -618,7 +648,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
                 taglist.append(d.tag)
         return taglist
 
-    def getSelectedDicomNames(self):
+    def getSelectedDicomNames(self) -> list[str]:
         # return list of selected dicom tags (names)
         de = self.getSelectedDicomDataElements()
         namelist = []
@@ -627,7 +657,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
                 namelist.append(d.name)
         return namelist
 
-    def getSelectedDicomValues(self):
+    def getSelectedDicomValues(self) -> list[str]:
         # return list of selected dicom values
         de = self.getSelectedDicomDataElements()
         valuelist = []
@@ -636,7 +666,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
                 valuelist.append(str(d.value))
         return valuelist
 
-    def getCheckedDicomNames(self):
+    def getCheckedDicomNames(self) -> list[str] | None:
         n = self.model().rowCount()
         if n > 0:
             r = list()
@@ -650,7 +680,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
         else:
             return None
 
-    def getEditedDataElements(self):
+    def getEditedDataElements(self) -> list[str] | None:
         n = self.model().rowCount()
         if n > 0:
             r = list()
@@ -664,11 +694,11 @@ class DicomHeaderTreeViewWidget(QTreeView):
             return r
         else: return None
 
-    def scrollToDicomDataElement(self, de):
+    def scrollToDicomDataElement(self, de: DataElement) -> None:
         if isinstance(de, DataElement):
             self.scrollToDicomTag(de.tag)
 
-    def scrollToDicomTag(self, tag):
+    def scrollToDicomTag(self, tag: int | str | tuple[int, int] | BaseTag) -> None:
         if isinstance(tag, BaseTag):
             # noinspection PyUnresolvedReferences
             items = self.model().findItems(str(tag), Qt.MatchExactly, 0)
@@ -677,7 +707,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
                 # noinspection PyTypeChecker
                 self.selectionModel().select(items[0].index(), self._SELECTROWS)
 
-    def scrollToDicomName(self, name):
+    def scrollToDicomName(self, name: str) -> None:
         if isinstance(name, str):
             # noinspection PyUnresolvedReferences
             items = self.model().findItems(name, Qt.MatchExactly, 1)
@@ -686,7 +716,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
                 # noinspection PyTypeChecker
                 self.selectionModel().select(items[0].index(), self._SELECTROWS)
 
-    def checkSelectedRows(self):
+    def checkSelectedRows(self) -> None:
         indexlist = self.selectedIndexes()
         if len(indexlist) > 0:
             for index in indexlist:
@@ -695,7 +725,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
                 if item.isCheckable():
                     item.setCheckState(Qt.Checked)
 
-    def uncheckSelectedRows(self):
+    def uncheckSelectedRows(self) -> None:
         indexlist = self.selectedIndexes()
         if len(indexlist) > 0:
             for index in indexlist:
@@ -718,6 +748,8 @@ class DicomComboBoxWidget(QComboBox):
     ~~~~~~~~~~~
 
     QComboBox -> DicomComboBoxWidget
+
+    Last revision: 20/10/2025
     """
 
     # Special method
@@ -729,7 +761,10 @@ class DicomComboBoxWidget(QComboBox):
     _dataset    pydicom.dataset, DICOM dataset
     """
 
-    def __init__(self, dataset=None, private=True, parent=None):
+    def __init__(self,
+                 dataset: Dataset | None = None,
+                 private: bool = True,
+                 parent: QWidget | None = None) -> None:
         super(DicomComboBoxWidget, self).__init__(parent)
         self.setEditable(True)
         self._private = private
@@ -749,21 +784,21 @@ class DicomComboBoxWidget(QComboBox):
 
     # Public methods
 
-    def setDicomDataset(self, dataset, private=True):
+    def setDicomDataset(self, dataset: Dataset, private: bool = True) -> None:
         if isinstance(dataset, FileDataset) or isinstance(dataset, Dataset):
             self.clear()
             self._dataset = dataset
             self._private = private
             self._updateTagList()
 
-    def getDicomDataset(self):
+    def getDicomDataset(self) -> Dataset:
         return self.dataset
 
-    def setPrivateTagVisibility(self, v):
+    def setPrivateTagVisibility(self, v: bool) -> None:
         self._private = v
         self._updateTagList()
 
-    def getCurrentDicomDataElement(self):
+    def getCurrentDicomDataElement(self) -> DataElement | None:
         c = self.currentData()
         if c:
             de = self._dataset[c]
@@ -771,35 +806,35 @@ class DicomComboBoxWidget(QComboBox):
                 return de
         return None
 
-    def getCurrentDicomTag(self):
+    def getCurrentDicomTag(self) -> int | str | tuple[int, int] | BaseTag | None:
         de = self.getCurrentDicomDataElement()
         if de:
             if isinstance(de, DataElement):
                 return de.tag
         return None
 
-    def getCurrentDicomName(self):
+    def getCurrentDicomName(self) -> str | None:
         de = self.getCurrentDicomDataElement()
         if de:
             if isinstance(de, DataElement):
                 return de.name
         return None
 
-    def getCurrentDicomValue(self):
+    def getCurrentDicomValue(self) -> Any | None:
         de = self.getCurrentDicomDataElement()
         if de:
             if isinstance(de, DataElement):
                 return de.value
         return None
 
-    def getCurrentDicomVR(self):
+    def getCurrentDicomVR(self) -> str | None:
         de = self.getCurrentDicomDataElement()
         if de:
             if isinstance(de, DataElement):
                 return de.VR
         return None
 
-    def getCurrentDicomVM(self):
+    def getCurrentDicomVM(self) -> int | None:
         de = self.getCurrentDicomDataElement()
         if de:
             if isinstance(de, DataElement):
@@ -821,7 +856,7 @@ class DicomFilesTreeWidget(QTreeWidget):
 
     QTreeWidget -> DicomFilesTreeWidget
 
-    Last revision: 20/06/2025
+    Last revision: 20/10/2025
     """
 
     # Special method
@@ -848,7 +883,10 @@ class DicomFilesTreeWidget(QTreeWidget):
     """
 
     # noinspection PyShadowingBuiltins
-    def __init__(self, path=None, filter='.*', parent=None):
+    def __init__(self,
+                 path: str | None = None,
+                 filter: str = '.*',
+                 parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._dict = dict()
         self._path = list()
@@ -1101,23 +1139,23 @@ class DicomFilesTreeWidget(QTreeWidget):
 
     # Public methods
 
-    def treeUpdate(self):
+    def treeUpdate(self) -> None:
         self._dictToWidget()
 
-    def getDict(self):
+    def getDict(self) -> dict:
         return self._dict
 
-    def isMosaic(self, series):
+    def isMosaic(self, series: str) -> bool | None:
         # noinspection PyInconsistentReturns
         if series in self._dict:
             return self._dict[series]['mosaic'] != 1
 
-    def getMosaic(self, series):
+    def getMosaic(self, series: str) -> int | None:
         # noinspection PyInconsistentReturns
         if series in self._dict:
             return self._dict[series]['mosaic']
 
-    def getSelectedSeriesCount(self):
+    def getSelectedSeriesCount(self) -> int:
         c = 0
         n = self.topLevelItemCount()
         for i in range(n):
@@ -1125,7 +1163,7 @@ class DicomFilesTreeWidget(QTreeWidget):
             if item.checkState(0) == Qt.Checked: c += 1
         return c
 
-    def getSelectedAcquisitionsCount(self):
+    def getSelectedAcquisitionsCount(self) -> int:
         c = 0
         ns = self.topLevelItemCount()
         for i in range(ns):
@@ -1136,53 +1174,53 @@ class DicomFilesTreeWidget(QTreeWidget):
                 if aitem.checkState(0) == Qt.Checked: c += 1
         return c
 
-    def getModalityFilter(self):
+    def getModalityFilter(self) -> list[str]:
         return self._modalityfilter
 
-    def clearModalityFiler(self):
+    def clearModalityFiler(self) -> None:
         self._modalityfilter = list()
 
-    def setModalityFilterToImages(self):
+    def setModalityFilterToImages(self) -> None:
         self._modalityfilter = getDicomImageModalities()
 
-    def setModalityFilterToRT(self):
+    def setModalityFilterToRT(self) -> None:
         self._modalityfilter = getDicomRTModalities()
 
-    def setModalityFilterToAll(self):
+    def setModalityFilterToAll(self) -> None:
         self._modalityfilter = getDicomModalities()
 
-    def addCTtoModalityFilter(self):
+    def addCTtoModalityFilter(self) -> None:
         if 'CT' not in self._modalityfilter:
             self._modalityfilter.append('CT')
 
-    def addMRtoModalityFilter(self):
+    def addMRtoModalityFilter(self) -> None:
         if 'MR' not in self._modalityfilter:
             self._modalityfilter.append('MR')
 
-    def addPTtoModalityFilter(self):
+    def addPTtoModalityFilter(self) -> None:
         if 'PT' not in self._modalityfilter:
             self._modalityfilter.append('PT')
 
-    def addNMtoModalityFilter(self):
+    def addNMtoModalityFilter(self) -> None:
         if 'NM' not in self._modalityfilter:
             self._modalityfilter.append('NM')
 
-    def addOTtoModalityFilter(self):
+    def addOTtoModalityFilter(self) -> None:
         if 'OT' not in self._modalityfilter:
             self._modalityfilter.append('OT')
 
-    def addRTStructToModalityFilter(self):
+    def addRTStructToModalityFilter(self) -> None:
         if 'RTSTRUCT' not in self._modalityfilter:
             self._modalityfilter.append('RTSTRUCT')
 
-    def addRTDoseToModalityFilter(self):
+    def addRTDoseToModalityFilter(self) -> None:
         if 'RTDOSE' not in self._modalityfilter:
             self._modalityfilter.append('RTDOSE')
 
-    def setDefaultFilter(self):
+    def setDefaultFilter(self) -> None:
         self.setFilter('.*')
 
-    def setFilter(self, v):
+    def setFilter(self, v: str) -> None:
         if isinstance(v, str):
             flt = ['.*'] + getDicomExt()
             if v in flt:
@@ -1197,17 +1235,17 @@ class DicomFilesTreeWidget(QTreeWidget):
                              text='{} is not a DICOM file extension.'.format(v))
         else: raise TypeError('parameter type {} is not str.'.format(type(v)))
 
-    def getFilter(self):
+    def getFilter(self) -> str:
         return self._filter
 
-    def setPath(self, path):
+    def setPath(self, path: str) -> None:
         if path not in self._path:
             self._path = [path]
             self.clear()
             self._dict = dict()
             self._updateWidget()
 
-    def addPath(self, path):
+    def addPath(self, path: str) -> None:
 
         def isSubdir(rpath, subpath):
             d = glob(join(rpath, '**'), recursive=True)
@@ -1220,13 +1258,13 @@ class DicomFilesTreeWidget(QTreeWidget):
             self._path.append(path)
             self._updateWidget()
 
-    def getPath(self):
+    def getPath(self) -> list[str]:
         return self._path
 
-    def hasPath(self):
+    def hasPath(self) -> bool:
         return len(self._path) > 0
 
-    def extractDataElements(self, tag, series):
+    def extractDataElements(self, tag: int | str | tuple[int, int] | BaseTag, series: str) -> dict:
         r = dict()
         if isinstance(tag, BaseTag):
             if series in self._dict:
@@ -1243,21 +1281,21 @@ class DicomFilesTreeWidget(QTreeWidget):
                     if len(r[i]) == 1: r[i] = r[i][0]
         return r
 
-    def checkAll(self):
+    def checkAll(self) -> None:
         for i in range(self.topLevelItemCount()):
             item = self.topLevelItem(i)
             # noinspection PyTypeChecker
             item.setCheckState(0, Qt.Checked)
             self._onToggleCheckbox(item)
 
-    def uncheckAll(self):
+    def uncheckAll(self) -> None:
         for i in range(self.topLevelItemCount()):
             item = self.topLevelItem(i)
             # noinspection PyTypeChecker
             item.setCheckState(0, Qt.Unchecked)
             self._onToggleCheckbox(item)
 
-    def checkSelected(self):
+    def checkSelected(self) -> None:
         items = self.selectedItems()
         if len(items) > 0:
             for item in self.selectedItems():
@@ -1265,7 +1303,7 @@ class DicomFilesTreeWidget(QTreeWidget):
                 item.setCheckState(0, Qt.Checked)
                 self._onToggleCheckbox(item)
 
-    def uncheckSelected(self):
+    def uncheckSelected(self) -> None:
         items = self.selectedItems()
         if len(items) > 0:
             for item in self.selectedItems():
@@ -1287,6 +1325,8 @@ class DicomFilesEnhancedTreeWidget(QWidget):
     ~~~~~~~~~~~
 
     QWidget -> DicomFilesEnhancedTreeWidget
+
+    Last revision: 20/10/2025
     """
 
     # Special method
@@ -1304,7 +1344,10 @@ class DicomFilesEnhancedTreeWidget(QWidget):
     """
 
     # noinspection PyShadowingBuiltins
-    def __init__(self, path=None, filter='.*', parent=None):
+    def __init__(self,
+                 path: str | None = None,
+                 filter: str = '.*',
+                 parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self._ext = QComboBox()
@@ -1370,7 +1413,7 @@ class DicomFilesEnhancedTreeWidget(QWidget):
         lyout.addLayout(self._checklyout)
         self.setLayout(lyout)
 
-    def __getattr__(self, name: str):
+    def __getattr__(self, name: str) -> Any:
         """
             When attribute does not exist in the class, try calling self._tree DicomFilesTreeWidget method
         """
@@ -1413,7 +1456,7 @@ class DicomFilesEnhancedTreeWidget(QWidget):
 
     # Public methods
 
-    def newDirectory(self):
+    def newDirectory(self) -> None:
         if self._tree.hasPath(): path = self._tree.getPath()[-1]
         else: path = getcwd()
         path = QFileDialog.getExistingDirectory(self,
@@ -1423,7 +1466,7 @@ class DicomFilesEnhancedTreeWidget(QWidget):
             chdir(path)
             self._tree.setPath(path)
 
-    def addDirectory(self):
+    def addDirectory(self) -> None:
         if self._tree.hasPath(): path = self._tree.getPath()[-1]
         else: path = getcwd()
         path = QFileDialog.getExistingDirectory(self,
@@ -1432,51 +1475,51 @@ class DicomFilesEnhancedTreeWidget(QWidget):
         if path:
             self._tree.addPath(path)
 
-    def getTreeWidget(self):
+    def getTreeWidget(self) -> QTreeWidget:
         return self._tree
 
     # noinspection PyShadowingBuiltins
-    def setFilter(self, filter):
+    def setFilter(self, filter: str) -> None:
         flt = ['.*'] + getDicomExt()
         if filter in flt: self._ext.setCurrentText(filter)
 
-    def setSelectionButtonVisibility(self, v):
+    def setSelectionButtonVisibility(self, v: bool) -> None:
         self._checkall.setVisible(v)
         self._uncheckall.setVisible(v)
         self._checksel.setVisible(v)
         self._unchecksel.setVisible(v)
 
-    def getSelectionButtonVisibility(self):
+    def getSelectionButtonVisibility(self) -> bool:
         return self._checkall.isVisible()
 
-    def selectionButtonVisibilityOn(self):
+    def selectionButtonVisibilityOn(self) -> None:
         self.setSelectionButtonVisibility(True)
 
-    def selectionButtonVisibilityOff(self):
+    def selectionButtonVisibilityOff(self) -> None:
         self.setSelectionButtonVisibility(False)
 
-    def setDirectoryButtonVisibility(self, v):
+    def setDirectoryButtonVisibility(self, v: bool) -> None:
         self._dir.setVisible(v)
 
-    def getDirectoryButtonVisibility(self):
+    def getDirectoryButtonVisibility(self) -> bool:
         return self._dir.isVisible()
 
-    def directoryButtonVisibilityOn(self):
+    def directoryButtonVisibilityOn(self) -> None:
         self.setDirectoryButtonVisibility(True)
 
-    def directoryButtonVisibilityOff(self):
+    def directoryButtonVisibilityOff(self) -> None:
         self.setDirectoryButtonVisibility(False)
 
-    def setFilterButtonVisibility(self, v):
+    def setFilterButtonVisibility(self, v: bool) -> None:
         self._ext.setVisible(v)
 
-    def getFilterButtonVisibility(self):
+    def getFilterButtonVisibility(self) -> bool:
         return self._ext.isVisible()
 
-    def filterButtonVisibilityOn(self):
+    def filterButtonVisibilityOn(self) -> None:
         self.setFilterButtonVisibility(True)
 
-    def filterButtonVisibilityOff(self):
+    def filterButtonVisibilityOff(self) -> None:
         self.setFilterButtonVisibility(False)
 
 
@@ -1493,6 +1536,8 @@ class XmlDicomTreeViewWidget(QTreeWidget):
     ~~~~~~~~~~~
 
     QTreeView -> XmlDicomTreeViewWidget
+
+    Last revision: 20/10/2025
     """
 
     # Special method
@@ -1503,7 +1548,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
     _dcm    XmlDicom
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self._dcm = XmlDicom()
@@ -1520,13 +1565,13 @@ class XmlDicomTreeViewWidget(QTreeWidget):
 
     # Public methods
 
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
         return self._dcm.isEmpty()
 
-    def getXmlDicom(self):
+    def getXmlDicom(self) -> XmlDicom:
         return self._dcm
 
-    def loadXmlDicom(self, filename):
+    def loadXmlDicom(self, filename: str) -> None:
         if exists(filename):
             self._dcm.loadXmlDicomFilename(filename)
             keys = self._dcm.getKeywords()
@@ -1547,35 +1592,35 @@ class XmlDicomTreeViewWidget(QTreeWidget):
             for i in range(4):
                 self.resizeColumnToContents(i)
 
-    def checkAll(self):
+    def checkAll(self) -> None:
         n = self.topLevelItemCount()
         for i in range(n):
             item = self.topLevelItem(i)
             # noinspection PyTypeChecker
             item.setCheckState(0, Qt.Checked)
 
-    def uncheckAll(self):
+    def uncheckAll(self) -> None:
         n = self.topLevelItemCount()
         for i in range(n):
             item = self.topLevelItem(i)
             # noinspection PyTypeChecker
             item.setCheckState(0, Qt.Unchecked)
 
-    def checkSelected(self):
+    def checkSelected(self) -> None:
         items = self.selectedItems()
         if len(items) > 0:
             for item in self.selectedItems():
                 # noinspection PyTypeChecker
                 item.setCheckState(0, Qt.Checked)
 
-    def uncheckSelected(self):
+    def uncheckSelected(self) -> None:
         items = self.selectedItems()
         if len(items) > 0:
             for item in self.selectedItems():
                 # noinspection PyTypeChecker
                 item.setCheckState(0, Qt.Unchecked)
 
-    def saveCheckedDataElementsToXml(self, filename=''):
+    def saveCheckedDataElementsToXml(self, filename: str = '') -> None:
         n = self.topLevelItemCount()
         keys = self._dcm.getKeywords()
         skeys = list()
@@ -1593,7 +1638,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 chdir(dirname(filename))
                 self._dcm.saveDataElementValuesToXml(skeys, filename)
 
-    def saveCheckedDataElementsToTxt(self, filename=''):
+    def saveCheckedDataElementsToTxt(self, filename: str = '') -> None:
         n = self.topLevelItemCount()
         skeys = list()
         for i in range(n):
@@ -1610,7 +1655,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 chdir(dirname(filename))
                 self._dcm.saveDataElementValuesToTxt(skeys, filename)
 
-    def saveCheckedDataElementsToCSV(self, filename=''):
+    def saveCheckedDataElementsToCSV(self, filename: str = '') -> None:
         n = self.topLevelItemCount()
         skeys = list()
         for i in range(n):
@@ -1626,7 +1671,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 chdir(dirname(filename))
                 self._dcm.saveDataElementValuesToCSV(skeys, filename)
 
-    def saveCheckedDataElementsToMatfile(self, filename=''):
+    def saveCheckedDataElementsToMatfile(self, filename: str = '') -> None:
         n = self.topLevelItemCount()
         skeys = list()
         for i in range(n):
@@ -1643,7 +1688,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 chdir(dirname(filename))
                 self._dcm.saveDataElementValuesToMatfile(skeys, filename)
 
-    def saveCheckedDataElementsToExcel(self, filename=''):
+    def saveCheckedDataElementsToExcel(self, filename: str = '') -> None:
         n = self.topLevelItemCount()
         skeys = list()
         for i in range(n):
@@ -1660,7 +1705,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 chdir(dirname(filename))
                 self._dcm.saveDataElementValuesToExcel(skeys, filename)
 
-    def saveCheckedDataElementsToLATEX(self, filename=''):
+    def saveCheckedDataElementsToLATEX(self, filename: str = '') -> None:
         n = self.topLevelItemCount()
         skeys = list()
         for i in range(n):
@@ -1676,7 +1721,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 chdir(dirname(filename))
                 self._dcm.saveDataElementValuesToLATEX(skeys, filename)
 
-    def copyCheckedDataElementsToClipboard(self):
+    def copyCheckedDataElementsToClipboard(self) -> None:
         n = self.topLevelItemCount()
         skeys = list()
         for i in range(n):

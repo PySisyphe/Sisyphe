@@ -7,6 +7,10 @@ External packages/modules
     - vtk, visualization engine/3D rendering, https://vtk.org/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from typing import Any
+
 from math import pow
 from math import sqrt
 
@@ -25,21 +29,22 @@ from vtk import vtkImageSlice
 from vtk import vtkImageResliceMapper
 
 from Sisyphe.core.sisypheTransform import SisypheTransform
-from Sisyphe.core.sisypheTools import HandleWidget
-from Sisyphe.core.sisypheTools import LineWidget
 from Sisyphe.widgets.sliceViewWidgets import SliceOverlayViewWidget
 
+if TYPE_CHECKING:
+    from vtk import vtkObject
+    from vtk import vtk3DWidget
+    from Sisyphe.core.sisypheVolume import SisypheVolume
+    from Sisyphe.core.sisypheVolume import SisypheVolumeCollection
+    from Sisyphe.core.sisypheMesh import SisypheMeshCollection
+    from Sisyphe.core.sisypheTools import HandleWidget
+    from Sisyphe.core.sisypheTools import LineWidget
 
 """
 Class hierarchy
 ~~~~~~~~~~~~~~~
 
     - QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> SliceTrajectoryViewWidget
-    
-Description
-~~~~~~~~~~~
-
-Derived from SliceOverlayViewWidget. Adds interactive management of target and trajectory widgets. 
 """
 
 
@@ -50,14 +55,18 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
     Description
     ~~~~~~~~~~~
 
-    Add target management and camera trajectory alignment to SliceOverlayViewWidget.
+    The SliceTrajectoryViewWidget extends SliceOverlayViewWidget by integrating advanced features for interactive
+    management of 3D tools, specifically HandleWidget (targets) and LineWidget (trajectories). It provides
+    functionalities for aligning the camera view with predefined anatomical landmarks (AC-PC), 3D camera vectors, or
+    existing trajectory tools. This widget also introduces controls for slice thickness (slab) and step size, enhancing
+    the user's ability to navigate and analyze volumetric data in a trajectory-oriented manner.
 
     Inheritance
     ~~~~~~~~~~~
 
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> SliceTrajectoryViewWidget
 
-    Last revision: 11/10/2023
+    Last revision: 20/10/2025
     """
     # Custom Qt signals
 
@@ -71,13 +80,22 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
 
     # Special method
 
-    """
-    Private attributes
+    def __init__(self,
+                 overlays: SisypheVolumeCollection | None = None,
+                 meshes: SisypheMeshCollection | None = None,
+                 parent: QWidget | None = None) -> None:
+        """
+        SliceTrajectoryViewWidget instance constructor.
 
-    _target     List[float, float, float], current target
-    """
-
-    def __init__(self, overlays=None, meshes=None, parent=None):
+        Parameters
+        ----------
+        overlays : SisypheVolumeCollection | None (optional)
+            collection of SisypheVolume displayed in the viewport as overlays (default None).
+        meshes : SisypheMeshCollection | None (optional)
+            collection SisypheMesh displayed in the viewport (default None).
+        parent: QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(overlays, meshes, parent)
 
         self._camera0 = None
@@ -99,9 +117,32 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         self._popup.insertMenu(self._popup.actions()[6], self._menuAlign)
         self._updateToolMenu()
 
+    """
+    Private attributes
+
+    _target     HandleWidget | LineWidget, current target
+    """
+
     # Private methods
 
-    def _addSlice(self, volume, alpha):
+    def _addSlice(self, volume: SisypheVolume, alpha: float) -> vtkImageSlice:
+        """
+        Creates a new vtkImageSlice from a SisypheVolume.
+        vtkImageSlice instances are internally added to a vtkImageStack.
+        Currently, this method overrides superclass's implementation.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            volume from which to extract the slice.
+        alpha : float
+            opacity of the slice (0.0 to 1.0).
+
+        Returns
+        -------
+        vtkImageSlice
+            created vtkImageSlice actor.
+        """
         mapper = vtkImageResliceMapper()
         mapper.BorderOff()
         mapper.SliceAtFocalPointOn()
@@ -118,7 +159,21 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         self._stack.AddImage(slc)
         return slc
 
-    def _setCameraFocalDepth(self, p, signal=True):
+    def _setCameraFocalDepth(self, p: list[float] | tuple[float, float, float] | int, signal: bool = True) -> None:
+        """
+        Sets the camera's focal depth, effectively moving the slice plane.
+        Currently, this method overrides superclass's implementation.
+
+        Parameters
+        ----------
+        p : list[float] | tuple[float, float, float] | int
+
+            - If a list/tuple, it's the new absolute world coordinates for the focal point.
+            - If an int, it's a relative step to move the focal point along the current slice normal.
+
+        signal : bool (optional)
+            If True, emits the `CursorPositionChanged` signal for synchronization (default True).
+        """
         camera = self._renderer.GetActiveCamera()
         if isinstance(p, (list, tuple)):
             self._cursorpos = p
@@ -174,13 +229,23 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         # Update info
         self._updateBottomRightInfo()
 
-    def _updateCameraClipping(self):
+    def _updateCameraClipping(self) -> None:
+        """
+        Updates the camera's clipping range based on the current slice step.
+        This ensures that only the relevant portion of the volume around the slice is rendered.
+        Currently, this method overrides superclass's implementation.
+        """
         camera = self._renderer.GetActiveCamera()
         d = camera.GetDistance()
         camera.SetClippingRange(d - self._step, d + self._step)
         self.updateRender()
 
-    def _updateCameraOrientation(self):
+    def _updateCameraOrientation(self) -> None:
+        """
+        Overrides the parent method to update the camera's orientation and view-up vector.
+        This method is crucial for aligning the slice view with the chosen orientation (axial, coronal, sagittal)
+        and ensuring correct rendering of the slice. It also initializes the default zoom if not set.
+        """
         if self._camera0 is not None:
             camera = self._renderer.GetActiveCamera()
             camera.SetPosition(self._camera0)
@@ -214,7 +279,12 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                 self._cursor.SetPosition(p)
             self._renderwindow.Render()
 
-    def _updateToolMenu(self):
+    def _updateToolMenu(self) -> None:
+        """
+        Update the 'Move to target' submenu in the popup menu and adds a new 'Alignment' submenu to the popup menu.
+        The 'Alignment' submenu includes options for default alignment, 3D camera alignment, AC-PC alignment, and
+        alignment to existing trajectory tools. Currently, this method calls superclass's implementation.
+        """
         super()._updateToolMenu()
         # search checked action
         checked = None
@@ -264,11 +334,33 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                                         self.setTrajectoryFromLineWidget(x, signal=True))
                     self._menuAlign.addAction(t)
 
-    def _updateCheckedAction(self, name):
+    def _updateCheckedAction(self, name: str) -> None:
+        """
+        Updates the checked state of actions within the alignment menu group.
+
+        Parameters
+        ----------
+        name : str
+            text of the action to be checked.
+        """
         for a in self._menuAlignGroup.actions():
             a.setChecked(a.text() == name)
 
-    def _getInfoValuesText(self, p):
+    def _getInfoValuesText(self, p: list[float] | tuple[float, float, float]) -> None:
+        """
+        Generates additional information text, including the distance from the current slice to the active target tool.
+        Currently, this method calls superclass's implementation.
+
+        Parameters
+        ----------
+        p : list[float] | tuple[float, float, float]
+            The world coordinates of the current cursor position.
+
+        Returns
+        -------
+        str
+            The formatted information text, including target distances.
+        """
         txt = ''
         if self.getInfoVisibility():
             if self._target is not None:
@@ -283,47 +375,145 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
 
     # Public synchronisation event methods
 
-    def synchroniseTrajectoryToolAligned(self, obj, name):
+    def synchroniseTrajectoryToolAligned(self, obj: QWidget, name: str) -> None:
+        """
+        Synchronizes trajectory alignment to a tool between SliceTrajectoryViewWidget instances.
+        This method is called by the TrajectoryToolAligned PyQt signal.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceTrajectoryViewWidget instance that emitted the TrajectoryToolAligned signal.
+        name : str
+            name of the LineWidget tool to align the trajectory with.
+        """
         if self != obj:
             self.setTrajectoryFromLineWidget(name, signal=False)
 
-    def synchroniseTrajectoryACPCAligned(self, obj):
+    def synchroniseTrajectoryACPCAligned(self, obj: QWidget) -> None:
+        """
+        Synchronizes AC-PC alignment between SliceTrajectoryViewWidget instances.
+        This method is called by the TrajectoryACPCAligned PyQt signal.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceTrajectoryViewWidget instance that emitted the TrajectoryACPCAligned signal.
+        """
         if self != obj:
             self.setTrajectoryFromACPC(signal=False)
             
-    def synchroniseTrajectoryVectorAligned(self, obj, x, y, z):
+    def synchroniseTrajectoryVectorAligned(self, obj: QWidget, x: float, y: float, z: float) -> None:
+        """
+        Synchronizes trajectory alignment to a normal vector between SliceTrajectoryViewWidget instances.
+        This method is called by the TrajectoryVectorAligned PyQt signal.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceTrajectoryViewWidget instance that emitted the TrajectoryVectorAligned signal.
+        x : float
+            x-component of the normal vector.
+        y : float
+            y-component of the normal vector.
+        z : float
+            z-component of the normal vector.
+        """
         if self != obj:
             self.setTrajectoryFromNormalVector([x, y, z], signal=False)
             
-    def synchroniseTrajectoryDefaultAligned(self, obj):
+    def synchroniseTrajectoryDefaultAligned(self, obj: QWidget) -> None:
+        """
+        Synchronizes default trajectory alignment between SliceTrajectoryViewWidget instances.
+        This method is called by the TrajectoryDefaultAligned PyQt signal.
+
+        Parameters
+        ----------
+        obj : QWidget
+            The SliceTrajectoryViewWidget instance that emitted the TrajectoryDefaultAligned signal.
+        """
         if self != obj:
             self.setTrajectoryToDefault(signal=False)
 
-    def synchroniseToolMoved(self, obj, tool):
+    def synchroniseToolMoved(self, obj: QWidget, tool:HandleWidget | LineWidget) -> None:
+        """
+        Synchronizes tool movement and, if the view is aligned to a tool, re-align the trajectory based on the moved
+        tool. Currently, this method calls superclass's implementation.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceTrajectoryViewWidget instance that emitted the ToolMoved signal.
+        tool : HandleWidget | LineWidget
+            tool that was moved.
+        """
         super().synchroniseToolMoved(obj, tool)
         name = self._menuAlignGroup.checkedAction().text()
         if name[:4] == 'Tool':
             toolname = name.split(' ')[1]
             self.setTrajectoryFromLineWidget(toolname, signal=False)
 
-    def synchroniseSlabChanged(self, obj, thickness, slabtype):
+    def synchroniseSlabChanged(self, obj: QWidget, thickness: float, slabtype: str) -> None:
+        """
+        Synchronizes slab thickness and type changes between SliceTrajectoryViewWidget instances.
+        This method is called by the SlabChanged PyQt signal.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceTrajectoryViewWidget instance that emitted the SlabChanged signal.
+        thickness : float
+            new slab thickness.
+        slabtype : str
+            new slab type ('Min', 'Max', 'Mean', 'Sum').
+        """
         if obj != self:
             self.setSlabThickness(thickness, signal=False)
             self.setSlabType(slabtype, signal=False)
 
-    def synchroniseStepChanged(self, obj, step):
+    def synchroniseStepChanged(self, obj: QWidget, step: float) -> None:
+        """
+        Synchronizes slice step changes between SliceTrajectoryViewWidget instances.
+        This method is called by the StepChanged PyQt signal.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceTrajectoryViewWidget instance that emitted the StepChanged signal.
+        step : float
+            new slice step value.
+        """
         if obj != self:
             self.setSliceStep(step, signal=False)
 
     # Public methods
 
-    def setVolume(self, volume):
+    def setVolume(self, volume: SisypheVolume) -> None:
+        """
+        Set the SisypheVolume to be displayed in the widget.
+        Initializes the VTK image stack and slice actor, and updates the camera orientation.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            Sisyphevolume to display.
+        """
         super().setVolume(volume)
         self._updateToolMenu()
 
     # < Revision 18/10/2024
     # add replaceVolume method
-    def replaceVolume(self, volume):
+    def replaceVolume(self, volume: SisypheVolume) -> None:
+        """
+        Replace the current displayed SisypheVolume with a new one, preserving the previous display and slab properties.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        volume : SisypheVolume
+            new SisypheVolume to display.
+        """
         # Copy previous display properties
         slabttype = self.getSlabType()
         slabThickness = self.getSlabThickness()
@@ -333,16 +523,41 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         self.setSlabThickness(slabThickness, signal=False)
     # Revision 18/10/2024
 
-    def getPopupAlignment(self):
+    def getPopupAlignment(self) -> QMenu:
+        """
+        Get the popup submenu 'Alignment' of the SliceTrajectoryViewWidget instance.
+        This submenu provides options for aligning the slice view.
+
+        Returns
+        -------
+        QMenu
+            'Alignment' submenu.
+        """
         return self._menuAlign
 
-    def popupAlignmentEnabled(self):
+    def popupAlignmentEnabled(self) -> None:
+        """
+        Enable the popup submenu 'Alignment' of the SliceTrajectoryViewWidget instance.
+        """
         self._menuAlign.menuAction().setVisible(True)
 
-    def popupAlignmentDisabled(self):
+    def popupAlignmentDisabled(self) -> None:
+        """
+        Disable the popup submenu 'Alignment' of the SliceTrajectoryViewWidget instance.
+        """
         self._menuAlign.menuAction().setVisible(False)
 
-    def setSliceStep(self, v, signal=True):
+    def setSliceStep(self, v: float, signal: bool = True) -> None:
+        """
+        Set the step size for moving the slice plane.
+
+        Parameters
+        ----------
+        v : float
+            new step size in world units (between 0.5 and 10.0).
+        signal : bool (optional)
+            If True, emits the `StepChanged` signal for synchronization (default True).
+        """
         if isinstance(v, float):
             if 0.5 <= v <= 10.0:
                 self._step = v
@@ -352,23 +567,67 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             else: raise ValueError('parameter value {} is not between 0.5 and 10.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getSliceStep(self):
+    def getSliceStep(self) -> float:
+        """
+        Get the current step size for moving the slice plane.
+
+        Returns
+        -------
+        float
+            current step size in world units.
+        """
         return self._step
 
-    def hasTarget(self):
+    def hasTarget(self) -> bool:
+        """
+        Check if an active target (HandleWidget or LineWidget) is set for the widget.
+
+        Returns
+        -------
+        bool
+            True if a target is set, False otherwise.
+        """
         return self._target is not None
 
-    def getTarget(self):
+    def getTarget(self) -> HandleWidget | LineWidget | None:
+        """
+        Get the currently active target (HandleWidget or LineWidget).
+
+        Returns
+        -------
+        HandleWidget | LineWidget | None
+            active target tool, or None if no target is set.
+        """
         return self._target
 
-    def getTargetPosition(self):
+    def getTargetPosition(self) -> tuple[float, float, float] | None:
+        """
+        Get the world coordinates of the active target.
+        For a HandleWidget, it returns its position. For a LineWidget, it returns its target point (p2).
+
+        Returns
+        -------
+        tuple[float, float, float] | None
+            The (x, y, z) world coordinates of the target, or None if no target is set.
+        """
         if self._target is not None:
             if isinstance(self._target, HandleWidget): return self._target.getPosition()
             elif isinstance(self._target, LineWidget): return self._target.getPosition2()
             else: return None
         else: raise AttributeError('_target attribute is None.')
 
-    def setTarget(self, key, signal=True):
+    def setTarget(self, key: int | str | HandleWidget | LineWidget, signal: bool = True) -> None:
+        """
+        Set the active target tool for the widget.
+        The target can be identified by its index, name, or instance.
+
+        Parameters
+        ----------
+        key : int | str | HandleWidget | LineWidget
+            identifier for the tool to be set as the target.
+        signal : bool (optional)
+            If True, emits the `ViewMethodCalled` signal for synchronization (default True).
+        """
         if isinstance(key, HandleWidget | LineWidget): key = key.getName()
         if isinstance(key, (int, str)):
             if key in self._tools:
@@ -377,7 +636,22 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             else: raise KeyError('invalid tool key, tool {} is not in current view.'.format(key))
         else: raise TypeError('parameter type {} is not int or str')
 
-    def setCursorWorldPosition(self, x, y, z, signal=True):
+    def setCursorWorldPosition(self, x: float, y: float, z: float, signal: bool = True) -> None:
+        """
+        Set the 3D world position of the cross-shaped cursor and updates the camera's focal depth accordingly.
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        x : float
+            world x-coordinate.
+        y : float
+            world y-coordinate.
+        z : float
+            world z-coordinate.
+        signal : bool (optional)
+            If True and synchronization is on, emits the CursorPositionChanged signal (default True).
+        """
         if self._volume is not None:
             p = [x, y, z]
             # Update camera focal
@@ -387,16 +661,51 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                 x, y, z = self._cursorpos
                 self.CursorPositionChanged.emit(self, x, y, z)
 
-    def getCursorWorldPosition(self):
+    def getCursorWorldPosition(self) -> list[float]:
+        """
+        Get the 3D world position of the cross-shaped cursor.
+        Currently, this method overrides the superclass's implementation.
+
+        Returns
+        -------
+        list[float]
+            The (x, y, z) world coordinates of the cross-shaped cursor.
+        """
         return self._cursorpos
 
-    def setCursorFromDisplayPosition(self, x, y):
+    def setCursorFromDisplayPosition(self, x: float, y: float) -> None:
+        """
+        Set the cros-shaped cursor's world position from 2D display coordinates.
+        The display coordinates are projected onto the current slice plane.
+        Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        x : float
+            2D display x-coordinate.
+        y : float
+            2D display y-coordinate.
+        """
         p = list(self._getWorldFromDisplay(x, y))
         r = [0.0, 0.0, 0.0]
         self.getVtkPlane().ProjectPoint(p, r)
         self.setCursorWorldPosition(r[0], r[1], r[2], signal=False)
 
-    def getDistanceFromCurrentSliceToTarget(self):
+    def getDistanceFromCurrentSliceToTarget(self) -> list[float] | None:
+        """
+        Calculate the distance from the current slice plane to the active target tool.
+
+        - For a HandleWidget, it returns the distance to the handle.
+        - For a LineWidget, it returns distances to its entry and target points.
+
+        Returns
+        -------
+        list[float] | None
+
+            - list containing the distance(s) in mm, or None if no target is set.
+            - for HandleWidget: [distance_to_handle, 0.0]
+            - for LineWidget: [distance_to_target_point, distance_to_entry_point]
+        """
         if self._target is not None:
             if isinstance(self._target, HandleWidget):
                 return [self._target.getDistanceToPlane(self), 0.0]
@@ -406,7 +715,18 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             else: raise TypeError('Invalid _target attribute type {}'.format(type(self._target)))
         else: return None
 
-    def setTrajectoryFromCamera(self, t, signal=True):
+    def setTrajectoryFromCamera(self, t: vtkCamera, signal: bool = True) -> None:
+        """
+        Align the slice view's camera with the orientation of a given 3D camera.
+        This sets the view to match an external 3D perspective.
+
+        Parameters
+        ----------
+        t : vtkCamera
+            vtkCamera instance whose orientation will be used for alignment.
+        signal : bool (optional)
+            If True, emits the TrajectoryCameraAligned signal for synchronization (default True).
+        """
         if isinstance(t, vtkCamera):
             camera = self._renderer.GetActiveCamera()
             camera.SetPosition(t.GetPosition())
@@ -422,7 +742,19 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                 self.TrajectoryCameraAligned.emit()
         else: raise TypeError('parameter type {} is not vtkCamera.'.format(type(t)))
 
-    def setTrajectoryFromLineWidget(self, name, signal=True):
+    def setTrajectoryFromLineWidget(self, name: str, signal: bool = True) -> None:
+        """
+        Aligns the slice view's camera with a specified LineWidget (trajectory tool).
+        The camera's focal point is set to the tool's target point (p2), and its position is set along the line defined
+        by the tool, looking towards the target.
+
+        Parameters
+        ----------
+        name : str
+            name of the LineWidget tool to align the trajectory with.
+        signal : bool (optional)
+            If True, emits the TrajectoryToolAligned signal for synchronization (default True).
+        """
         tool = None
         for t in self._tools:
             if t.getName() == name:
@@ -458,7 +790,18 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                 self.TrajectoryToolAligned.emit(self, name)
         else: raise TypeError('parameter type {} is not LineWidget.'.format(type(tool)))
 
-    def setTrajectoryFromNormalVector(self, t, signal=True):
+    def setTrajectoryFromNormalVector(self, t: ndarray | list[float], signal: bool = True) -> None:
+        """
+        Aligns the slice view's camera such that its view plane normal matches a given vector.
+        The camera's focal point is set to the volume's center.
+
+        Parameters
+        ----------
+        t : ndarray | list[float]
+            A 3-element list or NumPy array representing the normal vector (x, y, z).
+        signal : bool (optional)
+            If True, emits the TrajectoryVectorAligned signal for synchronization (default True).
+        """
         if isinstance(t, ndarray): t = t.tolist()
         if isinstance(t, list):
             plane = vtkPlane()
@@ -482,7 +825,17 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                 self.TrajectoryVectorAligned.emit(self, t[0], t[1], t[2])
         else: raise TypeError('parameter type {} is not list or numpy array.'.format(type(t)))
 
-    def setTrajectoryFromACPC(self, signal=True):
+    def setTrajectoryFromACPC(self, signal: bool = True) -> None:
+        """
+        Align the slice view's camera based on the Anterior Commissure (AC) and Posterior Commissure (PC) landmarks of
+        the reference SisypheVolume. The camera's focal point is set to the mid-ACPC point, and its orientation is
+        adjusted according to the AC-PC alignment.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the TrajectoryACPCAligned signal for synchronization (default True).
+        """
         if self._volume.acpc.hasACPC():
             camera = self._renderer.GetActiveCamera()
             # Set focal point
@@ -546,7 +899,16 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.TrajectoryACPCAligned.emit(self)
 
-    def setTrajectoryToDefault(self, signal=True):
+    def setTrajectoryToDefault(self, signal: bool = True) -> None:
+        """
+        Reset the slice view's camera to its default orientation and position.
+        This typically aligns the view with the primary anatomical axes.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the TrajectoryDefaultAligned signal for synchronization (default True).
+        """
         super()._updateCameraOrientation()
         self._target = None
         self._updateCheckedAction('Default alignment')
@@ -556,23 +918,74 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.TrajectoryDefaultAligned.emit(self)
 
-    def getTrajectory(self):
+    def getTrajectory(self) -> tuple[float, float, float]:
+        """
+        Get the current trajectory vector, which corresponds to the camera's view plane normal.
+
+        Returns
+        -------
+        tuple[float, float, float]
+            (x, y, z) components of the camera's view plane normal.
+        """
         camera = self._renderer.GetActiveCamera()
         return camera.GetViewPlaneNormal()
 
-    def isCameraAligned(self):
+    def isCameraAligned(self) -> bool:
+        """
+        Check if the slice view is currently aligned with a 3D camera.
+
+        Returns
+        -------
+        bool
+            True if aligned with a 3D camera, False otherwise.
+        """
         return self._menuAlignGroup.checkedAction().text()[0] == '3'
 
-    def isACPCAligned(self):
+    def isACPCAligned(self) -> bool:
+        """
+        Check if the slice view is currently aligned with the AC-PC line.
+
+        Returns
+        -------
+        bool
+            True if aligned with AC-PC, False otherwise.
+        """
         return self._menuAlignGroup.checkedAction().text()[0] == 'A'
 
-    def isToolAligned(self):
+    def isToolAligned(self) -> bool:
+        """
+        Check if the slice view is currently aligned with a trajectory tool (LineWidget).
+
+        Returns
+        -------
+        bool
+            True if aligned with a tool, False otherwise.
+        """
         return self._menuAlignGroup.checkedAction().text()[0] == 'T'
 
-    def isDefaultAligned(self):
+    def isDefaultAligned(self) -> bool:
+        """
+        Check if the slice view is currently set to its default alignment.
+
+        Returns
+        -------
+        bool
+            True if set to default alignment, False otherwise.
+        """
         return self._menuAlignGroup.checkedAction().text()[0] == 'D'
 
-    def setSlabThickness(self, v=0.0, signal=True):
+    def setSlabThickness(self, v: float = 0.0, signal: bool = True) -> None:
+        """
+        Set the thickness of the slab. The signal is blended into the slab thickness using one of the following
+        functions: mean, maximum, minimum, cumulative sum.
+
+        Parameters
+        ----------
+        v : float (optional)
+            slab thickness in world units (default 0.0).
+        signal : bool (optional)
+            If True, emits the SlabChanged signal for synchronization (default True).
+        """
         if isinstance(v, float):
             mapper = self._volumeslice.GetMapper()
             mapper.SetSlabThickness(v)
@@ -583,10 +996,29 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                 self.SlabChanged.emit(self, v, self.getSlabType())
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getSlabThickness(self):
+    def getSlabThickness(self) -> float:
+        """
+        Get the current slab thickness. The signal is blended into the slab thickness using one of the following
+        functions: mean, maximum, minimum, cumulative sum.
+
+        Returns
+        -------
+        float
+            The current slab thickness in world units.
+        """
         return self._volumeslice.GetMapper().GetSlabThickness()
 
-    def setSlabType(self, v='Sum', signal=True):
+    def setSlabType(self, v='Sum', signal: bool = True) -> None:
+        """
+        Set how the signal is blended wihtin the slab thickness (e.g., Min, Max, Mean, Sum).
+
+        Parameters
+        ----------
+        v : str (optional)
+            blending function ('Min', 'Max', 'Mean', or 'Sum', default 'Sum').
+        signal : bool (optional)
+            If True, emits the SlabChanged signal for synchronization (default True).
+        """
         if isinstance(v, str):
             if v == 'Min': self._volumeslice.GetMapper().SetSlabTypeToMin()
             elif v == 'Max': self._volumeslice.GetMapper().SetSlabTypeToMax()
@@ -596,36 +1028,88 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.SlabChanged.emit(self, self.getSlabThickness(), v)
 
-    def setSlabTypeToMin(self, signal=True):
+    def setSlabTypeToMin(self, signal: bool = True)-> None:
+        """
+        Set the slab blending fnuction to 'Min' to display the minimum intensity value across the slab.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the SlabChanged signal for synchronization (default True).
+        """
         self._volumeslice.GetMapper().SetSlabTypeToMin()
         if signal:
             # noinspection PyUnresolvedReferences
             self.SlabChanged.emit(self, self.getSlabThickness(), 'Min')
 
-    def setSlabTypeToMax(self, signal=True):
+    def setSlabTypeToMax(self, signal: bool = True)-> None:
+        """
+        Set the slab blending fnuction to 'Max' to display the maximum intensity value across the slab.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the SlabChanged signal for synchronization (default True).
+        """
         self._volumeslice.GetMapper().SetSlabTypeToMax()
         if signal:
             # noinspection PyUnresolvedReferences
             self.SlabChanged.emit(self, self.getSlabThickness(), 'Max')
 
-    def setSlabTypeToMean(self, signal=True):
+    def setSlabTypeToMean(self, signal: bool = True)-> None:
+        """
+        Set the slab blending fnuction to 'Mean' to display the mean intensity value across the slab.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the SlabChanged signal for synchronization (default True).
+        """
         self._volumeslice.GetMapper().SetSlabTypeToMean()
         if signal:
             # noinspection PyUnresolvedReferences
             self.SlabChanged.emit(self, self.getSlabThickness(), 'Mean')
 
-    def setSlabTypeToSum(self, signal=True):
+    def setSlabTypeToSum(self, signal: bool = True)-> None:
+        """
+        Set the slab blending fnuction to 'Sum' to display the sum of intensity values across the slab.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the SlabChanged signal for synchronization (default True).
+        """
         self._volumeslice.GetMapper().SetSlabTypeToSum()
         if signal:
             # noinspection PyUnresolvedReferences
             self.SlabChanged.emit(self, self.getSlabThickness(), 'Sum')
 
-    def getSlabType(self):
+    def getSlabType(self) -> str:
+        """
+        Get how the signal is blended wihtin the slab thickness (e.g., Min, Max, Mean, Sum).
+
+        Returns
+        -------
+        str
+            The current slab type ('Min', 'Max', 'Mean', or 'Sum').
+        """
         return self._volumeslice.GetMapper().GetSlabTypeAsString()
 
     # Private event methods
 
-    def _onMouseMoveEvent(self, obj, evt_name):
+    def _onMouseMoveEvent(self, obj: vtkObject , evt_name: str) -> None:
+        """
+        Handle mouse move VTK events for slice manipulation.
+        This includes zooming, panning, windowing, and cursor position updates, with specific logic for
+        trajectory-aligned views. Currently, this method overrides the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (MouseMoveEvent).
+        """
         if self.hasVolume():
             interactorstyle = self._window.GetInteractorStyle()
             last = interactorstyle.GetLastPos()
@@ -692,7 +1176,19 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
 
     # tool VTK event methods
 
-    def _onTrajectoryEndInteractionEvent(self, widget, event):
+    def _onTrajectoryEndInteractionEvent(self, widget: vtk3DWidget, event: Any):
+        """
+        Handles the end of interaction with a LineWidget (trajectory tool).
+        It updates the cursor position to the tool's target point and, if the view is aligned to a tool, re-aligns the
+        trajectory based on the moved tool. Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        widget : vtk3DWidget
+            `LineWidget` that triggered the event.
+        event : Any
+            event parameter.
+        """
         super()._onTrajectoryEndInteractionEvent(widget, event)
         if self.isToolAligned():
             for a in self._menuAlignGroup.actions():
