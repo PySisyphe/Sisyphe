@@ -1,0 +1,36 @@
+.. _page-widgets-single-view:
+
+Single viewport widgets
+=======================
+
+.. _abstract-view-widget:
+.. autoclass:: Sisyphe.widgets.abstractViewWidget.AbstractViewWidget
+   :members:
+
+.. _slice-view-widget:
+.. autoclass:: Sisyphe.widgets.sliceViewWidgets.SliceViewWidget
+   :members:
+
+.. _slice-reorient-view-widget:
+.. autoclass:: Sisyphe.widgets.sliceViewWidgets.SliceReorientViewWidget
+   :members:
+
+.. _slice-overlay-view-widget:
+.. autoclass:: Sisyphe.widgets.sliceViewWidgets.SliceOverlayViewWidget
+   :members:
+
+.. _slice-registration-view-widget:
+.. autoclass:: Sisyphe.widgets.sliceViewWidgets.SliceRegistrationViewWidget
+   :members:
+
+.. _slice-roi-view-widget:
+.. autoclass:: Sisyphe.widgets.sliceViewWidgets.SliceROIViewWidget
+   :members:
+
+.. _projection-view-widget:
+.. autoclass:: Sisyphe.widgets.projectionViewWidget.ProjectionViewWidget
+   :members:
+
+.. _volume-view-widget:
+.. autoclass:: Sisyphe.widgets.volumeViewWidget.VolumeViewWidget
+   :members:

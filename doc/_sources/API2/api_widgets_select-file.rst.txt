@@ -1,0 +1,7 @@
+.. _page-widgets-select-file:
+
+Select file(s) widgets
+======================
+
+.. automodule:: Sisyphe.widgets.selectFileWidgets
+   :members:

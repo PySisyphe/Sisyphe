@@ -1,0 +1,52 @@
+.. _page-widgets-iconbar:
+
+Icon bar widgets
+================
+
+.. _iconbar-widget:
+.. autoclass:: Sisyphe.widgets.iconBarViewWidgets.IconBarWidget
+   :members:
+
+.. _iconbar-orthogonal-slice-view-widget:
+.. autoclass:: Sisyphe.widgets.iconBarViewWidgets.IconBarOrthogonalSliceViewWidget
+   :members:
+
+.. _iconbar-orthogonal-registration-view-widget:
+.. autoclass:: Sisyphe.widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget
+   :members:
+
+.. _iconbar-orthogonal-registration2-view-widget:
+.. autoclass:: Sisyphe.widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget2
+   :members:
+
+.. _iconbar-orthogonal-reorient-view-widget:
+.. autoclass:: Sisyphe.widgets.iconBarViewWidgets.IconBarOrthogonalReorientViewWidget
+   :members:
+
+.. _iconbar-orthogonal-slice-volume-view-widget:
+.. autoclass:: Sisyphe.widgets.iconBarViewWidgets.IconBarOrthogonalSliceVolumeViewWidget
+   :members:
+
+.. _iconbar-orthogonal-slice-trajectory-view-widget:
+.. autoclass:: Sisyphe.widgets.iconBarViewWidgets.IconBarOrthogonalSliceTrajectoryViewWidget
+   :members:
+
+.. _iconbar-multi-slice-grid-view-widget:
+.. autoclass:: Sisyphe.widgets.iconBarViewWidgets.IconBarMultiSliceGridViewWidget
+   :members:
+
+.. _iconbar-synchronised-grid-view-widget:
+.. autoclass:: Sisyphe.widgets.iconBarViewWidgets.IconBarSynchronisedGridViewWidget
+   :members:
+
+.. _iconbar-projection-view-widget:
+.. autoclass:: Sisyphe.widgets.projectionViewWidget.IconBarMultiProjectionViewWidget
+   :members:
+
+.. _iconbar-multi-component-view-widget:
+.. autoclass:: Sisyphe.widgets.multiComponentViewWidget.IconBarMultiComponentViewWidget
+   :members:
+
+.. _iconbar-slice-view-widget:
+.. autoclass:: Sisyphe.widgets.iconBarViewWidgets.IconBarSliceViewWidget
+   :members:

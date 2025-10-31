@@ -1,0 +1,26 @@
+.. _page-widgets-lut:
+
+LUT widgets
+===========
+
+.. autoclass:: Sisyphe.widgets.LUTWidgets.LutWidget
+   :members:
+
+.. autoclass:: Sisyphe.widgets.LUTWidgets.LutEditWidget
+   :members:
+
+.. autoclass:: Sisyphe.widgets.LUTWidgets.ComboBoxLut
+   :members:
+
+.. autoclass:: Sisyphe.widgets.LUTWidgets.PopupMenuLut
+   :members:
+
+.. autoclass:: Sisyphe.widgets.LUTWidgets.ColorTransferWidget
+   :members:
+
+.. autoclass:: Sisyphe.widgets.LUTWidgets.AlphaTransferWidget
+   :members:
+
+.. autoclass:: Sisyphe.widgets.LUTWidgets.TransferWidget
+   :members:
+

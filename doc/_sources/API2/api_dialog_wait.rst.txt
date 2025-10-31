@@ -1,0 +1,7 @@
+.. _page-dialog-wait:
+
+Progress & wait dialog
+======================
+
+.. autoclass:: Sisyphe.gui.dialogWait.DialogWait
+   :members:

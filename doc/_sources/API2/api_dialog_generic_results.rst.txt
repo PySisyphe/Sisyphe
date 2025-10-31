@@ -1,0 +1,7 @@
+.. _page-dialog-generic-results:
+
+Generic results dialog
+======================
+
+.. autoclass:: Sisyphe.gui.dialogGenericResults.DialogGenericResults
+   :members:

@@ -1,0 +1,14 @@
+
+.. _page-widgets-settings:
+
+Settings widgets
+================
+
+.. autoclass:: Sisyphe.widgets.functionsSettingsWidget.SettingsWidget
+   :members:
+
+.. autoclass:: Sisyphe.widgets.functionsSettingsWidget.FunctionSettingsWidget
+   :members:
+
+.. autoclass:: Sisyphe.widgets.functionsSettingsWidget.DialogSettingsWidget
+   :members:

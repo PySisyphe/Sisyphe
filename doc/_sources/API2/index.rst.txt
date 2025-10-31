@@ -1,0 +1,18 @@
+.. _page-widgets-api:
+
+Widgets & dialogs API
+=====================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   ./api_understanding_views.rst
+   ./api_widgets_single_view.rst
+   ./api_widgets_multiple_view.rst
+   ./api_widgets_iconbar.rst
+   ./api_widgets_lut.rst
+   ./api_widgets_select_file.rst
+   ./api_widgets_settings.rst
+   ./api_dialog_generic_results.rst
+   ./api_dialog_wait.rst

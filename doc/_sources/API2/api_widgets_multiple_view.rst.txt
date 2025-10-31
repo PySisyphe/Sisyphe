@@ -1,0 +1,48 @@
+.. _page-widgets-multiple-view:
+
+Multiple viewport widgets
+=========================
+
+.. _multi-view-widget:
+.. autoclass:: Sisyphe.widgets.multiViewWidgets.MultiViewWidget
+   :members:
+
+.. _orthogonal-slice-view-widget:
+.. autoclass:: Sisyphe.widgets.multiViewWidgets.OrthogonalSliceViewWidget
+   :members:
+
+.. _orthogonal-registration-view-widget:
+.. autoclass:: Sisyphe.widgets.multiViewWidgets.OrthogonalRegistrationViewWidget
+   :members:
+
+.. _orthogonal-reorient-view-widget:
+.. autoclass:: Sisyphe.widgets.multiViewWidgets.OrthogonalReorientViewWidget
+   :members:
+
+.. _orthogonal-slice-volume-view-widget:
+.. autoclass:: Sisyphe.widgets.multiViewWidgets.OrthogonalSliceVolumeViewWidget
+   :members:
+
+.. _orthogonal-trajectory-view-widget:
+.. autoclass:: Sisyphe.widgets.multiViewWidgets.OrthogonalTrajectoryViewWidget
+   :members:
+
+.. _grid-view-widget:
+.. autoclass:: Sisyphe.widgets.multiViewWidgets.GridViewWidget
+   :members:
+
+.. _multi-slice-grid-view-widget:
+.. autoclass:: Sisyphe.widgets.multiViewWidgets.MultiSliceGridViewWidget
+   :members:
+
+.. _synchronised-grid-view-widget:
+.. autoclass:: Sisyphe.widgets.multiViewWidgets.SynchronisedGridViewWidget
+   :members:
+
+.. _multi-projection-view-widget:
+.. autoclass:: Sisyphe.widgets.projectionViewWidget.MultiProjectionViewWidget
+   :members:
+
+.. _multi-component-view-widget:
+.. autoclass:: Sisyphe.widgets.multiComponentViewWidget.MultiComponentViewWidget
+   :members:

@@ -1,0 +1,19 @@
+.. _page-widgets-select-file:
+
+Select file(s) widgets
+======================
+
+.. autoclass:: Sisyphe.widgets.selectFileWidgets.SelectionFilter
+   :members:
+
+.. autoclass:: Sisyphe.widgets.selectFileWidgets.FileSelectionWidget
+   :members:
+
+.. autoclass:: Sisyphe.widgets.selectFileWidgets.FilesSelectionWidget
+   :members:
+
+.. autoclass:: Sisyphe.widgets.selectFileWidgets.MultiExtFilesSelectionWidget
+   :members:
+
+.. autoclass:: Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget
+   :members:
