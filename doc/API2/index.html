@@ -1,0 +1,237 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Widgets &amp; dialogs API &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=049aceee"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Understanding view widgets" href="api_understanding_views.html" />
+    <link rel="prev" title="Sisyphe.core.sisypheXml" href="../API/api_xml.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Sisyphe
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_File.html">File menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Functions.html">Functions menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Registration.html">Registration menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Segmentation.html">Segmentation menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Mapping.html">Mapping menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Diffusion.html">Diffusion menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Window.html">Window menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../API/index.html">Core API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Widgets &amp; dialogs API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_understanding_views.html">Understanding view widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_single_view.html">Single viewport widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_multiple_view.html">Multiple viewport widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_iconbar.html">Icon bar widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_lut.html">LUT widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_select_file.html">Select file(s) widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_settings.html">Settings widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dialog_generic_results.html">Generic results dialog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dialog_wait.html">Progress &amp; wait dialog</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Versions.html">Version history</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Widgets &amp; dialogs API</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/API2/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="widgets-dialogs-api">
+<span id="page-widgets-api"></span><h1>Widgets &amp; dialogs API<a class="headerlink" href="#widgets-dialogs-api" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api_understanding_views.html">Understanding view widgets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_understanding_views.html#single-view-widgets">Single view widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_understanding_views.html#mulitple-view-widgets">Mulitple view widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_understanding_views.html#icon-bar-widgets">Icon bar widgets</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_widgets_single_view.html">Single viewport widgets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.abstractViewWidget.AbstractViewWidget"><code class="docutils literal notranslate"><span class="pre">AbstractViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.sliceViewWidgets.SliceViewWidget"><code class="docutils literal notranslate"><span class="pre">SliceViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.sliceViewWidgets.SliceReorientViewWidget"><code class="docutils literal notranslate"><span class="pre">SliceReorientViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.sliceViewWidgets.SliceOverlayViewWidget"><code class="docutils literal notranslate"><span class="pre">SliceOverlayViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.sliceViewWidgets.SliceRegistrationViewWidget"><code class="docutils literal notranslate"><span class="pre">SliceRegistrationViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.sliceViewWidgets.SliceROIViewWidget"><code class="docutils literal notranslate"><span class="pre">SliceROIViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.projectionViewWidget.ProjectionViewWidget"><code class="docutils literal notranslate"><span class="pre">ProjectionViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_widgets_multiple_view.html">Multiple viewport widgets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_multiple_view.html#Sisyphe.widgets.multiViewWidgets.MultiViewWidget"><code class="docutils literal notranslate"><span class="pre">MultiViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_multiple_view.html#Sisyphe.widgets.multiViewWidgets.OrthogonalSliceViewWidget"><code class="docutils literal notranslate"><span class="pre">OrthogonalSliceViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_multiple_view.html#Sisyphe.widgets.multiViewWidgets.OrthogonalRegistrationViewWidget"><code class="docutils literal notranslate"><span class="pre">OrthogonalRegistrationViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_multiple_view.html#Sisyphe.widgets.multiViewWidgets.OrthogonalReorientViewWidget"><code class="docutils literal notranslate"><span class="pre">OrthogonalReorientViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_multiple_view.html#Sisyphe.widgets.multiViewWidgets.OrthogonalSliceVolumeViewWidget"><code class="docutils literal notranslate"><span class="pre">OrthogonalSliceVolumeViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_multiple_view.html#Sisyphe.widgets.multiViewWidgets.OrthogonalTrajectoryViewWidget"><code class="docutils literal notranslate"><span class="pre">OrthogonalTrajectoryViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_multiple_view.html#Sisyphe.widgets.multiViewWidgets.GridViewWidget"><code class="docutils literal notranslate"><span class="pre">GridViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_multiple_view.html#Sisyphe.widgets.multiViewWidgets.MultiSliceGridViewWidget"><code class="docutils literal notranslate"><span class="pre">MultiSliceGridViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_multiple_view.html#Sisyphe.widgets.multiViewWidgets.SynchronisedGridViewWidget"><code class="docutils literal notranslate"><span class="pre">SynchronisedGridViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_multiple_view.html#Sisyphe.widgets.projectionViewWidget.MultiProjectionViewWidget"><code class="docutils literal notranslate"><span class="pre">MultiProjectionViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_multiple_view.html#Sisyphe.widgets.multiComponentViewWidget.MultiComponentViewWidget"><code class="docutils literal notranslate"><span class="pre">MultiComponentViewWidget</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_widgets_iconbar.html">Icon bar widgets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.iconBarViewWidgets.IconBarWidget"><code class="docutils literal notranslate"><span class="pre">IconBarWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.iconBarViewWidgets.IconBarOrthogonalSliceViewWidget"><code class="docutils literal notranslate"><span class="pre">IconBarOrthogonalSliceViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget"><code class="docutils literal notranslate"><span class="pre">IconBarOrthogonalRegistrationViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget2"><code class="docutils literal notranslate"><span class="pre">IconBarOrthogonalRegistrationViewWidget2</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.iconBarViewWidgets.IconBarOrthogonalReorientViewWidget"><code class="docutils literal notranslate"><span class="pre">IconBarOrthogonalReorientViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.iconBarViewWidgets.IconBarOrthogonalSliceVolumeViewWidget"><code class="docutils literal notranslate"><span class="pre">IconBarOrthogonalSliceVolumeViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.iconBarViewWidgets.IconBarOrthogonalSliceTrajectoryViewWidget"><code class="docutils literal notranslate"><span class="pre">IconBarOrthogonalSliceTrajectoryViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.iconBarViewWidgets.IconBarMultiSliceGridViewWidget"><code class="docutils literal notranslate"><span class="pre">IconBarMultiSliceGridViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.iconBarViewWidgets.IconBarSynchronisedGridViewWidget"><code class="docutils literal notranslate"><span class="pre">IconBarSynchronisedGridViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.projectionViewWidget.IconBarMultiProjectionViewWidget"><code class="docutils literal notranslate"><span class="pre">IconBarMultiProjectionViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.multiComponentViewWidget.IconBarMultiComponentViewWidget"><code class="docutils literal notranslate"><span class="pre">IconBarMultiComponentViewWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.iconBarViewWidgets.IconBarSliceViewWidget"><code class="docutils literal notranslate"><span class="pre">IconBarSliceViewWidget</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_widgets_lut.html">LUT widgets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_lut.html#Sisyphe.widgets.LUTWidgets.LutWidget"><code class="docutils literal notranslate"><span class="pre">LutWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_lut.html#Sisyphe.widgets.LUTWidgets.LutEditWidget"><code class="docutils literal notranslate"><span class="pre">LutEditWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_lut.html#Sisyphe.widgets.LUTWidgets.ComboBoxLut"><code class="docutils literal notranslate"><span class="pre">ComboBoxLut</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_lut.html#Sisyphe.widgets.LUTWidgets.PopupMenuLut"><code class="docutils literal notranslate"><span class="pre">PopupMenuLut</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_lut.html#Sisyphe.widgets.LUTWidgets.ColorTransferWidget"><code class="docutils literal notranslate"><span class="pre">ColorTransferWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_lut.html#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget"><code class="docutils literal notranslate"><span class="pre">AlphaTransferWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_lut.html#Sisyphe.widgets.LUTWidgets.TransferWidget"><code class="docutils literal notranslate"><span class="pre">TransferWidget</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_widgets_select_file.html">Select file(s) widgets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_select_file.html#Sisyphe.widgets.selectFileWidgets.SelectionFilter"><code class="docutils literal notranslate"><span class="pre">SelectionFilter</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_select_file.html#Sisyphe.widgets.selectFileWidgets.FileSelectionWidget"><code class="docutils literal notranslate"><span class="pre">FileSelectionWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_select_file.html#Sisyphe.widgets.selectFileWidgets.FilesSelectionWidget"><code class="docutils literal notranslate"><span class="pre">FilesSelectionWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_select_file.html#Sisyphe.widgets.selectFileWidgets.MultiExtFilesSelectionWidget"><code class="docutils literal notranslate"><span class="pre">MultiExtFilesSelectionWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_select_file.html#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget"><code class="docutils literal notranslate"><span class="pre">SynchronizedFilesSelectionWidget</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_widgets_settings.html">Settings widgets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_settings.html#Sisyphe.widgets.functionsSettingsWidget.SettingsWidget"><code class="docutils literal notranslate"><span class="pre">SettingsWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_settings.html#Sisyphe.widgets.functionsSettingsWidget.FunctionSettingsWidget"><code class="docutils literal notranslate"><span class="pre">FunctionSettingsWidget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_settings.html#Sisyphe.widgets.functionsSettingsWidget.DialogSettingsWidget"><code class="docutils literal notranslate"><span class="pre">DialogSettingsWidget</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_dialog_generic_results.html">Generic results dialog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_dialog_generic_results.html#Sisyphe.gui.dialogGenericResults.DialogGenericResults"><code class="docutils literal notranslate"><span class="pre">DialogGenericResults</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_dialog_wait.html">Progress &amp; wait dialog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait"><code class="docutils literal notranslate"><span class="pre">DialogWait</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../API/api_xml.html" class="btn btn-neutral float-left" title="Sisyphe.core.sisypheXml" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_understanding_views.html" class="btn btn-neutral float-right" title="Understanding view widgets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1342 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUT widgets &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=049aceee"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Select file(s) widgets" href="api_widgets_select_file.html" />
+    <link rel="prev" title="Icon bar widgets" href="api_widgets_iconbar.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Sisyphe
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_File.html">File menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Functions.html">Functions menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Registration.html">Registration menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Segmentation.html">Segmentation menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Mapping.html">Mapping menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Diffusion.html">Diffusion menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Window.html">Window menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../API/index.html">Core API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Widgets &amp; dialogs API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api_understanding_views.html">Understanding view widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_single_view.html">Single viewport widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_multiple_view.html">Multiple viewport widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_iconbar.html">Icon bar widgets</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">LUT widgets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget"><code class="docutils literal notranslate"><span class="pre">LutWidget</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.autoWindow"><code class="docutils literal notranslate"><span class="pre">LutWidget.autoWindow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.defaultWindow"><code class="docutils literal notranslate"><span class="pre">LutWidget.defaultWindow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getDisplay"><code class="docutils literal notranslate"><span class="pre">LutWidget.getDisplay()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getLut"><code class="docutils literal notranslate"><span class="pre">LutWidget.getLut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getRange"><code class="docutils literal notranslate"><span class="pre">LutWidget.getRange()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getRangeMax"><code class="docutils literal notranslate"><span class="pre">LutWidget.getRangeMax()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getRangeMin"><code class="docutils literal notranslate"><span class="pre">LutWidget.getRangeMin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getViewWidget"><code class="docutils literal notranslate"><span class="pre">LutWidget.getViewWidget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getVolume"><code class="docutils literal notranslate"><span class="pre">LutWidget.getVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getWindow"><code class="docutils literal notranslate"><span class="pre">LutWidget.getWindow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getWindowMax"><code class="docutils literal notranslate"><span class="pre">LutWidget.getWindowMax()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getWindowMin"><code class="docutils literal notranslate"><span class="pre">LutWidget.getWindowMin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.hasViewWidget"><code class="docutils literal notranslate"><span class="pre">LutWidget.hasViewWidget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.hasVolume"><code class="docutils literal notranslate"><span class="pre">LutWidget.hasVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.isDarkMode"><code class="docutils literal notranslate"><span class="pre">LutWidget.isDarkMode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.isLightMode"><code class="docutils literal notranslate"><span class="pre">LutWidget.isLightMode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.loadLut"><code class="docutils literal notranslate"><span class="pre">LutWidget.loadLut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.removeVolume"><code class="docutils literal notranslate"><span class="pre">LutWidget.removeVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.reverseLut"><code class="docutils literal notranslate"><span class="pre">LutWidget.reverseLut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setCTBoneWindow"><code class="docutils literal notranslate"><span class="pre">LutWidget.setCTBoneWindow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setCTBrainWindow"><code class="docutils literal notranslate"><span class="pre">LutWidget.setCTBrainWindow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setCTMetallicWindow"><code class="docutils literal notranslate"><span class="pre">LutWidget.setCTMetallicWindow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setDisplay"><code class="docutils literal notranslate"><span class="pre">LutWidget.setDisplay()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setRange"><code class="docutils literal notranslate"><span class="pre">LutWidget.setRange()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setRangeMax"><code class="docutils literal notranslate"><span class="pre">LutWidget.setRangeMax()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setRangeMin"><code class="docutils literal notranslate"><span class="pre">LutWidget.setRangeMin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setViewWidget"><code class="docutils literal notranslate"><span class="pre">LutWidget.setViewWidget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setVolume"><code class="docutils literal notranslate"><span class="pre">LutWidget.setVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setWindow"><code class="docutils literal notranslate"><span class="pre">LutWidget.setWindow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setWindowMax"><code class="docutils literal notranslate"><span class="pre">LutWidget.setWindowMax()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setWindowMin"><code class="docutils literal notranslate"><span class="pre">LutWidget.setWindowMin()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutEditWidget"><code class="docutils literal notranslate"><span class="pre">LutEditWidget</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutEditWidget.copyTo"><code class="docutils literal notranslate"><span class="pre">LutEditWidget.copyTo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutEditWidget.getDefaultLutDirectory"><code class="docutils literal notranslate"><span class="pre">LutEditWidget.getDefaultLutDirectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutEditWidget.getMatplotlibLut"><code class="docutils literal notranslate"><span class="pre">LutEditWidget.getMatplotlibLut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutEditWidget.getSisypheLut"><code class="docutils literal notranslate"><span class="pre">LutEditWidget.getSisypheLut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.LutEditWidget.save"><code class="docutils literal notranslate"><span class="pre">LutEditWidget.save()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut"><code class="docutils literal notranslate"><span class="pre">ComboBoxLut</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.addFileLut"><code class="docutils literal notranslate"><span class="pre">ComboBoxLut.addFileLut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.addFilesLut"><code class="docutils literal notranslate"><span class="pre">ComboBoxLut.addFilesLut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.addLut"><code class="docutils literal notranslate"><span class="pre">ComboBoxLut.addLut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.getCurrentAsMatplotlibColormap"><code class="docutils literal notranslate"><span class="pre">ComboBoxLut.getCurrentAsMatplotlibColormap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.getCurrentAsSisypheLut"><code class="docutils literal notranslate"><span class="pre">ComboBoxLut.getCurrentAsSisypheLut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.getDefaultLutDirectory"><code class="docutils literal notranslate"><span class="pre">ComboBoxLut.getDefaultLutDirectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.insertFileLut"><code class="docutils literal notranslate"><span class="pre">ComboBoxLut.insertFileLut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.insertLut"><code class="docutils literal notranslate"><span class="pre">ComboBoxLut.insertLut()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.PopupMenuLut"><code class="docutils literal notranslate"><span class="pre">PopupMenuLut</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.PopupMenuLut.addFileLut"><code class="docutils literal notranslate"><span class="pre">PopupMenuLut.addFileLut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.PopupMenuLut.addFilesLut"><code class="docutils literal notranslate"><span class="pre">PopupMenuLut.addFilesLut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.PopupMenuLut.addLut"><code class="docutils literal notranslate"><span class="pre">PopupMenuLut.addLut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.PopupMenuLut.getCurrentAsMatplotlibColormap"><code class="docutils literal notranslate"><span class="pre">PopupMenuLut.getCurrentAsMatplotlibColormap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.PopupMenuLut.getCurrentAsSisypheLut"><code class="docutils literal notranslate"><span class="pre">PopupMenuLut.getCurrentAsSisypheLut()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget"><code class="docutils literal notranslate"><span class="pre">ColorTransferWidget</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.getTransfer"><code class="docutils literal notranslate"><span class="pre">ColorTransferWidget.getTransfer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.getViewWidget"><code class="docutils literal notranslate"><span class="pre">ColorTransferWidget.getViewWidget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.getVolume"><code class="docutils literal notranslate"><span class="pre">ColorTransferWidget.getVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.hasViewWidget"><code class="docutils literal notranslate"><span class="pre">ColorTransferWidget.hasViewWidget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.hasVolume"><code class="docutils literal notranslate"><span class="pre">ColorTransferWidget.hasVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.setTransfer"><code class="docutils literal notranslate"><span class="pre">ColorTransferWidget.setTransfer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.setViewWidget"><code class="docutils literal notranslate"><span class="pre">ColorTransferWidget.setViewWidget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.setVolume"><code class="docutils literal notranslate"><span class="pre">ColorTransferWidget.setVolume()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget"><code class="docutils literal notranslate"><span class="pre">AlphaTransferWidget</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.getTransfer"><code class="docutils literal notranslate"><span class="pre">AlphaTransferWidget.getTransfer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.getViewWidget"><code class="docutils literal notranslate"><span class="pre">AlphaTransferWidget.getViewWidget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.getVolume"><code class="docutils literal notranslate"><span class="pre">AlphaTransferWidget.getVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.hasViewWidget"><code class="docutils literal notranslate"><span class="pre">AlphaTransferWidget.hasViewWidget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.hasVolume"><code class="docutils literal notranslate"><span class="pre">AlphaTransferWidget.hasVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.save"><code class="docutils literal notranslate"><span class="pre">AlphaTransferWidget.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.setTransfer"><code class="docutils literal notranslate"><span class="pre">AlphaTransferWidget.setTransfer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.setViewWidget"><code class="docutils literal notranslate"><span class="pre">AlphaTransferWidget.setViewWidget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.setVolume"><code class="docutils literal notranslate"><span class="pre">AlphaTransferWidget.setVolume()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.TransferWidget"><code class="docutils literal notranslate"><span class="pre">TransferWidget</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.getTransfer"><code class="docutils literal notranslate"><span class="pre">TransferWidget.getTransfer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.getViewWidget"><code class="docutils literal notranslate"><span class="pre">TransferWidget.getViewWidget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.getVolume"><code class="docutils literal notranslate"><span class="pre">TransferWidget.getVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.hasViewWidget"><code class="docutils literal notranslate"><span class="pre">TransferWidget.hasViewWidget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.hasVolume"><code class="docutils literal notranslate"><span class="pre">TransferWidget.hasVolume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.load"><code class="docutils literal notranslate"><span class="pre">TransferWidget.load()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.save"><code class="docutils literal notranslate"><span class="pre">TransferWidget.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.setTransfer"><code class="docutils literal notranslate"><span class="pre">TransferWidget.setTransfer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.setViewWidget"><code class="docutils literal notranslate"><span class="pre">TransferWidget.setViewWidget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.setVolume"><code class="docutils literal notranslate"><span class="pre">TransferWidget.setVolume()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_select_file.html">Select file(s) widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_widgets_settings.html">Settings widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dialog_generic_results.html">Generic results dialog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dialog_wait.html">Progress &amp; wait dialog</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Versions.html">Version history</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Widgets &amp; dialogs API</a></li>
+      <li class="breadcrumb-item active">LUT widgets</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/API2/api_widgets_lut.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lut-widgets">
+<span id="page-widgets-lut"></span><h1>LUT widgets<a class="headerlink" href="#lut-widgets" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.widgets.LUTWidgets.</span></span><span class="sig-name descname"><span class="pre">LutWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IconBarViewWidgetCollection</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.iconBarViewWidgets.IconBarWidget" title="Sisyphe.widgets.iconBarViewWidgets.IconBarWidget"><span class="pre">IconBarWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_widgets_multiple_view.html#Sisyphe.widgets.multiViewWidgets.MultiViewWidget" title="Sisyphe.widgets.multiViewWidgets.MultiViewWidget"><span class="pre">MultiViewWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.abstractViewWidget.AbstractViewWidget" title="Sisyphe.widgets.abstractViewWidget.AbstractViewWidget"><span class="pre">AbstractViewWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget" title="Link to this definition"></a></dt>
+<dd><p>LutWidget class</p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>Custom QWidget to control LUT (colormap selection, window settings)</p>
+<p>Functionalities:</p>
+<ul class="simple">
+<li><p>Displaying the histogram of the associate SisypheVolume.</p></li>
+<li><p>Providing a visual representation of the current Lut and colormap.</p></li>
+<li><p>Allowing the user to select a Lut from a predefined list or from a file on disk.</p></li>
+<li><p>Enabling the user to reverse the current Lut.</p></li>
+<li><p>Providing a range slider to adjust the image windowing settings.</p></li>
+<li><p>Displaying the current windowing settings (min and max values) in editable text boxes.</p></li>
+<li><p>Handling mouse events for adjusting the windowing settings and moving the windowing range.</p></li>
+</ul>
+<p>This widget consists of the following elements:</p>
+<ul class="simple">
+<li><p>Figure, histogram and Lut display, interactive left and right span to change window</p></li>
+<li><p>QDoubleSpinBox, minimum range value</p></li>
+<li><p>QDoubleSpinBox, maximum range value</p></li>
+<li><p>ComboBoxLut, Lut selection</p></li>
+<li><p>QCheckBox, reverse Lut</p></li>
+</ul>
+</section>
+<section id="inheritance">
+<h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
+<p>QWidget -&gt; LutWidget</p>
+<p>Creation: 01/11/2022
+Last revision: 20/10/2025</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.autoWindow">
+<span class="sig-name descname"><span class="pre">autoWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">99</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.autoWindow" title="Link to this definition"></a></dt>
+<dd><p>Automatically adjust the window based on intensity percentiles.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>cmin<span class="classifier">int, optional</span></dt><dd><p>lower percentile (1-99).</p>
+</dd>
+<dt>cmax<span class="classifier">int, optional</span></dt><dd><p>upper percentile (1-99).</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.defaultWindow">
+<span class="sig-name descname"><span class="pre">defaultWindow</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.defaultWindow" title="Link to this definition"></a></dt>
+<dd><p>Reset the window to the full intensity range of the volume.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.getDisplay">
+<span class="sig-name descname"><span class="pre">getDisplay</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getDisplay" title="Link to this definition"></a></dt>
+<dd><p>Get the SisypheDisplay attribute of the associated Sisyphevolume.</p>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheDisplay</dt><dd><p>SisypheDisplay instance.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.getLut">
+<span class="sig-name descname"><span class="pre">getLut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheLut" title="Sisyphe.core.sisypheLUT.SisypheLut"><span class="pre">SisypheLut</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getLut" title="Link to this definition"></a></dt>
+<dd><p>Get the SisypheLut instanvce from the associated Sisyphevolume.</p>
+<section id="id1">
+<h3>Returns<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheLut</dt><dd><p>SisypheLut instance.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.getRange">
+<span class="sig-name descname"><span class="pre">getRange</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getRange" title="Link to this definition"></a></dt>
+<dd><p>Get the current display range settings (min, max).</p>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>tuple[float, float] | tuple[int, int]</dt><dd><p>minimum and maximum range values.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.getRangeMax">
+<span class="sig-name descname"><span class="pre">getRangeMax</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getRangeMax" title="Link to this definition"></a></dt>
+<dd><p>Get the maximum value of the current display range.</p>
+<section id="id3">
+<h3>Returns<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float | int</dt><dd><p>maximum range value.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.getRangeMin">
+<span class="sig-name descname"><span class="pre">getRangeMin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getRangeMin" title="Link to this definition"></a></dt>
+<dd><p>Get the minimum value of the current display range.</p>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float | int</dt><dd><p>minimum range value.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.getViewWidget">
+<span class="sig-name descname"><span class="pre">getViewWidget</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">IconBarViewWidgetCollection</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.iconBarViewWidgets.IconBarWidget" title="Sisyphe.widgets.iconBarViewWidgets.IconBarWidget"><span class="pre">IconBarWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_widgets_multiple_view.html#Sisyphe.widgets.multiViewWidgets.MultiViewWidget" title="Sisyphe.widgets.multiViewWidgets.MultiViewWidget"><span class="pre">MultiViewWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.abstractViewWidget.AbstractViewWidget" title="Sisyphe.widgets.abstractViewWidget.AbstractViewWidget"><span class="pre">AbstractViewWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getViewWidget" title="Link to this definition"></a></dt>
+<dd><p>Get the associated view widget.</p>
+<section id="id5">
+<h3>Returns<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>IconBarViewWidgetCollection | IconBarWidget | MultiViewWidget | AbstractViewWidget | None</dt><dd><p>associated view widget, or None.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.getVolume">
+<span class="sig-name descname"><span class="pre">getVolume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getVolume" title="Link to this definition"></a></dt>
+<dd><p>Get the Sisyphevolume associated with the widget.</p>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheVolume</dt><dd><p>associated Sisyphevolume.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.getWindow">
+<span class="sig-name descname"><span class="pre">getWindow</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getWindow" title="Link to this definition"></a></dt>
+<dd><p>Get the current windowing settings (min, max).</p>
+<section id="id7">
+<h3>Returns<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>tuple[float, float] | tuple[int, int]</dt><dd><p>minimum and maximum window values.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.getWindowMax">
+<span class="sig-name descname"><span class="pre">getWindowMax</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getWindowMax" title="Link to this definition"></a></dt>
+<dd><p>Get the maximum value of the current window.</p>
+<section id="id8">
+<h3>Returns<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float | int</dt><dd><p>maximum window value.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.getWindowMin">
+<span class="sig-name descname"><span class="pre">getWindowMin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.getWindowMin" title="Link to this definition"></a></dt>
+<dd><p>Get the minimum value of the current window.</p>
+<section id="id9">
+<h3>Returns<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float | int</dt><dd><p>minimum window value.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.hasViewWidget">
+<span class="sig-name descname"><span class="pre">hasViewWidget</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.hasViewWidget" title="Link to this definition"></a></dt>
+<dd><p>Check if a view widget is associated.</p>
+<section id="id10">
+<h3>Returns<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if a view widget is associated, False otherwise.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.hasVolume">
+<span class="sig-name descname"><span class="pre">hasVolume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.hasVolume" title="Link to this definition"></a></dt>
+<dd><p>Check if a SisypheVolume is associated with the widget.</p>
+<section id="id11">
+<h3>Returns<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if a SisypheVolume is associated, False otherwise.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.isDarkMode">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isDarkMode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.isDarkMode" title="Link to this definition"></a></dt>
+<dd><p>Check if the system is currently in dark mode.</p>
+<section id="id12">
+<h3>Returns<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if dark mode is detected, False otherwise.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.isLightMode">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isLightMode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.isLightMode" title="Link to this definition"></a></dt>
+<dd><p>Check if the system is currently in light mode.</p>
+<section id="id13">
+<h3>Returns<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if light mode is detected, False otherwise.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.loadLut">
+<span class="sig-name descname"><span class="pre">loadLut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.loadLut" title="Link to this definition"></a></dt>
+<dd><p>Opens a file dialog to load a LUT from disk.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.removeVolume">
+<span class="sig-name descname"><span class="pre">removeVolume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.removeVolume" title="Link to this definition"></a></dt>
+<dd><p>Remove the current SisypheVolume and disables the widget.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.reverseLut">
+<span class="sig-name descname"><span class="pre">reverseLut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.reverseLut" title="Link to this definition"></a></dt>
+<dd><p>Reverses the current LUT and updates the display.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.setCTBoneWindow">
+<span class="sig-name descname"><span class="pre">setCTBoneWindow</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setCTBoneWindow" title="Link to this definition"></a></dt>
+<dd><p>Apply a preset windowing for CT bone visualization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.setCTBrainWindow">
+<span class="sig-name descname"><span class="pre">setCTBrainWindow</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setCTBrainWindow" title="Link to this definition"></a></dt>
+<dd><p>Apply a preset windowing for CT brain visualization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.setCTMetallicWindow">
+<span class="sig-name descname"><span class="pre">setCTMetallicWindow</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setCTMetallicWindow" title="Link to this definition"></a></dt>
+<dd><p>Apply a preset windowing for CT metallic implant visualization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.setDisplay">
+<span class="sig-name descname"><span class="pre">setDisplay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">display</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheDisplay" title="Sisyphe.core.sisypheImageAttributes.SisypheDisplay"><span class="pre">SisypheDisplay</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setDisplay" title="Link to this definition"></a></dt>
+<dd><p>Set new SisypheDisplay attribute.</p>
+<section id="id14">
+<h3>Parameters<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>display<span class="classifier">SisypheDisplay</span></dt><dd><p>SisypheDisplay instance.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.setRange">
+<span class="sig-name descname"><span class="pre">setRange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setRange" title="Link to this definition"></a></dt>
+<dd><p>Set the display range values.</p>
+<section id="id15">
+<h3>Parameters<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>rmin<span class="classifier">float</span></dt><dd><p>minimum range value.</p>
+</dd>
+<dt>rmax<span class="classifier">float</span></dt><dd><p>maximum range value.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.setRangeMax">
+<span class="sig-name descname"><span class="pre">setRangeMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setRangeMax" title="Link to this definition"></a></dt>
+<dd><p>Set the maximum display range value.</p>
+<section id="id16">
+<h3>Parameters<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>rmax<span class="classifier">float</span></dt><dd><p>maximum range value.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.setRangeMin">
+<span class="sig-name descname"><span class="pre">setRangeMin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setRangeMin" title="Link to this definition"></a></dt>
+<dd><p>Set the minimum display range value.</p>
+<section id="id17">
+<h3>Parameters<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>rmin<span class="classifier">float</span></dt><dd><p>minimum range value.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.setViewWidget">
+<span class="sig-name descname"><span class="pre">setViewWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IconBarViewWidgetCollection</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_widgets_iconbar.html#Sisyphe.widgets.iconBarViewWidgets.IconBarWidget" title="Sisyphe.widgets.iconBarViewWidgets.IconBarWidget"><span class="pre">IconBarWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_widgets_multiple_view.html#Sisyphe.widgets.multiViewWidgets.MultiViewWidget" title="Sisyphe.widgets.multiViewWidgets.MultiViewWidget"><span class="pre">MultiViewWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.abstractViewWidget.AbstractViewWidget" title="Sisyphe.widgets.abstractViewWidget.AbstractViewWidget"><span class="pre">AbstractViewWidget</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setViewWidget" title="Link to this definition"></a></dt>
+<dd><p>Set the associated view widget to be updated.</p>
+<section id="id18">
+<h3>Parameters<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>view<span class="classifier">IconBarViewWidgetCollection | IconBarWidget | MultiViewWidget | AbstractViewWidget</span></dt><dd><p>view widget to associate.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.setVolume">
+<span class="sig-name descname"><span class="pre">setVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setVolume" title="Link to this definition"></a></dt>
+<dd><p>Associate a Sisyphevolume with the widget and re-initializes the display.</p>
+<section id="id19">
+<h3>Parameters<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>volume<span class="classifier">SisypheVolume</span></dt><dd><p>SisypheVolume instance to associate.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.setWindow">
+<span class="sig-name descname"><span class="pre">setWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setWindow" title="Link to this definition"></a></dt>
+<dd><p>Set the windowing values.</p>
+<section id="id20">
+<h3>Parameters<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>wmin<span class="classifier">float | int</span></dt><dd><p>minimum window value.</p>
+</dd>
+<dt>wmax<span class="classifier">float | int</span></dt><dd><p>maximum window value.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.setWindowMax">
+<span class="sig-name descname"><span class="pre">setWindowMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setWindowMax" title="Link to this definition"></a></dt>
+<dd><p>Set the maximum windowing value.</p>
+<section id="id21">
+<h3>Parameters<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>wmax<span class="classifier">float | int</span></dt><dd><p>maximum window value.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.setWindowMin">
+<span class="sig-name descname"><span class="pre">setWindowMin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.setWindowMin" title="Link to this definition"></a></dt>
+<dd><p>Set the minimum windowing value.</p>
+<section id="id22">
+<h3>Parameters<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>wmin<span class="classifier">float | int</span></dt><dd><p>minimum window value.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutEditWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.widgets.LUTWidgets.</span></span><span class="sig-name descname"><span class="pre">LutEditWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutEditWidget" title="Link to this definition"></a></dt>
+<dd><p>LutEditWidget class</p>
+<section id="id23">
+<h2>Description<a class="headerlink" href="#id23" title="Link to this heading"></a></h2>
+<p>Custom QWidget to edit Lut.</p>
+<p>It provides a graphical user interface for users to interactively add, remove, and modify color points in the Lut.</p>
+</section>
+<section id="id24">
+<h2>Inheritance<a class="headerlink" href="#id24" title="Link to this heading"></a></h2>
+<p>QWidget -&gt; LutEditWidget</p>
+<p>Creation: 08/11/2022
+Last revision: 20/10/2025</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutEditWidget.copyTo">
+<span class="sig-name descname"><span class="pre">copyTo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">display</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheDisplay" title="Sisyphe.core.sisypheImageAttributes.SisypheDisplay"><span class="pre">SisypheDisplay</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutEditWidget.copyTo" title="Link to this definition"></a></dt>
+<dd><p>Copy the created SisypheLut to a SisypheDisplay instance.</p>
+<section id="id25">
+<h3>Parameters<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>display<span class="classifier">SisypheDisplay</span></dt><dd><p>target SisypheDisplay instance to update.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutEditWidget.getDefaultLutDirectory">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getDefaultLutDirectory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutEditWidget.getDefaultLutDirectory" title="Link to this definition"></a></dt>
+<dd><p>Get the path to the default Lut directory.</p>
+<section id="id26">
+<h3>Returns<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>The absolute path to the Lut directory.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutEditWidget.getMatplotlibLut">
+<span class="sig-name descname"><span class="pre">getMatplotlibLut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LinearSegmentedColormap</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutEditWidget.getMatplotlibLut" title="Link to this definition"></a></dt>
+<dd><p>Get a Matplotlib colormap from the current control points.</p>
+<section id="id27">
+<h3>Returns<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>LinearSegmentedColormap</dt><dd><p>generated colormap instance.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutEditWidget.getSisypheLut">
+<span class="sig-name descname"><span class="pre">getSisypheLut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheLut" title="Sisyphe.core.sisypheLUT.SisypheLut"><span class="pre">SisypheLut</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutEditWidget.getSisypheLut" title="Link to this definition"></a></dt>
+<dd><p>Get a SisypheLut from the current control points.</p>
+<section id="id28">
+<h3>Returns<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheLut</dt><dd><p>generated SisypheLut instance.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutEditWidget.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutEditWidget.save" title="Link to this definition"></a></dt>
+<dd><p>Open a file dialog to save the current SisypheLut.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ComboBoxLut">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.widgets.LUTWidgets.</span></span><span class="sig-name descname"><span class="pre">ComboBoxLut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut" title="Link to this definition"></a></dt>
+<dd><p>ComboBoxLut class</p>
+<section id="id29">
+<h2>Description<a class="headerlink" href="#id29" title="Link to this heading"></a></h2>
+<p>Custom ComboBox to select Lut for visualization purposes.</p>
+<p>It provides a user-friendly interface for selecting and displaying different Lut, both internal and external files.</p>
+</section>
+<section id="id30">
+<h2>Inheritance<a class="headerlink" href="#id30" title="Link to this heading"></a></h2>
+<p>QComboBox -&gt; ComboBoxLut</p>
+<p>Creation: 20/11/2022
+Last revision: 20/10/2025</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ComboBoxLut.addFileLut">
+<span class="sig-name descname"><span class="pre">addFileLut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.addFileLut" title="Link to this definition"></a></dt>
+<dd><p>Add a Lut from a file path to the combo box.</p>
+<section id="id31">
+<h3>Parameters<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>name<span class="classifier">str</span></dt><dd><p>The file path of the Lut.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ComboBoxLut.addFilesLut">
+<span class="sig-name descname"><span class="pre">addFilesLut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.addFilesLut" title="Link to this definition"></a></dt>
+<dd><p>Add all supported Lut files from a given directory to the combo box.</p>
+<section id="id32">
+<h3>Parameters<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>pathname<span class="classifier">str</span></dt><dd><p>directory path to search for Lut files.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ComboBoxLut.addLut">
+<span class="sig-name descname"><span class="pre">addLut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ListedColormap</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LinearSegmentedColormap</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheLut" title="Sisyphe.core.sisypheLUT.SisypheLut"><span class="pre">SisypheLut</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.addLut" title="Link to this definition"></a></dt>
+<dd><p>Add a Lut instance to the combo box.</p>
+<section id="id33">
+<h3>Parameters<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>lut<span class="classifier">ListedColormap | LinearSegmentedColormap | SisypheLut</span></dt><dd><p>Lut instance to add.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ComboBoxLut.getCurrentAsMatplotlibColormap">
+<span class="sig-name descname"><span class="pre">getCurrentAsMatplotlibColormap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ListedColormap</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.getCurrentAsMatplotlibColormap" title="Link to this definition"></a></dt>
+<dd><p>Get the currently selected Lut as a Matplotlib colormap.</p>
+<section id="id34">
+<h3>Returns<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>ListedColormap</dt><dd><p>selected colormap instance.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ComboBoxLut.getCurrentAsSisypheLut">
+<span class="sig-name descname"><span class="pre">getCurrentAsSisypheLut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheLut" title="Sisyphe.core.sisypheLUT.SisypheLut"><span class="pre">SisypheLut</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.getCurrentAsSisypheLut" title="Link to this definition"></a></dt>
+<dd><p>Gets the currently selected Lut as a SisypheLut object.</p>
+<section id="id35">
+<h3>Returns<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheLut</dt><dd><p>selected Lut instance.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ComboBoxLut.getDefaultLutDirectory">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getDefaultLutDirectory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.getDefaultLutDirectory" title="Link to this definition"></a></dt>
+<dd><p>Get the path to the default Lut directory.</p>
+<section id="id36">
+<h3>Returns<a class="headerlink" href="#id36" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>The absolute path to the Lut directory.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ComboBoxLut.insertFileLut">
+<span class="sig-name descname"><span class="pre">insertFileLut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.insertFileLut" title="Link to this definition"></a></dt>
+<dd><p>Inserts a Lut from a file path at a specific index.</p>
+<section id="id37">
+<h3>Parameters<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>index<span class="classifier">int</span></dt><dd><p>index at which to insert the item.</p>
+</dd>
+<dt>name<span class="classifier">str</span></dt><dd><p>file path of the Lut.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ComboBoxLut.insertLut">
+<span class="sig-name descname"><span class="pre">insertLut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ListedColormap</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LinearSegmentedColormap</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheLut" title="Sisyphe.core.sisypheLUT.SisypheLut"><span class="pre">SisypheLut</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ComboBoxLut.insertLut" title="Link to this definition"></a></dt>
+<dd><p>Insert a Lut instance at a specific index in the combo box.</p>
+<section id="id38">
+<h3>Parameters<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>index<span class="classifier">int</span></dt><dd><p>index at which to insert the item.</p>
+</dd>
+<dt>lut<span class="classifier">ListedColormap | LinearSegmentedColormap | SisypheLut</span></dt><dd><p>Lut instance to insert.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.PopupMenuLut">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.widgets.LUTWidgets.</span></span><span class="sig-name descname"><span class="pre">PopupMenuLut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.PopupMenuLut" title="Link to this definition"></a></dt>
+<dd><p>PopupMenuLut class</p>
+<section id="id39">
+<h2>Description<a class="headerlink" href="#id39" title="Link to this heading"></a></h2>
+<p>PopupMenu to select Lut for visualization purposes.</p>
+<p>It provides a user-friendly interface for selecting and displaying different LUTs, both internal and external files.</p>
+</section>
+<section id="id40">
+<h2>Inheritance<a class="headerlink" href="#id40" title="Link to this heading"></a></h2>
+<p>QMenu -&gt; PopupMenuLut</p>
+<p>Creation: 20/10/2022
+Last revision: 20/10/2025</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.PopupMenuLut.addFileLut">
+<span class="sig-name descname"><span class="pre">addFileLut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.PopupMenuLut.addFileLut" title="Link to this definition"></a></dt>
+<dd><p>Add a Lut from a file path as a menu action.</p>
+<section id="id41">
+<h3>Parameters<a class="headerlink" href="#id41" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>name<span class="classifier">str</span></dt><dd><p>file path of the LUT.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.PopupMenuLut.addFilesLut">
+<span class="sig-name descname"><span class="pre">addFilesLut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.PopupMenuLut.addFilesLut" title="Link to this definition"></a></dt>
+<dd><p>Add all supported Lut files from a given directory as menu actions.</p>
+<section id="id42">
+<h3>Parameters<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>pathname<span class="classifier">str</span></dt><dd><p>directory path to search for Lut files.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.PopupMenuLut.addLut">
+<span class="sig-name descname"><span class="pre">addLut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheLut" title="Sisyphe.core.sisypheLUT.SisypheLut"><span class="pre">SisypheLut</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.PopupMenuLut.addLut" title="Link to this definition"></a></dt>
+<dd><p>Add a Lut instance as a menu action.</p>
+<section id="id43">
+<h3>Parameters<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>lut<span class="classifier">SisypheLut</span></dt><dd><p>Lut instance to add.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.PopupMenuLut.getCurrentAsMatplotlibColormap">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getCurrentAsMatplotlibColormap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QAction</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ListedColormap</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.PopupMenuLut.getCurrentAsMatplotlibColormap" title="Link to this definition"></a></dt>
+<dd><p>Get the Lut from a QAction menu item.</p>
+<section id="id44">
+<h3>Parameters<a class="headerlink" href="#id44" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>action<span class="classifier">QAction</span></dt><dd><p>QAction instance of a menu item.</p>
+</dd>
+</dl>
+</section>
+<section id="id45">
+<h3>Returns<a class="headerlink" href="#id45" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>ListedColormap</dt><dd><p>Lut as Matplotlib colormap instance.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.PopupMenuLut.getCurrentAsSisypheLut">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getCurrentAsSisypheLut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QAction</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheLut" title="Sisyphe.core.sisypheLUT.SisypheLut"><span class="pre">SisypheLut</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.PopupMenuLut.getCurrentAsSisypheLut" title="Link to this definition"></a></dt>
+<dd><p>Get the Lut from a QAction menu item.</p>
+<section id="id46">
+<h3>Parameters<a class="headerlink" href="#id46" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>action<span class="classifier">QAction</span></dt><dd><p>QAction instance of a menu item.</p>
+</dd>
+</dl>
+</section>
+<section id="id47">
+<h3>Returns<a class="headerlink" href="#id47" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheLut</dt><dd><p>Lut as SisypheLut instance.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ColorTransferWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.widgets.LUTWidgets.</span></span><span class="sig-name descname"><span class="pre">ColorTransferWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget" title="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget"><span class="pre">VolumeViewWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheColorTransfer" title="Sisyphe.core.sisypheLUT.SisypheColorTransfer"><span class="pre">SisypheColorTransfer</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget" title="Link to this definition"></a></dt>
+<dd><p>ColorTransferWidget class</p>
+<section id="id48">
+<h2>Description<a class="headerlink" href="#id48" title="Link to this heading"></a></h2>
+<p>Custom QWidget to edit and control color transfer function for volume rendering.</p>
+<p>It provides a user-friendly interface for editing color transfer functions, including adding, removing, and
+modifying color points, as well as saving and loading color transfer functions in various formats.</p>
+</section>
+<section id="id49">
+<h2>Inheritance<a class="headerlink" href="#id49" title="Link to this heading"></a></h2>
+<p>QWidget - &gt; LutEditWidget - &gt; ColorTransferWidget</p>
+<p>Creation: 10/11/2022
+Last revision: 20/10/2025</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ColorTransferWidget.getTransfer">
+<span class="sig-name descname"><span class="pre">getTransfer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheColorTransfer" title="Sisyphe.core.sisypheLUT.SisypheColorTransfer"><span class="pre">SisypheColorTransfer</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.getTransfer" title="Link to this definition"></a></dt>
+<dd><p>Get the SisypheColorTransfer instance edited with the widget.</p>
+<section id="id50">
+<h3>Returns<a class="headerlink" href="#id50" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheColorTransfer</dt><dd><p>edited SisypheColorTransfer instance.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ColorTransferWidget.getViewWidget">
+<span class="sig-name descname"><span class="pre">getViewWidget</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget" title="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget"><span class="pre">VolumeViewWidget</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.getViewWidget" title="Link to this definition"></a></dt>
+<dd><p>Get the associated VolumeViewWidget.</p>
+<section id="id51">
+<h3>Returns<a class="headerlink" href="#id51" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>VolumeViewWidget</dt><dd><p>associated VolumeViewWidget.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ColorTransferWidget.getVolume">
+<span class="sig-name descname"><span class="pre">getVolume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.getVolume" title="Link to this definition"></a></dt>
+<dd><p>Get the SisypheVolume associated with the widget.</p>
+<section id="id52">
+<h3>Returns<a class="headerlink" href="#id52" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheVolume</dt><dd><p>associated SisypheVolume instance.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ColorTransferWidget.hasViewWidget">
+<span class="sig-name descname"><span class="pre">hasViewWidget</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.hasViewWidget" title="Link to this definition"></a></dt>
+<dd><p>Check if a VolumeViewWidget is associated to the widget.</p>
+<section id="id53">
+<h3>Returns<a class="headerlink" href="#id53" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if a VolumeViewWidget is associated, False otherwise.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ColorTransferWidget.hasVolume">
+<span class="sig-name descname"><span class="pre">hasVolume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.hasVolume" title="Link to this definition"></a></dt>
+<dd><p>Check if a SisypheVolume is associated with the widget.</p>
+<section id="id54">
+<h3>Returns<a class="headerlink" href="#id54" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if a SisypheVolume is associated, False otherwise.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ColorTransferWidget.setTransfer">
+<span class="sig-name descname"><span class="pre">setTransfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transfer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheColorTransfer" title="Sisyphe.core.sisypheLUT.SisypheColorTransfer"><span class="pre">SisypheColorTransfer</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.setTransfer" title="Link to this definition"></a></dt>
+<dd><p>Set a new SisypheColorTransfer instance to be edited and updates the widget.</p>
+<section id="id55">
+<h3>Parameters<a class="headerlink" href="#id55" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>transfer<span class="classifier">SisypheColorTransfer</span></dt><dd><p>SisypheColorTransfer instance to edit</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ColorTransferWidget.setViewWidget">
+<span class="sig-name descname"><span class="pre">setViewWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget" title="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget"><span class="pre">VolumeViewWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">getinfos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.setViewWidget" title="Link to this definition"></a></dt>
+<dd><p>Set the VolumeViewWidget and optionally syncs its SisypheVolume and transfer function.</p>
+<section id="id56">
+<h3>Parameters<a class="headerlink" href="#id56" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>view<span class="classifier">VolumeViewWidget</span></dt><dd><p>VolumeViewWidget to associate.</p>
+</dd>
+<dt>getinfos<span class="classifier">bool (optional)</span></dt><dd><p>If True, the widget’s SisypheVolume and transfer function are updated from the VolumeViewWidget.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.ColorTransferWidget.setVolume">
+<span class="sig-name descname"><span class="pre">setVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.ColorTransferWidget.setVolume" title="Link to this definition"></a></dt>
+<dd><p>Associate a new SisypheVolume and resets the color transfer function to its default for that volume.</p>
+<section id="id57">
+<h3>Parameters<a class="headerlink" href="#id57" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>volume<span class="classifier">SisypheVolume</span></dt><dd><p>SisypheVolume associated to.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.AlphaTransferWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.widgets.LUTWidgets.</span></span><span class="sig-name descname"><span class="pre">AlphaTransferWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget" title="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget"><span class="pre">VolumeViewWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheColorTransfer" title="Sisyphe.core.sisypheLUT.SisypheColorTransfer"><span class="pre">SisypheColorTransfer</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">functype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'alpha'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget" title="Link to this definition"></a></dt>
+<dd><p>AlphaTransferWidget class</p>
+<section id="id58">
+<h2>Description<a class="headerlink" href="#id58" title="Link to this heading"></a></h2>
+<p>Custom QWidget to edit and control alpha transfer function for volume rendering.</p>
+<p>It provides a visual representation of the alpha transfer function, allowing users to interactively add, remove,
+and modify alpha transfer elements. It also includes features to save, load, and clear the alpha transfer function.</p>
+<p>The widget displays a histogram of the volume’s intensity values, along with markers representing the alpha
+transfer elements. Users can add new alpha transfer elements by double-clicking on the background of the histogram,
+remove existing elements by right-clicking on the markers, and modify the alpha values by dragging the markers
+vertically.</p>
+</section>
+<section id="id59">
+<h2>Inheritance<a class="headerlink" href="#id59" title="Link to this heading"></a></h2>
+<p>QWidget -&gt; AlphaTransferWidget</p>
+<p>Creation: 12/11/2022
+Last revision: 20/10/2025</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.getTransfer">
+<span class="sig-name descname"><span class="pre">getTransfer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheColorTransfer" title="Sisyphe.core.sisypheLUT.SisypheColorTransfer"><span class="pre">SisypheColorTransfer</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.getTransfer" title="Link to this definition"></a></dt>
+<dd><p>Get the associated SisypheColorTransfer instance.</p>
+<section id="id60">
+<h3>Returns<a class="headerlink" href="#id60" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheColorTransfer</dt><dd><p>Associated SisypheColorTransfer.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.getViewWidget">
+<span class="sig-name descname"><span class="pre">getViewWidget</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget" title="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget"><span class="pre">VolumeViewWidget</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.getViewWidget" title="Link to this definition"></a></dt>
+<dd><p>Get the associated VolumeViewWidget.</p>
+<section id="id61">
+<h3>Returns<a class="headerlink" href="#id61" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>VolumeViewWidget</dt><dd><p>associated VolumeViewWidget.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.getVolume">
+<span class="sig-name descname"><span class="pre">getVolume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.getVolume" title="Link to this definition"></a></dt>
+<dd><p>Get the SisypheVolume associated with the widget.</p>
+<section id="id62">
+<h3>Returns<a class="headerlink" href="#id62" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheVolume</dt><dd><p>associated SisypheVolume instance.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.hasViewWidget">
+<span class="sig-name descname"><span class="pre">hasViewWidget</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.hasViewWidget" title="Link to this definition"></a></dt>
+<dd><p>Check if a VolumeViewWidget is associated to the widget.</p>
+<section id="id63">
+<h3>Returns<a class="headerlink" href="#id63" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if a VolumeViewWidget is associated, False otherwise.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.hasVolume">
+<span class="sig-name descname"><span class="pre">hasVolume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.hasVolume" title="Link to this definition"></a></dt>
+<dd><p>Check if a SisypheVolume is associated with the widget.</p>
+<section id="id64">
+<h3>Returns<a class="headerlink" href="#id64" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if a SisypheVolume is associated, False otherwise.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.save" title="Link to this definition"></a></dt>
+<dd><p>Open a file dialog to save the current transfer function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.setTransfer">
+<span class="sig-name descname"><span class="pre">setTransfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transfer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheColorTransfer" title="Sisyphe.core.sisypheLUT.SisypheColorTransfer"><span class="pre">SisypheColorTransfer</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.setTransfer" title="Link to this definition"></a></dt>
+<dd><p>Associate SisypheColorTransfer instance and updates the widget.</p>
+<section id="id65">
+<h3>Parameters<a class="headerlink" href="#id65" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>transfer<span class="classifier">SisypheColorTransfer</span></dt><dd><p>SisypheColorTransfer to associate.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.setViewWidget">
+<span class="sig-name descname"><span class="pre">setViewWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget" title="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget"><span class="pre">VolumeViewWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">getinfos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.setViewWidget" title="Link to this definition"></a></dt>
+<dd><p>Associate VolumeViewWidget and optionally syncs its SisypheVolume and transfer function.</p>
+<section id="id66">
+<h3>Parameters<a class="headerlink" href="#id66" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>view<span class="classifier">VolumeViewWidget</span></dt><dd><p>VolumeViewWidget to associate.</p>
+</dd>
+<dt>getinfos<span class="classifier">bool (optional)</span></dt><dd><p>If True, the widget’s SisypheVolume and transfer function are updated from the VolumeViewWidget.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.setVolume">
+<span class="sig-name descname"><span class="pre">setVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.AlphaTransferWidget.setVolume" title="Link to this definition"></a></dt>
+<dd><p>Associate a new SisypheVolume.</p>
+<section id="id67">
+<h3>Parameters<a class="headerlink" href="#id67" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>volume<span class="classifier">SisypheVolume</span></dt><dd><p>SisypheVolume associated to.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.TransferWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.widgets.LUTWidgets.</span></span><span class="sig-name descname"><span class="pre">TransferWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget" title="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget"><span class="pre">VolumeViewWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheColorTransfer" title="Sisyphe.core.sisypheLUT.SisypheColorTransfer"><span class="pre">SisypheColorTransfer</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.TransferWidget" title="Link to this definition"></a></dt>
+<dd><p>TransferWidget class</p>
+<section id="id68">
+<h2>Description<a class="headerlink" href="#id68" title="Link to this heading"></a></h2>
+<p>Custom QWidget to edit and control color and alpha transfer functions for volume rendering. It is a complex widget
+that integrates multiple functionalities, such as color transfer widget, alpha transfer widget, gradient transfer
+widget, and a file dialog for loading and saving color transfer functions.</p>
+</section>
+<section id="id69">
+<h2>Inheritance<a class="headerlink" href="#id69" title="Link to this heading"></a></h2>
+<p>QWidget - &gt; TransferWidget</p>
+<p>Creation: 12/11/2022
+Last revision: 20/10/2025</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.TransferWidget.getTransfer">
+<span class="sig-name descname"><span class="pre">getTransfer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheColorTransfer" title="Sisyphe.core.sisypheLUT.SisypheColorTransfer"><span class="pre">SisypheColorTransfer</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.getTransfer" title="Link to this definition"></a></dt>
+<dd><p>Get the associated SisypheColorTransfer instance.</p>
+<section id="id70">
+<h3>Returns<a class="headerlink" href="#id70" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheColorTransfer</dt><dd><p>Associated SisypheColorTransfer.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.TransferWidget.getViewWidget">
+<span class="sig-name descname"><span class="pre">getViewWidget</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget" title="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget"><span class="pre">VolumeViewWidget</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.getViewWidget" title="Link to this definition"></a></dt>
+<dd><p>Get the associated VolumeViewWidget.</p>
+<section id="id71">
+<h3>Returns<a class="headerlink" href="#id71" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>VolumeViewWidget</dt><dd><p>associated VolumeViewWidget.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.TransferWidget.getVolume">
+<span class="sig-name descname"><span class="pre">getVolume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.getVolume" title="Link to this definition"></a></dt>
+<dd><p>Get the SisypheVolume associated with the widget.</p>
+<section id="id72">
+<h3>Returns<a class="headerlink" href="#id72" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>SisypheVolume</dt><dd><p>associated SisypheVolume instance.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.TransferWidget.hasViewWidget">
+<span class="sig-name descname"><span class="pre">hasViewWidget</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.hasViewWidget" title="Link to this definition"></a></dt>
+<dd><p>Check if a VolumeViewWidget is associated to the widget.</p>
+<section id="id73">
+<h3>Returns<a class="headerlink" href="#id73" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if a VolumeViewWidget is associated, False otherwise.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.TransferWidget.hasVolume">
+<span class="sig-name descname"><span class="pre">hasVolume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.hasVolume" title="Link to this definition"></a></dt>
+<dd><p>Check if a SisypheVolume is associated with the widget.</p>
+<section id="id74">
+<h3>Returns<a class="headerlink" href="#id74" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if a SisypheVolume is associated, False otherwise.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.TransferWidget.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.load" title="Link to this definition"></a></dt>
+<dd><p>Open a file dialog to load a transfer function from an XML file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.TransferWidget.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.save" title="Link to this definition"></a></dt>
+<dd><p>Save the current color transfer function to a file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.TransferWidget.setTransfer">
+<span class="sig-name descname"><span class="pre">setTransfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transfer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheColorTransfer" title="Sisyphe.core.sisypheLUT.SisypheColorTransfer"><span class="pre">SisypheColorTransfer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.setTransfer" title="Link to this definition"></a></dt>
+<dd><p>Associate a new SisypheColorTransfer instance for all child editor widgets.</p>
+<section id="id75">
+<h3>Parameters<a class="headerlink" href="#id75" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>transfer<span class="classifier">SisypheColorTransfer</span></dt><dd><p>SisypheColorTransfer to associate.</p>
+</dd>
+<dt>gradient<span class="classifier">bool, optional</span></dt><dd><p>Flag to indicate if gradient-related components should be updated.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.TransferWidget.setViewWidget">
+<span class="sig-name descname"><span class="pre">setViewWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_widgets_single_view.html#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget" title="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget"><span class="pre">VolumeViewWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.setViewWidget" title="Link to this definition"></a></dt>
+<dd><p>Associate a new VolumeViewWidget for all child editor widgets.</p>
+<section id="id76">
+<h3>Parameters<a class="headerlink" href="#id76" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>view<span class="classifier">VolumeViewWidget</span></dt><dd><p>VolumeViewWidget to associate.</p>
+</dd>
+<dt>gradient<span class="classifier">bool, optional</span></dt><dd><p>Flag to indicate if gradient-related components should be updated.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.TransferWidget.setVolume">
+<span class="sig-name descname"><span class="pre">setVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.TransferWidget.setVolume" title="Link to this definition"></a></dt>
+<dd><p>Associate a new SisypheVolume for all child editor widgets.</p>
+<section id="id77">
+<h3>Parameters<a class="headerlink" href="#id77" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>volume<span class="classifier">SisypheVolume</span></dt><dd><p>SisypheVolume to associate.</p>
+</dd>
+<dt>gradient<span class="classifier">bool (optional)</span></dt><dd><p>Flag to indicate if gradient-related components should be updated.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api_widgets_iconbar.html" class="btn btn-neutral float-left" title="Icon bar widgets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_widgets_select_file.html" class="btn btn-neutral float-right" title="Select file(s) widgets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
