@@ -1,7 +1,7 @@
-.. _page-api:
+.. _page-core-api:
 
-API
-===
+Core API
+========
 
 .. toctree::
    :maxdepth: 2
