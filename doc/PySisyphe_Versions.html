@@ -73,7 +73,8 @@
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Mapping.html">Mapping menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Diffusion.html">Diffusion menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Window.html">Window menu</a></li>
-<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API2/index.html">Widgets &amp; dialogs API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Version history</a><ul>
@@ -1494,6 +1495,10 @@
 <li><p>core.sisypheDownload</p></li>
 <li><p>gui.windowSisyphe</p></li>
 <li><p>gui.dialogSegmentation</p></li>
+<li><p>widgets.sliceViewWidgets</p></li>
+<li><p>widgets.multiViewWidgets</p></li>
+<li><p>widgets.volumeViewWidget</p></li>
+<li><p>widgets.iconBarViewWidgets</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -1523,7 +1528,39 @@
 <li><p>gui.dialogSegmentation.DialogPriorBasedSegmentation</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>update _priorsChanged method</p></li>
+<li><p>update _priorsChanged() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _getInfoValuesText() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiViewWidgets.OrthogonalSliceViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getMeshCollection() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getSlice0Visibility() method</p></li>
+<li><p>update getSlice1Visibility() method</p></li>
+<li><p>update getSlice2Visibility() method</p></li>
+<li><p>update getSurfaceVisibility() method</p></li>
+<li><p>update getTextureVisibility() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget2</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setMoveOverlayOff() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -1544,6 +1581,38 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>bug fix, line 1027, from ‘Custom’ to ‘CUSTOM’ to display file selection widgets (T1, Mask, GMPrior, CGMPrior, WMPrior, CSFPrior, BrainstemPrior, CerebellumPrior)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceViewWidget._getInfoValuesText()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, lines 690 and 696, PC and midACPC infos</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiViewWidgets.OrthogonalSliceViewWidget.getMeshCollection()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 830, no return value</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget.getSlice0Visibility()</p></li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget.getSlice1Visibility()</p></li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget.getSlice2Visibility()</p></li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget.getSurfaceVisibility()</p></li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget.getTextureVisibility()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, lines 1021, 1027, 1033, no return value</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget2.setMoveOverlayOff()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 2530, replace widget.setMoveOverlayOff() by widget.setMoveOverlayFlag(False)</p></li>
 </ul>
 </div></blockquote>
 </li>
