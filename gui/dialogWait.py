@@ -7,6 +7,10 @@ External packages/modules
     - SimpleITK, Medical image processing, https://simpleitk.org/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from typing import Any
+
 from sys import platform
 
 from os.path import abspath
@@ -43,6 +47,9 @@ from SimpleITK import ImageFilter as sitkImageFilter
 # noinspection PyCompatibility
 import __main__
 
+if TYPE_CHECKING:
+    from PyQt5.QtWidgets import QWidget
+
 __all__ = ['UserAbortException',
            'DialogWait',
            'DialogWaitRegistration']
@@ -65,7 +72,7 @@ class UserAbortException(Exception):
 
     Custom python exception to abort processing.
     """
-    def __init__(self, *args):
+    def __init__(self, *args) -> None:
         super().__init__(*args)
 
 
@@ -76,7 +83,7 @@ class DialogWait(QDialog):
     Description
     ~~~~~~~~~~~
 
-    Wait and progress GUI dialog.
+    Wait and progress dialog.
 
     Inheritance
     ~~~~~~~~~~~
@@ -89,7 +96,7 @@ class DialogWait(QDialog):
     # Class method
 
     @classmethod
-    def getModuleClassDirectory(cls):
+    def getModuleClassDirectory(cls) -> str:
         import Sisyphe.gui
         return dirname(abspath(Sisyphe.gui.__file__))
 
@@ -108,14 +115,40 @@ class DialogWait(QDialog):
     """
 
     # noinspection PyUnusedLocal
-    def __init__(self, title='', info='',
-                 progress=False,
-                 progressmin=None,
-                 progressmax=None,
-                 progresstxt=False,
-                 chart=False,
-                 cancel=False,
-                 parent=None):
+    def __init__(self,
+                 title: str = '',
+                 info: str = '',
+                 progress: bool = False,
+                 progressmin: int | None = None,
+                 progressmax: int | None = None,
+                 progresstxt: bool = False,
+                 chart: bool = False,
+                 cancel: bool = False,
+                 parent: QWidget | None = None) -> None:
+        """
+        DialogWait dialog constructor.
+
+        Parameters
+        ----------
+        title : str (optional)
+            The window title of the dialog. Defaults to ''.
+        info : str, optional
+            Initial information text displayed in the dialog. Defaults to ''.
+        progress : bool (optional)
+            If True, the progress bar is visible. Defaults to False.
+        progressmin : int | None (optional)
+            Minimum value for the progress bar. Defaults to None.
+        progressmax : int | None (optional)
+            Maximum value for the progress bar. Defaults to None.
+        progresstxt : bool (optional)
+            If True, the progress bar displays text. Defaults to False.
+        chart : bool (optional)
+            If True, the Matplotlib chart canvas is visible. Defaults to False.
+        cancel : bool (optional)
+            If True, the cancel button is visible. Defaults to False.
+        parent : QWidget | None (optional)
+            The parent widget of the dialog. Defaults to None.
+        """
         super().__init__()
 
         # Window
@@ -206,7 +239,11 @@ class DialogWait(QDialog):
 
     # Private method
 
-    def _stop(self):
+    def _stop(self) -> None:
+        """
+        Sets the internal flag to indicate that the process should be stopped.
+        Updates button visibility and processes pending GUI events.
+        """
         self._stopped = True
         # < Revision 10/10/2024
         # add self.buttonVisibilityOff()
@@ -214,7 +251,12 @@ class DialogWait(QDialog):
         # Revision 10/10/2024 >
         QApplication.processEvents()
 
-    def _onIteration(self):
+    def _onIteration(self) -> None:
+        """
+        Callback function for SimpleITK's sitkIterationEvent.
+        Increments the current iteration, updates the progress bar or info text, and checks for user abort.
+        Raises UserAbortException if stopped.
+        """
         self._currentiter += 1
         if self.getProgressVisibility(): self._progress.setValue(self._currentiter)
         else: self._info.setText('{} iteration {}'.format(self._baseinfo, self._currentiter))
@@ -224,7 +266,12 @@ class DialogWait(QDialog):
             raise UserAbortException
         QApplication.processEvents()
 
-    def _onProgress(self):
+    def _onProgress(self) -> None:
+        """
+        Callback function for SimpleITK's sitkProgressEvent.
+        Updates the progress bar based on the filter's progress, and checks for user abort.
+        Raises UserAbortException if stopped.
+        """
         self._progress.setValue(int(self._filter.GetProgress() * 100))
         QApplication.processEvents()
         if self._stopped:
@@ -232,47 +279,98 @@ class DialogWait(QDialog):
             raise UserAbortException
         QApplication.processEvents()
 
-    def _onStart(self):
+    def _onStart(self) -> None:
+        """
+        Callback function for SimpleITK's sitkStartEvent.
+        Currently does nothing.
+        """
         pass
 
-    def _onEnd(self):
+    def _onEnd(self) -> None:
+        """
+        Callback function for SimpleITK's sitkEndEvent.
+        Currently does nothing.
+        """
         pass
 
-    def _center(self):
+    def _center(self) -> None:
+        """
+        Centers the dialog on the screen.
+        Processes pending GUI events to ensure correct positioning.
+        """
         QApplication.processEvents()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
 
     # Public methods
 
-    def open(self):
+    def open(self) -> None:
+        """
+        Opens the dialog.
+        On macOS, it overrides the default open() to handle title bar display.
+        """
         if platform == 'darwin':
             # bug fix darwin platform, open() always displays a title bar
             # override open() to call show() and hide title bar
             self.show()
         else: super().open()
 
-    def setStopped(self):
+    def setStopped(self) -> None:
+        """
+        Manually sets the internal stopped flag to True.
+        """
         self._stopped = True
 
-    def resetStopped(self):
+    def resetStopped(self) -> None:
+        """
+        Resets the internal stopped flag to False.
+        """
         self._stopped = False
 
-    def getStopped(self):
+    def getStopped(self) -> bool:
+        """
+        Returns the current state of the stopped flag.
+
+        Returns
+        -------
+        bool
+            True if the process is stopped, False otherwise.
+        """
         return self._stopped
 
-    def reset(self):
+    def reset(self) -> None:
+        """
+        Resets the dialog's internal state, including the SimpleITK filter, stopped flag, current iteration, and base
+        information text.
+        """
         if self._filter is not None: self._filter.RemoveAllCommands()
         self._filter = None
         self._stopped = False
         self._currentiter = 0
         self._baseinfo = ''
 
-    def setSimpleITKFilter(self, filtr):
+    def setSimpleITKFilter(self, filtr: sitkImageFilter) -> None:
+        """
+        Sets the SimpleITK image filter to monitor.
+
+        Parameters
+        ----------
+        filtr : sitkImageFilter
+            The SimpleITK image filter instance.
+        """
         if isinstance(filtr, sitkImageFilter): self._filter = filtr
         else: raise TypeError('parameter type {} is not sitkImageFilter.')
 
-    def addSimpleITKFilterIterationCommand(self, niter):
+    def addSimpleITKFilterIterationCommand(self, niter: int) -> None:
+        """
+        Configures the dialog to monitor a SimpleITK filter's iteration events.
+        Sets progress bar range and attaches event commands.
+
+        Parameters
+        ----------
+        niter : int
+            The total number of iterations for the process.
+        """
         if isinstance(niter, int) and self._filter is not None:
             self._currentiter = 0
             self._progress.setMinimum(0)
@@ -285,7 +383,11 @@ class DialogWait(QDialog):
             QApplication.processEvents()
         else: raise TypeError('parameter type {} is not int.'.format(niter))
 
-    def addSimpleITKFilterProcessCommand(self):
+    def addSimpleITKFilterProcessCommand(self) -> None:
+        """
+        Configures the dialog to monitor a SimpleITK filter's progress events.
+        Sets progress bar range and attaches event commands.
+        """
         if self._filter is not None:
             self._progress.setMinimum(0)
             self._progress.setMaximum(100)
@@ -297,7 +399,16 @@ class DialogWait(QDialog):
             QApplication.processEvents()
         else: raise TypeError('No SimpleITK filter.')
 
-    def setInformationText(self, txt):
+    def setInformationText(self, txt: str) -> None:
+        """
+        Sets the main information text displayed in the dialog.
+        Adjusts dialog size and centers it.
+
+        Parameters
+        ----------
+        txt : str
+            The text to display.
+        """
         if isinstance(txt, str):
             self._baseinfo = txt
             self._info.setText(txt)
@@ -305,25 +416,60 @@ class DialogWait(QDialog):
             self._center()
         else: raise TypeError('parameter type {} is not str.'.format(type(txt)))
 
-    def addInformationText(self, txt=''):
+    def addInformationText(self, txt: str = '') -> None:
+        """
+        Appends additional information text to the current display.
+        If txt is empty, it resets to the base information.
+        Adjusts dialog size and centers it.
+
+        Parameters
+        ----------
+        txt : str, optional
+            The additional text to append. Defaults to ''.
+        """
         if txt == '': self._info.setText(self._baseinfo)
         else: self._info.setText('{}\n{}'.format(self._baseinfo, txt))
         self.adjustSize()
         self._center()
 
-    def getInformationText(self):
+    def getInformationText(self) -> str:
+        """
+        Retrieves the currently displayed information text.
+
+        Returns
+        -------
+        str
+            The current information text.
+        """
         return self._info.text()
 
-    def setProgressVisibility(self, v):
+    def setProgressVisibility(self, v: bool) -> None:
+        """
+        Sets the visibility of the progress bar.
+        Adjusts dialog size and centers it.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the progress bar, False to hide it.
+        """
         if isinstance(v, bool):
             self._progress.setVisible(v)
             self._center()
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def progressVisibilityOn(self):
+    def progressVisibilityOn(self) -> None:
+        """
+        Makes the progress bar visible.
+        Adjusts dialog size and centers it.
+        """
         self.setProgressVisibility(True)
 
-    def progressVisibilityOff(self):
+    def progressVisibilityOff(self) -> None:
+        """
+        Hides the progress bar.
+        Adjusts dialog size and centers it.
+        """
         self.setProgressVisibility(False)
         # < Revision 05/11/2024
         # add size and position adjustment
@@ -331,69 +477,197 @@ class DialogWait(QDialog):
         self._center()
         # Revision 05/11/2024 >
 
-    def getProgressVisibility(self):
+    def getProgressVisibility(self) -> bool:
+        """
+        Checks if the progress bar is visible.
+
+        Returns
+        -------
+        bool
+            True if the progress bar is visible, False otherwise.
+        """
         return self._progress.isVisible()
 
-    def setFigureVisibility(self, v):
+    def setFigureVisibility(self, v: bool) -> None:
+        """
+        Sets the visibility of the Matplotlib figure canvas.
+        Adjusts dialog size and centers it.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the figure, False to hide it.
+        """
         if isinstance(v, bool):
             self._canvas.setVisible(v)
             self._center()
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def FigureVisibilityOn(self):
+    def FigureVisibilityOn(self) -> None:
+        """
+        Makes the Matplotlib figure canvas visible.
+        Adjusts dialog size and centers it.
+        """
         self.setFigureVisibility(True)
 
-    def FigureVisibilityOff(self):
+    def FigureVisibilityOff(self) -> None:
+        """
+        Hides the Matplotlib figure canvas.
+        Adjusts dialog size and centers it.
+        """
         self.setFigureVisibility(False)
 
-    def getFigureVisibility(self):
+    def getFigureVisibility(self) -> None:
+        """
+        Checks if the Matplotlib figure canvas is visible.
+
+        Returns
+        -------
+        bool
+            True if the figure canvas is visible, False otherwise.
+        """
         return self._canvas.isVisible()
 
-    def getFigure(self):
+    def getFigure(self) -> Figure:
+        """
+        Retrieves the Matplotlib Figure object used by the dialog.
+
+        Returns
+        -------
+        Figure
+            The Matplotlib Figure instance.
+        """
         return self._fig
 
-    def setProgressTextVisibility(self, v):
+    def setProgressTextVisibility(self, v: bool) -> None:
+        """
+        Sets the visibility of the text displayed on the progress bar.
+        Adjusts dialog size and centers it.
+
+        Parameters
+        ----------
+        v : bool
+            True to show progress text, False to hide it.
+        """
         if isinstance(v, bool):
             self._progress.setTextVisible(v)
             self._center()
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def progressTextVisibilityOn(self):
+    def progressTextVisibilityOn(self) -> None:
+        """
+        Makes the progress bar text visible.
+        Adjusts dialog size and centers it.
+        """
         self.setProgressTextVisibility(True)
 
-    def progressTextVisibilityOff(self):
+    def progressTextVisibilityOff(self) -> None:
+        """
+        Hides the progress bar text.
+        Adjusts dialog size and centers it.
+        """
         self.setProgressTextVisibility(False)
 
-    def getProgressTextVisibility(self):
+    def getProgressTextVisibility(self) -> bool:
+        """
+        Checks if the progress bar text is visible.
+
+        Returns
+        -------
+        bool
+            True if the progress bar text is visible, False otherwise.
+        """
         return self._progress.isTextVisible()
 
-    def setProgressMaximum(self, v):
+    def setProgressMaximum(self, v: int) -> None:
+        """
+        Sets the maximum value of the progress bar.
+        The dialog's visibility is also set based on whether v > 1.
+
+        Parameters
+        ----------
+        v : int
+            The maximum value.
+        """
         if isinstance(v, int):
             self.setVisible(v > 1)
             self._progress.setMaximum(v)
         else: raise TypeError('parameter type {} is not int.'.format(type(v)))
 
-    def getProgressMaximum(self):
+    def getProgressMaximum(self) -> int:
+        """
+        Retrieves the maximum value of the progress bar.
+
+        Returns
+        -------
+        int
+            The maximum progress bar value.
+        """
         return self._progress.maximum()
 
-    def setProgressMinimum(self, v):
+    def setProgressMinimum(self, v: int) -> None:
+        """
+        Sets the minimum value of the progress bar and updates its current value.
+
+        Parameters
+        ----------
+        v : int
+            The minimum value.
+        """
         if isinstance(v, int):
             self._progress.setMinimum(v)
             self._progress.setValue(v)
         else: raise TypeError('parameter type {} is not int.'.format(type(v)))
 
-    def getProgressMinimum(self):
+    def getProgressMinimum(self) -> int:
+        """
+        Retrieves the minimum value of the progress bar.
+
+        Returns
+        -------
+        int
+            The minimum progress bar value.
+        """
         return self._progress.minimum()
 
-    def setProgressRange(self, vmin, vmax):
+    def setProgressRange(self, vmin: int, vmax: int) -> None:
+        """
+        Sets the minimum and maximum values for the progress bar.
+        Ensures vmin is not greater than vmax by swapping if necessary.
+
+        Parameters
+        ----------
+        vmin : int
+            The minimum value.
+        vmax : int
+            The maximum value.
+        """
         if vmin > vmax: vmin, vmax = vmax, vmin
         self._progress.setMaximum(vmax)
         self._progress.setMinimum(vmin)
 
-    def getProgressRange(self):
+    def getProgressRange(self) -> tuple[int, int]:
+        """
+        Retrieves the current minimum and maximum values of the progress bar.
+
+        Returns
+        -------
+        tuple[int, int]
+            A tuple containing (minimum_value, maximum_value).
+        """
         return self._progress.minimum(), self._progress.maximum()
 
-    def setCurrentProgressValue(self, v):
+    def setCurrentProgressValue(self, v: int) -> None:
+        """
+        Sets the current value of the progress bar.
+        Clamps the value within the defined minimum and maximum range.
+        Processes pending GUI events.
+
+        Parameters
+        ----------
+        v : int
+            The value to set.
+        """
         if isinstance(v, int):
             if v < self._progress.minimum(): v = self._progress.minimum()
             if v > self._progress.maximum(): v = self._progress.maximum()
@@ -402,7 +676,17 @@ class DialogWait(QDialog):
         else:
             raise TypeError('parameter type {} is not int.'.format(type(v)))
 
-    def messageFromDictProxyManager(self, mng):
+    def messageFromDictProxyManager(self, mng: dict[str, str | int | None]) -> None:
+        """
+        Updates the dialog's state based on a dictionary from a proxy manager.
+        Handles updates for information text, progress bar range, and current value.
+        Processes pending GUI events.
+
+        Parameters
+        ----------
+        mng : dict[str, str | int | None]
+            A dictionary containing update commands (e.g., 'msg', 'amsg', 'max', 'value', 'inc').
+        """
         if 'msg' in mng:
             if mng['msg'] is not None:
                 self.setInformationText(mng['msg'])
@@ -433,7 +717,18 @@ class DialogWait(QDialog):
         QApplication.processEvents()
 
     # noinspection PyUnusedLocal
-    def setCurrentProgressValuePercent(self, v, dummy):
+    def setCurrentProgressValuePercent(self, v: float | int, dummy: Any) -> None:
+        """
+        Sets the current value of the progress bar as a percentage (0-100).
+        Processes pending GUI events.
+
+        Parameters
+        ----------
+        v : float | int
+            The percentage value. Can be a float (0.0-1.0) or an int (0-100).
+        dummy : Any
+            A placeholder parameter (unused).
+        """
         if isinstance(v, float):
             if 0.0 <= v <= 1.0:
                 self._progress.setValue(int(v*100))
@@ -446,46 +741,109 @@ class DialogWait(QDialog):
             else: raise ValueError('parameter value {} is not between 0 and 100.'.format(v))
         else: raise TypeError('parameter type {} is not int or float.'.format(type(v)))
 
-    def getCurrentProgressValue(self):
+    def getCurrentProgressValue(self) -> int:
+        """
+        Retrieves the current value of the progress bar.
+
+        Returns
+        -------
+        int
+            The current progress bar value.
+        """
         return self._progress.value()
 
-    def incCurrentProgressValue(self):
+    def incCurrentProgressValue(self) -> None:
+        """
+        Increments the current value of the progress bar by one, if it's less than the maximum value.
+        Processes pending GUI events.
+        """
         if self._progress.value() < self._progress.maximum():
             self.setCurrentProgressValue(self._progress.value() + 1)
             QApplication.processEvents()
 
-    def setCurrentProgressValueToMinimum(self):
+    def setCurrentProgressValueToMinimum(self) -> None:
+        """
+        Sets the current progress bar value to its minimum.
+        Processes pending GUI events.
+        """
         self.setCurrentProgressValue(self._progress.minimum())
         QApplication.processEvents()
 
-    def setCurrentProgressValueToMaximum(self):
+    def setCurrentProgressValueToMaximum(self) -> None:
+        """
+        Sets the current progress bar value to its maximum.
+        Processes pending GUI events.
+        """
         self.setCurrentProgressValue(self._progress.maximum())
         QApplication.processEvents()
 
-    def buttonEnabled(self, v):
+    def buttonEnabled(self, v: bool) -> None:
+        """
+        Enables or disables the cancel button.
+        Processes pending GUI events.
+
+        Parameters
+        ----------
+        v : bool
+            True to enable, False to disable.
+        """
         if isinstance(v, bool):
             self._abort.setEnabled(v)
             QApplication.processEvents()
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def setButtonVisibility(self, v):
+    def setButtonVisibility(self, v: bool) -> None:
+        """
+        Sets the visibility of the cancel button.
+        Adjusts dialog size and centers it.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the button, False to hide it.
+        """
         if isinstance(v, bool):
             self._abort.setVisible(v)
             self._center()
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def buttonVisibilityOn(self):
+    def buttonVisibilityOn(self) -> None:
+        """
+        Makes the cancel button visible.
+        Adjusts dialog size and centers it.
+        """
         self.setButtonVisibility(True)
 
-    def buttonVisibilityOff(self):
+    def buttonVisibilityOff(self) -> None:
+        """
+        Hides the cancel button.
+        Adjusts dialog size and centers it.
+        """
         self.setButtonVisibility(False)
 
-    def getButtonVisibility(self):
+    def getButtonVisibility(self) -> bool:
+        """
+        Checks if the cancel button is visible.
+
+        Returns
+        -------
+        bool
+            True if the button is visible, False otherwise.
+        """
         return self._abort.isVisible()
 
     # Qt event
 
-    def showEvent(self, event):
+    def showEvent(self, event: Any):
+        """
+        Event handler for when the dialog is shown.
+        Resets the stopped flag and centers the dialog.
+
+        Parameters
+        ----------
+        event : Any
+            The show event object.
+        """
         super().showEvent(event)
         self._stopped = False
         self._center()

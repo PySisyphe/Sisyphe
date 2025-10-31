@@ -72,7 +72,7 @@ class DialogGenericResults(QDialog):
     Description
     ~~~~~~~~~~~
 
-    Generic dialog o display statistical results.
+    Generic dialog to display statistical results.
 
     Inheritance
     ~~~~~~~~~~~
@@ -95,6 +95,14 @@ class DialogGenericResults(QDialog):
     """
 
     def __init__(self, parent=None):
+        """
+        DialogGenericResults instance constructor.
+
+        Parameters
+        ----------
+        parent : QWidget, optional
+            The parent widget. Defaults to None.
+        """
         super().__init__(parent)
 
         # noinspection PyTypeChecker
@@ -135,6 +143,11 @@ class DialogGenericResults(QDialog):
     # Private methods
 
     def _onSaveBitmap(self):
+        """
+        Slot to save the current tab's figure as a bitmap image.
+        Opens a file dialog to select the output path and format.
+        Supported formats: BMP, JPG, PNG, TIFF, SVG.
+        """
         if self._tab.count() > 0:
             index = self._tab.currentIndex()
             fig = self._plotlist[index].figure
@@ -151,6 +164,10 @@ class DialogGenericResults(QDialog):
                 except Exception as err: messageBox(self, 'Save capture', text='{}'.format(err))
 
     def _onCopyClipboard(self):
+        """
+        Slot to copy the current tab's figure to the system clipboard.
+        The figure is saved to a temporary PNG file, then loaded as a QPixmap and placed on the clipboard.
+        """
         if self._tab.count() > 0:
             index = self._tab.currentIndex()
             if self.isFigureVisible(index):
@@ -166,6 +183,9 @@ class DialogGenericResults(QDialog):
                     if exists(tmp): remove(tmp)
 
     def _onCopyScreenshots(self):
+        """
+        Slot to copy the current tab's figure and/or tree widget to the associated ScreenshotsGridWidget.
+        """
         if self._tab.count() > 0:
             index = self._tab.currentIndex()
             widget = self._scrshot[index]
@@ -179,6 +199,11 @@ class DialogGenericResults(QDialog):
                     widget.pasteFromClipboard()
 
     def _onSaveDataset(self):
+        """
+        Slot to save the data from the current tab's tree widget to a file.
+        Opens a file dialog to select the output path and format.
+        Supported formats: CSV, JSON, LaTeX, TXT, XLSX, XSHEET.
+        """
         if self._tab.count() > 0:
             index = self._tab.currentIndex()
             filename = self._tab.tabText(index) + '_data'
@@ -208,6 +233,15 @@ class DialogGenericResults(QDialog):
                     messageBox(self, 'Save Dataset', text='error: {}'.format(err))
 
     def _onSelectionChanged(self, item):
+        """
+        Slot to handle selection changes in the tree widget.
+        Redraws the chart based on the selected column if a chart type is defined.
+
+        Parameters
+        ----------
+        item : QTreeWidgetItem
+            The clicked item in the tree widget.
+        """
         index = self._tab.currentIndex()
         if self.isFigureVisible(index):
             c = item.treeWidget().currentIndex().column()
@@ -219,6 +253,19 @@ class DialogGenericResults(QDialog):
                 elif data == 'pie': self.chartPieFromTreeWidgetColumn(index, c)
 
     def _getDataFrame(self, index):
+        """
+        Get a pandas DataFrame from the data in a tree widget.
+
+        Parameters
+        ----------
+        index : int
+            The tab index.
+
+        Returns
+        -------
+        DataFrame
+            A pandas DataFrame containing the data from the tree widget.
+        """
         if isinstance(index, int):
             df = dict()
             if 0 <= index < self._tab.count():
@@ -246,6 +293,19 @@ class DialogGenericResults(QDialog):
 
     @staticmethod
     def _getDecimals(data: tuple | list | ndarray) -> tuple[int, str]:
+        """
+        Determine the appropriate number of decimals for formatting a dataset.
+
+        Parameters
+        ----------
+        data : tuple | list | ndarray
+            The input data array.
+
+        Returns
+        -------
+        tuple[int, str]
+            A tuple containing the number of decimals and the format string.
+        """
         if isinstance(data, tuple): data = array(list(data))
         if isinstance(data, list): data = array(data)
         if isinstance(data, ndarray):
@@ -265,6 +325,14 @@ class DialogGenericResults(QDialog):
     # Public methods
 
     def autoSize(self, index: int) -> None:
+        """
+        Automatically resize the dialog width to fit the tree widget content.
+
+        Parameters
+        ----------
+        index : int
+            The tab index containing the tree widget to measure.
+        """
         if self._tab.count() > 0:
             if isinstance(index, int):
                 if 0 <= index < self._tab.count():
@@ -286,13 +354,25 @@ class DialogGenericResults(QDialog):
                scrshot: ScreenshotsGridWidget | None = None,
                dataset: bool = True) -> int:
         """
-            title       str, title of the tab
-            capture     bool, to display save bitmap button if true
-            clipbrd     bool, to display copy to clipboard button if true
-            scrshot     ScreenshotsGridWidget, to display copy to screenshots
-            dataset     bool, to display dataset TreeView/save dataset button if true
+        Create and add a new tab to the dialog.
 
-            return      int, index of the new tab
+        Parameters
+        ----------
+        title : str, optional
+            Title of the tab.
+        capture : bool, optional
+            If True, enables the figure canvas and save/copy buttons.
+        clipbrd : bool, optional
+            If True, enables the copy to clipboard button.
+        scrshot : ScreenshotsGridWidget | None, optional
+            A ScreenshotsGridWidget instance to enable copying to it.
+        dataset : bool, optional
+            If True, enables the tree widget and save dataset button.
+
+        Returns
+        -------
+        int
+            The index of the newly created tab.
         """
         if not isinstance(scrshot, ScreenshotsGridWidget): scrshot = None
         if isinstance(title, str):
@@ -368,6 +448,37 @@ class DialogGenericResults(QDialog):
                                     clipbrd: bool = True,
                                     scrshot: ScreenshotsGridWidget | None = None,
                                     dataset: bool = True) -> int:
+        """
+        Create a new tab to display descriptive statistics.
+        Calculates and displays statistics (min, max, mean, std, etc.) in a tree widget and shows a corresponding
+        boxplot.
+
+        Parameters
+        ----------
+        labels : list[str]
+            Labels for the data series.
+        data : list[ndarray]
+            A list of numpy arrays containing the data.
+        title : str, optional
+            Base title for the tab.
+        units : str, optional
+            Units for the data values.
+        decimals : int | None, optional
+            Number of decimals for display. Auto-detected if None.
+        capture : bool, optional
+            If True, enables the figure canvas and save/copy buttons.
+        clipbrd : bool, optional
+            If True, enables the copy to clipboard button.
+        scrshot : ScreenshotsGridWidget | None, optional
+            A ScreenshotsGridWidget instance to enable copying to it.
+        dataset : bool, optional
+            If True, enables the tree widget and save dataset button.
+
+        Returns
+        -------
+        int
+            The index of the newly created tab.
+        """
         title += ' descriptive statistics'
         index = self.newTab(title, capture, clipbrd, scrshot, dataset)
         if units == '': units = None
@@ -431,6 +542,35 @@ class DialogGenericResults(QDialog):
                         clipbrd: bool = True,
                         scrshot: ScreenshotsGridWidget | None = None,
                         dataset: bool = True) -> int:
+        """
+        Create a new tab to display a histogram.
+
+        Parameters
+        ----------
+        data : ndarray
+            The 1D data to be plotted.
+        bins : int | None, optional
+            Number of histogram bins. Defaults to 32.
+        cumulative : bool, optional
+            If True, create a cumulative histogram. Defaults to False.
+        label : str, optional
+            Label for the data.
+        units : str, optional
+            Units for the data values.
+        capture : bool, optional
+            If True, enables the figure canvas and save/copy buttons.
+        clipbrd : bool, optional
+            If True, enables the copy to clipboard button.
+        scrshot : ScreenshotsGridWidget | None, optional
+            A ScreenshotsGridWidget instance to enable copying to it.
+        dataset : bool, optional
+            If True, enables the tree widget and save dataset button.
+
+        Returns
+        -------
+        int
+            The index of the newly created tab.
+        """
         if cumulative: title = '{} cumulative histogram'.format(label)
         else: title = '{} histogram'.format(label)
         if len(data) > 10000: dataset = False
@@ -462,6 +602,29 @@ class DialogGenericResults(QDialog):
                              capture: bool = True,
                              clipbrd: bool = True,
                              scrshot: ScreenshotsGridWidget | None = None):
+        """
+        Create a new tab to display a histogram of a SisypheVolume.
+
+        Parameters
+        ----------
+        vol : SisypheVolume
+            The volume to analyze.
+        bins : int | None, optional
+            Number of histogram bins. Defaults to 128.
+        cumulative : bool, optional
+            If True, create a cumulative histogram. Defaults to False.
+        capture : bool, optional
+            If True, enables the figure canvas and save/copy buttons.
+        clipbrd : bool, optional
+            If True, enables the copy to clipboard button.
+        scrshot : ScreenshotsGridWidget | None, optional
+            A ScreenshotsGridWidget instance to enable copying to it.
+
+        Returns
+        -------
+        int
+            The index of the newly created tab.
+        """
         if cumulative: title = '{} cumulative histogram'.format(vol.getName())
         else: title = '{} histogram'.format(vol.getName())
         index = self.newTab(title, capture, clipbrd, scrshot, True)
@@ -498,9 +661,30 @@ class DialogGenericResults(QDialog):
         return index
 
     def getTabCount(self) -> int:
+        """
+        Get the number of tabs in the dialog.
+
+        Returns
+        -------
+        int
+            The total number of tabs.
+        """
         return self._tab.count()
 
     def getTreeWidget(self, index: str | int) -> QTreeWidget:
+        """
+        Get the tree widget from a specific tab.
+
+        Parameters
+        ----------
+        index : str | int
+            The tab index or title.
+
+        Returns
+        -------
+        QTreeWidget
+            The tree widget from the specified tab.
+        """
         if isinstance(index, str):
             for i in range(self._tab.count()):
                 if self._tab.tabText(i) == index: index = i
@@ -512,6 +696,14 @@ class DialogGenericResults(QDialog):
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
 
     def hideTree(self, index: str | int) -> None:
+        """
+        Hide the tree widget in a specific tab.
+
+        Parameters
+        ----------
+        index : str | int
+            The tab index or title.
+        """
         if isinstance(index, str):
             for i in range(self._tab.count()):
                 if self._tab.tabText(i) == index: index = i
@@ -528,6 +720,14 @@ class DialogGenericResults(QDialog):
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
 
     def showTree(self, index: str | int) -> None:
+        """
+        Show the tree widget in a specific tab.
+
+        Parameters
+        ----------
+        index : str | int
+            The tab index or title.
+        """
         if isinstance(index, str):
             for i in range(self._tab.count()):
                 if self._tab.tabText(i) == index: index = i
@@ -544,6 +744,19 @@ class DialogGenericResults(QDialog):
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
 
     def isTreeVisible(self, index: str | int) -> bool:
+        """
+        Check if the tree widget in a specific tab is visible.
+
+        Parameters
+        ----------
+        index : str | int
+            The tab index or title.
+
+        Returns
+        -------
+        bool
+            True if the tree widget is visible, False otherwise.
+        """
         if isinstance(index, str):
             for i in range(self._tab.count()):
                 if self._tab.tabText(i) == index: index = i
@@ -555,6 +768,19 @@ class DialogGenericResults(QDialog):
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
 
     def getFigure(self, index: str | int) -> Figure:
+        """
+        Get the Matplotlib figure from a specific tab.
+
+        Parameters
+        ----------
+        index : str | int
+            The tab index or title.
+
+        Returns
+        -------
+        Figure
+            The Matplotlib figure from the specified tab.
+        """
         if isinstance(index, str):
             for i in range(self._tab.count()):
                 if self._tab.tabText(i) == index: index = i
@@ -566,6 +792,14 @@ class DialogGenericResults(QDialog):
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
 
     def hideFigure(self, index:  str | int) -> None:
+        """
+        Hide the figure canvas in a specific tab.
+
+        Parameters
+        ----------
+        index : str | int
+            The tab index or title.
+        """
         if isinstance(index, str):
             for i in range(self._tab.count()):
                 if self._tab.tabText(i) == index: index = i
@@ -587,6 +821,14 @@ class DialogGenericResults(QDialog):
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
 
     def showFigure(self, index: str | int) -> None:
+        """
+        Show the figure canvas in a specific tab.
+
+        Parameters
+        ----------
+        index : str | int
+            The tab index or title.
+        """
         if isinstance(index, str):
             for i in range(self._tab.count()):
                 if self._tab.tabText(i) == index: index = i
@@ -608,6 +850,19 @@ class DialogGenericResults(QDialog):
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
 
     def isFigureVisible(self, index: str | int) -> bool:
+        """
+        Check if the figure canvas in a specific tab is visible.
+
+        Parameters
+        ----------
+        index : str | int
+            The tab index or title.
+
+        Returns
+        -------
+        bool
+            True if the figure is visible, False otherwise.
+        """
         if isinstance(index, str):
             for i in range(self._tab.count()):
                 if self._tab.tabText(i) == index: index = i
@@ -624,10 +879,18 @@ class DialogGenericResults(QDialog):
                                   units: list[str] | None = None,
                                   charts: list[str] | None = None) -> None:
         """
-            index   int, tab index
-            labels  list[str], list of columns labels displayed in TreeWidget header
-            units   list[str], list of columns units
-            charts  list[str], list of columns chart type (in ['bar', 'plot', 'boxplot', 'pie', ''])
+        Set the header labels, units, and chart types for a tree widget.
+
+        Parameters
+        ----------
+        index : int
+            The tab index.
+        labels : list[str]
+            List of column header labels.
+        units : list[str] | None, optional
+            List of units for each column.
+        charts : list[str] | None, optional
+            List of chart types for each column ('bar', 'plot', 'boxplot', 'pie').
         """
         if isinstance(index, int):
             if 0 <= index < self._tab.count():
@@ -653,9 +916,16 @@ class DialogGenericResults(QDialog):
 
     def addTreeWidgetRow(self, index: int, row: list | tuple | ndarray, d: int | None = None) -> None:
         """
-            index   int, tab number
-            row     list | tuple | ndarray, row values
-            d       int, floating values precision
+        Add a new row of data to a tree widget.
+
+        Parameters
+        ----------
+        index : int
+            The tab index.
+        row : list | tuple | ndarray
+            The data for the new row.
+        d : int | None, optional
+            Number of decimals for formatting float values. Auto-detected if None.
         """
         if isinstance(index, int):
             if 0 <= index < self._tab.count():
@@ -686,8 +956,16 @@ class DialogGenericResults(QDialog):
 
     def setColumnChart(self, index: int, col: int, chart: str = '') -> None:
         """
-            chart   str, type of chart used to display values in a column
-                         chart types are 'bar', 'plot', 'boxplot', 'pie'
+        Set the chart type for a specific column in a tree widget.
+
+        Parameters
+        ----------
+        index : int
+            The tab index.
+        col : int
+            The column index.
+        chart : str, optional
+            The chart type ('bar', 'plot', 'boxplot', 'pie'). Defaults to ''.
         """
         if isinstance(index, int):
             if 0 <= index < self._tab.count():
@@ -702,6 +980,18 @@ class DialogGenericResults(QDialog):
         else: raise TypeError('index parameter type {} is not int.'.format(type(index)))
 
     def setColumnUnit(self, index: int, col: int, unit: str = '') -> None:
+        """
+        Set the unit for a specific column in a tree widget.
+
+        Parameters
+        ----------
+        index : int
+            The tab index.
+        col : int
+            The column index.
+        unit : str, optional
+            The unit string. Defaults to ''.
+        """
         if isinstance(index, int):
             if 0 <= index < self._tab.count():
                 tree = self._treelist[index]
@@ -715,6 +1005,14 @@ class DialogGenericResults(QDialog):
         else: raise TypeError('index parameter type {} is not int.'.format(type(index)))
 
     def clearColumnCharts(self, index: int) -> None:
+        """
+        Clear the chart type for all columns in a tree widget.
+
+        Parameters
+        ----------
+        index : int
+            The tab index.
+        """
         if isinstance(index, int):
             if 0 <= index < self._tab.count():
                 tree = self._treelist[index]
@@ -727,6 +1025,14 @@ class DialogGenericResults(QDialog):
         else: raise TypeError('index parameter type {} is not int.'.format(type(index)))
 
     def clearColumnUnits(self, index: int) -> None:
+        """
+        Clear the units for all columns in a tree widget.
+
+        Parameters
+        ----------
+        index : int
+            The tab index.
+        """
         if isinstance(index, int):
             if 0 <= index < self._tab.count():
                 tree = self._treelist[index]
@@ -740,8 +1046,14 @@ class DialogGenericResults(QDialog):
 
     def chartBarFromTreeWidgetColumn(self, index: int, col: int) -> None:
         """
-            index   int, tab number
-            col     int, column number
+        Generate and display a bar chart from a tree widget column.
+
+        Parameters
+        ----------
+        index : int
+            The tab index.
+        col : int
+            The column index to plot.
         """
         if isinstance(index, int):
             if 0 <= index < self._tab.count():
@@ -791,8 +1103,14 @@ class DialogGenericResults(QDialog):
 
     def chartPlotFromTreeWidgetColumn(self, index: int, col: int) -> None:
         """
-            index   int, tab number
-            col     int, column number
+        Generate and display a line plot from a tree widget column.
+
+        Parameters
+        ----------
+        index : int
+            The tab index.
+        col : int
+            The column index to plot.
         """
         if isinstance(index, int):
             if 0 <= index < self._tab.count():
@@ -835,8 +1153,14 @@ class DialogGenericResults(QDialog):
 
     def chartBoxplotFromTreeWidgetColumn(self, index: int, col: int) -> None:
         """
-            index   int, tab number
-            col     int, column number
+        Generate and display a boxplot from a tree widget column.
+
+        Parameters
+        ----------
+        index : int
+            The tab index.
+        col : int
+            The column index to plot.
         """
         if isinstance(index, int):
             if 0 <= index < self._tab.count():
@@ -880,8 +1204,14 @@ class DialogGenericResults(QDialog):
 
     def chartPieFromTreeWidgetColumn(self, index: int, col: int) -> None:
         """
-            index   int, tab number
-            col     int, column number
+        Generate and display a pie chart from a tree widget column.
+
+        Parameters
+        ----------
+        index : int
+            The tab index.
+        col : int
+            The column index to plot.
         """
 
         def func(pct, vv):
@@ -935,10 +1265,18 @@ class DialogGenericResults(QDialog):
                            d: int | None = None,
                            rows: list[str] | None = None) -> None:
         """
-            index   int, tab number
-            arr     ndarray, data
-            d       int, decimals
-            rows    list[str], row labels (default None)
+        Populate a tree widget from a NumPy array or pandas DataFrame.
+
+        Parameters
+        ----------
+        index : int
+            The tab index.
+        arr : ndarray | DataFrame
+            The data to populate the widget with.
+        d : int | None, optional
+            Number of decimals for formatting float values. Auto-detected if None.
+        rows : list[str] | None, optional
+            Labels for the rows. If provided, they are placed in the first column.
         """
         if isinstance(index, int):
             if 0 <= index < self._tab.count():
@@ -978,6 +1316,18 @@ class DialogGenericResults(QDialog):
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
 
     def setTreeWidgetDict(self, index: int, arr: dict, d: int | None = None):
+        """
+        Populate a tree widget from a dictionary.
+
+        Parameters
+        ----------
+        index : int
+            The tab index.
+        arr : dict
+            The data dictionary. Keys are used as headers, and values are lists of column data.
+        d : int | None, optional
+            Number of decimals for formatting float values. Auto-detected if None.
+        """
         if isinstance(index, int):
             if 0 <= index < self._tab.count():
                 if isinstance(arr, dict):
@@ -1016,6 +1366,9 @@ class DialogGenericResults(QDialog):
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
 
     def clear(self) -> None:
+        """
+        Clear all tabs and data from the dialog.
+        """
         self._tab.clear()
         self._plotlist = list()
         self._treelist = list()
@@ -1024,6 +1377,14 @@ class DialogGenericResults(QDialog):
     # < Revision 18/09/2025
     # add showEvent method, Adjust the size of the dialog box to fit the content
     def showEvent(self, a0):
+        """
+        Reimplementation of QWidget.showEvent to adjust dialog size on show.
+
+        Parameters
+        ----------
+        a0 : QShowEvent
+            The show event.
+        """
         super().showEvent(a0)
         self.adjustSize()
     # <Revision 18/09/2025 >

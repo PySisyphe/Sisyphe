@@ -1335,24 +1335,39 @@ class WindowSisyphe(QMainWindow):
         self._menu['views'].setAttribute(Qt.WA_TranslucentBackground, True)
 
         sliceview = self._sliceview()[0, 0].getPopup()
+        # noinspection PyTypeChecker
         sliceview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
         sliceview.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyTypeChecker
         sliceview.setAttribute(Qt.WA_TranslucentBackground, True)
         orthoview = self._orthoview()[0, 0].getPopup()
+        # noinspection PyTypeChecker
         orthoview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
         orthoview.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyTypeChecker
         orthoview.setAttribute(Qt.WA_TranslucentBackground, True)
         synchroview = self._synchroview()[0, 0].getPopup()
+        # noinspection PyTypeChecker
         synchroview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
         synchroview.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyTypeChecker
         synchroview.setAttribute(Qt.WA_TranslucentBackground, True)
         projview = self._projview()[0, 0].getPopup()
+        # noinspection PyTypeChecker
         projview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
         projview.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyTypeChecker
         projview.setAttribute(Qt.WA_TranslucentBackground, True)
         compview = self._compview()[0, 0].getPopup()
+        # noinspection PyTypeChecker
         compview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
         compview.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyTypeChecker
         compview.setAttribute(Qt.WA_TranslucentBackground, True)
         sliceview.setTitle(self._tabview.tabText(0))
         orthoview.setTitle(self._tabview.tabText(1))

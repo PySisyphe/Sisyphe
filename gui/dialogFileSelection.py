@@ -5,6 +5,10 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from typing import Any
+
 from sys import platform
 
 from os.path import exists
@@ -19,6 +23,10 @@ from PyQt5.QtWidgets import QApplication
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
+
+if TYPE_CHECKING:
+    from PyQt5.QtWidgets import QWidget
+    from Sisyphe.widgets.toolBarThumbnail import ToolBarThumbnail
 
 __all__ = ['DialogFileSelection',
            'DialogMultiFileSelection',
@@ -47,7 +55,7 @@ class DialogFileSelection(QDialog):
     QDialog -> DialogFileSelection
 
     Creation: 15/11/2022
-    Last revision: 15/10/2024
+    Last revision: 22/10/2025
     """
 
     # Special method
@@ -58,7 +66,7 @@ class DialogFileSelection(QDialog):
     _widget    FileSelectionWidget
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self.setWindowTitle('File selection')
@@ -153,14 +161,14 @@ class DialogFileSelection(QDialog):
 
     # Private method
 
-    def _accept(self):
+    def _accept(self) -> None:
         if self.getFilename() != '': self.accept()
 
     # Public method
 
     # < Revision 15/10/2025
     # add getFileSelectionWidget method
-    def getFileSelectionWidget(self):
+    def getFileSelectionWidget(self) -> FileSelectionWidget:
         return  self._widget
     # Revision 15/10/2025 >
 
@@ -178,7 +186,7 @@ class DialogMultiFileSelection(QDialog):
     QDialog -> DialogMultipleFileSelection
 
     Creation: 15/11/2022
-    Last revision: 22/05/2025
+    Last revision: 22/10/2025
     """
 
     # Special methods
@@ -189,7 +197,7 @@ class DialogMultiFileSelection(QDialog):
     _widget    dict[str, FileSelectionWidget]
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self.setWindowTitle('Files selection')
@@ -235,20 +243,20 @@ class DialogMultiFileSelection(QDialog):
 
     # Container Public methods
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> FileSelectionWidget:
         return self._widgets[key]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._widgets)
 
-    def __contains__(self, key):
+    def __contains__(self, key: str) -> bool:
         return key in self._widgets
 
-    def __iter__(self):
+    def __iter__(self) -> Any:
         self._current = 0
         return self
 
-    def __next__(self):
+    def __next__(self) -> FileSelectionWidget:
         keys = list(self._widgets.keys())
         if self._current < len(self._widgets):
             index = self._current
@@ -258,7 +266,7 @@ class DialogMultiFileSelection(QDialog):
 
     # Private method
 
-    def _accept(self):
+    def _accept(self) -> None:
         filenames = self.getFilenames()
         if len(filenames) == len(self._widgets): self.accept()
         else: messageBox(self,
@@ -267,7 +275,12 @@ class DialogMultiFileSelection(QDialog):
 
     # Public methods
 
-    def createFileSelectionWidget(self, label, toolbar=None, current=False, clear=True, sfilter=True):
+    def createFileSelectionWidget(self,
+                                  label: str,
+                                  toolbar: ToolBarThumbnail | None = None,
+                                  current: bool = False,
+                                  clear: bool = True,
+                                  sfilter: bool = True) -> FileSelectionWidget:
         widget = FileSelectionWidget()
         widget.setTextLabel(label)
         if toolbar is not None: widget.setToolbarThumbnail(toolbar)
@@ -291,20 +304,20 @@ class DialogMultiFileSelection(QDialog):
         self.setFixedHeight(self.sizeHint().height())
         return widget
 
-    def count(self):
+    def count(self) -> int:
         return len(self._widgets)
 
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
         return len(self._widgets) == 0
 
-    def getFilename(self, key):
+    def getFilename(self, key: str) -> str | None:
         if len(self._widgets) > 0:
             filename = self._widgets[key].getFilename()
             if exists(filename): return filename
             else: self._widgets[key].clear()
         return None
 
-    def getFilenames(self):
+    def getFilenames(self) -> dict[str, str] | None:
         if len(self._widgets) > 0:
             r = dict()
             keys = list(self._widgets.keys())
@@ -329,7 +342,7 @@ class DialogFilesSelection(QDialog):
     QDialog -> DialogFilesSelection
 
     Creation: 15/11/2022
-    Last revision: 15/10/2025
+    Last revision: 22/10/2025
     """
 
     # Special method
@@ -340,7 +353,7 @@ class DialogFilesSelection(QDialog):
     _widget    FilesSelectionWidget
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self.setWindowTitle('Files selection')
@@ -438,13 +451,13 @@ class DialogFilesSelection(QDialog):
 
     # Private method
 
-    def _accept(self):
+    def _accept(self) -> None:
         if self.filenamesCount() > 0: self.accept()
 
     # Public method
 
     # < Revision 15/10/2025
     # add getFileSelectionWidget method
-    def getFilesSelectionWidget(self):
+    def getFilesSelectionWidget(self) -> FileSelectionWidget:
         return  self._widget
     # Revision 15/10/2025 >
