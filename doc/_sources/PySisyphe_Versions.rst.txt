@@ -841,6 +841,10 @@ version 0.18.9, build 01/11/2025
 	- core.sisypheDownload
 	- gui.windowSisyphe 
 	- gui.dialogSegmentation
+	- widgets.sliceViewWidgets
+	- widgets.multiViewWidgets
+	- widgets.volumeViewWidget
+	- widgets.iconBarViewWidgets
 
 - **updated function**
 
@@ -856,7 +860,27 @@ version 0.18.9, build 01/11/2025
 	
 	- gui.dialogSegmentation.DialogPriorBasedSegmentation
 
-		- update _priorsChanged method
+		- update _priorsChanged() method
+
+	- widgets.sliceViewWidgets.SliceViewWidget
+
+		- update _getInfoValuesText() method
+
+	- widgets.multiViewWidgets.OrthogonalSliceViewWidget
+
+		- update getMeshCollection() method
+
+	- widgets.volumeViewWidget.VolumeViewWidget
+
+		- update getSlice0Visibility() method
+		- update getSlice1Visibility() method
+		- update getSlice2Visibility() method
+		- update getSurfaceVisibility() method
+		- update getTextureVisibility() method
+
+	- widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget2
+
+		- update setMoveOverlayOff() method
 
 - **updates methods**
 
@@ -867,3 +891,23 @@ version 0.18.9, build 01/11/2025
 	- gui.dialogSegmentation.DialogPriorBasedSegmentation._priorsChanged()
 
 		- bug fix, line 1027, from 'Custom' to 'CUSTOM' to display file selection widgets (T1, Mask, GMPrior, CGMPrior, WMPrior, CSFPrior, BrainstemPrior, CerebellumPrior)
+
+	- widgets.sliceViewWidgets.SliceViewWidget._getInfoValuesText()
+
+		- bug fix, lines 690 and 696, PC and midACPC infos
+
+	- widgets.multiViewWidgets.OrthogonalSliceViewWidget.getMeshCollection()
+
+		- bug fix, line 830, no return value
+
+	- widgets.volumeViewWidget.VolumeViewWidget.getSlice0Visibility()
+	- widgets.volumeViewWidget.VolumeViewWidget.getSlice1Visibility()
+	- widgets.volumeViewWidget.VolumeViewWidget.getSlice2Visibility()
+	- widgets.volumeViewWidget.VolumeViewWidget.getSurfaceVisibility()
+	- widgets.volumeViewWidget.VolumeViewWidget.getTextureVisibility()
+
+		- bug fix, lines 1021, 1027, 1033, no return value
+
+	- widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget2.setMoveOverlayOff()
+
+		- bug fix, line 2530, replace widget.setMoveOverlayOff() by widget.setMoveOverlayFlag(False)

@@ -40,6 +40,7 @@ PySisyphe documentation
    ./PySisyphe_Diffusion.rst
    ./PySisyphe_Window.rst
    ./API/index.rst
+   ./API2/index.rst
    ./PySisyphe_license.rst
    ./PySisyphe_contact.rst
    ./PySisyphe_Versions.rst

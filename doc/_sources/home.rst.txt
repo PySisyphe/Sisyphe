@@ -25,7 +25,8 @@ PySisyphe documentation
 - :ref:`Dock Tracking <page-docktracking>`
 - :ref:`Dock Documentation <page-dockhelp>`
 - :ref:`Menubar <page-menubar>`
-- :ref:`API <page-api>`
+- :ref:`Core API <page-core-api>`
+- :ref:`Widgets & dialogs API <page-widgets-api>`
 - :ref:`License <page-license>`
 - :ref:`Version history <page-versions>`
 - :ref:`Contact <page-contact>`
