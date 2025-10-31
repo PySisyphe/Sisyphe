@@ -66,7 +66,6 @@ from Sisyphe.core.sisypheTransform import SisypheTransform
 if TYPE_CHECKING:
     from Sisyphe.widgets.sliceViewWidgets import SliceViewWidget
 
-
 __all__ = ['ToolWidgetCollection',
            'NamedWidget',
            'DistanceWidget',

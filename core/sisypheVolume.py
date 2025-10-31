@@ -473,7 +473,7 @@ class SisypheVolume(SisypheImage):
 
     def __str__(self) -> str:
         """
-         Special overloaded method called by the built-in str() python function.
+        Special overloaded method called by the built-in str() python function.
 
         Returns
         -------
