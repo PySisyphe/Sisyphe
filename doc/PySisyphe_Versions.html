@@ -1534,10 +1534,12 @@
 <li><p>core.sisypheDownload</p></li>
 <li><p>gui.windowSisyphe</p></li>
 <li><p>gui.dialogSegmentation</p></li>
+<li><p>gui.dialogTexture</p></li>
 <li><p>widgets.sliceViewWidgets</p></li>
 <li><p>widgets.multiViewWidgets</p></li>
 <li><p>widgets.volumeViewWidget</p></li>
 <li><p>widgets.iconBarViewWidgets</p></li>
+<li><p>widgets.selectFileWidgets</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -1568,6 +1570,13 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>update _priorsChanged() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogTexture.DialogROITexture</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _validateROI() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -1603,6 +1612,13 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getItemFromIndex() method</p></li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </div></blockquote>
 </li>
@@ -1620,6 +1636,13 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>bug fix, line 1027, from ‘Custom’ to ‘CUSTOM’ to display file selection widgets (T1, Mask, GMPrior, CGMPrior, WMPrior, CSFPrior, BrainstemPrior, CerebellumPrior)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogTexture.DialogROITexture._validateROI()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 651/661, row index of a ROI filename</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -1652,6 +1675,13 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>bug fix, line 2530, replace widget.setMoveOverlayOff() by widget.setMoveOverlayFlag(False)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget.getItemFromIndex()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, return value type (QListWidgetItem, not str)</p></li>
 </ul>
 </div></blockquote>
 </li>
