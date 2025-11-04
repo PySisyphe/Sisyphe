@@ -2216,11 +2216,11 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         Parameters
         ----------
         maxcount : int
-            maximum number of files allowed in the list
+            maximum number of files allowed in the list.
         checkbox : bool
-            display or not a QCheckbox widget before each file name in the list
+            display or not a QCheckbox widget before each file name in the list.
         parent : QWidget | None (optional)
-            parent widget
+            parent widget.
         """
         QWidget.__init__(self, parent)
         SelectionFilter.__init__(self)
@@ -2921,25 +2921,41 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             return self._list.row(v)
         else: raise TypeError('parameter type {} is not QListWidgetItem.'.format(type(v)))
 
-    def getItemFromIndex(self, i: int) -> str:
+    # < Revision 03/11/2025
+    def getItemFromIndex(self, i: int) -> QListWidgetItem:
         """
-        Get the filename of the item at a given index.
+        Get the QListWidgetItem item at a given row index.
 
         Parameters
         ----------
         i : int
-            index of the item
+            row index
+
+        Returns
+        -------
+        QListWidgetItem
+            item at row index i.
+        """
+        if isinstance(i, int):
+            # return self._list.item(i).data(256)
+            return self._list.item(i)
+        else: raise TypeError('parameter type {} is not int.'.format(type(i)))
+    # Revision 03/11/2025 >
+
+    def getFilenameFromIndex(self, i: int) -> str:
+        """
+        Get the filename at a given index.
+
+        Parameters
+        ----------
+        i : int
+            element index
 
         Returns
         -------
         str
-            filename associated with the item
+            filename at index i.
         """
-        if isinstance(i, int):
-            return self._list.item(i).data(256)
-        else: raise TypeError('parameter type {} is not int.'.format(type(i)))
-
-    def getFilenameFromIndex(self, i: int) -> str:
         if isinstance(i, int):
             return self._list.item(i).data(256)
         else: raise TypeError('parameter type {} is not int.'.format(type(i)))
@@ -4394,10 +4410,24 @@ class SynchronizedFilesSelectionWidget(QWidget):
     # Special method
 
     def __init__(self,
-                 single: list[str] | tuple[str, ...],
-                 multiple: list[str] | tuple[str, ...],
+                 single: list[str] | tuple[str, ...] | None,
+                 multiple: list[str] | tuple[str, ...] | None,
                  maxcount: int = 100,
                  parent: QWidget | None = None) -> None:
+        """
+        SynchronizedFilesSelectionWidget instance constructor.
+
+        Parameters
+        ----------
+        single : list[str] | tuple[str, ...] | None
+            titles of single file selection widgets.
+        multiple : list[str] | tuple[str, ...] | None
+            titles of multiple file selection widgets.
+        maxcount : int (optional)
+            maximum number of files allowed in the list.
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         # Init QLayout
@@ -4454,7 +4484,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
 
     # Private method
 
-    def _ListChanged(self, widget, filename):
+    def _ListChanged(self, widget: QWidget, filename: str) -> None:
         """
         Slot connected to the FieldChanged signal of contained file selection widgets.
         It checks for Field of View (FOV) consistency among selected volumes.
@@ -4490,7 +4520,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
                                    'FOV discrepancy between file selectors.')
 
     # noinspection PyUnusedLocal
-    def _ListCleared(self, widget):
+    def _ListCleared(self, widget: QWidget) -> None:
         """
         Slot connected to the FieldCleared signal of contained file selection widgets.
         If all widgets are empty, it clears the stored FOV reference.
