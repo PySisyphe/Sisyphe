@@ -21,7 +21,7 @@ Version increment rules
 	- new python interpreter version
 	- 20 minor version increments
 
-- **minor version increment**: 
+- **minor version increment**:
 
 	- new module, new external module, external module upgrade
 	- 20 patch version increments
@@ -824,8 +824,21 @@ version 0.18.3, build 16/10/2025
 		- center cursor on double-cliked label
 
 .. _build01-11-2025:
-version 0.18.9, build 01/11/2025
+version 0.20.16, build 01/11/2025
 --------------------------------
+
+- **new html documentation**
+
+	- /API2/api_dialog_generic_results.rst
+	- /API2/api_dialog_wait.rst
+	- /API2/api_understanding_views.rst
+	- /API2/api_widgets_iconbar.rst
+	- /API2/api_widgets_lut.rst
+	- /API2/api_widgets_multiple_view.rst
+	- /API2/api_widgets_select_file.rst
+	- /API2/api_widgets_settings.rst
+	- /API2/api_widgets_single_view.rst
+	- /API2/index.rst
 
 - **updated html documentation**
 
@@ -836,15 +849,37 @@ version 0.18.9, build 01/11/2025
 	- /Sisyphe/settings/tooltips.xml
 	- /Sisyphe/settings/functions.xml
 
+- **updated docstrings & typing**
+
+	- Sisyphe.widgets.multiViewWidgets
+	- Sisyphe.widgets.volumeViewWidget
+	- Sisyphe.widgets.sliceViewWidgets
+	- Sisyphe.widgets.sliceTrajectoryViewWidget
+	- Sisyphe.widgets.selectFileWidgets
+	- Sisyphe.widgets.projectionViewWidget
+	- Sisyphe.widgets.multiComponentViewWidget
+	- Sisyphe.widgets.iconBarViewWidgets
+	- Sisyphe.widgets.LUTWidgets
+	- Sisyphe.widgets.functionsSettingsWidget
+	- Sisyphe.widgets.abstractViewWidget
+	- Sisyphe.widgets.dicomWidgets
+	- Sisyphe.widgets.sliceViewFiducialBoxWidget
+	- Sisyphe.widgets.thresholdWidgets
+	- Sisyphe.gui.dialogFileSelection
+	- Sisyphe.gui.dialogWait
+	- Sisyphe.gui.dialogGenericResults
+
 - **updated modules**
 
 	- core.sisypheDownload
 	- gui.windowSisyphe 
 	- gui.dialogSegmentation
+	- gui.dialogTexture
 	- widgets.sliceViewWidgets
 	- widgets.multiViewWidgets
 	- widgets.volumeViewWidget
 	- widgets.iconBarViewWidgets
+	- widgets.selectFileWidgets
 
 - **updated function**
 
@@ -861,6 +896,10 @@ version 0.18.9, build 01/11/2025
 	- gui.dialogSegmentation.DialogPriorBasedSegmentation
 
 		- update _priorsChanged() method
+
+	- gui.dialogTexture.DialogROITexture
+
+		- update _validateROI() method
 
 	- widgets.sliceViewWidgets.SliceViewWidget
 
@@ -882,7 +921,11 @@ version 0.18.9, build 01/11/2025
 
 		- update setMoveOverlayOff() method
 
-- **updates methods**
+	- widgets.selectFileWidgets.FilesSelectionWidget
+
+		- update getItemFromIndex() method
+
+- **updated methods**
 
 	- gui.windowSisyphe.WindowSisyphe.checkUpdate()
 
@@ -891,6 +934,10 @@ version 0.18.9, build 01/11/2025
 	- gui.dialogSegmentation.DialogPriorBasedSegmentation._priorsChanged()
 
 		- bug fix, line 1027, from 'Custom' to 'CUSTOM' to display file selection widgets (T1, Mask, GMPrior, CGMPrior, WMPrior, CSFPrior, BrainstemPrior, CerebellumPrior)
+
+	- gui.dialogTexture.DialogROITexture._validateROI()
+
+		- bug fix, line 651/661, row index of a ROI filename
 
 	- widgets.sliceViewWidgets.SliceViewWidget._getInfoValuesText()
 
@@ -911,3 +958,7 @@ version 0.18.9, build 01/11/2025
 	- widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget2.setMoveOverlayOff()
 
 		- bug fix, line 2530, replace widget.setMoveOverlayOff() by widget.setMoveOverlayFlag(False)
+
+	- widgets.selectFileWidgets.FilesSelectionWidget.getItemFromIndex()
+
+		- bug fix, return value type (QListWidgetItem, not str)
