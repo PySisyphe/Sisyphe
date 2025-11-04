@@ -569,6 +569,7 @@ class DialogROITexture(DialogTexture):
     QDialog -> DialogTexture -> DialogROITexture
 
     Creation: 04/08/2025
+    Revision: 03/11/2025
     """
 
     @classmethod
@@ -645,8 +646,10 @@ class DialogROITexture(DialogTexture):
             self._rois.clearall()
 
     def _validateROI(self):
+        # < Revision 03/11/2025
         if self._files.filenamesCount() > 0 and self._rois.filenamesCount() > 0:
-            for roi in self._rois.getFilenames():
+            # for roi in self._rois.getFilenames():
+            for index, roi in enumerate(self._rois.getFilenames()):
                 r = XmlROI(roi)
                 fov1 = [round(v, 2) for v in r.getFOV()]
                 flag = False
@@ -654,10 +657,11 @@ class DialogROITexture(DialogTexture):
                     fov2 = [round(v, 2) for v in SisypheVolume.getVolumeAttribute(filename, 'fov')]
                     flag = flag or (fov1 == fov2)
                 if not flag:
-                    index = self._rois.getIndexFromItem(roi)
+                    # index = self._rois.getIndexFromItem(roi)
                     self._rois.clearItem(index, False)
             self._execute.setEnabled(self._rois.filenamesCount() > 0)
         else: self._execute.setEnabled(False)
+        # Revision 03/11/2025 >
 
     # Public methods
 
