@@ -130,7 +130,7 @@ class AbstractViewWidget(QFrame):
     QWidget -> AbstractViewWidget
 
     Creation: 20/03/2022
-    Last Revision: 20/10/2025
+    Last Revision: 10/11/2025
     """
 
     _DEFAULTZOOM = 128.0  # Default zoom (vtk parallel scale) = conventional FOV of head imaging / 2
@@ -1437,18 +1437,22 @@ class AbstractViewWidget(QFrame):
         if self.hasTools():
             self._menuMoveTarget.clear()
             for tool in self._tools:
-                if isinstance(tool, HandleWidget):
+                # < Revision 10/11/2025
+                # if isinstance(tool, HandleWidget):
+                if tool.GetObjectName() == 'HandleWidget':
                     t = QAction(tool.getName(), self)
                     # noinspection PyUnresolvedReferences
                     t.triggered.connect(lambda state, x=tool.getName(): self._moveToTool(x))
                     self._menuMoveTarget.addAction(t)
                     v = True
-                elif isinstance(tool, LineWidget):
+                # elif isinstance(tool, LineWidget):
+                elif tool.GetObjectName() == 'LineWidget':
                     t = QAction(tool.getName(), self)
                     # noinspection PyUnresolvedReferences
                     t.triggered.connect(lambda state, x=tool.getName(): self._moveToTool(x))
                     self._menuMoveTarget.addAction(t)
                     v = True
+                # Revision 10/11/2025 >
         self._menuMoveTarget.menuAction().setVisible(v)
 
     # Public synchronisation event methods

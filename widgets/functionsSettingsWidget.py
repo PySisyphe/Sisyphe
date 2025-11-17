@@ -47,6 +47,7 @@ import darkdetect
 from Sisyphe.core.sisypheSettings import SisypheSettings
 from Sisyphe.core.sisypheSettings import SisypheFunctionsSettings
 from Sisyphe.core.sisypheSettings import SisypheDialogsSettings
+from Sisyphe.core.sisypheSettings import SisypheCustomSettings
 from Sisyphe.core.sisypheSettings import SisypheTooltips
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
@@ -58,7 +59,8 @@ from Sisyphe.widgets.LUTWidgets import ComboBoxLut
 
 __all__ = ['SettingsWidget',
            'FunctionSettingsWidget',
-           'DialogSettingsWidget']
+           'DialogSettingsWidget',
+           'CustomSettingsWidget']
 
 """
 Class hierarchy
@@ -78,12 +80,12 @@ class QDoubleSpinBox2(QDoubleSpinBox):
         Parameters
         ----------
         v : float
-            The value to convert.
+            value to convert.
 
         Returns
         -------
         str
-            The formatted string representation of the value.
+            formatted string representation of the value.
         """
         # noinspection PyTypeChecker
         f = QLocale(QLocale.English, QLocale.UnitedStates)
@@ -140,7 +142,7 @@ class SettingsWidget(QWidget):
     QWidget -> SettingsWidget -> FunctionSettingsWidget
 
     Creation: 11/08/2022
-    Last revision: 23/10/2025
+    Last revision: 04/11/2025
     """
 
     _VSIZE = 24
@@ -186,7 +188,7 @@ class SettingsWidget(QWidget):
         Returns
         -------
         str
-            The absolute path to the icon directory.
+            absolute path to the icon directory.
         """
         import Sisyphe.gui
         if cls.isDarkMode(): return join(dirname(abspath(Sisyphe.gui.__file__)), 'darkroi')
@@ -200,7 +202,7 @@ class SettingsWidget(QWidget):
         Returns
         -------
         str
-            The absolute path to the toolbar icon directory.
+            absolute path to the toolbar icon directory.
         """
         import Sisyphe.gui
         if cls.isDarkMode(): return join(dirname(abspath(Sisyphe.gui.__file__)), 'darkicons')
@@ -214,7 +216,7 @@ class SettingsWidget(QWidget):
         Returns
         -------
         int
-            Icon size in pixels.
+            icon size in pixels.
         """
         dpi = QApplication.primaryScreen().logicalDotsPerInch()
         if dpi > 100: return int(cls._VSIZE * dpi / 800) * 8
@@ -228,7 +230,7 @@ class SettingsWidget(QWidget):
         Parameters
         ----------
         label : str
-            The label to be formatted.
+            label to be formatted.
 
         Returns
         -------
@@ -264,12 +266,12 @@ class SettingsWidget(QWidget):
         Parameters
         ----------
         v : float
-            The floating-point number.
+            floating-point number.
 
         Returns
         -------
         int
-            The number of decimal places.
+            number of decimal places.
         """
         if v == 0.0: return 1
         elif abs(v) < 1e-8: return 8
@@ -287,9 +289,9 @@ class SettingsWidget(QWidget):
         Parameters
         ----------
         function : str
-            The name of the function for which to create the settings widget.
+            name of the function for which to create the settings widget.
         parent : QWidget | None
-            The parent widget.
+            parent widget.
         """
         QWidget.__init__(self, parent)
 
@@ -368,7 +370,7 @@ class SettingsWidget(QWidget):
         Parameters
         ----------
         value : Any
-            The new value of the parameter (unused).
+            new value of the parameter (unused).
         """
         # noinspection PyUnresolvedReferences
         self.ParameterChanged.emit(self)
@@ -380,7 +382,7 @@ class SettingsWidget(QWidget):
         Parameters
         ----------
         function : str
-            The name of the function.
+            name of the function.
         """
         # < Revision 19/03/2025
         size = self.getDefaultIconSize()
@@ -763,7 +765,11 @@ class SettingsWidget(QWidget):
                     edit.setMinimumWidth(400)
                     # edit.setFixedWidth(400)
                     for d in data.split('|'):
-                        if exists(d): edit.add(data)
+                        # < Revision 04/11/2025
+                        # bug fix, replace data by d
+                        # if exists(d): edit.add(data)
+                        if exists(d): edit.add(d)
+                        # Revision 04/11/2025 >
                     edit.FieldChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
                     layout.addWidget(edit, i, 0, 1, 2)
@@ -776,7 +782,10 @@ class SettingsWidget(QWidget):
                     edit.setMinimumWidth(400)
                     # edit.setFixedWidth(400)
                     for d in data.split('|'):
-                        if exists(d): edit.add(data)
+                        # < Revision 04/11/2025
+                        # if exists(d): edit.add(data)
+                        if exists(d): edit.add(d)
+                        # Revision 04/11/2025 >
                     edit.FieldChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
                     layout.addWidget(edit, i, 0, 1, 2)
@@ -791,7 +800,10 @@ class SettingsWidget(QWidget):
                     edit.setMinimumWidth(400)
                     # edit.setFixedWidth(400)
                     for d in data.split('|'):
-                        if exists(d): edit.add(data)
+                        # < Revision 04/11/2025
+                        # if exists(d): edit.add(data)
+                        if exists(d): edit.add(d)
+                        # Revision 04/11/2025 >
                     edit.FieldChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
                     layout.addWidget(edit, i, 0, 1, 2)
@@ -805,7 +817,10 @@ class SettingsWidget(QWidget):
                     edit.setMinimumWidth(400)
                     # edit.setFixedWidth(400)
                     for d in data.split('|'):
-                        if exists(d): edit.add(data)
+                        # < Revision 04/11/2025
+                        # if exists(d): edit.add(data)
+                        if exists(d): edit.add(d)
+                        # Revision 04/11/2025 >
                     edit.FieldChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
                     layout.addWidget(edit, i, 0, 1, 2)
@@ -833,7 +848,7 @@ class SettingsWidget(QWidget):
         Returns
         -------
         int
-            The font point size.
+            font point size.
         """
         return self.font().pointSize()
 
@@ -844,7 +859,7 @@ class SettingsWidget(QWidget):
         Parameters
         ----------
         v : int
-            The font point size.
+            font point size.
         """
         self.font().setPointSize(v)
         self._button.font().setPointSize(v)
@@ -906,7 +921,7 @@ class SettingsWidget(QWidget):
         Returns
         -------
         str
-            The function name.
+            function name.
         """
         return self._function
 
@@ -917,12 +932,12 @@ class SettingsWidget(QWidget):
         Parameters
         ----------
         parameter : str
-            The name of the parameter.
+            name of the parameter.
 
         Returns
         -------
         QWidget
-            The widget for the given parameter.
+            widget for the given parameter.
         """
         return self._parameters[parameter]
 
@@ -933,12 +948,12 @@ class SettingsWidget(QWidget):
         Parameters
         ----------
         parameter : str
-            The name of the parameter.
+            name of the parameter.
 
         Returns
         -------
         Any
-            The value of the parameter.
+            value of the parameter.
         """
         # noinspection PyInconsistentReturns
         if isinstance(self._parameters[parameter], QLineEdit):
@@ -1012,9 +1027,9 @@ class SettingsWidget(QWidget):
         Parameters
         ----------
         parameter : str
-            The name of the parameter.
+            name of the parameter.
         v : Any
-            The new value to set.
+            new value to set.
         """
         widget = self.getParameterWidget(parameter)
         if isinstance(widget, QLineEdit): widget.setText(v)
@@ -1078,7 +1093,7 @@ class SettingsWidget(QWidget):
         Parameters
         ----------
         parameter : str
-            The name of the parameter.
+            name of the parameter.
         v : bool
             True to show the widget, False to hide it.
         """
@@ -1102,7 +1117,7 @@ class SettingsWidget(QWidget):
         Parameters
         ----------
         parameter : str
-            The name of the parameter.
+            name of the parameter.
 
         Returns
         -------
@@ -1122,7 +1137,7 @@ class SettingsWidget(QWidget):
         Returns
         -------
         list[str]
-            A list containing the names of all parameters.
+            list containing the names of all parameters.
         """
         return list(self._parameters.keys())
 
@@ -1133,7 +1148,7 @@ class SettingsWidget(QWidget):
         Returns
         -------
         dict[str, Any]
-            A dictionary with parameter names as keys and their values.
+            dictionary with parameter names as keys and their values.
         """
         r = dict()
         for parameter in self._parameters:
@@ -1149,7 +1164,7 @@ class SettingsWidget(QWidget):
         Parameters
         ----------
         d : dict[str, Any]
-            A dictionary with parameter names as keys and their new values.
+            dictionary with parameter names as keys and their new values.
         """
         params = self.getParametersList()
         for k in list(d.keys()):
@@ -1163,15 +1178,19 @@ class SettingsWidget(QWidget):
 
         Parameters
         ----------
-        filename : str
-            Path to a custom settings file. If empty, uses the user's default settings (~/.PySisyphe/settings.xml).
-        default : bool
-            If True, loads from the application's default settings file, ignoring `filename`.
-            If False (default), loads from the user's settings file (~/.PySisyphe/settings.xml) or the custom `filename`.
+        filename : str (optional)
+            Path to a custom settings file. If empty (default), uses the user's default settings (~/.PySisyphe/settings.xml).
+        default : bool (optional)
+
+            - If True, loads from the application's default settings file, ignoring `filename`.
+            - If False (default), loads from the user's settings file (~/.PySisyphe/settings.xml) or the custom settings file.
         """
         xml = self.classSisypheSettings()
         if filename == '':
             if default: xml.loadDefaultFileSettings()
+            # < Revision 04/11/2025
+            else: xml.loadUserFileSettings()
+            # Revision 04/11/2025 >
         else: xml.loadCustomFileSettings(filename)
         parameters = xml.getSectionFieldsList(self._function)
         if len(parameters) > 0:
@@ -1288,7 +1307,7 @@ class SettingsWidget(QWidget):
         Parameters
         ----------
         txt : str
-            The new text for the button.
+            new text for the button.
         """
         if isinstance(txt, str):
             v = self._button.toolTip()[:5]
@@ -1436,3 +1455,43 @@ class DialogSettingsWidget(SettingsWidget):
     """
 
     classSisypheSettings = SisypheDialogsSettings
+
+# < Revision 04/11/2025
+# new class CustomSettingsWidget
+class CustomSettingsWidget(SettingsWidget):
+    """
+    CustomSettingsWidget class
+
+    Description
+    ~~~~~~~~~~~
+
+    Widget to manage settings from a custom XML file.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QWidget -> SettingsWidget -> DialogSettingsWidget
+
+    Creation: 04/11/2025
+    """
+
+    classSisypheSettings = SisypheCustomSettings
+
+    # Special method
+
+    def __init__(self, filename: str, function: str, parent: QWidget | None = None) -> None:
+        """
+        CustomSettingsWidget instance constructor.
+
+        Parameters
+        ----------
+        filename : str
+            custom settings xml file name
+        function : str
+             name of the function for which to create the settings widget.
+        parent : QWidget | None
+            parent widget.
+        """
+        SisypheCustomSettings.setClassSettings(filename)
+        super().__init__(function, parent)
+# Revision 04/11/2025 >

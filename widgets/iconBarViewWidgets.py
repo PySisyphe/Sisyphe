@@ -4113,22 +4113,6 @@ class IconBarViewWidgetCollection(QObject):
                         if sliceview is not None: sliceview.setFillHolesFlag(f, signal=True)
             else: raise TypeError('parameter type {} is not bool.'.format(type(f)))
 
-    def getFillHolesROIFlag(self) -> bool | None:
-        """
-        Get the current state of the hole filling flag in suitable widgets.
-
-        Returns
-        -------
-        bool | None
-            state of the flag, or None if not applicable.
-        """
-        if self.count() > 0:
-            for widget in self:
-                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
-                    sliceview = widget().getFirstSliceViewWidget()
-                    if sliceview is not None: return sliceview.getFillHolesFlag()
-        return None
-
     def set2DBlobDilateROIFlag(self) -> None:
         """
         Activate the 2D blob dilation tool in suitable widgets.
@@ -4520,6 +4504,550 @@ class IconBarViewWidgetCollection(QObject):
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.setActiveContourFlagOn(signal=True)
+
+    def getFillHolesROIFlag(self) -> bool | None:
+        """
+        Get the current state of the hole filling flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.getFillHolesFlag()
+        return None
+
+    def get2DBlobDilateROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D blob dilation tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DBlobDilateFlag()
+        return None
+
+    def get2DBlobErodeROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D blob erosion tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DBlobErodeFlag()
+        return None
+
+    def get2DBlobCloseROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D blob closing tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DBlobCloseFlag()
+        return None
+
+    def get2DBlobOpenROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D blob opening tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DBlobOpenFlag()
+        return None
+
+    def get2DBlobCopyROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D blob copy flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DBlobCopyFlag()
+        return None
+
+    def get2DBlobCutROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D blob cut flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DBlobCutFlag()
+        return None
+
+    def get2DBlobPasteROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D blob paste flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DBlobPasteFlag()
+        return None
+
+    def get2DBlobRemoveROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D blob remove tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DBlobRemoveFlag()
+        return None
+
+    def get2DBlobKeepROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D keep blob tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DBlobKeepFlag()
+        return None
+
+    def get2DBlobThresholdROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D blob thresholding tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DBlobThresholdFlag()
+        return None
+
+    def get2DFillROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D flood fill tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DFillFlag()
+        return None
+
+    def get2DRegionGrowingROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D region growing tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DRegionGrowingFlag()
+        return None
+
+    def get2DRegionConfidenceROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D confidence-connected region growing tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DRegionConfidenceFlag()
+        return None
+
+    def get2DBlobRegionGrowingROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D blob-based region growing tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DBlobRegionGrowingFlag()
+        return None
+
+    def get2DBlobRegionConfidenceROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 2D blob-based confidence-connected region growing tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get2DBlobRegionConfidenceFlag()
+        return None
+
+    def get3DBlobDilateROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D blob dilation tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DBlobDilateFlag()
+        return None
+
+    def get3DBlobErodeROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D blob erosion tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DBlobErodeFlag()
+        return None
+
+    def get3DBlobCloseROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D blob closing tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DBlobCloseFlag()
+        return None
+
+    def get3DBlobOpenROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D blob opening tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DBlobOpenFlag()
+        return None
+
+    def get3DBlobCopyROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D blob copy flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DBlobCopyFlag()
+        return None
+
+    def get3DBlobCutROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D blob cut flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DBlobCutFlag()
+        return None
+
+    def get3DBlobPasteROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D blob paste flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DBlobPasteFlag()
+        return None
+
+    def get3DBlobRemoveROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D blob remove flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DBlobRemoveFlag()
+        return None
+
+    def get3DBlobKeepROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D keep blob tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DBlobKeepFlag()
+        return None
+
+    def get3DBlobExpandFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D blob expansion tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DBlobExpandFlag()
+        return None
+
+    def get3DBlobShrinkFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D blob shrinking tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DBlobShrinkFlag()
+        return None
+
+    def get3DBlobThresholdROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D blob thresholding tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DBlobThresholdFlag()
+        return None
+
+    def get3DFillROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D flood fill tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DFillFlag()
+        return None
+
+    def get3DRegionGrowingROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D region growing tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DRegionGrowingFlag()
+        return None
+
+    def get3DRegionConfidenceROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D confidence-connected region growing tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DRegionConfidenceFlag()
+        return None
+
+    def get3DBlobRegionGrowingROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D blob-based region growing tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DBlobRegionGrowingFlag()
+        return None
+
+    def get3DBlobRegionConfidenceROIFlag(self) -> bool | None:
+        """
+        Get the current state of the 3D blob-based confidence-connected region growing tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.get3DBlobRegionConfidenceFlag()
+        return None
+
+    def getActiveContourROIFlag(self) -> bool | None:
+        """
+        Get the current state of the active contour (snake) segmentation tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.getActiveContourFlag()
+        return None
 
     # Mesh/Tools methods
 

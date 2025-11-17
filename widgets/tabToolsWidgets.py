@@ -88,6 +88,8 @@ class TabWidget(QWidget):
     ~~~~~~~~~~~
 
     QWidget -> TabWidget
+
+    Last revision: 15/11/2025
     """
     _VSIZE = 32
 
@@ -406,7 +408,7 @@ class TabROIToolsWidget(TabWidget):
 
     QWidget -> TabROIToolsWidget
 
-    Last revision: 29/08/2025
+    Last revision: 14/11/2025
     """
 
     # Special method
@@ -792,7 +794,7 @@ class TabROIToolsWidget(TabWidget):
         self._btn['2Dclose'].pressed.connect(self.slcClosing)
         self._btn['2Dinvert'].pressed.connect(self.slcInvert)
         self._btn['2Dholes'].pressed.connect(self.slcHoles)
-        self._btn['2Dfill'].pressed.connect(self.slcFill)
+        self._btn['2Dfill'].clicked.connect(self.slcFill)
         self._btn['2Dobject'].pressed.connect(self.slcObject)
         self._btn['2Dback'].pressed.connect(self.slcBack)
         self._btn['2Dthreshold'].pressed.connect(self.slcThresholding)
@@ -902,17 +904,17 @@ class TabROIToolsWidget(TabWidget):
         self._btn['2Dblobthreshold'].setToolTip('Blob thresholding in current slice')
         self._btn['2Dblobregion'].setToolTip('Region segmentation in blob, current slice')
 
-        self._btn['2Dblobdilate'].pressed.connect(self.slcBlobDilate)
-        self._btn['2Dbloberode'].pressed.connect(self.slcBlobErode)
-        self._btn['2Dblobopen'].pressed.connect(self.slcBlobOpening)
-        self._btn['2Dblobclose'].pressed.connect(self.slcBlobClosing)
-        self._btn['2Dblobkeep'].pressed.connect(self.slcBlobKeep)
-        self._btn['2Dblobremove'].pressed.connect(self.slcBlobRemove)
-        self._btn['2Dblobextent'].pressed.connect(self.slcFilterExtent)
-        self._btn['2Dblobcopy'].pressed.connect(self.slcBlobCopy)
-        self._btn['2Dblobcut'].pressed.connect(self.slcBlobCut)
-        self._btn['2Dblobpaste'].pressed.connect(self.slcBlobPaste)
-        self._btn['2Dblobthreshold'].pressed.connect(self.slcBlobThresholding)
+        self._btn['2Dblobdilate'].clicked.connect(self.slcBlobDilate)
+        self._btn['2Dbloberode'].clicked.connect(self.slcBlobErode)
+        self._btn['2Dblobopen'].clicked.connect(self.slcBlobOpening)
+        self._btn['2Dblobclose'].clicked.connect(self.slcBlobClosing)
+        self._btn['2Dblobkeep'].clicked.connect(self.slcBlobKeep)
+        self._btn['2Dblobremove'].clicked.connect(self.slcBlobRemove)
+        self._btn['2Dblobextent'].clicked.connect(self.slcFilterExtent)
+        self._btn['2Dblobcopy'].clicked.connect(self.slcBlobCopy)
+        self._btn['2Dblobcut'].clicked.connect(self.slcBlobCut)
+        self._btn['2Dblobpaste'].clicked.connect(self.slcBlobPaste)
+        self._btn['2Dblobthreshold'].clicked.connect(self.slcBlobThresholding)
 
         vlyout = QVBoxLayout()
         lyout = QHBoxLayout()
@@ -999,7 +1001,7 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dclose'].pressed.connect(self.voiClosing)
         self._btn['3Dinvert'].pressed.connect(self.voiInvert)
         self._btn['3Dholes'].pressed.connect(self.voi3DHoles)
-        self._btn['3Dfill'].pressed.connect(self.voiFill)
+        self._btn['3Dfill'].clicked.connect(self.voiFill)
         self._btn['3Dexpand'].pressed.connect(self.voiEuclideanExpand)
         self._btn['3Dshrink'].pressed.connect(self.voiEuclideanShrink)
         self._btn['3Dobject'].pressed.connect(self.voiObject)
@@ -1116,19 +1118,19 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dblobthreshold'].setToolTip('Thresholding in blob')
         self._btn['3Dblobregion'].setToolTip('Region segmentation in blob')
 
-        self._btn['3Dblobdilate'].pressed.connect(self.voiBlobDilate)
-        self._btn['3Dbloberode'].pressed.connect(self.voiBlobErode)
-        self._btn['3Dblobopen'].pressed.connect(self.voiBlobOpening)
-        self._btn['3Dblobclose'].pressed.connect(self.voiBlobClosing)
-        self._btn['3Dblobexpand'].pressed.connect(self.voiBlobExpand)
-        self._btn['3Dblobshrink'].pressed.connect(self.voiBlobShrink)
-        self._btn['3Dblobkeep'].pressed.connect(self.voiBlobKeep)
-        self._btn['3Dblobremove'].pressed.connect(self.voiBlobRemove)
-        self._btn['3Dblobextent'].pressed.connect(self.voiFilterExtent)
-        self._btn['3Dblobcopy'].pressed.connect(self.voiBlobCopy)
-        self._btn['3Dblobcut'].pressed.connect(self.voiBlobCut)
-        self._btn['3Dblobpaste'].pressed.connect(self.voiBlobPaste)
-        self._btn['3Dblobthreshold'].pressed.connect(self.voiBlobThresholding)
+        self._btn['3Dblobdilate'].clicked.connect(self.voiBlobDilate)
+        self._btn['3Dbloberode'].clicked.connect(self.voiBlobErode)
+        self._btn['3Dblobopen'].clicked.connect(self.voiBlobOpening)
+        self._btn['3Dblobclose'].clicked.connect(self.voiBlobClosing)
+        self._btn['3Dblobexpand'].clicked.connect(self.voiBlobExpand)
+        self._btn['3Dblobshrink'].clicked.connect(self.voiBlobShrink)
+        self._btn['3Dblobkeep'].clicked.connect(self.voiBlobKeep)
+        self._btn['3Dblobremove'].clicked.connect(self.voiBlobRemove)
+        self._btn['3Dblobextent'].clicked.connect(self.voiFilterExtent)
+        self._btn['3Dblobcopy'].clicked.connect(self.voiBlobCopy)
+        self._btn['3Dblobcut'].clicked.connect(self.voiBlobCut)
+        self._btn['3Dblobpaste'].clicked.connect(self.voiBlobPaste)
+        self._btn['3Dblobthreshold'].clicked.connect(self.voiBlobThresholding)
 
         vlyout = QVBoxLayout()
         lyout = QHBoxLayout()
@@ -1393,7 +1395,7 @@ class TabROIToolsWidget(TabWidget):
 
     # < Revision 29/08/2025
     # add _menuThresholdShow method
-    # # bug fix, loss of volume display in darwin platform when popup is shown
+    # bug fix, loss of volume display in darwin platform when popup is shown
     def _menuThresholdShow(self):
         if platform == 'darwin':
             self._menuThreshold.addAction(self._athreshold)
@@ -1457,8 +1459,10 @@ class TabROIToolsWidget(TabWidget):
             if self._views.getBrushFlag() > 0:
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Brush tool unselected')
+            else:
+                self._views.setBrushROIFlag(self._brushtype.currentIndex())
                 if self._logger is not None: self._logger.info('ROI tools - Brush tool selected')
-            else: self._views.setBrushROIFlag(self._brushtype.currentIndex())
 
     def interpolate(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1549,8 +1553,18 @@ class TabROIToolsWidget(TabWidget):
 
     def slcFill(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set2DFillROIFlag()
-            if self._logger is not None: self._logger.info('ROI tools - Slice fill tool selected')
+            # < Revision 14/11/2025
+            # self._views.set2DFillROIFlag()
+            # if self._logger is not None: self._logger.info('ROI tools - Slice fill tool selected')
+            if self._views.get2DFillROIFlag() is True:
+                self._btn['2Dfill'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice fill tool unselected')
+            else:
+                self._views.set2DFillROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice fill tool selected')
+            # Revision 14/11/2025 >
 
     def slcObject(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1732,53 +1746,151 @@ class TabROIToolsWidget(TabWidget):
 
     def slcBlobDilate(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set2DBlobDilateROIFlag()
-            if self._logger is not None: self._logger.info('ROI tools - Slice blob dilate tool selected')
+            # < Revision 14/11/2025
+            # self._views.set2DBlobDilateROIFlag()
+            # if self._logger is not None: self._logger.info('ROI tools - Slice blob dilate tool selected')
+            if self._views.get2DBlobDilateROIFlag() is True:
+                self._btn['2Dblobdilate'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob dilate tool unselected')
+            else:
+                self._views.set2DBlobDilateROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob dilate tool selected')
+            # Revision 14/11/2025 >
 
     def slcBlobErode(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set2DBlobErodeROIFlag()
-            if self._logger is not None: self._logger.info('ROI tools - Slice blob erode tool selected')
+            # < Revision 14/11/2025
+            # self._views.set2DBlobErodeROIFlag()
+            # if self._logger is not None: self._logger.info('ROI tools - Slice blob erode tool selected')
+            if self._views.get2DBlobErodeROIFlag() is True:
+                self._btn['2Dbloberode'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob erode tool unselected')
+            else:
+                self._views.set2DBlobErodeROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob erode tool selected')
+            # Revision 14/11/2025 >
 
     def slcBlobOpening(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set2DBlobOpenROIFlag()
-            if self._logger is not None: self._logger.info('ROI tools - Slice blob opening tool selected')
+            # self._views.set2DBlobOpenROIFlag()
+            # if self._logger is not None: self._logger.info('ROI tools - Slice blob opening tool selected')
+            # < Revision 14/11/2025
+            if self._views.get2DBlobOpenROIFlag() is True:
+                self._btn['2Dblobopen'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob opening tool unselected')
+            else:
+                self._views.set2DBlobOpenROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob opening tool selected')
+            # Revision 14/11/2025 >
 
     def slcBlobClosing(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set2DBlobCloseROIFlag()
-            if self._logger is not None: self._logger.info('ROI tools - Slice blob closing tool selected')
+            # < Revision 14/11/2025
+            # self._views.set2DBlobCloseROIFlag()
+            # if self._logger is not None: self._logger.info('ROI tools - Slice blob closing tool selected')
+            if self._views.get2DBlobCloseROIFlag() is True:
+                self._btn['2Dblobclose'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob closing tool unselected')
+            else:
+                self._views.set2DBlobCloseROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob closing tool selected')
+            # Revision 14/11/2025 >
 
     def slcBlobCopy(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set2DBlobCopyROIFlag()
-            if self._logger is not None: self._logger.info('ROI tools - Slice blob copy tool selected')
+            # self._views.set2DBlobCopyROIFlag()
+            # if self._logger is not None: self._logger.info('ROI tools - Slice blob copy tool selected')
+            # < Revision 14/11/2025
+            if self._views.get2DBlobCopyROIFlag() is True:
+                self._btn['2Dblobcopy'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob copy tool unselected')
+            else:
+                self._views.set2DBlobCopyROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob copy tool selected')
+            # Revision 14/11/2025 >
 
     def slcBlobCut(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set2DBlobCutROIFlag()
-            if self._logger is not None: self._logger.info('ROI tools - Slice blob cut tool selected')
+            # < Revision 14/11/2025
+            # self._views.set2DBlobCutROIFlag()
+            # if self._logger is not None: self._logger.info('ROI tools - Slice blob cut tool selected')
+            if self._views.get2DBlobCutROIFlag() is True:
+                self._btn['2Dblobcut'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob cut tool unselected')
+            else:
+                self._views.set2DBlobCutROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob cut tool selected')
+            # Revision 14/11/2025 >
 
     def slcBlobPaste(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set2DBlobPasteROIFlag()
-            if self._logger is not None: self._logger.info('ROI tools - Slice blob paste tool selected')
+            # < Revision 14/11/2025
+            # self._views.set2DBlobPasteROIFlag()
+            # if self._logger is not None: self._logger.info('ROI tools - Slice blob paste tool selected')
+            if self._views.get2DBlobPasteROIFlag() is True:
+                self._btn['2Dblobpaste'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob paste tool unselected')
+            else:
+                self._views.set2DBlobPasteROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob paste tool selected')
+            # Revision 14/11/2025 >
 
     def slcBlobRemove(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set2DBlobRemoveROIFlag()
-            if self._logger is not None: self._logger.info('ROI tools - Slice blob remove tool selected')
+            # < Revision 14/11/2025
+            # self._views.set2DBlobRemoveROIFlag()
+            # if self._logger is not None: self._logger.info('ROI tools - Slice blob remove tool selected')
+            if self._views.get2DBlobRemoveROIFlag() is True:
+                self._btn['2Dblobremove'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob remove tool unselected')
+            else:
+                self._views.set2DBlobRemoveROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob remove tool selected')
+            # Revision 14/11/2025 >
 
     def slcBlobKeep(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set2DBlobKeepROIFlag()
-            if self._logger is not None: self._logger.info('ROI tools - Slice blob keep tool selected')
+            # < Revision 14/11/2025
+            # self._views.set2DBlobKeepROIFlag()
+            # if self._logger is not None: self._logger.info('ROI tools - Slice blob keep tool selected')
+            if self._views.get2DBlobKeepROIFlag() is True:
+                self._btn['2Dblobkeep'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob keep tool unselected')
+            else:
+                self._views.set2DBlobKeepROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob keep tool selected')
+            # Revision 14/11/2025 >
 
     def slcBlobThresholding(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set2DBlobThresholdROIFlag()
-            if self._logger is not None: self._logger.info('ROI tools - Slice blob thresholding tool selected')
+            # < Revision 14/11/2025
+            if self._views.get2DBlobThresholdROIFlag() is True:
+                self._btn['2Dblobthreshold'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob thresholding tool unselected')
+            else:
+                self._views.set2DBlobThresholdROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Slice blob thresholding tool selected')
+            # Revision 14/11/2025 >
 
     def slcBlobRegionGrowing(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -1922,8 +2034,18 @@ class TabROIToolsWidget(TabWidget):
 
     def voiFill(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set3DFillROIFlag()
-            if self._logger is not None: self._logger.info('ROI tools - Fill tool selected')
+            # < Revision 14/11/2025
+            # self._views.set3DFillROIFlag()
+            # if self._logger is not None: self._logger.info('ROI tools - Fill tool selected')
+            if self._views.get3DFillROIFlag() is True:
+                self._btn['3Dfill'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Fill tool unselected')
+            else:
+                self._views.set3DFillROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Fill tool selected')
+            # Revision 14/11/2025 >
 
     def voiClear(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -2124,63 +2246,184 @@ class TabROIToolsWidget(TabWidget):
 
     def voiBlobDilate(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set3DBlobDilateROIFlag()
-            self._logger.info('ROI tools - Blob binary dilate tool selected')
+            # < Revision 14/11/2025
+            # self._views.set3DBlobDilateROIFlag()
+            #self._logger.info('ROI tools - Blob binary dilate tool selected')
+            if self._views.get3DBlobDilateROIFlag() is True:
+                self._btn['3Dblobdilate'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Blob binary dilate tool unselected')
+            else:
+                self._views.set3DBlobDilateROIFlag()
+                self._logger.info('ROI tools - Blob binary dilate tool selected')
+            # Revision 14/11/2025 >
 
     def voiBlobErode(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set3DBlobErodeROIFlag()
-            self._logger.info('ROI tools - Blob binary erode tool selected')
+            # < Revision 14/11/2025
+            # self._views.set3DBlobErodeROIFlag()
+            # self._logger.info('ROI tools - Blob binary erode tool selected')
+            if self._views.get3DBlobErodeROIFlag() is True:
+                self._btn['3Dbloberode'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Blob binary erode tool unselected')
+            else:
+                self._views.set3DBlobErodeROIFlag()
+                self._logger.info('ROI tools - Blob binary erode tool selected')
+            # Revision 14/11/2025 >
 
     def voiBlobOpening(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set3DBlobOpenROIFlag()
-            self._logger.info('ROI tools - Blob binary opening tool selected')
+            # < Revision 14/11/2025
+            # self._views.set3DBlobOpenROIFlag()
+            # self._logger.info('ROI tools - Blob binary opening tool selected')
+            if self._views.get3DBlobOpenROIFlag() is True:
+                self._btn['3Dblobopen'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Blob binary opening tool unselected')
+            else:
+                self._views.set3DBlobOpenROIFlag()
+                self._logger.info('ROI tools - Blob binary opening tool selected')
+            # Revision 14/11/2025 >
 
     def voiBlobClosing(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set3DBlobCloseROIFlag()
-            self._logger.info('ROI tools - Blob binary closing tool selected')
+            # < Revision 14/11/2025
+            # self._views.set3DBlobCloseROIFlag()
+            # self._logger.info('ROI tools - Blob binary closing tool selected')
+            if self._views.get3DBlobCloseROIFlag() is True:
+                self._btn['3Dblobclose'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+
+                if self._logger is not None: self._logger.info('ROI tools - Blob binary closing tool unselected')
+            else:
+                self._views.set3DBlobCloseROIFlag()
+                self._logger.info('ROI tools - Blob binary closing tool selected')
+            # Revision 14/11/2025 >
 
     def voiBlobCopy(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set3DBlobCopyROIFlag()
-            self._logger.info('ROI tools - Blob copy tool selected')
+            # < Revision 14/11/2025
+            # self._views.set3DBlobCopyROIFlag()
+            # self._logger.info('ROI tools - Blob copy tool selected')
+            if self._views.get3DBlobCopyROIFlag() is True:
+                self._btn['3Dblobcopy'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Blob copy tool unselected')
+            else:
+                self._views.set3DBlobCopyROIFlag()
+                self._logger.info('ROI tools - Blob copy tool selected')
+            # Revision 14/11/2025 >
 
     def voiBlobCut(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set3DBlobCutROIFlag()
-            self._logger.info('ROI tools - Blob cut tool selected')
+            # < Revision 14/11/2025
+            # self._views.set3DBlobCutROIFlag()
+            # self._logger.info('ROI tools - Blob cut tool selected')
+            if self._views.get3DBlobCutROIFlag() is True:
+                self._btn['3Dblobcut'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Blob cut tool unselected')
+            else:
+                self._views.set3DBlobCutROIFlag()
+                self._logger.info('ROI tools - Blob cut tool selected')
+            # Revision 14/11/2025 >
 
     def voiBlobPaste(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set3DBlobPasteROIFlag()
-            self._logger.info('ROI tools - Blob paste tool selected')
+            # < Revision 14/11/2025
+            # self._views.set3DBlobPasteROIFlag()
+            # self._logger.info('ROI tools - Blob paste tool selected')
+            if self._views.get3DBlobPasteROIFlag() is True:
+                self._btn['3Dblobpaste'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Blob paste tool unselected')
+            else:
+                self._views.set3DBlobPasteROIFlag()
+                self._logger.info('ROI tools - Blob paste tool selected')
+            # Revision 14/11/2025 >
 
     def voiBlobRemove(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set3DBlobRemoveROIFlag()
-            self._logger.info('ROI tools - Blob remove tool selected')
+            # < Revision 14/11/2025
+            # self._views.set3DBlobRemoveROIFlag()
+            # self._logger.info('ROI tools - Blob remove tool selected')
+            if self._views.get3DBlobRemoveROIFlag() is True:
+                self._btn['3Dblobremove'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Blob remove tool unselected')
+            else:
+                self._views.set3DBlobRemoveROIFlag()
+                self._logger.info('ROI tools - Blob remove tool selected')
+            # Revision 14/11/2025 >
 
     def voiBlobKeep(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set3DBlobKeepROIFlag()
-            self._logger.info('ROI tools - Blob keep tool selected')
+            # < Revision 14/11/2025
+            # self._views.set3DBlobKeepROIFlag()
+            # self._logger.info('ROI tools - Blob keep tool selected')
+            if self._views.get3DBlobKeepROIFlag() is True:
+                self._btn['3Dblobkeep'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Blob keep tool unselected')
+            else:
+                self._views.set3DBlobKeepROIFlag()
+                self._logger.info('ROI tools - Blob keep tool selected')
+            # Revision 14/11/2025 >
 
     def voiBlobExpand(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set3DBlobExpandFlagOn(self._thick.value())
-            self._logger.info('ROI tools - Blob expand tool selected')
+            # < Revision 14/11/2025
+            # self._views.set3DBlobExpandFlagOn(self._thick.value())
+            # self._logger.info('ROI tools - Blob expand tool selected')
+            if self._views.get3DBlobExpandFlag() is True:
+                self._btn['3Dblobexpand'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Blob expand tool unselected')
+            else:
+                self._views.set3DBlobExpandFlagOn(self._thick.value())
+                self._logger.info('ROI tools - Blob expand tool selected')
+            # Revision 14/11/2025 >
 
     def voiBlobShrink(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set3DBlobShrinkFlagOn(self._thick.value())
-            self._logger.info('ROI tools - Blob shrink tool selected')
+            # < Revision 14/11/2025
+            # self._views.set3DBlobShrinkFlagOn(self._thick.value())
+            # self._logger.info('ROI tools - Blob shrink tool selected')
+            if self._views.get3DBlobShrinkFlag() is True:
+                self._btn['3Dblobshrink'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Blob shrink tool unselected')
+            else:
+                self._views.set3DBlobShrinkFlagOn(self._thick.value())
+                self._logger.info('ROI tools - Blob shrink tool selected')
+            # Revision 14/11/2025 >
 
     def voiBlobThresholding(self):
         if self.hasViewCollection() and self.hasCollection():
-            self._views.set3DBlobThresholdROIFlag()
-            self._logger.info('ROI tools - Blob thresholding tool selected')
+            # < Revision 14/11/2025
+            # self._views.set3DBlobThresholdROIFlag()
+            # self._logger.info('ROI tools - Blob thresholding tool selected')
+            if self._views.get3DBlobThresholdROIFlag() is True:
+                self._btn['3Dblobthreshold'].setChecked(False)
+                self._btn['dummy'].setChecked(True)
+                self._views.setNoROIFlag()
+                if self._logger is not None: self._logger.info('ROI tools - Blob thresholding tool unselected')
+            else:
+                self._views.set3DBlobThresholdROIFlag()
+                self._logger.info('ROI tools - Blob thresholding tool selected')
+            # Revision 14/11/2025 >
 
     def voiBlobRegionGrowing(self):
         if self.hasViewCollection() and self.hasCollection():

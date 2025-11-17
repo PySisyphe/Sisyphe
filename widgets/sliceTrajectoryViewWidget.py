@@ -30,6 +30,8 @@ from vtk import vtkImageResliceMapper
 
 from Sisyphe.core.sisypheTransform import SisypheTransform
 from Sisyphe.widgets.sliceViewWidgets import SliceOverlayViewWidget
+from Sisyphe.core.sisypheTools import HandleWidget
+from Sisyphe.core.sisypheTools import LineWidget
 
 if TYPE_CHECKING:
     from vtk import vtkObject
@@ -37,8 +39,6 @@ if TYPE_CHECKING:
     from Sisyphe.core.sisypheVolume import SisypheVolume
     from Sisyphe.core.sisypheVolume import SisypheVolumeCollection
     from Sisyphe.core.sisypheMesh import SisypheMeshCollection
-    from Sisyphe.core.sisypheTools import HandleWidget
-    from Sisyphe.core.sisypheTools import LineWidget
 
 """
 Class hierarchy
@@ -324,7 +324,9 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         # Tool alignment
         if len(self._tools) > 0:
             for tool in self._tools:
-                if isinstance(tool, LineWidget):
+                # < Revision 10/11/2025
+                # if isinstance(tool, LineWidget):
+                if tool.GetObjectName() == 'LineWidget':
                     t = QAction('Tool {} alignment'.format(tool.getName()), self)
                     self._menuAlignGroup.addAction(t)
                     t.setCheckable(True)
@@ -333,6 +335,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                     t.triggered.connect(lambda state, x=tool.getName():
                                         self.setTrajectoryFromLineWidget(x, signal=True))
                     self._menuAlign.addAction(t)
+                # Revision 10/11/2025 >
 
     def _updateCheckedAction(self, name: str) -> None:
         """

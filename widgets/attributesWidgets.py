@@ -2334,7 +2334,7 @@ class ListAttributesWidget(QWidget):
 
     QWidget -> ListAttributesWidget
 
-    Last revision: 02/11/2024
+    Last revision: 15/11/2025
     """
     _VSIZE = 32
 
@@ -2362,6 +2362,10 @@ class ListAttributesWidget(QWidget):
                 raise TypeError('views parameter type {} is not IconBarViewWidgetCollection'.format(type(views)))
 
         self._list = QListWidget()
+        # < Revision 15/11/2025
+        if platform == 'win32':
+            self._list.setStyleSheet('QListWidget::item:selected { background-color: rgb(0, 125, 255); }')
+        # Revision 15/11/2025 >
         self._list.setSelectionMode(QListWidget.SingleSelection)
         # noinspection PyUnresolvedReferences
         self._list.itemSelectionChanged.connect(self._selectionChanged)
@@ -2465,6 +2469,10 @@ class ListAttributesWidget(QWidget):
     def _addItem(self, item):
         if self._notAlreadyInList(item):
             widget = self._createWidget(item)
+            # < Revision 15/11/2025
+            if platform == 'win32':
+                widget.setStyleSheet('QFrame { background-color: transparent; }')
+            # Revision 15/11/2025 >
             listitem = QListWidgetItem()
             listitem.setSizeHint(widget.sizeHint())
             self._list.addItem(listitem)
@@ -2636,6 +2644,7 @@ class ListAttributesWidget(QWidget):
             n = self._list.count()
             if n > 0 and self.hasCollection():
                 wait = DialogWait()
+                wait.open()
                 wait.setInformationText('Save all...')
                 if n > 1:
                     wait.setProgressRange(0, n)
@@ -2701,7 +2710,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListROIAttributesWidget
 
-    Last revision: 22/07/2024
+    Last revision: 17/11/2025
     """
 
     # Special method
@@ -2719,6 +2728,10 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._dist = IconPushButton('map.png', size=ListAttributesWidget._VSIZE)
         self._features = IconPushButton('texture.png', size=ListAttributesWidget._VSIZE)
 
+        # < Revision 17/11/2025
+        self._visibility = VisibilityLabel()
+        # Revision 17/11/2025 >
+
         # noinspection PyUnresolvedReferences
         self._remove.clicked.connect(self.remove)
         # noinspection PyUnresolvedReferences
@@ -2731,6 +2744,10 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._dist.clicked.connect(self.toDistance)
         # noinspection PyUnresolvedReferences
         self._features.clicked.connect(self.features)
+        # < Revision 17/11/2025
+        # noinspection PyUnresolvedReferences
+        self._visibility.visibilityChanged.connect(self.visibility)
+        # Revision 17/11/2025 >
 
         self._remove.setToolTip('Remove checked ROI(s)')
         self._duplicate.setToolTip('Duplicate selected ROI')
@@ -2738,6 +2755,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._mesh.setToolTip('Conversion of checked ROI(s) to mesh(es)')
         self._dist.setToolTip('Distance map processing from checked ROI(s)')
         self._features.setToolTip('Checked ROI(s) feature processing')
+        # < Revision 17/11/2025
+        self._visibility.setToolTip('Show/hide all ROI(s)')
+        # Revision 17/11/2025 >
 
         self._btlayout1.insertWidget(5, self._export)
         self._btlayout1.insertWidget(5, self._remove)
@@ -2745,6 +2765,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._btlayout2.insertWidget(3, self._dist)
         self._btlayout2.insertWidget(3, self._duplicate)
         self._btlayout2.insertWidget(6, self._features)
+        # < Revision 13/11/2025
+        self._btlayout2.insertWidget(1, self._visibility)
+        # Revision 13/11/2025 >
 
         self._popup = QMenu()
         # noinspection PyTypeChecker
@@ -2844,6 +2867,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._dist.setFixedSize(size, size)
         self._features.setIconSize(QSize(size - 8, size - 8))
         self._features.setFixedSize(size, size)
+        # < Revision 13/11/2025
+        self._visibility.setFixedSize(size, size)
+        # Revision 13/11/2025
 
     def getCheckedROI(self):
         rois = list()
@@ -2995,6 +3021,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                         chdir(dirname(filenames[0]))
                         n = len(filenames)
                         wait = DialogWait()
+                        wait.open()
                         wait.setInformationText('Open ROI')
                         wait.setProgressRange(0, n)
                         wait.setProgressVisibility(n > 1)
@@ -3031,6 +3058,11 @@ class ListROIAttributesWidget(ListAttributesWidget):
             rois = self.getCheckedROI()
             n = len(rois)
             if n > 0:
+                # < Revision 06/11/2025
+                wait = DialogWait()
+                wait.open()
+                wait.setInformationText('Remove ROI...')
+                # Revision 06/11/2025 >
                 super().remove()
                 mainwindow = self._getMainWindow()
                 if self._collection.count() == 0:
@@ -3040,6 +3072,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
                         mainwindow.setROIToolsEnabled(False)
                 if mainwindow is not None:
                     mainwindow.setStatusBarMessage('Checked ROI(s) removed.')
+                # < Revision 06/11/2025
+                wait.close()
+                # Revision 06/11/2025 >
             else: messageBox(self, 'Remove ROI', 'No ROI checked.')
 
     def removeItem(self, w):
@@ -3080,6 +3115,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         n = len(rois)
         if n > 0:
             wait = DialogWait()
+            wait.open()
             wait.setInformationText('Save as Sisyphe volume...')
             wait.setProgressRange(0, n)
             wait.setProgressVisibility(n > 1)
@@ -3105,6 +3141,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         n = len(rois)
         if n > 0:
             wait = DialogWait()
+            wait.open()
             wait.setInformationText('Save as Nifti...')
             wait.setProgressRange(0, n)
             wait.setProgressVisibility(n > 1)
@@ -3129,6 +3166,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         n = len(rois)
         if n > 0:
             wait = DialogWait()
+            wait.open()
             wait.setInformationText('Save as Nrrd...')
             wait.setProgressRange(0, n)
             wait.setProgressVisibility(n > 1)
@@ -3153,6 +3191,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         n = len(rois)
         if n > 0:
             wait = DialogWait()
+            wait.open()
             wait.setInformationText('Save as Minc...')
             wait.setProgressRange(0, n)
             wait.setProgressVisibility(n > 1)
@@ -3177,6 +3216,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         n = len(rois)
         if n > 0:
             wait = DialogWait()
+            wait.open()
             wait.setInformationText('Save as Numpy...')
             wait.setProgressRange(0, n)
             wait.setProgressVisibility(n > 1)
@@ -3201,6 +3241,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         n = len(rois)
         if n > 0:
             wait = DialogWait()
+            wait.open()
             wait.setInformationText('Save as Vtk...')
             wait.setProgressRange(0, n)
             wait.setProgressVisibility(n > 1)
@@ -3236,8 +3277,8 @@ class ListROIAttributesWidget(ListAttributesWidget):
                         path = abspath(path)
                         chdir(path)
                         wait = DialogWait()
-                        wait.setInformationText('Convert ROI(s) to Dicom RTStruct...')
                         wait.open()
+                        wait.setInformationText('Convert ROI(s) to Dicom RTStruct...')
                         QApplication.processEvents()
                         f = ExportToRTStruct()
                         f.setReferenceVolume(ref)
@@ -3265,10 +3306,10 @@ class ListROIAttributesWidget(ListAttributesWidget):
             if n > 0:
                 ref = self.getViewCollection().getVolume()
                 wait = DialogWait(info='ROI to Mesh processing...')
+                wait.open()
                 wait.setProgressRange(0, n)
                 wait.setCurrentProgressValue(0)
                 wait.setProgressVisibility(n > 1)
-                wait.open()
                 for roi in rois:
                     wait.setInformationText('{} to Mesh processing...'.format(roi.getName()))
                     wait.incCurrentProgressValue()
@@ -3294,10 +3335,10 @@ class ListROIAttributesWidget(ListAttributesWidget):
             n = len(rois)
             if n > 0:
                 wait = DialogWait(info='Save distance map...')
+                wait.open()
                 wait.setProgressRange(0, n)
                 wait.setCurrentProgressValue(0)
                 wait.setProgressVisibility(n > 1)
-                wait.open()
                 for roi in rois:
                     r = roi.getDistanceMap()
                     if not roi.hasFilename():
@@ -3362,6 +3403,17 @@ class ListROIAttributesWidget(ListAttributesWidget):
         else: messageBox(self, 'ROI(s) texture features', 'No ROI checked.')
     # Revision 05/08/2025 >
 
+    # < Revision 17/11/2025
+    # add visibility method
+    def visibility(self):
+        if self.isEnabled():
+            if self.hasViewCollection():
+                if len(self._collection) > 0:
+                    for i in range(0, self._list.count()):
+                        widget = self._list.itemWidget(self._list.item(i))
+                        widget.setVisibility(self._visibility.getVisibilityStateIcon())
+    # Revision 17/11/2025 >
+
     # Qt event
 
     def dropEvent(self, event):
@@ -3404,7 +3456,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListMeshAttributesWidget
 
-    Last revision: 28/08/2025
+    Last revision: 17/11/2025
     """
 
     # Special method
@@ -3425,6 +3477,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._export = IconPushButton('export.png', size=ListAttributesWidget._VSIZE)
         self._2roi = IconPushButton('mesh2roi.png', size=ListAttributesWidget._VSIZE)
 
+        # < Revision 17/11/2025
+        self._visibility = VisibilityLabel()
+        # Revision 17/11/2025 >
+
         # noinspection PyUnresolvedReferences
         self._remove.clicked.connect(self.remove)
         # noinspection PyUnresolvedReferences
@@ -3439,6 +3495,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._overlay.clicked.connect(self._overlayMenu)
         # noinspection PyUnresolvedReferences
         self._2roi.clicked.connect(self.toRoi)
+        # < Revision 17/11/2025
+        # noinspection PyUnresolvedReferences
+        self._visibility.visibilityChanged.connect(self.visibility)
+        # Revision 17/11/2025 >
 
         self._remove.setToolTip('Remove checked mesh(es)')
         self._out.setToolTip('Add outer surface mesh')
@@ -3450,6 +3510,9 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._overlay.setToolTip('Paint checked mesh(es) with overlay')
         self._export.setToolTip('Export checked mesh(es)')
         self._2roi.setToolTip('Conversion of checked mesh(es) to ROI(s)')
+        # < Revision 17/11/2025
+        self._visibility.setToolTip('Show/hide all mesh(es)')
+        # Revision 17/11/2025 >
 
         self._new.setVisible(False)
         self._btlayout1.insertWidget(5, self._export)
@@ -3462,6 +3525,9 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._btlayout2.insertWidget(3, self._iso)
         self._btlayout2.insertWidget(3, self._overlay)
         self._btlayout2.insertWidget(3, self._duplicate)
+        # < Revision 13/11/2025
+        self._btlayout2.insertWidget(1, self._visibility)
+        # Revision 13/11/2025 >
 
         self._popupExport = QMenu()
         # noinspection PyTypeChecker
@@ -3714,6 +3780,9 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._export.setFixedSize(size, size)
         self._2roi.setIconSize(QSize(size - 8, size - 8))
         self._2roi.setFixedSize(size, size)
+        # < Revision 13/11/2025
+        self._visibility.setFixedSize(size, size)
+        # Revision 13/11/2025
 
     def getCheckedMesh(self):
         meshes = list()
@@ -3866,8 +3935,8 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                         if self._dialog.exec() == QDialog.Accepted:
                             value = self._dialog.getThreshold()
                             wait = DialogWait()
-                            wait.setInformationText('Isosurface mesh processing...')
                             wait.open()
+                            wait.setInformationText('Isosurface mesh processing...')
                             mesh = SisypheMesh()
                             if self.hasTabToolsWidget():
                                 settings = self.getTabToolsWidget().getSettingsWidget()
@@ -3917,6 +3986,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                             if n > 0:
                                 chdir(dirname(filenames[0]))
                                 wait = DialogWait()
+                                wait.open()
                                 wait.setInformationText('Open ROI(s)...')
                                 wait.setProgressRange(0, n)
                                 wait.setProgressVisibility(n > 1)
@@ -3939,10 +4009,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                         n = len(rois)
                         if n > 0 and all([isinstance(roi, SisypheROI) for roi in rois]):
                             wait = DialogWait()
+                            wait.open()
                             wait.setInformationText('Mesh(es) from ROI(s)...')
                             wait.setProgressRange(0, n)
                             wait.setProgressVisibility(n > 1)
-                            wait.open()
                             for roi in rois:
                                 if self.count() < self.getMaxCount():
                                     wait.setInformationText('{} mesh processing'.format(roi.getName()))
@@ -4057,10 +4127,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     n = len(meshes)
                     if n > 0:
                         wait = DialogWait(info='Duplicate checked mesh(es)...')
+                        wait.open()
                         wait.setProgressRange(0, n)
                         wait.setCurrentProgressValue(0)
                         wait.setProgressVisibility(n > 1)
-                        wait.open()
                         for mesh in meshes:
                             if self.count() < self.getMaxCount():
                                 wait.setInformationText('Duplicate {} mesh...'.format(mesh.getName()))
@@ -4131,10 +4201,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     vol = f.execute(fixed=None, save=False)
                             # Apply overlay to mesh
                             wait = DialogWait(info='Display mesh overlay...')
+                            wait.open()
                             wait.setProgressRange(0, len(meshes))
                             wait.setCurrentProgressValue(0)
                             wait.setProgressVisibility(n > 1)
-                            wait.open()
                             for mesh in meshes:
                                 if self.count() < self.getMaxCount():
                                     wait.setInformationText('Display {} as {} mesh overlay...'.format(vol.getName(), mesh.getName()))
@@ -4194,10 +4264,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                             niter = settings.getParameterValue('SmoothIterations')
                             if niter is None: niter = 10
                             wait = DialogWait(info='Filter checked mesh(es)...')
+                            wait.open()
                             wait.setProgressRange(0, n)
                             wait.setCurrentProgressValue(0)
                             wait.setProgressVisibility(n > 1)
-                            wait.open()
                             for mesh in meshes:
                                 wait.setInformationText('Filter {} mesh...'.format(mesh.getName()))
                                 mesh2 = SisypheMesh()
@@ -4235,10 +4305,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     n = len(meshes)
                     if n > 0:
                         wait = DialogWait(info='Checked mesh(es) dilatation...')
+                        wait.open()
                         wait.setProgressRange(0, n)
                         wait.setCurrentProgressValue(0)
                         wait.setProgressVisibility(n > 1)
-                        wait.open()
                         for mesh in meshes:
                             wait.setInformationText('{} mesh dilatation...'.format(mesh.getName()))
                             wait.incCurrentProgressValue()
@@ -4268,10 +4338,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     n = len(meshes)
                     if n > 0:
                         wait = DialogWait(info='Checked mesh(es) shrinking...')
+                        wait.open()
                         wait.setProgressRange(0, n)
                         wait.setCurrentProgressValue(0)
                         wait.setProgressVisibility(n > 1)
-                        wait.open()
                         for mesh in meshes:
                             wait.setInformationText('{} mesh shrinking...'.format(mesh.getName()))
                             wait.incCurrentProgressValue()
@@ -4301,8 +4371,8 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     n = len(meshes)
                     if n > 1:
                         wait = DialogWait()
-                        wait.setInformationText('Checked mesh(es) union...')
                         wait.open()
+                        wait.setInformationText('Checked mesh(es) union...')
                         mesh2 = SisypheMesh()
                         mesh2.copyFrom(meshes[0])
                         meshes = meshes[1:]
@@ -4330,8 +4400,8 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     n = len(meshes)
                     if n > 1:
                         wait = DialogWait()
-                        wait.setInformationText('Checked mesh(es) intersection...')
                         wait.open()
+                        wait.setInformationText('Checked mesh(es) intersection...')
                         mesh2 = SisypheMesh()
                         mesh2.copyFrom(meshes[0])
                         meshes = meshes[1:]
@@ -4363,8 +4433,8 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                         n = len(meshes)
                         if n > 0:
                             wait = DialogWait()
-                            wait.setInformationText('Mesh(es) difference...')
                             wait.open()
+                            wait.setInformationText('Mesh(es) difference...')
                             mesh2.difference(meshes)
                             wait.close()
                             if not mesh2.isEmpty():
@@ -4407,10 +4477,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                         h.append(mesh.getName())
                     dialog.setTreeWidgetHeaderLabels(1, h)
                     wait = DialogWait()
+                    wait.open()
                     wait.setInformationText('Checked mesh(es) features...')
                     wait.setProgressRange(0, n)
                     wait.setProgressVisibility(n > 1)
-                    wait.open()
                     for mesh in meshes:
                         wait.setInformationText('{} features processing...'.format(mesh.getName()))
                         wait.incCurrentProgressValue()
@@ -4449,9 +4519,9 @@ class ListMeshAttributesWidget(ListAttributesWidget):
             n = len(meshes)
             if n > 0:
                 wait = DialogWait(info='Export checked mesh(es) to OBJ format...')
+                wait.open()
                 wait.setProgressRange(0, n)
                 wait.setProgressVisibility(n > 1)
-                wait.open()
                 for mesh in meshes:
                     item = mesh.getItem()
                     wait.setInformationText('Export {} mesh to OBJ format...'.format(item.getName()))
@@ -4473,10 +4543,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
             n = len(meshes)
             if n > 0:
                 wait = DialogWait()
+                wait.open()
                 wait.setInformationText('Export checked mesh(es) to STL format...')
                 wait.setProgressRange(0, n)
                 wait.setProgressVisibility(n > 1)
-                wait.open()
                 for mesh in meshes:
                     item = mesh.getItem()
                     wait.setInformationText('Export {} mesh to STL format...'.format(item.getName()))
@@ -4498,10 +4568,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
             n = len(meshes)
             if len(meshes) > 0:
                 wait = DialogWait()
+                wait.open()
                 wait.setInformationText('Export checked mesh(es) to VTK format...')
                 wait.setProgressRange(0, n)
                 wait.setProgressVisibility(n > 1)
-                wait.open()
                 for mesh in meshes:
                     item = mesh.getItem()
                     wait.setInformationText('Export {} mesh to VTK format...'.format(item.getName()))
@@ -4523,10 +4593,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
             n = len(meshes)
             if n > 0:
                 wait = DialogWait()
+                wait.open()
                 wait.setInformationText('Export checked mesh(es) to XMLVTK format...')
                 wait.setProgressRange(0, n)
                 wait.setProgressVisibility(n > 1)
-                wait.open()
                 for mesh in meshes:
                     item = mesh.getItem()
                     wait.setInformationText('Export {} mesh to XMLVTK format...'.format(item.getName()))
@@ -4554,10 +4624,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                         n = len(filenames)
                         chdir(dirname(filenames[0]))
                         wait = DialogWait()
+                        wait.open()
                         wait.setInformationText('Open mesh(es)...')
                         wait.setProgressRange(0, n)
                         wait.setProgressVisibility(n > 1)
-                        wait.open()
                         for filename in filenames:
                             filename = abspath(filename)
                             mesh = SisypheMesh()
@@ -4621,10 +4691,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                 if n > 0:
                     ref = self.getViewCollection().getVolume()
                     wait = DialogWait()
+                    wait.open()
                     wait.setInformationText('Mesh to ROI processing...')
                     wait.setProgressRange(0, n)
                     wait.setProgressVisibility(n > 1)
-                    wait.open()
                     for mesh in meshes:
                         wait.setInformationText('{} to ROI processing...'.format(mesh.getName()))
                         wait.incCurrentProgressValue()
@@ -4639,6 +4709,17 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                 mainwindow = self._getMainWindow()
                 if mainwindow is not None:
                     mainwindow.setStatusBarMessage('Mesh(es) converted to ROI(s).')
+
+    # < Revision 17/11/2025
+    # add visibility method
+    def visibility(self):
+        if self.isEnabled():
+            if self.hasViewCollection():
+                if len(self._collection) > 0:
+                    for i in range(0, self._list.count()):
+                        widget = self._list.itemWidget(self._list.item(i))
+                        widget.setVisibility(self._visibility.getVisibilityStateIcon())
+    # Revision 17/11/2025 >
 
     # Qt event
 
@@ -4677,7 +4758,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListToolAttributesWidget
 
-    Last revision: 28/08/2025
+    Last revision: 13/11/2025
     """
 
     # Special method
@@ -4699,6 +4780,10 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._duplicate = IconPushButton('duplicate.png', size=ListAttributesWidget._VSIZE)
         self._features = IconPushButton('toolfeature.png', size=ListAttributesWidget._VSIZE)
         self._features2 = IconPushButton('toolfeature2.png', size=ListAttributesWidget._VSIZE)
+        # < Revision 13/11/2025
+        self._visibility = VisibilityLabel()
+        self._lock = LockLabel()
+        # Revision 13/11/2025 >
 
         # noinspection PyUnresolvedReferences
         self._target.clicked.connect(self.newHandle)
@@ -4712,6 +4797,12 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._features.clicked.connect(self.features)
         # noinspection PyUnresolvedReferences
         self._features2.clicked.connect(self.features2)
+        # < Revision 13/11/2025
+        # noinspection PyUnresolvedReferences
+        self._visibility.visibilityChanged.connect(self.visibility)
+        # noinspection PyUnresolvedReferences
+        self._lock.lockChanged.connect(self.lock)
+        # Revision 13/11/2025 >
 
         self._target.setToolTip('Add new target tool')
         self._trajectory.setToolTip('Add new trajectory tool')
@@ -4719,6 +4810,10 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._duplicate.setToolTip('Duplicate selected tool')
         self._features.setToolTip('Tool features')
         self._features2.setToolTip('Tool and mesh relationships')
+        # < Revision 13/11/2025
+        self._visibility.setToolTip('Show/hide all tools')
+        self._lock.setToolTip('Lock/unlock all tools')
+        # Revision 13/11/2025 >
 
         self._new.setVisible(False)
         self._btlayout1.insertWidget(5, self._remove)
@@ -4727,6 +4822,10 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._btlayout2.insertWidget(3, self._features2)
         self._btlayout2.insertWidget(3, self._features)
         self._btlayout2.insertWidget(3, self._duplicate)
+        # < Revision 13/11/2025
+        self._btlayout2.insertWidget(1, self._visibility)
+        self._btlayout2.insertWidget(1, self._lock)
+        # Revision 13/11/2025 >
 
         self._open.setToolTip('{} tool(s)'.format(self._open.toolTip()))
         self._saveall.setToolTip('{} tool(s)'.format(self._saveall.toolTip()))
@@ -4805,6 +4904,10 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._features.setFixedSize(size, size)
         self._features2.setIconSize(QSize(size - 8, size - 8))
         self._features2.setFixedSize(size, size)
+        # < Revision 13/11/2025
+        self._visibility.setFixedSize(size, size)
+        self._lock.setFixedSize(size, size)
+        # Revision 13/11/2025
 
     def getCheckedTool(self):
         tools = list()
@@ -4945,10 +5048,10 @@ class ListToolAttributesWidget(ListAttributesWidget):
                         n = len(filenames)
                         chdir(dirname(filenames[0]))
                         wait = DialogWait()
+                        wait.open()
                         wait.setInformationText('Open tool(s)...')
                         wait.setProgressRange(0, n)
                         wait.setProgressVisibility(n > 1)
-                        wait.open()
                         for filename in filenames:
                             wait.setInformationText('Open {}...'.format(basename(filename)))
                             wait.incCurrentProgressValue()
@@ -4964,6 +5067,15 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     vol = self._views.getVolume()
                                     if tools is not None and vol is not None:
                                         if tools.hasSameID(vol):
+                                            # < Revision 13/11/2025
+                                            n2 = len(tools)
+                                            if n2 > 1:
+                                                c = wait.getCurrentProgressValue()
+                                                wait.setProgressRange(0, n2)
+                                                wait.setCurrentProgressValue(0)
+                                                wait.setProgressVisibility(True)
+                                            else: c = 0
+                                            # Revision 13/11/2025 >
                                             for tool in tools:
                                                 if self.count() < self.getMaxCount():
                                                     if isinstance(tool, HandleWidget):
@@ -4982,6 +5094,12 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                                                 slcviews[1, 0].ToolMoved.connect(self._updateTargets)
                                                                 slcviews[1, 1].ToolMoved.connect(self._updateTargets)
                                                         self._logger.info('Add target {}'.format(item.getName()))
+                                                        # < Revision 10/11/2025
+                                                        widget.lock()
+                                                        # Revision 10/11/2025 >
+                                                        # < Revision 13/11/2025
+                                                        if n2 > 1: wait.incCurrentProgressValue()
+                                                        # Revision 13/11/2025 >
                                                     elif isinstance(tool, LineWidget):
                                                         p = tool.getPosition2()
                                                         item = view.addTrajectory(p1=tool.getPosition1(),
@@ -5000,6 +5118,12 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                                                 slcviews[1, 0].ToolMoved.connect(self._updateTargets)
                                                                 slcviews[1, 1].ToolMoved.connect(self._updateTargets)
                                                         self._logger.info('Add trajectory {}'.format(item.getName()))
+                                                        # < Revision 10/11/2025
+                                                        widget.lock()
+                                                        # Revision 10/11/2025 >
+                                                        # < Revision 13/11/2025
+                                                        if n2 > 1: wait.incCurrentProgressValue()
+                                                        # Revision 13/11/2025 >
                                                 else:
                                                     wait.close()
                                                     messageBox(self,
@@ -5008,6 +5132,12 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                                                     'Close a tool to add a new one.',
                                                                icon=QMessageBox.Information)
                                                     return
+                                            # < Revision 13/11/2025
+                                            if n2 > 1:
+                                                wait.setProgressRange(0, n)
+                                                wait.setCurrentProgressValue(c)
+                                                wait.setProgressVisibility(n > 1)
+                                            # Revision 13/11/2025 >
                                         else:
                                             messageBox(self,
                                                        'Open tools',
@@ -5037,6 +5167,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                                     slcviews[1, 0].ToolMoved.connect(self._updateTargets)
                                                     slcviews[1, 1].ToolMoved.connect(self._updateTargets)
                                             self._logger.info('Add target {}'.format(item.getName()))
+                                            # < Revision 10/11/2025
+                                            widget.lock()
+                                            # Revision 10/11/2025 >
                                     else:
                                         wait.close()
                                         messageBox(self,
@@ -5071,6 +5204,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                                     slcviews[1, 0].ToolMoved.connect(self._updateTargets)
                                                     slcviews[1, 1].ToolMoved.connect(self._updateTargets)
                                             self._logger.info('Add trajectory {}'.format(item.getName()))
+                                            # < Revision 10/11/2025
+                                            widget.lock()
+                                            # Revision 10/11/2025 >
                                     else:
                                         wait.close()
                                         messageBox(self,
@@ -5226,8 +5362,8 @@ class ListToolAttributesWidget(ListAttributesWidget):
             if self.hasViewCollection():
                 if len(self._collection) > 0:
                     wait = DialogWait()
-                    wait.setInformationText('Compute coordinates and distances...')
                     wait.open()
+                    wait.setInformationText('Compute coordinates and distances...')
                     self._dialogfeatures.clear()
                     from Sisyphe.core.sisypheTools import HandleWidget
                     from Sisyphe.core.sisypheTools import LineWidget
@@ -5333,31 +5469,45 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                             if toolc == toolr: r.append('')
                                             else:
                                                 # column toolc HandleWidget, row toolr HandleWidget
-                                                if nc == 1 and nr == 1: r.append(toolc.getDistanceToHandleWidget(toolr))
+                                                if nc == 1 and nr == 1:
+                                                    # noinspection PyUnresolvedReferences
+                                                    r.append(toolc.getDistanceToHandleWidget(toolr))
                                                 # column toolc HandleWidget, row toolr LineWidget
                                                 elif nc == 1 and nr == 3:
                                                     # toolr target, toolc point
-                                                    if subi == 0: r.append(toolc.getDistanceToPoint(toolr.getPosition2()))
+                                                    if subi == 0:
+                                                        # noinspection PyUnresolvedReferences
+                                                        r.append(toolc.getDistanceToPoint(toolr.getPosition2()))
                                                     # toolr entry, toolc point
-                                                    elif subi == 1: r.append(toolc.getDistanceToPoint(toolr.getPosition1()))
+                                                    elif subi == 1:
+                                                        # noinspection PyUnresolvedReferences
+                                                        r.append(toolc.getDistanceToPoint(toolr.getPosition1()))
                                                     # toolr line, toolc point
-                                                    else: r.append(toolc.getDistanceToLineWidget(toolr)[0])
+                                                    else:
+                                                        # noinspection PyUnresolvedReferences
+                                                        r.append(toolc.getDistanceToLineWidget(toolr)[0])
                                                 # column toolc LineWidget, row toolr HandleWidget
                                                 elif nc == 3 and nr == 1:
                                                     # toolc target, toolr point
                                                     if subj == 0:
-                                                        # noinspection PyTypeChecker
+                                                        # noinspection PyTypeChecker,PyUnresolvedReferences
                                                         r.append(toolr.getDistanceToPoint(toolc.getPosition2()))
                                                     # toolc entry, toolr point
                                                     elif subj == 1:
-                                                        # noinspection PyTypeChecker
+                                                        # noinspection PyTypeChecker,PyUnresolvedReferences
                                                         r.append(toolr.getDistanceToPoint(toolc.getPosition1()))
                                                     # toolc line, toolr point
-                                                    else: r.append(toolr.getDistanceToLineWidget(toolc)[0])
+                                                    else:
+                                                        # noinspection PyTypeChecker
+                                                        r.append(toolr.getDistanceToLineWidget(toolc)[0])
                                                 # column toolc LineWidget, row toolr LineWidget
                                                 elif nc == 3 and nr == 3:
-                                                    if dr is None: dr = toolr.getDistancesToLineWidget(toolc)
-                                                    if dc is None: dc = toolc.getDistancesToLineWidget(toolr)
+                                                    if dr is None:
+                                                        # noinspection PyTypeChecker
+                                                        dr = toolr.getDistancesToLineWidget(toolc)
+                                                    if dc is None:
+                                                        # noinspection PyUnresolvedReferences
+                                                        dc = toolc.getDistancesToLineWidget(toolr)
                                                     """
                                                         dr[0], distance between toolc line and toolr entry
                                                         dr[1], distance between toolc line and toolr target
@@ -5424,8 +5574,8 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     meshes = self._views.getMeshCollection()
                     if meshes is not None and len(meshes) > 0:
                         wait = DialogWait()
-                        wait.setInformationText('Compute tool and mesh distances...')
                         wait.open()
+                        wait.setInformationText('Compute tool and mesh distances...')
                         h = list()
                         h.append('Tools')
                         for mesh in meshes:
@@ -5495,6 +5645,28 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                'Compute tool and mesh distances...',
                                'No target or trajectory.')
 
+    # < Revision 13/11/2025
+    # add visibility method
+    def visibility(self):
+        if self.isEnabled():
+            if self.hasViewCollection():
+                if len(self._collection) > 0:
+                    for i in range(0, self._list.count()):
+                        widget = self._list.itemWidget(self._list.item(i))
+                        widget.setVisibility(self._visibility.getVisibilityStateIcon())
+    # Revision 13/11/2025 >
+
+    # < Revision 13/11/2025
+    # add lock method
+    def lock(self):
+        if self.isEnabled():
+            if self.hasViewCollection():
+                if len(self._collection) > 0:
+                    for i in range(0, self._list.count()):
+                        widget = self._list.itemWidget(self._list.item(i))
+                        widget.setLock(self._lock.getLockStateIcon())
+    # Revision 13/11/2025 >
+
     def remove(self):
         if self.hasViewCollection():
             tools = self.getCheckedTool()
@@ -5536,8 +5708,8 @@ class ListToolAttributesWidget(ListAttributesWidget):
                 filename = QFileDialog.getSaveFileName(self, 'Save tools', filename, ToolWidgetCollection.getFilterExt())[0]
                 if filename:
                     wait = DialogWait()
-                    wait.setInformationText('Save {}...'.format(basename(filename)))
                     wait.open()
+                    wait.setInformationText('Save {}...'.format(basename(filename)))
                     self._collection.setReferenceID(vol)
                     self._collection.saveAs(filename)
                     self._filename = filename
@@ -5611,7 +5783,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListBundleAttributesWidget
 
-    Last revision: 11/04/2025
+    Last revision: 17/11/2025
     """
 
     # Class constant
@@ -5640,6 +5812,10 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._stat = IconPushButton('statistics.png', size=ListAttributesWidget._VSIZE)
         self._duplicate = IconPushButton('duplicate.png', size=ListAttributesWidget._VSIZE)
         self._union = IconPushButton('attach.png', size=ListAttributesWidget._VSIZE)
+
+        # < Revision 17/11/2025
+        self._visibility = VisibilityLabel()
+        # Revision 17/11/2025 >
 
         self._treshroi = LabeledSpinBox(title='Count threshold', fontsize=12)
         self._treshroi.setRange(1, 1000)
@@ -5795,6 +5971,10 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._tomap.clicked.connect(self.toMap)
         # noinspection PyUnresolvedReferences
         self._union.clicked.connect(self.union)
+        # < Revision 17/11/2025
+        # noinspection PyUnresolvedReferences
+        self._visibility.visibilityChanged.connect(self.visibility)
+        # Revision 17/11/2025 >
 
         self._remove.setToolTip('Remove checked bundle(s)')
         self._filter.setToolTip('Checked bundle(s) filtering')
@@ -5813,6 +5993,9 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._removeall.setToolTip('{} bundle(s)'.format(self._removeall.toolTip()))
         self._checkall.setToolTip('{} bundle(s)'.format(self._checkall.toolTip()))
         self._uncheckall.setToolTip('{} bundle(s)'.format(self._uncheckall.toolTip()))
+        # < Revision 17/11/2025
+        self._visibility.setToolTip('Show/hide all bundle(s)')
+        # Revision 17/11/2025 >
 
         self._new.setVisible(False)
         self._btlayout1.insertWidget(5, self._tomesh)
@@ -5827,6 +6010,9 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._btlayout2.insertWidget(3, self._filter)
         self._btlayout2.insertWidget(3, self._interactive)
         self._btlayout2.insertWidget(3, self._dissection)
+        # < Revision 13/11/2025
+        self._btlayout2.insertWidget(1, self._visibility)
+        # Revision 13/11/2025 >
 
         self._roidialog = DialogStreamlinesROISelection()
         self._fltdialog = DialogStreamlinesFiltering()
@@ -5898,6 +6084,9 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._duplicate.setFixedSize(size, size)
         self._union.setIconSize(QSize(size - 8, size - 8))
         self._union.setFixedSize(size, size)
+        # < Revision 13/11/2025
+        self._visibility.setFixedSize(size, size)
+        # Revision 13/11/2025
 
     def getTabTrackingWidget(self):
         parent = self.parent()
@@ -6048,10 +6237,10 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         n = len(filenames)
                         chdir(dirname(filenames[0]))
                         wait = DialogWait()
+                        wait.open()
                         wait.setInformationText('Open streamlines...')
                         wait.setProgressRange(0, n)
                         wait.setProgressVisibility(n > 1)
-                        wait.open()
                         QApplication.processEvents()
                         for filename in filenames:
                             if self.count() < self.getMaxCount():
@@ -6107,8 +6296,8 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 n = len(bundles)
                 if n > 0:
                     wait = DialogWait()
-                    wait.setInformationText('Remove bundle(s)...')
                     wait.open()
+                    wait.setInformationText('Remove bundle(s)...')
                     QApplication.processEvents()
                     tracts = self._views.getTractCollection()
                     if tracts is not None:
@@ -6130,8 +6319,8 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         if self.hasViewCollection() and self.hasCollection():
             if not self.isEmpty():
                 wait = DialogWait()
-                wait.setInformationText('Remove {} bundle...'.format(w.getName()))
                 wait.open()
+                wait.setInformationText('Remove {} bundle...'.format(w.getName()))
                 QApplication.processEvents()
                 tracts = self._views.getTractCollection()
                 if tracts is not None:
@@ -6150,8 +6339,8 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         if self.hasViewCollection() and self.hasCollection():
             if not self.isEmpty():
                 wait = DialogWait()
-                wait.setInformationText('Remove all bundles...')
                 wait.open()
+                wait.setInformationText('Remove all bundles...')
                 QApplication.processEvents()
                 tracts = self._views.getTractCollection()
                 if tracts is not None:
@@ -6170,10 +6359,10 @@ class ListBundleAttributesWidget(ListAttributesWidget):
             if not self.isEmpty():
                 n = self.count()
                 wait = DialogWait()
+                wait.open()
                 wait.setInformationText('Save all bundles...')
                 wait.setProgressRange(0, n)
                 wait.setProgressVisibility(n > 1)
-                wait.open()
                 QApplication.processEvents()
                 for i in range(self.count()):
                     w = self.getWidget(i)
@@ -6217,8 +6406,8 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     # Revision 28/08/2025 >
                     if self._roidialog.exec() == QDialog.Accepted:
                         wait = DialogWait()
-                        wait.setInformationText('Bundle streamlines selection by ROI...')
                         wait.open()
+                        wait.setInformationText('Bundle streamlines selection by ROI...')
                         QApplication.processEvents()
                         l = self._roidialog.getMinimalLength()
                         incl = self._roidialog.getInclusionROINames()
@@ -6307,10 +6496,10 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     n = len(wchk)
                     if n > 0:
                         wait = DialogWait()
+                        wait.open()
                         wait.setInformationText('Interactive streamlines selection...')
                         wait.setProgressVisibility(n > 1)
                         wait.setProgressRange(0, n)
-                        wait.open()
                         QApplication.processEvents()
                         for w in wchk:
                             sl = w.getStreamlines()
@@ -6514,10 +6703,10 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     # Revision 28/08/2025 >
                     if self._fltdialog.exec() == QDialog.Accepted:
                         wait = DialogWait()
+                        wait.open()
                         wait.setInformationText('Bundle filtering...')
                         wait.setProgressVisibility(n > 1)
                         wait.setProgressRange(0, n)
-                        wait.open()
                         QApplication.processEvents()
                         for w in wchk:
                             select = None
@@ -6596,10 +6785,10 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         # Revision 28/08/2025 >
                         if self._cltdialog.exec() == QDialog.Accepted:
                             wait = DialogWait()
+                            wait.open()
                             wait.setInformationText('Bundle clustering...')
                             wait.setProgressVisibility(n > 1)
                             wait.setProgressRange(0, n)
-                            wait.open()
                             for w in wchk:
                                 # Clustering
                                 sl = w.getStreamlines()
@@ -6675,10 +6864,10 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         # Revision 28/08/2025 >
                         if self._cltdialog.exec() == QDialog.Accepted:
                             wait = DialogWait()
+                            wait.open()
                             wait.setInformationText('Bundle centroid...')
                             wait.setProgressRange(0, n)
                             wait.setProgressVisibility(n > 1)
-                            wait.open()
                             for w in wchk:
                                 if self.count() < self.getMaxCount():
                                     slt = w.getStreamlines()
@@ -6715,11 +6904,11 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 n = len(wchk)
                 if n > 0:
                     wait = DialogWait()
+                    wait.open()
                     wait.setInformationText('Bundle density map processing...')
                     wait.setProgressRange(0, n)
                     wait.setCurrentProgressValue(0)
                     wait.setProgressVisibility(n > 1)
-                    wait.open()
                     for w in wchk:
                         wait.setInformationText('{} density map processing...'.format(w.getName()))
                         wait.incCurrentProgressValue()
@@ -6749,11 +6938,11 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 n = len(wchk)
                 if n > 0:
                     wait = DialogWait()
+                    wait.open()
                     wait.setInformationText('Bundle ROI processing...')
                     wait.setProgressRange(0, n)
                     wait.setCurrentProgressValue(0)
                     wait.setProgressVisibility(n > 1)
-                    wait.open()
                     for w in wchk:
                         wait.setInformationText('{} ROI processing...'.format(w.getName()))
                         wait.incCurrentProgressValue()
@@ -6805,11 +6994,11 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 n = len(wchk)
                 if n > 0:
                     wait = DialogWait()
+                    wait.open()
                     wait.setInformationText('Bundle Mesh processing...')
                     wait.setProgressRange(0, n)
                     wait.setCurrentProgressValue(0)
                     wait.setProgressVisibility(n > 1)
-                    wait.open()
                     for w in wchk:
                         wait.setInformationText('{} Mesh processing...'.format(w.getName()))
                         wait.incCurrentProgressValue()
@@ -6861,10 +7050,10 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 n = len(wchk)
                 if n > 0:
                     wait = DialogWait()
+                    wait.open()
                     wait.setInformationText('Compute bundle statistics...')
                     wait.setProgressRange(0, n)
                     wait.setProgressVisibility(n > 1)
-                    wait.open()
                     QApplication.processEvents()
                     self._statdialog.clear()
                     data = list()
@@ -6933,10 +7122,10 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     n = len(wchk)
                     if n > 0:
                         wait = DialogWait()
+                        wait.open()
                         wait.setInformationText('Duplicate bundle...')
                         wait.setProgressRange(0, n)
                         wait.setProgressVisibility(n > 1)
-                        wait.open()
                         for w in wchk:
                             if self.count() < self.getMaxCount():
                                 wait.incCurrentProgressValue()
@@ -6991,8 +7180,8 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     n = len(wchk)
                     if n > 1:
                         wait = DialogWait()
-                        wait.setInformationText('Bundles union...')
                         wait.open()
+                        wait.setInformationText('Bundles union...')
                         self.unionBundle(wchk, wait)
                         wait.close()
                     else: messageBox(self,
@@ -7004,6 +7193,17 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                                text='Maximum number of bundles reached.\n'
                                     'Close a bundle to add a new one.',
                                icon=QMessageBox.Information)
+
+    # < Revision 17/11/2025
+    # add visibility method
+    def visibility(self):
+        if self.isEnabled():
+            if self.hasViewCollection():
+                if len(self._collection) > 0:
+                    for i in range(0, self._list.count()):
+                        widget = self._list.itemWidget(self._list.item(i))
+                        widget.setVisibility(self._visibility.getVisibilityStateIcon())
+    # Revision 17/11/2025 >
 
     # Qt event
 

@@ -4404,7 +4404,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
 
     QWidget -> SynchronizedFileSelectionWidget
 
-    Last revision: 20/10/2025
+    Last revision: 04/11/2025
     """
 
     # Special method
@@ -4646,17 +4646,17 @@ class SynchronizedFilesSelectionWidget(QWidget):
         """
         return list(self._multiple.keys())
 
-    def setSisypheVolumeFilters(self, filters: dict[str, list[bool] | bool | None]) -> None:
+    def setSisypheVolumeFilters(self, filters: dict[str, list[bool] | None]) -> None:
         """
         Set PySisyphe volume (.xvol) filters to the contained single and multiple file selection widgets based on the
         provided filter configuration.
 
         Parameters
         ----------
-        filters : dict[str, dict[str, list[bool] | bool | None]
+        filters : dict[str, dict[str, list[bool] | None]
 
             - dictionary specifying which widgets should filter for SisypheVolumes.
-            - expected format: {'single': [bool, ...], 'multiple': [bool, ...]}
+            - expected format: {'single': list[bool] | None, 'multiple': list[bool] | None}
         """
         if len(self._single) > 0:
             if 'single' in filters:
@@ -4677,7 +4677,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
                     else: ValueError('wrong number of elements in multiple file selection {}'.format(type(flt)))
                 else: raise TypeError('parameter type {} is not list or tuple.'.format(type(flt)))
 
-    def setSequenceFilters(self, filters: dict[str, dict[str, list[str] | str | None]]) -> None:
+    def setSequenceFilters(self, filters: dict[str, list[str] | None]) -> None:
         """
         Set sequence filters to the contained single (FileSelectionWidget) and multiple file selection
         (FilesSelectionWidget) widgets.
@@ -4686,8 +4686,8 @@ class SynchronizedFilesSelectionWidget(QWidget):
         ----------
         filters : dict[str, dict[str, list[str] | str | None]
 
-            - dictionary specifying sequence filters for single and multiple widgets, mapped by their labels.
-            - expected format: {'single': [sequence_str | list[str] | None, ...], 'multiple': [sequence_str | list[str] | None, ...]}
+            - dictionary specifying sequence filters for single and multiple widgets.
+            - expected format: {'single': list[str] | None, 'multiple': list[str] | None}
         """
         if isinstance(filters, dict):
             if len(self._single) > 0:
@@ -4731,17 +4731,17 @@ class SynchronizedFilesSelectionWidget(QWidget):
         r['multiple'] = r2
         return r
 
-    def setModalityFilters(self, filters: dict[str, dict[str, list[str] | str | None]]) -> None:
+    def setModalityFilters(self, filters: dict[str, list[str] | None]) -> None:
         """
         Set modality filters to the contained single (FileSelectionWidget) and multiple file selection
         (FilesSelectionWidget) widgets.
 
         Parameters
         ----------
-        filters : dict[str, dict[str, list[str] | str | None]
+        filters : dict[str, list[str] | None]
 
-            - dictionary specifying sequence filters for single and multiple widgets, mapped by their labels.
-            - expected format: {'single': [modality_str | list[str] | None, ...], 'multiple': [modality_str | list[str] | None, ...]}
+            - dictionary specifying sequence filters for single and multiple widgets.
+            - expected format: {'single': list[str] | None, 'multiple': list[str] | None}
         """
         if isinstance(filters, dict):
             if len(self._single) > 0:
@@ -4785,17 +4785,17 @@ class SynchronizedFilesSelectionWidget(QWidget):
         r['multiple'] = r2
         return r
 
-    def setSuffixFilters(self, filters: dict[str, dict[str, str | None]]) -> None:
+    def setSuffixFilters(self, filters: dict[str, list[str] | None]) -> None:
         """
         Set suffix filters to the contained single (FileSelectionWidget) and multiple file selection
         (FilesSelectionWidget) widgets.
 
         Parameters
         ----------
-        filters : dict[str, dict[str, list[str] | str | None]
+        filters : dict[str, list[str] | None]
 
-            - dictionary specifying suffix filters for single and multiple widgets, mapped by their labels.
-            - expected format: {'single': [suffix_str | list[str] | None, ...], 'multiple': [suffix_str | list[str] | None, ...]}
+            - dictionary specifying suffix filters for single and multiple widgets.
+            - expected format: {'single': list[str] | None, 'multiple': list[str] | None}
         """
         if isinstance(filters, dict):
             if len(self._single) > 0:
@@ -4804,7 +4804,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
                     if isinstance(flt, (list, tuple)):
                         if len(flt) == len(self._single):
                             for i, (_, flist) in enumerate(self._single.items()):
-                                flist.filterSuffix(flt[i])
+                                if flt[i] is not None: flist.filterSuffix(flt[i])
                         else: ValueError('wrong number of elements in multiple file selection {}'.format(type(flt)))
                     else: raise TypeError('parameter type {} is not list or tuple.'.format(type(flt)))
             if len(self._multiple) > 0:
@@ -4813,7 +4813,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
                     if isinstance(flt, (list, tuple)):
                         if len(flt) == len(self._multiple):
                             for i, (_, flist) in enumerate(self._multiple.items()):
-                                flist.filterSuffix(flt[i])
+                                if flt[i] is not None: flist.filterSuffix(flt[i])
                         else: ValueError('wrong number of elements in multiple file selection {}'.format(type(flt)))
                     else: raise TypeError('parameter type {} is not list or tuple.'.format(type(flt)))
 
@@ -4839,17 +4839,17 @@ class SynchronizedFilesSelectionWidget(QWidget):
         r['multiple'] = r2
         return r
 
-    def setPrefixFilters(self, filters: dict[str, dict[str, str | None]]) -> None:
+    def setPrefixFilters(self, filters: dict[str, list[str] | None]) -> None:
         """
         Set prefix filters to the contained single (FileSelectionWidget) and multiple file selection
         (FilesSelectionWidget) widgets.
 
         Parameters
         ----------
-        filters : dict[str, dict[str, list[str] | str | None]
+        filters : dict[str, list[str] | None]
 
-            - dictionary specifying prefix filters for single and multiple widgets, mapped by their labels.
-            - expected format: {'single': [prefix_str | list[str] | None, ...], 'multiple': [prefix_str | list[str] | None, ...]}
+            - dictionary specifying prefix filters for single and multiple widgets.
+            - expected format: {'single': list[str], 'multiple': list[str] | None}
         """
         if isinstance(filters, dict):
             if len(self._single) > 0:
@@ -4858,7 +4858,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
                     if isinstance(flt, (list, tuple)):
                         if len(flt) == len(self._single):
                             for i, (_, flist) in enumerate(self._single.items()):
-                                flist.filterPrefix(flt[i])
+                                if flt[i] is not None: flist.filterPrefix(flt[i])
                         else: ValueError('wrong number of elements in multiple file selection {}'.format(type(flt)))
                     else: raise TypeError('parameter type {} is not list or tuple.'.format(type(flt)))
             if len(self._multiple) > 0:
@@ -4867,7 +4867,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
                     if isinstance(flt, (list, tuple)):
                         if len(flt) == len(self._multiple):
                             for i, (_, flist) in enumerate(self._multiple.items()):
-                                flist.filterPrefix(flt[i])
+                                if flt[i] is not None: flist.filterPrefix(flt[i])
                         else: ValueError('wrong number of elements in multiple file selection {}'.format(type(flt)))
                     else: raise TypeError('parameter type {} is not list or tuple.'.format(type(flt)))
 
@@ -4893,17 +4893,17 @@ class SynchronizedFilesSelectionWidget(QWidget):
         r['multiple'] = r2
         return r
 
-    def setContainsStringFilters(self, filters: dict[str, dict[str, str | None]]) -> None:
+    def setContainsStringFilters(self, filters: dict[str, list[str] | None]) -> None:
         """
         Set filename substring filters to the contained single (FileSelectionWidget) and multiple file selection
         (FilesSelectionWidget) widgets.
 
         Parameters
         ----------
-        filters : dict[str, dict[str, list[str] | str | None]
+        filters : dict[str, list[str] | None]
 
-            - dictionary specifying filename substring filters for single and multiple widgets, mapped by their labels.
-            - expected format: {'single': [substring_str | list[str] | None, ...], 'multiple': [substring_str | list[str] | None, ...]}
+            - dictionary specifying filename substring filters for single and multiple widgets.
+            - expected format: {'single': list[str] | None, 'multiple': list[str] | None}
         """
         if isinstance(filters, dict):
             if len(self._single) > 0:
@@ -4912,7 +4912,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
                     if isinstance(flt, (list, tuple)):
                         if len(flt) == len(self._single):
                             for i, (_, flist) in enumerate(self._single.items()):
-                                flist.filterFilenameContains(flt[i])
+                                if flt[i] is not None: flist.filterFilenameContains(flt[i])
                         else: ValueError('wrong number of elements in multiple file selection {}'.format(type(flt)))
                     else: raise TypeError('parameter type {} is not list or tuple.'.format(type(flt)))
             if len(self._multiple) > 0:
@@ -4921,7 +4921,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
                     if isinstance(flt, (list, tuple)):
                         if len(flt) == len(self._multiple):
                             for i, (_, flist) in enumerate(self._multiple.items()):
-                                flist.filterFilenameContains(flt[i])
+                                if flt[i] is not None: flist.filterFilenameContains(flt[i])
                         else: ValueError('wrong number of elements in multiple file selection {}'.format(type(flt)))
                     else: raise TypeError('parameter type {} is not list or tuple.'.format(type(flt)))
 

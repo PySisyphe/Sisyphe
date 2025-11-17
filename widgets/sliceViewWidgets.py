@@ -1358,14 +1358,10 @@ class SliceViewWidget(AbstractViewWidget):
             tolsup = 1 + tol
             tolinf = 1 - tol
             s = self._volume.getSpacing()
-            if self._orient == self._DIM0:
-                return tolinf <= (s[1] / s[0]) <= tolsup
-            elif self._orient == self._DIM1:
-                return tolinf <= (s[2] / s[0]) <= tolsup
-            else:
-                return tolinf <= (s[1] / s[2]) <= tolsup
-        else:
-            raise TypeError('parameter functype is not float.')
+            if self._orient == self._DIM0: return tolinf <= (s[1] / s[0]) <= tolsup
+            elif self._orient == self._DIM1: return tolinf <= (s[2] / s[0]) <= tolsup
+            else: return tolinf <= (s[1] / s[2]) <= tolsup
+        else: raise TypeError('parameter functype is not float.')
 
     def setCameraPlanePosition(self, p: list[float] | tuple[float, float, float], signal: bool = True) -> None:
         """
@@ -6461,7 +6457,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> SliceROIViewWidget
 
     Creation: 12/04/2022
-    Last revision: 20/10/2025
+    Last revision: 14/11/2025
     """
 
     # Custom Qt signals
@@ -7192,8 +7188,11 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         """
         super()._updateCameraOrientation()
         self._updateBrush()
-        if not self.isCurrentOrientationIsotropic(): self.setROIVisibilityOff()
-        else: self.setROIVisibilityOn()
+        # < Revision 06/11/2025
+        # if not self.isCurrentOrientationIsotropic(): self.setROIVisibilityOff()
+        # else: self.setROIVisibilityOn()
+        self.setROIVisibilityOn()
+        # Revision 06/11/2025 >
 
     def _getClickedMatrixCoordinate(self) -> list[int]:
         """
@@ -8732,6 +8731,435 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # noinspection PyUnresolvedReferences
                 self.ROIFlagChanged.emit(self, 'setActiveContourFlagOn', None)
 
+    def get2DBlobDilateFlag(self) -> bool:
+        """
+        Get the current state of the '2D Dilate Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2dblobdilate'].isChecked()
+        else: return False
+
+    def get2DBlobErodeFlag(self) -> bool:
+        """
+        Get the current state of the '2D Erode Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2dbloberode'].isChecked()
+        else: return False
+
+    def get2DBlobCloseFlag(self) -> bool:
+        """
+        Get the current state of the '2D Closing Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2dblobclose'].isChecked()
+        else: return False
+
+    def get2DBlobOpenFlag(self) -> bool:
+        """
+        Get the current state of the '2D Opening Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2dblobopen'].isChecked()
+        else: return False
+
+    def get2DBlobCopyFlag(self) -> bool:
+        """
+        Get the current state of the '2D Copy Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2dblobcopy'].isChecked()
+        else: return False
+
+    def get2DBlobCutFlag(self) -> bool:
+        """
+        Get the current state of the '2D Cut Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2dblobcut'].isChecked()
+        else: return False
+
+    def get2DBlobPasteFlag(self) -> bool:
+        """
+        Get the current state of the '2D Paste Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2dblobpaste'].isChecked()
+        else: return False
+
+    def get2DBlobRemoveFlag(self) -> bool:
+        """
+        Get the current state of the '2D Remove Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2dblobremove'].isChecked()
+        else: return False
+
+    def get2DBlobKeepFlag(self) -> bool:
+        """
+        Get the current state of the '2D Keep Only Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2dblobkeep'].isChecked()
+        else: return False
+
+    def get2DBlobThresholdFlag(self) -> bool:
+        """
+        Get the current state of the '2D Thresholding in Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2dblobthreshold'].isChecked()
+        else: return False
+
+    def get2DFillFlag(self) -> bool:
+        """
+        Get the current state of the '2D Fill from Seed' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2dfill'].isChecked()
+        else: return False
+
+    def get2DRegionGrowingFlag(self) -> bool:
+        """
+        Get the current state of the '2D Region Growing' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2drgrowing'].isChecked()
+        else: return False
+
+    def get2DBlobRegionGrowingFlag(self) -> bool:
+        """
+        Get the current state of the '2D Region Growing in Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2dblobrgrowing'].isChecked()
+        else: return False
+
+    def get2DRegionConfidenceFlag(self) -> bool:
+        """
+        Get the current state of the '2D Confidence Connected Region Growing' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2drconfidence'].isChecked()
+        else: return False
+
+    def get2DBlobRegionConfidenceFlag(self) -> bool:
+        """
+        Get the current state of the '2D Confidence Connected Region Growing in Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['2dblobrconfidence'].isChecked()
+        else: return False
+
+    def get3DBlobDilateFlag(self) -> bool:
+        """
+        Get the current state of the '3D Dilate Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dblobdilate'].isChecked()
+        else: return False
+
+    def get3DBlobErodeFlag(self) -> bool:
+        """
+        Get the current state of the '3D Erode Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dbloberode'].isChecked()
+        else: return False
+
+    def get3DBlobCloseFlag(self) -> bool:
+        """
+        Get the current state of the '3D Closing Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dblobclose'].isChecked()
+        else: return False
+
+    def get3DBlobOpenFlag(self) -> bool:
+        """
+        Get the current state of the '3D Opening Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dblobopen'].isChecked()
+        else: return False
+
+    def get3DBlobCopyFlag(self) -> bool:
+        """
+        Get the current state of the '3D Copy Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dblobcopy'].isChecked()
+        else: return False
+
+    def get3DBlobCutFlag(self) -> bool:
+        """
+        Get the current state of the '3D Cut Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dblobcut'].isChecked()
+        else: return False
+
+    def get3DBlobPasteFlag(self) -> bool:
+        """
+        Get the current state of the '3D Paste Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dblobpaste'].isChecked()
+        else: return False
+
+    def get3DBlobRemoveFlag(self) -> bool:
+        """
+        Get the current state of the '3D Remove Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dblobremove'].isChecked()
+        else: return False
+
+    def get3DBlobKeepFlag(self) -> bool:
+        """
+        Get the current state of the '3D Keep Only Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dblobkeep'].isChecked()
+        else: return False
+
+    def get3DBlobExpandFlag(self) -> bool:
+        """
+        Get the current state of the '3D Expand Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dblobexpand'].isChecked()
+        else: return False
+
+    def get3DBlobShrinkFlag(self) -> bool:
+        """
+        Get the current state of the '3D Shrink Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dblobshrink'].isChecked()
+        else: return False
+
+    def get3DBlobThresholdFlag(self) -> bool:
+        """
+        Get the current state of the '3D Thresholding in Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dblobthreshold'].isChecked()
+        else: return False
+
+    def get3DFillFlag(self) -> bool:
+        """
+        Get the current state of the '3D Fill from Seed' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dfill'].isChecked()
+        else: return False
+
+    def get3DRegionGrowingFlag(self) -> bool:
+        """
+        Get the current state of the '3D Region Growing' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3drgrowing'].isChecked()
+        else: return False
+
+    def get3DBlobRegionGrowingFlag(self) -> bool:
+        """
+        Get the current state of the '3D Region Growing in Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dblobrgrowing'].isChecked()
+        else: return False
+
+    def get3DRegionConfidenceFlag(self) -> bool:
+        """
+        Get the current state of the '3D Confidence Connected Region Growing' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3drconfidence'].isChecked()
+        else: return False
+
+    def get3DBlobRegionConfidenceFlag(self) -> bool:
+        """
+        Get the current state of the '3D Confidence Connected Region Growing in Selected Blob' tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['3dblobrconfidence'].isChecked()
+        else: return False
+
+    def getActiveContourFlag(self) -> bool:
+        """
+        Get the current state of the 'Active Contour' segmentation tool.
+
+        Returns
+        -------
+        bool
+            True if tool is activated.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            return self._action['activecontour'].isChecked()
+        else: return False
+
     def setUndoOn(self, signal: bool = True) -> None:
         """
         Enable the undo/redo functionality.
@@ -9222,8 +9650,13 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     elif self._window.GetInteractorStyle().GetButton() == 3:
                         self._draw.erase(p[0], p[1], p[2], self._orient)
                     self._roimapper.GetInput().Modified()
-                    # noinspection PyUnresolvedReferences
-                    self.ROIModified.emit(self)
+                    # < Revision 14/11/2025
+                    # self.ROIModified.emit(self)
+                    # no synchronization to speed up 2D brush control
+                    if self.getBrushFlag() not in (1, 2):
+                        # noinspection PyUnresolvedReferences
+                        self.ROIModified.emit(self)
+                    # Revision 14/11/2025 >
                 self._renderwindow.Render()
         else: super()._onMouseMoveEvent(obj, evt_name)
 
@@ -9452,8 +9885,13 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     wait.close()
                 self._roimapper.GetInput().Modified()
                 self._renderwindow.Render()
-                # noinspection PyUnresolvedReferences
-                self.ROIModified.emit(self)
+                # < Revision 14/11/2025
+                # self.ROIModified.emit(self)
+                # no synchronization to speed up 2D brush control
+                if self.getBrushFlag() not in (1, 2):
+                    # noinspection PyUnresolvedReferences
+                    self.ROIModified.emit(self)
+                # Revision 14/11/2025 >
         else: super()._onLeftPressEvent(obj, evt_name)
 
     def _onLeftReleaseEvent(self,  obj: vtkObject, evt_name: str) -> None:
