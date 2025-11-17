@@ -1069,6 +1069,10 @@ version 0.21.08, build 18/11/2025
 		- update __init__() method
 		- new visibility() method
 
+	- widgets.iconBarViewWidgets.IconBarWidget
+
+		- update _onExpand method()
+
 	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection
 
 		- new methods to get flag of ROI tools
@@ -1120,6 +1124,10 @@ version 0.21.08, build 18/11/2025
 		- widgets.selectFileWidgets.SettingsWidget._initSettingsLayout()
 
 			- bug fix, lines 768/785/803/820, vols/rois/dcms/dirs add filenames to FilesSelectionWidget
+
+		- widgets.iconBarViewWidgets.IconBarWidget._onExpand()
+
+			- line 713 & 723, disable synchronization when displaying a single (expanded) view to speed up rendering
 
 		- widgets.sliceViewWidgets.SliceROIViewWidget._updateCameraOrientation()
 
