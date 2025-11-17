@@ -14,8 +14,9 @@ from Sisyphe.lib.mega.mega import Mega
 from xml.dom import minidom
 
 # __version__ = "0.9.1"
-#__version__ = "0.18.9"
-__version__ = "0.20.16" # 01-11-2025
+# __version__ = "0.18.9"
+# __version__ = "0.20.16" # 01-11-2025
+__version__ = "0.21.08" # 181-11-2025
 
 _V = b'70797369737970686540676d61696c2e636f6d'
 
