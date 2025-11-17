@@ -137,14 +137,18 @@ def globalExceptionHandler(tp, value, tb):
     messageBox(None,
                'PySisyphe uncaught exception',
                '{}\nSee PySisyphe.log for traceback details.'.format(str(value)))
-    stack = traceback.format_list(traceback.extract_stack())
-    summary = traceback.format_list(traceback.extract_tb(tb))
-    if len(summary) > 0: summary = summary[0]
-    else: summary = ''
-    if len(stack) > 1: msg = ''.join(stack[:-1])
-    else: msg = ''
+    # < Revision 10/11/2025
+    # stack = traceback.format_list(traceback.extract_stack())
+    # summary = traceback.format_list(traceback.extract_tb(tb))
+    # if len(summary) > 0: summary = summary[0]
+    # else: summary = ''
+    # if len(stack) > 1: msg = ''.join(stack[:-1])
+    # else: msg = ''
     # if not hasattr(sys, '_MEIPASS'):
-    logging.error('{}{}  {}'.format(msg, summary, str(value)))
+    # logging.error('{}{}  {}'.format(msg, summary, str(value)))
+    msg = ''.join(traceback.format_exception(tp, value, tb))
+    # Revision 10/11/2025 >
+    logging.error(msg)
 # Revision 04/07/2025 >
 
 # < Revision 22/07/2025
