@@ -510,6 +510,7 @@ class DialogDiffusionTracking(QDialog):
                 try:
                     process.start()
                     while process.is_alive():
+                        # noinspection PyTypeChecker
                         wait.messageFromDictProxyManager(mng)
                         if not queue.empty():
                             # noinspection PyUnusedLocal

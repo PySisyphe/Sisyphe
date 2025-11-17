@@ -1868,10 +1868,11 @@ class WindowSisyphe(QMainWindow):
                            'Plugin...',
                            '{} import failed.'.format(name))
                 return
-            try: mod.main(self)
-            except: messageBox(self,
-                               'Plugin...',
-                               '{} failed to run.'.format(name))
+            mod.main(self)
+            # try: mod.main(self)
+            # except: messageBox(self,
+            #                    'Plugin...',
+            #                    '{} failed to run.'.format(name))
         else: messageBox(self,
                          'Plugin...',
                          'No such file {}'.format(action.text() + '.py'))

@@ -50,7 +50,7 @@ class DialogSkullStripping(AbstractDialogFunction):
 
     QDialog -> AbstractDialogFunction -> DialogSkullStripping
 
-    Last revision: 13/07/2025
+    Last revision: 06/11/2025
     """
 
     # Class method
@@ -208,11 +208,20 @@ class DialogSkullStripping(AbstractDialogFunction):
                 v.saveAs(filename2)
             # Save mask as ROI
             if roimask:
+                # < Revision 06/11/2025
+                filename2 = addPrefixSuffixToFilename(filename, maskprefix, masksuffix)
+                # Revision 06/11/2025 >
                 roi = SisypheROI()
-                roi.copyFromNumpyArray(mask)
+                # < Revision 06/11/2025
+                # roi.copyFromNumpyArray(mask)
+                roi.copyFromNumpyArray(mask, spacing=s, defaultshape=False)
+                # Revision 06/11/2025 >
                 roi.setName('Cerebrum')
                 roi.setReferenceID(img)
-                roi.saveAs(filename)
+                # < Revision 06/11/2025
+                # roi.saveAs(filename2)
+                roi.saveAs(filename2)
+                # Revision 06/11/2025 >
             # Save brain extracted volume
             filename2 = addPrefixSuffixToFilename(filename, prefix, suffix)
             # shape x, y, z
