@@ -122,7 +122,7 @@ class IconBarWidget(QWidget):
     QWidget -> IconBarWidget
 
     Creation: 17/04/2022
-    Last revision: 10/10/2025
+    Last revision: 17/11/2025
     """
 
     _BTSIZE = 40    # default button size
@@ -710,12 +710,19 @@ class IconBarWidget(QWidget):
                 if w is not None:
                     w.getAction()['expand'].toggle()
                     self._widget.expandViewWidget(w)
+                    # < Revision 17/11/2025
+                    # disable synchronization when displaying a single (expanded) view to speed up rendering
+                    w.synchronisationOff()
+                    # Revision 17/11/2025 >
             else:
                 for i in range(0, self._widget.getRows()):
                     for j in range(0, self._widget.getCols()):
                         action = self._widget[i, j].getAction()['expand']
                         if action.isChecked(): action.setChecked(False)
                         self._widget[i, j].setVisible(True)
+                        # < Revision 17/11/2025
+                        self._widget[i, j].synchronisationOn()
+                        # Revision 17/11/2025 >
 
     def _onFullScreen(self) -> None:
         """
