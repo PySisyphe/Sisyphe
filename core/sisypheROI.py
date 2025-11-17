@@ -171,7 +171,8 @@ if TYPE_CHECKING:
     from Sisyphe.core.sisypheTransform import SisypheApplyTransform
 
 
-__all__ = ['SisypheROI',
+__all__ = ['isCompiled',
+           'SisypheROI',
            'SisypheROICollection',
            'SisypheROIDraw',
            'SisypheROIFeatures',
@@ -196,6 +197,19 @@ tupleInt3 = tuple[int, int, int]
 vectorInt3 = list[int] | tupleInt3
 tupleFloat3 = tuple[float, float, float]
 vectorFloat3 = list[float] | tupleFloat3
+
+
+def isCompiled() -> bool:
+    """
+    Check if current instance is cython compiled or interpreted.
+
+    Returns
+    -------
+    bool
+        True if current instance is cython compiled, False otherwise.
+    """
+    # noinspection PyUnresolvedReferences
+    return cython.compiled
 
 
 class SisypheROI(SisypheBinaryImage):
@@ -316,19 +330,6 @@ class SisypheROI(SisypheBinaryImage):
 
     # Special methods
 
-    """
-    Private attributes
-
-    _color          list[double]
-    _alpha          float
-    _name           str
-    _path           str
-    _reference_ID   str
-    _compressed     bool
-    _filename       str
-    _lut            SisypheLut
-    """
-
     def __init__(self,
                  image: str | listLibImages | SisypheImage | None = None,
                  copy: bool = True,
@@ -371,6 +372,19 @@ class SisypheROI(SisypheBinaryImage):
         self.setDefaultOrigin()
         self.setDirections()
         self.setDefaultFilename()
+
+    """
+    Private attributes
+
+    _color          list[double]
+    _alpha          float
+    _name           str
+    _path           str
+    _reference_ID   str
+    _compressed     bool
+    _filename       str
+    _lut            SisypheLut
+    """
 
     def __str__(self) -> str:
         """
@@ -3942,40 +3956,6 @@ class SisypheROIDraw(object):
 
     # Special methods
 
-    """
-    Private attributes
-
-    _volume         SisypheVolume
-    _gradient       sitkImage
-    _mask
-    _roi            SisypheROI
-    _brush          numpy array, disk brush
-    _vbrush         numpy array, ball brush
-    _undo           bool
-    _undolifo       deque
-    _redolifo       deque
-    _radius         int, brush radius (pixel unit)
-    _brushtype      int, brush shape
-    _morphradius    int, structuring element radius (pixel unit)
-    _struct         int, structuring element shape (ball, box, cross, annulus)
-    _thickness      float, default expand/shrink thickness (mm)
-    _thresholdmin   float
-    _thresholdmax   float
-    _ccsigma        float, cluster confidence sigma
-    _cciter         int, cluster confidence iterations
-    _acradius       float, active contour seed radius in mm (default 2.0)
-    _acrms          float, active contour convergnece threshold (default 0.01)
-    _acsigma        float, active contour gaussian kernel sigma for gradient magnitude processing (default 1.0)
-    _accurv         float, active contour curvature weight (default 1.0)
-    _acadvec        float, active contour advection weight (default 1.0)
-    _acpropag       float, active contour propagation weight (default 1.0)
-    _aciter         int, active contour number of iterations (default 1000)
-    _acalgo         str, active contour algorithm ('geodesic', 'shape', 'threshold')
-    _acfactor       float, factor used to process thresholds in seed region (mean +/- factor * sigma)
-    _acthresholds   tuple[float, float] | None, active contour thresholds inf. and sup.
-    _clipboard      sitkImage
-    """
-
     def __init__(self) -> None:
         """
         SisypheROIDraw instance constructor.
@@ -4025,6 +4005,40 @@ class SisypheROIDraw(object):
         self._acthresholds: tuple[float, float] | None = None
         self._clipboard = None
         self._calcBrush()
+
+    """
+    Private attributes
+
+    _volume         SisypheVolume
+    _gradient       sitkImage
+    _mask
+    _roi            SisypheROI
+    _brush          numpy array, disk brush
+    _vbrush         numpy array, ball brush
+    _undo           bool
+    _undolifo       deque
+    _redolifo       deque
+    _radius         int, brush radius (pixel unit)
+    _brushtype      int, brush shape
+    _morphradius    int, structuring element radius (pixel unit)
+    _struct         int, structuring element shape (ball, box, cross, annulus)
+    _thickness      float, default expand/shrink thickness (mm)
+    _thresholdmin   float
+    _thresholdmax   float
+    _ccsigma        float, cluster confidence sigma
+    _cciter         int, cluster confidence iterations
+    _acradius       float, active contour seed radius in mm (default 2.0)
+    _acrms          float, active contour convergnece threshold (default 0.01)
+    _acsigma        float, active contour gaussian kernel sigma for gradient magnitude processing (default 1.0)
+    _accurv         float, active contour curvature weight (default 1.0)
+    _acadvec        float, active contour advection weight (default 1.0)
+    _acpropag       float, active contour propagation weight (default 1.0)
+    _aciter         int, active contour number of iterations (default 1000)
+    _acalgo         str, active contour algorithm ('geodesic', 'shape', 'threshold')
+    _acfactor       float, factor used to process thresholds in seed region (mean +/- factor * sigma)
+    _acthresholds   tuple[float, float] | None, active contour thresholds inf. and sup.
+    _clipboard      sitkImage
+    """
 
     def __str__(self) -> str:
         """

@@ -39,6 +39,7 @@ __all__ = ['getUsername',
            'getDPIScaleFactor',
            'SisypheSettings',
            'SisypheFunctionsSettings',
+           'SisypheCustomSettings',
            'SisypheDialogsSettings',
            'SisypheTooltips']
 
@@ -1267,6 +1268,79 @@ class SisypheDialogsSettings(SisypheSettings):
         """
         super().__init__()
 
+# < Revision 04/11/2025
+# new class SisypheCustomSettings
+class SisypheCustomSettings(SisypheSettings):
+    """
+    SisypheCustomSettings class
+
+    Description
+    ~~~~~~~~~~~
+
+    Management of settings from a custom XML file.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    object -> SisypheSettings -> SisypheCustomSettings
+
+    Creation: 04/11/2025
+    Last Revision:
+    """
+
+    _Filename = ''
+
+    # Special methods
+
+    @classmethod
+    def setClassSettings(cls, filename: str) -> None:
+        """
+        Set the custom settings xml file name.
+
+        Parameters
+        ----------
+        filename : str
+            custom settings xml file name
+
+        Returns
+        -------
+        str
+            custom settings xml file name.
+        """
+        cls._Filename = filename
+
+    @classmethod
+    def getDefaultSettings(cls) -> str:
+        """
+        Get custom settings xml file name.
+
+        Returns
+        -------
+        str
+            custom settings xml file name.
+        """
+        return cls._Filename
+
+    @classmethod
+    def getUserSettings(cls) -> str:
+        """
+        Get custom settings xml file name.
+
+        Returns
+        -------
+        str
+            custom settings xml file name.
+        """
+        return cls.getDefaultSettings()
+
+    # Special methods
+
+    def __init__(self) -> None:
+        """
+        SisypheCustomSettings instance constructor.
+        """
+        super().__init__(self.getDefaultSettings())
+# Revision 04/11/2025 >
 
 class SisypheTooltips(SisypheSettings):
     """

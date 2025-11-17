@@ -56,6 +56,7 @@ from numpy.ma import filled
 
 from scipy.stats import kurtosis
 from scipy.stats import skew
+from scipy.ndimage import map_coordinates
 
 # noinspection PyProtectedMember
 from skimage.measure._moments import centroid
@@ -290,20 +291,11 @@ class SisypheImage(object):
     object -> SisypheImage
 
     Creation: 12/01/2021
-    Last revision: 13/06/2025
+    Last revision: 13/11/2025
     """
     __slots__ = ['_sitk_image', '_itk_image', '_vtk_image', '_numpy_array', '_attr']
 
     # Special methods
-
-    """
-    Private attributes
-
-    _sitk_image     sitkImage
-    _vtk_image      vtkImageData
-    _itk_image      itkImage
-    _numpy_array    ndarray
-    """
 
     def __init__(self,
                  image: str | listImages2 | SisypheImage | None = None,
@@ -380,7 +372,14 @@ class SisypheImage(object):
                 self._sitk_image.SetOrigin(origin)
                 self._sitk_image.SetDirection(direction)
                 self._updateImages()
+    """
+    Private attributes
 
+    _sitk_image     sitkImage
+    _vtk_image      vtkImageData
+    _itk_image      itkImage
+    _numpy_array    ndarray
+    """
     def __str__(self) -> str:
         """
         Special overloaded method called by the built-in str() python function.
@@ -2388,6 +2387,43 @@ class SisypheImage(object):
         """
         return self._sitk_image.TransformPhysicalPointToIndex(p)
 
+    # < Revision 07/11/2025
+    # add getValueAtContiuousIndex method
+    def getValueAtContiuousIndex(self,
+                                 p: vectorFloat3 | ndarray,
+                                 world: bool = True,
+                                 order: int = 1) -> float:
+        """
+        Get an interpolated scalar value from continuous coordinates.
+
+        Parameters
+        ----------
+        p : list[float, float, float] | tuple[float, float, float] | ndarray
+            coordinates
+        world : bool
+
+            - if True, world coordinates in mm
+            - if False, voxels coordinates (world / spacing)
+
+        order : int
+            interpolation order (0: nearest neighbour, 1: linear, >1 spline order)
+
+        Returns
+        -------
+        float
+        """
+        # < Revision 13/11/2025
+        if isinstance(p, list | tuple): p = array(p)
+        if world:
+            s = array(self.getSpacing())
+            p = p / s
+        # f = itk.LinearInterpolateImageFunction.New(self._itk_image)
+        # return f.Evaluate(p)
+        a = self.getNumpy(defaultshape=False)
+        return float(map_coordinates(a, p.reshape(3, 1), order=order)[0])
+        # Revision 13/11/2025 >
+    # Revision 07/11/2025 >
+
     # < Revision 26/10/2024
     # add fillWith method
     def fillWith(self, v: float = 0.0) -> None:
@@ -4039,7 +4075,10 @@ class SisypheImage(object):
         if n == 1:
             img = self.getNumpy().flatten()
             if nonzero: img = img[img > 0]
-            return float(std(img))
+            # < Revision 06/11/2025
+            # return float(std(img))
+            return float(img.min())
+            # Revision 06/11/2025 >
         else:
             if c is None: first, last = 0, n
             else: first, last = c, c + 1
@@ -4049,7 +4088,10 @@ class SisypheImage(object):
             for i in range(first, last):
                 img = self.getNumpy()[i, :, :, :].flatten()
                 if nonzero: img = img[img > 0]
-                r.append(float(std(img)))
+                # < Revision 06/11/2025
+                # r.append(float(std(img)))
+                r.append(float(img.min()))
+                # Revision 06/11/2025 >
             if len(r) == 1: return r[0]
             else: return r
     # Revision 16/12/2024 >

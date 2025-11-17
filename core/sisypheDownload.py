@@ -11,22 +11,22 @@ from os import remove
 from os import chdir
 from os import mkdir
 
-from os.path import getmtime
-from os.path import expanduser
-
-from shutil import rmtree
-from shutil import copy
-
-from binascii import unhexlify
-
-from glob import glob
-
 from os.path import isfile
+from os.path import isdir
 from os.path import join
 from os.path import exists
 from os.path import dirname
 from os.path import split
 from os.path import splitext
+from os.path import getmtime
+from os.path import expanduser
+
+from glob import glob
+
+from shutil import rmtree
+from shutil import copy
+
+from binascii import unhexlify
 
 from tempfile import TemporaryDirectory
 
@@ -192,6 +192,11 @@ def installFromHost(urls: str | list[str],
             # < Revision 15/10/2025
             # elif isdir(file): folders.append(file)
             # Revision 15/10/2025 >
+            elif isdir(file):
+                dst2 = join(dst, file)
+                if not exists(dst2): mkdir(dst2)
+            # < Revision 06/11/2025
+            # Revision 06/11/2025 >
             if wait is not None: wait.incCurrentProgressValue()
         # < Revision 15/10/2025
         # if len(folders) > 0:

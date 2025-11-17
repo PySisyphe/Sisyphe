@@ -243,7 +243,7 @@ class DistanceWidget(vtkDistanceWidget, NamedWidget):
     (vtkDistanceWidget, NamedWidget) -> DistanceWidget
 
     Creation: 05/04/2022
-    Last revision: 18/12/2023
+    Last revision: 10/11/2025
     """
 
     # Special method
@@ -260,6 +260,9 @@ class DistanceWidget(vtkDistanceWidget, NamedWidget):
         vtkDistanceWidget.__init__(self)
         NamedWidget.__init__(self, name)
         self.setDefaultRepresentation()
+        # < Revision 10/11/2025
+        self.SetObjectName('DistanceWidget')
+        # Revision 10/11/2025 >
 
     # Public methods
 
@@ -552,7 +555,7 @@ class OrthogonalDistanceWidget(vtkBiDimensionalWidget, NamedWidget):
     (vtkDistanceWidget, NamedWidget) -> OrthogonalDistanceWidget
 
     Creation: 05/04/2022
-    Last revision: 18/12/2023
+    Last revision: 10/11/2025
     """
 
     # Special method
@@ -569,6 +572,9 @@ class OrthogonalDistanceWidget(vtkBiDimensionalWidget, NamedWidget):
         vtkBiDimensionalWidget.__init__(self)
         NamedWidget.__init__(self, name)
         self.setDefaultRepresentation()
+        # < Revision 10/11/2025
+        self.SetObjectName('OrthogonalDistanceWidget')
+        # Revision 10/11/2025 >
 
     # Public methods
 
@@ -861,7 +867,7 @@ class AngleWidget(vtkAngleWidget, NamedWidget):
     (vtkDistanceWidget, NamedWidget) -> AngleWidget
 
     Creation: 05/04/2022
-    Last revision: 18/12/2023
+    Last revision: 10/11/2025
     """
 
     # Special method
@@ -878,6 +884,9 @@ class AngleWidget(vtkAngleWidget, NamedWidget):
         vtkAngleWidget.__init__(self)
         NamedWidget.__init__(self, name)
         self.setDefaultRepresentation()
+        # < Revision 10/11/2025
+        self.SetObjectName('AngleWidget')
+        # Revision 10/11/2025 >
 
     # Public methods
 
@@ -1164,7 +1173,7 @@ class BoxWidget(vtkBorderWidget, NamedWidget):
     (vtkDistanceWidget,NamedWidget) -> BoxWidget
 
     Creation: 05/04/2022
-    Last revision: 18/04/2025
+    Last revision: 10/11/2025
     """
 
     # Special method
@@ -1181,6 +1190,9 @@ class BoxWidget(vtkBorderWidget, NamedWidget):
         vtkBorderWidget.__init__(self)
         NamedWidget.__init__(self, name)
         self.setDefaultRepresentation()
+        # < Revision 10/11/2025
+        self.SetObjectName('BoxWidget')
+        # Revision 10/11/2025 >
 
     # Public methods
 
@@ -1421,7 +1433,7 @@ class TextWidget(vtkTextWidget, NamedWidget):
     (vtkDistanceWidget, NamedObject) -> TextWidget
 
     Creation: 05/04/2022
-    Last revision: 18/12/2023
+    Last revision: 10/11/2025
     """
 
     # Special method
@@ -1438,6 +1450,9 @@ class TextWidget(vtkTextWidget, NamedWidget):
         vtkTextWidget.__init__(self)
         NamedWidget.__init__(self, name)
         self.setDefaultRepresentation()
+        # < Revision 10/11/2025
+        self.SetObjectName('TextWidget')
+        # Revision 10/11/2025 >
 
     # Public methods
 
@@ -1682,7 +1697,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
     (vtkDistanceWidget, NamedWidget) -> HandleWidget
 
     Creation: 05/04/2022
-    Last revision: 07/09/2025
+    Last revision: 10/11/2025
     """
 
     _FILEEXT = '.xpoint'
@@ -1730,6 +1745,9 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         """
         vtkHandleWidget.__init__(self)
         NamedWidget.__init__(self, name)
+        # < Revision 10/11/2025
+        self.SetObjectName('HandleWidget')
+        # Revision 10/11/2025 >
 
         # noinspection PyTypeChecker
         self.AddObserver('InteractionEvent', self._onInteractionEvent)
@@ -2054,9 +2072,11 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
             # < Revision 07/09/2025
             # font size f(dpi)
             if usedpi:
-                from PyQt5.QtWidgets import QApplication
-                f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
-                if f != 1.0: size = int(size * f)
+                try:
+                    from PyQt5.QtWidgets import QApplication
+                    f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
+                    if f != 1.0: size = int(size * f)
+                except: pass
             # Revision 07/09/2025 >
             self._targetText.GetTextProperty().SetFontSize(size)
         else: raise TypeError('parameter type {} is not int.'.format(type(size)))
@@ -2079,9 +2099,11 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         # < Revision 07/09/2025
         # font size f(dpi)
         if usedpi:
-            from PyQt5.QtWidgets import QApplication
-            f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
-            if f != 1.0: size = ceil(size / f)
+            try:
+                from PyQt5.QtWidgets import QApplication
+                f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
+                if f != 1.0: size = ceil(size / f)
+            except: pass
         # Revision 07/09/2025 >
         return size
 
@@ -3419,7 +3441,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
     (vtkDistanceWidget, NamedWidget) -> LineWidget
 
     Creation: 05/04/2022
-    Last revision: 07/09/2025
+    Last revision: 10/11/2025
     """
 
     _FILEEXT = '.xline'
@@ -3467,6 +3489,9 @@ class LineWidget(vtkLineWidget2, NamedWidget):
          """
         vtkLineWidget2.__init__(self)
         NamedWidget.__init__(self, name)
+        # < Revision 10/11/2025
+        self.SetObjectName('LineWidget')
+        # Revision 10/11/2025 >
 
         # noinspection PyTypeChecker
         self.AddObserver('InteractionEvent', self._onInteractionEvent)
@@ -3852,9 +3877,11 @@ class LineWidget(vtkLineWidget2, NamedWidget):
             # < Revision 07/09/2025
             # font size f(dpi)
             if usedpi:
-                from PyQt5.QtWidgets import QApplication
-                f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
-                if f != 1.0: size = int(size * f)
+                try:
+                    from PyQt5.QtWidgets import QApplication
+                    f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
+                    if f != 1.0: size = int(size * f)
+                except: pass
             # Revision 07/09/2025 >
             self._targetText.GetTextProperty().SetFontSize(size)
             self._entryText.GetTextProperty().SetFontSize(size)
@@ -3878,9 +3905,11 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         # < Revision 07/09/2025
         # font size f(dpi)
         if usedpi:
-            from PyQt5.QtWidgets import QApplication
-            f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
-            if f != 1.0: size = ceil(size / f)
+            try:
+                from PyQt5.QtWidgets import QApplication
+                f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
+                if f != 1.0: size = ceil(size / f)
+            except: pass
         # Revision 07/09/2025 >
         return size
 
@@ -4235,12 +4264,12 @@ class LineWidget(vtkLineWidget2, NamedWidget):
 
     def setPosition1(self, p: vectorFloat3) -> None:
         """
-        Set the target point position of the current LineWidget instance.
+        Set the entry point position of the current LineWidget instance.
 
         Parameters
         ----------
         p : tuple[float, float, float] | list[float]
-            target point position in world coordinates
+            entry point position in world coordinates
         """
         if isinstance(p, (list, tuple)):
             if len(p) == 3:
@@ -4260,23 +4289,23 @@ class LineWidget(vtkLineWidget2, NamedWidget):
 
     def getPosition1(self) -> vectorFloat3:
         """
-        Get the target point position of the current LineWidget instance.
+        Get the entry point position of the current LineWidget instance.
 
         Returns
         -------
         tuple[float, float, float] | list[float]
-            target point position in world coordinates
+            entry point position in world coordinates
         """
         return self.GetLineRepresentation().GetPoint1WorldPosition()
 
     def setPosition2(self, p: vectorFloat3) -> None:
         """
-        Set the entry point position of the current LineWidget instance.
+        Set the target point position of the current LineWidget instance.
 
         Parameters
         ----------
         p : tuple[float, float, float] | list[float]
-            entry point position in world coordinates
+            target point position in world coordinates
         """
         if isinstance(p, (list, tuple)):
             if len(p) == 3:
@@ -4296,12 +4325,12 @@ class LineWidget(vtkLineWidget2, NamedWidget):
 
     def getPosition2(self) -> vectorFloat3:
         """
-        Get the entry point position of the current LineWidget instance.
+        Get the target point position of the current LineWidget instance.
 
         Returns
         -------
         tuple[float, float, float] | list[float]
-            entry point position in world coordinates
+            target point position in world coordinates
         """
         return self.GetLineRepresentation().GetPoint2WorldPosition()
 
