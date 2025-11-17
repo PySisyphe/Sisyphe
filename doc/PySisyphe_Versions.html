@@ -1731,6 +1731,8 @@
 <li><p>widgets.selectFileWidgets</p></li>
 <li><p>widgets.functionsSettingsWidget</p></li>
 <li><p>widgets.attributesWidgets</p></li>
+<li><p>widgets.abstractViewWidget</p></li>
+<li><p>widgets.multiViewWidgets</p></li>
 <li><p>widgets.sliceViewWidgets</p></li>
 <li><p>widgets.sliceTrajectoryViewWidget</p>
 <blockquote>
@@ -1817,6 +1819,14 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>update _updateToolMenu() method</p></li>
+<li><p>update synchroniseCursorPositionChanged() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiViewWidgets.GridViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setNumberOfVisibleViews() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -1962,6 +1972,20 @@
 <div><ul class="simple">
 <li><p>bug fix, lines 1441, replace isinstance(tool, HandleWidget) by tool.GetObjectName() == ‘HandleWidget’</p></li>
 <li><p>bug fix, lines 1448, replace isinstance(tool, LineWidget) by tool.GetObjectName() == ‘LineWidget’</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget.synchroniseCursorPositionChanged()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 1447, use synchronisation flag attribute (no cursor synchronization if flag is False), used to speed up display</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiViewWidgets.GridViewWidget.setNumberOfVisibleViews()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 2861 &amp; 2868, no synchronization of hidden views, used to speed up display</p></li>
 </ul>
 </div></blockquote>
 </li>
