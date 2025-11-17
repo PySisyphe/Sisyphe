@@ -130,7 +130,7 @@ class AbstractViewWidget(QFrame):
     QWidget -> AbstractViewWidget
 
     Creation: 20/03/2022
-    Last Revision: 10/11/2025
+    Last Revision: 17/11/2025
     """
 
     _DEFAULTZOOM = 128.0  # Default zoom (vtk parallel scale) = conventional FOV of head imaging / 2
@@ -1474,8 +1474,12 @@ class AbstractViewWidget(QFrame):
         z : float
             z-axis world coordinate of the cross-shaped cursor.
         """
-        if self != obj and self.hasVolume():
+        # < Revision 17/11/2025
+        # use synchronisation flag attribute
+        # if self != obj and self.hasVolume():
+        if self != obj and self.hasVolume() and self.isSynchronised():
             self.setCursorWorldPosition(x, y, z, signal=False)
+        # Revision 17/11/2025 >
 
     def synchroniseZoomChanged(self, obj: QWidget, z: float) -> None:
         """

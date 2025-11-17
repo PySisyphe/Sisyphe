@@ -2591,7 +2591,7 @@ class GridViewWidget(MultiViewWidget):
     QWidget -> MultiViewWidget -> GridViewWidget
 
     Creation: 03/04/2022
-    Last revision: 20/10/2025
+    Last revision: 17/11/2025
     """
 
     # Special method
@@ -2857,8 +2857,18 @@ class GridViewWidget(MultiViewWidget):
             a = i // 3
             b = i % 3
             self[a, b].getAction()[k].setChecked(True)
-            if n > 0: self[a, b].setVisible(i < n)
-            else: self[a, b].setVisible(i in [0, 1, 3, 4])
+            if n > 0:
+                # < Revision 17/11/2025
+                # no synchronization if hidden view, used to speed up display
+                self[a, b].setVisible(i < n)
+                self[a, b].setSynchronisation(i < n)
+                # Revision 17/11/2025 >
+            else:
+                # < Revision 17/11/2025
+                # no synchronization if hidden view, used to speed up display
+                self[a, b].setVisible(i in [0, 1, 3, 4])
+                self[a, b].setSynchronisation(i in [0, 1, 3, 4])
+                # Revision 17/11/2025 >
             self.setRows(r)
             self.setCols(c)
 
