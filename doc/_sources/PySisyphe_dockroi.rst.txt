@@ -61,6 +61,9 @@ Icon bar below ROI list:
 |delete|
 	Left-click to remove all ROI(s) from the list and from the view widget(s).
 
+|view|
+	Left-click to show/hide all ROI(s) of the list.
+
 |cross|
 	Left-click to remove checked ROI(s) from the list and from the view widget(s).
 

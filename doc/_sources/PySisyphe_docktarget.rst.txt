@@ -54,6 +54,12 @@ Left-click to select a target or a trajectory element in the list (blue outline 
 |delete|
 	Left-click to remove all Target(s)/Trajectory(ies) from the list and from the view widget.
 
+|lock|
+	Left-click to lock/unlock all Target(s)/Trajectory(ies) of the list.
+
+|view|
+	Left-click to show/hide all Target(s)/Trajectory(ies) of the list.
+
 |cross|
 	Left-click to remove checked Target(s)/Trajectory(ies) from the list and from the view widget.
 

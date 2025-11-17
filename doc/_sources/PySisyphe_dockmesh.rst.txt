@@ -84,6 +84,9 @@ Icon bar below mesh list:
 |delete|
 	Left-click to remove all mesh(es) from the list and from the orthogonal view widget.
 
+|view|
+	Left-click to show/hide all mesh(es) of the list.
+
 |cross|
 	Left-click to remove checked mesh(es) from the list and from the orthogonal view widget.
 

@@ -73,6 +73,9 @@ Left-click to select a bundle element in the list (blue outline in Windows platf
 |delete|
 	Left-click to remove all Bundle(s) from the list and from the view widget.
 
+|view|
+	Left-click to show/hide all Bundle(s) of the list.
+	
 |cross|
 	Left-click to remove checked Bundle(s) from list and from view widget(s).
 

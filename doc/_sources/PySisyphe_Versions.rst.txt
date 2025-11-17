@@ -11,6 +11,7 @@ Version history
 - :ref:`build13-10-2025`
 - :ref:`build16-10-2025`
 - :ref:`build01-11-2025`
+- :ref:`build18-11-2025`
 
 .. _version-increment-rules:
 Version increment rules
@@ -19,12 +20,12 @@ Version increment rules
 - **major version increment**:
 
 	- new python interpreter version
-	- 20 minor version increments
+	- 50 minor version increments
 
 - **minor version increment**:
 
 	- new module, new external module, external module upgrade
-	- 20 patch version increments
+	- 25 patch version increments
 
 - **patch version increment**:
 
@@ -666,7 +667,7 @@ version 0.16.5, build 13/10/2025
 
 	- core.sisypheSettings.getDPIScaleFactor()
 
-		- Calculate the scale factor that is used to define the size of icons and some widgets.
+		- Calculate the scale factor that is used to define the size of icons and some widgets
 
 - **new methods**
 
@@ -795,15 +796,15 @@ version 0.18.3, build 16/10/2025
 
 	- gui.dialogLabel.DialogLabeltoMask
 
-		- dialog box to create a mask as a combination of labels from a label volume.
+		- dialog box to create a mask as a combination of labels from a label volume
 
 	- gui.dialogLabel.DialogRelabel
 
-		- dialog box to remaps label indexes of a label volume.
+		- dialog box to remaps label indexes of a label volume
 
 	- gui.dialogContrast.DialogLateralityIndex
 
-		- dialog box to calculate laterality index of a statistical map.
+		- dialog box to calculate laterality index of a statistical map
 
 - **new methods**
 
@@ -825,7 +826,7 @@ version 0.18.3, build 16/10/2025
 
 .. _build01-11-2025:
 version 0.20.16, build 01/11/2025
---------------------------------
+---------------------------------
 
 - **new html documentation**
 
@@ -839,10 +840,13 @@ version 0.20.16, build 01/11/2025
 	- /API2/api_widgets_settings.rst
 	- /API2/api_widgets_single_view.rst
 	- /API2/index.rst
+	- version-histrory.rst update
+	- rebuild sphinx documentation
 
 - **updated html documentation**
 
 	- PySisyphe_Mapping.rst update
+	- rebuild sphinx documentation
 
 - **updated files**
 
@@ -962,3 +966,234 @@ version 0.20.16, build 01/11/2025
 	- widgets.selectFileWidgets.FilesSelectionWidget.getItemFromIndex()
 
 		- bug fix, return value type (QListWidgetItem, not str)
+
+.. _build18-11-2025:
+version 0.21.08, build 18/11/2025
+---------------------------------
+
+- **updated html documentation**
+
+	- PySisyphe_dockroi.rst
+	- PySisyphe_dockmesh.rst
+	- PySisyphe_docktarget.rst
+	- PySisyphe_docktracking.rst
+	- /API/api_settings.rst
+	- /API/api_volume.rst
+	- /API2/api_widgets_select_file.rst
+	- /API2/api_widgets_settings.rst
+	- version-histrory.rst update
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- /Sisyphe/settings/settings.xml
+
+- **updated modules**
+
+	- core.sisypheSettings
+	- core.sisypheImage
+	- core.sisypheDownload
+	- core.sisypheTools
+	- widgets.selectFileWidgets
+	- widgets.functionsSettingsWidget
+	- widgets.attributesWidgets
+	- widgets.sliceViewWidgets
+	- widgets.sliceTrajectoryViewWidget
+
+		- update import: add from Sisyphe.core.sisypheTools import HandleWidget
+		- update import: add from Sisyphe.core.sisypheTools import LineWidget
+		- remove these imports from TYPE_CHECKING
+
+	- widgets.abstractViewWidget
+	- widgets.attributesWidgets
+	- widgets.iconBarViewWidgets
+	- widgets.tabToolsWidgets
+	- gui.dialogSkullStripping
+
+- **updated classes**
+
+	- core.sisypheImage.SisypheImage
+
+		- update getMin() method
+		- update getValueAtContiuousIndex() method
+		- new method getValueAtContiuousIndex()
+
+	- core.sisypheTools.HandleWidget
+	- core.sisypheTools.HLineWidget
+
+		- update setFontSize() & getFontSize() methods
+
+	- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget
+
+		- update setSisypheVolumeFilters() method
+		- update setSequenceFilters() method
+		- update setModalityFilters() method
+		- update setSuffixFilters() method
+		- update setPrefixFilters() method
+		- update setContainsStringFilters() method
+
+	- widgets.selectFileWidgets.SettingsWidget
+
+		- update _initSettingsLayout() method
+
+	- widgets.attributesWidgets.ListAttributesWidget
+
+		- update __init__() method
+		- update _addItem() method
+
+	- widgets.attributesWidgets.ListROIAttributesWidget
+
+	 	- add wait.open() to all methods
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget
+
+		- update _updateCameraOrientation() method
+		- update _onLeftPressEvent() method
+		- update _onMouseMoveEvent() method
+		- new methods to get flag of ROI tools
+
+	- widgets.abstractViewWidget.AbstractViewWidget
+
+		- update _updateToolMenu() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- update __init__() method
+		- update open() method
+		- new visibility() method
+
+	- widgets.attributesWidgets.ListROIAttributesWidget
+	- widgets.attributesWidgets.ListMeshAttributesWidget
+	- widgets.attributesWidgets.ListBundleAttributesWidget
+
+		- update __init__() method
+		- new visibility() method
+
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection
+
+		- new methods to get flag of ROI tools
+
+	- widgets.tabToolsWidgets.SliceROIViewWidget
+
+		- update Slice ROI actions, slice blob actions, volume ROI actions, volume blob actions methods
+
+	- gui.dialogSkullStripping.DialogSkullStripping
+
+	 	- update function() method
+
+- **updated methods**
+
+		- core.sisypheImage.SisypheImage.getMin()
+
+			- bug fix, lines 4042 & 4055, returns std and not min, replace std(img) by img.min()
+
+		- core.sisypheImage.SisypheImage.getValueAtContiuousIndex()
+
+			- add ndarray type for p parameter
+
+		- core.sisypheTools.HandleWidget.getFontSize()
+		- core.sisypheTools.HandleWidget.setFontSize()
+		- core.sisypheTools.LineWidget.getFontSize()
+		- core.sisypheTools.LineWidget.setFontSize()
+
+			- exception handling for dpi
+
+		- core.sisypheTools.DistanceWidget.__init__()
+		- core.sisypheTools.OrthogonalDistanceWidget.__init__()
+		- core.sisypheTools.AngleWidget.__init__()
+		- core.sisypheTools.BoxWidget.__init__()
+		- core.sisypheTools.TextWidget.__init__()
+		- core.sisypheTools.HandleWidget.__init__()
+		- core.sisypheTools.LineWidget.__init__()
+
+			- add self.SetObjectName(), used in widgets.abstractViewWidget.AbstractViewWidget._updateToolMenu(), see below
+
+		- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSisypheVolumeFilters() method
+		- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSequenceFilters() method
+		- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setModalityFilters() method
+		- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSuffixFilters() method
+		- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setPrefixFilters() method
+		- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setContainsStringFilters() method
+			
+			- Typing correction
+
+		- widgets.selectFileWidgets.SettingsWidget._initSettingsLayout()
+
+			- bug fix, lines 768/785/803/820, vols/rois/dcms/dirs add filenames to FilesSelectionWidget
+
+		- widgets.sliceViewWidgets.SliceROIViewWidget._updateCameraOrientation()
+
+			- line 7191, remove anisotropic testing to update ROI visibility
+
+		- widgets.sliceViewWidgets.SliceROIViewWidget._onLeftPressEvent()
+
+			- line 9883, no ROImodified synchronisation for 2D brush
+
+		- widgets.sliceViewWidgets.SliceROIViewWidget._onMouseMoveEvent()
+
+			- line 9653, no ROImodified signal for the 2D brush, which is responsible for considerable acceleration of the brush tool
+
+		- widgets.abstractViewWidget.AbstractViewWidget._updateToolMenu()
+
+			- bug fix, lines 1441, replace isinstance(tool, HandleWidget) by tool.GetObjectName() == 'HandleWidget'
+			- bug fix, lines 1448, replace isinstance(tool, LineWidget) by tool.GetObjectName() == 'LineWidget'
+
+		- widgets.attributesWidgets.ListAttributesWidget.__init__()
+
+			- line 2365, change the background colour of the selected item
+
+		- widgets.attributesWidgets.ListAttributesWidget._addItem()
+
+			- line 2472, change the background colour of the selected item
+
+		- widgets.attributesWidgets.ListToolAttributesWidget.__init__()
+
+			- create lock and visibility buttons
+
+		- widgets.attributesWidgets.ListROIAttributesWidget.__init__()
+		- widgets.attributesWidgets.ListMeshAttributesWidget.__init__()
+		- widgets.attributesWidgets.ListBundleAttributesWidget.__init__()
+
+			- create lock and visibility buttons
+
+		- widgets.attributesWidgets.ListToolAttributesWidget.open()
+
+			- lines 5002, 5023, 5063, 5100, opened tools are locked by default
+			- lines 4984, 5014, 5038, 5043, wait progress when opening .xtools file
+
+		- gui.dialogSkullStripping.DialogSkullStripping.function()
+
+			- bug fix, line 202, replace copyFromNumpyArray(mask) by copyFromNumpyArray(mask, spacing=s, defaultshape=False)
+
+- **updated function**
+
+	- core.sisypheDownload.installFromHost()
+
+		- bug fix, line 194, new directory
+
+- **new classes**
+
+	- core.sisypheSettings.SisypheCustomSettings
+
+		- management of settings from a custom XML file
+
+	- widgets.functionsSettingsWidget.CustomSettingsWidget
+
+		- widget to manage settings from a custom XML file
+
+- **new methods**
+
+	- core.sisypheImage.SisypheImage.getValueAtContiuousIndex()
+
+		- get an interpolated scalar value from continuous coordinates
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.lock()
+
+		- method called by lock button
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.visibility()
+	- widgets.attributesWidgets.ListMeshAttributesWidget.visibility()
+	- widgets.attributesWidgets.ListToolAttributesWidget.visibility()
+	- widgets.attributesWidgets.ListBundleAttributesWidget.visibility()
+
+		- method called by visibility button
