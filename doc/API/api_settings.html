@@ -91,6 +91,12 @@
 <li class="toctree-l2"><a class="reference internal" href="api_roi.html">Sisyphe.core.sisypheROI</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Sisyphe.core.sisypheSettings</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#external-packages-modules">External packages/modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheSettings.SisypheCustomSettings"><code class="docutils literal notranslate"><span class="pre">SisypheCustomSettings</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSettings.SisypheCustomSettings.getDefaultSettings"><code class="docutils literal notranslate"><span class="pre">SisypheCustomSettings.getDefaultSettings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSettings.SisypheCustomSettings.getUserSettings"><code class="docutils literal notranslate"><span class="pre">SisypheCustomSettings.getUserSettings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSettings.SisypheCustomSettings.setClassSettings"><code class="docutils literal notranslate"><span class="pre">SisypheCustomSettings.setClassSettings()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheSettings.SisypheDialogsSettings"><code class="docutils literal notranslate"><span class="pre">SisypheDialogsSettings</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSettings.SisypheDialogsSettings.getDefaultSettings"><code class="docutils literal notranslate"><span class="pre">SisypheDialogsSettings.getDefaultSettings()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheSettings.SisypheDialogsSettings.getUserSettings"><code class="docutils literal notranslate"><span class="pre">SisypheDialogsSettings.getUserSettings()</span></code></a></li>
@@ -197,15 +203,77 @@
 </div></blockquote>
 </section>
 <dl class="py class">
-<dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheDialogsSettings">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheSettings.</span></span><span class="sig-name descname"><span class="pre">SisypheDialogsSettings</span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheDialogsSettings" title="Link to this definition"></a></dt>
-<dd><p>SisypheDialogsSettings class</p>
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheCustomSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheSettings.</span></span><span class="sig-name descname"><span class="pre">SisypheCustomSettings</span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheCustomSettings" title="Link to this definition"></a></dt>
+<dd><p>SisypheCustomSettings class</p>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
-<p>Management of application dialogs from XML file (dialogs.xml by default).</p>
+<p>Management of settings from a custom XML file.</p>
 </section>
 <section id="inheritance">
 <h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
+<p>object -&gt; SisypheSettings -&gt; SisypheCustomSettings</p>
+<p>Creation: 04/11/2025
+Last Revision:</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheCustomSettings.getDefaultSettings">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getDefaultSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheCustomSettings.getDefaultSettings" title="Link to this definition"></a></dt>
+<dd><p>Get custom settings xml file name.</p>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>custom settings xml file name.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheCustomSettings.getUserSettings">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getUserSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheCustomSettings.getUserSettings" title="Link to this definition"></a></dt>
+<dd><p>Get custom settings xml file name.</p>
+<section id="id1">
+<h3>Returns<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>custom settings xml file name.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheCustomSettings.setClassSettings">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setClassSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheCustomSettings.setClassSettings" title="Link to this definition"></a></dt>
+<dd><p>Set the custom settings xml file name.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>custom settings xml file name</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>custom settings xml file name.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheDialogsSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheSettings.</span></span><span class="sig-name descname"><span class="pre">SisypheDialogsSettings</span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheDialogsSettings" title="Link to this definition"></a></dt>
+<dd><p>SisypheDialogsSettings class</p>
+<section id="id3">
+<h2>Description<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p>Management of application dialogs from XML file (dialogs.xml by default).</p>
+</section>
+<section id="id4">
+<h2>Inheritance<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
 <p>object -&gt; SisypheSettings -&gt; SisypheDialogsSettings</p>
 <p>Creation: 08/09/2022
 Last Revision: 15/12/2023</p>
@@ -213,8 +281,8 @@ Last Revision: 15/12/2023</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheDialogsSettings.getDefaultSettings">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getDefaultSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheDialogsSettings.getDefaultSettings" title="Link to this definition"></a></dt>
 <dd><p>Get default dialog settings xml file name (./Sisyphe/settings/dialogs.xml’).</p>
-<section id="returns">
-<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<section id="id5">
+<h3>Returns<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>default dialog settings xml file name</p>
 </dd>
@@ -226,8 +294,8 @@ Last Revision: 15/12/2023</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheDialogsSettings.getUserSettings">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getUserSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheDialogsSettings.getUserSettings" title="Link to this definition"></a></dt>
 <dd><p>Get user dialog settings xml file name (~/.PySisyphe/settings/dialogs.xml’).</p>
-<section id="id1">
-<h3>Returns<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>user dialog settings xml file name</p>
 </dd>
@@ -242,12 +310,12 @@ Last Revision: 15/12/2023</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheFunctionsSettings">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheSettings.</span></span><span class="sig-name descname"><span class="pre">SisypheFunctionsSettings</span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheFunctionsSettings" title="Link to this definition"></a></dt>
 <dd><p>SisypheFunctionsSettings class</p>
-<section id="id2">
-<h2>Description<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<section id="id7">
+<h2>Description<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
 <p>Management of application function settings from XML file (functions.xml by default).</p>
 </section>
-<section id="id3">
-<h2>Inheritance<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<section id="id8">
+<h2>Inheritance<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
 <p>object -&gt; SisypheSettings -&gt; SisypheFunctionsSettings</p>
 <p>Creation: 08/09/2022
 Last revision: 15/12/2023</p>
@@ -255,8 +323,8 @@ Last revision: 15/12/2023</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheFunctionsSettings.getDefaultSettings">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getDefaultSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheFunctionsSettings.getDefaultSettings" title="Link to this definition"></a></dt>
 <dd><p>Get default function settings xml file name (./Sisyphe/settings/functions.xml).</p>
-<section id="id4">
-<h3>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<section id="id9">
+<h3>Returns<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>default function settings xml file name</p>
 </dd>
@@ -269,8 +337,8 @@ Last revision: 15/12/2023</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getUserSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheFunctionsSettings.getUserSettings" title="Link to this definition"></a></dt>
 <dd><p>Get user function settings xml file name (~/.PySisyphe/settings/functions.xml). If user function settings xml
 file does not exist, create it from a copy of the default xml file.</p>
-<section id="id5">
-<h3>Returns<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<section id="id10">
+<h3>Returns<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>user function settings xml file name</p>
 </dd>
@@ -285,12 +353,12 @@ file does not exist, create it from a copy of the default xml file.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheSettings.</span></span><span class="sig-name descname"><span class="pre">SisypheSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">setting</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'user'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings" title="Link to this definition"></a></dt>
 <dd><p>SisypheSettings class</p>
-<section id="id6">
-<h2>Description<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<section id="id11">
+<h2>Description<a class="headerlink" href="#id11" title="Link to this heading"></a></h2>
 <p>Management of application settings from XML file (settings.xml by default).</p>
 </section>
-<section id="id7">
-<h2>Inheritance<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<section id="id12">
+<h2>Inheritance<a class="headerlink" href="#id12" title="Link to this heading"></a></h2>
 <p>object -&gt; SisypheSettings</p>
 <p>Creation: 08/09/2022
 Last revisions: 11/10/2025</p>
@@ -298,8 +366,8 @@ Last revisions: 11/10/2025</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.fieldsFromDict">
 <span class="sig-name descname"><span class="pre">fieldsFromDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">QFont</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.fieldsFromDict" title="Link to this definition"></a></dt>
 <dd><p>Copy section field values of the current SisypheSettings instance from a dict.</p>
-<section id="parameters">
-<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<section id="id13">
+<h3>Parameters<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>section<span class="classifier">str</span></dt><dd><p>section name</p>
 </dd>
@@ -313,8 +381,8 @@ Last revisions: 11/10/2025</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.fieldsToDict">
 <span class="sig-name descname"><span class="pre">fieldsToDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">QFont</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.fieldsToDict" title="Link to this definition"></a></dt>
 <dd><p>Copy section fields of the current SisypheSettings instance into a dict.</p>
-<section id="id8">
-<h3>Returns<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<section id="id14">
+<h3>Returns<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>dict</dt><dd><p>dict keys are field names, and dict values are field values</p>
 </dd>
@@ -326,8 +394,8 @@ Last revisions: 11/10/2025</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.getAttributes">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getAttributes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.getAttributes" title="Link to this definition"></a></dt>
 <dd><p>Get node attribute names of the xml settings file format.</p>
-<section id="id9">
-<h3>Returns<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<section id="id15">
+<h3>Returns<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tuple[str, …]</dt><dd><p>node attribute names</p>
 </dd>
@@ -339,8 +407,8 @@ Last revisions: 11/10/2025</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.getDefaultSettings">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getDefaultSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.getDefaultSettings" title="Link to this definition"></a></dt>
 <dd><p>Get default settings xml file name (./Sisyphe/settings/settings.xml).</p>
-<section id="id10">
-<h3>Returns<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<section id="id16">
+<h3>Returns<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>default settings xml file name</p>
 </dd>
@@ -352,8 +420,8 @@ Last revisions: 11/10/2025</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.getFieldNode">
 <span class="sig-name descname"><span class="pre">getFieldNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Element</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.getFieldNode" title="Link to this definition"></a></dt>
 <dd><p>Get a field node (minidom.Element) from the current SisypheSettings instance.</p>
-<section id="id11">
-<h3>Parameters<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<section id="id17">
+<h3>Parameters<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>section<span class="classifier">str</span></dt><dd><p>section name</p>
 </dd>
@@ -361,8 +429,8 @@ Last revisions: 11/10/2025</p>
 </dd>
 </dl>
 </section>
-<section id="id12">
-<h3>Returns<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<section id="id18">
+<h3>Returns<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>minidom.Element | None</dt><dd><p>section node</p>
 </dd>
@@ -374,8 +442,8 @@ Last revisions: 11/10/2025</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.getFieldValue">
 <span class="sig-name descname"><span class="pre">getFieldValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">QFont</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.getFieldValue" title="Link to this definition"></a></dt>
 <dd><p>Get the value of a field in the current SisypheSettings instance.</p>
-<section id="id13">
-<h3>Parameters<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<section id="id19">
+<h3>Parameters<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>section<span class="classifier">str</span></dt><dd><p>section name</p>
 </dd>
@@ -383,8 +451,8 @@ Last revisions: 11/10/2025</p>
 </dd>
 </dl>
 </section>
-<section id="id14">
-<h3>Returns<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<section id="id20">
+<h3>Returns<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
 <dl>
 <dt>int | float | bool | str | list[int] | list[float] | list[bool] | list[str] | None</dt><dd><p>vartype / return type, return type depends on the field vartype</p>
 <blockquote>
@@ -423,8 +491,8 @@ Last revisions: 11/10/2025</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.getFieldVartype">
 <span class="sig-name descname"><span class="pre">getFieldVartype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.getFieldVartype" title="Link to this definition"></a></dt>
 <dd><p>Get the vartype of a field in the current SisypheSettings instance.</p>
-<section id="id15">
-<h3>Parameters<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<section id="id21">
+<h3>Parameters<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>section<span class="classifier">str</span></dt><dd><p>section name</p>
 </dd>
@@ -432,8 +500,8 @@ Last revisions: 11/10/2025</p>
 </dd>
 </dl>
 </section>
-<section id="id16">
-<h3>Returns<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<section id="id22">
+<h3>Returns<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>field vartype, vartypes are :</p>
 <ul class="simple">
@@ -471,8 +539,8 @@ Last revisions: 11/10/2025</p>
 <span class="sig-name descname"><span class="pre">getFilename</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.getFilename" title="Link to this definition"></a></dt>
 <dd><p>Get the custom save name of the current SisypheSettings instance. Save name is only defined in a custom
 instance. Save name is empty in a user instance.</p>
-<section id="id17">
-<h3>Returns<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<section id="id23">
+<h3>Returns<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>xml file name</p>
 </dd>
@@ -484,15 +552,15 @@ instance. Save name is empty in a user instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.getSectionFieldsList">
 <span class="sig-name descname"><span class="pre">getSectionFieldsList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.getSectionFieldsList" title="Link to this definition"></a></dt>
 <dd><p>Get the list of fields in a section of the current SisypheSettings instance.</p>
-<section id="id18">
-<h3>Parameters<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<section id="id24">
+<h3>Parameters<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>section<span class="classifier">str</span></dt><dd><p>section name</p>
 </dd>
 </dl>
 </section>
-<section id="id19">
-<h3>Returns<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<section id="id25">
+<h3>Returns<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>list[str]</dt><dd><p>list of fields in a section</p>
 </dd>
@@ -504,15 +572,15 @@ instance. Save name is empty in a user instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.getSectionNode">
 <span class="sig-name descname"><span class="pre">getSectionNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Element</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.getSectionNode" title="Link to this definition"></a></dt>
 <dd><p>Get a section node (minidom.Element) from the current SisypheSettings instance.</p>
-<section id="id20">
-<h3>Parameters<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<section id="id26">
+<h3>Parameters<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>section<span class="classifier">str</span></dt><dd><p>section name</p>
 </dd>
 </dl>
 </section>
-<section id="id21">
-<h3>Returns<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<section id="id27">
+<h3>Returns<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>minidom.Element | None</dt><dd><p>section node</p>
 </dd>
@@ -524,8 +592,8 @@ instance. Save name is empty in a user instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.getSectionsList">
 <span class="sig-name descname"><span class="pre">getSectionsList</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.getSectionsList" title="Link to this definition"></a></dt>
 <dd><p>Get the section list of the current SisypheSettings instance.</p>
-<section id="id22">
-<h3>Returns<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<section id="id28">
+<h3>Returns<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>list[str]</dt><dd><p>list of sections</p>
 </dd>
@@ -538,8 +606,8 @@ instance. Save name is empty in a user instance.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getUserSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.getUserSettings" title="Link to this definition"></a></dt>
 <dd><p>Get user settings xml file name (~/.PySisyphe/settings/settings.xml). if user settings xml file does not exist,
 create it from a copy of the default xml file.</p>
-<section id="id23">
-<h3>Returns<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<section id="id29">
+<h3>Returns<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>user settings xml file name</p>
 </dd>
@@ -551,8 +619,8 @@ create it from a copy of the default xml file.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.getVartypes">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getVartypes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.getVartypes" title="Link to this definition"></a></dt>
 <dd><p>Get vartype names of the xml settings file format.</p>
-<section id="id24">
-<h3>Returns<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<section id="id30">
+<h3>Returns<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tuple[str, …]</dt><dd><p>vartype names</p>
 </dd>
@@ -564,8 +632,8 @@ create it from a copy of the default xml file.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.hasField">
 <span class="sig-name descname"><span class="pre">hasField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.hasField" title="Link to this definition"></a></dt>
 <dd><p>Check whether the current SisypheSettings instance contains a section/field key.</p>
-<section id="id25">
-<h3>Parameters<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<section id="id31">
+<h3>Parameters<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>section<span class="classifier">str</span></dt><dd><p>section name</p>
 </dd>
@@ -573,8 +641,8 @@ create it from a copy of the default xml file.</p>
 </dd>
 </dl>
 </section>
-<section id="id26">
-<h3>Returns<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<section id="id32">
+<h3>Returns<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if section/field are defined</p>
 </dd>
@@ -586,15 +654,15 @@ create it from a copy of the default xml file.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.hasSection">
 <span class="sig-name descname"><span class="pre">hasSection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.hasSection" title="Link to this definition"></a></dt>
 <dd><p>Check whether the current SisypheSettings instance contains a section.</p>
-<section id="id27">
-<h3>Parameters<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<section id="id33">
+<h3>Parameters<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>section<span class="classifier">str</span></dt><dd><p>section name</p>
 </dd>
 </dl>
 </section>
-<section id="id28">
-<h3>Returns<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<section id="id34">
+<h3>Returns<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if section is defined</p>
 </dd>
@@ -607,8 +675,8 @@ create it from a copy of the default xml file.</p>
 <span class="sig-name descname"><span class="pre">isCustom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.isCustom" title="Link to this definition"></a></dt>
 <dd><p>Check whether the current SisypheSettings is a custom settings instance. In this case, the associated xml
 settings file is defined in a custom save name attribute.</p>
-<section id="id29">
-<h3>Returns<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<section id="id35">
+<h3>Returns<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if custom save name attribute is defined</p>
 </dd>
@@ -620,8 +688,8 @@ settings file is defined in a custom save name attribute.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.isEmpty">
 <span class="sig-name descname"><span class="pre">isEmpty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.isEmpty" title="Link to this definition"></a></dt>
 <dd><p>Check whether the current SisypheSettings instance is empty (No section and no field).</p>
-<section id="id30">
-<h3>Returns<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<section id="id36">
+<h3>Returns<a class="headerlink" href="#id36" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True is empty</p>
 </dd>
@@ -634,8 +702,8 @@ settings file is defined in a custom save name attribute.</p>
 <span class="sig-name descname"><span class="pre">isUser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.isUser" title="Link to this definition"></a></dt>
 <dd><p>Check whether the current SisypheSettings is a user settings instance. In this case, the associated xml
 settings file is ~/.PySisyphe/settings/settings.xml and the custom save name attribute is empty (‘’).</p>
-<section id="id31">
-<h3>Returns<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<section id="id37">
+<h3>Returns<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if custom save name attribute is empty</p>
 </dd>
@@ -647,15 +715,15 @@ settings file is ~/.PySisyphe/settings/settings.xml and the custom save name att
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.isValidAttribute">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isValidAttribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.isValidAttribute" title="Link to this definition"></a></dt>
 <dd><p>Check whether a str is a valid node attribute name of the xml settings file format.</p>
-<section id="id32">
-<h3>Parameters<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
+<section id="id38">
+<h3>Parameters<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">str</span></dt><dd><p>node attribute name to check</p>
 </dd>
 </dl>
 </section>
-<section id="id33">
-<h3>Returns<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
+<section id="id39">
+<h3>Returns<a class="headerlink" href="#id39" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if v is a valid node attribute name</p>
 </dd>
@@ -667,15 +735,15 @@ settings file is ~/.PySisyphe/settings/settings.xml and the custom save name att
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.isValidVartype">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isValidVartype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.isValidVartype" title="Link to this definition"></a></dt>
 <dd><p>Check whether a str is a valid vartype name of the xml settings file format.</p>
-<section id="id34">
-<h3>Parameters<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
+<section id="id40">
+<h3>Parameters<a class="headerlink" href="#id40" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">str</span></dt><dd><p>vartype name to check</p>
 </dd>
 </dl>
 </section>
-<section id="id35">
-<h3>Returns<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
+<section id="id41">
+<h3>Returns<a class="headerlink" href="#id41" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if v is a valid vartype name</p>
 </dd>
@@ -687,8 +755,8 @@ settings file is ~/.PySisyphe/settings/settings.xml and the custom save name att
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.loadCustomFileSettings">
 <span class="sig-name descname"><span class="pre">loadCustomFileSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.loadCustomFileSettings" title="Link to this definition"></a></dt>
 <dd><p>Load the current SisypheSettings from a custom xml settings file.</p>
-<section id="id36">
-<h3>Parameters<a class="headerlink" href="#id36" title="Link to this heading"></a></h3>
+<section id="id42">
+<h3>Parameters<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>custom xml settings file name, filename becomes the current save name used by save() method and the
 instance becomes custom</p>
@@ -713,8 +781,8 @@ instance becomes custom</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.newField">
 <span class="sig-name descname"><span class="pre">newField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.newField" title="Link to this definition"></a></dt>
 <dd><p>Create a new field in a section of the current SisypheSettings instance.</p>
-<section id="id37">
-<h3>Parameters<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
+<section id="id43">
+<h3>Parameters<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
 <dl>
 <dt>section<span class="classifier">str</span></dt><dd><p>section name</p>
 </dd>
@@ -740,8 +808,8 @@ instance becomes custom</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.newSection">
 <span class="sig-name descname"><span class="pre">newSection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.newSection" title="Link to this definition"></a></dt>
 <dd><p>Create a new section in the current SisypheSettings instance.</p>
-<section id="id38">
-<h3>Parameters<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
+<section id="id44">
+<h3>Parameters<a class="headerlink" href="#id44" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>section<span class="classifier">str</span></dt><dd><p>section name</p>
 </dd>
@@ -760,8 +828,8 @@ attribute. In case of user instance, saved in ~/.PySisyphe/settings/settings.xml
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.saveAs">
 <span class="sig-name descname"><span class="pre">saveAs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.saveAs" title="Link to this definition"></a></dt>
 <dd><p>Save the current SisypheSettings instance to a xml file.</p>
-<section id="id39">
-<h3>Parameters<a class="headerlink" href="#id39" title="Link to this heading"></a></h3>
+<section id="id45">
+<h3>Parameters<a class="headerlink" href="#id45" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>xml file name</p>
 </dd>
@@ -784,8 +852,8 @@ original settings are lost and the file may be corrupted (./Sisyphe/settings/set
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.setFieldValue">
 <span class="sig-name descname"><span class="pre">setFieldValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">QFont</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.setFieldValue" title="Link to this definition"></a></dt>
 <dd><p>Set the field value of the current SisypheSettings instance.</p>
-<section id="id40">
-<h3>Parameters<a class="headerlink" href="#id40" title="Link to this heading"></a></h3>
+<section id="id46">
+<h3>Parameters<a class="headerlink" href="#id46" title="Link to this heading"></a></h3>
 <dl>
 <dt>section<span class="classifier">str</span></dt><dd><p>section name</p>
 </dd>
@@ -831,20 +899,20 @@ original settings are lost and the file may be corrupted (./Sisyphe/settings/set
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheTooltips">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheSettings.</span></span><span class="sig-name descname"><span class="pre">SisypheTooltips</span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheTooltips" title="Link to this definition"></a></dt>
 <dd><p>SisypheTooltips class</p>
-<section id="id41">
-<h2>Description<a class="headerlink" href="#id41" title="Link to this heading"></a></h2>
+<section id="id47">
+<h2>Description<a class="headerlink" href="#id47" title="Link to this heading"></a></h2>
 <p>Management of function tooltips from XML file (tooltips.xml by default).</p>
 </section>
-<section id="id42">
-<h2>Inheritance<a class="headerlink" href="#id42" title="Link to this heading"></a></h2>
+<section id="id48">
+<h2>Inheritance<a class="headerlink" href="#id48" title="Link to this heading"></a></h2>
 <p>object -&gt; SisypheSettings -&gt; SisypheTooltips</p>
 <p>Creation: 05/10/2024</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheTooltips.getDefaultSettings">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getDefaultSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheTooltips.getDefaultSettings" title="Link to this definition"></a></dt>
 <dd><p>Get tooltips xml file name (./Sisyphe/settings/tooltips.xml).</p>
-<section id="id43">
-<h3>Returns<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
+<section id="id49">
+<h3>Returns<a class="headerlink" href="#id49" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>tooltips xml file name</p>
 </dd>
@@ -856,8 +924,8 @@ original settings are lost and the file may be corrupted (./Sisyphe/settings/set
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheTooltips.getUserSettings">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getUserSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheTooltips.getUserSettings" title="Link to this definition"></a></dt>
 <dd><p>Get user dialog settings xml file name (~/.PySisyphe/settings/dialogs.xml’).</p>
-<section id="id44">
-<h3>Returns<a class="headerlink" href="#id44" title="Link to this heading"></a></h3>
+<section id="id50">
+<h3>Returns<a class="headerlink" href="#id50" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>user dialog settings xml file name</p>
 </dd>
@@ -874,8 +942,8 @@ original settings are lost and the file may be corrupted (./Sisyphe/settings/set
 <dd><p>Calculate the scale factor (i.e. zoom factor), that is used to define the size of icons and some widgets. This
 will ensure a consistent display regardless of the screen’s DPI. This zoom is relative to a reference screen of
 100.0 DPI.</p>
-<section id="id45">
-<h2>Returns<a class="headerlink" href="#id45" title="Link to this heading"></a></h2>
+<section id="id51">
+<h2>Returns<a class="headerlink" href="#id51" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>float</dt><dd><p>DPI scale factor</p>
 </dd>
@@ -887,8 +955,8 @@ will ensure a consistent display regardless of the screen’s DPI. This zoom is 
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.getUserPath">
 <span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheSettings.</span></span><span class="sig-name descname"><span class="pre">getUserPath</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.getUserPath" title="Link to this definition"></a></dt>
 <dd><p>Get user path of the current session.</p>
-<section id="id46">
-<h2>Returns<a class="headerlink" href="#id46" title="Link to this heading"></a></h2>
+<section id="id52">
+<h2>Returns<a class="headerlink" href="#id52" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>str</dt><dd><p>user path of the current session</p>
 </dd>
@@ -900,8 +968,8 @@ will ensure a consistent display regardless of the screen’s DPI. This zoom is 
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.getUserPySisyphePath">
 <span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheSettings.</span></span><span class="sig-name descname"><span class="pre">getUserPySisyphePath</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.getUserPySisyphePath" title="Link to this definition"></a></dt>
 <dd><p>Get PySisyphe user path of the current session.</p>
-<section id="id47">
-<h2>Returns<a class="headerlink" href="#id47" title="Link to this heading"></a></h2>
+<section id="id53">
+<h2>Returns<a class="headerlink" href="#id53" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>str</dt><dd><p>user PySisyphe path of the current session</p>
 </dd>
@@ -913,8 +981,8 @@ will ensure a consistent display regardless of the screen’s DPI. This zoom is 
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.getUsername">
 <span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheSettings.</span></span><span class="sig-name descname"><span class="pre">getUsername</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.getUsername" title="Link to this definition"></a></dt>
 <dd><p>Get username of the current session.</p>
-<section id="id48">
-<h2>Returns<a class="headerlink" href="#id48" title="Link to this heading"></a></h2>
+<section id="id54">
+<h2>Returns<a class="headerlink" href="#id54" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>str</dt><dd><p>username of the current session</p>
 </dd>
