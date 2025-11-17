@@ -2161,7 +2161,7 @@ Field of View (FOV).</p>
 <section id="id114">
 <h2>Inheritance<a class="headerlink" href="#id114" title="Link to this heading"></a></h2>
 <p>QWidget -&gt; SynchronizedFileSelectionWidget</p>
-<p>Last revision: 20/10/2025</p>
+<p>Last revision: 04/11/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.clearall">
 <span class="sig-name descname"><span class="pre">clearall</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.clearall" title="Link to this definition"></a></dt>
@@ -2456,16 +2456,16 @@ selection widgets (FileSelectionWidget) are not empty, and all <em>visible</em> 
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setContainsStringFilters">
-<span class="sig-name descname"><span class="pre">setContainsStringFilters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setContainsStringFilters" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">setContainsStringFilters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setContainsStringFilters" title="Link to this definition"></a></dt>
 <dd><p>Set filename substring filters to the contained single (FileSelectionWidget) and multiple file selection
 (FilesSelectionWidget) widgets.</p>
 <section id="id137">
 <h3>Parameters<a class="headerlink" href="#id137" title="Link to this heading"></a></h3>
-<p>filters : dict[str, dict[str, list[str] | str | None]</p>
+<p>filters : dict[str, list[str] | None]</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>dictionary specifying filename substring filters for single and multiple widgets, mapped by their labels.</p></li>
-<li><p>expected format: {‘single’: [substring_str | list[str] | None, …], ‘multiple’: [substring_str | list[str] | None, …]}</p></li>
+<li><p>dictionary specifying filename substring filters for single and multiple widgets.</p></li>
+<li><p>expected format: {‘single’: list[str] | None, ‘multiple’: list[str] | None}</p></li>
 </ul>
 </div></blockquote>
 </section>
@@ -2490,16 +2490,16 @@ widgets.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setModalityFilters">
-<span class="sig-name descname"><span class="pre">setModalityFilters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setModalityFilters" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">setModalityFilters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setModalityFilters" title="Link to this definition"></a></dt>
 <dd><p>Set modality filters to the contained single (FileSelectionWidget) and multiple file selection
 (FilesSelectionWidget) widgets.</p>
 <section id="id139">
 <h3>Parameters<a class="headerlink" href="#id139" title="Link to this heading"></a></h3>
-<p>filters : dict[str, dict[str, list[str] | str | None]</p>
+<p>filters : dict[str, list[str] | None]</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>dictionary specifying sequence filters for single and multiple widgets, mapped by their labels.</p></li>
-<li><p>expected format: {‘single’: [modality_str | list[str] | None, …], ‘multiple’: [modality_str | list[str] | None, …]}</p></li>
+<li><p>dictionary specifying sequence filters for single and multiple widgets.</p></li>
+<li><p>expected format: {‘single’: list[str] | None, ‘multiple’: list[str] | None}</p></li>
 </ul>
 </div></blockquote>
 </section>
@@ -2507,16 +2507,16 @@ widgets.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setPrefixFilters">
-<span class="sig-name descname"><span class="pre">setPrefixFilters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setPrefixFilters" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">setPrefixFilters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setPrefixFilters" title="Link to this definition"></a></dt>
 <dd><p>Set prefix filters to the contained single (FileSelectionWidget) and multiple file selection
 (FilesSelectionWidget) widgets.</p>
 <section id="id140">
 <h3>Parameters<a class="headerlink" href="#id140" title="Link to this heading"></a></h3>
-<p>filters : dict[str, dict[str, list[str] | str | None]</p>
+<p>filters : dict[str, list[str] | None]</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>dictionary specifying prefix filters for single and multiple widgets, mapped by their labels.</p></li>
-<li><p>expected format: {‘single’: [prefix_str | list[str] | None, …], ‘multiple’: [prefix_str | list[str] | None, …]}</p></li>
+<li><p>dictionary specifying prefix filters for single and multiple widgets.</p></li>
+<li><p>expected format: {‘single’: list[str], ‘multiple’: list[str] | None}</p></li>
 </ul>
 </div></blockquote>
 </section>
@@ -2524,7 +2524,7 @@ widgets.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSequenceFilters">
-<span class="sig-name descname"><span class="pre">setSequenceFilters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSequenceFilters" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">setSequenceFilters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSequenceFilters" title="Link to this definition"></a></dt>
 <dd><p>Set sequence filters to the contained single (FileSelectionWidget) and multiple file selection
 (FilesSelectionWidget) widgets.</p>
 <section id="id141">
@@ -2532,8 +2532,8 @@ widgets.</p>
 <p>filters : dict[str, dict[str, list[str] | str | None]</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>dictionary specifying sequence filters for single and multiple widgets, mapped by their labels.</p></li>
-<li><p>expected format: {‘single’: [sequence_str | list[str] | None, …], ‘multiple’: [sequence_str | list[str] | None, …]}</p></li>
+<li><p>dictionary specifying sequence filters for single and multiple widgets.</p></li>
+<li><p>expected format: {‘single’: list[str] | None, ‘multiple’: list[str] | None}</p></li>
 </ul>
 </div></blockquote>
 </section>
@@ -2541,16 +2541,16 @@ widgets.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSisypheVolumeFilters">
-<span class="sig-name descname"><span class="pre">setSisypheVolumeFilters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSisypheVolumeFilters" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">setSisypheVolumeFilters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSisypheVolumeFilters" title="Link to this definition"></a></dt>
 <dd><p>Set PySisyphe volume (.xvol) filters to the contained single and multiple file selection widgets based on the
 provided filter configuration.</p>
 <section id="id142">
 <h3>Parameters<a class="headerlink" href="#id142" title="Link to this heading"></a></h3>
-<p>filters : dict[str, dict[str, list[bool] | bool | None]</p>
+<p>filters : dict[str, dict[str, list[bool] | None]</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>dictionary specifying which widgets should filter for SisypheVolumes.</p></li>
-<li><p>expected format: {‘single’: [bool, …], ‘multiple’: [bool, …]}</p></li>
+<li><p>expected format: {‘single’: list[bool] | None, ‘multiple’: list[bool] | None}</p></li>
 </ul>
 </div></blockquote>
 </section>
@@ -2558,16 +2558,16 @@ provided filter configuration.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSuffixFilters">
-<span class="sig-name descname"><span class="pre">setSuffixFilters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSuffixFilters" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">setSuffixFilters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSuffixFilters" title="Link to this definition"></a></dt>
 <dd><p>Set suffix filters to the contained single (FileSelectionWidget) and multiple file selection
 (FilesSelectionWidget) widgets.</p>
 <section id="id143">
 <h3>Parameters<a class="headerlink" href="#id143" title="Link to this heading"></a></h3>
-<p>filters : dict[str, dict[str, list[str] | str | None]</p>
+<p>filters : dict[str, list[str] | None]</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>dictionary specifying suffix filters for single and multiple widgets, mapped by their labels.</p></li>
-<li><p>expected format: {‘single’: [suffix_str | list[str] | None, …], ‘multiple’: [suffix_str | list[str] | None, …]}</p></li>
+<li><p>dictionary specifying suffix filters for single and multiple widgets.</p></li>
+<li><p>expected format: {‘single’: list[str] | None, ‘multiple’: list[str] | None}</p></li>
 </ul>
 </div></blockquote>
 </section>
