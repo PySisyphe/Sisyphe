@@ -1704,16 +1704,22 @@ class SisypheROI(SisypheBinaryImage):
 
     # < Revision 30/07/2024
     # add getRemoveBlobByDistance method
-    def getDistanceMap(self, blob: int = 0, output: str = 'xvol') -> Image | ndarray | SisypheVolume:
+    def getDistanceMap(self,
+                       blob: int = 0,
+                       outside: bool = True,
+                       output: str = 'xvol') -> Image | ndarray | SisypheVolume:
         """
         Calculates the Euclidean distance transform of the current SisypheROI instance.
 
         Parameters
         ----------
-        blob : int
+        blob : int (optional)
             blob index or 0 (all image, default)
-        output : str
-            output image type: 'sitk', 'numpy', 'xvol'
+        outside : bool (optional)
+            if True (default), the inside is considered as having negative distances and outside is treated as having
+            positive distances. It's the opposite otherwise.
+        output : str (optional)
+            output image type: 'sitk', 'numpy', 'xvol' (default)
 
         Returns
         -------
@@ -1726,7 +1732,7 @@ class SisypheROI(SisypheBinaryImage):
                     img = sitkConnectedComponent(self.getSITKImage())
                     img = (img == blob)
                 else: img = self.getSITKImage()
-                dmap = sitkSignedMaurerDistanceMap(img, False, False, True)
+                dmap = sitkSignedMaurerDistanceMap(img, not outside, False, True)
                 if output == 'sitk': return dmap
                 elif output == 'numpy':
                     r = sitkGetArrayFromImage(dmap).T
