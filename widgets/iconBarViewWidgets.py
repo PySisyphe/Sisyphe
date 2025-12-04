@@ -714,6 +714,9 @@ class IconBarWidget(QWidget):
                     # disable synchronization when displaying a single (expanded) view to speed up rendering
                     w.synchronisationOff()
                     # Revision 17/11/2025 >
+                    # < Revision 19/11/2025
+                    if 'grid' in self._icons: self._icons['grid'].setVisible(False)
+                    # Revision 19/11/2025 >
             else:
                 for i in range(0, self._widget.getRows()):
                     for j in range(0, self._widget.getCols()):
@@ -723,6 +726,9 @@ class IconBarWidget(QWidget):
                         # < Revision 17/11/2025
                         self._widget[i, j].synchronisationOn()
                         # Revision 17/11/2025 >
+                # < Revision 19/11/2025
+                if 'grid' in self._icons: self._icons['grid'].setVisible(True)
+                # Revision 19/11/2025 >
 
     def _onFullScreen(self) -> None:
         """

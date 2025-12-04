@@ -4,6 +4,8 @@ External packages/modules
 
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
+from __future__ import annotations
+from typing import TYPE_CHECKING
 
 from sys import platform
 
@@ -57,6 +59,9 @@ from Sisyphe.gui.dialogDiffusionBundle import DialogStreamlinesAtlasSelection
 from Sisyphe.gui.dialogSettings import DialogFunctionSetting
 from Sisyphe.gui.dialogWait import DialogWait
 
+if TYPE_CHECKING:
+    from Sisyphe.gui.windowSisyphe import WindowSisyphe
+
 __all__ = ['TabROIListWidget',
            'TabROIToolsWidget',
            'TabMeshListWidget',
@@ -89,7 +94,7 @@ class TabWidget(QWidget):
 
     QWidget -> TabWidget
 
-    Last revision: 15/11/2025
+    Last revision: 03/12/2025
     """
     _VSIZE = 32
 
@@ -112,6 +117,7 @@ class TabWidget(QWidget):
 
         self._views = views
         self._collection = None
+        self._mainwindow = None
 
         # Layout
 
@@ -138,6 +144,21 @@ class TabWidget(QWidget):
 
     def hasCollection(self):
         return self._collection is not None
+
+    # < Revision 03/12/2025
+    def setMainWindow(self, w: WindowSisyphe):
+        self._mainwindow = w
+    # Revision 03/12/2025 >
+
+    # < Revision 03/12/2025
+    def getMainWindow(self):
+        return self._mainwindow
+    # Revision 03/12/2025 >
+
+    # < Revision 03/12/2025
+    def hasMainWindow(self):
+        return self._mainwindow is not None
+    # Revision 03/12/2025 >
 
 
 class TabROIListWidget(TabWidget):
@@ -2227,6 +2248,10 @@ class TabROIToolsWidget(TabWidget):
             wait.progressVisibilityOff()
             QApplication.processEvents()
             self._statistics = DialogROIStatistics()
+            # < Revision 02/12/2025
+            if self._mainwindow is not None:
+                self._statistics.setConsoleWidget(self._mainwindow.getConsole())
+            # Revision 02/12/2025 >
             if platform == 'win32':
                 import pywinstyles
                 cl = self.palette().base().color()

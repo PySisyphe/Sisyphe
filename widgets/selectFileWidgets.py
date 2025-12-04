@@ -1022,7 +1022,7 @@ class FileSelectionWidget(QWidget, SelectionFilter):
 
     QWidget, SelectionFilter -> FileSelectionWidget
 
-    Last revision: 20/10/2025
+    Last revision: 30/11/2025
     """
 
     # Custom Qt Signal
@@ -1475,6 +1475,10 @@ class FileSelectionWidget(QWidget, SelectionFilter):
         signal : bool (optional)
             If True, emits FieldChanged signal upon successful selection. Defaults to True.
         """
+        # < Revision 30/11/2025
+        if self._path != '' and exists(self._path): folder = self._path
+        else: folder = getcwd()
+        # Revision 30/11/2025 >
         # Extract filepath, filename and ext of parameter if exists
         param = filename != '' and exists(filename)
         if param: paramext = splitext(filename)[1].lower()
@@ -1485,8 +1489,12 @@ class FileSelectionWidget(QWidget, SelectionFilter):
                 if isdir(filename): directory = filename
                 else: directory = dirname(filename)
             else:
+                # < Revision 30/11/2025
+                # directory = QFileDialog.getExistingDirectory(self, 'Select directory',
+                #                                             getcwd(), QFileDialog.ShowDirsOnly)
                 directory = QFileDialog.getExistingDirectory(self, 'Select directory',
-                                                             getcwd(), QFileDialog.ShowDirsOnly)
+                                                             folder, QFileDialog.ShowDirsOnly)
+                # Revision 30/11/2025 >
                 QApplication.processEvents()
                 self.activateWindow()
             if directory:
@@ -1504,7 +1512,10 @@ class FileSelectionWidget(QWidget, SelectionFilter):
             if self._refxvol:
                 if not param or paramext != SisypheVolume.getFileExt():
                     filt = 'PySisyphe Volume (*.xvol)'
-                    filename = QFileDialog.getOpenFileName(self, 'Select PySisyphe volume', getcwd(), filt)
+                    # < Revision 30/11/2025
+                    # filename = QFileDialog.getOpenFileName(self, 'Select PySisyphe volume', getcwd(), filt)
+                    filename = QFileDialog.getOpenFileName(self, 'Select PySisyphe volume', folder, filt)
+                    # Revision 30/11/2025 >
                     QApplication.processEvents()
                     self.activateWindow()
                     filename = filename[0]
@@ -1716,7 +1727,10 @@ class FileSelectionWidget(QWidget, SelectionFilter):
             elif self._refxroi:
                 if not param or paramext != SisypheROI.getFileExt():
                     filt = 'PySisyphe ROI (*.xroi)'
-                    filename = QFileDialog.getOpenFileName(self, 'Select Sisyphe ROI', getcwd(), filt)
+                    # < Revision 30/11/2025
+                    # filename = QFileDialog.getOpenFileName(self, 'Select Sisyphe ROI', getcwd(), filt)
+                    filename = QFileDialog.getOpenFileName(self, 'Select Sisyphe ROI', folder, filt)
+                    # Revision 30/11/2025 >
                     QApplication.processEvents()
                     self.activateWindow()
                     filename = filename[0]
@@ -1800,7 +1814,10 @@ class FileSelectionWidget(QWidget, SelectionFilter):
             elif self._refxmesh:
                 if not param or paramext != SisypheMesh.getFileExt():
                     filt = SisypheMesh.getFilterExt()
-                    filename = QFileDialog.getOpenFileName(self, 'Select PySisyphe mesh', getcwd(), filt)
+                    # < Revision 30/11/2025
+                    # filename = QFileDialog.getOpenFileName(self, 'Select PySisyphe mesh', getcwd(), filt)
+                    filename = QFileDialog.getOpenFileName(self, 'Select PySisyphe mesh', folder, filt)
+                    # Revision 30/11/2025 >
                     QApplication.processEvents()
                     self.activateWindow()
                     filename = filename[0]
@@ -1861,7 +1878,10 @@ class FileSelectionWidget(QWidget, SelectionFilter):
             elif self._refxtracts:
                 if not param or paramext != SisypheStreamlines.getFileExt():
                     filt = SisypheStreamlines.getFilterExt()
-                    filename = QFileDialog.getOpenFileName(self, 'Select PySisyphe streamlines', getcwd(), filt)
+                    # < Revision 30/11/2025
+                    # filename = QFileDialog.getOpenFileName(self, 'Select PySisyphe streamlines', getcwd(), filt)
+                    filename = QFileDialog.getOpenFileName(self, 'Select PySisyphe streamlines', folder, filt)
+                    # Revision 30/11/2025 >
                     QApplication.processEvents()
                     self.activateWindow()
                     filename = filename[0]
@@ -1972,7 +1992,10 @@ class FileSelectionWidget(QWidget, SelectionFilter):
             elif self._refdicom:
                 if not param or paramext not in getDicomExt().append(''):
                     filt = 'DICOM (*.dcm *.dicom *.ima *.nema *)'
-                    filename = QFileDialog.getOpenFileName(self, 'Select DICOM file', getcwd(), filt)
+                    # < Revision 30/11/2025
+                    # filename = QFileDialog.getOpenFileName(self, 'Select DICOM file', getcwd(), filt)
+                    filename = QFileDialog.getOpenFileName(self, 'Select DICOM file', folder, filt)
+                    # Revision 30/11/2025 >
                     QApplication.processEvents()
                     self.activateWindow()
                     filename = filename[0]
@@ -2024,7 +2047,10 @@ class FileSelectionWidget(QWidget, SelectionFilter):
                     for ext in self._refExt:
                         filt += '*{} '.format(ext)
                     filt = filt.rstrip() + ')'
-                    filename = QFileDialog.getOpenFileName(self, 'Select file', getcwd(), filt)
+                    # < Revision 30/11/2025
+                    # filename = QFileDialog.getOpenFileName(self, 'Select file', getcwd(), filt)
+                    filename = QFileDialog.getOpenFileName(self, 'Select file', folder, filt)
+                    # Revision 30/11/2025 >
                     QApplication.processEvents()
                     self.activateWindow()
                     filename = filename[0]
@@ -2070,7 +2096,10 @@ class FileSelectionWidget(QWidget, SelectionFilter):
         else:
             if not param:
                 filt = 'All files (*.*)'
-                filename = QFileDialog.getOpenFileName(self, 'Select file', getcwd(), filt)
+                # < Revision 30/11/2025
+                # filename = QFileDialog.getOpenFileName(self, 'Select file', getcwd(), filt)
+                filename = QFileDialog.getOpenFileName(self, 'Select file', folder, filt)
+                # Revision 30/11/2025 >
                 QApplication.processEvents()
                 self.activateWindow()
                 filename = filename[0]
@@ -2195,7 +2224,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
 
     QWidget, SelectionFilter -> FilesSelectionWidget
 
-    Last revision: 20/10/2025
+    Last revision: 30/11/2025
     """
 
     # Custom Qt Signals
@@ -2962,7 +2991,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
 
     # noinspection PyUnboundLocalVariable
     def add(self,
-            filenames: str = '',
+            filenames: str | list[str] = '',
             label: str = '',
             signal: bool = True,
             wait: DialogWait | None = None):
@@ -2973,7 +3002,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
 
         Parameters
         ----------
-        filenames : str (optional)
+        filenames : str | list[str] (optional)
             pre-selected filename or directory to add directly. Defaults to an empty string.
         label : str (optional)
             an optional label for the file dialog title. Defaults to an empty string.
@@ -2985,13 +3014,34 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         """
         dtag = wait is None
         if label != '': label += ' '
-        # Extract filepath, filename and ext of parameter if exists
-        param = filenames != '' and exists(filenames)
-        if param:
-            buff, paramext = splitext(filenames)
-            paramext = paramext.lower()
-            filenames = [filenames]
-        else: paramext = ''
+        # < Revision 30/11/2025
+        # param = filenames != '' and exists(filenames)
+        #    if param:
+        #        buff, paramext = splitext(filenames)
+        #        paramext = paramext.lower()
+        #        filenames = [filenames]
+        #    else: paramext = ''
+        if isinstance(filenames, str):
+            # Extract filepath, filename and ext of parameter if exists
+            param = filenames != '' and exists(filenames)
+            if param:
+                buff, paramext = splitext(filenames)
+                paramext = paramext.lower()
+                filenames = [filenames]
+            else: paramext = ''
+        elif isinstance(filenames, list):
+            if len(filenames) > 0:
+                buff, paramext = splitext(filenames[0])
+                paramext = paramext.lower()
+                buff = list()
+                for filename in filenames:
+                    if exists(filename): buff.append(filename)
+                filenames = buff
+                param = len(filenames) > 0
+            else:
+                param = False
+                paramext = ''
+        # Revision 30/11/2025 >
         # Apply filters
         if self._refDir:
             if param:
@@ -4404,7 +4454,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
 
     QWidget -> SynchronizedFileSelectionWidget
 
-    Last revision: 04/11/2025
+    Last revision: 30/11/2025
     """
 
     # Special method
@@ -4991,14 +5041,14 @@ class SynchronizedFilesSelectionWidget(QWidget):
         return tuple(r)
     # Revision 23/10/2024 >
 
-    def getFilenames(self) -> dict[str, dict[str, str]]:
+    def getFilenames(self) -> dict[str, dict[str, str | list[str]]]:
         """
         Get a dictionary of all selected filenames from single (FileSelectionWidget) and multiple selection
         (FilesSelectionWidget) widgets, organized by their labels.
 
         Returns
         -------
-        dict[str, dict[str, str]]
+        dict[str, dict[str, str | list[str]]]
             dictionary with 'single' and 'multiple' keys, each mapping to a dictionary of widget labels and their
             filenames.
         """
@@ -5015,14 +5065,14 @@ class SynchronizedFilesSelectionWidget(QWidget):
         r['multiple'] = r2
         return r
 
-    def setFilenames(self, filenames: dict[str, dict[str, str]]) -> None:
+    def setFilenames(self, filenames: dict[str, dict[str, str | list[str]]]) -> None:
         """
         Set the filenames for the contained single (FileSelectionWidget) and multiple selection (FilesSelectionWidget)
         widgets.
 
         Parameters
         ----------
-        filenames : dict[str, dict[str, str]]
+        filenames : dict[str, dict[str, str | list[str]]]
 
             - dictionary specifying filenames to set.
             - expected format: {'single': {label: filename_str}, 'multiple': {label: filename_str | list[filename_str]}}

@@ -734,9 +734,13 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._dialogprop = DialogMeshProperties()
         if platform == 'win32':
             import pywinstyles
-            cl = self.palette().base().color()
-            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
-            pywinstyles.change_header_color(self._dialogprop, c)
+            # < Revision 18/11/2025
+            # cl = self.palette().base().color()
+            if self._listattr is not None:
+                cl = self._listattr.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._dialogprop, c)
+            # Revision 18/11/2025 >
         self._dialogprop.UpdateRender.connect(self._updateViews)
 
         self._updateSettingsFromItem()
@@ -1004,9 +1008,13 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         # update title bar color of the dialog box for Win32 platform
         if platform == 'win32':
             import pywinstyles
-            cl = self.palette().base().color()
-            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
-            pywinstyles.change_header_color(self._dialogprop, c)
+            # < Revision 18/11/2025
+            # cl = self.palette().base().color()
+            if self._listattr is not None:
+                cl = self._listattr.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._dialogprop, c)
+            # Revision 18/11/2025 >
         # Revision 28/08/2025 >
         self._dialogprop.exec()
         c = self._item.getActor().GetProperty().GetColor()
@@ -1155,7 +1163,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
     QFrame -> ItemAttributesWidget -> ItemToolAttributesWidget
 
-    Last revision: 28/08/2025
+    Last revision: 04/12/2025
     """
 
     # Special method
@@ -1254,9 +1262,13 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self._dialogprop = DialogSetting('Tools')
         if platform == 'win32':
             import pywinstyles
-            cl = self.palette().base().color()
-            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
-            pywinstyles.change_header_color(self._dialogprop, c)
+            # < Revision 18/11/2025
+            # cl = self.palette().base().color()
+            if self._listattr is not None:
+                cl = self._listattr.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._dialogprop, c)
+            # Revision 18/11/2025 >
         self._dialogprop.getSettingsWidget().setParameterVisibility('MaxCount', False)
 
         # Position
@@ -1273,9 +1285,13 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self._dialogtarget = DialogTarget(tool, views)
         if platform == 'win32':
             import pywinstyles
-            cl = self.palette().base().color()
-            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
-            pywinstyles.change_header_color(self._dialogtarget, c)
+            # < Revision 18/11/2025
+            # cl = self.palette().base().color()
+            if self._listattr is not None:
+                cl = self._listattr.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._dialogtarget, c)
+            # Revision 18/11/2025 >
 
         # Length
 
@@ -1291,9 +1307,13 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self._dialoglength = DialogFromXml('Trajectory length', ['TrajectoryLength'])
         if platform == 'win32':
             import pywinstyles
-            cl = self.palette().base().color()
-            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
-            pywinstyles.change_header_color(self._dialoglength, c)
+            # < Revision 18/11/2025
+            # cl = self.palette().base().color()
+            if self._listattr is not None:
+                cl = self._listattr.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._dialoglength, c)
+            # Revision 18/11/2025 >
 
         # Move
 
@@ -1311,9 +1331,13 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self._dialogmove = DialogFromXml('Move point/trajectory', ['DuplicateTool'])
         if platform == 'win32':
             import pywinstyles
-            cl = self.palette().base().color()
-            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
-            pywinstyles.change_header_color(self._dialogmove, c)
+            # < Revision 18/11/2025
+            # cl = self.palette().base().color()
+            if self._listattr is not None:
+                cl = self._listattr.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._dialogmove, c)
+            # Revision 18/11/2025 >
 
         # Widget layout
 
@@ -1496,7 +1520,11 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             if v is not None: self._item.setTubeVisibility(v)
         # Update common properties from settings
         v = settings.getParameterValue('Color')
-        if v is not None: self._item.setColor(v)
+        if v is not None:
+            self._item.setColor(v)
+            # < Revision 04/12/2025
+            self._color.setFloatColor(v[0], v[1], v[2], signal=False)
+            # Revision 04/12/2025 >
         v = settings.getParameterValue('SelectedColor')
         if v is not None: self._item.setSelectedColor(v)
         v = settings.getParameterValue('Opacity')
@@ -1623,9 +1651,13 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             # update title bar color of the dialog box for Win32 platform
             if platform == 'win32':
                 import pywinstyles
-                cl = self.palette().base().color()
-                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
-                pywinstyles.change_header_color(self._dialogprop, c)
+                # < Revision 18/11/2025
+                # cl = self.palette().base().color()
+                if self._listattr is not None:
+                    cl = self._listattr.palette().base().color()
+                    c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                    pywinstyles.change_header_color(self._dialogprop, c)
+                # Revision 18/11/2025 >
             # Revision 28/08/2025 >
             if self._dialogprop.exec() == QDialog.Accepted:
                 txt = settings.getParameterValue('TextTarget')
@@ -1697,9 +1729,13 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             # update title bar color of the dialog box for Win32 platform
             if platform == 'win32':
                 import pywinstyles
-                cl = self.palette().base().color()
-                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
-                pywinstyles.change_header_color(self._dialogtarget, c)
+                # < Revision 18/11/2025
+                # cl = self.palette().base().color()
+                if self._listattr is not None:
+                    cl = self._listattr.palette().base().color()
+                    c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                    pywinstyles.change_header_color(self._dialogtarget, c)
+                # Revision 18/11/2025 >
             # Revision 28/08/2025 >
             if self._dialogtarget.exec() == QDialog.Accepted:
                 r = self._dialogtarget.getAttributes()
@@ -1739,9 +1775,13 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 # update title bar color of the dialog box for Win32 platform
                 if platform == 'win32':
                     import pywinstyles
-                    cl = self.palette().base().color()
-                    c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
-                    pywinstyles.change_header_color(self._dialoglength, c)
+                    # < Revision 18/11/2025
+                    # cl = self.palette().base().color()
+                    if self._listattr is not None:
+                        cl = self._listattr.palette().base().color()
+                        c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                        pywinstyles.change_header_color(self._dialoglength, c)
+                    # Revision 18/11/2025 >
                 # Revision 28/08/2025 >
                 if self._dialoglength.exec() == QDialog.Accepted:
                     view = self._views.getOrthogonalSliceTrajectoryViewWidget()
@@ -1828,9 +1868,13 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             # update title bar color of the dialog box for Win32 platform
             if platform == 'win32':
                 import pywinstyles
-                cl = self.palette().base().color()
-                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
-                pywinstyles.change_header_color(self._dialogmove, c)
+                # < Revision 18/11/2025
+                # cl = self.palette().base().color()
+                if self._listattr is not None:
+                    cl = self._listattr.palette().base().color()
+                    c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                    pywinstyles.change_header_color(self._dialogmove, c)
+                # Revision 18/11/2025 >
             # Revision 28/08/2025 >
             if self._dialogmove.exec() == QDialog.Accepted:
                 c = wp.currentIndex()
@@ -2049,9 +2093,13 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
         self._dialogcolor = DialogFromXml('Streamlines color', ['TractColor'])
         if platform == 'win32':
             import pywinstyles
-            cl = self.palette().base().color()
-            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
-            pywinstyles.change_header_color(self._dialogcolor, c)
+            # < Revision 18/11/2025
+            # cl = self.palette().base().color()
+            if self._listattr is not None:
+                cl = self._listattr.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._dialogcolor, c)
+            # Revision 18/11/2025 >
 
         # Opacity
 
@@ -2334,7 +2382,7 @@ class ListAttributesWidget(QWidget):
 
     QWidget -> ListAttributesWidget
 
-    Last revision: 15/11/2025
+    Last revision: 29/11/2025
     """
     _VSIZE = 32
 
@@ -2388,6 +2436,11 @@ class ListAttributesWidget(QWidget):
         self._uncheckall = IconPushButton('uncheck.png', size=self._VSIZE)
         # noinspection PyUnresolvedReferences
         self._uncheckall.clicked.connect(self.uncheckAll)
+        # < Revision 29/11/2025
+        self._console = IconPushButton('console.png', size=self._VSIZE)
+        # noinspection PyUnresolvedReferences
+        self._console.clicked.connect(self.copyToConsole)
+        # Revision 29/11/2025 >
 
         self._new.setToolTip('New')
         self._open.setToolTip('Open')
@@ -2395,6 +2448,9 @@ class ListAttributesWidget(QWidget):
         self._removeall.setToolTip('Remove all')
         self._checkall.setToolTip('Check all')
         self._uncheckall.setToolTip('Uncheck all')
+        # < Revision 29/11/2025
+        self._console.setToolTip('Copy to console')
+        # Revision 29/11/2025 >
 
         self._btlayout1 = QHBoxLayout()
         self._btlayout1.setContentsMargins(0, 0, 0, 0)
@@ -2404,6 +2460,9 @@ class ListAttributesWidget(QWidget):
         self._btlayout1.addWidget(self._new)
         self._btlayout1.addWidget(self._saveall)
         self._btlayout1.addWidget(self._removeall)
+        # < Revision 29/11/2025
+        self._btlayout1.addWidget(self._console)
+        # Revision 29/11/2025 >
         self._btlayout1.addStretch()
 
         self._btlayout2 = QHBoxLayout()
@@ -2508,7 +2567,8 @@ class ListAttributesWidget(QWidget):
         # noinspection PyInconsistentReturns
         while parent is not None:
             if isinstance(parent, WindowSisyphe): return parent
-            else: parent = parent.parent()
+            else:
+                parent = parent.parent()
 
     def _getStatusBar(self):
         mainwindow = self.getMainWindow()
@@ -2530,6 +2590,10 @@ class ListAttributesWidget(QWidget):
         self._checkall.setFixedSize(size, size)
         self._uncheckall.setIconSize(QSize(size - 8, size - 8))
         self._uncheckall.setFixedSize(size, size)
+        # < Revision 29/11/2025
+        self._console.setIconSize(QSize(size - 8, size - 8))
+        self._console.setFixedSize(size, size)
+        # Revision 29/11/2025 >
 
     def getIconSize(self):
         return self._new.width()
@@ -2591,6 +2655,16 @@ class ListAttributesWidget(QWidget):
             widget = self._list.itemWidget(item)
             if widget.isChecked(): widgets.append(widget)
         return widgets
+
+    # < Revision 20/11/2025
+    def getCheckedIndex(self):
+        index = list()
+        for i in range(0, self._list.count()):
+            item = self._list.item(i)
+            widget = self._list.itemWidget(item)
+            if widget.isChecked(): index.append(i)
+        return index
+    # Revision 20/11/2025 >
 
     def remove(self):
         if self.hasViewCollection() and self.hasCollection():
@@ -2656,6 +2730,12 @@ class ListAttributesWidget(QWidget):
                         witem.save(wait)
                 wait.close()
 
+    # < Revision 29/11/2025
+    # add copyToConsole method
+    def copyToConsole(self):
+        pass
+    # Revision 29/11/2025 >
+
     def clear(self):
         self._list.clear()
 
@@ -2710,7 +2790,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListROIAttributesWidget
 
-    Last revision: 17/11/2025
+    Last revision: 29/11/2025
     """
 
     # Special method
@@ -2740,8 +2820,10 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._export.clicked.connect(self._exportMenu)
         # noinspection PyUnresolvedReferences
         self._mesh.clicked.connect(self.toMesh)
+        # < Revision 25/11/2025
         # noinspection PyUnresolvedReferences
-        self._dist.clicked.connect(self.toDistance)
+        # self._dist.clicked.connect(self.toDistance)
+        # Revision 25/11/2025 >
         # noinspection PyUnresolvedReferences
         self._features.clicked.connect(self.features)
         # < Revision 17/11/2025
@@ -2804,6 +2886,25 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._popup.addAction(self._action['numpy'])
         self._popup.addAction(self._action['vtk'])
         self._popup.addAction(self._action['dcm'])
+        self._export.setMenu(self._popup)
+
+        # < Revision 18/11/2025
+        self._popupDist = QMenu()
+        # noinspection PyTypeChecker
+        self._popupDist.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._popupDist.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._popupDist.setAttribute(Qt.WA_TranslucentBackground, True)
+        self._action['outside'] = QAction('Outside positive')
+        self._action['inside'] = QAction('Inside positive')
+        # noinspection PyUnresolvedReferences
+        self._action['outside'].triggered.connect(lambda _: self.toDistance(True))
+        # noinspection PyUnresolvedReferences
+        self._action['inside'].triggered.connect(lambda _: self.toDistance(False))
+        self._popupDist.addAction(self._action['outside'])
+        self._popupDist.addAction(self._action['inside'])
+        self._dist.setMenu(self._popupDist)
+        # Revision 18/11/2025 >
 
         self._new.setToolTip('{} ROI'.format(self._new.toolTip()))
         self._open.setToolTip('{} ROI(s)'.format(self._open.toolTip()))
@@ -2811,6 +2912,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._removeall.setToolTip('{} ROI(s)'.format(self._removeall.toolTip()))
         self._checkall.setToolTip('{} ROI(s)'.format(self._checkall.toolTip()))
         self._uncheckall.setToolTip('{} ROI(s)'.format(self._uncheckall.toolTip()))
+        # < Revision 29/11/2025
+        self._console.setToolTip('Copy checked ROI(s) to console')
+        # Revision 29/11/2025 >
 
     # Private methods
 
@@ -3328,7 +3432,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     # < Revision 25/10/2024
     # add toDistance method
-    def toDistance(self):
+    def toDistance(self, outside: bool = True):
         if self.hasViewCollection():
             rois = self.getCheckedROI()
             filenames = list()
@@ -3340,7 +3444,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 wait.setCurrentProgressValue(0)
                 wait.setProgressVisibility(n > 1)
                 for roi in rois:
-                    r = roi.getDistanceMap()
+                    r = roi.getDistanceMap(0, outside)
                     if not roi.hasFilename():
                         wait.hide()
                         filename = QFileDialog.getSaveFileName(self,
@@ -3414,6 +3518,33 @@ class ListROIAttributesWidget(ListAttributesWidget):
                         widget.setVisibility(self._visibility.getVisibilityStateIcon())
     # Revision 17/11/2025 >
 
+    # < Revision 29/11/2025
+    # add copyToConsole method
+    def copyToConsole(self):
+        main = self._getMainWindow()
+        if main is not None:
+            console = main.getConsole()
+            rois = self.getCheckedROI()
+            if len(rois) > 0:
+                suffix = 0
+                name = 'rois'
+                while console.hasVariable(name):
+                    suffix += 1
+                    name = '{}{}'.format(name, suffix)
+                try:
+                    console.pushVariables({name: rois})
+                    console.update()
+                    messageBox(self,
+                               'Copy ROI(s) to console',
+                               text='ROI(s) is(are) available in the PySisyphe console '
+                                    'as a list variable called \"{}\".'.format(name))
+                except:
+                    messageBox(self,
+                               'Copy ROI(s) to console',
+                               text='Unable to copy ROI(s) to the PySisyphe console.')
+            else: messageBox(self, 'Copy ROI(s) to console', 'No ROI checked.')
+    # Revision 29/11/2025 >
+
     # Qt event
 
     def dropEvent(self, event):
@@ -3456,7 +3587,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListMeshAttributesWidget
 
-    Last revision: 17/11/2025
+    Last revision: 29/11/2025
     """
 
     # Special method
@@ -3673,6 +3804,9 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._removeall.setToolTip('{} Mesh(es)'.format(self._removeall.toolTip()))
         self._checkall.setToolTip('{} Mesh(es)'.format(self._checkall.toolTip()))
         self._uncheckall.setToolTip('{} Mesh(es)'.format(self._uncheckall.toolTip()))
+        # < Revision 29/11/2025
+        self._console.setToolTip('Copy checked mesh(es) to console')
+        # Revision 29/11/2025 >
 
         self._dialog = DialogThreshold(size=384)
         if platform == 'win32':
@@ -4459,6 +4593,11 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                 n = len(meshes)
                 if n > 0:
                     dialog = DialogGenericResults()
+                    # < Revision 29/11/2025
+                    main = self._getMainWindow()
+                    if main is not None:
+                        dialog.setConsoleWidget(main.getConsole())
+                    # Revision 29/11/2025 >
                     if platform == 'win32':
                         import pywinstyles
                         cl = self.palette().base().color()
@@ -4721,6 +4860,33 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                         widget.setVisibility(self._visibility.getVisibilityStateIcon())
     # Revision 17/11/2025 >
 
+    # < Revision 29/11/2025
+    # add copyToConsole method
+    def copyToConsole(self):
+        main = self._getMainWindow()
+        if main is not None:
+            console = main.getConsole()
+            meshes = self.getCheckedMesh()
+            if len(meshes) > 0:
+                suffix = 0
+                name = 'meshes'
+                while console.hasVariable(name):
+                    suffix += 1
+                    name = '{}{}'.format(name, suffix)
+                try:
+                    console.pushVariables({name: meshes})
+                    console.update()
+                    messageBox(self,
+                               'Copy mesh(es) to console',
+                               text='Mesh(es) is(are) available in the PySisyphe console '
+                                    'as a list variable called \"{}\".'.format(name))
+                except:
+                    messageBox(self,
+                               'Copy mesh(es) to console',
+                               text='Unable to copy mesh(es) to the PySisyphe console.')
+            else: messageBox(self, 'Copy mesh(es) to console', 'No mesh checked.')
+    # Revision 29/11/2025 >
+
     # Qt event
 
     def dropEvent(self, event):
@@ -4758,7 +4924,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListToolAttributesWidget
 
-    Last revision: 13/11/2025
+    Last revision: 29/11/2025
     """
 
     # Special method
@@ -4783,6 +4949,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
         # < Revision 13/11/2025
         self._visibility = VisibilityLabel()
         self._lock = LockLabel()
+        self._properties = IconPushButton('settings.png', size=ListAttributesWidget._VSIZE)
         # Revision 13/11/2025 >
 
         # noinspection PyUnresolvedReferences
@@ -4802,6 +4969,8 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._visibility.visibilityChanged.connect(self.visibility)
         # noinspection PyUnresolvedReferences
         self._lock.lockChanged.connect(self.lock)
+        # noinspection PyUnresolvedReferences
+        self._properties.clicked.connect(self.properties)
         # Revision 13/11/2025 >
 
         self._target.setToolTip('Add new target tool')
@@ -4813,6 +4982,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
         # < Revision 13/11/2025
         self._visibility.setToolTip('Show/hide all tools')
         self._lock.setToolTip('Lock/unlock all tools')
+        self._properties.setToolTip('Change properties of checked tool(s)')
         # Revision 13/11/2025 >
 
         self._new.setVisible(False)
@@ -4823,8 +4993,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._btlayout2.insertWidget(3, self._features)
         self._btlayout2.insertWidget(3, self._duplicate)
         # < Revision 13/11/2025
-        self._btlayout2.insertWidget(1, self._visibility)
+        self._btlayout2.insertWidget(1, self._properties)
         self._btlayout2.insertWidget(1, self._lock)
+        self._btlayout2.insertWidget(1, self._visibility)
         # Revision 13/11/2025 >
 
         self._open.setToolTip('{} tool(s)'.format(self._open.toolTip()))
@@ -4832,17 +5003,29 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._removeall.setToolTip('{} tool(s)'.format(self._removeall.toolTip()))
         self._checkall.setToolTip('{} tool(s)'.format(self._checkall.toolTip()))
         self._uncheckall.setToolTip('{} tool(s)'.format(self._uncheckall.toolTip()))
+        # < Revision 29/11/2025
+        self._console.setToolTip('Copy checked tool(s) to console')
+        # Revision 29/11/2025 >
 
         self._dialogtarget = DialogTarget()
         self._dialogduplicate = DialogFromXml('Duplicate tool', ['DuplicateTool'])
         self._dialogfeatures = DialogGenericResults()
+        self._dialogprop = DialogSetting('Tools')
+        self._dialogprop.getSettingsWidget().setParameterVisibility('MaxCount', False)
+        self._dialogprop.getSettingsWidget().setParameterVisibility('TextTarget', False)
+        self._dialogprop.getSettingsWidget().setParameterVisibility('TextEntry', False)
         if platform == 'win32':
             import pywinstyles
-            cl = self.palette().base().color()
-            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
-            pywinstyles.change_header_color(self._dialogtarget, c)
-            pywinstyles.change_header_color(self._dialogduplicate, c)
-            pywinstyles.change_header_color(self._dialogfeatures, c)
+            # < Revision 20/11/2025
+            if self._list is not None:
+                # cl = self.palette().base().color()
+                cl = self._list.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._dialogtarget, c)
+                pywinstyles.change_header_color(self._dialogduplicate, c)
+                pywinstyles.change_header_color(self._dialogfeatures, c)
+                pywinstyles.change_header_color(self._dialogprop, c)
+            # Revision 20/11/2025 >
 
     # Private methods
 
@@ -4907,7 +5090,11 @@ class ListToolAttributesWidget(ListAttributesWidget):
         # < Revision 13/11/2025
         self._visibility.setFixedSize(size, size)
         self._lock.setFixedSize(size, size)
-        # Revision 13/11/2025
+        # Revision 13/11/2025 >
+        # < Revision 20/11/2025
+        self._properties.setIconSize(QSize(size - 8, size - 8))
+        self._properties.setFixedSize(size, size)
+        # Revision 20/11/2025 >
 
     def getCheckedTool(self):
         tools = list()
@@ -5371,6 +5558,11 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     """      
                         Coordinates, page #0           
                     """
+                    # < Revision 29/11/2025
+                    main = self._getMainWindow()
+                    if main is not None:
+                        self._dialogfeatures.setConsoleWidget(main.getConsole())
+                    # Revision 29/11/2025 >
                     self._dialogfeatures.newTab('Coordinates',
                                                 capture=False, clipbrd=False,
                                                 scrshot=self._scrsht, dataset=True)
@@ -5585,6 +5777,11 @@ class ListToolAttributesWidget(ListAttributesWidget):
                             Distance to surface, page #1
                             Distance to center of mass, page #2
                         """
+                        # < Revision 29/11/2025
+                        main = self._getMainWindow()
+                        if main is not None:
+                            self._dialogfeatures.setConsoleWidget(main.getConsole())
+                        # Revision 29/11/2025 >
                         self._dialogfeatures.newTab('Inside mesh',
                                                     capture=False, clipbrd=False,
                                                     scrshot=self._scrsht, dataset=True)
@@ -5667,6 +5864,78 @@ class ListToolAttributesWidget(ListAttributesWidget):
                         widget.setLock(self._lock.getLockStateIcon())
     # Revision 13/11/2025 >
 
+    # < Revision 20/11/2025
+    # add properties() method
+    def properties(self):
+        if self.isEnabled():
+            if self.hasViewCollection():
+                if len(self._collection) > 0:
+                    idx = self.getCheckedIndex()
+                    if len(idx) > 0:
+                        settings = self._dialogprop.getSettingsWidget()
+                        self._logger.info('Dialog exec [gui.dialogSettings.DialogSetting - Tool properties]')
+                        if self._dialogprop.exec() == QDialog.Accepted:
+                            for i in idx:
+                                widget = self._list.itemWidget(self._list.item(i))
+                                tool = widget.getItem()
+                                wline = isinstance(tool, LineWidget)
+                                v = settings.getParameterValue('FontSize')
+                                if v is None: v = 12
+                                tool.setFontSize(v)
+                                v1 = settings.getParameterValue('FontFamily')[0]
+                                if v1 is None: v1 = 'Arial'
+                                v2 = settings.getParameterValue('FontBold')
+                                if v2 is None: v2 = False
+                                v3 = settings.getParameterValue('FontItalic')
+                                if v3 is None: v3 = False
+                                tool.setTextProperty(v1, v2, v3)
+                                v = settings.getParameterValue('TextOffset')
+                                if v is None: v = [40, 0]
+                                tool.setTextOffset(v)
+                                v = settings.getParameterValue('TextVisibility')
+                                if v is None: v = True
+                                tool.setTextVisibility(v)
+                                v = settings.getParameterValue('Color')
+                                if v is None: v = [1.0, 1.0, 1.0]
+                                tool.setColor(v)
+                                # noinspection PyProtectedMember
+                                widget._color.setFloatColor(v[0], v[1], v[2])
+                                v = settings.getParameterValue('SelectedColor')
+                                if v is None: v = [1.0, 1.0, 1.0]
+                                tool.setSelectedColor(v)
+                                v = settings.getParameterValue('Opacity')
+                                if v is None: v = 1.0
+                                tool.setOpacity(v)
+                                # noinspection PyProtectedMember
+                                widget._opacity.setOpacity(v)
+                                if wline:
+                                    v = settings.getParameterValue('PointSize')
+                                    if v is None: v = 5.0
+                                    tool.setPointSize(v)
+                                    v = settings.getParameterValue('LineWidth')
+                                    if v is None: v = 5.0
+                                    tool.setLineWidth(v)
+                                v = settings.getParameterValue('HandleSize')
+                                if v is None: v = 10.0
+                                tool.setHandleSize(v)
+                                v = settings.getParameterValue('HandleLineWidth')
+                                if v is None: v = 2.0
+                                if wline: tool.setHandleLineWidth(v)
+                                else: tool.setLineWidth(v)
+                                v = settings.getParameterValue('SafetyRadius')
+                                if v is None: v = 10.0
+                                if wline: tool.setTubeRadius(v)
+                                else: tool.setSphereRadius(v)
+                                v = settings.getParameterValue('SafetyVisibility')
+                                if v is None: v = True
+                                if wline: tool.setTubeVisibility(v)
+                                else: tool.setSphereVisibility(v)
+                                widget.setToolTip(str(tool))
+                                view = self._views.getVolumeView()
+                                if view is not None: view.copyToolAttributes(tool, None, signal=True)
+                                self._logger.info('Change propertiers Tool {}'.format(widget.getName()))
+    # Revision 20/11/2025 >
+
     def remove(self):
         if self.hasViewCollection():
             tools = self.getCheckedTool()
@@ -5718,6 +5987,33 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     mainwindow = self._getMainWindow()
                     if mainwindow is not None:
                         mainwindow.setStatusBarMessage('{} tools saved.'.format(basename(filename)))
+
+    # < Revision 29/11/2025
+    # add copyToConsole method
+    def copyToConsole(self):
+        main = self._getMainWindow()
+        if main is not None:
+            console = main.getConsole()
+            tools = self.getCheckedTool()
+            if len(tools) > 0:
+                suffix = 0
+                name = 'tools'
+                while console.hasVariable(name):
+                    suffix += 1
+                    name = '{}{}'.format(name, suffix)
+                try:
+                    console.pushVariables({name: tools})
+                    console.update()
+                    messageBox(self,
+                               'Copy tool(s) to console',
+                               text='Tool(s) is(are) available in the PySisyphe console '
+                                    'as a list variable called \"{}\".'.format(name))
+                except:
+                    messageBox(self,
+                               'Copy tool(s) to console',
+                               text='Unable to copy tool(s) to the PySisyphe console.')
+            else: messageBox(self, 'Copy tool(s) to console', 'No tool checked.')
+    # Revision 29/11/2025 >
 
     # Qt event
 
@@ -5783,7 +6079,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListBundleAttributesWidget
 
-    Last revision: 17/11/2025
+    Last revision: 29/11/2025
     """
 
     # Class constant
@@ -5996,6 +6292,9 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         # < Revision 17/11/2025
         self._visibility.setToolTip('Show/hide all bundle(s)')
         # Revision 17/11/2025 >
+        # < Revision 29/11/2025
+        self._console.setToolTip('Copy checked bundle(s) to console')
+        # Revision 29/11/2025 >
 
         self._new.setVisible(False)
         self._btlayout1.insertWidget(5, self._tomesh)
@@ -7056,6 +7355,11 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     wait.setProgressVisibility(n > 1)
                     QApplication.processEvents()
                     self._statdialog.clear()
+                    # < Revision 29/11/2025
+                    main = self._getMainWindow()
+                    if main is not None:
+                        self._statdialog.setConsoleWidget(main.getConsole())
+                    # Revision 29/11/2025 >
                     data = list()
                     labels = list()
                     for w in wchk:
@@ -7204,6 +7508,33 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         widget = self._list.itemWidget(self._list.item(i))
                         widget.setVisibility(self._visibility.getVisibilityStateIcon())
     # Revision 17/11/2025 >
+
+    # < Revision 29/11/2025
+    # add copyToConsole method
+    def copyToConsole(self):
+        main = self._getMainWindow()
+        if main is not None:
+            console = main.getConsole()
+            bundles = self.getCheckedBundle()
+            if len(bundles) > 0:
+                suffix = 0
+                name = 'bundles'
+                while console.hasVariable(name):
+                    suffix += 1
+                    name = '{}{}'.format(name, suffix)
+                try:
+                    console.pushVariables({name: bundles})
+                    console.update()
+                    messageBox(self,
+                               'Copy bundle(s) to console',
+                               text='Bundle(s) is(are) available in the PySisyphe console '
+                                    'as a list variable called \"{}\".'.format(name))
+                except:
+                    messageBox(self,
+                               'Copy bundle(s) to console',
+                               text='Unable to copy bundle(s) to the PySisyphe console.')
+            else: messageBox(self, 'Copy bundle(s) to console', 'No bundle checked.')
+    # Revision 29/11/2025 >
 
     # Qt event
 

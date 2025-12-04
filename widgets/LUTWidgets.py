@@ -3101,7 +3101,7 @@ class ComboBoxLut(QComboBox):
     QComboBox -> ComboBoxLut
 
     Creation: 20/11/2022
-    Last revision: 20/10/2025
+    Last revision: 02/12/2025
     """
 
     # Class methods
@@ -3227,12 +3227,9 @@ class ComboBoxLut(QComboBox):
             ext = ext.lower()
             if ext in getLutExt():
                 lut = SisypheLut()
-                if ext == '.lut':
-                    lut.load(name)
-                elif ext == '.xlut':
-                    lut.loadFromXML(name)
-                else:
-                    raise IOError('file extension {} is not Lut.'.format(ext))
+                if ext == '.lut': lut.load(name)
+                elif ext == '.xlut': lut.loadFromXML(name)
+                else: raise IOError('file extension {} is not Lut.'.format(ext))
                 self.addLut(lut)
 
     def insertLut(self, index: int, lut: ListedColormap |  LinearSegmentedColormap | SisypheLut) -> None:
@@ -3330,12 +3327,9 @@ class ComboBoxLut(QComboBox):
                 lut = SisypheLut()
                 path, ext = splitext(name)
                 ext = ext.lower()
-                if ext == '.lut':
-                    lut.load(name)
-                elif ext == '.xlut':
-                    lut.loadFromXML(name)
-                else:
-                    raise IOError('file extension {} is not Lut.'.format(ext))
+                if ext == '.lut': lut.load(name)
+                elif ext == '.xlut': lut.loadFromXML(name)
+                else: raise IOError('file extension {} is not Lut.'.format(ext))
                 lut = SisypheLut().copyToMatplotlibColormap()
             else: raise IOError('No such file {}.'.format(name))
         return lut
@@ -3359,15 +3353,17 @@ class ComboBoxLut(QComboBox):
             if exists(name):
                 path, ext = splitext(name)
                 ext = ext.lower()
-                if ext == '.lut':
-                    lut.load(name)
-                elif ext == '.xlut':
-                    lut.loadFromXML(name)
-                else:
-                    raise IOError('file extension {} is not Lut.'.format(ext))
-            else:
-                raise IOError('No such file {}.'.format(name))
+                if ext == '.lut': lut.load(name)
+                elif ext == '.xlut': lut.loadFromXML(name)
+                else: raise IOError('file extension {} is not Lut.'.format(ext))
+            else: raise IOError('No such file {}.'.format(name))
         return lut
+
+    # < Revision 02/12/2025
+    def removeFilesLut(self) -> None:
+        self.clear()
+        self._addInternalLut()
+    # Revision 02/12/2025 >
 
 
 class PopupMenuLut(QMenu):
@@ -3387,7 +3383,7 @@ class PopupMenuLut(QMenu):
     QMenu -> PopupMenuLut
 
     Creation: 20/10/2022
-    Last revision: 20/10/2025
+    Last revision: 01/12/2025
     """
 
     # Class methods
@@ -3590,3 +3586,9 @@ class PopupMenuLut(QMenu):
                     self.addMenu(action)
         finally:
             self.blockSignals(False)
+
+    # < Revision 02/12/2025
+    def removeFilesLut(self) -> None:
+        self.clear()
+        self._addInternalLut()
+    # Revision 02/12/2025 >

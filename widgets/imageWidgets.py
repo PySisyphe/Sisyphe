@@ -566,6 +566,16 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self._action['savecomp'].setVisible(n > 1)
             self._action['savecompas'] = QAction('Save current component as...', self)
             self._action['savecompas'].setVisible(n > 1)
+            # < Revision 29/11/2025
+            self._action['console1'] = QAction('as SisypheVolume', self)
+            self._action['console2'] = QAction('as SimpleITK Image', self)
+            self._action['console3'] = QAction('as VTK ImageData', self)
+            self._action['console4'] = QAction('as ANTs Image', self)
+            self._action['console5'] = QAction('as ITK Image', self)
+            self._action['console6'] = QAction('as Nibabel Image', self)
+            self._action['console7'] = QAction('as Numpy array', self)
+            self._action['console8'] = QAction('as transposed Numpy array', self)
+            # Revision 29/11/2025 >
             self._action['split'] = QAction('Split multi-component...', self)
             self._action['split'].setVisible(n > 1)
             self._action['close'] = QAction('Close', self)
@@ -624,6 +634,17 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self._action['savecomp'].triggered.connect(self.saveCurrentComponent)
             # noinspection PyUnresolvedReferences
             self._action['savecompas'].triggered.connect(self.saveCurrentComponentAs)
+            # < Revision 29/11/2025
+            # noinspection PyUnresolvedReferences
+            self._action['console1'].triggered.connect(lambda _: self.copyToConsole(0))
+            self._action['console2'].triggered.connect(lambda _: self.copyToConsole(1))
+            self._action['console3'].triggered.connect(lambda _: self.copyToConsole(2))
+            self._action['console4'].triggered.connect(lambda _: self.copyToConsole(3))
+            self._action['console5'].triggered.connect(lambda _: self.copyToConsole(4))
+            self._action['console6'].triggered.connect(lambda _: self.copyToConsole(5))
+            self._action['console7'].triggered.connect(lambda _: self.copyToConsole(6))
+            self._action['console8'].triggered.connect(lambda _: self.copyToConsole(7))
+            # Revision 29/11/2025 >
             # noinspection PyUnresolvedReferences
             self._action['split'].triggered.connect(self.split)
             # noinspection PyUnresolvedReferences
@@ -658,6 +679,23 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self._popup.addAction(self._action['saveas'])
             self._popup.addAction(self._action['savecomp'])
             self._popup.addAction(self._action['savecompas'])
+            # < Revision 29/11/2025
+            submenu = self._popup.addMenu('Copy to console')
+            # noinspection PyTypeChecker
+            submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+            # noinspection PyTypeChecker
+            submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+            # noinspection PyTypeChecker
+            submenu.setAttribute(Qt.WA_TranslucentBackground, True)
+            submenu.addAction(self._action['console1'])
+            submenu.addAction(self._action['console2'])
+            submenu.addAction(self._action['console3'])
+            submenu.addAction(self._action['console4'])
+            submenu.addAction(self._action['console5'])
+            submenu.addAction(self._action['console6'])
+            submenu.addAction(self._action['console7'])
+            submenu.addAction(self._action['console8'])
+            # Revision 29/11/2025 >
             self._popup.addAction(self._action['split'])
             self._popup.addAction(self._action['close'])
             self._popup.addSeparator()
@@ -1162,6 +1200,47 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             mainwindow = self.getMainWindow()
             if mainwindow is not None: mainwindow.setStatusBarMessage('{} saved.'.format(self._volume.getBasename()))
     # Revision 10/12/2024 >
+
+    # < Revision 29/11/2025
+    # add copyToConsole method
+    def copyToConsole(self, f: int = 0):
+        if self.hasMainWindow():
+            names = ['vol', 'sitkv', 'vtkv', 'antsv', 'itkv', 'nibv', 'npv', 'npv']
+            types = ['SisypheVolume',
+                     'SimpleITK Image',
+                     'VTK ImageData',
+                     'ANTsImage',
+                     'ITK Image',
+                     'Nibabel Image',
+                     'Numpy array',
+                     'Numpy array']
+            try:
+                suffix = 0
+                name = names[f]
+                console = self.getMainWindow().getConsole()
+                while console.hasVariable(name):
+                    suffix += 1
+                    name = '{}{}'.format(names[f], suffix)
+                if f == 0: v = self._volume
+                elif f == 1: v = self._volume.copyToSITKImage()
+                elif f == 2: v = self._volume.copyToVTKImage()
+                elif f == 3: v = self._volume.copyToANTSImage()
+                elif f == 4: v = self._volume.copyToITKImage()
+                elif f == 5: v = self._volume.copyToNibabelImage()
+                elif f == 6: v = self._volume.copyToNumpyArray(defaultshape=False)
+                elif f == 7: v = self._volume.copyToNumpyArray(defaultshape=True)
+                else: v = self._volume
+                console.pushVariables({name: v})
+                console.update()
+                messageBox(self,
+                           'Copy to console',
+                           text='{} is available in the PySisyphe console '
+                                'as a {} variable called \"{}\".'.format(self._volume.getBasename(), types[f], name))
+            except:
+                messageBox(self,
+                           'Copy to console',
+                           text='Unable to copy {} to the PySisyphe console.'.format(self._volume.getBasename()))
+    # Revision 29/11/2025 >
 
     # < Revision 10/12/2024
     # add split method

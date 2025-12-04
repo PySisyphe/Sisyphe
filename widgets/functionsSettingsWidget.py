@@ -142,7 +142,7 @@ class SettingsWidget(QWidget):
     QWidget -> SettingsWidget -> FunctionSettingsWidget
 
     Creation: 11/08/2022
-    Last revision: 04/11/2025
+    Last revision: 02/12/2025
     """
 
     _VSIZE = 24
@@ -342,8 +342,10 @@ class SettingsWidget(QWidget):
         self._layout.addWidget(self._settingsbox)
         # self._layout.addStretch()
 
+        # < Revision 28/11/2025
         # noinspection PyUnresolvedReferences
-        self._button.clicked.connect(self.toggleSettingsVisibility)
+        self._button.clicked.connect(lambda _: self.toggleSettingsVisibility(True))
+        # Revision 28/11/2025 >
         # noinspection PyUnresolvedReferences
         self._reset.clicked.connect(self.resetSettings)
         # noinspection PyUnresolvedReferences
@@ -718,6 +720,15 @@ class SettingsWidget(QWidget):
                     edit = FileSelectionWidget(parent=self)
                     edit.filterSisypheVolume()
                     edit.setFixedWidth(400)
+                    # < Revision 30/11/2025
+                    if node.hasAttribute('path'):
+                        path = node.getAttribute('path')
+                        import Sisyphe
+                        if path == '': base = ''
+                        elif path == '.': base = abspath(dirname(Sisyphe.__file__))
+                        else: base = abspath(join(dirname(Sisyphe.__file__), path))
+                        data = abspath(join(base, data))
+                    # Revision 30/11/2025 >
                     if exists(data): edit.open(data)
                     edit.FieldChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
@@ -870,9 +881,14 @@ class SettingsWidget(QWidget):
         for k in self._parameters:
             self._parameters[k].font().setPointSize(v)
 
-    def toggleSettingsVisibility(self) -> None:
+    def toggleSettingsVisibility(self, signal: bool = True) -> None:
         """
         Toggle the visibility of the settings box.
+
+        Parameters
+        ----------
+        signal : bool
+            emit VisibilityToggled Qt signal if signal is True.
         """
         if self._settingsbox.isVisible():
             self._settingsbox.setVisible(False)
@@ -897,22 +913,42 @@ class SettingsWidget(QWidget):
                 self._load.setVisible(True)
                 self._saveas.setVisible(True)
         QApplication.processEvents()
-        # noinspection PyUnresolvedReferences
-        self.VisibilityToggled.emit(self)
+        # < Revision 28/11/2025
+        # self.VisibilityToggled.emit(self)
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.VisibilityToggled.emit(self)
+        # Revision 28/11/2025 >
 
-    def settingsVisibilityOn(self) -> None:
+    def settingsVisibilityOn(self, signal: bool = True) -> None:
         """
         Show the settings box if it is not visible.
+
+        Parameters
+        ----------
+        signal : bool
+            emit VisibilityToggled Qt signal if signal is True.
         """
         if not self._settingsbox.isVisible():
-            self.toggleSettingsVisibility()
+            # < Revision 28/11/2025
+            # self.toggleSettingsVisibility()
+            self.toggleSettingsVisibility(signal)
+            # Revision 28/11/2025 >
 
-    def settingsVisibilityOff(self) -> None:
+    def settingsVisibilityOff(self, signal: bool = True) -> None:
         """
         Hide the settings box if it is visible.
+
+        Parameters
+        ----------
+        signal : bool
+            emit VisibilityToggled Qt signal if signal is True.
         """
         if self._settingsbox.isVisible():
-            self.toggleSettingsVisibility()
+            # < Revision 28/11/2025
+            # self.toggleSettingsVisibility()
+            self.toggleSettingsVisibility(signal)
+            # Revision 28/11/2025 >
 
     def getFunctionName(self) -> str:
         """
@@ -974,6 +1010,10 @@ class SettingsWidget(QWidget):
         elif isinstance(self._parameters[parameter], VisibilityLabel):
             # vartype visibility
             return bool(self._parameters[parameter].getVisibilityStateIcon())
+        # < Revision 02/12/2025
+        elif isinstance(self._parameters[parameter], ComboBoxLut):
+            # vartype lut
+            return self._parameters[parameter].currentText()
         elif isinstance(self._parameters[parameter], QComboBox):
             # vartype bool
             if self._parameters[parameter].itemText(0) == 'True':
@@ -986,9 +1026,9 @@ class SettingsWidget(QWidget):
                 for i in range(self._parameters[parameter].count()):
                     if i != current: d.append(self._parameters[parameter].itemText(i))
                 return d
-        elif isinstance(self._parameters[parameter], ComboBoxLut):
-            # vartype lut
-            return self._parameters[parameter].currentText()
+        # elif isinstance(self._parameters[parameter], ComboBoxLut):
+        #    return self._parameters[parameter].currentText()
+        # Revision 02/12/2025 >
         elif isinstance(self._parameters[parameter], ColorSelectPushButton):
             # vartype color
             return self._parameters[parameter].getFloatColor()
@@ -1245,6 +1285,15 @@ class SettingsWidget(QWidget):
                         data = datetime.strptime(data, '%Y-%m-%d').date()
                         self._parameters[parameter].setDate(data)
                     elif vartype == 'vol':
+                        # < Revision 30/11/2025
+                        if node.hasAttribute('path'):
+                            path = node.getAttribute('path')
+                            import Sisyphe
+                            if path == '': base = ''
+                            elif path == '.': base = abspath(dirname(Sisyphe.__file__))
+                            else: base = abspath(join(dirname(Sisyphe.__file__), path))
+                            data = abspath(join(base, data))
+                        # Revision 30/11/2025 >
                         self._parameters[parameter].open(data)
                     elif vartype == 'roi':
                         self._parameters[parameter].open(data)
