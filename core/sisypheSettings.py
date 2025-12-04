@@ -274,7 +274,7 @@ class SisypheSettings(object):
     object -> SisypheSettings
 
     Creation: 08/09/2022
-    Last revisions: 11/10/2025
+    Last revisions: 04/12/2025
     """
     __slots__ = ['_doc', '_filename']
 
@@ -978,11 +978,15 @@ class SisypheSettings(object):
                             if exists(v): node.setAttribute('path', '')
                             else: v = ''
                 elif not exists(v): v = ''
-            elif vartype in ('str', 'roi', 'dcm', 'dir'):
+            # < Revision 04/12/2025
+            # elif vartype in ('str', 'roi', 'dcm', 'dir'):
+            elif vartype in ('roi', 'dcm', 'dir'):
                 if v is None: v = ''
                 elif not exists(v): v = ''
-            elif vartype == 'lut':
+            # elif vartype in ('lut'):
+            elif vartype in ('lut', 'str'):
                 if v is None: v = ''
+            # Revision 04/12/2025 >
             # Revision 30/11/2025 >
             # < Revision 15/03/2025
             # add font type
@@ -1048,6 +1052,7 @@ class SisypheSettings(object):
                 else: raise ValueError('No such file {}'.format(v))
             # Revision 15/03/2025 >
             else: raise KeyError('Unknown vartype {}.'.format(vartype))
+            # print('{} {} {}'.format(section, field, v))
             if node.hasChildNodes(): node.firstChild.data = v
             else:
                 child = self._doc.createTextNode(v)
