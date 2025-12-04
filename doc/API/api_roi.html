@@ -74,7 +74,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Mapping.html">Mapping menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Diffusion.html">Diffusion menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Window.html">Window menu</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Core API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="api_packages.html">Packages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_constants.html">Sisyphe.core.sisypheConstants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_database.html">Sisyphe.core.sisypheDatabase</a></li>
@@ -464,6 +464,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheROI.SisypheROIHistogram.setVolume"><code class="docutils literal notranslate"><span class="pre">SisypheROIHistogram.setVolume()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheROI.isCompiled"><code class="docutils literal notranslate"><span class="pre">isCompiled()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api_settings.html">Sisyphe.core.sisypheSettings</a></li>
@@ -476,6 +477,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api_xml.html">Sisyphe.core.sisypheXml</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../API2/index.html">Widgets &amp; dialogs API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_contact.html">Contact</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Versions.html">Version history</a></li>
@@ -495,7 +497,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="index.html">API</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Core API</a></li>
       <li class="breadcrumb-item active">Sisyphe.core.sisypheROI</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/API/api_roi.rst.txt" rel="nofollow"> View page source</a>
@@ -567,8 +569,8 @@ Last revision: 21/09/2024</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROI.clearBorderBlobs">
 <span class="sig-name descname"><span class="pre">clearBorderBlobs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROI.clearBorderBlobs" title="Link to this definition"></a></dt>
-<dd><p>Clear blob(s) connected to the border of the current SisypheROI instance. The current SisypheROI instance is
-overwritten.</p>
+<dd><p>Clear blobs (connected components) linked to the border of the current SisypheROI instance. The current
+SisypheROI instance is overwritten.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -941,14 +943,17 @@ optionally gzipped.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROI.getDistanceMap">
-<span class="sig-name descname"><span class="pre">getDistanceMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blob</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'xvol'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROI.getDistanceMap" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">getDistanceMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blob</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outside</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'xvol'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROI.getDistanceMap" title="Link to this definition"></a></dt>
 <dd><p>Calculates the Euclidean distance transform of the current SisypheROI instance.</p>
 <section id="id22">
 <h3>Parameters<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>blob<span class="classifier">int</span></dt><dd><p>blob index or 0 (all image, default)</p>
+<dt>blob<span class="classifier">int (optional)</span></dt><dd><p>blob index or 0 (all image, default)</p>
 </dd>
-<dt>output<span class="classifier">str</span></dt><dd><p>output image type: ‘sitk’, ‘numpy’, ‘xvol’</p>
+<dt>outside<span class="classifier">bool (optional)</span></dt><dd><p>if True (default), the inside is considered as having negative distances and outside is treated as having
+positive distances. It’s the opposite otherwise.</p>
+</dd>
+<dt>output<span class="classifier">str (optional)</span></dt><dd><p>output image type: ‘sitk’, ‘numpy’, ‘xvol’ (default)</p>
 </dd>
 </dl>
 </section>
@@ -1774,14 +1779,14 @@ optionally gzipped.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROI.setCompressionOff">
 <span class="sig-name descname"><span class="pre">setCompressionOff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROI.setCompressionOff" title="Link to this definition"></a></dt>
-<dd><p>Disables gzip file compression of the current SisypheROI instance. PySisyphe ROI format (.xroi) can be
+<dd><p>Disable gzip file compression of the current SisypheROI instance. PySisyphe ROI format (.xroi) can be
 optionally gzipped.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROI.setCompressionOn">
 <span class="sig-name descname"><span class="pre">setCompressionOn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROI.setCompressionOn" title="Link to this definition"></a></dt>
-<dd><p>Enables gzip file compression of the current SisypheROI instance. PySisyphe ROI format (.xroi) can be
+<dd><p>Enable gzip file compression of the current SisypheROI instance. PySisyphe ROI format (.xroi) can be
 optionally gzipped.</p>
 </dd></dl>
 
@@ -2027,7 +2032,7 @@ Last revision: 23/05/2024</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROICollection.clearBorderBlobs">
 <span class="sig-name descname"><span class="pre">clearBorderBlobs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROICollection.clearBorderBlobs" title="Link to this definition"></a></dt>
-<dd><p>Clear blob(s) connected to the border of the current SisypheROI instance.</p>
+<dd><p>Clear blobs (connected components) linked to the border of the current SisypheROI instance.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2461,7 +2466,7 @@ container.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROICollection.isEmpty">
 <span class="sig-name descname"><span class="pre">isEmpty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROICollection.isEmpty" title="Link to this definition"></a></dt>
-<dd><p>Checks if SisypheROICollection instance container is empty.</p>
+<dd><p>Check if SisypheROICollection instance container is empty.</p>
 <section id="id135">
 <h3>Returns<a class="headerlink" href="#id135" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -2662,7 +2667,7 @@ smaller objects are removed first.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROICollection.resample">
-<span class="sig-name descname"><span class="pre">resample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform" title="Sisyphe.core.sisypheTransform.SisypheTransform"><span class="pre">SisypheTransform</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialog</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DialogWait</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROICollection.resample" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">resample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform" title="Sisyphe.core.sisypheTransform.SisypheTransform"><span class="pre">SisypheTransform</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialog</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROICollection.resample" title="Link to this definition"></a></dt>
 <dd><p>Apply an affine geometric transformation to all the SisypheROI elements of the current SisypheROICollection
 instance container.</p>
 <section id="id149">
@@ -2687,13 +2692,13 @@ instance container.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROICollection.reverse">
 <span class="sig-name descname"><span class="pre">reverse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROICollection.reverse" title="Link to this definition"></a></dt>
-<dd><p>Reverses the order of the elements in the current SisypheROICollection instance container.</p>
+<dd><p>Reverse the order of the elements in the current SisypheROICollection instance container.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROICollection.roiSTAPLECombination">
 <span class="sig-name descname"><span class="pre">roiSTAPLECombination</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheROI.SisypheROI" title="Sisyphe.core.sisypheROI.SisypheROI"><span class="pre">SisypheROI</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROICollection.roiSTAPLECombination" title="Link to this definition"></a></dt>
-<dd><p>Performs a pixelwise combination of ROIs, where each of them represents a segmentation of the same image. The
+<dd><p>Perform a pixelwise combination of ROIs, where each of them represents a segmentation of the same image. The
 labelings are weighted relative to each other based on their “performance” as estimated by an
 expectation-maximization algorithm. In the process, a ground truth segmentation is estimated, and the estimated
 performances of the individual segmentations are relative to this estimated ground truth.</p>
@@ -2713,7 +2718,7 @@ Springer-Verlag, Heidelberg, Germany, 2002, pp. 298-306</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROICollection.roiVotingCombination">
 <span class="sig-name descname"><span class="pre">roiVotingCombination</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheROI.SisypheROI" title="Sisyphe.core.sisypheROI.SisypheROI"><span class="pre">SisypheROI</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROICollection.roiVotingCombination" title="Link to this definition"></a></dt>
-<dd><p>Performs a pixelwise combination of ROIs, where each of them represents a segmentation of the same image. Label
+<dd><p>Perform a pixelwise combination of ROIs, where each of them represents a segmentation of the same image. Label
 voting is a simple method of classifier combination applied to image segmentation. Typically, the accuracy of
 the combined segmentation exceeds the accuracy of the input segmentations. Voting is therefore commonly used as
 a way of boosting segmentation performance.</p>
@@ -2832,7 +2837,7 @@ each ROI in the SisypheVolume instance is its int index in the SisypheROICollect
 <dd><section id="id158">
 <h2>Description<a class="headerlink" href="#id158" title="Link to this heading"></a></h2>
 <p>Processing class for SisypheROI instances with undo/redo management. Set input ROI with setROI method. Set input
-reference valume with SetVolume method.</p>
+reference volume with SetVolume method.</p>
 <p>Scope of methods:</p>
 <blockquote>
 <div><ul class="simple">
@@ -3257,7 +3262,7 @@ voxels).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROIDraw.blobRemove">
 <span class="sig-name descname"><span class="pre">blobRemove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIDraw.blobRemove" title="Link to this definition"></a></dt>
-<dd><p>Remove the blob containing the voxel whose coordinates are transmitted, from the SisypheROI image attribute.</p>
+<dd><p>Remove the blob containing the transmitted voxel coordinates, from the SisypheROI image attribute.</p>
 <section id="id179">
 <h3>Parameters<a class="headerlink" href="#id179" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -3302,7 +3307,7 @@ voxels).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROIDraw.blobSelect">
 <span class="sig-name descname"><span class="pre">blobSelect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIDraw.blobSelect" title="Link to this definition"></a></dt>
-<dd><p>Remove all blobs except the one containing the voxel whose coordinates are transmitted, from the SisypheROI
+<dd><p>Remove all blobs except the one containing the transmitted voxel coordinates, from the SisypheROI
 image attribute.</p>
 <section id="id181">
 <h3>Parameters<a class="headerlink" href="#id181" title="Link to this heading"></a></h3>
@@ -3382,7 +3387,7 @@ setBrushType() method, and size with setBrushRadius() method.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROIDraw.clearBorderBlob">
 <span class="sig-name descname"><span class="pre">clearBorderBlob</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIDraw.clearBorderBlob" title="Link to this definition"></a></dt>
-<dd><p>Remove all blobs (connected components) connected to image border.</p>
+<dd><p>Remove all blobs (connected components) linked to image border.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -3445,7 +3450,7 @@ temporary buffer by copy/cut/paste methods.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROIDraw.copyBlob">
 <span class="sig-name descname"><span class="pre">copyBlob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIDraw.copyBlob" title="Link to this definition"></a></dt>
-<dd><p>Copy to clipboard the blob containing the voxel whose coordinates are transmitted, from the SisypheROI image
+<dd><p>Copy to clipboard the blob containing the transmitted voxel coordinates, from the SisypheROI image
 attribute.</p>
 <section id="id186">
 <h3>Parameters<a class="headerlink" href="#id186" title="Link to this heading"></a></h3>
@@ -3492,7 +3497,7 @@ slice.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROIDraw.copySlice">
 <span class="sig-name descname"><span class="pre">copySlice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sindex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIDraw.copySlice" title="Link to this definition"></a></dt>
-<dd><p>Copy of a SisypheROI attribute slice to the clipboard.</p>
+<dd><p>Copy a slice of the SisypheROI attribute to the clipboard.</p>
 <section id="id188">
 <h3>Parameters<a class="headerlink" href="#id188" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -3514,7 +3519,7 @@ slice.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROIDraw.cutBlob">
 <span class="sig-name descname"><span class="pre">cutBlob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIDraw.cutBlob" title="Link to this definition"></a></dt>
-<dd><p>Cut to clipboard the blob containing the voxel whose coordinates are transmitted, from the SisypheROI image
+<dd><p>Cut to clipboard the blob containing the transmitted voxel coordinates, from the SisypheROI image
 attribute.</p>
 <section id="id189">
 <h3>Parameters<a class="headerlink" href="#id189" title="Link to this heading"></a></h3>
@@ -3561,7 +3566,7 @@ slice.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROIDraw.cutSlice">
 <span class="sig-name descname"><span class="pre">cutSlice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sindex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIDraw.cutSlice" title="Link to this definition"></a></dt>
-<dd><p>Cut of a SisypheROI attribute slice to the clipboard.</p>
+<dd><p>Cut a slice of the SisypheROI attribute to the clipboard.</p>
 <section id="id191">
 <h3>Parameters<a class="headerlink" href="#id191" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -5257,7 +5262,7 @@ names : ‘mean’, ‘otsu’, ‘huang’, ‘renyi’, ‘yen’, ‘li’, �
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROIDraw.pasteBlob">
 <span class="sig-name descname"><span class="pre">pasteBlob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIDraw.pasteBlob" title="Link to this definition"></a></dt>
-<dd><p>Paste the blob from clipboard at the position of the voxel whose coordinates are transmitted, into the
+<dd><p>Paste the blob from clipboard at the position of the transmitted voxel coordinates, into the
 SisypheROI image attribute.</p>
 <section id="id268">
 <h3>Parameters<a class="headerlink" href="#id268" title="Link to this heading"></a></h3>
@@ -5304,7 +5309,7 @@ attribute slice.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROIDraw.pasteSlice">
 <span class="sig-name descname"><span class="pre">pasteSlice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sindex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIDraw.pasteSlice" title="Link to this definition"></a></dt>
-<dd><p>Paste a SisypheROI attribute slice from the clipboard.</p>
+<dd><p>Paste a slice to the SisypheROI attribute from the clipboard.</p>
 <section id="id270">
 <h3>Parameters<a class="headerlink" href="#id270" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -6120,7 +6125,7 @@ euclideanErode, 2D and 3D, whole and blob versions).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROIDraw.setUndo">
 <span class="sig-name descname"><span class="pre">setUndo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIDraw.setUndo" title="Link to this definition"></a></dt>
-<dd><p>Enables/disables undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a
+<dd><p>Enable/disable undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a
 LIFO stack if this option is enabled.</p>
 <section id="id305">
 <h3>Parameters<a class="headerlink" href="#id305" title="Link to this heading"></a></h3>
@@ -6134,14 +6139,14 @@ LIFO stack if this option is enabled.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROIDraw.setUndoOff">
 <span class="sig-name descname"><span class="pre">setUndoOff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIDraw.setUndoOff" title="Link to this definition"></a></dt>
-<dd><p>Disables undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a LIFO
+<dd><p>Disable undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a LIFO
 stack if this option is enabled.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROIDraw.setUndoOn">
 <span class="sig-name descname"><span class="pre">setUndoOn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIDraw.setUndoOn" title="Link to this definition"></a></dt>
-<dd><p>Enables undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a LIFO
+<dd><p>Enable undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a LIFO
 stack if this option is enabled.</p>
 </dd></dl>
 
@@ -6404,6 +6409,19 @@ threshold in the reference SisypheVolume attribute.</p>
 <dd><section id="id317">
 <h2>Description<a class="headerlink" href="#id317" title="Link to this heading"></a></h2>
 <p>Extract features (descriptive statistics, shape, texture) from SisypheROI and SisypheVolume instance(s).</p>
+<p>List of calculated features enabled by tag methods :</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>First order statistics (19 features)</p></li>
+<li><p>Gray Level Co-occurrence Matrix (GLCM, 24 features)</p></li>
+<li><p>Gray Level Run Length Matrix (GLRM, 16 features)</p></li>
+<li><p>Gray Level Size Zone Matrix (GLSZM, 16 features)</p></li>
+<li><p>Neighbouring Gray Tone Difference Matrix (NGTDM, 5 features)</p></li>
+<li><p>Gray Level Dependence Matrix (GLDM, 14 features)</p></li>
+<li><p>3D Shape (16 features)</p></li>
+</ul>
+</div></blockquote>
+<p>The features definition is described in <a class="reference external" href="https://pyradiomics.readthedocs.io/en/latest/features.html">https://pyradiomics.readthedocs.io/en/latest/features.html</a></p>
 </section>
 <section id="id318">
 <h2>Inheritance<a class="headerlink" href="#id318" title="Link to this heading"></a></h2>
@@ -6412,7 +6430,7 @@ threshold in the reference SisypheVolume attribute.</p>
 Last revision: 15/12/2023</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROIFeatures.execute">
-<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DialogWait</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIFeatures.execute" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIFeatures.execute" title="Link to this definition"></a></dt>
 <dd><p>Execute features calculation.</p>
 <dl class="simple">
 <dt>List of calculated features enabled by tag methods :</dt><dd><ul class="simple">
@@ -6815,7 +6833,7 @@ SisypheROICollection attribute (same image size and spacing).</p>
 Last revision: 15/12/2023</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.SisypheROIHistogram.execute">
-<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DialogWait</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIHistogram.execute" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.SisypheROIHistogram.execute" title="Link to this definition"></a></dt>
 <dd><p>Execute histogram(s) calculation. Histogram results are set in the pandas.DataFrame instance attribute of the
 current SisypheROIFeatures instance.</p>
 <section id="id346">
@@ -7016,6 +7034,19 @@ SisypheROICollection attribute (same image size and spacing).</p>
 </section>
 </dd></dl>
 
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheROI.isCompiled">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheROI.</span></span><span class="sig-name descname"><span class="pre">isCompiled</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheROI.isCompiled" title="Link to this definition"></a></dt>
+<dd><p>Check if current instance is cython compiled or interpreted.</p>
+<section id="id361">
+<h2>Returns<a class="headerlink" href="#id361" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if current instance is cython compiled, False otherwise.</p>
+</dd>
+</dl>
 </section>
 </dd></dl>
 

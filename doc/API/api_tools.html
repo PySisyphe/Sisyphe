@@ -409,12 +409,15 @@
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.getLineWidth"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.getLineWidth()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.getList"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.getList()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.getOpacity"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.getOpacity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.getPurpose"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.getPurpose()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.getReferenceID"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.getReferenceID()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.getSelectedColor"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.getSelectedColor()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.hasFilename"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.hasFilename()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.hasInteractor"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.hasInteractor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.hasPurpose"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.hasPurpose()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.hasReferenceID"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.hasReferenceID()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.hasSameID"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.hasSameID()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.hasSamePurpose"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.hasSamePurpose()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.index"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.index()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.insert"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.insert()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.isEmpty"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.isEmpty()</span></code></a></li>
@@ -440,6 +443,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setInteractor"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.setInteractor()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setLineWidth"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.setLineWidth()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setOpacity"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.setOpacity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setPurpose"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.setPurpose()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setReferenceID"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.setReferenceID()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setSelectedColor"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.setSelectedColor()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.sort"><code class="docutils literal notranslate"><span class="pre">ToolWidgetCollection.sort()</span></code></a></li>
@@ -1314,7 +1318,7 @@ Distance tolerance (in pixels) between tool and mouse cursor for interaction.</p
 <h2>Inheritance<a class="headerlink" href="#id54" title="Link to this heading"></a></h2>
 <p>(vtkDistanceWidget, NamedWidget) -&gt; HandleWidget</p>
 <p>Creation: 05/04/2022
-Last revision: 10/11/2025</p>
+Last revision: 04/12/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.HandleWidget.copyAttributesFrom">
 <span class="sig-name descname"><span class="pre">copyAttributesFrom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Sisyphe.core.sisypheTools.HandleWidget" title="Sisyphe.core.sisypheTools.HandleWidget"><span class="pre">HandleWidget</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.HandleWidget.copyAttributesFrom" title="Link to this definition"></a></dt>
@@ -2461,7 +2465,7 @@ and mouse cursor for interaction.</p>
 </div></blockquote>
 <p>(vtkDistanceWidget, NamedWidget) -&gt; LineWidget</p>
 <p>Creation: 05/04/2022
-Last revision: 10/11/2025</p>
+Last revision: 20/11/2025</p>
 </div></blockquote>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.LineWidget.copyAttributesFrom">
@@ -4599,7 +4603,7 @@ Distance tolerance (in pixels) between tool and mouse cursor for interaction.</p
 <h2>Inheritance<a class="headerlink" href="#id291" title="Link to this heading"></a></h2>
 <p>object -&gt; ToolWidgetCollection</p>
 <p>Creation: 05/04/2022
-Last revision: 19/12/2023</p>
+Last revision: 22/11/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.append">
 <span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Sisyphe.core.sisypheTools.NamedWidget" title="Sisyphe.core.sisypheTools.NamedWidget"><span class="pre">NamedWidget</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.append" title="Link to this definition"></a></dt>
@@ -4777,12 +4781,26 @@ current ToolWidgetCollection instance container.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.getPurpose">
+<span class="sig-name descname"><span class="pre">getPurpose</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.getPurpose" title="Link to this definition"></a></dt>
+<dd><p>Get the purpose attribute of the current ToolWidgetCollection instance.
+This is a free string attribute that describes the purpose of the current collection.</p>
+<section id="id305">
+<h3>Returns<a class="headerlink" href="#id305" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>purpose</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.getReferenceID">
 <span class="sig-name descname"><span class="pre">getReferenceID</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.getReferenceID" title="Link to this definition"></a></dt>
 <dd><p>Get reference ID attribute of the current ToolWidgetCollection instance. All tools in the container are defined
 in the space of a reference SisypheVolume whose ID is the reference ID.</p>
-<section id="id305">
-<h3>Returns<a class="headerlink" href="#id305" title="Link to this heading"></a></h3>
+<section id="id306">
+<h3>Returns<a class="headerlink" href="#id306" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>reference ID</p>
 </dd>
@@ -4794,8 +4812,8 @@ in the space of a reference SisypheVolume whose ID is the reference ID.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.getSelectedColor">
 <span class="sig-name descname"><span class="pre">getSelectedColor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.getSelectedColor" title="Link to this definition"></a></dt>
 <dd><p>Get the tool elements selected color of the current ToolWidgetCollection instance.</p>
-<section id="id306">
-<h3>Returns<a class="headerlink" href="#id306" title="Link to this heading"></a></h3>
+<section id="id307">
+<h3>Returns<a class="headerlink" href="#id307" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tuple[float, float, float] | list[float]</dt><dd><p>color, red, green, blue components (between 0.0 and 1.0)</p>
 </dd>
@@ -4807,8 +4825,8 @@ in the space of a reference SisypheVolume whose ID is the reference ID.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.hasFilename">
 <span class="sig-name descname"><span class="pre">hasFilename</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.hasFilename" title="Link to this definition"></a></dt>
 <dd><p>Check if the file name attribute of the current ToolWidgetCollection instance is defined (not empty str).</p>
-<section id="id307">
-<h3>Returns<a class="headerlink" href="#id307" title="Link to this heading"></a></h3>
+<section id="id308">
+<h3>Returns<a class="headerlink" href="#id308" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if file name is defined</p>
 </dd>
@@ -4821,10 +4839,23 @@ in the space of a reference SisypheVolume whose ID is the reference ID.</p>
 <span class="sig-name descname"><span class="pre">hasInteractor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.hasInteractor" title="Link to this definition"></a></dt>
 <dd><p>Check whether the interactor attribute of the current ToolWidgetCollection instance is defined (not None).
 vtk.vtkRenderWindowInteractor manage vtk events of the tool widgets.</p>
-<section id="id308">
-<h3>Returns<a class="headerlink" href="#id308" title="Link to this heading"></a></h3>
+<section id="id309">
+<h3>Returns<a class="headerlink" href="#id309" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if interactor is defined</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.hasPurpose">
+<span class="sig-name descname"><span class="pre">hasPurpose</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.hasPurpose" title="Link to this definition"></a></dt>
+<dd><p>Check if the purpose attribute of the current ToolWidgetCollection instance is defined (not empty str).</p>
+<section id="id310">
+<h3>Returns<a class="headerlink" href="#id310" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if purpose is defined</p>
 </dd>
 </dl>
 </section>
@@ -4834,8 +4865,8 @@ vtk.vtkRenderWindowInteractor manage vtk events of the tool widgets.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.hasReferenceID">
 <span class="sig-name descname"><span class="pre">hasReferenceID</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.hasReferenceID" title="Link to this definition"></a></dt>
 <dd><p>Check if the reference ID attribute of the current ToolWidgetCollection instance is defined (not empty str).</p>
-<section id="id309">
-<h3>Returns<a class="headerlink" href="#id309" title="Link to this heading"></a></h3>
+<section id="id311">
+<h3>Returns<a class="headerlink" href="#id311" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if reference ID is defined</p>
 </dd>
@@ -4845,16 +4876,34 @@ vtk.vtkRenderWindowInteractor manage vtk events of the tool widgets.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.hasSameID">
-<span class="sig-name descname"><span class="pre">hasSameID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.hasSameID" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">hasSameID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.hasSameID" title="Link to this definition"></a></dt>
 <dd><p>Check that the ID parameter is identical to the ID attribute of the current ToolWidgetCollection instance.</p>
-<section id="id310">
-<h3>Parameters<a class="headerlink" href="#id310" title="Link to this heading"></a></h3>
+<section id="id312">
+<h3>Parameters<a class="headerlink" href="#id312" title="Link to this heading"></a></h3>
 <p>ID : str | Sisyphe.core.sisypheVolume.SisypheVolume</p>
 </section>
-<section id="id311">
-<h3>Returns<a class="headerlink" href="#id311" title="Link to this heading"></a></h3>
+<section id="id313">
+<h3>Returns<a class="headerlink" href="#id313" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if IDs are identical</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.hasSamePurpose">
+<span class="sig-name descname"><span class="pre">hasSamePurpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection" title="Sisyphe.core.sisypheTools.ToolWidgetCollection"><span class="pre">ToolWidgetCollection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.hasSamePurpose" title="Link to this definition"></a></dt>
+<dd><p>Check that the purpose parameter is identical to the prupose attribute of the current ToolWidgetCollection
+instance.</p>
+<section id="id314">
+<h3>Parameters<a class="headerlink" href="#id314" title="Link to this heading"></a></h3>
+<p>c : ToolWidgetCollection | str</p>
+</section>
+<section id="id315">
+<h3>Returns<a class="headerlink" href="#id315" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if purposes are identical</p>
 </dd>
 </dl>
 </section>
@@ -4864,15 +4913,15 @@ vtk.vtkRenderWindowInteractor manage vtk events of the tool widgets.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.index">
 <span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#Sisyphe.core.sisypheTools.NamedWidget" title="Sisyphe.core.sisypheTools.NamedWidget"><span class="pre">NamedWidget</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.index" title="Link to this definition"></a></dt>
 <dd><p>Index of a tool element in the current ToolWidgetCollection instance container.</p>
-<section id="id312">
-<h3>Parameters<a class="headerlink" href="#id312" title="Link to this heading"></a></h3>
+<section id="id316">
+<h3>Parameters<a class="headerlink" href="#id316" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>value<span class="classifier">str | NamedWidget</span></dt><dd><p>tool name or NamedWidget</p>
 </dd>
 </dl>
 </section>
-<section id="id313">
-<h3>Returns<a class="headerlink" href="#id313" title="Link to this heading"></a></h3>
+<section id="id317">
+<h3>Returns<a class="headerlink" href="#id317" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>int</dt><dd><p>index</p>
 </dd>
@@ -4884,8 +4933,8 @@ vtk.vtkRenderWindowInteractor manage vtk events of the tool widgets.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.insert">
 <span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#Sisyphe.core.sisypheTools.NamedWidget" title="Sisyphe.core.sisypheTools.NamedWidget"><span class="pre">NamedWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Sisyphe.core.sisypheTools.NamedWidget" title="Sisyphe.core.sisypheTools.NamedWidget"><span class="pre">NamedWidget</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.insert" title="Link to this definition"></a></dt>
 <dd><p>Insert a tool element at the position given by the key in the current ToolWidgetCollection instance container.</p>
-<section id="id314">
-<h3>Parameters<a class="headerlink" href="#id314" title="Link to this heading"></a></h3>
+<section id="id318">
+<h3>Parameters<a class="headerlink" href="#id318" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>key<span class="classifier">int | str | NamedWidget</span></dt><dd><ul class="simple">
 <li><p>int, index</p></li>
@@ -4903,8 +4952,8 @@ vtk.vtkRenderWindowInteractor manage vtk events of the tool widgets.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.isEmpty">
 <span class="sig-name descname"><span class="pre">isEmpty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.isEmpty" title="Link to this definition"></a></dt>
 <dd><p>Checks if ToolWidgetCollection instance container is empty.</p>
-<section id="id315">
-<h3>Returns<a class="headerlink" href="#id315" title="Link to this heading"></a></h3>
+<section id="id319">
+<h3>Returns<a class="headerlink" href="#id319" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if empty</p>
 </dd>
@@ -4916,8 +4965,8 @@ vtk.vtkRenderWindowInteractor manage vtk events of the tool widgets.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.keys">
 <span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.keys" title="Link to this definition"></a></dt>
 <dd><p>Get the list of keys in the current ToolWidgetCollection instance container.</p>
-<section id="id316">
-<h3>Returns<a class="headerlink" href="#id316" title="Link to this heading"></a></h3>
+<section id="id320">
+<h3>Returns<a class="headerlink" href="#id320" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>list[str]</dt><dd><p>list of keys in the container</p>
 </dd>
@@ -4930,8 +4979,8 @@ vtk.vtkRenderWindowInteractor manage vtk events of the tool widgets.</p>
 <span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.load" title="Link to this definition"></a></dt>
 <dd><p>Load the current ToolWidgetCollection instance from a PySisyphe tool collection (.xtools) file. If the filename
 parameter is empty (default), the file name attribute of the current ToolWidgetCollection instance is used.</p>
-<section id="id317">
-<h3>Parameters<a class="headerlink" href="#id317" title="Link to this heading"></a></h3>
+<section id="id321">
+<h3>Parameters<a class="headerlink" href="#id321" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>PySisyphe tool collection file name.</p>
 </dd>
@@ -4943,15 +4992,15 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.newAngleWidget">
 <span class="sig-name descname"><span class="pre">newAngleWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheTools.AngleWidget" title="Sisyphe.core.sisypheTools.AngleWidget"><span class="pre">AngleWidget</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.newAngleWidget" title="Link to this definition"></a></dt>
 <dd><p>Create a new AngleWidget instance and addBundle it to the current ToolWidgetCollection.</p>
-<section id="id318">
-<h3>Parameters<a class="headerlink" href="#id318" title="Link to this heading"></a></h3>
+<section id="id322">
+<h3>Parameters<a class="headerlink" href="#id322" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>name<span class="classifier">str</span></dt><dd><p>tool name (default empty str)</p>
 </dd>
 </dl>
 </section>
-<section id="id319">
-<h3>Returns<a class="headerlink" href="#id319" title="Link to this heading"></a></h3>
+<section id="id323">
+<h3>Returns<a class="headerlink" href="#id323" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>AngleWidget</dt><dd><p>new widget</p>
 </dd>
@@ -4963,8 +5012,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.newBoxWidget">
 <span class="sig-name descname"><span class="pre">newBoxWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheTools.BoxWidget" title="Sisyphe.core.sisypheTools.BoxWidget"><span class="pre">BoxWidget</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.newBoxWidget" title="Link to this definition"></a></dt>
 <dd><p>Create a new BoxWidget instance and addBundle it to the current ToolWidgetCollection.</p>
-<section id="id320">
-<h3>Parameters<a class="headerlink" href="#id320" title="Link to this heading"></a></h3>
+<section id="id324">
+<h3>Parameters<a class="headerlink" href="#id324" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>p<span class="classifier">tuple[float, float] | list[float]</span></dt><dd><p>widget position, top/left corner, vtk display 2D coordinates</p>
 </dd>
@@ -4972,8 +5021,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 </dd>
 </dl>
 </section>
-<section id="id321">
-<h3>Returns<a class="headerlink" href="#id321" title="Link to this heading"></a></h3>
+<section id="id325">
+<h3>Returns<a class="headerlink" href="#id325" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>BoxWidget</dt><dd><p>new widget</p>
 </dd>
@@ -4985,15 +5034,15 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.newDistanceWidget">
 <span class="sig-name descname"><span class="pre">newDistanceWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheTools.DistanceWidget" title="Sisyphe.core.sisypheTools.DistanceWidget"><span class="pre">DistanceWidget</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.newDistanceWidget" title="Link to this definition"></a></dt>
 <dd><p>Create a new DistanceWidget instance and addBundle it to the current ToolWidgetCollection.</p>
-<section id="id322">
-<h3>Parameters<a class="headerlink" href="#id322" title="Link to this heading"></a></h3>
+<section id="id326">
+<h3>Parameters<a class="headerlink" href="#id326" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>name<span class="classifier">str</span></dt><dd><p>tool name (default empty str)</p>
 </dd>
 </dl>
 </section>
-<section id="id323">
-<h3>Returns<a class="headerlink" href="#id323" title="Link to this heading"></a></h3>
+<section id="id327">
+<h3>Returns<a class="headerlink" href="#id327" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>DistanceWidget</dt><dd><p>new widget</p>
 </dd>
@@ -5005,8 +5054,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.newHandleWidget">
 <span class="sig-name descname"><span class="pre">newHandleWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheTools.HandleWidget" title="Sisyphe.core.sisypheTools.HandleWidget"><span class="pre">HandleWidget</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.newHandleWidget" title="Link to this definition"></a></dt>
 <dd><p>Create a new HandleWidget instance and addBundle it to the current ToolWidgetCollection.</p>
-<section id="id324">
-<h3>Parameters<a class="headerlink" href="#id324" title="Link to this heading"></a></h3>
+<section id="id328">
+<h3>Parameters<a class="headerlink" href="#id328" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>p<span class="classifier">tuple[float, float, float] | list[float]</span></dt><dd><p>widget position, world coordinates</p>
 </dd>
@@ -5014,8 +5063,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 </dd>
 </dl>
 </section>
-<section id="id325">
-<h3>Returns<a class="headerlink" href="#id325" title="Link to this heading"></a></h3>
+<section id="id329">
+<h3>Returns<a class="headerlink" href="#id329" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>HandleWidget</dt><dd><p>new widget</p>
 </dd>
@@ -5027,8 +5076,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.newLineWidget">
 <span class="sig-name descname"><span class="pre">newLineWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheTools.LineWidget" title="Sisyphe.core.sisypheTools.LineWidget"><span class="pre">LineWidget</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.newLineWidget" title="Link to this definition"></a></dt>
 <dd><p>Create a new LineWidget instance and addBundle it to the current ToolWidgetCollection.</p>
-<section id="id326">
-<h3>Parameters<a class="headerlink" href="#id326" title="Link to this heading"></a></h3>
+<section id="id330">
+<h3>Parameters<a class="headerlink" href="#id330" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>p1<span class="classifier">tuple[float, float, float] | list[float]</span></dt><dd><p>target point position, world coordinates</p>
 </dd>
@@ -5038,8 +5087,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 </dd>
 </dl>
 </section>
-<section id="id327">
-<h3>Returns<a class="headerlink" href="#id327" title="Link to this heading"></a></h3>
+<section id="id331">
+<h3>Returns<a class="headerlink" href="#id331" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>LineWidget</dt><dd><p>new widget</p>
 </dd>
@@ -5051,15 +5100,15 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.newOrthogonalDistanceWidget">
 <span class="sig-name descname"><span class="pre">newOrthogonalDistanceWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheTools.OrthogonalDistanceWidget" title="Sisyphe.core.sisypheTools.OrthogonalDistanceWidget"><span class="pre">OrthogonalDistanceWidget</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.newOrthogonalDistanceWidget" title="Link to this definition"></a></dt>
 <dd><p>Create a new OrthogonalDistanceWidget instance and addBundle it to the current ToolWidgetCollection.</p>
-<section id="id328">
-<h3>Parameters<a class="headerlink" href="#id328" title="Link to this heading"></a></h3>
+<section id="id332">
+<h3>Parameters<a class="headerlink" href="#id332" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>name<span class="classifier">str</span></dt><dd><p>tool name (default empty str)</p>
 </dd>
 </dl>
 </section>
-<section id="id329">
-<h3>Returns<a class="headerlink" href="#id329" title="Link to this heading"></a></h3>
+<section id="id333">
+<h3>Returns<a class="headerlink" href="#id333" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>OrthogonalDistanceWidget</dt><dd><p>new widget</p>
 </dd>
@@ -5071,8 +5120,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.newTextWidget">
 <span class="sig-name descname"><span class="pre">newTextWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheTools.TextWidget" title="Sisyphe.core.sisypheTools.TextWidget"><span class="pre">TextWidget</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.newTextWidget" title="Link to this definition"></a></dt>
 <dd><p>Create a new TextWidget instance and addBundle it to the current ToolWidgetCollection.</p>
-<section id="id330">
-<h3>Parameters<a class="headerlink" href="#id330" title="Link to this heading"></a></h3>
+<section id="id334">
+<h3>Parameters<a class="headerlink" href="#id334" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>p<span class="classifier">tuple[float, float] | list[float]</span></dt><dd><p>widget position, vtk display 2D coordinates</p>
 </dd>
@@ -5082,8 +5131,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 </dd>
 </dl>
 </section>
-<section id="id331">
-<h3>Returns<a class="headerlink" href="#id331" title="Link to this heading"></a></h3>
+<section id="id335">
+<h3>Returns<a class="headerlink" href="#id335" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>TextWidget</dt><dd><p>new widget</p>
 </dd>
@@ -5095,8 +5144,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.parseXML">
 <span class="sig-name descname"><span class="pre">parseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.parseXML" title="Link to this definition"></a></dt>
 <dd><p>Read the current oolWidgetCollection instance attributes from xml document instance.</p>
-<section id="id332">
-<h3>Parameters<a class="headerlink" href="#id332" title="Link to this heading"></a></h3>
+<section id="id336">
+<h3>Parameters<a class="headerlink" href="#id336" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
 </dd>
@@ -5109,8 +5158,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#Sisyphe.core.sisypheTools.NamedWidget" title="Sisyphe.core.sisypheTools.NamedWidget"><span class="pre">NamedWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.pop" title="Link to this definition"></a></dt>
 <dd><p>Remove a tool element from the current ToolWidgetCollection instance container and return it. If key is None,
 removes and returns the last element.</p>
-<section id="id333">
-<h3>Parameters<a class="headerlink" href="#id333" title="Link to this heading"></a></h3>
+<section id="id337">
+<h3>Parameters<a class="headerlink" href="#id337" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>key<span class="classifier">int | str | NamedWidget | None</span></dt><dd><ul class="simple">
 <li><p>int, index of the tool to remove</p></li>
@@ -5121,8 +5170,8 @@ removes and returns the last element.</p>
 </dd>
 </dl>
 </section>
-<section id="id334">
-<h3>Returns<a class="headerlink" href="#id334" title="Link to this heading"></a></h3>
+<section id="id338">
+<h3>Returns<a class="headerlink" href="#id338" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>NamedWidget</dt><dd><p>element removed from the container</p>
 </dd>
@@ -5134,8 +5183,8 @@ removes and returns the last element.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.remove">
 <span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Sisyphe.core.sisypheTools.NamedWidget" title="Sisyphe.core.sisypheTools.NamedWidget"><span class="pre">NamedWidget</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.remove" title="Link to this definition"></a></dt>
 <dd><p>Remove a tool element from the current ToolWidgetCollection instance container.</p>
-<section id="id335">
-<h3>Parameters<a class="headerlink" href="#id335" title="Link to this heading"></a></h3>
+<section id="id339">
+<h3>Parameters<a class="headerlink" href="#id339" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>value<span class="classifier">int | str | NamedWidget</span></dt><dd><ul class="simple">
 <li><p>int, index of the tool to remove</p></li>
@@ -5158,8 +5207,8 @@ removes and returns the last element.</p>
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.save" title="Link to this definition"></a></dt>
 <dd><p>Save the current ToolWidgetCollection instance to a PySisyphe tool collection (.xtools) file. If the filename
 parameter is empty (default), the file name attribute of the current ToolWidgetCollection instance is used.</p>
-<section id="id336">
-<h3>Parameters<a class="headerlink" href="#id336" title="Link to this heading"></a></h3>
+<section id="id340">
+<h3>Parameters<a class="headerlink" href="#id340" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>PySisyphe tool collection file name</p>
 </dd>
@@ -5171,8 +5220,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.saveAs">
 <span class="sig-name descname"><span class="pre">saveAs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.saveAs" title="Link to this definition"></a></dt>
 <dd><p>Save the current ToolWidgetCollection instance to a PySisyphe tool collection (.xtools) file.</p>
-<section id="id337">
-<h3>Parameters<a class="headerlink" href="#id337" title="Link to this heading"></a></h3>
+<section id="id341">
+<h3>Parameters<a class="headerlink" href="#id341" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>PySisyphe tool collection file name</p>
 </dd>
@@ -5184,8 +5233,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.select">
 <span class="sig-name descname"><span class="pre">select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.select" title="Link to this definition"></a></dt>
 <dd><p>Select a tool element of the current ToolWidgetCollection. This tool is displayed with the selected color.</p>
-<section id="id338">
-<h3>Parameters<a class="headerlink" href="#id338" title="Link to this heading"></a></h3>
+<section id="id342">
+<h3>Parameters<a class="headerlink" href="#id342" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>key<span class="classifier">int | str</span></dt><dd><ul class="simple">
 <li><p>int, index</p></li>
@@ -5200,8 +5249,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.setColor">
 <span class="sig-name descname"><span class="pre">setColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setColor" title="Link to this definition"></a></dt>
 <dd><p>Set the tool elements color of the current ToolWidgetCollection instance.</p>
-<section id="id339">
-<h3>Parameters<a class="headerlink" href="#id339" title="Link to this heading"></a></h3>
+<section id="id343">
+<h3>Parameters<a class="headerlink" href="#id343" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>c<span class="classifier">tuple[float, float, float] | list[float]</span></dt><dd><p>color, red, green, blue components (between 0.0 and 1.0)</p>
 </dd>
@@ -5213,8 +5262,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.setFilenameFromVolume">
 <span class="sig-name descname"><span class="pre">setFilenameFromVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setFilenameFromVolume" title="Link to this definition"></a></dt>
 <dd><p>Set the file name attribute of the current ToolWidgetCollection instance from a volume.</p>
-<section id="id340">
-<h3>Parameters<a class="headerlink" href="#id340" title="Link to this heading"></a></h3>
+<section id="id344">
+<h3>Parameters<a class="headerlink" href="#id344" title="Link to this heading"></a></h3>
 <p>img : Sisyphe.core.sisypheVolume.SisypheVolume</p>
 </section>
 </dd></dl>
@@ -5223,10 +5272,10 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.setFontFamily">
 <span class="sig-name descname"><span class="pre">setFontFamily</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Arial'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setFontFamily" title="Link to this definition"></a></dt>
 <dd><p>Set the font used to display the tool elements text of the current ToolWidgetCollection instance.</p>
-<section id="id341">
-<h3>Parameters<a class="headerlink" href="#id341" title="Link to this heading"></a></h3>
+<section id="id345">
+<h3>Parameters<a class="headerlink" href="#id345" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>v<span class="classifier">str</span></dt><dd><p>font name ‘Arial’ (default), ‘Courier’, ‘Times’ or ttf font file name (<a href="#id342"><span class="problematic" id="id343">*</span></a>.ttf)</p>
+<dt>v<span class="classifier">str</span></dt><dd><p>font name ‘Arial’ (default), ‘Courier’, ‘Times’ or ttf font file name (<a href="#id346"><span class="problematic" id="id347">*</span></a>.ttf)</p>
 </dd>
 </dl>
 </section>
@@ -5237,8 +5286,8 @@ parameter is empty (default), the file name attribute of the current ToolWidgetC
 <span class="sig-name descname"><span class="pre">setInteractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interactor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">vtkRenderWindowInteractor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setInteractor" title="Link to this definition"></a></dt>
 <dd><p>Set the interactor attribute of the current ToolWidgetCollection instance. vtk.vtkRenderWindowInteractor manage
 vtk events of the tool widgets.</p>
-<section id="id344">
-<h3>Parameters<a class="headerlink" href="#id344" title="Link to this heading"></a></h3>
+<section id="id348">
+<h3>Parameters<a class="headerlink" href="#id348" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>interactor<span class="classifier">vtk.vtkRenderWindowInteractor</span></dt><dd><p>interactor to copy</p>
 </dd>
@@ -5250,8 +5299,8 @@ vtk events of the tool widgets.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.setLineWidth">
 <span class="sig-name descname"><span class="pre">setLineWidth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setLineWidth" title="Link to this definition"></a></dt>
 <dd><p>Set the tool elements line width of the current ToolWidgetCollection instance.</p>
-<section id="id345">
-<h3>Parameters<a class="headerlink" href="#id345" title="Link to this heading"></a></h3>
+<section id="id349">
+<h3>Parameters<a class="headerlink" href="#id349" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">float</span></dt><dd><p>line width</p>
 </dd>
@@ -5263,10 +5312,24 @@ vtk events of the tool widgets.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.setOpacity">
 <span class="sig-name descname"><span class="pre">setOpacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setOpacity" title="Link to this definition"></a></dt>
 <dd><p>Set the tool elements opacity of the current ToolWidgetCollection instance.</p>
-<section id="id346">
-<h3>Parameters<a class="headerlink" href="#id346" title="Link to this heading"></a></h3>
+<section id="id350">
+<h3>Parameters<a class="headerlink" href="#id350" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">float</span></dt><dd><p>opacity (between 0.0 and 1.0)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.setPurpose">
+<span class="sig-name descname"><span class="pre">setPurpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setPurpose" title="Link to this definition"></a></dt>
+<dd><p>Get the purpose attribute of the current ToolWidgetCollection instance.
+This is a free string attribute that describes the purpose of the current collection.</p>
+<section id="id351">
+<h3>Parameters<a class="headerlink" href="#id351" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>v<span class="classifier">str</span></dt><dd><p>purpose</p>
 </dd>
 </dl>
 </section>
@@ -5277,8 +5340,8 @@ vtk events of the tool widgets.</p>
 <span class="sig-name descname"><span class="pre">setReferenceID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setReferenceID" title="Link to this definition"></a></dt>
 <dd><p>Set reference ID attribute of the current ToolWidgetCollection instance. All tools in the container are defined
 in the space of a reference SisypheVolume whose ID is the reference ID.</p>
-<section id="id347">
-<h3>Parameters<a class="headerlink" href="#id347" title="Link to this heading"></a></h3>
+<section id="id352">
+<h3>Parameters<a class="headerlink" href="#id352" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>ID<span class="classifier">str | Sisyphe.core.sisypheVolume.SisypheVolume</span></dt><dd><ul class="simple">
 <li><p>str, ID</p></li>
@@ -5293,8 +5356,8 @@ in the space of a reference SisypheVolume whose ID is the reference ID.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTools.ToolWidgetCollection.setSelectedColor">
 <span class="sig-name descname"><span class="pre">setSelectedColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.setSelectedColor" title="Link to this definition"></a></dt>
 <dd><p>Set the tool elements selected color of the current ToolWidgetCollection instance.</p>
-<section id="id348">
-<h3>Parameters<a class="headerlink" href="#id348" title="Link to this heading"></a></h3>
+<section id="id353">
+<h3>Parameters<a class="headerlink" href="#id353" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>c<span class="classifier">tuple[float, float, float] | list[float]</span></dt><dd><p>color, red, green, blue components (between 0.0 and 1.0)</p>
 </dd>
@@ -5307,8 +5370,8 @@ in the space of a reference SisypheVolume whose ID is the reference ID.</p>
 <span class="sig-name descname"><span class="pre">sort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTools.ToolWidgetCollection.sort" title="Link to this definition"></a></dt>
 <dd><p>Sort elements of the current ToolWidgetCollection instance container. Sorting is based on the name attribute of
 the tool elements, in the ascending order.</p>
-<section id="id349">
-<h3>Parameters<a class="headerlink" href="#id349" title="Link to this heading"></a></h3>
+<section id="id354">
+<h3>Parameters<a class="headerlink" href="#id354" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>reverse<span class="classifier">bool</span></dt><dd><p>sorting in reverse order</p>
 </dd>

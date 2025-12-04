@@ -74,7 +74,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Mapping.html">Mapping menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Diffusion.html">Diffusion menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Window.html">Window menu</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Core API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="api_packages.html">Packages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_constants.html">Sisyphe.core.sisypheConstants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_database.html">Sisyphe.core.sisypheDatabase</a></li>
@@ -175,6 +175,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheLUT.SisypheLut.getFilename"><code class="docutils literal notranslate"><span class="pre">SisypheLut.getFilename()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheLUT.SisypheLut.getFilterExt"><code class="docutils literal notranslate"><span class="pre">SisypheLut.getFilterExt()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheLUT.SisypheLut.getIntColor"><code class="docutils literal notranslate"><span class="pre">SisypheLut.getIntColor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheLUT.SisypheLut.getInternalColormapFromName"><code class="docutils literal notranslate"><span class="pre">SisypheLut.getInternalColormapFromName()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheLUT.SisypheLut.getLUTType"><code class="docutils literal notranslate"><span class="pre">SisypheLut.getLUTType()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheLUT.SisypheLut.getName"><code class="docutils literal notranslate"><span class="pre">SisypheLut.getName()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisypheLUT.SisypheLut.getQColor"><code class="docutils literal notranslate"><span class="pre">SisypheLut.getQColor()</span></code></a></li>
@@ -239,6 +240,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api_xml.html">Sisyphe.core.sisypheXml</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../API2/index.html">Widgets &amp; dialogs API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_contact.html">Contact</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Versions.html">Version history</a></li>
@@ -258,7 +260,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="index.html">API</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Core API</a></li>
       <li class="breadcrumb-item active">Sisyphe.core.sisypheLUT</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/API/api_lut.rst.txt" rel="nofollow"> View page source</a>
@@ -1454,7 +1456,7 @@ Black color for the minimum value of the image array. White color for the maximu
 <h2>Inheritance<a class="headerlink" href="#id82" title="Link to this heading"></a></h2>
 <p>object -&gt; SisypheLut</p>
 <p>Creation: 07/11/2022
-Last revision: 25/10/2024</p>
+Last revision: 02/12/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.copy">
 <span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheLUT.SisypheLut" title="Sisyphe.core.sisypheLUT.SisypheLut"><span class="pre">SisypheLut</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.copy" title="Link to this definition"></a></dt>
@@ -1605,7 +1607,7 @@ instance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.getColormapFromName">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getColormapFromName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.getColormapFromName" title="Link to this definition"></a></dt>
-<dd><p>Get public name of a Look-Up table colormap from its internal name.</p>
+<dd><p>Get public name of a Look-Up table colormap from its internal name (matplotlib name).</p>
 <section id="id95">
 <h3>Parameters<a class="headerlink" href="#id95" title="Link to this heading"></a></h3>
 <p>name : str, internal name</p>
@@ -1706,18 +1708,35 @@ instance.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.getInternalColormapFromName">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getInternalColormapFromName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.getInternalColormapFromName" title="Link to this definition"></a></dt>
+<dd><p>Get internal name of a Look-Up table colormap (matplotlib name) from its public name.</p>
+<section id="id104">
+<h3>Parameters<a class="headerlink" href="#id104" title="Link to this heading"></a></h3>
+<p>name : str, public name</p>
+</section>
+<section id="id105">
+<h3>Returns<a class="headerlink" href="#id105" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>internal name</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.getLUTType">
 <span class="sig-name descname"><span class="pre">getLUTType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.getLUTType" title="Link to this definition"></a></dt>
 <dd><p>Get the look-up table colormap type of the current SisypheLut instance.</p>
-<section id="id104">
-<h3>Parameters<a class="headerlink" href="#id104" title="Link to this heading"></a></h3>
+<section id="id106">
+<h3>Parameters<a class="headerlink" href="#id106" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>string<span class="classifier">bool</span></dt><dd><p>if true returns str code, otherwise int code (0 ‘default’, 1 ‘internal’, 2 ‘file’, 3 ‘custom’)</p>
 </dd>
 </dl>
 </section>
-<section id="id105">
-<h3>Returns<a class="headerlink" href="#id105" title="Link to this heading"></a></h3>
+<section id="id107">
+<h3>Returns<a class="headerlink" href="#id107" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>str | int</dt><dd><p>look-up table colormap type</p>
 </dd>
@@ -1729,8 +1748,8 @@ instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.getName">
 <span class="sig-name descname"><span class="pre">getName</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.getName" title="Link to this definition"></a></dt>
 <dd><p>Get the name of the look-up table colormap of the current SisypheLut instance.</p>
-<section id="id106">
-<h3>Returns<a class="headerlink" href="#id106" title="Link to this heading"></a></h3>
+<section id="id108">
+<h3>Returns<a class="headerlink" href="#id108" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>lut name</p>
 </dd>
@@ -1742,15 +1761,15 @@ instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.getQColor">
 <span class="sig-name descname"><span class="pre">getQColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QColor</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.getQColor" title="Link to this definition"></a></dt>
 <dd><p>Get the color (Qt color) at index i in the look-up table colormap of the current SisypheLut instance.</p>
-<section id="id107">
-<h3>Parameters<a class="headerlink" href="#id107" title="Link to this heading"></a></h3>
+<section id="id109">
+<h3>Parameters<a class="headerlink" href="#id109" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>i<span class="classifier">int</span></dt><dd><p>colormap index</p>
 </dd>
 </dl>
 </section>
-<section id="id108">
-<h3>Returns<a class="headerlink" href="#id108" title="Link to this heading"></a></h3>
+<section id="id110">
+<h3>Returns<a class="headerlink" href="#id110" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>PyQt5.QtGui.QColor</dt><dd><p>Qt color</p>
 </dd>
@@ -1762,8 +1781,8 @@ instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.getReversedLut">
 <span class="sig-name descname"><span class="pre">getReversedLut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheLUT.SisypheLut" title="Sisyphe.core.sisypheLUT.SisypheLut"><span class="pre">SisypheLut</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.getReversedLut" title="Link to this definition"></a></dt>
 <dd><p>Copy of the current SisypheLut instance (deep copy) in reverse color order.</p>
-<section id="id109">
-<h3>Returns<a class="headerlink" href="#id109" title="Link to this heading"></a></h3>
+<section id="id111">
+<h3>Returns<a class="headerlink" href="#id111" title="Link to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>SisypheLut</dt><dd><p>reversed LUT</p>
@@ -1777,8 +1796,8 @@ instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.getWindowRange">
 <span class="sig-name descname"><span class="pre">getWindowRange</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.getWindowRange" title="Link to this definition"></a></dt>
 <dd><p>Get the windowing range of the look-up table colormap of the current SisypheLut instance.</p>
-<section id="id110">
-<h3>Returns<a class="headerlink" href="#id110" title="Link to this heading"></a></h3>
+<section id="id112">
+<h3>Returns<a class="headerlink" href="#id112" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tuple[float, float]</dt><dd><p>minimum and maximum values of the window</p>
 </dd>
@@ -1790,8 +1809,8 @@ instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.getvtkLookupTable">
 <span class="sig-name descname"><span class="pre">getvtkLookupTable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">vtkLookupTable</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.getvtkLookupTable" title="Link to this definition"></a></dt>
 <dd><p>Get the look-up table colormap attribute of the current SisypheLut instance.</p>
-<section id="id111">
-<h3>Returns<a class="headerlink" href="#id111" title="Link to this heading"></a></h3>
+<section id="id113">
+<h3>Returns<a class="headerlink" href="#id113" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>vtk.vtkLookupTable</dt><dd><p>VTK lut</p>
 </dd>
@@ -1803,8 +1822,8 @@ instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.isCustomLut">
 <span class="sig-name descname"><span class="pre">isCustomLut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.isCustomLut" title="Link to this definition"></a></dt>
 <dd><p>Check whether look-up table colormap type of the current SisypheLut instance is ‘custom’.</p>
-<section id="id112">
-<h3>Returns<a class="headerlink" href="#id112" title="Link to this heading"></a></h3>
+<section id="id114">
+<h3>Returns<a class="headerlink" href="#id114" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if look-up table colormap type is ‘custom’</p>
 </dd>
@@ -1816,8 +1835,8 @@ instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.isDefaultLut">
 <span class="sig-name descname"><span class="pre">isDefaultLut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.isDefaultLut" title="Link to this definition"></a></dt>
 <dd><p>Check whether look-up table colormap type of the current SisypheLut instance is ‘default’ (grayscale).</p>
-<section id="id113">
-<h3>Returns<a class="headerlink" href="#id113" title="Link to this heading"></a></h3>
+<section id="id115">
+<h3>Returns<a class="headerlink" href="#id115" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if look-up table colormap type is ‘default’</p>
 </dd>
@@ -1830,15 +1849,15 @@ instance.</p>
 <span class="sig-name descname"><span class="pre">isEqual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ListedColormap</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LinearSegmentedColormap</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#Sisyphe.core.sisypheLUT.SisypheLut" title="Sisyphe.core.sisypheLUT.SisypheLut"><span class="pre">SisypheLut</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.isEqual" title="Link to this definition"></a></dt>
 <dd><p>Check whether the look-up table colormap of the current SisypheLut instance is identical to the one sent as
 parameter.</p>
-<section id="id114">
-<h3>Parameters<a class="headerlink" href="#id114" title="Link to this heading"></a></h3>
+<section id="id116">
+<h3>Parameters<a class="headerlink" href="#id116" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>buff<span class="classifier">ListedColormap | LinearSegmentedColormap | SisypheLut</span></dt><dd><p>look-up table colormap</p>
 </dd>
 </dl>
 </section>
-<section id="id115">
-<h3>Returns<a class="headerlink" href="#id115" title="Link to this heading"></a></h3>
+<section id="id117">
+<h3>Returns<a class="headerlink" href="#id117" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if lut are identical</p>
 </dd>
@@ -1850,8 +1869,8 @@ parameter.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.isFileLut">
 <span class="sig-name descname"><span class="pre">isFileLut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.isFileLut" title="Link to this definition"></a></dt>
 <dd><p>Check whether look-up table colormap type of the current SisypheLut instance is ‘file’.</p>
-<section id="id116">
-<h3>Returns<a class="headerlink" href="#id116" title="Link to this heading"></a></h3>
+<section id="id118">
+<h3>Returns<a class="headerlink" href="#id118" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if look-up table colormap type is ‘file’</p>
 </dd>
@@ -1863,8 +1882,8 @@ parameter.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.isInternalLut">
 <span class="sig-name descname"><span class="pre">isInternalLut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.isInternalLut" title="Link to this definition"></a></dt>
 <dd><p>Check whether look-up table colormap type of the current SisypheLut instance is ‘internal’.</p>
-<section id="id117">
-<h3>Returns<a class="headerlink" href="#id117" title="Link to this heading"></a></h3>
+<section id="id119">
+<h3>Returns<a class="headerlink" href="#id119" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if look-up table colormap type is ‘internal’</p>
 </dd>
@@ -1877,8 +1896,8 @@ parameter.</p>
 <span class="sig-name descname"><span class="pre">isSameColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">QColor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.isSameColor" title="Link to this definition"></a></dt>
 <dd><p>Check whether color at the index i in the look-up table colormap of the current SisypheLut instance identical
 to a color c given in parameter.</p>
-<section id="id118">
-<h3>Parameters<a class="headerlink" href="#id118" title="Link to this heading"></a></h3>
+<section id="id120">
+<h3>Parameters<a class="headerlink" href="#id120" title="Link to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>i<span class="classifier">int</span></dt><dd><p>colormap index</p>
@@ -1888,8 +1907,8 @@ to a color c given in parameter.</p>
 </dl>
 </div></blockquote>
 </section>
-<section id="id119">
-<h3>Returns<a class="headerlink" href="#id119" title="Link to this heading"></a></h3>
+<section id="id121">
+<h3>Returns<a class="headerlink" href="#id121" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if colors are identical</p>
 </dd>
@@ -1901,8 +1920,8 @@ to a color c given in parameter.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.load">
 <span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.load" title="Link to this definition"></a></dt>
 <dd><p>Load current SisypheLut instance attributes from lut file (.lut).</p>
-<section id="id120">
-<h3>Parameters<a class="headerlink" href="#id120" title="Link to this heading"></a></h3>
+<section id="id122">
+<h3>Parameters<a class="headerlink" href="#id122" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>lut file name (.lut)</p>
 </dd>
@@ -1914,8 +1933,8 @@ to a color c given in parameter.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.loadFromOlt">
 <span class="sig-name descname"><span class="pre">loadFromOlt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.loadFromOlt" title="Link to this definition"></a></dt>
 <dd><p>Load current SisypheLut instance attributes from BrainVoyager lut file (.olt).</p>
-<section id="id121">
-<h3>Parameters<a class="headerlink" href="#id121" title="Link to this heading"></a></h3>
+<section id="id123">
+<h3>Parameters<a class="headerlink" href="#id123" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>BrainVoyager lut file name (.olt)</p>
 </dd>
@@ -1927,8 +1946,8 @@ to a color c given in parameter.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.loadFromTxt">
 <span class="sig-name descname"><span class="pre">loadFromTxt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.loadFromTxt" title="Link to this definition"></a></dt>
 <dd><p>Load current SisypheLut instance attributes from text file (.txt).</p>
-<section id="id122">
-<h3>Parameters<a class="headerlink" href="#id122" title="Link to this heading"></a></h3>
+<section id="id124">
+<h3>Parameters<a class="headerlink" href="#id124" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>text file name (.txt)</p>
 </dd>
@@ -1940,8 +1959,8 @@ to a color c given in parameter.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.loadFromXML">
 <span class="sig-name descname"><span class="pre">loadFromXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.loadFromXML" title="Link to this definition"></a></dt>
 <dd><p>Load current SisypheLut instance attributes from xml file (.xlut).</p>
-<section id="id123">
-<h3>Parameters<a class="headerlink" href="#id123" title="Link to this heading"></a></h3>
+<section id="id125">
+<h3>Parameters<a class="headerlink" href="#id125" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>xml file name (.xlut)</p>
 </dd>
@@ -1953,15 +1972,15 @@ to a color c given in parameter.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.openLut">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">openLut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Sisyphe.core.sisypheLUT.SisypheLut" title="Sisyphe.core.sisypheLUT.SisypheLut"><span class="pre">SisypheLut</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.openLut" title="Link to this definition"></a></dt>
 <dd><p>Create a SisypheLut instance from a Look-Up table colormap file.</p>
-<section id="id124">
-<h3>Parameters<a class="headerlink" href="#id124" title="Link to this heading"></a></h3>
+<section id="id126">
+<h3>Parameters<a class="headerlink" href="#id126" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>lut file name (supported formats ‘xlut’, ‘.lut’, ‘.olt’, ‘.txt’)</p>
 </dd>
 </dl>
 </section>
-<section id="id125">
-<h3>Returns<a class="headerlink" href="#id125" title="Link to this heading"></a></h3>
+<section id="id127">
+<h3>Returns<a class="headerlink" href="#id127" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>SisypheLut</dt><dd><p>loaded lut.</p>
 </dd>
@@ -1979,8 +1998,8 @@ to a color c given in parameter.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.save">
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.save" title="Link to this definition"></a></dt>
 <dd><p>Save current SisypheLut instance attributes to lut file (.lut).</p>
-<section id="id126">
-<h3>Parameters<a class="headerlink" href="#id126" title="Link to this heading"></a></h3>
+<section id="id128">
+<h3>Parameters<a class="headerlink" href="#id128" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>lut file name (.lut)</p>
 </dd>
@@ -1992,8 +2011,8 @@ to a color c given in parameter.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.saveBitmapPreview">
 <span class="sig-name descname"><span class="pre">saveBitmapPreview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'jpg'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.saveBitmapPreview" title="Link to this definition"></a></dt>
 <dd><p>Save a look-up table colormap bitmap preview of the current SisypheLut instance.</p>
-<section id="id127">
-<h3>Parameters<a class="headerlink" href="#id127" title="Link to this heading"></a></h3>
+<section id="id129">
+<h3>Parameters<a class="headerlink" href="#id129" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>width<span class="classifier">int</span></dt><dd><p>bitmap preview width</p>
 </dd>
@@ -2009,8 +2028,8 @@ to a color c given in parameter.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.saveToTxt">
 <span class="sig-name descname"><span class="pre">saveToTxt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.saveToTxt" title="Link to this definition"></a></dt>
 <dd><p>Save current SisypheLut instance attributes to text file (.txt).</p>
-<section id="id128">
-<h3>Parameters<a class="headerlink" href="#id128" title="Link to this heading"></a></h3>
+<section id="id130">
+<h3>Parameters<a class="headerlink" href="#id130" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>text file name (.txt)</p>
 </dd>
@@ -2022,8 +2041,8 @@ to a color c given in parameter.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.saveToXML">
 <span class="sig-name descname"><span class="pre">saveToXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.saveToXML" title="Link to this definition"></a></dt>
 <dd><p>Save current SisypheLut instance attributes to xml file (.xlut).</p>
-<section id="id129">
-<h3>Parameters<a class="headerlink" href="#id129" title="Link to this heading"></a></h3>
+<section id="id131">
+<h3>Parameters<a class="headerlink" href="#id131" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>xml file name (.xlut)</p>
 </dd>
@@ -2036,8 +2055,8 @@ to a color c given in parameter.</p>
 <span class="sig-name descname"><span class="pre">setColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.setColor" title="Link to this definition"></a></dt>
 <dd><p>Set a color (red, green, blue, alpha) to index i in the look-up table colormap of the current SisypheLut
 instance.</p>
-<section id="id130">
-<h3>Parameters<a class="headerlink" href="#id130" title="Link to this heading"></a></h3>
+<section id="id132">
+<h3>Parameters<a class="headerlink" href="#id132" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>i<span class="classifier">int</span></dt><dd><p>colormap index</p>
 </dd>
@@ -2078,8 +2097,8 @@ instance.</p>
 <span class="sig-name descname"><span class="pre">setIntColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">255</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.setIntColor" title="Link to this definition"></a></dt>
 <dd><p>Set a color (red, green, blue, alpha) to index i in the look-up table colormap of the current SisypheLut
 instance.</p>
-<section id="id131">
-<h3>Parameters<a class="headerlink" href="#id131" title="Link to this heading"></a></h3>
+<section id="id133">
+<h3>Parameters<a class="headerlink" href="#id133" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>i<span class="classifier">int</span></dt><dd><p>colormap index</p>
 </dd>
@@ -2099,8 +2118,8 @@ instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.setInternalLut">
 <span class="sig-name descname"><span class="pre">setInternalLut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.setInternalLut" title="Link to this definition"></a></dt>
 <dd><p>Set look-up table colormap of the current SisypheLut instance.</p>
-<section id="id132">
-<h3>Parameters<a class="headerlink" href="#id132" title="Link to this heading"></a></h3>
+<section id="id134">
+<h3>Parameters<a class="headerlink" href="#id134" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>name<span class="classifier">str</span></dt><dd><p>lut name</p>
 </dd>
@@ -2113,8 +2132,8 @@ instance.</p>
 <span class="sig-name descname"><span class="pre">setLut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.setLut" title="Link to this definition"></a></dt>
 <dd><p>Set look-up table colormap of the current SisypheLut instance. If the name doesn’t appear in the internal lut
 list, try opening a file with the same name from the default lut directory.</p>
-<section id="id133">
-<h3>Parameters<a class="headerlink" href="#id133" title="Link to this heading"></a></h3>
+<section id="id135">
+<h3>Parameters<a class="headerlink" href="#id135" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>name<span class="classifier">str</span></dt><dd><p>lut name</p>
 </dd>
@@ -2198,8 +2217,8 @@ list, try opening a file with the same name from the default lut directory.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.setQColor">
 <span class="sig-name descname"><span class="pre">setQColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QColor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.setQColor" title="Link to this definition"></a></dt>
 <dd><p>Set a color (Qt color) to index i in the look-up table colormap of the current SisypheLut instance.</p>
-<section id="id134">
-<h3>Parameters<a class="headerlink" href="#id134" title="Link to this heading"></a></h3>
+<section id="id136">
+<h3>Parameters<a class="headerlink" href="#id136" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>i<span class="classifier">int</span></dt><dd><p>colormap index</p>
 </dd>
@@ -2213,8 +2232,8 @@ list, try opening a file with the same name from the default lut directory.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.setWindowRange">
 <span class="sig-name descname"><span class="pre">setWindowRange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.setWindowRange" title="Link to this definition"></a></dt>
 <dd><p>Set the windowing range of the look-up table colormap of the current SisypheLut instance.</p>
-<section id="id135">
-<h3>Parameters<a class="headerlink" href="#id135" title="Link to this heading"></a></h3>
+<section id="id137">
+<h3>Parameters<a class="headerlink" href="#id137" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>w1<span class="classifier">float</span></dt><dd><p>minimum value of the window</p>
 </dd>
@@ -2228,8 +2247,8 @@ list, try opening a file with the same name from the default lut directory.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.SisypheLut.setvtkLookupTable">
 <span class="sig-name descname"><span class="pre">setvtkLookupTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vtklut</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">vtkLookupTable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.SisypheLut.setvtkLookupTable" title="Link to this definition"></a></dt>
 <dd><p>Set the look-up table colormap attribute of the current SisypheLut instance.</p>
-<section id="id136">
-<h3>Parameters<a class="headerlink" href="#id136" title="Link to this heading"></a></h3>
+<section id="id138">
+<h3>Parameters<a class="headerlink" href="#id138" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>vtklut<span class="classifier">vtk.vtkLookupTable</span></dt><dd><p>VTK lut to copy</p>
 </dd>
@@ -2244,8 +2263,8 @@ list, try opening a file with the same name from the default lut directory.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.lutConversion">
 <span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheLUT.</span></span><span class="sig-name descname"><span class="pre">lutConversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filenames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'xlut'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.lutConversion" title="Link to this definition"></a></dt>
 <dd><p>Batch look-up table colormaps conversion. Supported formats are .lut, .xlut, .olt, .txt</p>
-<section id="id137">
-<h2>Parameters<a class="headerlink" href="#id137" title="Link to this heading"></a></h2>
+<section id="id139">
+<h2>Parameters<a class="headerlink" href="#id139" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>filenames<span class="classifier">str | list[str]</span></dt><dd><p>list of look-up table colormaps file names</p>
 </dd>
@@ -2259,8 +2278,8 @@ list, try opening a file with the same name from the default lut directory.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheLUT.saveColormapBitmapPreview">
 <span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheLUT.</span></span><span class="sig-name descname"><span class="pre">saveColormapBitmapPreview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filenames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'jpg'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheLUT.saveColormapBitmapPreview" title="Link to this definition"></a></dt>
 <dd><p>Save a bitmap preview of look-up table colormap files.</p>
-<section id="id138">
-<h2>Parameters<a class="headerlink" href="#id138" title="Link to this heading"></a></h2>
+<section id="id140">
+<h2>Parameters<a class="headerlink" href="#id140" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>filenames<span class="classifier">str | list[str]</span></dt><dd><p>list of look-up table colormaps file names</p>
 </dd>
