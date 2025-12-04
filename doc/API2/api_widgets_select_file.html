@@ -1030,7 +1030,7 @@ be allowed.</p>
 <section id="id39">
 <h2>Inheritance<a class="headerlink" href="#id39" title="Link to this heading"></a></h2>
 <p>QWidget, SelectionFilter -&gt; FileSelectionWidget</p>
-<p>Last revision: 20/10/2025</p>
+<p>Last revision: 30/11/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.FileSelectionWidget.alignLabels">
 <span class="sig-name descname"><span class="pre">alignLabels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.FileSelectionWidget.alignLabels" title="Link to this definition"></a></dt>
@@ -1409,17 +1409,17 @@ thumbnail toolbar is provided.</p>
 <section id="id62">
 <h2>Inheritance<a class="headerlink" href="#id62" title="Link to this heading"></a></h2>
 <p>QWidget, SelectionFilter -&gt; FilesSelectionWidget</p>
-<p>Last revision: 20/10/2025</p>
+<p>Last revision: 30/11/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.FilesSelectionWidget.add">
-<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filenames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.FilesSelectionWidget.add" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filenames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.FilesSelectionWidget.add" title="Link to this definition"></a></dt>
 <dd><p>Open a file dialog to select one or more files/directories and adds them to the list. Applies all configured
 filters and performs checks (component, identity, FOV, size, modality, etc.) before adding each file. Displays
 a progress dialog for multiple file additions.</p>
 <section id="id63">
 <h3>Parameters<a class="headerlink" href="#id63" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>filenames<span class="classifier">str (optional)</span></dt><dd><p>pre-selected filename or directory to add directly. Defaults to an empty string.</p>
+<dt>filenames<span class="classifier">str | list[str] (optional)</span></dt><dd><p>pre-selected filename or directory to add directly. Defaults to an empty string.</p>
 </dd>
 <dt>label<span class="classifier">str (optional)</span></dt><dd><p>an optional label for the file dialog title. Defaults to an empty string.</p>
 </dd>
@@ -2161,7 +2161,7 @@ Field of View (FOV).</p>
 <section id="id114">
 <h2>Inheritance<a class="headerlink" href="#id114" title="Link to this heading"></a></h2>
 <p>QWidget -&gt; SynchronizedFileSelectionWidget</p>
-<p>Last revision: 04/11/2025</p>
+<p>Last revision: 30/11/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.clearall">
 <span class="sig-name descname"><span class="pre">clearall</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.clearall" title="Link to this definition"></a></dt>
@@ -2205,13 +2205,13 @@ Field of View (FOV).</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.getFilenames">
-<span class="sig-name descname"><span class="pre">getFilenames</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.getFilenames" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">getFilenames</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.getFilenames" title="Link to this definition"></a></dt>
 <dd><p>Get a dictionary of all selected filenames from single (FileSelectionWidget) and multiple selection
 (FilesSelectionWidget) widgets, organized by their labels.</p>
 <section id="id118">
 <h3>Returns<a class="headerlink" href="#id118" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>dict[str, dict[str, str]]</dt><dd><p>dictionary with ‘single’ and ‘multiple’ keys, each mapping to a dictionary of widget labels and their
+<dt>dict[str, dict[str, str | list[str]]]</dt><dd><p>dictionary with ‘single’ and ‘multiple’ keys, each mapping to a dictionary of widget labels and their
 filenames.</p>
 </dd>
 </dl>
@@ -2473,12 +2473,12 @@ selection widgets (FileSelectionWidget) are not empty, and all <em>visible</em> 
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setFilenames">
-<span class="sig-name descname"><span class="pre">setFilenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filenames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setFilenames" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">setFilenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filenames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setFilenames" title="Link to this definition"></a></dt>
 <dd><p>Set the filenames for the contained single (FileSelectionWidget) and multiple selection (FilesSelectionWidget)
 widgets.</p>
 <section id="id138">
 <h3>Parameters<a class="headerlink" href="#id138" title="Link to this heading"></a></h3>
-<p>filenames : dict[str, dict[str, str]]</p>
+<p>filenames : dict[str, dict[str, str | list[str]]]</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>dictionary specifying filenames to set.</p></li>

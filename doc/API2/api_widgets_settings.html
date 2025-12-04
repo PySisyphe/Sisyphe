@@ -131,6 +131,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.functionsSettingsWidget.DialogSettingsWidget.classSisypheSettings"><code class="docutils literal notranslate"><span class="pre">DialogSettingsWidget.classSisypheSettings</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.widgets.functionsSettingsWidget.CustomSettingsWidget"><code class="docutils literal notranslate"><span class="pre">CustomSettingsWidget</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.functionsSettingsWidget.CustomSettingsWidget.classSisypheSettings"><code class="docutils literal notranslate"><span class="pre">CustomSettingsWidget.classSisypheSettings</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api_dialog_generic_results.html">Generic results dialog</a></li>
@@ -215,7 +219,7 @@ This widget displays a list of the parameters of a function/section, i.e. first 
 <h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
 <p>QWidget -&gt; SettingsWidget -&gt; FunctionSettingsWidget</p>
 <p>Creation: 11/08/2022
-Last revision: 04/11/2025</p>
+Last revision: 02/12/2025</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="Sisyphe.widgets.functionsSettingsWidget.SettingsWidget.classSisypheSettings">
 <span class="sig-name descname"><span class="pre">classSisypheSettings</span></span><a class="headerlink" href="#Sisyphe.widgets.functionsSettingsWidget.SettingsWidget.classSisypheSettings" title="Link to this definition"></a></dt>
@@ -627,14 +631,28 @@ This button is used to toggle visibility of the parameters.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.functionsSettingsWidget.SettingsWidget.settingsVisibilityOff">
-<span class="sig-name descname"><span class="pre">settingsVisibilityOff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.functionsSettingsWidget.SettingsWidget.settingsVisibilityOff" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">settingsVisibilityOff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.functionsSettingsWidget.SettingsWidget.settingsVisibilityOff" title="Link to this definition"></a></dt>
 <dd><p>Hide the settings box if it is visible.</p>
+<section id="id28">
+<h3>Parameters<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>signal<span class="classifier">bool</span></dt><dd><p>emit VisibilityToggled Qt signal if signal is True.</p>
+</dd>
+</dl>
+</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.functionsSettingsWidget.SettingsWidget.settingsVisibilityOn">
-<span class="sig-name descname"><span class="pre">settingsVisibilityOn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.functionsSettingsWidget.SettingsWidget.settingsVisibilityOn" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">settingsVisibilityOn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.functionsSettingsWidget.SettingsWidget.settingsVisibilityOn" title="Link to this definition"></a></dt>
 <dd><p>Show the settings box if it is not visible.</p>
+<section id="id29">
+<h3>Parameters<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>signal<span class="classifier">bool</span></dt><dd><p>emit VisibilityToggled Qt signal if signal is True.</p>
+</dd>
+</dl>
+</section>
 </dd></dl>
 
 <dl class="py method">
@@ -651,8 +669,15 @@ This button is used to toggle visibility of the parameters.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.functionsSettingsWidget.SettingsWidget.toggleSettingsVisibility">
-<span class="sig-name descname"><span class="pre">toggleSettingsVisibility</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.functionsSettingsWidget.SettingsWidget.toggleSettingsVisibility" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">toggleSettingsVisibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.functionsSettingsWidget.SettingsWidget.toggleSettingsVisibility" title="Link to this definition"></a></dt>
 <dd><p>Toggle the visibility of the settings box.</p>
+<section id="id30">
+<h3>Parameters<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>signal<span class="classifier">bool</span></dt><dd><p>emit VisibilityToggled Qt signal if signal is True.</p>
+</dd>
+</dl>
+</section>
 </dd></dl>
 
 </section>
@@ -662,12 +687,12 @@ This button is used to toggle visibility of the parameters.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.functionsSettingsWidget.FunctionSettingsWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.widgets.functionsSettingsWidget.</span></span><span class="sig-name descname"><span class="pre">FunctionSettingsWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.functionsSettingsWidget.FunctionSettingsWidget" title="Link to this definition"></a></dt>
 <dd><p>FunctionSettingsWidget class</p>
-<section id="id28">
-<h2>Description<a class="headerlink" href="#id28" title="Link to this heading"></a></h2>
+<section id="id31">
+<h2>Description<a class="headerlink" href="#id31" title="Link to this heading"></a></h2>
 <p>Widget to manage function settings from an XML file (functions.xml).</p>
 </section>
-<section id="id29">
-<h2>Inheritance<a class="headerlink" href="#id29" title="Link to this heading"></a></h2>
+<section id="id32">
+<h2>Inheritance<a class="headerlink" href="#id32" title="Link to this heading"></a></h2>
 <p>QWidget -&gt; SettingsWidget -&gt; FunctionSettingsWidget</p>
 <p>Creation: 11/08/2022</p>
 <dl class="py attribute">
@@ -683,18 +708,39 @@ This button is used to toggle visibility of the parameters.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.functionsSettingsWidget.DialogSettingsWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.widgets.functionsSettingsWidget.</span></span><span class="sig-name descname"><span class="pre">DialogSettingsWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.functionsSettingsWidget.DialogSettingsWidget" title="Link to this definition"></a></dt>
 <dd><p>DialogSettingsWidget class</p>
-<section id="id30">
-<h2>Description<a class="headerlink" href="#id30" title="Link to this heading"></a></h2>
+<section id="id33">
+<h2>Description<a class="headerlink" href="#id33" title="Link to this heading"></a></h2>
 <p>Widget to manage dialog window from an XML file (dialog.xml).</p>
 </section>
-<section id="id31">
-<h2>Inheritance<a class="headerlink" href="#id31" title="Link to this heading"></a></h2>
+<section id="id34">
+<h2>Inheritance<a class="headerlink" href="#id34" title="Link to this heading"></a></h2>
 <p>QWidget -&gt; SettingsWidget -&gt; DialogSettingsWidget</p>
 <p>Creation: 11/08/2022</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="Sisyphe.widgets.functionsSettingsWidget.DialogSettingsWidget.classSisypheSettings">
 <span class="sig-name descname"><span class="pre">classSisypheSettings</span></span><a class="headerlink" href="#Sisyphe.widgets.functionsSettingsWidget.DialogSettingsWidget.classSisypheSettings" title="Link to this definition"></a></dt>
 <dd><p>alias of <a class="reference internal" href="../API/api_settings.html#Sisyphe.core.sisypheSettings.SisypheDialogsSettings" title="Sisyphe.core.sisypheSettings.SisypheDialogsSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SisypheDialogsSettings</span></code></a></p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Sisyphe.widgets.functionsSettingsWidget.CustomSettingsWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.widgets.functionsSettingsWidget.</span></span><span class="sig-name descname"><span class="pre">CustomSettingsWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.functionsSettingsWidget.CustomSettingsWidget" title="Link to this definition"></a></dt>
+<dd><p>CustomSettingsWidget class</p>
+<section id="id35">
+<h2>Description<a class="headerlink" href="#id35" title="Link to this heading"></a></h2>
+<p>Widget to manage settings from a custom XML file.</p>
+</section>
+<section id="id36">
+<h2>Inheritance<a class="headerlink" href="#id36" title="Link to this heading"></a></h2>
+<p>QWidget -&gt; SettingsWidget -&gt; DialogSettingsWidget</p>
+<p>Creation: 04/11/2025</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Sisyphe.widgets.functionsSettingsWidget.CustomSettingsWidget.classSisypheSettings">
+<span class="sig-name descname"><span class="pre">classSisypheSettings</span></span><a class="headerlink" href="#Sisyphe.widgets.functionsSettingsWidget.CustomSettingsWidget.classSisypheSettings" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="../API/api_settings.html#Sisyphe.core.sisypheSettings.SisypheCustomSettings" title="Sisyphe.core.sisypheSettings.SisypheCustomSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SisypheCustomSettings</span></code></a></p>
 </dd></dl>
 
 </section>
