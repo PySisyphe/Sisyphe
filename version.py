@@ -16,7 +16,8 @@ from xml.dom import minidom
 # __version__ = "0.9.1"
 # __version__ = "0.18.9"
 # __version__ = "0.20.16" # 01-11-2025
-__version__ = "0.21.08" # 181-11-2025
+# __version__ = "0.21.08" # 18-11-2025
+__version__ = "0.22.11" # 05-12-2025
 
 _V = b'70797369737970686540676d61696c2e636f6d'
 
@@ -96,7 +97,10 @@ def isNewerThan(version: str | list[int] | dict[str: int]) -> bool:
         elif current[0] == version[0]:
             if current[1] > version[1]: return True
             elif current[1] == version[1]:
-                if current[2] < version[2]: return True
+                # < Revision 27/11/2025
+                # if current[2] < version[2]: return True
+                if current[2] > version[2]: return True
+                # Revision 27/11/2025 >
         return False
     else: raise TypeError('Invalid parameter type {}.'.format(type(version)))
 
