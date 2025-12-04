@@ -87,6 +87,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-18-3-build-16-10-2025">version 0.18.3, build 16/10/2025</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-20-16-build-01-11-2025">version 0.20.16, build 01/11/2025</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-21-08-build-18-11-2025">version 0.21.08, build 18/11/2025</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-22-11-build-05-12-2025">version 0.22.11, build 05/12/2025</a></li>
 </ul>
 </li>
 </ul>
@@ -127,6 +128,7 @@
 <li><p><a class="reference internal" href="#build16-10-2025"><span class="std std-ref">version 0.18.3, build 16/10/2025</span></a></p></li>
 <li><p><a class="reference internal" href="#build01-11-2025"><span class="std std-ref">version 0.20.16, build 01/11/2025</span></a></p></li>
 <li><p><a class="reference internal" href="#build18-11-2025"><span class="std std-ref">version 0.21.08, build 18/11/2025</span></a></p></li>
+<li><p><a class="reference internal" href="#build28-11-2025"><span class="std std-ref">version 0.22.11, build 05/12/2025</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -1835,6 +1837,7 @@
 <div><ul class="simple">
 <li><p>update __init__() method</p></li>
 <li><p>update open() method</p></li>
+<li><p>update setIconSize() method</p></li>
 <li><p>new visibility() method</p></li>
 </ul>
 </div></blockquote>
@@ -1845,6 +1848,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>update __init__() method</p></li>
+<li><p>update setIconSize() method</p></li>
 <li><p>new visibility() method</p></li>
 </ul>
 </div></blockquote>
@@ -2010,12 +2014,28 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.setIconSize()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>set icon size of the lock and visibility buttons</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>widgets.attributesWidgets.ListROIAttributesWidget.__init__()</p></li>
 <li><p>widgets.attributesWidgets.ListMeshAttributesWidget.__init__()</p></li>
 <li><p>widgets.attributesWidgets.ListBundleAttributesWidget.__init__()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>create lock and visibility buttons</p></li>
+<li><p>create visibility buttons</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListROIAttributesWidget.setIconSize()</p></li>
+<li><p>widgets.attributesWidgets.ListMeshAttributesWidget.setIconSize()</p></li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.setIconSize()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>set icon size of the visibility button</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -2101,6 +2121,823 @@
 </div></blockquote>
 </li>
 </ul>
+</section>
+<section id="version-0-22-11-build-05-12-2025">
+<span id="build28-11-2025"></span><h2>version 0.22.11, build 05/12/2025<a class="headerlink" href="#version-0-22-11-build-05-12-2025" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>updated html documentation</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PySisyphe_dockroi.rst</p></li>
+<li><p>PySisyphe_ipython.rst</p></li>
+<li><p>PySisyphe_dockroi.rst</p></li>
+<li><p>PySisyphe_dockmesh.rst</p></li>
+<li><p>PySisyphe_docktarget.rst</p></li>
+<li><p>PySisyphe_docktracking.rst</p></li>
+<li><p>PySisyphe_thumbnailbar.rst</p></li>
+<li><p>version-histrory.rst update</p></li>
+<li><p>rebuild sphinx documentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated files</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>/Sisyphe/settings/settings.xml</p></li>
+<li><p>/Sisyphe/settings/dialogs.xml</p></li>
+<li><p>/Sisyphe/gui/doc/ipython.txt</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new files</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>/Sisyphe/gui/lightroi/console.png</p></li>
+<li><p>/Sisyphe/gui/darkroi/console.png</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated modules</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>version</p></li>
+<li><p>core.sisypheImage</p></li>
+<li><p>core.sisypheROI</p></li>
+<li><p>core.sisypheSettings</p></li>
+<li><p>core.sisypheLUT</p></li>
+<li><p>core.sisypheTools</p></li>
+<li><p>cythonize updated core.sisypheROI module</p></li>
+<li><p>gui.dialogRegistration</p></li>
+<li><p>gui.dialogGenericResults</p></li>
+<li><p>gui.dialogRegistration</p></li>
+<li><p>gui.dialogSegmentation</p></li>
+<li><p>gui.dialogROIStatistics</p></li>
+<li><p>gui.windowSisyphe</p></li>
+<li><p>widgets.attributesWidgets</p></li>
+<li><p>widgets.iconViewWidgets</p></li>
+<li><p>widgets.functionsSettingsWidget</p></li>
+<li><p>widgets.consoleWidget</p></li>
+<li><p>widgets.imageWidgets</p></li>
+<li><p>widgets.selectFileWidgets</p></li>
+<li><p>widgets.consoleWidget</p></li>
+<li><p>widgets.LUTWidgets</p></li>
+<li><p>widgets.tabToolsWidgets</p></li>
+<li><p>widgets.abstractViewWidget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImage.SisypheImage</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>refactor the method name from ‘getValueAtContiuousIndex’ to ‘getValueAtContinuousIndex’</p></li>
+<li><p>update getHistogram() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.ToolWidgetCollection</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update createXML() method</p></li>
+<li><p>update parseXML() method</p></li>
+<li><p>add setPurpose() method</p></li>
+<li><p>add getPurpose() method</p></li>
+<li><p>add hasPurpose() method</p></li>
+<li><p>add hasSamePurpose() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.HandleWidget</p></li>
+<li><p>core.sisypheTools.LineWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update copyAttributesTo() and copyAttributesFrom() methods</p></li>
+<li><p>update setTubeVisibility() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.ToolWidgetCollection</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update parseXML() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROI</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getDistanceMap() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSettings.SisypheSettings</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getFieldValue() method</p></li>
+<li><p>update setFieldValue() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheLUT.SisypheLUT</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add getInternalColormapFromName() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogRegistration.DialogRegistration</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add setFilesToApply() method</p></li>
+<li><p>add getFilesToApply() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogGenericResults.DialogGenericResults</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update newTab() method</p></li>
+<li><p>add _onCopyConsole() method</p></li>
+<li><p>add setConsoleWidget() method</p></li>
+<li><p>add getConsoleWidget() method</p></li>
+<li><p>add hasConsoleWidget() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogRegistration.DialogICBMNormalization</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _updateTemplate() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSegmentation.DialogCorticalThickness</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getFilenames() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogROIStatistics.DialogROIStatistics</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__()</p></li>
+<li><p>add setConsoleWidget() method</p></li>
+<li><p>add getConsoleWidget() method</p></li>
+<li><p>add hasConsoleWidget() method</p></li>
+<li><p>add  _copyStatsToConsole() method</p></li>
+<li><p>add _copyHistogramsToConsole() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update setIconSize() method</p></li>
+<li><p>add copyToConsole() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListROIAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update toDistance() method</p></li>
+<li><p>add copyToConsole() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update setIconSize() method</p></li>
+<li><p>add properties() method</p></li>
+<li><p>update features() method</p></li>
+<li><p>add copyToConsole() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListMeshAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update features() method</p></li>
+<li><p>add copyToConsole() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update statistics() method</p></li>
+<li><p>add copyToConsole() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemMeshAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ItemBundleAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setDefaultAttributesFromSettings() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconViewWidgets.IconBarWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _onExpand() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update toggleSettingsVisibility() method</p></li>
+<li><p>update settingsVisibilityOn() method</p></li>
+<li><p>update settingsVisibilityOff() method</p></li>
+<li><p>update resetSettings() method</p></li>
+<li><p>update _initSettingsLayout() method</p></li>
+<li><p>update getParameterValue() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__()</p></li>
+<li><p>add hasVariable() method</p></li>
+<li><p>add _popupGlobals() method</p></li>
+<li><p>add _plot() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>add copyToConsole() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FileSelectionWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update open() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update add() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.SynchronizedFilesSelectionWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getFilenames() method</p></li>
+<li><p>update setFilenames() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.ComboBoxLut</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add removeFilesLut() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>add setMainWindow() method</p></li>
+<li><p>add getMainWindow() method</p></li>
+<li><p>add hasMainWindow() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update statistics() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update copyToolAttributes() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImage.SisypheImage.getHistogram()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add intervals to the returned value</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.ToolWidgetCollection.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add the purpose attribute (_purpose)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.ToolWidgetCollection.createXML()</p></li>
+<li><p>core.sisypheTools.ToolWidgetCollection.parseXML()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add the purpose field in the .xtools file format</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.HandleWidget.copyAttributesTo()</p></li>
+<li><p>core.sisypheTools.LineWidget.copyAttributesTo()</p></li>
+<li><p>core.sisypheTools.HandleWidget.copyAttributesFrom()</p></li>
+<li><p>core.sisypheTools.LineWidget.copyAttributesFrom()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>copy legend, suffix, prefix, and name attributes rather than text</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.ToolWidgetCollection.parseXML()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 7001 &amp; 7007, set an empty legend parameter rather than using the default values (i.e. ‘Target’ for HandleWidget and (‘Target’, ‘Entry’) for LineWidget)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.LineWidget.setTubeVisibility()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, restore self._contourActor and self._tubeActor visibility management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROI.getDistanceMap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add outside parameter to calculate distance map with positive values outside (True) or positive values inside (False)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSettings.SisypheSettings.getFieldValue()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 869, path xml attribute management for ‘vol’ vartype</p></li>
+<li><p>line 915, returns an empty list for ‘dirs’, ‘vols’, ‘rois’, ‘dcms’ vartype if data node is empty (returned ‘’ previouly)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSettings.SisypheSettings.setFieldValue()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 964, path xml attribute management for ‘vol’ vartype</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListAttributesWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>create ‘Copy to console’ button</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListAttributesWidget.setIconSize()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>set size of the ‘Copy to console’ button</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListROIAttributesWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add popup menu to _dist button (‘outside positive’ and ‘inside positive’)</p></li>
+<li><p>add tooltip for the ‘Copy to console’ button</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListROIAttributesWidget.toDistance()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add outside parameter to calculate distance map with positive values outside (True) or positive values inside (False)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>create properties button</p></li>
+<li><p>add tooltip for the ‘Copy to console’ button</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.setIconSize()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>set icon size of the properties button</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.features()</p></li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.features2()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 5472 &amp; 5691, add ‘copy to console button’ to DialogGenericResults</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListMeshAttributesWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add tooltip for the ‘Copy to console’ button</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListMeshAttributesWidget.features()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 4537, add ‘copy to console’ button to DialogGenericResults</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add tooltip for the ‘Copy to console’ button</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.statistics()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 7239, add ‘copy to console’ button to DialogGenericResults</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemMeshAttributesWidget.__init__()</p></li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget.__init__()</p></li>
+<li><p>widgets.attributesWidgets.ItemBundleAttributesWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>change the title bar color of the child dialogs (win32 platform)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget.setDefaultAttributesFromSettings()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 1525, add self._color.setFloatColor(v[0], v[1], v[2], signal=False) to update button color</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconViewWidgets.IconBarWidget._onExpand()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>hide the grid icon when the view is expanded (expand icon selected)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 345, replace self._button.clicked.connect(self.toggleSettingsVisibility) by self._button.clicked.connect(lambda _: self.toggleSettingsVisibility(True))</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget.toggleSettingsVisibility()</p></li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget.settingsVisibilityOn()</p></li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget.settingsVisibilityOff()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add a signal parameter that will indicate whether or not the VisibilityToggled Qt signal is emitted</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget.resetSettings()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 1275, path xml attribute management for ‘vol’ vartype</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget._initSettingsLayout()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 723 path xml attribute management for ‘vol’ vartype</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget.getParameterValue()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 1013, bug fix, isinstance(self._parameters[parameter], ComboBoxLut) before isinstance(self._parameters[parameter], ComboBox)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add ‘Copy to console’ QAction</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FileSelectionWidget.open()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 1478, 1492, 1515, 1730, 1817, 1881, 1995, 2050, 2099, change default folder of QFileDialog</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget.add()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>change typing of the filenames parameter, from str to str | list[str]</p></li>
+<li><p>line 2988, management of list[str] filenames parameter</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.getFilenames()</p></li>
+<li><p>widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setFilenames()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>typing corretion, from dict[str, dict[str, str]] to dict[str, dict[str, str | list[str]]]</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget.__init__()</p>
+<blockquote>
+<div><ul>
+<li><p>line 148, replace _console type from RichJupyterWidget to RichJupyterWidget2</p></li>
+<li><p>RichJupyterWidget2 is a subclass of RichJupyterWidget that adds key events</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>key . triggers the complete widget display</p></li>
+<li><p>key ( displays ()</p></li>
+<li><p>key [ displays []</p></li>
+<li><p>key { displays {}</p></li>
+<li><p>key quote displays ‘’</p></li>
+<li><p>key double-quote displays “”</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>line 196, add _globals QTreeWidget popup menu management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 120, add _mainwindow attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.statistics()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 2251, add self._statistics.setConsoleWidget(self._mainwindow.getConsole())</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogGenericResults.DialogGenericResults.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add _console ConsoleWidget attribute, used to create dataset variable in the console</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogGenericResults.DialogGenericResults.newTab()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add ‘Copy to console’ button</p></li>
+<li><p>add tooltips to buttons</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogRegistration.DialogICBMNormalization._updateTemplate()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 1078, change abspath position</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSegmentation.DialogCorticalThickness.getFilenames()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>typing corretion, from list[str] to dict[str, str | list[str]]</p></li>
+<li><p>line 1811, change return value from return self._select.getFilenames() to return self._select.getFilenames()[‘multiple’]</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogROIStatistics.DialogROIStatistics.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add ‘Copy to console’ button</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 456, add self._tabROITools.setMainWindow(self)</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheTools.ToolWidgetCollection.setPurpose()</p></li>
+<li><p>core.sisypheTools.ToolWidgetCollection.getPurpose()</p></li>
+<li><p>core.sisypheTools.ToolWidgetCollection.hasPurpose()</p></li>
+<li><p>core.sisypheTools.ToolWidgetCollection.hasSamePurpose()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>methods to manage the new purpose attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheLUT.SisypheLUT.getInternalColormapFromName()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>returns internal name of a Look-Up table colormap (matplotlib name) from its public name</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogRegistration.DialogRegistration.setFilesToApply()</p></li>
+<li><p>gui.dialogRegistration.DialogRegistration.getFilesToApply()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>set/get additionnal volume(s) to resample</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogGenericResults.DialogGenericResults._onCopyConsole()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>method called by ‘Copy to console’ button to copy dataset as variable in the console widget.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogGenericResults.DialogGenericResults.setConsoleWidget()</p></li>
+<li><p>gui.dialogGenericResults.DialogGenericResults.getConsoleWidget()</p></li>
+<li><p>gui.dialogGenericResults.DialogGenericResults.hasConsoleWidget()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>set &amp; get _console ConsoleWidget attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogROIStatistics.DialogROIStatistics.setConsoleWidget()</p></li>
+<li><p>gui.dialogROIStatistics.DialogROIStatistics.getConsoleWidget()</p></li>
+<li><p>gui.dialogROIStatistics.DialogROIStatistics.hasConsoleWidget()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>set &amp; get _console ConsoleWidget attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogROIStatistics.DialogROIStatistics._copyStatsToConsole()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>called by ‘Copy to console’ button menu event. Copy ROI descriptive and shape statistics to the concole</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogROIStatistics.DialogROIStatistics._copyHistogramsToConsole</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>called by ‘Copy to console’ button menu event. Copy ROI histograms to the console</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListAttributesWidget.copyToConsole()</p></li>
+<li><p>widgets.attributesWidgets.ListROIAttributesWidget.copyToConsole()</p></li>
+<li><p>widgets.attributesWidgets.ListMeshAttributesWidget.copyToConsole()</p></li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.copyToConsole()</p></li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.copyToConsole()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>copy checked items to the console</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.properties()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>change properties of checked ItemToolAttributesWidget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget.hasVariable()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>check if a variable already exists in the console</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget._popupGlobals()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>displays popup menu after right-click event on Globals QTreeWidgetItem (numpy, list and sitkImage variables)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget._plot()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>called by Globals QTreeWidgetItem popup menu</p></li>
+<li><p>displays various matplotlib pyplot charts (line, bar, stairs, Box-and-Whisker, violin, histogram, scatter, matrix and image plots) in the console</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.copyToConsole()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>copy self._volume to PySisyphe console</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.ComboBoxLut.removeFilesLut()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove files lut (keep only internal lut)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabWidget.setMainWindow()</p></li>
+<li><p>widgets.tabToolsWidgets.TabWidget.getMainWindow()</p></li>
+<li><p>widgets.tabToolsWidgets.TabWidget.hasMainWindow()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>methods to get/set _mainwindow attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget.copyToolAttributes()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 4736, add self._renderwindow.Render() to update VolumeView display</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p><strong>updated function</strong></p>
+<blockquote>
+<div><ul>
+<li><p>version.isNewerThan()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 100, replace &lt; by &gt; between current[2] and version[2]</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
 </section>
 </section>
 

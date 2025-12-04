@@ -77,7 +77,8 @@
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Mapping.html">Mapping menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Diffusion.html">Diffusion menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Window.html">Window menu</a></li>
-<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API2/index.html">Widgets &amp; dialogs API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Versions.html">Version history</a></li>
@@ -114,17 +115,39 @@
 <div class="line"><br /></div>
 </div>
 <p>A fully functional IPython console (Jupyter 5.4.0) is available in the “IPython” tab of the central area (see <a class="reference external" href="https://ipython.readthedocs.io/en/stable/">IPython documentation</a>).</p>
-<p>Command line on the left (1). Right-click displays a pop-up menu:</p>
+<p>Command line on the left (1). Right-click displays a popup menu:</p>
 <ul class="simple">
 <li><p><strong>Cut</strong>, cut selected text.</p></li>
-<li><p><strong>Copy</strong>, copy selected text to the clipboard.</p></li>
+<li><p><strong>Copy</strong>, copy selected text to the system clipboard.</p></li>
 <li><p><strong>Paste</strong>, paste clipboard text to the console.</p></li>
 <li><p><strong>Select all</strong>, select all of the console text.</p></li>
 <li><p><strong>Save as HTML/XML</strong>, save the console display to HTML/XML file.</p></li>
 <li><p><strong>Print</strong>, open a print dialog to print the console display.</p></li>
 </ul>
-<p>Modules/Types/Functions imported into the environment are displayed in the list box at top-right (2). A tooltip pops when mouse cursor remains in front of a box element. It displays its docstring.</p>
-<p>Variables are displayed in the list box at bottom-right (3). A tooltip pops when mouse cursor remains in front of a variable. It displays its value converted to string. Double-click on a SisypheVolume, sitkImage (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1Image.html">SimpleITK Image class</a>), ANTsImage (see <a class="reference external" href="https://antspy.readthedocs.io/en/latest/core.html">ANTs Image class</a>), vtkImageData (see <a class="reference external" href="https://vtk.org/doc/nightly/html/classvtkImageData.html">VTK Image class</a>) or ndarray variable (see <a class="reference external" href="https://antspy.readthedocs.io/en/latest/core.html">Numpy ndarray class</a>) opens it in the thumbnail bar.</p>
+<p>Right-click a chart image displays another popup menu:</p>
+<ul class="simple">
+<li><p><strong>Copy Image</strong>, copy the chart image to the system clipboard.</p></li>
+<li><p><strong>Save Image As</strong>, save the chart image in png bitmap format.</p></li>
+</ul>
+<p>another
+Modules/Types/Functions imported into the environment are displayed in the list box at top-right (2). A tooltip pops when mouse cursor remains in front of a box element. It displays its docstring.</p>
+<p>Variables are displayed in the list box at bottom-right (3). A tooltip pops when mouse cursor remains in front of a variable. It displays its value converted to string.</p>
+<ul class="simple">
+<li><p>Double-click on a SisypheVolume, sitkImage (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1Image.html">SimpleITK Image class</a>), ANTsImage (see <a class="reference external" href="https://antspy.readthedocs.io/en/latest/core.html">ANTs Image class</a>), vtkImageData (see <a class="reference external" href="https://vtk.org/doc/nightly/html/classvtkImageData.html">VTK Image class</a>) or ndarray variable (see <a class="reference external" href="https://antspy.readthedocs.io/en/latest/core.html">Numpy ndarray class</a>) opens it in the thumbnail bar.</p></li>
+<li><p>Right-click on 1D/2D ndarray or 2D sitkImage variables displays a popup menu that allows you to select various Matplotlib charts to draw at the current console prompt. A dialog box opens to select the display settings for each chart. Matplotlib Figure and Axes variables for the chart are created under the names ‘fig’ and ‘ax’.</p></li>
+</ul>
+<p>The available charts are listed below:</p>
+<ul class="simple">
+<li><p><strong>Line plot</strong>, 1D ndarray or 2D (one line plot for each row vector)</p></li>
+<li><p><strong>Bar plot</strong>, 1D ndarray or 2D (one bar plot for each row vector)</p></li>
+<li><p><strong>Stairs plot</strong>, 1D ndarray or 2D (one stair plot for each row vector)</p></li>
+<li><p><strong>Box-and-Whisker plot</strong>, 1D ndarray or 2D (one Box-and-Whisker plot for each row vector)</p></li>
+<li><p><strong>Violin plot</strong>, 1D ndarray or 2D (one violin plot for each row vector)</p></li>
+<li><p><strong>Histogram plot</strong>, 1D ndarray or 2D (one histogram for each row vector)</p></li>
+<li><p><strong>Scatter plot</strong>, 2D ndarray with 2 rows (1 row vector for x, 1 row vector for y) or 2 columns (1 column vector for x, 1 column vector for y)</p></li>
+<li><p><strong>Matrix plot</strong>, 2D ndarray</p></li>
+<li><p><strong>Image plot</strong>, 2D ndarray or SimpleITK Image variable</p></li>
+</ul>
 <p>Five buttons (4):</p>
 <ul class="simple">
 <li><p><strong>Import</strong>, import of most-used modules (PySisyphe core modules, ANTs, Matplotlib, NiBabel, Nilearn, Numpy, Pandas, Pillow, PyDicom, Scikit-image, SciPy, SimpleITK)</p></li>
@@ -139,7 +162,8 @@
 <dt><strong>Up/Down</strong></dt><dd><p>keys to get command history.</p>
 </dd>
 </dl>
-<p><strong>Tab key (-&gt;|)</strong> after a dot to display a pop-up window of available methods.</p>
+<p><strong>Tab key (-&gt;|)</strong> to display a popup menu with autocomplete suggestions for available modules/classes/methods/functions related to the string preceding the current cursor position on the prompt line.</p>
+<p>This popup menu with autocomplete suggestions also appears automatically after typing a <strong>dot</strong>.</p>
 <dl class="simple">
 <dt><strong>?</strong></dt><dd><p>IPython help.</p>
 </dd>
