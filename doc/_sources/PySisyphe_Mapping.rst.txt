@@ -328,7 +328,7 @@ Hemispheric or regional dominance in cognitive functions, particularly language,
 
 	`Reference <https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0230129>`_: Implementation of clinically relevant and robust fMRI-based language lateralization: Choosing the laterality index calculation method. I Brumer, E De Vita, J Ashmore, J Jarosz, M Borri. PLoS One. 2020 Mar 12;15(3):e0230129.
 
-The **Laterality index** dialog box is displayed, wich is provides five :ref:`widgets-section-single-file` widgets:
+The **Laterality index** dialog box is displayed, which is provides five :ref:`widgets-section-single-file` widgets:
 
 - Select a **Statistical map** PySisyphe volume (.xvol, t-map or z-map sequence attribute).
 - Select one of the PySisyphe volumes (.xvol) of the fMRI time-series used to calculate the statistical map, or the mean volume of the fMRI time-series with the **fMRI volume** widget. This volume is used for the spatial normalization stage used to resample the statistical map in the ICBM152 space. This widget will not be displayed if the statistical map is already normalized in the ICBM152 space (i.e. space/transform ID is *ICBM152*).

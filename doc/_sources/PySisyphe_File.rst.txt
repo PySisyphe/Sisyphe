@@ -367,7 +367,7 @@ Left-click **Cancel** button to close dialog box without processing.
 Remap label volume
 -------------------
 
-This menu displays the **Remap label volume** dialog box, wich is used to change the label indexes and names of a PySisyphe label volume (.xvol).
+This menu displays the **Remap label volume** dialog box, which is used to change the label indexes and names of a PySisyphe label volume (.xvol).
 
 Add a PySisyphe label volume in the :ref:`widgets-section-single-file` widget. The table below is populated with original label indexes in the first column, new label indexes in the second column, and label names in the last column. The new label indexes and names can be edited.
 

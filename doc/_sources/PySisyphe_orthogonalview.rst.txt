@@ -158,8 +158,8 @@ Orthogonal view widget includes a vertical icon bar to the left:
 |iso|
 	Left-click to display a menu to iso-value lines as overlay.
 
-	- |palette| to chose line color. 
-	- |opacity2| to chose line opacity.
+	- |palette| to choose line color. 
+	- |opacity2| to choose line opacity.
 	- **Isoline value** box to edit one or more iso-value splits using a space character.
 	- Check volume name (reference volume or overlays) used to perform iso-value lines.
 

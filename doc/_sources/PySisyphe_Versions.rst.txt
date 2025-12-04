@@ -12,7 +12,8 @@ Version history
 - :ref:`build16-10-2025`
 - :ref:`build01-11-2025`
 - :ref:`build18-11-2025`
-- :ref:`build28-11-2025`
+- :ref:`build05-12-2025`
+- :ref:`buildxx-xx-xxxx`
 
 .. _version-increment-rules:
 Version increment rules
@@ -1234,7 +1235,7 @@ version 0.21.08, build 18/11/2025
 
 		- method called by visibility button
 
-.. _build28-11-2025:
+.. _build05-12-2025:
 version 0.22.11, build 05/12/2025
 ---------------------------------
 
@@ -1745,3 +1746,81 @@ version 0.22.11, build 05/12/2025
 	- version.isNewerThan()
 
 		- bug fix, line 100, replace < by > between current[2] and version[2]
+
+.. _buildxx-xx-xxxx:
+version 0.22.16, build xx/xx/xxxx
+---------------------------------
+
+- **updated modules**
+
+	- core.sisypheSettings
+	- core.sisypheDatabase
+	- widgets.consoleWidget
+	- gui.dialogDownload
+	- gui.dialogVolumeAttributes
+
+- **updated functions**
+
+	- core.sisypheSettings.initPySisypheUserPath()
+	
+		- line 185, set current and default database paths ($User/.PySisyphe/database) in the settings file
+
+	- core.sisypheSettings.setUserSettingsToDefault()
+
+		- line 245, set current and default database paths ($User/.PySisyphe/database) in the settings file 
+
+- **updated classes**
+
+	- core.sisypheSettings.SisypheSettings
+
+		- update getUserSettings() method
+
+	- core.sisypheDatabase.SisypheDatabase
+
+		- update setDefaultDatabasePath() method
+
+	- widgets.consoleWidget.ConsoleWidget
+
+		- update _popupGlobals() method
+
+	- gui.dialogDownload.DialogDownload
+
+		- update download() method
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes
+
+		- update __init__() method
+		- add _unlockSpacing() method
+		- add _unlockOrigin() method
+
+- **updated methods**
+
+	- core.sisypheSettings.SisypheSettings.getUserSettings()
+
+		- line 376, set current and default database paths (~/.PySisyphe/database) if the user file settings do not exist
+
+	- core.sisypheDatabase.SisypheDatabase.setDefaultDatabasePath()
+
+		- line 381, set default database path from 'DefaultPath' field of the settings file. If this field is empty, set the PySisyphe patient database folder to ~/.PySisyphe/Database (in user folder)
+
+	- widgets.consoleWidget.ConsoleWidget._popupGlobals()
+
+		- lines 483 & 494, test data type, no popup for non-numeric types
+
+	- gui.dialogDownload.DialogDownload.download()
+
+		- line 261, add information dialog boxes after the download is complete
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes.__init__()
+
+		- add QCheckBox self._unlocksp and self._unlocko before spacing/origin
+
+- **new methods**
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes._unlockSpacing()
+
+		- called by QCheckBox self._unlocksp toggled event
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes._unlockOrigin()
+
+		- called by QCheckBox self._unlocko toggled event
