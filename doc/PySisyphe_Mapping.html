@@ -89,7 +89,8 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Diffusion.html">Diffusion menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Window.html">Window menu</a></li>
-<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API2/index.html">Widgets &amp; dialogs API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Versions.html">Version history</a></li>
@@ -430,7 +431,7 @@ beta, vector of regressor weight values, one value for each factor (effects/cova
 <p>LI indexes are calculated in a subset of voxels located within symmetric masks in each hemisphere (e.g. language areas).</p>
 <p><a class="reference external" href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0230129">Reference</a>: Implementation of clinically relevant and robust fMRI-based language lateralization: Choosing the laterality index calculation method. I Brumer, E De Vita, J Ashmore, J Jarosz, M Borri. PLoS One. 2020 Mar 12;15(3):e0230129.</p>
 </div>
-<p>The <strong>Laterality index</strong> dialog box is displayed, wich is provides five <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widgets:</p>
+<p>The <strong>Laterality index</strong> dialog box is displayed, which is provides five <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widgets:</p>
 <ul class="simple">
 <li><p>Select a <strong>Statistical map</strong> PySisyphe volume (.xvol, t-map or z-map sequence attribute).</p></li>
 <li><p>Select one of the PySisyphe volumes (.xvol) of the fMRI time-series used to calculate the statistical map, or the mean volume of the fMRI time-series with the <strong>fMRI volume</strong> widget. This volume is used for the spatial normalization stage used to resample the statistical map in the ICBM152 space. This widget will not be displayed if the statistical map is already normalized in the ICBM152 space (i.e. space/transform ID is <em>ICBM152</em>).</p></li>

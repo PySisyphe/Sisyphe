@@ -88,6 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-20-16-build-01-11-2025">version 0.20.16, build 01/11/2025</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-21-08-build-18-11-2025">version 0.21.08, build 18/11/2025</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-22-11-build-05-12-2025">version 0.22.11, build 05/12/2025</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-22-16-build-xx-xx-xxxx">version 0.22.16, build xx/xx/xxxx</a></li>
 </ul>
 </li>
 </ul>
@@ -128,7 +129,8 @@
 <li><p><a class="reference internal" href="#build16-10-2025"><span class="std std-ref">version 0.18.3, build 16/10/2025</span></a></p></li>
 <li><p><a class="reference internal" href="#build01-11-2025"><span class="std std-ref">version 0.20.16, build 01/11/2025</span></a></p></li>
 <li><p><a class="reference internal" href="#build18-11-2025"><span class="std std-ref">version 0.21.08, build 18/11/2025</span></a></p></li>
-<li><p><a class="reference internal" href="#build28-11-2025"><span class="std std-ref">version 0.22.11, build 05/12/2025</span></a></p></li>
+<li><p><a class="reference internal" href="#build05-12-2025"><span class="std std-ref">version 0.22.11, build 05/12/2025</span></a></p></li>
+<li><p><a class="reference internal" href="#buildxx-xx-xxxx"><span class="std std-ref">version 0.22.16, build xx/xx/xxxx</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -2123,7 +2125,7 @@
 </ul>
 </section>
 <section id="version-0-22-11-build-05-12-2025">
-<span id="build28-11-2025"></span><h2>version 0.22.11, build 05/12/2025<a class="headerlink" href="#version-0-22-11-build-05-12-2025" title="Link to this heading"></a></h2>
+<span id="build05-12-2025"></span><h2>version 0.22.11, build 05/12/2025<a class="headerlink" href="#version-0-22-11-build-05-12-2025" title="Link to this heading"></a></h2>
 <ul>
 <li><p><strong>updated html documentation</strong></p>
 <blockquote>
@@ -2938,6 +2940,146 @@
 </li>
 </ul>
 </div></blockquote>
+</section>
+<section id="version-0-22-16-build-xx-xx-xxxx">
+<span id="buildxx-xx-xxxx"></span><h2>version 0.22.16, build xx/xx/xxxx<a class="headerlink" href="#version-0-22-16-build-xx-xx-xxxx" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>updated modules</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>core.sisypheSettings</p></li>
+<li><p>core.sisypheDatabase</p></li>
+<li><p>widgets.consoleWidget</p></li>
+<li><p>gui.dialogDownload</p></li>
+<li><p>gui.dialogVolumeAttributes</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated functions</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheSettings.initPySisypheUserPath()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 185, set current and default database paths ($User/.PySisyphe/database) in the settings file</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSettings.setUserSettingsToDefault()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 245, set current and default database paths ($User/.PySisyphe/database) in the settings file</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheSettings.SisypheSettings</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getUserSettings() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheDatabase.SisypheDatabase</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setDefaultDatabasePath() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _popupGlobals() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDownload.DialogDownload</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update download() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogVolumeAttributes.DialogVolumeAttributes</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>add _unlockSpacing() method</p></li>
+<li><p>add _unlockOrigin() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheSettings.SisypheSettings.getUserSettings()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 376, set current and default database paths (~/.PySisyphe/database) if the user file settings do not exist</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheDatabase.SisypheDatabase.setDefaultDatabasePath()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 381, set default database path from ‘DefaultPath’ field of the settings file. If this field is empty, set the PySisyphe patient database folder to ~/.PySisyphe/Database (in user folder)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget._popupGlobals()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 483 &amp; 494, test data type, no popup for non-numeric types</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDownload.DialogDownload.download()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 261, add information dialog boxes after the download is complete</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogVolumeAttributes.DialogVolumeAttributes.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add QCheckBox self._unlocksp and self._unlocko before spacing/origin</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>gui.dialogVolumeAttributes.DialogVolumeAttributes._unlockSpacing()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>called by QCheckBox self._unlocksp toggled event</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogVolumeAttributes.DialogVolumeAttributes._unlockOrigin()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>called by QCheckBox self._unlocko toggled event</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
 </section>
 </section>
 
