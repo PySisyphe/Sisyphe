@@ -84,6 +84,9 @@ Icon bar below mesh list:
 |delete|
 	Left-click to remove all mesh(es) from the list and from the orthogonal view widget.
 
+|console|
+	Left-click to copy checked Mesh(es) to the PySisyphe console as a list of SisypheMesh instances (variable name 'meshes').
+
 |view|
 	Left-click to show/hide all mesh(es) of the list.
 
@@ -142,7 +145,7 @@ Mesh tools below icon bar:
 	Left-click to process symmetric difference betwenn selected ROI and checked ROI(s), adds result to the ROI list and displays it in the view widget(s).
 
 |cubefeature|
-	Left-click to calculate checked mesh(es) geometric features (volume, surface, bounds, center of mass coordinates, major axis vector, mid-axis vector, minor axis vector, sizes in each vector directions) and displays them in a dialog box. Features can be stored in various formats (CSV, JSON, latex TEX, TEXT, Word XLSX, PySisyphe XSHEET).
+	Left-click to calculate checked mesh(es) geometric features (volume, surface, bounds, center of mass coordinates, major axis vector, mid-axis vector, minor axis vector, sizes in each vector directions) and displays them in a dialog box. Features can be stored in various formats (CSV, JSON, latex TEX, TEXT, Word XLSX, PySisyphe XSHEET). They can be copied to the PySisyphe console as a numpy ndarray variable named 'df'.
 
 .. _mesh-section-mesh-settings:
 Mesh settings
@@ -226,6 +229,8 @@ Settings used by mesh tools.
 .. |check| image:: /GUI/dock/check.png
    :scale: 50 %
 .. |uncheck| image:: /GUI/dock/uncheck.png
+   :scale: 50 %
+.. |console| image:: /GUI/dock/console.png
    :scale: 50 %
 .. |duplicate| image:: /GUI/dock/duplicate.png
    :scale: 50 %

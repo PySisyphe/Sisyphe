@@ -79,6 +79,9 @@ Left-click to select a bundle element in the list (blue outline in Windows platf
 |cross|
 	Left-click to remove checked Bundle(s) from list and from view widget(s).
 
+|console|
+	Left-click to copy checked Bundle(s) to the PySisyphe console as a list of SisypheStreamlines instances (variable name 'bundles').
+
 |attach|
 	Left-click to process union of the checked Bundles, adds result to the Bundle list and displays it in the view widget.
 
@@ -171,6 +174,7 @@ Left-click to select a bundle element in the list (blue outline in Windows platf
 	- **Copy to clipboard**, copy a bitmap capture of the displayed chart to the clipboard.
 	- **Copy to screenshots**, copy a bitmap capture of the displayed chart to the :ref:`Screenshots manager <page-screenshots>`.
 	- **Save Dataset**, show a dialog box to save the displayed table (supported formats CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET).
+	- **Copy to console**, copy the table to the PySisyphe console as a numpy ndarray variable named 'df'.
 
 .. _tracking-section-bundle-item:
 Bundle item
@@ -217,6 +221,8 @@ Bundle item widgets:
 .. |check| image:: /GUI/dock/check.png
    :scale: 50 %
 .. |uncheck| image:: /GUI/dock/uncheck.png
+   :scale: 50 %
+.. |console| image:: /GUI/dock/console.png
    :scale: 50 %
 .. |tracking| image:: /GUI/dock/tracking.png
    :scale: 50 %

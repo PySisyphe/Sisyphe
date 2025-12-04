@@ -49,6 +49,7 @@ Left-Click on the lower right of the thumbnail (on the three dots "..."), or rig
 - **Display as overlay**, display the thumbnail volume as overlay in views.
 - **Save**, save the thumbnail volume.
 - **Save as...**, display a dialog box to save volume with a new file name.
+- **Copy to console**, to copy the thumbnail volume as a variable in the PySisyhe console. One of the following formats is selected in the submenu: SisypheVolume (variable name 'vol'), SimpleITKImage (variable name 'sitkv'), ITKImage (variable name 'itkv'), VTKImageData (variable name 'vtkv'), ANTsImage (antsv), NibabelImage (variable name 'nibv'), or numpy ndarray (transposed or not, variable name 'npv').
 - **Close**, close the thumbnail volume.
 - **Windowing >**
 

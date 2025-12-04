@@ -54,6 +54,9 @@ Left-click to select a target or a trajectory element in the list (blue outline 
 |delete|
 	Left-click to remove all Target(s)/Trajectory(ies) from the list and from the view widget.
 
+|console|
+	Left-click to copy checked Tool(s) to the PySisyphe console as a list of HandleWidget/LineWidget instances (variable name 'tools').
+
 |lock|
 	Left-click to lock/unlock all Target(s)/Trajectory(ies) of the list.
 
@@ -92,7 +95,8 @@ Left-click to select a target or a trajectory element in the list (blue outline 
 	Two buttons are avalaible at the bottom:
 
 	- **Copy to screenshots**, to take a bitmap capture of the displayed table and copy it to the :ref:`Screenshots manager <page-screenshots>`.
-	- **Save dataset**, show a dialog box to save the displayed table (supported formats CSV, JSON, Latex, TEXT, Excel XLSX, Pysisyphe XSHEET)
+	- **Save dataset**, show a dialog box to save the displayed table (supported formats CSV, JSON, Latex, TEXT, Excel XLSX, Pysisyphe XSHEET).
+	- **Copy to console**, copy the table to the PySisyphe console as a numpy ndarray variable named 'df'.
 
 |toolfeature2|
 	Left-click to show a dialog of distances between Target(s)/Trajectory(ies) and mesh(es). This dialog have three tables:
@@ -104,7 +108,8 @@ Left-click to select a target or a trajectory element in the list (blue outline 
 	Two buttons are avalaible at the bottom:
 
 	- **Copy to screenshots**, to take a bitmap capture of the displayed table and copy it to the :ref:`Screenshots manager <page-screenshots>`.
-	- **Save dataset**, show a dialog box to save the displayed table (supported formats CSV, JSON, Latex, TEXT, Excel XLSX, Pysisyphe XSHEET)
+	- **Save dataset**, show a dialog box to save the displayed table (supported formats CSV, JSON, Latex, TEXT, Excel XLSX, Pysisyphe XSHEET).
+	- **Copy to console**, copy the table to the PySisyphe console as a numpy ndarray variable named 'df'.
 
 .. _target-section-target-item:
 Target/Trajectory item
@@ -205,6 +210,8 @@ Target/Trajectory item
 .. |check| image:: /GUI/dock/check.png
    :scale: 50 %
 .. |uncheck| image:: /GUI/dock/uncheck.png
+   :scale: 50 %
+.. |console| image:: /GUI/dock/console.png
    :scale: 50 %
 .. |duplicate| image:: /GUI/dock/duplicate.png
    :scale: 50 %

@@ -12,6 +12,7 @@ Version history
 - :ref:`build16-10-2025`
 - :ref:`build01-11-2025`
 - :ref:`build18-11-2025`
+- :ref:`build28-11-2025`
 
 .. _version-increment-rules:
 Version increment rules
@@ -997,6 +998,8 @@ version 0.21.08, build 18/11/2025
 	- widgets.selectFileWidgets
 	- widgets.functionsSettingsWidget
 	- widgets.attributesWidgets
+	- widgets.abstractViewWidget
+	- widgets.multiViewWidgets
 	- widgets.sliceViewWidgets
 	- widgets.sliceTrajectoryViewWidget
 
@@ -1055,11 +1058,17 @@ version 0.21.08, build 18/11/2025
 	- widgets.abstractViewWidget.AbstractViewWidget
 
 		- update _updateToolMenu() method
+		- update synchroniseCursorPositionChanged() method
+
+	- widgets.multiViewWidgets.GridViewWidget
+
+		- update setNumberOfVisibleViews() method
 
 	- widgets.attributesWidgets.ListToolAttributesWidget
 
 		- update __init__() method
 		- update open() method
+		- update setIconSize() method
 		- new visibility() method
 
 	- widgets.attributesWidgets.ListROIAttributesWidget
@@ -1067,6 +1076,7 @@ version 0.21.08, build 18/11/2025
 	- widgets.attributesWidgets.ListBundleAttributesWidget
 
 		- update __init__() method
+		- update setIconSize() method
 		- new visibility() method
 
 	- widgets.iconBarViewWidgets.IconBarWidget
@@ -1146,6 +1156,14 @@ version 0.21.08, build 18/11/2025
 			- bug fix, lines 1441, replace isinstance(tool, HandleWidget) by tool.GetObjectName() == 'HandleWidget'
 			- bug fix, lines 1448, replace isinstance(tool, LineWidget) by tool.GetObjectName() == 'LineWidget'
 
+		- widgets.abstractViewWidget.AbstractViewWidget.synchroniseCursorPositionChanged()
+
+			- line 1447, use synchronisation flag attribute (no cursor synchronization if flag is False), used to speed up display
+
+		- widgets.multiViewWidgets.GridViewWidget.setNumberOfVisibleViews()
+
+			- lines 2861 & 2868, no synchronization of hidden views, used to speed up display
+
 		- widgets.attributesWidgets.ListAttributesWidget.__init__()
 
 			- line 2365, change the background colour of the selected item
@@ -1158,11 +1176,21 @@ version 0.21.08, build 18/11/2025
 
 			- create lock and visibility buttons
 
+		- widgets.attributesWidgets.ListToolAttributesWidget.setIconSize()
+
+			- set icon size of the lock and visibility buttons
+
 		- widgets.attributesWidgets.ListROIAttributesWidget.__init__()
 		- widgets.attributesWidgets.ListMeshAttributesWidget.__init__()
 		- widgets.attributesWidgets.ListBundleAttributesWidget.__init__()
 
-			- create lock and visibility buttons
+			- create visibility buttons
+
+		- widgets.attributesWidgets.ListROIAttributesWidget.setIconSize()
+		- widgets.attributesWidgets.ListMeshAttributesWidget.setIconSize()
+		- widgets.attributesWidgets.ListBundleAttributesWidget.setIconSize()
+
+			- set icon size of the visibility button
 
 		- widgets.attributesWidgets.ListToolAttributesWidget.open()
 
@@ -1205,3 +1233,515 @@ version 0.21.08, build 18/11/2025
 	- widgets.attributesWidgets.ListBundleAttributesWidget.visibility()
 
 		- method called by visibility button
+
+.. _build28-11-2025:
+version 0.22.11, build 05/12/2025
+---------------------------------
+
+- **updated html documentation**
+
+	- PySisyphe_dockroi.rst
+	- PySisyphe_ipython.rst
+	- PySisyphe_dockroi.rst
+	- PySisyphe_dockmesh.rst
+	- PySisyphe_docktarget.rst
+	- PySisyphe_docktracking.rst
+	- PySisyphe_thumbnailbar.rst
+	- version-histrory.rst update
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- /Sisyphe/settings/settings.xml
+	- /Sisyphe/settings/dialogs.xml
+	- /Sisyphe/gui/doc/ipython.txt
+
+- **new files**
+
+	- /Sisyphe/gui/lightroi/console.png
+	- /Sisyphe/gui/darkroi/console.png
+
+- **updated modules**
+
+	- version
+	- core.sisypheImage
+	- core.sisypheROI
+	- core.sisypheSettings
+	- core.sisypheLUT
+	- core.sisypheTools
+	- cythonize updated core.sisypheROI module
+	- gui.dialogRegistration
+	- gui.dialogGenericResults
+	- gui.dialogRegistration
+	- gui.dialogSegmentation
+	- gui.dialogROIStatistics
+	- gui.windowSisyphe
+	- widgets.attributesWidgets
+	- widgets.iconViewWidgets
+	- widgets.functionsSettingsWidget
+	- widgets.consoleWidget
+	- widgets.imageWidgets
+	- widgets.selectFileWidgets
+	- widgets.consoleWidget
+	- widgets.LUTWidgets
+	- widgets.tabToolsWidgets
+	- widgets.abstractViewWidget
+
+- **updated classes**
+
+	- core.sisypheImage.SisypheImage
+
+		- refactor the method name from 'getValueAtContiuousIndex' to 'getValueAtContinuousIndex'
+		- update getHistogram() method
+
+	- core.sisypheTools.ToolWidgetCollection
+
+		- update __init__() method
+		- update createXML() method
+		- update parseXML() method
+		- add setPurpose() method
+		- add getPurpose() method
+		- add hasPurpose() method
+		- add hasSamePurpose() method
+
+	- core.sisypheTools.HandleWidget
+	- core.sisypheTools.LineWidget
+
+		- update copyAttributesTo() and copyAttributesFrom() methods
+		- update setTubeVisibility() method
+	
+	- core.sisypheTools.ToolWidgetCollection
+
+		- update parseXML() method
+
+	- core.sisypheROI.SisypheROI
+
+		- update getDistanceMap() method
+
+	- core.sisypheSettings.SisypheSettings
+
+		- update getFieldValue() method
+		- update setFieldValue() method
+
+	- core.sisypheLUT.SisypheLUT
+
+		- add getInternalColormapFromName() method
+
+	- gui.dialogRegistration.DialogRegistration
+
+		- add setFilesToApply() method
+		- add getFilesToApply() method
+
+	- gui.dialogGenericResults.DialogGenericResults
+
+		- update __init__() method
+		- update newTab() method
+		- add _onCopyConsole() method
+		- add setConsoleWidget() method
+		- add getConsoleWidget() method
+		- add hasConsoleWidget() method
+
+	- gui.dialogRegistration.DialogICBMNormalization
+
+		- update _updateTemplate() method
+
+	- gui.dialogSegmentation.DialogCorticalThickness
+
+		- update getFilenames() method
+
+	- gui.dialogROIStatistics.DialogROIStatistics
+
+		- update __init__()
+		- add setConsoleWidget() method
+		- add getConsoleWidget() method
+		- add hasConsoleWidget() method
+		- add  _copyStatsToConsole() method
+		- add _copyHistogramsToConsole() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update __init__() method
+
+	- widgets.attributesWidgets.ListAttributesWidget
+
+		- update __init__() method
+		- update setIconSize() method
+		- add copyToConsole() method
+
+	- widgets.attributesWidgets.ListROIAttributesWidget
+
+		- update __init__() method
+		- update toDistance() method
+		- add copyToConsole() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- update __init__() method
+		- update setIconSize() method
+		- add properties() method
+		- update features() method
+		- add copyToConsole() method
+
+	- widgets.attributesWidgets.ListMeshAttributesWidget
+
+		- update features() method
+		- add copyToConsole() method
+
+	- widgets.attributesWidgets.ListBundleAttributesWidget
+
+		- update statistics() method
+		- add copyToConsole() method
+
+	- widgets.attributesWidgets.ItemMeshAttributesWidget
+	- widgets.attributesWidgets.ItemToolAttributesWidget
+	- widgets.attributesWidgets.ItemBundleAttributesWidget
+
+		- update __init__() method
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget
+
+		- update setDefaultAttributesFromSettings() method
+
+	- widgets.iconViewWidgets.IconBarWidget
+
+		- update _onExpand() method
+
+	- widgets.functionsSettingsWidget.SettingsWidget
+
+		- update __init__() method
+		- update toggleSettingsVisibility() method
+		- update settingsVisibilityOn() method
+		- update settingsVisibilityOff() method
+		- update resetSettings() method
+		- update _initSettingsLayout() method
+		- update getParameterValue() method
+
+	- widgets.consoleWidget.ConsoleWidget
+
+		- update __init__()
+		- add hasVariable() method
+		- add _popupGlobals() method
+		- add _plot() method
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget
+
+		- update __init__() method
+		- add copyToConsole() method
+
+	- widgets.selectFileWidgets.FileSelectionWidget
+
+		- update open() method
+
+	- widgets.selectFileWidgets.FilesSelectionWidget
+
+		- update add() method
+
+	- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget
+
+		- update getFilenames() method
+		- update setFilenames() method
+
+	- widgets.consoleWidget.ConsoleWidget
+
+		- update __init__() method
+
+	- widgets.LUTWidgets.ComboBoxLut
+
+		- add removeFilesLut() method
+
+	- widgets.tabToolsWidgets.TabWidget
+
+		- update __init__() method
+		- add setMainWindow() method
+		- add getMainWindow() method
+		- add hasMainWindow() method
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+
+		- update statistics() method
+
+	- widgets.abstractViewWidget.AbstractViewWidget
+
+		- update copyToolAttributes() method
+		
+- **updated methods**
+
+	- core.sisypheImage.SisypheImage.getHistogram()
+
+		- add intervals to the returned value
+
+	- core.sisypheTools.ToolWidgetCollection.__init__()
+
+		- add the purpose attribute (_purpose)
+
+	- core.sisypheTools.ToolWidgetCollection.createXML()
+	- core.sisypheTools.ToolWidgetCollection.parseXML()
+
+		- add the purpose field in the .xtools file format
+
+	- core.sisypheTools.HandleWidget.copyAttributesTo()
+	- core.sisypheTools.LineWidget.copyAttributesTo()
+	- core.sisypheTools.HandleWidget.copyAttributesFrom()
+	- core.sisypheTools.LineWidget.copyAttributesFrom()
+
+		- copy legend, suffix, prefix, and name attributes rather than text
+
+	- core.sisypheTools.ToolWidgetCollection.parseXML()
+
+		- lines 7001 & 7007, set an empty legend parameter rather than using the default values (i.e. 'Target' for HandleWidget and ('Target', 'Entry') for LineWidget)
+
+	- core.sisypheTools.LineWidget.setTubeVisibility()
+
+		- bug fix, restore self._contourActor and self._tubeActor visibility management
+
+	- core.sisypheROI.SisypheROI.getDistanceMap()
+
+		- add outside parameter to calculate distance map with positive values outside (True) or positive values inside (False)
+
+	- core.sisypheSettings.SisypheSettings.getFieldValue()
+
+		- line 869, path xml attribute management for 'vol' vartype
+		- line 915, returns an empty list for 'dirs', 'vols', 'rois', 'dcms' vartype if data node is empty (returned '' previouly)
+
+	- core.sisypheSettings.SisypheSettings.setFieldValue()
+
+		- line 964, path xml attribute management for 'vol' vartype
+
+	- widgets.attributesWidgets.ListAttributesWidget.__init__()
+
+		- create 'Copy to console' button
+
+	- widgets.attributesWidgets.ListAttributesWidget.setIconSize()
+
+		- set size of the 'Copy to console' button
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.__init__()
+
+		- add popup menu to _dist button ('outside positive' and 'inside positive')
+		- add tooltip for the 'Copy to console' button
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.toDistance()
+
+		- add outside parameter to calculate distance map with positive values outside (True) or positive values inside (False)
+	
+	- widgets.attributesWidgets.ListToolAttributesWidget.__init__()
+
+		- create properties button
+		- add tooltip for the 'Copy to console' button
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.setIconSize()
+
+		- set icon size of the properties button
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.features()
+	- widgets.attributesWidgets.ListToolAttributesWidget.features2()
+
+		- lines 5472 & 5691, add 'copy to console button' to DialogGenericResults
+
+	- widgets.attributesWidgets.ListMeshAttributesWidget.__init__()
+
+		- add tooltip for the 'Copy to console' button
+
+	- widgets.attributesWidgets.ListMeshAttributesWidget.features()
+
+		- line 4537, add 'copy to console' button to DialogGenericResults
+
+	- widgets.attributesWidgets.ListBundleAttributesWidget.__init__()
+
+		- add tooltip for the 'Copy to console' button
+
+	- widgets.attributesWidgets.ListBundleAttributesWidget.statistics()
+
+		- line 7239, add 'copy to console' button to DialogGenericResults
+
+	- widgets.attributesWidgets.ItemMeshAttributesWidget.__init__()
+	- widgets.attributesWidgets.ItemToolAttributesWidget.__init__()
+	- widgets.attributesWidgets.ItemBundleAttributesWidget.__init__()
+
+		- change the title bar color of the child dialogs (win32 platform)
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget.setDefaultAttributesFromSettings()
+
+		- bug fix, line 1525, add self._color.setFloatColor(v[0], v[1], v[2], signal=False) to update button color
+
+	- widgets.iconViewWidgets.IconBarWidget._onExpand()
+
+		- hide the grid icon when the view is expanded (expand icon selected)
+
+	- widgets.functionsSettingsWidget.SettingsWidget.__init__()
+
+		- line 345, replace self._button.clicked.connect(self.toggleSettingsVisibility) by self._button.clicked.connect(lambda _: self.toggleSettingsVisibility(True))
+	
+	- widgets.functionsSettingsWidget.SettingsWidget.toggleSettingsVisibility()
+	- widgets.functionsSettingsWidget.SettingsWidget.settingsVisibilityOn()
+	- widgets.functionsSettingsWidget.SettingsWidget.settingsVisibilityOff()
+
+		- add a signal parameter that will indicate whether or not the VisibilityToggled Qt signal is emitted
+
+	- widgets.functionsSettingsWidget.SettingsWidget.resetSettings()
+
+		- line 1275, path xml attribute management for 'vol' vartype
+
+	- widgets.functionsSettingsWidget.SettingsWidget._initSettingsLayout()
+
+		- line 723 path xml attribute management for 'vol' vartype
+
+	- widgets.functionsSettingsWidget.SettingsWidget.getParameterValue()
+
+		- line 1013, bug fix, isinstance(self._parameters[parameter], ComboBoxLut) before isinstance(self._parameters[parameter], ComboBox)
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.__init__()
+
+		- add 'Copy to console' QAction
+
+	- widgets.selectFileWidgets.FileSelectionWidget.open()
+
+		- lines 1478, 1492, 1515, 1730, 1817, 1881, 1995, 2050, 2099, change default folder of QFileDialog
+
+	- widgets.selectFileWidgets.FilesSelectionWidget.add()
+
+		- change typing of the filenames parameter, from str to str | list[str]
+		- line 2988, management of list[str] filenames parameter
+
+	- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.getFilenames()
+	- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setFilenames()
+
+		- typing corretion, from dict[str, dict[str, str]] to dict[str, dict[str, str | list[str]]]
+
+	- widgets.consoleWidget.ConsoleWidget.__init__()
+
+		- line 148, replace _console type from RichJupyterWidget to RichJupyterWidget2
+		- RichJupyterWidget2 is a subclass of RichJupyterWidget that adds key events 
+
+			- key . triggers the complete widget display
+			- key ( displays ()
+			- key [ displays []
+			- key { displays {}
+			- key quote displays ''
+			- key double-quote displays ""
+		- line 196, add _globals QTreeWidget popup menu management
+
+	- widgets.tabToolsWidgets.TabWidget.__init__()
+
+		- line 120, add _mainwindow attribute
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget.statistics()
+
+		- line 2251, add self._statistics.setConsoleWidget(self._mainwindow.getConsole())
+
+	- gui.dialogGenericResults.DialogGenericResults.__init__()
+
+		- add _console ConsoleWidget attribute, used to create dataset variable in the console
+
+	- gui.dialogGenericResults.DialogGenericResults.newTab()
+
+		- add 'Copy to console' button
+		- add tooltips to buttons
+
+	- gui.dialogRegistration.DialogICBMNormalization._updateTemplate()
+
+		- line 1078, change abspath position
+
+	- gui.dialogSegmentation.DialogCorticalThickness.getFilenames()
+
+		- typing corretion, from list[str] to dict[str, str | list[str]]
+		- line 1811, change return value from return self._select.getFilenames() to return self._select.getFilenames()['multiple']
+
+	- gui.dialogROIStatistics.DialogROIStatistics.__init__()
+
+		- add 'Copy to console' button
+
+	- gui.windowSisyphe.WindowSisyphe.__init__()
+
+		- line 456, add self._tabROITools.setMainWindow(self)
+
+- **new methods**
+
+	- core.sisypheTools.ToolWidgetCollection.setPurpose()
+	- core.sisypheTools.ToolWidgetCollection.getPurpose()
+	- core.sisypheTools.ToolWidgetCollection.hasPurpose()
+	- core.sisypheTools.ToolWidgetCollection.hasSamePurpose()
+
+		- methods to manage the new purpose attribute
+
+	- core.sisypheLUT.SisypheLUT.getInternalColormapFromName()
+
+		- returns internal name of a Look-Up table colormap (matplotlib name) from its public name
+
+	- gui.dialogRegistration.DialogRegistration.setFilesToApply()
+	- gui.dialogRegistration.DialogRegistration.getFilesToApply()
+
+		- set/get additionnal volume(s) to resample
+
+	- gui.dialogGenericResults.DialogGenericResults._onCopyConsole()
+
+		- method called by 'Copy to console' button to copy dataset as variable in the console widget.
+
+	- gui.dialogGenericResults.DialogGenericResults.setConsoleWidget()
+	- gui.dialogGenericResults.DialogGenericResults.getConsoleWidget()
+	- gui.dialogGenericResults.DialogGenericResults.hasConsoleWidget()
+
+		- set & get _console ConsoleWidget attribute
+
+	- gui.dialogROIStatistics.DialogROIStatistics.setConsoleWidget()
+	- gui.dialogROIStatistics.DialogROIStatistics.getConsoleWidget()
+	- gui.dialogROIStatistics.DialogROIStatistics.hasConsoleWidget()
+
+		- set & get _console ConsoleWidget attribute
+
+	- gui.dialogROIStatistics.DialogROIStatistics._copyStatsToConsole()
+
+		- called by 'Copy to console' button menu event. Copy ROI descriptive and shape statistics to the concole
+
+	- gui.dialogROIStatistics.DialogROIStatistics._copyHistogramsToConsole
+
+		- called by 'Copy to console' button menu event. Copy ROI histograms to the console
+
+	- widgets.attributesWidgets.ListAttributesWidget.copyToConsole()
+	- widgets.attributesWidgets.ListROIAttributesWidget.copyToConsole()
+	- widgets.attributesWidgets.ListMeshAttributesWidget.copyToConsole()
+	- widgets.attributesWidgets.ListToolAttributesWidget.copyToConsole()
+	- widgets.attributesWidgets.ListBundleAttributesWidget.copyToConsole()
+
+		- copy checked items to the console
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.properties()
+
+		- change properties of checked ItemToolAttributesWidget
+
+	- widgets.consoleWidget.ConsoleWidget.hasVariable()
+
+		- check if a variable already exists in the console
+
+	- widgets.consoleWidget.ConsoleWidget._popupGlobals()
+
+		- displays popup menu after right-click event on Globals QTreeWidgetItem (numpy, list and sitkImage variables)
+
+	- widgets.consoleWidget.ConsoleWidget._plot()
+
+		- called by Globals QTreeWidgetItem popup menu
+		- displays various matplotlib pyplot charts (line, bar, stairs, Box-and-Whisker, violin, histogram, scatter, matrix and image plots) in the console
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.copyToConsole()
+
+		- copy self._volume to PySisyphe console
+
+	- widgets.LUTWidgets.ComboBoxLut.removeFilesLut()
+
+		- remove files lut (keep only internal lut)
+
+	- widgets.tabToolsWidgets.TabWidget.setMainWindow()
+	- widgets.tabToolsWidgets.TabWidget.getMainWindow()
+	- widgets.tabToolsWidgets.TabWidget.hasMainWindow()
+
+		- methods to get/set _mainwindow attribute
+
+	- widgets.abstractViewWidget.AbstractViewWidget.copyToolAttributes()
+
+		- bug fix, line 4736, add self._renderwindow.Render() to update VolumeView display
+
+**updated function**
+
+	- version.isNewerThan()
+
+		- bug fix, line 100, replace < by > between current[2] and version[2]

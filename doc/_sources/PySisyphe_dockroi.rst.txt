@@ -61,6 +61,9 @@ Icon bar below ROI list:
 |delete|
 	Left-click to remove all ROI(s) from the list and from the view widget(s).
 
+|console|
+	Left-click to copy checked ROI(s) to the PySisyphe console as a list of SisypheROI instances (variable name 'rois').
+
 |view|
 	Left-click to show/hide all ROI(s) of the list.
 
@@ -80,7 +83,7 @@ Icon bar below ROI list:
 	Left-click to uncheck all ROI(s) of the list.
 
 |map|
-	Left-click to calculate and save distance map(s) of checked ROI(s).
+	Left-click to open a popup menu that will calculate and save distance maps of the checked ROI(s). The distance map labels each voxels of the image with the euclidean distance to the nearest boundary of the ROI. Two types of distance maps can be calculated, either with positive values outside the ROI (menu outside positive) or, conversely, with positive values inside the ROI (menu inside positive).
 
 |roi2mesh|
 	Left-click to convert checked ROI(s) to mesh(es) and save. 
@@ -123,6 +126,8 @@ Set operators icons at the bottom:
 .. |check| image:: /GUI/dock/check.png
    :scale: 50 %
 .. |uncheck| image:: /GUI/dock/uncheck.png
+   :scale: 50 %
+.. |console| image:: /GUI/dock/console.png
    :scale: 50 %
 .. |map| image:: /GUI/dock/map.png
    :scale: 50 %
