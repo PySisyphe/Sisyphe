@@ -170,7 +170,7 @@ class DialogSettings(QDialog):
 
     QDialog -> DialogSettings
 
-    Last revision: 30/03/2025
+    Last revision: 05/12/2025
     """
 
     # Class method
@@ -311,6 +311,9 @@ class DialogSettings(QDialog):
         functions = settings.getSectionsList()
         for function in functions:
             widget = FunctionSettingsWidget(function)
+            # < Revision 05/12/2025
+            widget.setObjectName(function)
+            # Revision 05/12/2025 >
             widget.settingsVisibilityOn()
             widget.setSettingsButtonFunctionText()
             widget.hideButtons()
