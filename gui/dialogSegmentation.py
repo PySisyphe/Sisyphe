@@ -1807,8 +1807,11 @@ class DialogCorticalThickness(QDialog):
 
     # < Revision 13/02/2025
     # add getFilenames method
-    def getFilenames(self) -> list[str]:
-        return self._select.getFilenames()
+    def getFilenames(self) -> dict[str, str | list[str]]:
+        # < Revision 30/11/2025
+        # return self._select.getFilenames()
+        return self._select.getFilenames()['multiple']
+        # Revision 30/11/2025 >
     # Revision 13/02/2025 >
 
     # < Revision 13/02/2025

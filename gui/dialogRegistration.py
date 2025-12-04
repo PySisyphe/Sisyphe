@@ -100,7 +100,7 @@ class DialogRegistration(QDialog):
 
     QDialog -> DialogRegistration
 
-    Last revision: 17/07/2025
+    Last revision: 27/11/2025
     """
     # Class method
 
@@ -334,11 +334,24 @@ class DialogRegistration(QDialog):
                 self._movingSelect.open(v)
                 self._movingSelect.setEnabled(editable)
 
+    # < Revision 27/11/2025
+    def setFilesToApply(self, files: list[str], editable=True):
+        for f in files:
+            self._applyToSelect.add(f)
+        if self._applyToSelect.isEmpty(): self._applyToSelect.setEnabled(True)
+        else: self._applyToSelect.setEnabled(editable)
+    # Revision 27/11/2025 >
+
     def getFixed(self) -> str:
         return self._fixedSelect.getFilename()
 
     def getMoving(self) -> str:
         return self._movingSelect.getFilename()
+
+    # < Revision 27/11/2025
+    def getFilesToApply(self) -> list[str]:
+        return self._applyToSelect.getFilenames()
+    # Revision 27/11/2025 >
 
     # < Revision 13/02/2025
     # add getParametersDict method
@@ -1016,6 +1029,8 @@ class DialogICBMNormalization(DialogRegistration):
     ~~~~~~~~~~~
 
     QDialog -> DialogRegistration -> DialogICBMNormalization
+
+    Last revision: 30/11/2025
     """
 
     # Special method
@@ -1060,7 +1075,10 @@ class DialogICBMNormalization(DialogRegistration):
                 if template is not None and len(template) > 0:
                     if template[0] == '/': template = template[1:]
                 import Sisyphe.templates
-                filename = join(dirname(abspath(Sisyphe.templates.__file__)), template)
+                # < Revision 30/11/2025
+                # filename = join(dirname(abspath(Sisyphe.templates.__file__)), template)
+                filename = abspath(join(dirname(Sisyphe.templates.__file__), template))
+                # Revision 30/11/2025 >
                 if exists(filename) and isfile(filename): self._fixedSelect.open(filename)
                 else:
                     messageBox(self,

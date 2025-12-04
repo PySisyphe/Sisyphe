@@ -54,6 +54,9 @@ from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheSheet import SisypheSheet
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.screenshotsGridWidget import ScreenshotsGridWidget
+# < Revision 29/11/2025
+from Sisyphe.widgets.consoleWidget import ConsoleWidget
+# Revision 29/11/2025 >
 
 __all__ = ['DialogGenericResults']
 
@@ -80,19 +83,10 @@ class DialogGenericResults(QDialog):
     QDialog -> DialogGenericResults
 
     Creation: 25/11/2022
-    Last revision: 18/09/2025
+    Last revision: 29/11/2025
     """
 
     # Special method
-
-    """
-     Private attributes
-
-    _plotlist   list[Figure]
-    _treelist   list[TreeViewWidget]
-    _scrshot    list[ScreenshotsGridWidget]
-    _tab        QTabWidget
-    """
 
     def __init__(self, parent=None):
         """
@@ -111,6 +105,7 @@ class DialogGenericResults(QDialog):
         self._plotlist = list()
         self._treelist = list()
         self._scrshot = list()
+        self._console: ConsoleWidget | None = None
 
         self._tab = QTabWidget()
 
@@ -139,6 +134,16 @@ class DialogGenericResults(QDialog):
         self._layout.addWidget(self._tab)
         self._layout.addLayout(lyout)
         self.setLayout(self._layout)
+
+    """
+     Private attributes
+
+    _plotlist   list[Figure]
+    _treelist   list[TreeViewWidget]
+    _scrshot    list[ScreenshotsGridWidget]
+    _tab        QTabWidget
+    _console    ConsoleWidget
+    """
 
     # Private methods
 
@@ -197,6 +202,35 @@ class DialogGenericResults(QDialog):
                     img = self._treelist[index].grab()
                     QApplication.clipboard().setPixmap(img)
                     widget.pasteFromClipboard()
+
+    # < Revision 29/11/2025
+    # add _onCopyConsole method
+    def _onCopyConsole(self):
+        """
+        Slot to copy the current dataset to the associated ConsoleWidget.
+        """
+        if self._console is not None:
+            if self._tab.count() > 0:
+                index = self._tab.currentIndex()
+                df = self._getDataFrame(index)
+                try:
+                    suffix = 0
+                    name = 'df'
+                    while self._console.hasVariable(name):
+                        suffix += 1
+                        name = 'df{}'.format(suffix)
+                    self._console.pushVariables({name: df.values.tolist()})
+                    self._console.update()
+                    messageBox(self,
+                               'Copy dataset to console',
+                               text='The current dataset is available in the PySisyphe console '
+                                    'as a list variable called \"{}\".'.format(name))
+                except:
+                    messageBox(self,
+                               'Copy dataset to console',
+                               text='Unable to copy the current dataset to the PySisyphe console.')
+
+    # Revision 29/11/2025 >
 
     def _onSaveDataset(self):
         """
@@ -324,6 +358,46 @@ class DialogGenericResults(QDialog):
 
     # Public methods
 
+    # < Revision 29/11/2025
+    # add setConsoleWidget method
+    def setConsoleWidget(self, w: ConsoleWidget) -> None:
+        """
+        Set the console widget attribute.
+
+        Parameters
+        ----------
+        w : ConsoleWidget
+        """
+        self._console = w
+    # Revision 29/11/2025 >
+
+    # < Revision 29/11/2025
+    # add getConsoleWidget method
+    def getConsoleWidget(self) -> ConsoleWidget | None:
+        """
+        Get the console widget attribute.
+
+        Returns
+        -------
+        ConsoleWidget
+        """
+        return self._console
+    # Revision 29/11/2025 >
+
+    # < Revision 29/11/2025
+    # add hasConsoleWidget method
+    def hasConsoleWidget(self) -> bool:
+        """
+        Check if the console widget attribute is defined.
+
+        Returns
+        -------
+        bool
+            True if the console widget attribute is not None, False otherwise.
+        """
+        return self._console is not None
+    # Revision 29/11/2025 >
+
     def autoSize(self, index: int) -> None:
         """
         Automatically resize the dialog width to fit the tree widget content.
@@ -399,30 +473,47 @@ class DialogGenericResults(QDialog):
             btlyout.setSpacing(10)
             btlyout.setContentsMargins(0, 0, 0, 0)
             cap = QPushButton('Save bitmap', parent=self)
+            cap.setToolTip('Save the current chart as a bitmap image.')
             cap.setObjectName('cap')
             # noinspection PyUnresolvedReferences
             cap.clicked.connect(self._onSaveBitmap)
             clip = QPushButton('Copy to clipboard', parent=self)
+            clip.setToolTip('Copy the current chart to the system clipboard.')
             clip.setObjectName('clip')
             # noinspection PyUnresolvedReferences
             clip.clicked.connect(self._onCopyClipboard)
             screen = QPushButton('Copy to screenshots',parent=self)
+            screen.setToolTip('Copy the current chart to the PySisyphe screenshots manager.')
             screen.setObjectName('screen')
             # noinspection PyUnresolvedReferences
             screen.clicked.connect(self._onCopyScreenshots)
             self._scrshot.append(scrshot)
+            # < Revision 29/11/2025
+            csle = QPushButton('Copy to console',parent=self)
+            csle.setToolTip('Copy the current dataset to the PySisyphe console\n'
+                            'as a pandas DataFrame variable.')
+            csle.setObjectName('console')
+            # noinspection PyUnresolvedReferences
+            csle.clicked.connect(self._onCopyConsole)
+            # Revision 29/11/2025 >
             data = QPushButton('Save Dataset', parent=self)
+            data.setToolTip('Save the current dataset as a file in one of the\n'
+                            'following formats: csv, json, LaTeX, txt, xlsx, PySisyphe xsheet')
             data.setObjectName('data')
             # noinspection PyUnresolvedReferences
             data.clicked.connect(self._onSaveDataset)
             btlyout.addWidget(cap)
             btlyout.addWidget(clip)
             btlyout.addWidget(screen)
+            btlyout.addWidget(csle)
             btlyout.addWidget(data)
             btlyout.addStretch()
             cap.setVisible(capture)
             clip.setVisible(clipbrd)
             screen.setVisible(scrshot is not None)
+            # < Revision 29/11/2025
+            csle.setVisible(dataset and self._console is not None)
+            # Revision 29/11/2025 >
             data.setVisible(dataset)
             # Tab
             if capture: lyout.addWidget(canvas)

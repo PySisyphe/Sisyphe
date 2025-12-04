@@ -134,7 +134,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 19/10/2025
+    Last revision: 03/12/2025
     """
 
     # Class constants
@@ -453,6 +453,9 @@ class WindowSisyphe(QMainWindow):
             splash.getProgressBar().setValue(12)
             splash.setMessage('ROI tools dock initialization...')
         self._tabROITools = TabROIToolsWidget(parent=self._dock)
+        # < Revision 03/12/2025
+        self._tabROITools.setMainWindow(self)
+        # Revision 03/12/2025 >
         self._tabROITools.setContentsMargins(10, 10, 10, 10)
         self._tabROITools.setViewCollection(self._views)
         self._tabROITools.setEnabled(False)
@@ -1868,11 +1871,10 @@ class WindowSisyphe(QMainWindow):
                            'Plugin...',
                            '{} import failed.'.format(name))
                 return
-            mod.main(self)
-            # try: mod.main(self)
-            # except: messageBox(self,
-            #                    'Plugin...',
-            #                    '{} failed to run.'.format(name))
+            try: mod.main(self)
+            except: messageBox(self,
+                               'Plugin...',
+                               '{} error.'.format(name))
         else: messageBox(self,
                          'Plugin...',
                          'No such file {}'.format(action.text() + '.py'))
@@ -2328,6 +2330,12 @@ class WindowSisyphe(QMainWindow):
 
     def getDockVisibility(self) -> bool:
         return self._dock.isVisible()
+
+    # < Revision 29/11/2025
+    # add getConsole method
+    def getConsole(self) -> ConsoleWidget:
+        return self._console
+    # Revision 29/11/2025 >
 
     def getDatabase(self) -> DatabaseWidget:
         return self._database

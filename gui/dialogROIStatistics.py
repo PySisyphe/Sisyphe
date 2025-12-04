@@ -55,6 +55,9 @@ from Sisyphe.core.sisypheROI import SisypheROICollection
 from Sisyphe.core.sisypheROI import SisypheROIDraw
 from Sisyphe.core.sisypheROI import SisypheROIFeatures
 from Sisyphe.widgets.basicWidgets import messageBox
+# < Revision 03/12/2025
+from Sisyphe.widgets.consoleWidget import ConsoleWidget
+# Revision 03/12/2025 >
 
 __all__ = ['DialogROIStatistics']
 
@@ -75,7 +78,7 @@ class DialogROIStatistics(QDialog):
 
     QWidget - > QDialog -> DialogROIStatistics
 
-    Last revision: 21/03/2025
+    Last revision: 03/12/2025
     """
     _DEFAULTBINS = 1
 
@@ -86,6 +89,7 @@ class DialogROIStatistics(QDialog):
 
     _rois           SisypheROICollection
     _volume         SisypheVolume
+    _console        ConsoleWidget
     _stats          DataFrame, descriptive statistics for each roi
     _shape          DataFrame, shape features for each roi
     _hists          DataFrame, histograms for each roi
@@ -115,6 +119,9 @@ class DialogROIStatistics(QDialog):
         self._histplots = None
         self._cumhistplots = None
         self._boxplots = None
+        # < Revision 03/12/2025
+        self._console = None
+        # Revision 03/12/2025 >
 
         # Init QLayout
 
@@ -180,6 +187,23 @@ class DialogROIStatistics(QDialog):
         self._menusavestats.addAction(self._action['saveallstats2'])
         self._menusavestats.addAction(self._action['savehists1'])
         self._menusavestats.addAction(self._action['savehists2'])
+
+        # < Revision 03/12/2025
+        self._menucopystats = QMenu()
+        # noinspection PyTypeChecker
+        self._menusavestats.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker
+        self._menusavestats.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._menusavestats.setAttribute(Qt.WA_TranslucentBackground, True)
+        self._action['copystats'] = QAction('Copy signal & shape statistics to console...', self)
+        self._action['copyhists'] = QAction('Copy histograms to console...', self)
+        # noinspection PyUnresolvedReferences
+        self._action['copystats'].triggered.connect(self._copyStatsToConsole)
+        # noinspection PyUnresolvedReferences
+        self._action['copyhists'].triggered.connect(self._copyHistogramsToConsole)
+        self._menucopystats.addAction(self._action['copystats'])
+        self._menucopystats.addAction(self._action['copyhists'])
+        # Revision 03/12/2025 >
 
         # Init widgets
 
@@ -309,11 +333,20 @@ class DialogROIStatistics(QDialog):
         self._savestats.setToolTip('Save ROI statistics and shape features to CSV,\n'
                                    'JSON, Latex, Text, XLSX or PySisyphe xsheet format.')
         self._savestats.setMenu(self._menusavestats)
+        # < Revision 03/12/2025
+        self._copystats = QPushButton('Copy to console')
+        self._copystats.setToolTip('Copy statistics to PySisyphe console.')
+        self._copystats.setMenu(self._menucopystats)
+        self._copystats.setVisible(False)
+        # Revision 03/12/2025 >
         buttonlyout.addWidget(QLabel('Bins'))
         buttonlyout.addWidget(self._bins)
         buttonlyout.addWidget(self._savefig)
         buttonlyout.addWidget(self._copyfig)
         buttonlyout.addWidget(self._savestats)
+        # < Revision 03/12/2025
+        buttonlyout.addWidget(self._copystats)
+        # Revision 03/12/2025 >
         buttonlyout.addStretch()
         self._layout.addLayout(buttonlyout)
 
@@ -694,6 +727,53 @@ class DialogROIStatistics(QDialog):
                            title='Save {} error'.format(basename(filename)),
                            text='{}'.format(msg))
 
+    # < Revision 03/12/2025
+    def _copyStatsToConsole(self):
+        if self._console is not None:
+            try:
+                stats = dict()
+                stats['signal'] = self._stats
+                stats['shape'] = self._shape
+                suffix = 0
+                name = 'roistats'
+                while self._console.hasVariable(name):
+                    suffix += 1
+                    name = 'roistats{}'.format(suffix)
+                self._console.pushVariables({name: stats})
+                self._console.update()
+                messageBox(self,
+                           'Copy ROI statistics to console',
+                           text='ROI statistics are available in the PySisyphe console '
+                                'as a dict variable called \"{}\".'.format(name))
+            except:
+                messageBox(self,
+                           'Copy ROI statistics to console',
+                           text='Unable to copy histograms to the PySisyphe console.')
+        else: self._copystats.setVisible(False)
+    # Revision 03/12/2025 >
+
+    # < Revision 03/12/2025
+    def _copyHistogramsToConsole(self):
+        if self._console is not None:
+            # try:
+            suffix = 0
+            name = 'roihists'
+            while self._console.hasVariable(name):
+                suffix += 1
+                name = 'roihists{}'.format(suffix)
+            self._console.pushVariables({name: self._hists})
+            self._console.update()
+            messageBox(self,
+                       'Copy histograms to console',
+                       text='Histograms are available in the PySisyphe console '
+                            'as a dict variable called \"{}\".'.format(name))
+            # except:
+            #     messageBox(self,
+            #                'Copy histograms to console',
+            #                text='Unable to copy histograms to the PySisyphe console.')
+        else: self._copystats.setVisible(False)
+    # Revision 03/12/2025 >
+
     # Private matplotlib event methods
 
     def _onMouseClickEvent(self, event):
@@ -717,6 +797,48 @@ class DialogROIStatistics(QDialog):
         self._moveFlag = False
 
     # Public methods
+
+    # < Revision 03/12/2025
+    # add setConsoleWidget method
+    def setConsoleWidget(self, w: ConsoleWidget) -> None:
+        """
+        Set the console widget attribute.
+
+        Parameters
+        ----------
+        w : ConsoleWidget
+        """
+        self._console = w
+        if isinstance(w, ConsoleWidget): self._copystats.setVisible(True)
+        else: self._copystats.setVisible(False)
+    # Revision 03/12/2025 >
+
+    # < Revision 03/12/2025
+    # add getConsoleWidget method
+    def getConsoleWidget(self) -> ConsoleWidget | None:
+        """
+        Get the console widget attribute.
+
+        Returns
+        -------
+        ConsoleWidget
+        """
+        return self._console
+    # Revision 03/12/2025 >
+
+    # < Revision 03/12/2025
+    # add hasConsoleWidget method
+    def hasConsoleWidget(self) -> bool:
+        """
+        Check if the console widget attribute is defined.
+
+        Returns
+        -------
+        bool
+            True if the console widget attribute is not None, False otherwise.
+        """
+        return self._console is not None
+    # Revision 03/12/2025 >
 
     def setVolume(self, volume):
         if isinstance(volume, SisypheVolume):
