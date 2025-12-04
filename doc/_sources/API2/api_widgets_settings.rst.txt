@@ -12,3 +12,6 @@ Settings widgets
 
 .. autoclass:: Sisyphe.widgets.functionsSettingsWidget.DialogSettingsWidget
    :members:
+
+.. autoclass:: Sisyphe.widgets.functionsSettingsWidget.CustomSettingsWidget
+   :members:
