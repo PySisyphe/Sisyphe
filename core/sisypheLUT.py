@@ -150,7 +150,7 @@ class SisypheLut(object):
     object -> SisypheLut
 
     Creation: 07/11/2022
-    Last revision: 25/10/2024
+    Last revision: 02/12/2025
     """
     __slots__ = ['_vtklut', '_name', '_typeLUT']
 
@@ -227,7 +227,7 @@ class SisypheLut(object):
     @classmethod
     def getColormapFromName(cls, name: str) -> str:
         """
-        Get public name of a Look-Up table colormap from its internal name.
+        Get public name of a Look-Up table colormap from its internal name (matplotlib name).
 
         Parameters
         ----------
@@ -238,7 +238,30 @@ class SisypheLut(object):
         str
             public name
         """
-        return cls. _COLORMAPSNAME[name]
+        try: return cls._COLORMAPSNAME[name]
+        except: return 'gray'
+
+    # < Revision 02/12/2025
+    @classmethod
+    def getInternalColormapFromName(cls, name: str) -> str:
+        """
+        Get internal name of a Look-Up table colormap (matplotlib name) from its public name.
+
+        Parameters
+        ----------
+        name : str, public name
+
+        Returns
+        -------
+        str
+            internal name
+        """
+        public = list(cls._COLORMAPSNAME.values())
+        try:
+            idx = public.index(name)
+            return cls._COLORMAPS[idx]
+        except: return 'gray'
+    # Revision 02/12/2025 >
 
     @classmethod
     def openLut(cls, filename: str) -> SisypheLut | None:

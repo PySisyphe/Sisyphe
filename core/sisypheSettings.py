@@ -19,6 +19,8 @@ from os.path import dirname
 from os.path import basename
 from os.path import exists
 from os.path import isfile
+from os.path import commonpath
+from os.path import relpath
 
 from glob import glob
 
@@ -810,6 +812,7 @@ class SisypheSettings(object):
             - 'lbool': list[bool]
             - 'lut': str, lut name
             - 'color': list[float, float, float], each float between 0.0 and 1.0
+            - 'cmap': str, colormap name
             - 'font': str, font name
             - 'txt', str text file name (in ./Sisyphe/doc folder if path attribute is not defined)
         """
@@ -868,7 +871,19 @@ class SisypheSettings(object):
                 # add 'dcm' var type
                 # add 'font' var type
                 # if vartype in ('str', 'dir', 'vol', 'roi', 'date', 'lut'): return data
-                if vartype in ('str', 'dir', 'vol', 'roi', 'dcm', 'date', 'lut', 'font'): return data
+                # < Revision 30/11/2025
+                # if vartype in ('str', 'dir', 'vol', 'roi', 'dcm', 'date', 'lut', 'font'): return data
+                if vartype in ('str', 'dir', 'roi', 'dcm', 'date', 'lut', 'font'): return data
+                elif vartype == 'vol':
+                    if node.hasAttribute('path'):
+                        path = node.getAttribute('path')
+                        import Sisyphe
+                        if path == '': base = ''
+                        elif path == '.': base = abspath(dirname(Sisyphe.__file__))
+                        else: base = abspath(join(dirname(Sisyphe.__file__), path))
+                        return abspath(join(base, data))
+                    else: return data
+                # Revision 30/11/2025 >
                 # Revision 23/12/2024 >
                 elif vartype == 'int': return int(data)
                 elif vartype in ('float', 'percent'): return float(data)
@@ -897,7 +912,10 @@ class SisypheSettings(object):
                     return r
                 # Revision 6/10/2024 >
                 else: return data
-            elif vartype in ('str', 'dir', 'vol', 'roi', 'dcm', 'dirs', 'vols', 'rois', 'dcms', 'date'): return ''
+            elif vartype in ('str', 'dir', 'vol', 'roi', 'dcm', 'date'): return ''
+            # < Revision 30/11/2025
+            elif vartype in ('dirs', 'vols', 'rois', 'dcms'): return list()
+            # Revision 30/11/2025 >
             elif vartype == 'font': return 'Arial'
         return None
 
@@ -944,8 +962,28 @@ class SisypheSettings(object):
             # < Revision 23/12/2024
             # add 'dcm' var type
             # if vartype in ('str', 'vol', 'roi', 'dir', 'lut'):
-            if vartype in ('str', 'vol', 'roi', 'dcm', 'dir', 'lut'):
+            # < Revision 30/11/2025
+            if vartype == 'vol':
                 if v is None: v = ''
+                elif node.hasAttribute('path'):
+                    path = node.getAttribute('path')
+                    import Sisyphe
+                    if path != '':
+                        if path == '.': path = abspath(dirname(Sisyphe.__file__))
+                        else: path = abspath(join(dirname(Sisyphe.__file__), path))
+                        data = abspath(v)
+                        prefix = commonpath([path, data])
+                        if prefix == data: v = relpath(data, prefix)
+                        else:
+                            if exists(v): node.setAttribute('path', '')
+                            else: v = ''
+                elif not exists(v): v = ''
+            elif vartype in ('str', 'roi', 'dcm', 'dir'):
+                if v is None: v = ''
+                elif not exists(v): v = ''
+            elif vartype == 'lut':
+                if v is None: v = ''
+            # Revision 30/11/2025 >
             # < Revision 15/03/2025
             # add font type
             elif vartype == 'font':

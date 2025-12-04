@@ -291,7 +291,7 @@ class SisypheImage(object):
     object -> SisypheImage
 
     Creation: 12/01/2021
-    Last revision: 13/11/2025
+    Last revision: 23/11/2025
     """
     __slots__ = ['_sitk_image', '_itk_image', '_vtk_image', '_numpy_array', '_attr']
 
@@ -2389,10 +2389,10 @@ class SisypheImage(object):
 
     # < Revision 07/11/2025
     # add getValueAtContiuousIndex method
-    def getValueAtContiuousIndex(self,
-                                 p: vectorFloat3 | ndarray,
-                                 world: bool = True,
-                                 order: int = 1) -> float:
+    def getValueAtContinuousIndex(self,
+                                  p: vectorFloat3 | ndarray,
+                                  world: bool = True,
+                                  order: int = 1) -> float:
         """
         Get an interpolated scalar value from continuous coordinates.
 
@@ -4473,7 +4473,7 @@ class SisypheImage(object):
                      bins: int = 100,
                      range: tuple[float, float] | None = None,
                      density: bool = False,
-                     c: int = 0) -> ndarray:
+                     c: int = 0) -> tuple[ndarray, ndarray]:
         """
         Get histogram of image. Calculation is performed on the entire image (mask parameter = None) or in a mask.
 
@@ -4496,8 +4496,8 @@ class SisypheImage(object):
 
         Returns
         -------
-        ndarray
-            histogram
+        tuple[ndarray, ndarray]
+            histogram, intervals
         """
         n = self._sitk_image.GetNumberOfComponentsPerPixel()
         if n > 1: img = self.getNumpy()[c, :, :, :].flatten()
@@ -4515,8 +4515,11 @@ class SisypheImage(object):
             else: raise TypeError('parameter type {} is not str or SisypheBinaryImage.'.format(type(mask)))
             img = img[m > 0]
         # < Revision 04/03/2025
+        # < Revision 23/11/2025
         # return histogram(img, bins, range, density)[0]
-        return histogram(img, bins, range, density=density)[0]
+        # return histogram(img, bins, range, density=density)[0]
+        return histogram(img, bins, range, density=density)
+        # Revision 23/11/2025 >
         # Revision 04/03/2025 >
 
     def getStatistics(self, mask: str | SisypheImage | SisypheBinaryImage | None = None, c: int = 0) -> dict[str, float]:

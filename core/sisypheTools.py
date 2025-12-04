@@ -1697,7 +1697,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
     (vtkDistanceWidget, NamedWidget) -> HandleWidget
 
     Creation: 05/04/2022
-    Last revision: 10/11/2025
+    Last revision: 04/12/2025
     """
 
     _FILEEXT = '.xpoint'
@@ -2877,7 +2877,13 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
             copy attributes to this widget
         """
         if isinstance(tool, HandleWidget):
-            tool.setText(self.getText())
+            # < Revision 20/11/2025
+            tool._legend = self._legend
+            tool._prefix = self._prefix
+            tool._suffix = self._suffix
+            tool.setName(self.getName())
+            # tool.setText(self.getText())
+            # Revision 20/11/2025 >
             tool.setFontSize(self.getFontSize())
             tool.setFontBold(self.getFontBold())
             tool.setFontItalic(self.getFontItalic())
@@ -2911,7 +2917,13 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
             copy attributes from this widget
         """
         if isinstance(tool, HandleWidget):
-            self.setText(tool.getText())
+            # < Revision 20/11/2025
+            self._legend = tool._legend
+            self._prefix = tool._prefix
+            self._suffix = tool._suffix
+            self.setName(tool.getName())
+            # self.setText(tool.getText())
+            # Revision 20/11/2025 >
             self.setFontSize(tool.getFontSize())
             self.setFontBold(tool.getFontBold())
             self.setFontItalic(tool.getFontItalic())
@@ -3441,7 +3453,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
     (vtkDistanceWidget, NamedWidget) -> LineWidget
 
     Creation: 05/04/2022
-    Last revision: 10/11/2025
+    Last revision: 20/11/2025
     """
 
     _FILEEXT = '.xline'
@@ -4172,8 +4184,16 @@ class LineWidget(vtkLineWidget2, NamedWidget):
             True to show text
         """
         if isinstance(v, bool):
-            if self.isVolumeDisplay(): self._tubeActor.SetVisibility(v)
-            else:  self._tubeActor.SetVisibility(False)
+            # < Revision 04/12/2025
+            # if self.isVolumeDisplay(): self._tubeActor.SetVisibility(v)
+            # else:  self._tubeActor.SetVisibility(False)
+            if self.isVolumeDisplay():
+                self._tubeActor.SetVisibility(v)
+                self._contourActor.SetVisibility(False)
+            else:
+                self._tubeActor.SetVisibility(False)
+                self._contourActor.SetVisibility(v)
+            # < Revision 04/12/2025
         else: raise TypeError('parameter type {} is not bool'.format(type(v)))
 
     def getTubeVisibility(self) -> bool:
@@ -5165,7 +5185,13 @@ class LineWidget(vtkLineWidget2, NamedWidget):
             copy attributes to this widget
         """
         if isinstance(tool, LineWidget):
-            tool.setText(self.getText())
+            # < Revision 20/11/2025
+            tool._legend = self._legend
+            tool._prefix = self._prefix
+            tool._suffix = self._suffix
+            tool.setName(self.getName())
+            # tool.setText(self.getText())
+            # Revision 20/11/2025 >
             tool.setFontSize(self.getFontSize())
             tool.setFontBold(self.getFontBold())
             tool.setFontItalic(self.getFontItalic())
@@ -5202,7 +5228,13 @@ class LineWidget(vtkLineWidget2, NamedWidget):
             copy attributes from this widget
         """
         if isinstance(tool, LineWidget):
-            self.setText(tool.getText())
+            # < Revision 20/11/2025
+            self._legend = tool._legend
+            self._prefix = tool._prefix
+            self._suffix = tool._suffix
+            self.setName(tool.getName())
+            # self.setText(tool.getText())
+            # Revision 20/11/2025 >
             self.setFontSize(tool.getFontSize())
             self.setFontBold(tool.getFontBold())
             self.setFontItalic(tool.getFontItalic())
@@ -5867,11 +5899,11 @@ class ToolWidgetCollection(object):
     object -> ToolWidgetCollection
 
     Creation: 05/04/2022
-    Last revision: 19/12/2023
+    Last revision: 22/11/2025
     """
 
-    __slots__ = ['_referenceID', '_filename', '_tools', '_index', '_color',
-                 '_scolor', '_lwidth', '_alpha', '_ffamily', '_fsize', '_interactor']
+    __slots__ = ['_referenceID', '_filename', '_tools', '_index', '_color', '_scolor',
+                 '_purpose', '_lwidth', '_alpha', '_ffamily', '_fsize', '_interactor']
 
     _FILEEXT = '.xtools'
 
@@ -5924,6 +5956,7 @@ class ToolWidgetCollection(object):
         self._alpha = _ALPHA
         self._fsize = _FSIZE
         self._ffamily = _FFAMILY
+        self._purpose = ''
         self._interactor = interactor
         # reference SisypheVolume ID
         if isinstance(volume, SisypheVolume):
@@ -6316,7 +6349,7 @@ class ToolWidgetCollection(object):
         """
         return self._referenceID is not None
 
-    def hasSameID(self, ID: str | SisypheVolume):
+    def hasSameID(self, ID: str | SisypheVolume) -> bool:
         """
         Check that the ID parameter is identical to the ID attribute of the current ToolWidgetCollection instance.
 
@@ -6332,6 +6365,70 @@ class ToolWidgetCollection(object):
         if isinstance(ID, SisypheVolume): ID = ID.getID()
         if isinstance(ID, str): return ID == self._referenceID
         else: raise TypeError('parameter type {} is not str or SisypheVolume'.format(type(ID)))
+
+    # < Revision 22/11/2025
+    # add getPurpose() method
+    def getPurpose(self) -> str:
+        """
+        Get the purpose attribute of the current ToolWidgetCollection instance.
+        This is a free string attribute that describes the purpose of the current collection.
+
+        Returns
+        -------
+        str
+            purpose
+        """
+        return self._purpose
+    # Revision 22/11/2025 >
+
+    # < Revision 22/11/2025
+    # add setPurpose() method
+    def setPurpose(self, v: str) -> None:
+        """
+        Get the purpose attribute of the current ToolWidgetCollection instance.
+        This is a free string attribute that describes the purpose of the current collection.
+
+        Parameters
+        ----------
+        v : str
+            purpose
+        """
+        self._purpose = v
+    # Revision 22/11/2025 >
+
+    # < Revision 22/11/2025
+    # add hasPurpose() method
+    def hasPurpose(self) -> bool:
+        """
+        Check if the purpose attribute of the current ToolWidgetCollection instance is defined (not empty str).
+
+        Returns
+        -------
+        bool
+            True if purpose is defined
+        """
+        return self._purpose != ''
+    # Revision 22/11/2025 >
+
+    # < Revision 22/11/2025
+    # add hasSamePurpose() method
+    def hasSamePurpose(self, c: ToolWidgetCollection | str) -> bool:
+        """
+        Check that the purpose parameter is identical to the prupose attribute of the current ToolWidgetCollection
+        instance.
+
+        Parameters
+        ----------
+        c : ToolWidgetCollection | str
+
+        Returns
+        -------
+        bool
+            True if purposes are identical
+        """
+        if isinstance(c, ToolWidgetCollection): c = c.getPurpose()
+        return self._purpose == c
+    # Revision 22/11/2025 >
 
     def hasFilename(self) -> bool:
         """
@@ -6948,6 +7045,13 @@ class ToolWidgetCollection(object):
             root.appendChild(node)
             txt = doc.createTextNode(str(self.getReferenceID()))
             node.appendChild(txt)
+            # < Revision 22/11/2025
+            # Purpose
+            node = doc.createElement('purpose')
+            root.appendChild(node)
+            txt = doc.createTextNode(str(self.getPurpose()))
+            node.appendChild(txt)
+            # Revision 22/11/2025 >
             # NamedWidgets nodes
             for tool in self._tools:
                 # save only HandWidget and LineWidget instances
@@ -6973,12 +7077,23 @@ class ToolWidgetCollection(object):
                     # ID
                     if node.nodeName == 'referenceID':
                         self.setReferenceID(node.firstChild.data)
+                    # < Revision 22/11/2025
+                    # Purpose
+                    elif node.nodeName == 'purpose':
+                        self.setPurpose(node.firstChild.data)
+                    # Revision 22/11/2025 >
                     elif node.nodeName == 'point':
-                        tool = HandleWidget('')
+                        # < Revision 20/11/2025
+                        # tool = HandleWidget('')
+                        tool = HandleWidget(name='', legend='')
+                        # Revision 20/11/2025 >
                         tool.parseXMLNode(node)
                         self.append(tool)
                     elif node.nodeName == 'line':
-                        tool = LineWidget('')
+                        # < Revision 20/11/2025
+                        # tool = LineWidget('')
+                        tool = LineWidget(name='', legend=('', ''))
+                        # Revision 20/11/2025 >
                         tool.parseXMLNode(node)
                         self.append(tool)
                     node = node.nextSibling
