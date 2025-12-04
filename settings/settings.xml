@@ -136,7 +136,7 @@
 		<FontFamily vartype="lstr">Arial|Courier|Times</FontFamily>
 		<FontBold vartype="bool">False</FontBold>
 		<FontItalic vartype="bool">False</FontItalic>
-		<TextOffset vartype="lint" varmax="50" varmin="0">40 0</TextOffset>
+		<TextOffset vartype="lint" varmax="50" varmin="-50">40 0</TextOffset>
 		<TextVisibility vartype="bool">True</TextVisibility>
 		<Color vartype="color">1.0 1.0 1.0</Color>
 		<SelectedColor vartype="color">1.0 1.0 1.0</SelectedColor>
@@ -153,25 +153,25 @@
 		<MaxCount varmax="50" varmin="10" vartype="int">20</MaxCount>
 	</Bundles>
 	<Templates>
-		<T1 label="MR T1-weighted" vartype="vol">/ICBM152/icbm152_sym_template_t1.xvol</T1>
-		<T2 label="MR T2-weighted" vartype="vol">/ICBM152/icbm152_sym_template_t2.xvol</T2>
-		<PD label="MR PD-weighted" vartype="vol">/ICBM152/icbm152_sym_template_pd.xvol</PD>
-		<FLAIR label="MR FLAIR" vartype="vol">/ICBM152/icbm152_template_flair.xvol</FLAIR>
-		<PT label="FDG PET" vartype="vol">/ICBM152/icbm152_template_pet.xvol</PT>
-		<NM label="HMPAO SPECT" vartype="vol">/ICBM152/icbm152_template_spect.xvol</NM>
-		<GM label="Gray matter" vartype="vol">/ICBM152/icbm152_sym_template_gm.xvol</GM>
-		<CGM label="Cortical gray matter" vartype="vol">/ICBM152/icbm152_sym_template_cortical_gm.xvol</CGM>
-		<SCGM label="Sub-cortical gray matter" vartype="vol">/ICBM152/icbm152_sym_template_subcortical_gm.xvol</SCGM>
-		<WM label="White matter" vartype="vol">/ICBM152/icbm152_sym_template_wm.xvol</WM>
-		<CSF label="Cerebro-spinal fluid" vartype="vol">/ICBM152/icbm152_sym_template_csf.xvol</CSF>
-		<BSTEM label="Brainstem" vartype="vol">/ICBM152/icbm152_sym_template_brainstem.xvol</BSTEM>
-		<CEREB label="Cerebellum" vartype="vol">/ICBM152/icbm152_sym_template_cerebellum.xvol</CEREB>
-		<BRAINMASK label="Brain mask" vartype="vol">/ICBM152/icbm152_sym_template_mask.xvol</BRAINMASK>
-		<CT label="Computed tomography" vartype="vol">/ICBM152/icbm152_asym_template_ct.xvol</CT>
+		<T1 label="MR T1-weighted" path='templates' vartype="vol">ICBM152/icbm152_sym_template_t1.xvol</T1>
+		<T2 label="MR T2-weighted" path='templates' vartype="vol">ICBM152/icbm152_sym_template_t2.xvol</T2>
+		<PD label="MR PD-weighted" path='templates' vartype="vol">ICBM152/icbm152_sym_template_pd.xvol</PD>
+		<FLAIR label="MR FLAIR" path='templates' vartype="vol">ICBM152/icbm152_template_flair.xvol</FLAIR>
+		<PT label="FDG PET" path='templates' vartype="vol">ICBM152/icbm152_template_pet.xvol</PT>
+		<NM label="HMPAO SPECT" path='templates' vartype="vol">ICBM152/icbm152_template_spect.xvol</NM>
+		<GM label="Gray matter" path='templates' vartype="vol">ICBM152/icbm152_sym_template_gm.xvol</GM>
+		<CGM label="Cortical gray matter" path='templates' vartype="vol">ICBM152/icbm152_sym_template_cortical_gm.xvol</CGM>
+		<SCGM label="Sub-cortical gray matter" path='templates' vartype="vol">ICBM152/icbm152_sym_template_subcortical_gm.xvol</SCGM>
+		<WM label="White matter" path='templates' vartype="vol">ICBM152/icbm152_sym_template_wm.xvol</WM>
+		<CSF label="Cerebro-spinal fluid" path='templates' vartype="vol">ICBM152/icbm152_sym_template_csf.xvol</CSF>
+		<BSTEM label="Brainstem" path='templates' vartype="vol">ICBM152/icbm152_sym_template_brainstem.xvol</BSTEM>
+		<CEREB label="Cerebellum" path='templates' vartype="vol">ICBM152/icbm152_sym_template_cerebellum.xvol</CEREB>
+		<BRAINMASK label="Brain mask" path='templates' vartype="vol">ICBM152/icbm152_sym_template_mask.xvol</BRAINMASK>
+		<CT label="Computed tomography" path='templates' vartype="vol">ICBM152/icbm152_asym_template_ct.xvol</CT>
 	</Templates>
 	<Database>
-		<CurrentPath vartype="dir">/Users/Jean-Albert/.PySisyphe/database</CurrentPath>
-		<DefaultPath vartype="dir">/Users/Jean-Albert/.PySisyphe/database</DefaultPath>
+		<CurrentPath vartype="dir"/>
+		<DefaultPath vartype="dir"/>
 	</Database>
 	<DicomHost>
 		<AET label="DICOM SCP host AE title" vartype="str">ANY-SCP</AET>

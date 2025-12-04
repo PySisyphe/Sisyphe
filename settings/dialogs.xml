@@ -1,5 +1,4 @@
-<?xml version="1.0" ?>
-<settings version="1.0">
+<?xml version="1.0" ?><settings version="1.0">
 	<Region>
 		<Origin varmax="1024" varmin="0" vartype="lint">0|0|0</Origin>
 		<Size varmax="1024" varmin="0" vartype="lint">0|0|0</Size>
@@ -73,4 +72,164 @@
 		<SetOrigin label="Set origin to default" vartype="bool">False</SetOrigin>
 		<SetDirections label="Set directions to default" vartype="bool">False</SetDirections>
 	</Attributes>
+	<LinePlot>
+		<title label="Title" vartype="str"></title>
+		<xlabel label="x-axis label" vartype="str"></xlabel>
+		<ylabel label="y-axis label" vartype="str"></ylabel>
+		<yscale label="y-axis scale" vartype="lstr">linear|log</yscale>
+		<frame label="Frame" vartype="bool">True</frame>
+		<taxis label="Top axis" vartype="bool">False</taxis>
+		<raxis label="Right axis" vartype="bool">False</raxis>
+		<baxis label="Bottom axis" vartype="bool">True</baxis>
+		<laxis label="Left axis" vartype="bool">True</laxis>
+		<grid label="Grid" vartype="bool">True</grid>
+		<glinestyle label="Grid line style" vartype="lstr">-- dashed| none|- solid|-. dashdot|: dotted</glinestyle>
+		<glinewidth label="Grid line width" vartype="int">1</glinewidth>
+		<gcolor label="Grid color" vartype="color">0.6784313725490196 0.6784313725490196 0.6784313725490196</gcolor>
+		<color label="Background color" vartype="color">1.0 1.0 1.0</color>
+		<linestyle label="Line style" vartype="lstr">- solid| none|-- dashed|-. dashdot|: dotted</linestyle>
+		<linewidth label="Line width" vartype="int">2</linewidth>
+		<marker label="Marker style" vartype="lstr">o circle| none|. point|, pixel|g octagon|s square|p pentagon|P plus filled|* star|h hexagon1|H hexagon2|+ plus|x cross|X cross filled|D diamond|d thin diamond</marker>
+		<markersize label="Maker size" vartype="int">10</markersize>
+	</LinePlot>
+	<BarPlot>
+		<title label="Title" vartype="str"/>
+		<xlabel label="x-axis label" vartype="str"/>
+		<ylabel label="y-axis label" vartype="str"/>
+		<yscale label="y-axis scale" vartype="lstr">linear|log</yscale>
+		<frame label="Frame" vartype="bool">True</frame>
+		<taxis label="Top axis" vartype="bool">False</taxis>
+		<raxis label="Right axis" vartype="bool">False</raxis>
+		<baxis label="Bottom axis" vartype="bool">True</baxis>
+		<laxis label="Left axis" vartype="bool">True</laxis>
+		<grid label="Grid" vartype="bool">True</grid>
+		<glinestyle label="Grid line style" vartype="lstr">-- dashed| none|- solid|-. dashdot|: dotted</glinestyle>
+		<glinewidth label="Grid line width" vartype="int">1</glinewidth>
+		<gcolor label="Grid color" vartype="color">1.0 1.0 1.0</gcolor>
+		<color label="Background color" vartype="color">1.0 1.0 1.0</color>
+		<linestyle label="Line style" vartype="lstr"> none|- solid|-- dashed|-. dashdot|: dotted</linestyle>
+		<linewidth label="Line width" vartype="int">1</linewidth>
+		<barwidth label="Bar width" varmin="0.1" varmax="1.0" vartype="float">0.8</barwidth>
+	</BarPlot>
+	<StairsPlot>
+		<title label="Title" vartype="str"/>
+		<xlabel label="x-axis label" vartype="str"/>
+		<ylabel label="y-axis label" vartype="str"/>
+		<yscale label="y-axis scale" vartype="lstr">linear|log</yscale>
+		<frame label="Frame" vartype="bool">True</frame>
+		<taxis label="Top axis" vartype="bool">False</taxis>
+		<raxis label="Right axis" vartype="bool">False</raxis>
+		<baxis label="Bottom axis" vartype="bool">True</baxis>
+		<laxis label="Left axis" vartype="bool">True</laxis>
+		<grid label="Grid" vartype="bool">True</grid>
+		<glinestyle label="Grid line style" vartype="lstr">-- dashed| none|- solid|-. dashdot|: dotted</glinestyle>
+		<glinewidth label="Grid line width" vartype="int">1</glinewidth>
+		<gcolor label="Grid color" vartype="color">1.0 1.0 1.0</gcolor>
+		<color label="Background color" vartype="color">1.0 1.0 1.0</color>
+		<linestyle label="Line style" vartype="lstr"> none|- solid|-- dashed|-. dashdot|: dotted</linestyle>
+		<linewidth label="Line width" vartype="int">1</linewidth>
+		<fill label="Fill" vartype="bool">False</fill>
+	</StairsPlot>
+	<WhiskerPlot>
+		<title label="Title" vartype="str"/>
+		<xlabel label="x-axis label" vartype="str"/>
+		<ylabel label="y-axis label" vartype="str"/>
+		<yscale label="y-axis scale" vartype="lstr">linear|log</yscale>
+		<frame label="Frame" vartype="bool">True</frame>
+		<taxis label="Top axis" vartype="bool">False</taxis>
+		<raxis label="Right axis" vartype="bool">False</raxis>
+		<baxis label="Bottom axis" vartype="bool">True</baxis>
+		<laxis label="Left axis" vartype="bool">True</laxis>
+		<grid label="Grid" vartype="bool">True</grid>
+		<glinestyle label="Grid line style" vartype="lstr">-- dashed| none|- solid|-. dashdot|: dotted</glinestyle>
+		<glinewidth label="Grid line width" vartype="int">1</glinewidth>
+		<gcolor label="Grid color" vartype="color">1.0 1.0 1.0</gcolor>
+		<color label="Background color" vartype="color">1.0 1.0 1.0</color>
+		<notch label="Notched boxplot" vartype="bool">False</notch>
+		<symbol label="Outlier point symbol" vartype="lstr">* star| none|. point|, pixel|o circle|g octagon|s square|p pentagon|P plus filled|h hexagon1|H hexagon2|+ plus|x cross|X cross filled|D diamond|d thin diamond</symbol>
+		<boxwidth label="Box width" varmin="0.1" varmax="1.0" vartype="float">0.5</boxwidth>
+		<showcaps label="Show caps on the ends of whiskers" vartype="bool">True</showcaps>
+		<showbox label="Show central box" vartype="bool">True</showbox>
+		<showfliers label="Show outliers" vartype="bool">True</showfliers>
+		<showmeans label="Show arithmetic means" vartype="bool">True</showmeans>
+	</WhiskerPlot>
+	<ViolinPlot>
+		<title label="Title" vartype="str"/>
+		<xlabel label="x-axis label" vartype="str"/>
+		<ylabel label="y-axis label" vartype="str"/>
+		<yscale label="y-axis scale" vartype="lstr">linear|log</yscale>
+		<frame label="Frame" vartype="bool">True</frame>
+		<taxis label="Top axis" vartype="bool">False</taxis>
+		<raxis label="Right axis" vartype="bool">False</raxis>
+		<baxis label="Bottom axis" vartype="bool">True</baxis>
+		<laxis label="Left axis" vartype="bool">True</laxis>
+		<grid label="Grid" vartype="bool">True</grid>
+		<glinestyle label="Grid line style" vartype="lstr">-- dashed| none|- solid|-. dashdot|: dotted</glinestyle>
+		<glinewidth label="Grid line width" vartype="int">1</glinewidth>
+		<gcolor label="Grid color" vartype="color">1.0 1.0 1.0</gcolor>
+		<color label="Background color" vartype="color">1.0 1.0 1.0</color>
+		<boxwidth label="Maximmum violin width" varmin="0.1" varmax="1.0" vartype="float">0.5</boxwidth>
+		<showmeans label="Show mean" vartype="bool">True</showmeans>
+		<showextrema label="Show extrema" vartype="bool">True</showextrema>
+		<showmedians label="Show median" vartype="bool">True</showmedians>
+	</ViolinPlot>
+	<HistPlot>
+		<title label="Title" vartype="str"/>
+		<xlabel label="x-axis label" vartype="str"/>
+		<ylabel label="y-axis label" vartype="str"/>
+		<yscale label="y-axis scale" vartype="lstr">linear|log</yscale>
+		<frame label="Frame" vartype="bool">True</frame>
+		<taxis label="Top axis" vartype="bool">False</taxis>
+		<raxis label="Right axis" vartype="bool">False</raxis>
+		<baxis label="Bottom axis" vartype="bool">True</baxis>
+		<laxis label="Left axis" vartype="bool">True</laxis>
+		<grid label="Grid" vartype="bool">True</grid>
+		<glinestyle label="Grid line style" vartype="lstr">-- dashed| none|- solid|-. dashdot|: dotted</glinestyle>
+		<glinewidth label="Grid line width" vartype="int">1</glinewidth>
+		<gcolor label="Grid color" vartype="color">1.0 1.0 1.0</gcolor>
+		<color label="Background color" vartype="color">1.0 1.0 1.0</color>
+		<cumulative label="Cumulative" vartype="bool">False</cumulative>
+		<histtype label="histogram type" vartype="lstr">bar|barstacked|step|stepfilled</histtype>
+	</HistPlot>
+	<ScatterPlot>
+		<title label="Title" vartype="str"/>
+		<xlabel label="x-axis label" vartype="str"/>
+		<ylabel label="y-axis label" vartype="str"/>
+		<yscale label="y-axis scale" vartype="lstr">linear|log</yscale>
+		<frame label="Frame" vartype="bool">True</frame>
+		<taxis label="Top axis" vartype="bool">False</taxis>
+		<raxis label="Right axis" vartype="bool">False</raxis>
+		<baxis label="Bottom axis" vartype="bool">True</baxis>
+		<laxis label="Left axis" vartype="bool">True</laxis>
+		<grid label="Grid" vartype="bool">True</grid>
+		<glinestyle label="Grid line style" vartype="lstr">-- dashed| none|- solid|-. dashdot|: dotted</glinestyle>
+		<glinewidth label="Grid line width" vartype="int">1</glinewidth>
+		<gcolor label="Grid color" vartype="color">1.0 1.0 1.0</gcolor>
+		<color label="Background color" vartype="color">1.0 1.0 1.0</color>
+		<marker label="Marker style" vartype="lstr"> none|. point|, pixel|o circle|g octagon|s square|p pentagon|P plus filled|* star|h hexagon1|H hexagon2|+ plus|x cross|X cross filled|D diamond|d thin diamond</marker>
+	</ScatterPlot>
+	<MatrixPlot>
+		<title label="Title" vartype="str"/>
+		<xlabel label="x-axis label" vartype="str"/>
+		<ylabel label="y-axis label" vartype="str"/>
+		<yscale label="y-axis scale" vartype="lstr">linear|log</yscale>
+		<frame label="Frame" vartype="bool">False</frame>
+		<taxis label="Top axis" vartype="bool">False</taxis>
+		<raxis label="Right axis" vartype="bool">False</raxis>
+		<color label="Background color" vartype="color">1.0 1.0 1.0</color>
+		<cmap label="Colormap" vartype="lut">gray</cmap>
+		<colorbar label="Colorbar" vartype="bool">True</colorbar>
+	</MatrixPlot>
+	<ImagePlot>
+		<title label="Title" vartype="str"/>
+		<xlabel label="x-axis label" vartype="str"/>
+		<ylabel label="y-axis label" vartype="str"/>
+		<yscale label="y-axis scale" vartype="lstr">linear|log</yscale>
+		<frame label="Frame" vartype="bool">True</frame>
+		<taxis label="Top axis" vartype="bool">False</taxis>
+		<raxis label="Right axis" vartype="bool">False</raxis>
+		<color label="Background color" vartype="color">1.0 1.0 1.0</color>
+		<cmap label="Colormap" vartype="lut">gray</cmap>
+		<colorbar label="Colorbar" vartype="bool">False</colorbar>
+	</ImagePlot>
 </settings>
