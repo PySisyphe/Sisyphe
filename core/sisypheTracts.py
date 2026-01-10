@@ -223,12 +223,14 @@ Class hierarchy
 """
 
 listint = list[int]
+tuple2int = tuple[int, int]
 tuple3int = tuple[int, int, int]
 listfloat = list[float]
 tuple3float = tuple[float, float, float]
 tuple4float = tuple[float, float, float, float]
 vector3float = list[float] | tuple3float
 vector3int = list[int] | tuple3int
+vector2int = list[int] | tuple2int
 
 
 class SisypheTract(object):
@@ -644,7 +646,7 @@ class SisypheTract(object):
                 self._scalarnames[name] = (name == 'RGB')
         elif r == self._CMAP:
             for name in self._scalarnames:
-                if self._scalarnames[name] is True:
+                if self._scalarnames[name]:
                     if name == 'volume':
                         if not self._polydata.GetPointData().HasArray('volume'): name = 'RGB'
                     if self._lut is None: self.setLut()
@@ -675,8 +677,9 @@ class SisypheTract(object):
                 - 2, COLOR mode, solid color given by the color attribute of the current SisypheTract instance.
         """
         if self._mapper.GetScalarVisibility() > 0:
+            # noinspection PyInconsistentReturns
             for name in self._scalarnames:
-                if self._scalarnames[name] is True:
+                if self._scalarnames[name]:
                     if name == 'RGB': return self._RGB
                     else: return self._CMAP
         else: return self._COLOR
@@ -808,7 +811,7 @@ class SisypheTract(object):
             scalar value name
         """
         for name in self._scalarnames:
-            if self._scalarnames[name] is True: return name
+            if self._scalarnames[name]: return name
         return None
 
     def getScalarNames(self) -> list[str]:
@@ -1188,7 +1191,7 @@ class SisypheTractCollection(object):
         """
         self._bundles = dict()
 
-    def getDict(self) -> dict[str: list[SisypheTract]]:
+    def getDict(self) -> dict[str, list[SisypheTract]]:
         """
         Get the current SisypheTractCollection instance container as dict (Shallow copy).
 
@@ -2200,7 +2203,7 @@ class SisypheBundle(object):
     _list       list[int], bundle list
     """
 
-    def __init__(self, s: int | vector3int | None = None) -> None:
+    def __init__(self, s: int | vector3int | vector2int | None = None) -> None:
         """
         SisypheBundle instance constructor.
 
@@ -3873,9 +3876,13 @@ class SisypheStreamlines(object):
         buff += 'Atlas: {}\n'.format(str(self._atlas))
         if self._trf is not None:
             buff += 'Affine (Atlas to native anatomy):\n'
+            # noinspection PyStringFormat
             buff += '\t{0[0]:.2f} {0[1]:.2f} {0[2]:.2f} {0[3]:.2f}\n'.format(self._trf[0])
+            # noinspection PyStringFormat
             buff += '\t{0[0]:.2f} {0[1]:.2f} {0[2]:.2f} {0[3]:.2f}\n'.format(self._trf[1])
+            # noinspection PyStringFormat
             buff += '\t{0[0]:.2f} {0[1]:.2f} {0[2]:.2f} {0[3]:.2f}\n'.format(self._trf[2])
+            # noinspection PyStringFormat
             buff += '\t{0[0]:.2f} {0[1]:.2f} {0[2]:.2f} {0[3]:.2f}\n'.format(self._trf[3])
         for bundle in self._bundles:
             buff += 'Bundle: {}\n'.format(bundle.getName())
@@ -5107,6 +5114,7 @@ class SisypheStreamlines(object):
         if 0 <= index < len(self._streamlines):
             # noinspection PyUnresolvedReferences
             i: cython.int
+            # noinspection PyInconsistentReturns
             for i in range(len(self._streamlines[index])):
                 if allclose(self._streamlines[index][i], p, rtol=0.0, atol=tol): return i
         else: return None
@@ -5208,7 +5216,7 @@ class SisypheStreamlines(object):
             return values_from_volume(img, [self._streamlines[index]], affine)
         else: raise ValueError('index parameter is out of range.')
 
-    def streamlineScalarStatisticsFromVolume(self, index: int, vol: SisypheVolume) -> dict[str: float]:
+    def streamlineScalarStatisticsFromVolume(self, index: int, vol: SisypheVolume) -> dict[str, float]:
         """
         Get descriptive statistics of scalar values in a Sisyphe.core.sisypheVolume.SisypheVolume instance along a
         streamline of the current SisypheStreamline instance.
@@ -5222,7 +5230,7 @@ class SisypheStreamlines(object):
 
         Returns
         -------
-        dict[str: float]
+        dict[str, float]
             descriptive statistics dict, keys(str), values (float) :
                 - 'min', minimum
                 - 'perc5', 5th percentile
@@ -5438,7 +5446,7 @@ class SisypheStreamlines(object):
             return array(r)
         else: raise ValueError('{} invalid bundle name.'.format(bundle))
 
-    def bundleLengthStatistics(self, bundle: str = 'all') -> dict[str: float]:
+    def bundleLengthStatistics(self, bundle: str = 'all') -> dict[str, float]:
         """
         Get the descriptive statistics of streamline lengths in a bundle of the current SisypheStreamlines instance.
 
@@ -5449,7 +5457,7 @@ class SisypheStreamlines(object):
 
         Returns
         -------
-        dict[str: float]
+        dict[str, float]
             descriptive statistics of streamline lengths, keys(str), values (float) :
                 - 'min', minimum
                 - 'perc5', 5th percentile
@@ -5513,7 +5521,7 @@ class SisypheStreamlines(object):
             return array(r)
         else: raise ValueError('{} invalid bundle name.'.format(bundle))
 
-    def bundleMeanCurvatureStatistics(self, bundle: str = 'all') -> dict[str: float]:
+    def bundleMeanCurvatureStatistics(self, bundle: str = 'all') -> dict[str, float]:
         """
         Get the descriptive statistics of streamline mean curvatures in a bundle of the current SisypheStreamlines
         instance.
@@ -5525,7 +5533,7 @@ class SisypheStreamlines(object):
 
         Returns
         -------
-        dict[str: float]
+        dict[str, float]
             descriptive statistics of streamline mean curvatures, keys(str), values (float) :
                 - 'min', minimum
                 - 'perc5', 5th percentile
@@ -5607,7 +5615,7 @@ class SisypheStreamlines(object):
                                           mdf: int = 5,
                                           power: int = 1,
                                           subsample: int = 12,
-                                          bundle: str = 'all') -> dict[str: float]:
+                                          bundle: str = 'all') -> dict[str, float]:
         """
         Get the descriptive statistics of streamline cluster confidence index in a bundle
         of the current SisypheStreamlines instance.
@@ -5630,7 +5638,7 @@ class SisypheStreamlines(object):
 
         Returns
         -------
-        dict[str: float]
+        dict[str, float]
             descriptive statistics of streamline mean curvatures, keys(str), values (float) :
                 - 'min', minimum
                 - 'perc5', 5th percentile
@@ -5780,7 +5788,7 @@ class SisypheStreamlines(object):
             return values_from_volume(img, sl, affine)
         else: raise ValueError('{} invalid bundle name.'.format(bundle))
 
-    def bundleScalarStatisticsFromVolume(self, vol: SisypheVolume, bundle: str = 'all') -> dict[str: float]:
+    def bundleScalarStatisticsFromVolume(self, vol: SisypheVolume, bundle: str = 'all') -> dict[str, float]:
         """
         Get descriptive statistics of scalar values in a Sisyphe.core.sisypheVolume.SisypheVolume instance along the
         streamlines in a bundle of the current SisypheStreamline instance.
@@ -5794,7 +5802,7 @@ class SisypheStreamlines(object):
 
         Returns
         -------
-        dict[str: float]
+        dict[str, float]
             descriptive statistics dict, keys(str), values (float) :
                 - 'min', minimum
                 - 'perc5', 5th percentile
@@ -7435,13 +7443,13 @@ class SisypheStreamlines(object):
 
     def createXML(self, doc: minidom.Document, bundle: str) -> None:
         """
-        Write a bundle of the current SisypheStreamlines instance attributes to xml instance. This method is called by
+        Write a bundle of the current SisypheStreamlines instance attributes to XML instance. This method is called by
         save() and saveAs() methods, it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         bundle : str
             bundle name or 'all' for all streamlines
         """
@@ -7655,13 +7663,13 @@ class SisypheStreamlines(object):
     # noinspection PyTypeChecker
     def parseXML(self, doc: minidom.Document) -> dict:
         """
-        Read a bundle of the current SisypheStreamline instance attributes from xml instance. This method is called by
+        Read a bundle of the current SisypheStreamline instance attributes from XML instance. This method is called by
         load() method, it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+           XML document
 
         Returns
         -------
@@ -7990,7 +7998,7 @@ class SisypheDiffusionModel(object):
             compute model fitting (default False)
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
-            - if False, only xml part is loaded
+            - if False, only XML part is loaded
         wait : DialogWait | multiprocessing.managers.DictProxy | None
             optional progress dialog or multiprocessing shared dict (DictProxy)
 
@@ -8088,6 +8096,7 @@ class SisypheDiffusionModel(object):
             # < Revision 10/04/2025
             # bug fix, ndarray is not C-contiguous
             # m.update(self._b0)
+            # noinspection PyUnresolvedReferences
             m.update(self._b0.tostring())
             # < Revision 10/04/2025
             self._ID = m.hexdigest()
@@ -8166,7 +8175,7 @@ class SisypheDiffusionModel(object):
                       lpstoras: bool = False) -> None:
         """
         Load gradient values/vectors attributes of the current SisypheDiffusionModel instance
-        from text or xml files.
+        from text or XML files.
 
         Parameters
         ----------
@@ -8308,6 +8317,7 @@ class SisypheDiffusionModel(object):
                 # DWI mean
                 v = SisypheVolumeCollection()
                 for i in range(len(self._bvals)):
+                    # noinspection PyTypeChecker
                     if self._bvals[i] > 0: v.append(vols[i])
                 # < Revision 04/07/2025
                 # bug fix, if v.count() == 1: self._b0 = v[0]
@@ -8347,6 +8357,7 @@ class SisypheDiffusionModel(object):
                 # DWI mean
                 v = list()
                 for i in range(len(self._bvals)):
+                    # noinspection PyTypeChecker
                     if self._bvals[i] > 0: v.append(self._dwi[:, :, :, i])
                 if len(v) == 1: self._mean = v[0]
                 elif len(v) > 1:
@@ -8572,13 +8583,13 @@ class SisypheDiffusionModel(object):
 
     def createXML(self, doc: minidom.Document) -> None:
         """
-        Write the current SisypheDiffusionModel instance attributes to xml instance. This method is called by save()
+        Write the current SisypheDiffusionModel instance attributes to XML instance. This method is called by save()
         method, it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -8700,13 +8711,13 @@ class SisypheDiffusionModel(object):
 
     def parseXML(self, doc: minidom.Document) -> dict:
         """
-        Read the current SisypheDiffusionModel instance attributes from xml instance. This method is called by load()
+        Read the current SisypheDiffusionModel instance attributes from XML instance. This method is called by load()
         method, it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
 
         Returns
         -------
@@ -8766,7 +8777,7 @@ class SisypheDiffusionModel(object):
             PySisyphe diffusion model file name
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
-            - if False, only xml part is loaded
+            - if False, only XML part is loaded
         wait : DialogWait | multiprocessing.managers.DictProxy | None
             optional progress dialog or multiprocessing shared dict (DictProxy)
         """
@@ -8912,7 +8923,7 @@ class SisypheDTIModel(SisypheDiffusionModel):
             compute model fitting (default False)
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
-            - if False, only xml part is loaded
+            - if False, only XML part is loaded
         wait : DialogWait | multiprocessing.managers.DictProxy | None
             optional progress dialog or multiprocessing shared dict (DictProxy)
 
@@ -9059,6 +9070,7 @@ class SisypheDTIModel(SisypheDiffusionModel):
                 if algfit == '' or algfit not in self._ALG: algfit = self._algfit
                 else: self._algfit = algfit
                 self._model = TensorModel(gtab=self._gtable, fit_method=algfit)
+                # noinspection PyTypeChecker
                 self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
 
     def getFA(self) -> SisypheVolume:
@@ -9256,13 +9268,13 @@ class SisypheDTIModel(SisypheDiffusionModel):
 
     def createXML(self, doc: minidom.Document) -> None:
         """
-        Write the current SisypheDTIModel instance attributes to xml instance. This method is called by save() method,
+        Write the current SisypheDTIModel instance attributes to XML instance. This method is called by save() method,
         it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -9281,13 +9293,13 @@ class SisypheDTIModel(SisypheDiffusionModel):
 
     def parseXML(self, doc: minidom.Document) -> dict:
         """
-        Read the current SisypheDTIModel instance attributes from xml instance. This method is called by load() method,
+        Read the current SisypheDTIModel instance attributes from XML instance. This method is called by load() method,
         it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
 
         Returns
         -------
@@ -9355,7 +9367,7 @@ class SisypheDKIModel(SisypheDiffusionModel):
             compute model fitting (default False)
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
-            - if False, only xml part is loaded
+            - if False, only XML part is loaded
         wait : DialogWait | multiprocessing.managers.DictProxy | None
             optional progress dialog or multiprocessing shared dict (DictProxy)
 
@@ -9502,6 +9514,7 @@ class SisypheDKIModel(SisypheDiffusionModel):
                 if algfit == '' or algfit not in self._ALG: algfit = self._algfit
                 else: self._algfit = algfit
                 self._model = DiffusionKurtosisModel(gtab=self._gtable, fit_method=algfit)
+                # noinspection PyTypeChecker
                 self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
 
     def getFA(self) -> SisypheVolume:
@@ -9634,13 +9647,13 @@ class SisypheDKIModel(SisypheDiffusionModel):
 
     def createXML(self, doc: minidom.Document) -> None:
         """
-        Write the current SisypheDKIModel instance attributes to xml instance. This method is called by save() method,
+        Write the current SisypheDKIModel instance attributes to XML instance. This method is called by save() method,
         it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -9659,13 +9672,13 @@ class SisypheDKIModel(SisypheDiffusionModel):
 
     def parseXML(self, doc: minidom.Document) -> dict:
         """
-        Read the current SisypheDKIModel instance attributes from xml instance. This method is called by load() method,
+        Read the current SisypheDKIModel instance attributes from XML instance. This method is called by load() method,
         it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
 
         Returns
         -------
@@ -9726,7 +9739,7 @@ class SisypheSHCSAModel(SisypheDiffusionModel):
             compute model fitting (default False)
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
-            - if False, only xml part is loaded
+            - if False, only XML part is loaded
         wait : DialogWait | multiprocessing.managers.DictProxy | None
             optional progress dialog or multiprocessing shared dict (DictProxy)
 
@@ -9879,13 +9892,13 @@ class SisypheSHCSAModel(SisypheDiffusionModel):
 
     def createXML(self, doc: minidom.Document) -> None:
         """
-        Write the current SisypheSHCSAModel instance attributes to xml instance. This method is called by save()
+        Write the current SisypheSHCSAModel instance attributes to XML instance. This method is called by save()
         method, it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -9904,13 +9917,13 @@ class SisypheSHCSAModel(SisypheDiffusionModel):
 
     def parseXML(self, doc: minidom.Document) -> dict:
         """
-        Read the current SisypheSHCSAModel instance attributes from xml instance. This method is called by load()
+        Read the current SisypheSHCSAModel instance attributes from XML instance. This method is called by load()
         method, it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
 
         Returns
         -------
@@ -9971,7 +9984,7 @@ class SisypheSHCSDModel(SisypheDiffusionModel):
             compute model fitting (default False)
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
-            - if False, only xml part is loaded
+            - if False, only XML part is loaded
         wait : DialogWait | multiprocessing.managers.DictProxy | None
             optional progress dialog or multiprocessing shared dict (DictProxy)
 
@@ -10130,13 +10143,13 @@ class SisypheSHCSDModel(SisypheDiffusionModel):
 
     def createXML(self, doc: minidom.Document) -> None:
         """
-        Write the current SisypheSHCSDModel instance attributes to xml instance. This method is called by save()
+        Write the current SisypheSHCSDModel instance attributes to XML instance. This method is called by save()
         method, it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -10155,13 +10168,13 @@ class SisypheSHCSDModel(SisypheDiffusionModel):
 
     def parseXML(self, doc: minidom.Document) -> dict:
         """
-        Read the current SisypheSHCSDModel instance attributes from xml instance. This method is called by load()
+        Read the current SisypheSHCSDModel instance attributes from XML instance. This method is called by load()
         method, it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
 
         Returns
         -------
@@ -10220,7 +10233,7 @@ class SisypheDSIModel(SisypheDiffusionModel):
             compute model fitting (default False)
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
-            - if False, only xml part is loaded
+            - if False, only XML part is loaded
         wait : DialogWait | multiprocessing.managers.DictProxy | None
             optional progress dialog or multiprocessing shared dict (DictProxy)
 
@@ -10340,13 +10353,13 @@ class SisypheDSIModel(SisypheDiffusionModel):
 
     def createXML(self, doc: minidom.Document) -> None:
         """
-        Write the current SisypheDSIModel instance attributes to xml instance. This method is called by save() method,
+        Write the current SisypheDSIModel instance attributes to XML instance. This method is called by save() method,
         it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -10360,13 +10373,13 @@ class SisypheDSIModel(SisypheDiffusionModel):
 
     def parseXML(self, doc: minidom.Document) -> dict:
         """
-        Read the current SisypheDSIModel instance attributes from xml instance. This method is called by load() method,
+        Read the current SisypheDSIModel instance attributes from XML instance. This method is called by load() method,
         it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
 
         Returns
         -------
@@ -10423,7 +10436,7 @@ class SisypheDSIDModel(SisypheDiffusionModel):
             compute model fitting (default False)
         binary : bool
             - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
-            - if False, only xml part is loaded
+            - if False, only XML part is loaded
         wait : DialogWait | multiprocessing.managers.DictProxy | None
             optional progress dialog or multiprocessing shared dict (DictProxy)
 
@@ -10543,13 +10556,13 @@ class SisypheDSIDModel(SisypheDiffusionModel):
 
     def createXML(self, doc: minidom.Document) -> None:
         """
-        Write the current SisypheDSIDModel instance attributes to xml instance. This method is called by save() method,
+        Write the current SisypheDSIDModel instance attributes to XML instance. This method is called by save() method,
         it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -10563,13 +10576,13 @@ class SisypheDSIDModel(SisypheDiffusionModel):
 
     def parseXML(self, doc: minidom.Document) -> dict:
         """
-        Read the current SisypheDSIDModel instance attributes from xml instance. This method is called by load()
+        Read the current SisypheDSIDModel instance attributes from XML instance. This method is called by load()
         method, it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
 
         Returns
         -------
@@ -10967,9 +10980,9 @@ class SisypheTracking(object):
         self._stopping = BinaryStoppingCriterion(roi.copyToNumpyArray(defaultshape=False))
 
     def setStoppingCriterionToMaps(self,
-                                   gm: SisypheVolume(),
-                                   wm: SisypheVolume(),
-                                   csf: SisypheVolume()) -> None:
+                                   gm: SisypheVolume,
+                                   wm: SisypheVolume,
+                                   csf: SisypheVolume) -> None:
         """
         Set the stopping criterion attribute of the current SisypheTracking instance to maps. This stopping criterion
         uses gray matter, white matter and cerebro-spinal fluid maps. Streamline reconstruction is stopped when the

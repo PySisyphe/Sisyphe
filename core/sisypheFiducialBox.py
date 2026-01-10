@@ -7,7 +7,6 @@ External packages/modules
     - SimpleITK, medical image processing, https://simpleitk.org/
     - vtk, visualization engine/3D rendering, https://vtk.org/
 """
-
 from os import remove
 from os.path import exists
 from os.path import splitext
@@ -15,6 +14,8 @@ from os.path import splitext
 from xml.dom import minidom
 
 from math import sqrt
+from math import degrees
+from math import radians
 
 import numpy as np
 
@@ -36,14 +37,226 @@ from PyQt5.QtCore import pyqtSignal
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheTransform import SisypheTransform
 
-__all__ = ['SisypheFiducialBox']
+__all__ = ['LeksellProcessings',
+           'SisypheFiducialBox']
 
 """
+
 Class hierarchy
 ~~~~~~~~~~~~~~~
 
-    - PyQt5.QtCore.QObject -> SisypheFiducialBox
+- object -> LeksellProcessings
+- PyQt5.QtCore.QObject -> SisypheFiducialBox
 """
+
+class LeksellProcessings(object):
+    """
+    Description
+    ~~~~~~~~~~~
+
+    This class provides the following processings:
+
+        - convert Leksell trajectory angles (arc and ring) from one orientation to another.
+        - calculate entry point from arc, ring, orientation, target point and trajectory length.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    object -> LeksellAngleConversion
+
+    Creation: 18/12/2025
+    """
+
+    # Class methods
+
+    @classmethod
+    def computeEntryPoint(cls,
+                          p: list[float] | tuple[float, float, float],
+                          length: float,
+                          arc: float,
+                          ring: float,
+                          orient: str,
+                          deg: bool = True) -> tuple[float, ...]:
+        """
+        Method that calculates entry point from arc, ring, orientation, target point and trajectory length.
+
+        Parameters
+        ----------
+        p : list[float] | tuple[float, float, float]
+        length : float
+            trajectory length in mm.
+        arc : float
+            arc angle in degrees of the trajectory
+        ring : float
+            ring angle in degrees of the trajectory
+        orient : str
+            trajectory orientation: 'lr' lateral rigth, 'll' lateral left, 'sa' sagittal anterior, 'sp' sagittal posterior
+        deg : bool
+            angles in degrees if True, in radians otherwise.
+
+        Returns
+        -------
+        tuple[float, ...]
+            entry point (x, y, z).
+        """
+        if deg:
+            arc = radians(arc)
+            ring = radians(ring)
+        if orient == 'lr':  # Lateral Right
+            v = np.array([-np.cos(arc),
+                          np.sin(arc) * np.cos(ring),
+                          np.sin(arc) * np.sin(ring)])
+        elif orient == 'll':  # Lateral Left
+            v = np.array([np.cos(arc),
+                          np.sin(arc) * np.cos(ring),
+                          np.sin(arc) * np.sin(ring)])
+        elif orient == 'sa':  # Sagittal Anterior
+            v = np.array([np.sin(arc) * np.cos(ring),
+                          np.cos(arc),
+                          np.sin(arc) * np.sin(ring)])
+        elif orient == 'sp':  # Sagittal Posterior
+            v = np.array([np.sin(arc) * np.cos(ring),
+                          -np.cos(arc),
+                          np.sin(arc) * np.sin(ring)])
+        else: raise ValueError('{} invalid orientation'.format(orient))
+        v = v / np.linalg.norm(v)
+        target = np.array(p, dtype=float)
+        entry = target - length * v
+        return tuple(entry)
+
+    @classmethod
+    def computeEntryPoints(cls,
+                           p: list[list[float]] | list[tuple[float, float, float]],
+                           length: list[float],
+                           arc: list[float],
+                           ring: list[float],
+                           orient: str,
+                           deg: bool = True) -> list[tuple[float, ...]]:
+        """
+        Method that calculates a list of entry points from arc, ring, orientation, target point and trajectory length.
+
+        Parameters
+        ----------
+        p : list[float] | tuple[float, float, float]
+        length : list[float]
+            trajectory length in mm.
+        arc : list[float]
+            arc angle in degrees of the trajectory
+        ring : list[float]
+            ring angle in degrees of the trajectory
+        orient : str
+            trajectory orientation: 'lr' lateral rigth, 'll' lateral left, 'sa' sagittal anterior, 'sp' sagittal posterior
+        deg : bool
+            angles in degrees if True, in radians otherwise.
+
+        Returns
+        -------
+        list[tuple[float, ...]]
+            list of entry points.
+        """
+        points = list()
+        for i in range(len(p)):
+            points.append(cls.computeEntryPoint(p[i], length[i], arc[i], ring[i], orient, deg))
+        return points
+
+    # Special method
+
+    def __init__(self):
+        """
+        LeksellAngleConversion instance constructor.
+        """
+        self._r: dict[str, np.ndarray] = dict()
+        self._r['lr'] = np.array([[-1, 0, 0], [0, 1, 0], [0, 0, 1]])  # Lateral Right
+        self._r['ll'] = np.array([[1, 0, 0], [0, -1, 0], [0, 0, 1]])  # Lateral Left
+        self._r['sa'] = np.array([[0, 1, 0], [1, 0, 0], [0, 0, 1]])   # Sagittal Anterior
+        self._r['sp'] = np.array([[0, -1, 0], [-1, 0, 0], [0, 0, 1]]) # Sagittal Posterior
+
+    """
+    Private attributes
+    
+    _r  dict[str, ndarray], dict of orientation matrix
+    """
+
+    # Public method
+
+    def convertAngles(self,
+                      arc: float,
+                      ring: float,
+                      orientfrom: str,
+                      orientto: str,
+                      deg: bool = True) -> tuple[float, float]:
+        """
+        Method that converts Leksell trajectory angles (arc and ring) from one orientation to another.
+
+        Parameters
+        ----------
+        arc : float
+            arc angle or list of arcs to convert
+        ring : float
+            ring angle or list rings to convert
+        orientfrom : str
+            original orientation: 'lr' lateral rigth, 'll' lateral left, 'sa' sagittal anterior, 'sp' sagittal posterior
+        orientto : str
+            orientation of conversion: 'lr' lateral rigth, 'll' lateral left, 'sa' sagittal anterior, 'sp' sagittal posterior
+        deg : bool
+            angle in degrees if True, in radians otherwise
+
+        Returns
+        -------
+        tuple[float, float]
+            arc and ring in the new orientation
+        """
+        if deg:
+            arc = radians(arc)
+            ring = radians(ring)
+        # local vector in the original orientation to global vector
+        vlocal = np.array([np.cos(arc),
+                           np.sin(arc) * np.cos(ring),
+                           np.sin(arc) * np.sin(ring)])
+        vglobal = self._r[orientfrom] @ vlocal
+        vglobal / np.linalg.norm(vglobal)
+        # global vector to local vector in the new orientation
+        vlocal = np.linalg.inv(self._r[orientto]) @ vglobal
+        x, y, z = vlocal
+        arc = np.arccos(x)
+        ring = degrees(np.arctan2(z, y)) % 360.0
+        if deg: arc = degrees(arc)
+        else: ring = radians(ring)
+        return arc, ring
+
+    def convertMultipleAngles(self,
+                              arc: list[float],
+                              ring: list[float],
+                              orientfrom: str,
+                              orientto: str,
+                              deg: bool = True) -> tuple[list[float], list[float]]:
+        """
+        Method that converts a list of Leksell trajectory angles (arc and ring) from one orientation to another.
+
+        Parameters
+        ----------
+        arc : float
+            list of arcs to convert
+        ring : float
+            list rings to convert
+        orientfrom : str
+            original orientation: 'lr' lateral rigth, 'll' lateral left, 'sa' sagittal anterior, 'sp' sagittal posterior
+        orientto : str
+            orientation of conversion: 'lr' lateral rigth, 'll' lateral left, 'sa' sagittal anterior, 'sp' sagittal posterior
+        deg : bool
+            angle in degrees if True, in radians otherwise
+
+        Returns
+        -------
+        tuple[list[float], list[float]]
+            list of arcs and rings in the new orientation
+        """
+        rarc = list()
+        rring = list()
+        for i in range(len(arc)):
+            self.convertAngles(arc[i], ring[i], orientfrom, orientto, deg)
+        return rarc, rring
+
 
 class SisypheFiducialBox(QObject):
     """
@@ -60,7 +273,7 @@ class SisypheFiducialBox(QObject):
         - superior (0.0) to inferior (+)
         - origin right, posterior, superior
 
-    Fiducial coordinates:
+    Fiducial Leksell coordinates:
 
         - Fiducial              x       y       z
         - anterior right  ->    5.0     160.0   40.0 cranial to 160.0 caudal
@@ -74,7 +287,7 @@ class SisypheFiducialBox(QObject):
     QObject -> SisypheFiducialBox
 
     Creation: 26/07/2022
-    Last revision: 21/05/2025
+    Last revision: 04/01/2026
     """
     # Class constant
 
@@ -454,11 +667,26 @@ class SisypheFiducialBox(QObject):
         else: img = sitkOtsuThreshold(self._volume.getSITKImage(), 0, 1)
         if slc is not None and 0 <= slc < self._volume.getDepth(): n = slc
         else: n = self._volume.getDepth() // 2
-        for i in range(10):
-            self._firstSliceSearch(img, n + i)
+        # < Revision 04/01/2026
+        # for i in range(10):
+        #    self._firstSliceSearch(img, n + i)
+        #    if self._nbfid in (6, 9):
+        #       n = n + i
+        #       break
+        step = n // 6
+        for i in range(5):
+            idx = n + (i * step)
+            self._firstSliceSearch(img, idx)
             if self._nbfid in (6, 9):
-                n = n + i
+                n = idx
                 break
+            if i > 0:
+                idx = n - (i * step)
+                self._firstSliceSearch(img, idx)
+                if self._nbfid in (6, 9):
+                    n = idx
+                    break
+        # Revision 04/01/2026 >
         if self._nbfid not in (6, 9): raise ValueError('No fiducial box or wrong number of fiducial markers, '
                                                        '{} detected, must be 6 or 9.')
         c = 1

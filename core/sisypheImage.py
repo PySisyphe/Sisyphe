@@ -3,11 +3,12 @@ External packages/modules
 -------------------------
 
     - Cython, static compiler, https://cython.org/
-    - ANTs, image registration, http://stnava.github.io/ANTs/
+    - ANTs, image registration, https://stnava.github.io/ANTs/
     - DIPY, MR diffusion image processing, https://www.dipy.org/
     - ITK, medical image processing, https://itk.org/
     - NiBabel, nibabel image class access, https://nipy.org/nibabel
     - Numpy, scientific computing, https://numpy.org/
+    - Pillow,  image processing, https://pillow.readthedocs.io/
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
     - scikit-image, image processing, https://scikit-image.org/
     - Scipy, scientific computing, https://docs.scipy.org
@@ -27,6 +28,7 @@ from copy import deepcopy
 from numpy import iinfo
 from numpy import can_cast
 from numpy import array
+# noinspection PyFinal
 from numpy import nan as npnan
 from numpy import min as npmin
 from numpy import max as npmax
@@ -61,6 +63,10 @@ from scipy.ndimage import map_coordinates
 # noinspection PyProtectedMember
 from skimage.measure._moments import centroid
 from skimage.morphology import h_maxima
+
+from PIL.Image import Image as pilImage
+from PIL.Image import fromarray
+from PIL.Image import Transpose
 
 from dipy.denoise.noise_estimate import estimate_sigma
 
@@ -291,7 +297,7 @@ class SisypheImage(object):
     object -> SisypheImage
 
     Creation: 12/01/2021
-    Last revision: 23/11/2025
+    Last revision: 08/01/2026
     """
     __slots__ = ['_sitk_image', '_itk_image', '_vtk_image', '_numpy_array', '_attr']
 
@@ -308,10 +314,10 @@ class SisypheImage(object):
         image : SisypheImage | SimpleITK.Image | vkt.vtkImageData | ants.core.ANTSImage | numpy.ndarray | str
             image to copy (optional)
         **kargs :
-            - size, tuple[float, float, float] | list[float, float, float]
+            - size, tuple[float, float, float] | list[float]
             - datatype, str
-            - spacing, tuple[float, float, float] | list[float, float, float]
-            - direction, tuple[float, ...] | list[float, ...] (9 elements)
+            - spacing, tuple[float, float, float] | list[float]
+            - direction, tuple[float, ...] | list[float] (9 elements)
         """
 
         # Init attributes (default, constructor without parameter)
@@ -902,7 +908,7 @@ class SisypheImage(object):
 
         Parameters
         ----------
-        idx : list[int, int, int], tuple[int, int, int] | slice
+        idx : list[int], tuple[int, int, int] | slice
             x, y, z int indices or pythonic slicing (i.e. python slice object, used the syntax first:last:step)
 
         Returns
@@ -921,7 +927,7 @@ class SisypheImage(object):
 
         Parameters
         ----------
-        idx : list[int, int, int], tuple[int, int, int] | slice
+        idx : list[int], tuple[int, int, int] | slice
             x, y, z int indices or pythonic slicing (i.e. python slice object, used the syntax first:last:step)
         rvalue : int | float | SisypheImage
             scalar value or SisypheImage if slicing
@@ -1006,7 +1012,7 @@ class SisypheImage(object):
 
         Parameters
         ----------
-        matrix : list[float, float, float] | tuple[float, float, float]
+        matrix : list[float] | tuple[float, float, float]
             image size in x, y, z dimensions
         datatype : str
             numpy datatype
@@ -1109,9 +1115,9 @@ class SisypheImage(object):
         ----------
         img : numpy.ndarray
             image to copy
-        spacing : list[float, float, float] | tuple[float, float, float],
+        spacing : list[float] | tuple[float, float, float],
             voxel sizes in mm (default 1.0, 1.0, 1.0)
-        origin : list[float, float, float] | tuple[float, float, float],
+        origin : list[float] | tuple[float, float, float],
             origin coordinates (default 0.0, 0.0, 0.0)
         direction : list[float]
             axes directions
@@ -1142,6 +1148,28 @@ class SisypheImage(object):
             self._sitk_image.SetOrigin(origin)
             self._updateImages()
         else: raise TypeError('parameter type {} is not numpy ndarray.'.format(type(img)))
+
+    # < Revision 08/12/2025
+    # add copyToPillowImage method
+    def copyFromPillowImage(self, img: pilImage, slc: int, orient: int = 0) -> None:
+        """
+        Copy a Pillow image to the current SisypheImage instance.
+
+        Parameters
+        ----------
+        img : pilImage
+            Pillow image to copy.
+        slc : int
+            slice index.
+        orient : int (optional)
+            slice orientation (0 axial - default, 1 coronal, 2 sagittal).
+        """
+        if img.mode not in ('L', 'I', 'F'): img = img.convert(mode='L')
+        img = array(img.transpose(Transpose.ROTATE_180)).astype(self.getDatatype())
+        if orient == 0: self.getNumpy()[slc,:,:] = img
+        elif orient == 1: self.getNumpy()[:,slc,:] = img
+        elif orient == 2: self.getNumpy()[:,:,slc] = img
+    # Revision 08/12/2025
 
     def copyFromNibabelImage(self, img: Nifti1Image):
         """
@@ -1311,6 +1339,52 @@ class SisypheImage(object):
         # noinspection PyTypeChecker
         return Nifti1Image(img, affine)
 
+    # < Revision 08/12/2025
+    # add copyToPillowImage method
+    def copyToPillowImage(self,
+                          slc: int,
+                          orient: int = 0,
+                          rgb: bool = False,
+                          wmin : int | None = None,
+                          wmax : int | None = None) -> pilImage:
+        """
+        Pillow copy of the current SisypheImage instance.
+
+        Parameters
+        ----------
+        slc : int
+            slice index.
+        orient : int (optional)
+            slice orientation (0 axial - default, 1 coronal, 2 sagittal).
+        rgb : bool (optional)
+            conversion to Pillow 'RGB' mode.
+        wmin : int | None (optional)
+            window min (default None, window min = min value of the image).
+        wmax : int | None (optional)
+            window max (default None, window max = max value of the image).
+        Returns
+        -------
+        pilImage
+            Pillow image.
+        """
+        # defaultshape is True, axis order is (z, y, x)
+        if orient == 0: img = self.getNumpy()[slc,:,:]
+        elif orient == 1: img = self.getNumpy()[:,slc,:]
+        elif orient == 2: img = self.getNumpy()[:,:,slc]
+        else: raise ValueError('Invalid orient {} (0 axial, 1 coronal, 2 sagittal).')
+        if rgb:
+            if wmin is None: wmin = img.min()
+            else: img[img < wmin] = 0
+            if wmax is None: wmax = img.max()
+            img = ((img - wmin) / (wmax - wmin)) * 255
+        if self.isUInt8Datatype(): pimg = fromarray(img, 'L')
+        elif self.isIntegerDatatype(): pimg = fromarray(img.astype('int32'), 'I')
+        elif self.isFloatDatatype(): pimg = fromarray(img.astype('float32'), 'F')
+        else: raise TypeError('Unsupported datatype {} for Pillow conversion.'.format(self.getDatatype()))
+        if rgb: pimg = pimg.convert('RGB')
+        return pimg.transpose(Transpose.ROTATE_180)
+    # Revision 08/12/2025
+
     def cast(self, datatype: str) -> tuple[SisypheImage, float, float]:  # recode with SimpleITK Clamp
         """
         SisypheImage copy of the current SisypheImage instance with a new datatype.
@@ -1475,7 +1549,10 @@ class SisypheImage(object):
         """
         # Numpy array shallow copy
         if not self.isEmpty():
-            if self._numpy_array.ndim == 3:
+            # < Revision 08/01/2026
+            # if self._numpy_array.ndim == 3:
+            if self._numpy_array.ndim in (2, 3):
+                # Revision 08/01/2026 >
                 """
                     3D volume
                     defaultshape = True  -> return shape (z, y, x)
@@ -1516,7 +1593,7 @@ class SisypheImage(object):
 
         Parameters
         ----------
-        img : SisypheImage | SimpleITK.Image | itk.Image | vtk.vtkImageData | ants.core.ANTsImage | numpy.ndarray | tuple[int, int, int] | list[int, int, int]
+        img : SisypheImage | SimpleITK.Image | itk.Image | vtk.vtkImageData | ants.core.ANTsImage | numpy.ndarray | tuple[int, int, int] | list[int]
             image to compare
 
         Returns
@@ -1600,7 +1677,7 @@ class SisypheImage(object):
 
         Parameters
         ----------
-        img : SisypheImage | SimpleITK.Image | itk.Image | vtk.vtkImageData | ants.core.ANTsImage | tuple[float, float, float] | list[float, float, float]
+        img : SisypheImage | SimpleITK.Image | itk.Image | vtk.vtkImageData | ants.core.ANTsImage | tuple[float, float, float] | list[float]
             get spacing from image attribute (SisypheImage | SimpleITK.Image | itk.Image | vtk.vtkImageData | ants.core.ANTsImage)
             or directly from a tuple or a list of three values
         decimals : int
@@ -1845,7 +1922,7 @@ class SisypheImage(object):
 
         Parameters
         ----------
-        img : SisypheImage | SimpleITK.Image | itk.Image | vtk.vtkImageData | ants.core.ANTsImage | tuple[float, float, float] | list[float, float, float]
+        img : SisypheImage | SimpleITK.Image | itk.Image | vtk.vtkImageData | ants.core.ANTsImage | tuple[float, float, float] | list[float]
             get FOV value from image attributes (SisypheImage | SimpleITK.Image | itk.Image | vtk.vtkImageData | ants.core.ANTsImage)
             or directly from a tuple or a list of three values
         decimals : int
@@ -2224,6 +2301,10 @@ class SisypheImage(object):
             9 elements, vectors of image axes
         """
         if not self.isEmpty():
+            # < Revision 08/01/2026
+            if self._sitk_image.GetDimension() == 2:
+                direction = direction[:2] + direction[3:5]
+            # Revision 08/01/2026 >
             self._sitk_image.SetDirection(direction)
             if self.hasITKImage():
                 d = array(self._sitk_image.GetDirection())
@@ -2273,11 +2354,14 @@ class SisypheImage(object):
 
         Parameters
         ----------
-        origin : list[float, float, float] | tuple[float, float, float]
+        origin : list[float] | tuple[float, float, float]
             image origin in world coordinates
         """
         if not self.isEmpty():
-            if self._sitk_image.GetDepth() == 2: origin = origin[:2]
+            # < Revision 08/01/2026
+            # if self._sitk_image.GetDepth() == 2: origin = origin[:2]
+            if self._sitk_image.GetDimension() == 2: origin = origin[:2]
+            # Revision 08/01/2026 >
             self._sitk_image.SetOrigin(origin)
             # < Revision 15/04/2023
             # self._vtk_image.SetOrigin(origin)
@@ -2326,7 +2410,7 @@ class SisypheImage(object):
 
         Parameters
         ----------
-        origin : SisypheImage | SimpleITK.Image | vtk.vtkImageData | ants.core.ANTsImage | tuple[float, float, float] | list[float, float, float] | ndarray | str
+        origin : SisypheImage | SimpleITK.Image | vtk.vtkImageData | ants.core.ANTsImage | tuple[float, float, float] | list[float] | ndarray | str
             - get origin from image attribute (SisypheImage, SimpleITK.Image, itk.Image, vtk.vtkImageData, ants.core.ANTsImage),
             - or from a tuple, a list, a numpy.ndarray of three values,
             - or from template tags 'ICBM152', 'ICBM452', 'ATROPOS', 'SRI24'
@@ -2361,7 +2445,7 @@ class SisypheImage(object):
 
         Parameters
         ----------
-        p : list[float, float, float] | tuple[float, float, float]
+        p : list[float] | tuple[float, float, float]
             voxel coordinates (image reference)
 
         Returns
@@ -2377,7 +2461,7 @@ class SisypheImage(object):
 
         Parameters
         ----------
-        p : list[float, float, float] | tuple[float, float, float]
+        p : list[float] | tuple[float, float, float]
             world coordinates
 
         Returns
@@ -2398,7 +2482,7 @@ class SisypheImage(object):
 
         Parameters
         ----------
-        p : list[float, float, float] | tuple[float, float, float] | ndarray
+        p : list[float] | tuple[float, float, float] | ndarray
             coordinates
         world : bool
 
@@ -2406,7 +2490,7 @@ class SisypheImage(object):
             - if False, voxels coordinates (world / spacing)
 
         order : int
-            interpolation order (0: nearest neighbour, 1: linear, >1 spline order)
+            interpolation order (0: nearest neighbor, 1: linear, >1 spline order)
 
         Returns
         -------
@@ -2420,6 +2504,7 @@ class SisypheImage(object):
         # f = itk.LinearInterpolateImageFunction.New(self._itk_image)
         # return f.Evaluate(p)
         a = self.getNumpy(defaultshape=False)
+        # noinspection PyTypeChecker
         return float(map_coordinates(a, p.reshape(3, 1), order=order)[0])
         # Revision 13/11/2025 >
     # Revision 07/11/2025 >
@@ -2610,16 +2695,19 @@ class SisypheImage(object):
                 else: kernel = 1
             # Revision 06/06/2025 >
             morpho = morpho.lower()
-            if morpho in ('dilate', 'erode', 'open', 'close'):
-                if morpho in ('dilate', 'erode'):
-                    # noinspection PyUnresolvedReferences
-                    i: cython.int
-                    for i in range(niter):
-                        if morpho == 'dilate': img = BinaryDilate(img, [kernel, kernel, kernel])
-                        elif morpho == 'erode': img = BinaryErode(img, [kernel, kernel, kernel])
-                elif morpho == 'open': img = BinaryMorphologicalOpening(img, [kernel, kernel, kernel])
-                else: img = BinaryMorphologicalClosing(img, [kernel, kernel, kernel])
-            else: raise ValueError('Invalid morphology operator ({})'.format(morpho))
+            # < Revision 25/12/2025
+            if morpho != '':
+                # Revision 25/12/2025 >
+                if morpho in ('dilate', 'erode', 'open', 'close'):
+                    if morpho in ('dilate', 'erode'):
+                        # noinspection PyUnresolvedReferences
+                        i: cython.int
+                        for i in range(niter):
+                            if morpho == 'dilate': img = BinaryDilate(img, [kernel, kernel, kernel])
+                            elif morpho == 'erode': img = BinaryErode(img, [kernel, kernel, kernel])
+                    elif morpho == 'open': img = BinaryMorphologicalOpening(img, [kernel, kernel, kernel])
+                    else: img = BinaryMorphologicalClosing(img, [kernel, kernel, kernel])
+                else: raise ValueError('Invalid morphology operator ({})'.format(morpho))
         else: raise TypeError('kernel parameter type {} is not int.'.format(type(kernel)))
         # < Revision 19/12/2024
         # keep major blob (remove blobs in head/brain)
@@ -2628,7 +2716,9 @@ class SisypheImage(object):
         img = blobs == 1
         # Revision 19/12/2024 >
         # Filling
-        if fill == '2d':
+        # < Revision 25/12/2025
+        # if fill == '2d':
+        if fill in ('2d', '2D'):
             f = BinaryFillholeImageFilter()
             # noinspection PyUnresolvedReferences
             i: cython.int
@@ -2637,8 +2727,10 @@ class SisypheImage(object):
                 slc = img[:, :, i]
                 slc = f.Execute(slc)
                 img[:, :, i] = slc
-        elif fill == '3d':
+        # elif fill == '3d':
+        elif fill in ('3d', '3D'):
             img = BinaryFillhole(img)
+        # Revision 25/12/2025 >
         return SisypheImage(img)
 
     # < Revision 23/10/2024
@@ -2716,6 +2808,7 @@ class SisypheImage(object):
                  algo: str = 'huang',
                  morphoiter: int = 2,
                  kernel: int = 0,
+                 objstep: bool = True,
                  c: int | None = 0) -> SisypheImage:
         """
         Calc SisypheImage mask of the head.
@@ -2739,6 +2832,8 @@ class SisypheImage(object):
             number of binary morphology iterations (default 2)
         kernel : int
             structuring element size, 0 automatic value (kernel=2 if spacing < 1.5 mm, kernel=1 otherwise)
+        objstep : bool
+            if False, steps 5 to 8 are skipped
         c : int | None
             - parameter only used for multi-component image
             - int index of the component to process (default 0, first component)
@@ -2809,44 +2904,60 @@ class SisypheImage(object):
             if kernel == 0:
                 if max(vol.getSpacing()) < 1.5: kernel = 2
                 else: kernel = 1
+            # < Revision 18/12/2025
+            kernel *= morphoiter
+            # Revision 18/12/2025 >
             # Erode
             if morphoiter > 0:
                 # noinspection PyUnresolvedReferences
-                i: cython.int
-                for i in range(morphoiter):
-                    img = BinaryErode(img, [kernel, kernel, kernel])
+                # < Revision 18/12/2025
+                # i: cython.int
+                # for i in range(morphoiter):
+                #     img = BinaryErode(img, [kernel, kernel, kernel])
+                img = BinaryErode(img, [kernel, kernel, kernel])
+                # Revision 18/12/2025 >
             # keep major blob (remove blobs in head/brain)
             blobs = sitkConnectedComponent(img)
             blobs = sitkRelabelComponent(blobs, sortByObjectSize=True)
             img = blobs == 1
             # Dilate
             if morphoiter > 0:
+                # < Revision 18/12/2025
                 # noinspection PyUnresolvedReferences
-                i: cython.int
-                for i in range(morphoiter):
-                    img = BinaryDilate(img, [kernel, kernel, kernel])
+                # i: cython.int
+                # for i in range(morphoiter):
+                #    img = BinaryDilate(img, [kernel, kernel, kernel])
+                img = BinaryDilate(img, [kernel, kernel, kernel])
+                # Revision 18/12/2025 >
         else: raise TypeError('kernel parameter type {} is not int.'.format(type(kernel)))
         # Object = not( background )
         img = sitkBinaryNot(img)
         # Object processing
-        if isinstance(kernel, int):
-            # Erode
-            if morphoiter > 0:
-                # noinspection PyUnresolvedReferences
-                i: cython.int
-                for i in range(morphoiter):
+        if objstep:
+            if isinstance(kernel, int):
+                # Erode
+                if morphoiter > 0:
+                    # < Revision 18/12/2025
+                    # noinspection PyUnresolvedReferences
+                    # i: cython.int
+                    # for i in range(morphoiter):
+                    #     img = BinaryErode(img, [kernel, kernel, kernel])
                     img = BinaryErode(img, [kernel, kernel, kernel])
-            # keep major blob (remove blobs in head/brain)
-            blobs = sitkConnectedComponent(img)
-            blobs = sitkRelabelComponent(blobs, sortByObjectSize=True)
-            img = blobs == 1
-            # Dilate
-            if morphoiter > 0:
-                # noinspection PyUnresolvedReferences
-                i: cython.int
-                for i in range(morphoiter):
+                    # Revision 18/12/2025 >
+                # keep major blob (remove blobs in head/brain)
+                blobs = sitkConnectedComponent(img)
+                blobs = sitkRelabelComponent(blobs, sortByObjectSize=True)
+                img = blobs == 1
+                # Dilate
+                if morphoiter > 0:
+                    # < Revision 18/12/2025
+                    # noinspection PyUnresolvedReferences
+                    # i: cython.int
+                    # for i in range(morphoiter):
+                    #     img = BinaryDilate(img, [kernel, kernel, kernel])
                     img = BinaryDilate(img, [kernel, kernel, kernel])
-        else: raise TypeError('kernel parameter type {} is not int.'.format(type(kernel)))
+                    # Revision 18/12/2025 >
+            else: raise TypeError('kernel parameter type {} is not int.'.format(type(kernel)))
         return SisypheImage(img)
 
     def getMaskROI(self,
@@ -2962,7 +3073,8 @@ class SisypheImage(object):
                         break
         else: raise TypeError('kernel parameter type {} is not int.'.format(type(kernel)))
         # Filling
-        if fill == '2d':
+        # < Revision 25/12/2025
+        if fill in ('2d', '3D'):
             f = BinaryFillholeImageFilter()
             # noinspection PyUnresolvedReferences
             i: cython.int
@@ -2970,14 +3082,16 @@ class SisypheImage(object):
                 slc = img[:, :, i]
                 slc = f.Execute(slc)
                 img[:, :, i] = slc
-        elif fill == '3d':
+        elif fill in ('3d', '3D'):
             img = BinaryFillhole(img)
+        # Revision 25/12/2025 >
         return SisypheROI(img)
 
     def getMaskROI2(self,
                     algo: str = 'huang',
                     morphoiter: int = 2,
                     kernel: int = 0,
+                    objstep: bool = True,
                     c: int | None = 0) -> SisypheROI:
         """
         Calc Sisyphe.core.sisypheROI.SisypheROI mask of the head.
@@ -2991,6 +3105,8 @@ class SisypheImage(object):
             number of binary morphology iterations
         kernel : int
             structuring element size, 0 automatic value (kernel=2 if spacing < 1.5 mm, kernel=1 otherwise)
+        objstep : bool
+            if False, steps 5 to 8 are skipped
         c : int | None
             - parameter only used for multi-component image
             - int index of the component to process (default 0, first component)
@@ -3062,44 +3178,60 @@ class SisypheImage(object):
             if kernel == 0:
                 if max(vol.getSpacing()) < 1.5: kernel = 2
                 else: kernel = 1
+            # < Revision 18/12/2025
+            kernel *= morphoiter
+            # Revision 18/12/2025 >
             # Erode
             if morphoiter > 0:
+                # < Revision 18/12/2025
                 # noinspection PyUnresolvedReferences
-                i: cython.int
-                for i in range(morphoiter):
-                    img = BinaryErode(img, [kernel, kernel, kernel])
+                # i: cython.int
+                # for i in range(morphoiter):
+                #     img = BinaryErode(img, [kernel, kernel, kernel])
+                img = BinaryErode(img, [kernel, kernel, kernel])
+                # Revision 18/12/2025 >
             # keep major blob (remove blobs in head/brain)
             blobs = sitkConnectedComponent(img)
             blobs = sitkRelabelComponent(blobs, sortByObjectSize=True)
             img = blobs == 1
             # Dilate
             if morphoiter > 0:
+                # < Revision 18/12/2025
                 # noinspection PyUnresolvedReferences
-                i: cython.int
-                for i in range(morphoiter):
-                    img = BinaryDilate(img, [kernel, kernel, kernel])
+                # i: cython.int
+                # for i in range(morphoiter):
+                #    img = BinaryDilate(img, [kernel, kernel, kernel])
+                img = BinaryDilate(img, [kernel, kernel, kernel])
+                # Revision 18/12/2025 >
         else: raise TypeError('kernel parameter type {} is not int.'.format(type(kernel)))
         # Object = not( background )
         img = sitkBinaryNot(img)
         # Object processing
-        if isinstance(kernel, int):
-            # Erode
-            if morphoiter > 0:
-                # noinspection PyUnresolvedReferences
-                i: cython.int
-                for i in range(morphoiter):
+        if objstep:
+            if isinstance(kernel, int):
+                # Erode
+                if morphoiter > 0:
+                    # < Revision 18/12/2025
+                    # noinspection PyUnresolvedReferences
+                    # i: cython.int
+                    # for i in range(morphoiter):
+                    #     img = BinaryErode(img, [kernel, kernel, kernel])
                     img = BinaryErode(img, [kernel, kernel, kernel])
-            # keep major blob (remove blobs in head/brain)
-            blobs = sitkConnectedComponent(img)
-            blobs = sitkRelabelComponent(blobs, sortByObjectSize=True)
-            img = blobs == 1
-            # Dilate
-            if morphoiter > 0:
-                # noinspection PyUnresolvedReferences
-                i: cython.int
-                for i in range(morphoiter):
+                    # Revision 18/12/2025 >
+                # keep major blob (remove blobs in head/brain)
+                blobs = sitkConnectedComponent(img)
+                blobs = sitkRelabelComponent(blobs, sortByObjectSize=True)
+                img = blobs == 1
+                # Dilate
+                if morphoiter > 0:
+                    # < Revision 18/12/2025
+                    # noinspection PyUnresolvedReferences
+                    # i: cython.int
+                    # for i in range(morphoiter):
+                    #     img = BinaryDilate(img, [kernel, kernel, kernel])
                     img = BinaryDilate(img, [kernel, kernel, kernel])
-        else: raise TypeError('kernel parameter type {} is not int.'.format(type(kernel)))
+                    # Revision 18/12/2025 >
+            else: raise TypeError('kernel parameter type {} is not int.'.format(type(kernel)))
         return SisypheROI(img)
 
     # < Revision 14/01/2025
@@ -5289,12 +5421,12 @@ class SisypheImage(object):
 
     def saveToJSON(self, filename: str) -> None:
         """
-        Save the current SisypheImage instance to a Json (.json) file.
+        Save the current SisypheImage instance to a JSON (.json) file.
 
         Parameters
         ----------
         filename : str
-            Json file name
+            JSON file name
         """
         if not self.isEmpty():
             writeToJSON(self._sitk_image, filename)
@@ -5558,10 +5690,10 @@ class SisypheBinaryImage(SisypheImage):
             - if True, copy image to SisypheBinaryImage if datatype is unit8
             - if False, create only a new SisypheBinaryImage with the same image geometry (size, spacing, origin, orientation)
         **kargs :
-            - size, tuple[float, float, float] | list[float, float, float]
+            - size, tuple[float, float, float] | list[float]
             - datatype, str
-            - spacing, tuple[float, float, float] | list[float, float, float]
-            - direction, tuple[float, ...] | list[float, ...] (9 elements)
+            - spacing, tuple[float, float, float] | list[float]
+            - direction, tuple[float, ...] | list[float] (9 elements)
         """
         if image is None:
             kargs['datatype'] = 'uint8'
@@ -5747,9 +5879,9 @@ class SisypheBinaryImage(SisypheImage):
         ----------
         img : numpy.ndarray
             image to copy
-        spacing : tuple[float, float, float] | list[float, float, float]
+        spacing : tuple[float, float, float] | list[float]
             voxel sizes in mm (default 1.0, 1.0, 1.0)
-        origin : tuple[float, float, float] | list[float, float, float]
+        origin : tuple[float, float, float] | list[float]
             origin coordinates (default 0.0, 0.0, 0.0)
         direction : tuple[float, ...] | list[float]
             axes directions

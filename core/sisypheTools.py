@@ -288,7 +288,10 @@ class DistanceWidget(vtkDistanceWidget, NamedWidget):
         bool
             True if visible
         """
-        return self.GetDistanceRepresentation().GetVisibility()
+        # < Revision 08/01/2025
+        # return self.GetDistanceRepresentation().GetVisibility()
+        return self.GetDistanceRepresentation().GetVisibility() > 0
+        # Revision 08/01/2025 >
 
     def setColor(self, c: vectorFloat3) -> None:
         """
@@ -300,10 +303,15 @@ class DistanceWidget(vtkDistanceWidget, NamedWidget):
             color, red, green, blue components (between 0.0 and 1.0)
         """
         r = self.GetDistanceRepresentation()
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetAxisProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetAxis().GetTitleTextProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetAxis().GetLabelTextProperty().SetColor(c[0], c[1], c[2])
 
     def getColor(self) -> vectorFloat3:
@@ -316,6 +324,7 @@ class DistanceWidget(vtkDistanceWidget, NamedWidget):
             color, red, green, blue components (between 0.0 and 1.0)
         """
         r = self.GetDistanceRepresentation()
+        # noinspection PyUnresolvedReferences
         return r.GetPoint1Representation().GetProperty().GetColor()
 
     def setSelectedColor(self, c: vectorFloat3) -> None:
@@ -328,7 +337,9 @@ class DistanceWidget(vtkDistanceWidget, NamedWidget):
             color, red, green, blue components (between 0.0 and 1.0)
         """
         r = self.GetDistanceRepresentation()
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetSelectedProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetSelectedProperty().SetColor(c[0], c[1], c[2])
 
     def getSelectedColor(self) -> vectorFloat3:
@@ -341,6 +352,7 @@ class DistanceWidget(vtkDistanceWidget, NamedWidget):
             color, red, green, blue components (between 0.0 and 1.0)
         """
         r = self.GetDistanceRepresentation()
+        # noinspection PyUnresolvedReferences
         return r.GetPoint1Representation().GetSelectedProperty().GetColor()
 
     def setOpacity(self, alpha: float) -> None:
@@ -353,12 +365,19 @@ class DistanceWidget(vtkDistanceWidget, NamedWidget):
             opacity between 0.0 (transparent) to 1.0 (opaque)
         """
         r = self.GetDistanceRepresentation()
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetSelectedProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetSelectedProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetAxisProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetAxis().GetTitleTextProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetAxis().GetLabelTextProperty().SetOpacity(alpha)
 
     def getOpacity(self) -> float:
@@ -370,6 +389,7 @@ class DistanceWidget(vtkDistanceWidget, NamedWidget):
         float
             opacity between 0.0 (transparent) to 1.0 (opaque)
         """
+        # noinspection PyUnresolvedReferences
         return self.GetDistanceRepresentation().GetAxisProperty().GetOpacity()
 
     def setLineWidth(self, width: float) -> None:
@@ -382,10 +402,15 @@ class DistanceWidget(vtkDistanceWidget, NamedWidget):
             line width
         """
         r = self.GetDistanceRepresentation()
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetSelectedProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetSelectedProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetAxisProperty().SetLineWidth(width)
 
     def getLineWidth(self) -> float:
@@ -397,6 +422,7 @@ class DistanceWidget(vtkDistanceWidget, NamedWidget):
         float
             line width
         """
+        # noinspection PyUnresolvedReferences
         return self.GetDistanceRepresentation().GetPoint1Representation().GetProperty().GetLineWidth()
 
     def setTextProperty(self, fontname: str = _FFAMILY, bold: bool = False, italic: bool = False) -> None:
@@ -412,6 +438,7 @@ class DistanceWidget(vtkDistanceWidget, NamedWidget):
         italic : bool
             text in italic (default False)
         """
+        # noinspection PyUnresolvedReferences
         r = self.GetDistanceRepresentation().GetAxis()
         r1 = r.GetTitleTextProperty()
         r1.SetBold(bold)
@@ -445,6 +472,7 @@ class DistanceWidget(vtkDistanceWidget, NamedWidget):
             - first bool, is bold ?
             - second bool, is italic ?
         """
+        # noinspection PyUnresolvedReferences
         r = self.GetDistanceRepresentation().GetAxis().GetTitleTextProperty()
         bold = r.GetBold()
         italic = r.GetItalic()
@@ -600,7 +628,10 @@ class OrthogonalDistanceWidget(vtkBiDimensionalWidget, NamedWidget):
         bool
             True if visible
         """
-        return self.GetBiDimensionalRepresentation().GetVisibility()
+        # < Revision 08/01/2026
+        # return self.GetBiDimensionalRepresentation().GetVisibility()
+        return self.GetBiDimensionalRepresentation().GetVisibility() > 0
+        # Revision 08/01/2026 >
 
     def setColor(self, c: vectorFloat3) -> None:
         """
@@ -612,11 +643,17 @@ class OrthogonalDistanceWidget(vtkBiDimensionalWidget, NamedWidget):
             color, red, green, blue components (between 0.0 and 1.0)
         """
         r = self.GetBiDimensionalRepresentation()
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetPoint3Representation().GetProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetPoint4Representation().GetProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetLineProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetTextProperty().SetColor(c[0], c[1], c[2])
 
     def getColor(self) -> vectorFloat3:
@@ -629,6 +666,7 @@ class OrthogonalDistanceWidget(vtkBiDimensionalWidget, NamedWidget):
             color, red, green, blue components (between 0.0 and 1.0)
         """
         r = self.GetBiDimensionalRepresentation()
+        # noinspection PyUnresolvedReferences
         return r.GetLineProperty().GetColor()
 
     def setSelectedColor(self, c: vectorFloat3) -> None:
@@ -641,10 +679,15 @@ class OrthogonalDistanceWidget(vtkBiDimensionalWidget, NamedWidget):
             color, red, green, blue components (between 0.0 and 1.0)
         """
         r = self.GetBiDimensionalRepresentation()
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetSelectedProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetSelectedProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetPoint3Representation().GetSelectedProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetPoint4Representation().GetSelectedProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetSelectedLineProperty().SetColor(c[0], c[1], c[2])
 
     def getSelectedColor(self) -> vectorFloat3:
@@ -657,6 +700,7 @@ class OrthogonalDistanceWidget(vtkBiDimensionalWidget, NamedWidget):
             color, red, green, blue components (between 0.0 and 1.0)
         """
         r = self.GetBiDimensionalRepresentation()
+        # noinspection PyUnresolvedReferences
         return r.GetSelectedLineProperty().GetColor()
 
     def setOpacity(self, alpha: float) -> None:
@@ -669,16 +713,27 @@ class OrthogonalDistanceWidget(vtkBiDimensionalWidget, NamedWidget):
             opacity between 0.0 (transparent) to 1.0 (opaque)
         """
         r = self.GetBiDimensionalRepresentation()
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetPoint3Representation().GetProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetPoint4Representation().GetProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetSelectedProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetSelectedProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetPoint3Representation().GetSelectedProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetPoint4Representation().GetSelectedProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetLineProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetSelectedLineProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetTextProperty().SetOpacity(alpha)
 
     def getOpacity(self) -> float:
@@ -690,6 +745,7 @@ class OrthogonalDistanceWidget(vtkBiDimensionalWidget, NamedWidget):
         float
             opacity between 0.0 (transparent) to 1.0 (opaque)
         """
+        # noinspection PyUnresolvedReferences
         return self.GetBiDimensionalRepresentation().GetLineProperty().GetOpacity()
 
     def setLineWidth(self, width: float) -> None:
@@ -702,15 +758,25 @@ class OrthogonalDistanceWidget(vtkBiDimensionalWidget, NamedWidget):
             line width
         """
         r = self.GetBiDimensionalRepresentation()
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetPoint3Representation().GetProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetPoint4Representation().GetProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetSelectedProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetSelectedProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetPoint3Representation().GetSelectedProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetPoint4Representation().GetSelectedProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetLineProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetSelectedLineProperty().SetLineWidth(width)
 
     def getLineWidth(self) -> float:
@@ -722,6 +788,7 @@ class OrthogonalDistanceWidget(vtkBiDimensionalWidget, NamedWidget):
         float
             line width
         """
+        # noinspection PyUnresolvedReferences
         return self.GetBiDimensionalRepresentation().GetPoint1Representation().GetProperty().GetLineWidth()
 
     def setTextProperty(self, fontname: str = _FFAMILY, bold: bool = False, italic: bool = False) -> None:
@@ -737,6 +804,7 @@ class OrthogonalDistanceWidget(vtkBiDimensionalWidget, NamedWidget):
         italic : bool
             text in italic (default False)
         """
+        # noinspection PyUnresolvedReferences
         r = self.GetBiDimensionalRepresentation().GetTextProperty()
         r.SetBold(bold)
         r.SetItalic(italic)
@@ -759,6 +827,7 @@ class OrthogonalDistanceWidget(vtkBiDimensionalWidget, NamedWidget):
             - first bool, is bold ?
             - second bool, is italic ?
         """
+        # noinspection PyUnresolvedReferences
         r = self.GetBiDimensionalRepresentation().GetTextProperty()
         bold = r.GetBold()
         italic = r.GetItalic()
@@ -840,6 +909,7 @@ class OrthogonalDistanceWidget(vtkBiDimensionalWidget, NamedWidget):
         tuple[float, float]
             distances in mm
         """
+        # noinspection PyUnresolvedReferences
         r = self.GetDistanceRepresentation()
         return r.GetLength1(), r.GetLength2()
 
@@ -912,7 +982,10 @@ class AngleWidget(vtkAngleWidget, NamedWidget):
         bool
             True if visible
         """
-        return self.GetAngleRepresentation().GetVisibility()
+        # < Revision 08/01/2026
+        # return self.GetAngleRepresentation().GetVisibility()
+        return self.GetAngleRepresentation().GetVisibility() > 0
+        # Revision 08/01/2026 >
 
     def setColor(self, c: vectorFloat3) -> None:
         """
@@ -924,14 +997,23 @@ class AngleWidget(vtkAngleWidget, NamedWidget):
             color, red, green, blue components (between 0.0 and 1.0)
         """
         r = self.GetAngleRepresentation()
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetCenterRepresentation().GetProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetArc().GetProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetRay1().GetProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetRay2().GetProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetArc().GetLabelTextProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetRay1().GetLabelTextProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetRay2().GetLabelTextProperty().SetColor(c[0], c[1], c[2])
 
     def getColor(self) -> vectorFloat3:
@@ -944,6 +1026,7 @@ class AngleWidget(vtkAngleWidget, NamedWidget):
             color, red, green, blue components (between 0.0 and 1.0)
         """
         r = self.GetAngleRepresentation()
+        # noinspection PyUnresolvedReferences
         return r.GetPoint1Representation().GetProperty().GetColor()
 
     def setSelectedColor(self, c: vectorFloat3) -> None:
@@ -956,8 +1039,11 @@ class AngleWidget(vtkAngleWidget, NamedWidget):
             color, red, green, blue components (between 0.0 and 1.0)
         """
         r = self.GetAngleRepresentation()
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetSelectedProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetSelectedProperty().SetColor(c[0], c[1], c[2])
+        # noinspection PyUnresolvedReferences
         r.GetCenterRepresentation().GetSelectedProperty().SetColor(c[0], c[1], c[2])
 
     def getSelectedColor(self) -> vectorFloat3:
@@ -970,6 +1056,7 @@ class AngleWidget(vtkAngleWidget, NamedWidget):
             color, red, green, blue components (between 0.0 and 1.0)
         """
         r = self.GetAngleRepresentation()
+        # noinspection PyUnresolvedReferences
         return r.GetPoint1Representation().GetSelectedProperty().GetColor()
 
     def setOpacity(self, alpha: float) -> None:
@@ -982,14 +1069,23 @@ class AngleWidget(vtkAngleWidget, NamedWidget):
             opacity between 0.0 (transparent) to 1.0 (opaque)
         """
         r = self.GetAngleRepresentation()
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetCenterRepresentation().GetProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetArc().GetProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetRay1().GetProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetRay2().GetProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetArc().GetLabelTextProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetRay1().GetLabelTextProperty().SetOpacity(alpha)
+        # noinspection PyUnresolvedReferences
         r.GetRay1().GetLabelTextProperty().SetOpacity(alpha)
 
     def getOpacity(self) -> float:
@@ -1001,6 +1097,7 @@ class AngleWidget(vtkAngleWidget, NamedWidget):
         float
             opacity between 0.0 (transparent) to 1.0 (opaque)
         """
+        # noinspection PyUnresolvedReferences
         return self.GetAngleRepresentation().GetArc().GetProperty().GetOpacity()
 
     def setLineWidth(self, width: float) -> None:
@@ -1013,14 +1110,23 @@ class AngleWidget(vtkAngleWidget, NamedWidget):
             line width
         """
         r = self.GetAngleRepresentation()
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetCenterRepresentation().GetProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetPoint1Representation().GetSelectedProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetPoint2Representation().GetSelectedProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetCenterRepresentation().GetSelectedProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetArc().GetProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetRay1().GetProperty().SetLineWidth(width)
+        # noinspection PyUnresolvedReferences
         r.GetRay2().GetProperty().SetLineWidth(width)
 
     def getLineWidth(self) -> float:
@@ -1032,6 +1138,7 @@ class AngleWidget(vtkAngleWidget, NamedWidget):
         float
             line width
         """
+        # noinspection PyUnresolvedReferences
         return self.GetAngleRepresentation().GetPoint1Representation().GetProperty().GetLineWidth()
 
     def setTextProperty(self, fontname: str = _FFAMILY, bold: bool = False, italic: bool = False) -> None:
@@ -1047,6 +1154,7 @@ class AngleWidget(vtkAngleWidget, NamedWidget):
         italic : bool
             text in italic (default False)
         """
+        # noinspection PyUnresolvedReferences
         r = self.GetAngleRepresentation().GetArc().GetLabelTextProperty()
         r.SetBold(bold)
         r.SetItalic(italic)
@@ -1069,6 +1177,7 @@ class AngleWidget(vtkAngleWidget, NamedWidget):
             - first bool, is bold ?
             - second bool, is italic ?
         """
+        # noinspection PyUnresolvedReferences
         r = self.GetAngleRepresentation().GetArc().GetLabelTextProperty()
         bold = r.GetBold()
         italic = r.GetItalic()
@@ -1149,6 +1258,7 @@ class AngleWidget(vtkAngleWidget, NamedWidget):
         float
             angle in degrees
         """
+        # noinspection PyUnresolvedReferences
         return self.GetDistanceRepresentation().GetAngle()
 
 
@@ -1218,7 +1328,10 @@ class BoxWidget(vtkBorderWidget, NamedWidget):
         bool
             True if visible
         """
-        return self.GetBorderRepresentation().GetVisibility()
+        # < Revision 08/01/2026
+        # return self.GetBorderRepresentation().GetVisibility()
+        return self.GetBorderRepresentation().GetVisibility() > 0
+        # Revision 08/01/2026 >
 
     def setColor(self, c: vectorFloat3) -> None:
         """
@@ -1303,6 +1416,7 @@ class BoxWidget(vtkBorderWidget, NamedWidget):
         if isinstance(v, bool):
             # < Revision 18/04/2025
             # self.GetRepresentation().SetProportionalResize(v)
+            # noinspection PyUnresolvedReferences
             self.GetRepresentation().SetProportionalResize(int(v))
             # Revision 18/04/2025 >
         else: raise TypeError('parameter type {} is not bool'.format(type(v)))
@@ -1319,6 +1433,7 @@ class BoxWidget(vtkBorderWidget, NamedWidget):
         """
         # < Revision 18/04/2025
         # return self.GetRepresentation().GetProportionalResize()
+        # noinspection PyUnresolvedReferences
         return self.GetRepresentation().GetProportionalResize() > 0
         # Revision 18/04/2025 >
 
@@ -1478,7 +1593,10 @@ class TextWidget(vtkTextWidget, NamedWidget):
         bool
             True if visible
         """
-        return self.GetRepresentation().GetVisibility()
+        # < Revision 08/01/2026
+        # return self.GetRepresentation().GetVisibility()
+        return self.GetRepresentation().GetVisibility() > 0
+        # Revision 08/01/2026 >
 
     def setColor(self, c: vectorFloat3) -> None:
         """
@@ -1535,6 +1653,7 @@ class TextWidget(vtkTextWidget, NamedWidget):
         alpha : float
             opacity between 0.0 (transparent) to 1.0 (opaque)
         """
+        # noinspection PyUnresolvedReferences
         self.GetRepresentation().GetBorderProperty().SetOpacity(alpha)
         self.GetTextActor().GetTextProperty().SetOpacity(alpha)
 
@@ -1560,6 +1679,7 @@ class TextWidget(vtkTextWidget, NamedWidget):
         y : float
             y-axis coordinate
         """
+        # noinspection PyUnresolvedReferences
         self.GetRepresentation().SetPosition(x, y)
 
     def getPosition(self) -> vectorFloat2:
@@ -1571,6 +1691,7 @@ class TextWidget(vtkTextWidget, NamedWidget):
         tuple[float, float]
             x-axis and y-axis coordinates
         """
+        # noinspection PyUnresolvedReferences
         return self.GetRepresentation().GetPosition()
 
     def setTextProperty(self, fontname: str = _FFAMILY, bold: bool = False, italic: bool = False) -> None:
@@ -1624,6 +1745,7 @@ class TextWidget(vtkTextWidget, NamedWidget):
             widget text
         """
         if isinstance(txt, str):
+            # noinspection PyUnresolvedReferences
             self.GetRepresentation().SetText(txt)
         else: raise TypeError('parameter type {} is not str'.format(type(txt)))
 
@@ -1636,6 +1758,7 @@ class TextWidget(vtkTextWidget, NamedWidget):
         str
             widget text
         """
+        # noinspection PyUnresolvedReferences
         return self.GetRepresentation().GetText()
 
     def setDefaultRepresentation(self) -> None:
@@ -1644,7 +1767,9 @@ class TextWidget(vtkTextWidget, NamedWidget):
         """
         self.CreateDefaultRepresentation()
         r = self.GetRepresentation()
+        # noinspection PyUnresolvedReferences
         r.SetShowBorderToOff()
+        # noinspection PyUnresolvedReferences
         r.GetBorderProperty().SetLineWidth(_HLWIDTH)
         self.GetTextActor().SetTextScaleModeToNone()
         pr = self.GetTextActor().GetTextProperty()
@@ -2265,11 +2390,14 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
             if not v:
                 # < Revision 21/05/2025
                 # self._alpha = self.GetHandleRepresentation().GetProperty().GetOpacity()
+                # noinspection PyUnresolvedReferences
                 alpha = self.GetHandleRepresentation().GetProperty().GetOpacity()
                 if alpha != 0.0: self._alpha = alpha
                 # Revision 21/05/2025 >
+                # noinspection PyUnresolvedReferences
                 self.GetHandleRepresentation().GetProperty().SetOpacity(0.0)
             else:
+                # noinspection PyUnresolvedReferences
                 self.GetHandleRepresentation().GetProperty().SetOpacity(self._alpha)
             self._targetText.SetVisibility(v)
             if self.isVolumeDisplay():
@@ -2293,6 +2421,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         bool
             True if visible
         """
+        # noinspection PyUnresolvedReferences
         return self.GetHandleRepresentation().GetProperty().GetOpacity() > 0
 
     def setTextVisibility(self, v: bool) -> None:
@@ -2386,6 +2515,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         if isinstance(c, (list, tuple)):
             if len(c) == 3:
                 if all([0.0 <= i <= 1.0 for i in c]):
+                    # noinspection PyUnresolvedReferences
                     self.GetHandleRepresentation().GetProperty().SetColor(c[0], c[1], c[2])
                     self._targetText.GetTextProperty().SetColor(c[0], c[1], c[2])
                     self._sphereActor.GetProperty().SetColor(c[0], c[1], c[2])
@@ -2405,6 +2535,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         tuple[float, float, float]
             color, red, green, blue components (between 0.0 and 1.0)
         """
+        # noinspection PyUnresolvedReferences
         return self.GetRepresentation().GetProperty().GetColor()
 
     def setSelectedColor(self, c: vectorFloat3) -> None:
@@ -2419,6 +2550,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         if isinstance(c, (list, tuple)):
             if len(c) == 3:
                 if all([0.0 <= i <= 1.0 for i in c]):
+                    # noinspection PyUnresolvedReferences
                     self.GetHandleRepresentation().GetSelectedProperty().SetColor(c[0], c[1], c[2])
                 else: raise ValueError('parameter value is not between 0.0 and 1.0.')
             else: raise ValueError('list length {} is not 3.'.format(len(c)))
@@ -2433,6 +2565,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         tuple[float, float, float]
             color, red, green, blue components (between 0.0 and 1.0)
         """
+        # noinspection PyUnresolvedReferences
         return self.GetHandleRepresentation().GetSelectedProperty().GetColor()
 
     def setPosition(self, p: vectorFloat3) -> None:
@@ -2561,7 +2694,9 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
             line width
         """
         if isinstance(width, float):
+            # noinspection PyUnresolvedReferences
             self.GetHandleRepresentation().GetProperty().SetLineWidth(width)
+            # noinspection PyUnresolvedReferences
             self.GetHandleRepresentation().GetSelectedProperty().SetLineWidth(width)
             self._contourActor.GetProperty().SetLineWidth(width)
         else: raise TypeError('parameter functype {} is not float'.format(type(width)))
@@ -2575,6 +2710,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         float
             line width
         """
+        # noinspection PyUnresolvedReferences
         return self.GetHandleRepresentation().GetProperty().GetLineWidth()
 
     def setHandleSize(self, size: float) -> None:
@@ -2601,6 +2737,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
             cross.AddInputConnection(linev.GetOutputPort())
             # noinspection PyArgumentList
             cross.Update()
+            # noinspection PyUnresolvedReferences
             self.GetHandleRepresentation().SetHandle(cross.GetOutput())
         else: raise TypeError('parameter type {} is not float'.format(type(size)))
 
@@ -2652,7 +2789,9 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         """
         if isinstance(alpha, float):
             if 0.0 <= alpha <= 1.0:
+                # noinspection PyUnresolvedReferences
                 self.GetHandleRepresentation().GetProperty().SetOpacity(alpha)
+                # noinspection PyUnresolvedReferences
                 self.GetHandleRepresentation().GetSelectedProperty().SetOpacity(alpha)
                 self._targetText.GetTextProperty().SetOpacity(alpha)
                 self._contourActor.GetProperty().SetOpacity(alpha)
@@ -2669,6 +2808,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         float
             opacity between 0.0 (transparent) to 1.0 (opaque)
         """
+        # noinspection PyUnresolvedReferences
         return self.GetHandleRepresentation().GetProperty().GetOpacity()
 
     def setInterpolation(self, inter: int) -> None:
@@ -3279,12 +3419,12 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
 
     def parseXMLNode(self, currentnode: minidom.Element) -> None:
         """
-        Read the current HandleWidget instance attributes from xml document instance.
+        Read the current HandleWidget instance attributes from XML document instance.
 
         Parameters
         ----------
         currentnode : minidom.Element
-            xml root node
+            XML root node
         """
         if currentnode.nodeName == 'point':
             for node in currentnode.childNodes:
@@ -3335,8 +3475,10 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
                         elif node.nodeName == 'linewidth': self.setLineWidth(float(buff))
                         # handlesize
                         elif node.nodeName == 'handlesize': self.setHandleSize(float(buff))
+                        # < Revision 08/01/2026
                         # handlelinewidth
-                        elif node.nodeName == 'handlelinewidth': self.setHandleLineWidth(float(buff))
+                        # elif node.nodeName == 'handlelinewidth': self.setHandleLineWidth(float(buff))
+                        # Revision 08/01/2026 >
                         # tolerance
                         elif node.nodeName == 'tolerance': self.setTolerance(int(buff))
                         # sphereradius
@@ -3359,12 +3501,12 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
 
     def parseXML(self, doc: minidom.Document):
         """
-        Read the current HandleWidget instance attributes from xml document instance.
+        Read the current HandleWidget instance attributes from XML document instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -5164,8 +5306,11 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         r.GetLineProperty().DeepCopy(self.GetLineRepresentation().GetLineProperty())
         r.GetSelectedLineProperty().DeepCopy(self.GetLineRepresentation().GetSelectedLineProperty())
         r.SetTolerance(self.GetLineRepresentation().GetTolerance())
+        # < Revision 08/01/2026
+        # self.GetLineRepresentation().GetLineColor()
         # noinspection PyArgumentList
-        r.SetLineColor(self.GetLineRepresentation().GetLineColor())
+        r.SetLineColor(self.GetLineRepresentation().GetLineProperty().GetColor())
+        # Revision 08/01/2026 >
         # noinspection PyTypeChecker
         r.SetPoint1WorldPosition(self.GetLineRepresentation().GetPoint1WorldPosition())
         # noinspection PyTypeChecker
@@ -5726,12 +5871,12 @@ class LineWidget(vtkLineWidget2, NamedWidget):
 
     def parseXMLNode(self, currentnode: minidom.Element) -> None:
         """
-        Read the current LineWidget instance attributes from xml document instance.
+        Read the current LineWidget instance attributes from XML document instance.
 
         Parameters
         ----------
         currentnode : minidom.Element
-            xml root node
+            XML root node
         """
         if currentnode.nodeName == 'line':
             for node in currentnode.childNodes:
@@ -6659,19 +6804,31 @@ class ToolWidgetCollection(object):
             r.InstantiateHandleRepresentation()
             r1 = r.GetPoint1Representation()
             r1.SetHandleSize(_HSIZE)
+            # noinspection PyUnresolvedReferences
             r1.GetProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r1.GetProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r1.GetProperty().SetColor(self._color[0], self._color[1], self._color[2])
+            # noinspection PyUnresolvedReferences
             r1.GetSelectedProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r1.GetSelectedProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r1.GetSelectedProperty().SetColor(self._scolor[0], self._scolor[1], self._scolor[2])
             r2 = r.GetPoint2Representation()
             r2.SetHandleSize(_HSIZE)
+            # noinspection PyUnresolvedReferences
             r2.GetProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r2.GetProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r2.GetProperty().SetColor(self._color[0], self._color[1], self._color[2])
+            # noinspection PyUnresolvedReferences
             r2.GetSelectedProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r2.GetSelectedProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r2.GetSelectedProperty().SetColor(self._scolor[0], self._scolor[1], self._scolor[2])
             r.SetHandleSize(_HSIZE)
             r.RulerModeOff()
@@ -6728,32 +6885,56 @@ class ToolWidgetCollection(object):
             r = vtkBiDimensionalRepresentation2D()
             r.InstantiateHandleRepresentation()
             r.GetPoint1Representation().SetHandleSize(_HSIZE)
+            # noinspection PyUnresolvedReferences
             r.GetPoint1Representation().GetProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetPoint1Representation().GetProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r.GetPoint1Representation().GetProperty().SetColor(self._color[0], self._color[1], self._color[2])
+            # noinspection PyUnresolvedReferences
             r.GetPoint1Representation().GetSelectedProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetPoint1Representation().GetSelectedProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r.GetPoint1Representation().GetSelectedProperty().SetColor(self._scolor[0], self._scolor[1], self._scolor[2])
             r.GetPoint2Representation().SetHandleSize(_HSIZE)
+            # noinspection PyUnresolvedReferences
             r.GetPoint2Representation().GetProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetPoint2Representation().GetProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r.GetPoint2Representation().GetProperty().SetColor(self._color[0], self._color[1], self._color[2])
+            # noinspection PyUnresolvedReferences
             r.GetPoint2Representation().GetSelectedProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetPoint2Representation().GetSelectedProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r.GetPoint2Representation().GetSelectedProperty().SetColor(self._scolor[0], self._scolor[1], self._scolor[2])
             r.GetPoint3Representation().SetHandleSize(_HSIZE)
+            # noinspection PyUnresolvedReferences
             r.GetPoint3Representation().GetProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetPoint3Representation().GetProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r.GetPoint3Representation().GetProperty().SetColor(self._color[0], self._color[1], self._color[2])
+            # noinspection PyUnresolvedReferences
             r.GetPoint3Representation().GetSelectedProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetPoint3Representation().GetSelectedProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r.GetPoint3Representation().GetSelectedProperty().SetColor(self._scolor[0], self._scolor[1], self._scolor[2])
             r.GetPoint4Representation().SetHandleSize(_HSIZE)
+            # noinspection PyUnresolvedReferences
             r.GetPoint4Representation().GetProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetPoint4Representation().GetProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r.GetPoint4Representation().GetProperty().SetColor(self._color[0], self._color[1], self._color[2])
+            # noinspection PyUnresolvedReferences
             r.GetPoint4Representation().GetSelectedProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetPoint4Representation().GetSelectedProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r.GetPoint4Representation().GetSelectedProperty().SetColor(self._scolor[0], self._scolor[1], self._scolor[2])
             r.SetHandleSize(_HSIZE)
             r.SetTolerance(_TOL)
@@ -6799,25 +6980,43 @@ class ToolWidgetCollection(object):
             r = vtkAngleRepresentation2D()
             r.InstantiateHandleRepresentation()
             r.GetPoint1Representation().SetHandleSize(_HSIZE)
+            # noinspection PyUnresolvedReferences
             r.GetPoint1Representation().GetProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetPoint1Representation().GetProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r.GetPoint1Representation().GetProperty().SetColor(self._color[0], self._color[1], self._color[2])
+            # noinspection PyUnresolvedReferences
             r.GetPoint1Representation().GetSelectedProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetPoint1Representation().GetSelectedProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r.GetPoint1Representation().GetSelectedProperty().SetColor(self._scolor[0], self._scolor[1], self._scolor[2])
             r.GetPoint2Representation().SetHandleSize(_HSIZE)
+            # noinspection PyUnresolvedReferences
             r.GetPoint2Representation().GetProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetPoint2Representation().GetProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r.GetPoint2Representation().GetProperty().SetColor(self._color[0], self._color[1], self._color[2])
+            # noinspection PyUnresolvedReferences
             r.GetPoint2Representation().GetSelectedProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetPoint2Representation().GetSelectedProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r.GetPoint2Representation().GetSelectedProperty().SetColor(self._scolor[0], self._scolor[1], self._scolor[2])
             r.GetCenterRepresentation().SetHandleSize(_HSIZE)
+            # noinspection PyUnresolvedReferences
             r.GetCenterRepresentation().GetProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetCenterRepresentation().GetProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r.GetCenterRepresentation().GetProperty().SetColor(self._color[0], self._color[1], self._color[2])
+            # noinspection PyUnresolvedReferences
             r.GetCenterRepresentation().GetSelectedProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetCenterRepresentation().GetSelectedProperty().SetOpacity(self._alpha)
+            # noinspection PyUnresolvedReferences
             r.GetCenterRepresentation().GetSelectedProperty().SetColor(self._scolor[0], self._scolor[1], self._scolor[2])
             r.SetHandleSize(_HSIZE)
             r.SetTolerance(_TOL)
@@ -6925,9 +7124,13 @@ class ToolWidgetCollection(object):
             widget = TextWidget(name)
             widget.CreateDefaultRepresentation()
             r = widget.GetRepresentation()
+            # noinspection PyUnresolvedReferences
             r.SetText(text)
+            # noinspection PyUnresolvedReferences
             r.SetShowBorderToOff()
+            # noinspection PyUnresolvedReferences
             r.GetBorderProperty().SetLineWidth(self._lwidth)
+            # noinspection PyUnresolvedReferences
             r.GetBorderProperty().SetOpacity(self._alpha)
             widget.GetTextActor().SetTextScaleModeToNone()
             pr = widget.GetTextActor().GetTextProperty()
@@ -7031,12 +7234,12 @@ class ToolWidgetCollection(object):
 
     def createXML(self, doc: minidom.Document) -> None:
         """
-        Write the current ToolWidgetCollection instance attributes to xml document instance.
+        Write the current ToolWidgetCollection instance attributes to XML document instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -7061,12 +7264,12 @@ class ToolWidgetCollection(object):
 
     def parseXML(self, doc: minidom.Document) -> None:
         """
-        Read the current oolWidgetCollection instance attributes from xml document instance.
+        Read the current oolWidgetCollection instance attributes from XML document instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -7080,7 +7283,10 @@ class ToolWidgetCollection(object):
                     # < Revision 22/11/2025
                     # Purpose
                     elif node.nodeName == 'purpose':
-                        self.setPurpose(node.firstChild.data)
+                        # < Revision 10/01/2026
+                        if node.hasChildNodes():
+                            self.setPurpose(node.firstChild.data)
+                        # Revision 10/01/2026 >
                     # Revision 22/11/2025 >
                     elif node.nodeName == 'point':
                         # < Revision 20/11/2025

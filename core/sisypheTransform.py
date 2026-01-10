@@ -2,7 +2,7 @@
 External packages/modules
 -------------------------
 
-    - ANTs, image registration, http://stnava.github.io/ANTs/
+    - ANTs, image registration, https://stnava.github.io/ANTs/
     - DIPY, MR diffusion image processing, https://www.dipy.org/
     - NiBabel, Euler angle conversions, https://nipy.org/nibabel
     - Numpy, scientific computing, https://numpy.org/
@@ -1953,15 +1953,15 @@ class SisypheTransform(object):
 
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
-        Write the current SisypheTransform instance attributes to xml document instance. Use of this method is not
+        Write the current SisypheTransform instance attributes to XML document instance. Use of this method is not
         recommended (called internally by saveAs method).
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         currentnode : minidom.Element
-            xml root node
+            XML root node
         """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):
@@ -2034,13 +2034,13 @@ class SisypheTransform(object):
 
     def parseXMLNode(self, currentnode: minidom.Element) -> None:
         """
-        Read the current SisypheTransform instance attributes from xml document instance. The use of this method is
+        Read the current SisypheTransform instance attributes from XML document instance. The use of this method is
         not recommended (called internally by parseXML method).
 
         Parameters
         ----------
         currentnode : minidom.Element
-            xml document
+            XML document
         """
         if currentnode.nodeName == 'transform':
             buffmat = [0] * 9
@@ -2084,12 +2084,15 @@ class SisypheTransform(object):
                 # Matrix
                 elif node.nodeName == 'matrixrow1':
                     buff = node.firstChild.data
+                    # noinspection PyTypeChecker
                     buffmat[:3] = buff.split(' ')
                 elif node.nodeName == 'matrixrow2':
                     buff = node.firstChild.data
+                    # noinspection PyTypeChecker
                     buffmat[3:6] = buff.split(' ')
                 elif node.nodeName == 'matrixrow3':
                     buff = node.firstChild.data
+                    # noinspection PyTypeChecker
                     buffmat[-3:] = buff.split(' ')
                 elif node.nodeName == 'displacementfield':
                     if node.hasChildNodes():
@@ -2104,13 +2107,13 @@ class SisypheTransform(object):
 
     def parseXML(self, doc: minidom.Document) -> None:
         """
-        Read the current SisypheTransform instance attributes from xml document instance. The use of this method is
+        Read the current SisypheTransform instance attributes from XML document instance. The use of this method is
         not recommended (called internally by load method).
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -3676,6 +3679,7 @@ class SisypheTransformCollection(object):
                         if name in SisypheTransform.__dict__:
                             if prefix == 'get': return [trf.__getattribute__(name)() for trf in self]
                             else:
+                                # noinspection PyInconsistentReturns
                                 for trf in self: trf.__getattribute__(name)()
                         else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
                     else: raise AttributeError('Not get/set method')
@@ -3687,6 +3691,7 @@ class SisypheTransformCollection(object):
                         n = len(p)
                         if n == self.count():
                             if name in SisypheTransform.__dict__:
+                                # noinspection PyInconsistentReturns
                                 for i in range(n): self[i].__getattribute__(name)(p[i])
                             else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
                         else: raise ValueError('Number of items in list ({}) '
@@ -3694,6 +3699,7 @@ class SisypheTransformCollection(object):
                     # SisypheTransform set method argument is a single value (int, float, str, bool)
                     else:
                         if name in SisypheTransform.__dict__:
+                            # noinspection PyInconsistentReturns
                             for trf in self: trf.__getattribute__(name)(p)
                         else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
                 else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
@@ -4195,12 +4201,12 @@ class SisypheTransforms(SisypheTransformCollection):
 
     def createXML(self, doc: minidom.Document) -> None:
         """
-        Write the current SisypheTransforms instance attributes to xml document instance.
+        Write the current SisypheTransforms instance attributes to XML document instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -4218,12 +4224,12 @@ class SisypheTransforms(SisypheTransformCollection):
 
     def parseXML(self, doc: minidom.Document) -> None:
         """
-        Read the current SisypheTransforms instance attributes from xml document instance.
+        Read the current SisypheTransforms instance attributes from XML document instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement

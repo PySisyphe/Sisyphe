@@ -358,7 +358,7 @@ class SisypheMesh(object):
         ----------
         idx : int, list[int], tuple[int, ...] | slice
             x, y, z int indices or pythonic slicing (i.e. python slice object, used the syntax first:last:step)
-        value : list[float, float, float] | ndarray
+        value : list[float] | ndarray
             mesh point(s)
         """
         if isinstance(idx, int):
@@ -881,7 +881,7 @@ class SisypheMesh(object):
         ----------
         idx : int
             point index in the vtkPolyData
-        p : tuple[float, float, float] | list[float, float, float]
+        p : tuple[float, float, float] | list[float]
             point coordinates
         """
         self._polydata.GetPoints().SetPoint(idx, p)
@@ -1514,11 +1514,15 @@ class SisypheMesh(object):
                     i: cython.int
                     c: cython.int = 0
                     vp: cython.double
+                    # noinspection PyTypeHints
                     p1: cython.double[3]
+                    # noinspection PyTypeHints
                     p2: cython.double[3]
                     if depth == 0:
                         for i in range(n):
+                            # noinspection PyTypeChecker
                             p1 = points.GetPoint(i)
+                            # noinspection PyTypeChecker
                             p2 = vol.getVoxelCoordinatesFromWorldCoordinates(p1)
                             vp = float(img[p2[0], p2[1], p2[2]])
                             scalars.SetTuple1(i, vp)
@@ -1535,15 +1539,18 @@ class SisypheMesh(object):
                         elif feature == 'max': f = 3
                         elif feature == 'sum': f = 4
                         else: f = 0
+                        # noinspection PyTypeHints
                         v1: cython.double[3]
                         v: ndarray = zeros(10, dtype=np.double)
                         for i in range(n):
                             for j in range(depth):
+                                # noinspection PyTypeChecker
                                 p1 = points.GetPoint(i)
                                 v1 = normals.GetPoint(i)
                                 p1[0] -= v1[0]
                                 p1[1] -= v1[1]
                                 p1[2] -= v1[2]
+                                # noinspection PyTypeChecker
                                 p2 = vol.getVoxelCoordinatesFromWorldCoordinates(p1)
                                 v[j] = img[p2[0], p2[1], p2[2]]
                             if f == 0: scalars.SetTuple1(i, v.mean())
@@ -2118,9 +2125,9 @@ class SisypheMesh(object):
 
         Parameters
         ----------
-        p1 : list[float, float, float]
+        p1 : list[float]
             first point coordinates
-        p2 : list[float, float, float]
+        p2 : list[float]
             second point coordinates
         d : float
             line width (mm)
@@ -2142,9 +2149,9 @@ class SisypheMesh(object):
 
         Parameters
         ----------
-        p1 : list[float, float, float]
+        p1 : list[float]
             first point coordinates
-        p2 : list[float, float, float]
+        p2 : list[float]
             second point coordinates
         r : float
             tube radius (mm)
@@ -2176,7 +2183,7 @@ class SisypheMesh(object):
         ----------
         r : float
             sphere radius (mm)
-        p : list[float, float, float]
+        p : list[float]
             center coordinates
         res : int
             set the number of points in the latitude and longitude directions (default 64)
@@ -2213,7 +2220,7 @@ class SisypheMesh(object):
             length of the cube in the y-direction (mm)
         dz : float
             length of the cube in the z-direction (mm)
-        p : list[float, float, float]
+        p : list[float]
             position coordinates
         """
         cube = vtkCubeSource()
@@ -3046,9 +3053,9 @@ class SisypheMesh(object):
 
         Returns
         -------
-        tuple[float, list[float, float, float]]
+        tuple[float, list[float]]
             - float, distance between p and surface of the mesh
-            - list[float, float, float], coordinates of the closest surface point of the mesh
+            - list[float], coordinates of the closest surface point of the mesh
         """
         if self._polydata is not None:
             if isinstance(p, (list, tuple)):
@@ -3333,12 +3340,12 @@ class SisypheMesh(object):
     def ParseXML(self, doc: minidom.Document) -> None:
         """
         Read the current SisypheMesh instance attributes
-        from xml document instance.
+        from XML document instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             item = doc.getElementsByTagName('XMESH')
@@ -3481,9 +3488,9 @@ class SisypheMesh(object):
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         currentnode : minidom.Element
-            xml root node
+            XML root node
         """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):
@@ -3867,6 +3874,7 @@ class SisypheMeshCollection(object):
                         if name in SisypheMesh.__dict__:
                             if prefix == 'get': return [mesh.__getattribute__(name)() for mesh in self]
                             else:
+                                # noinspection PyInconsistentReturns
                                 for mesh in self: mesh.__getattribute__(name)()
                         else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
                     else: raise AttributeError('Not get/set method.'.format(self.__class__, name))
@@ -3878,6 +3886,7 @@ class SisypheMeshCollection(object):
                         n = len(p)
                         if n == self.count():
                             if name in SisypheMesh.__dict__:
+                                # noinspection PyInconsistentReturns
                                 for i in range(n): self[i].__getattribute__(name)(p[i])
                             else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
                         else: raise ValueError('Number of items in list ({}) '
@@ -3885,6 +3894,7 @@ class SisypheMeshCollection(object):
                     # SisypheMesh set method argument is a single value (int, float, str, bool)
                     else:
                         if name in SisypheMesh.__dict__:
+                            # noinspection PyInconsistentReturns
                             for mesh in self: mesh.__getattribute__(name)(p)
                         else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
                 else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))

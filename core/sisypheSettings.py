@@ -121,8 +121,8 @@ def initPySisypheUserPath() -> None:
     if not exists(path2): mkdir(path2)
     # Revision 30/10/2024 >
     # Database directory
-    path2 = join(path, 'database')
-    if not exists(path2): mkdir(path2)
+    database = join(path, 'database')
+    if not exists(path2): mkdir(database)
     # Models directory
     path2 = join(path, 'models')
     if not exists(path2): mkdir(path2)
@@ -133,6 +133,11 @@ def initPySisypheUserPath() -> None:
     path2 = join(path, 'segmentation')
     if not exists(path2): mkdir(path2)
     xmls = glob(join(path2, '*.xml'))
+    # < Revision 10/12/2025
+    # Prompts directory
+    path2 = join(path, 'prompts')
+    if not exists(path2): mkdir(path2)
+    # Revision 10/12/2025 >
     if len(xmls) > 0:
         for xml in xmls: copy(xml, path2)
     # Root
@@ -145,8 +150,10 @@ def initPySisypheUserPath() -> None:
         # < Revision 11/10/2025
         # Apply DPI scale factor to some settings
         f = getDPIScaleFactor()
+        # < Revision 04/12/2025
+        settings = SisypheSettings()
+        # Revision 04/12/2025 >
         if f > 1.0:
-            settings = SisypheSettings()
             # GUI settings
             v = settings.getFieldValue('GUI', 'ToolbarSize')
             v = int(f * v)
@@ -180,8 +187,12 @@ def initPySisypheUserPath() -> None:
             if v < 24: v = 24
             if v > 64: v = 64
             settings.setFieldValue('Viewport', 'IconSize', v)
-            settings.save()
         # Revision 11/10/2025 >
+        # < Revision 04/12/2025
+        settings.setFieldValue('Database', 'CurrentPath', database)
+        settings.setFieldValue('Database', 'DefaultPath', database)
+        settings.save()
+        # Revision 04/12/2025 >
     file = join(path, 'functions.xml')
     if not exists(file):
         default = join(path2, 'functions.xml')
@@ -200,8 +211,10 @@ def setUserSettingsToDefault() -> None:
     # < Revision 11/10/2025
     # Apply DPI scale factor to some settings
     f = getDPIScaleFactor()
+    # < Revision 04/12/2025
+    settings = SisypheSettings()
+    # Revision 04/12/2025 >
     if f > 1.0:
-        settings = SisypheSettings()
         # GUI settings
         v = settings.getFieldValue('GUI', 'ToolbarSize')
         v = int(f * v)
@@ -233,8 +246,13 @@ def setUserSettingsToDefault() -> None:
         if v < 24: v = 24
         if v > 64: v = 64
         settings.setFieldValue('Viewport', 'IconSize', v)
-        settings.save()
     # Revision 11/10/2025 >
+    # < Revision 04/12/2025
+    database = join(getUserPySisyphePath(), 'database')
+    settings.setFieldValue('Database', 'CurrentPath', database)
+    settings.setFieldValue('Database', 'DefaultPath', database)
+    settings.save()
+    # Revision 04/12/2025 >
     file = join(dpath, 'functions.xml')
     copy(file, upath)
 
@@ -324,8 +342,10 @@ class SisypheSettings(object):
             # < Revision 11/10/2025
             # Apply DPI scale factor to some settings
             f = getDPIScaleFactor()
+            # < Revision 04/12/2025
+            settings = SisypheSettings()
+            # Revision 04/12/2025 >
             if f > 1.0:
-                settings = SisypheSettings()
                 # GUI settings
                 v = settings.getFieldValue('GUI', 'ToolbarSize')
                 v = int(f * v)
@@ -357,8 +377,13 @@ class SisypheSettings(object):
                 if v < 24: v = 24
                 if v > 64: v = 64
                 settings.setFieldValue('Viewport', 'IconSize', v)
-                settings.save()
             # Revision 11/10/2025 >
+            # < Revision 04/12/2025
+            database = join(getUserPySisyphePath(), 'database')
+            settings.setFieldValue('Database', 'CurrentPath', database)
+            settings.setFieldValue('Database', 'DefaultPath', database)
+            settings.save()
+            # Revision 04/12/2025 >
         return path
 
     @classmethod

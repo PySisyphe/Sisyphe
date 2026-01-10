@@ -3,9 +3,10 @@ External packages/modules
 -------------------------
 
     - Cython, static compiler, https://cython.org/
-    - ANTs, image registration, http://stnava.github.io/ANTs/
+    - ANTs, image registration, https://stnava.github.io/ANTs/
     - ITK, medical image processing, https://itk.org/
     - Numpy, scientific computing, https://numpy.org/
+    - Pillow,  image processing, https://pillow.readthedocs.io/
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
     - SimpleITK, medical image processing, https://simpleitk.org/
     - vtk, visualization engine/3D rendering, https://vtk.org/
@@ -13,6 +14,8 @@ External packages/modules
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
+
+import sys
 
 from os import remove
 
@@ -33,6 +36,9 @@ from zlib import decompress
 
 from hashlib import md5
 
+if 'matplotlib' not in sys.modules:
+    import matplotlib
+    matplotlib.use('Qt5Agg')
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 
@@ -50,6 +56,8 @@ from numpy import array
 from numpy import ndarray
 from numpy import fliplr
 
+from PIL.Image import Image as pilImage
+
 from PyQt5.QtGui import QImage
 
 # < Revision 19/02/2025
@@ -59,15 +67,12 @@ from ants.core.ants_image import ANTsImage
 
 # noinspection PyUnresolvedReferences
 from itk import Image as itkImage
-
 from SimpleITK import Image as sitkImage
 from SimpleITK import Cast as sitkCast
 from SimpleITK import LabelVoting as sitkLabelVoting
 from SimpleITK import ComposeImageFilter as sitkComposeImageFilter
 from SimpleITK import VectorIndexSelectionCastImageFilter as sitkVectorIndexSelectionCastImageFilter
-
 from vtk import vtkImageData
-
 from Sisyphe.core.sisypheConstants import getNiftiExt
 from Sisyphe.core.sisypheConstants import getMincExt
 from Sisyphe.core.sisypheConstants import getNrrdExt
@@ -144,7 +149,7 @@ def multiComponentSisypheVolumeFromList(vols: list[SisypheVolume] | SisypheVolum
 
 
 listImages = sitkImage | ndarray | SisypheImage
-listImages2 = sitkImage | ndarray | vtkImageData | ANTsImage
+listImages2 = sitkImage | ndarray | vtkImageData | ANTsImage | SisypheImage
 listFloat = list[float]
 tupleFloat3 = tuple[float, float, float]
 vectorFloat3 = listFloat | tupleFloat3
@@ -172,7 +177,7 @@ class SisypheVolume(SisypheImage):
         - z: inferior(-) to superior(+)
 
     This class provides access to internal SimpleITK, ITK, VTK and numpy image classes, which share the same image
-    buffer (behaviour inherited from the ancestor class SisypheImage).
+    buffer (behavior inherited from the ancestor class SisypheImage).
 
     Supported properties:
 
@@ -207,7 +212,7 @@ class SisypheVolume(SisypheImage):
     object -> SisypheImage -> SisypheVolume
 
     Creation: 04/02/2021
-    Last revisions: 07/06/2025
+    Last revisions: 18/12/2025
     """
     __slots__ = ['_ID', '_arrayID', '_filename', '_compression', '_identity', '_acquisition',
                  '_display', '_acpc', '_transforms', '_xdcm', '_slope', '_intercept', '_orientation']
@@ -434,10 +439,10 @@ class SisypheVolume(SisypheImage):
         image : SisypheImage | SimpleITK.Image | vkt.vtkImageData | ants.core.ANTSImage | numpy.ndarray | str
             file name if str
         **kargs :
-            - size, tuple[float, float, float] | list[float, float, float]
+            - size, tuple[float, float, float] | list[float]
             - datatype, str
-            - spacing, tuple[float, float, float] | list[float, float, float]
-            - direction, tuple[float, ...] | list[float, ...] (9 elements)
+            - spacing, tuple[float, float, float] | list[float]
+            - direction, tuple[float, ...] | list[float] (9 elements)
         """
         from Sisyphe.core.sisypheTransform import SisypheTransforms
         self._ID: str | None = None
@@ -453,7 +458,7 @@ class SisypheVolume(SisypheImage):
         self._xdcm = None
         self._identity: SisypheIdentity = SisypheIdentity(parent=self)
         self._acquisition: SisypheAcquisition = SisypheAcquisition(parent=self)
-        self._display: SisypheDisplay = SisypheDisplay(parent=self)
+        self._display: SisypheDisplay | None = SisypheDisplay(parent=self)
         self._acpc: SisypheACPC = SisypheACPC(parent=self)
         self._transforms: SisypheTransforms = SisypheTransforms()
         if isinstance(image, SisypheVolume):
@@ -1007,6 +1012,7 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheVolume): return id(self) == id(other)
         elif isinstance(other, (int, float)):
+            # noinspection PyTypeChecker
             r = SisypheVolume(self._sitk_image.__eq__(other))
             r.copyAttributesFrom(self, display=False)
             r.acquisition.setModalityToOT()
@@ -1032,6 +1038,7 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheVolume): return id(self) != id(other)
         elif isinstance(other, (int, float)):
+            # noinspection PyTypeChecker
             r = SisypheVolume(self._sitk_image.__ne__(other))
             r.copyAttributesFrom(self, display=False)
             r.acquisition.setModalityToOT()
@@ -1094,7 +1101,7 @@ class SisypheVolume(SisypheImage):
 
         Parameters
         ----------
-        idx : list[float, float, float] | tuple[float, float, float] | slice
+        idx : list[float] | tuple[float] | slice
             x, y, z int indices, pythonic slicing (i.e. python slice object, used the syntax first:last:step)
 
         Returns
@@ -1226,9 +1233,9 @@ class SisypheVolume(SisypheImage):
         ----------
          img : numpy.ndarray
             image to copy
-         spacing : list[float, float, float] | tuple[float, float, float]
+         spacing : list[float] | tuple[float, float, float]
             voxel sizes in mm (default 1.0, 1.0, 1.0)
-         origin : list[float, float, float] | tuple[float, float, float]
+         origin : list[float] | tuple[float, float, float]
             origin coordinates (default 0.0, 0.0, 0.0)
          direction : list[float]
             axes directions
@@ -1237,6 +1244,37 @@ class SisypheVolume(SisypheImage):
         """
         super().copyFromNumpyArray(img, spacing, origin, direction, defaultshape)
         self._updateRange()
+
+    def copyToPillowImage(self,
+                          slc: int,
+                          orient: int = 0,
+                          rgb: bool = False,
+                          wmin : int | None = None,
+                          wmax : int | None = None) -> pilImage:
+        """
+        Pillow copy of the current SisypheImage instance.
+
+        Parameters
+        ----------
+        slc : int
+            slice index.
+        orient : int (optional)
+            slice orientation (0 axial - default, 1 coronal, 2 sagittal).
+        rgb : bool (optional)
+            conversion to Pillow 'RGB' mode.
+        wmin : int | None (optional)
+            window min (default None, get window min from display attribute).
+        wmax : int | None (optional)
+            window max (default None, get window max from display attribute).
+        Returns
+        -------
+        pilImage
+            Pillow image.
+        """
+        if rgb:
+            if wmin is None: wmin = self.display.getWindowMin()
+            if wmax is None: wmax = self.display.getWindowMax()
+        return super().copyToPillowImage(slc, orient, rgb, wmin, wmax)
 
     def setSITKImage(self, img: sitkImage) -> None:
         """
@@ -1560,6 +1598,7 @@ class SisypheVolume(SisypheImage):
             cast volume
         """
         img, slope, inter = super().cast(datatype)
+        # noinspection PyTypeChecker
         img = SisypheVolume(img)
         self.copyAttributesTo(img)
         img._slope = slope
@@ -2293,6 +2332,7 @@ class SisypheVolume(SisypheImage):
         SisypheVolume
             relabeled image
         """
+        # noinspection PyTypeChecker
         vol = SisypheVolume(super().getRelabeled(cross))
         vol.copyAttributesFrom(self, display=False, acquisition=False)
         vol.setFilename(self._filename)
@@ -2335,6 +2375,7 @@ class SisypheVolume(SisypheImage):
         SisypheVolume
             mask
         """
+        # noinspection PyTypeChecker
         vol = SisypheVolume(super().getMask(algo, morpho, niter, kernel, fill, c))
         vol.copyAttributesFrom(self, display=False, acquisition=False)
         vol.setFilename(self._filename)
@@ -2390,6 +2431,7 @@ class SisypheVolume(SisypheImage):
                  algo: str = 'huang',
                  morphoiter: int = 1,
                  kernel: int = 0,
+                 objstep: bool = True,
                  c: int | None = 0) -> SisypheVolume:
         """
         Calc SisypheVolume mask of the head.
@@ -2403,6 +2445,8 @@ class SisypheVolume(SisypheImage):
             number of binary morphology iterations (default 2)
         kernel : int
             structuring element size, 0 automatic value (kernel=2 if spacing < 1.5 mm, kernel=1 otherwise)
+        objstep : bool
+            if False, steps 5 to 8 are skipped
         c : int | None
             - parameter only used for multi-component image
             - int index of the component to process (default 0, first component)
@@ -2413,7 +2457,8 @@ class SisypheVolume(SisypheImage):
         SisypheVolume
             mask
         """
-        vol = SisypheVolume(super().getMask2(algo, morphoiter, kernel, c))
+        # noinspection PyTypeChecker
+        vol = SisypheVolume(super().getMask2(algo, morphoiter, kernel, objstep, c))
         vol.copyAttributesFrom(self, display=False, acquisition=False)
         vol.setFilename(self._filename)
         vol.setFilenamePrefix('mask')
@@ -2426,6 +2471,7 @@ class SisypheVolume(SisypheImage):
                     algo: str = 'huang',
                     morphoiter: int = 1,
                     kernel: int = 0,
+                    objstep: bool = True,
                     c: int | None = 0) -> SisypheROI:
         """
         Calc Sisyphe.core.sisypheROI.SisypheROI mask of the head.
@@ -2441,6 +2487,8 @@ class SisypheVolume(SisypheImage):
             number of binary morphology iterations (default 2)
         kernel : int
             structuring element size, 0 automatic value (kernel=2 if spacing < 1.5 mm, kernel=1 otherwise)
+        objstep : bool
+            if False, steps 5 to 8 are skipped
         c : int | None
             - parameter only used for multi-component image
             - int index of the component to process (default 0, first component)
@@ -2451,7 +2499,7 @@ class SisypheVolume(SisypheImage):
         Sisyphe.core.sisypheROI.SisypheROI
             mask roi
         """
-        roi = super().getMaskROI2(algo, morphoiter, kernel, c)
+        roi = super().getMaskROI2(algo, morphoiter, kernel, objstep, c)
         roi.setReferenceID(self.getID())
         roi.setName(name)
         return roi
@@ -2474,6 +2522,7 @@ class SisypheVolume(SisypheImage):
         SisypheVolume
             non-zero mask
         """
+        # noinspection PyTypeChecker
         vol = SisypheVolume(super().getNonZeroMask(c))
         vol.copyAttributesFrom(self, display=False, acquisition=False)
         vol.setFilename(self._filename)
@@ -2502,6 +2551,7 @@ class SisypheVolume(SisypheImage):
         SisypheVolume
             cropped volume
         """
+        # noinspection PyTypeChecker
         vol = SisypheVolume(super().removeNeckSlices(f))
         vol.copyAttributesFrom(self, acpc=False, transform=False)
         vol.setFilename(self._filename)
@@ -2530,6 +2580,7 @@ class SisypheVolume(SisypheImage):
         if self.getNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # vol = SisypheVolume(super().getComponentMean())
+            # noinspection PyTypeChecker
             vol = SisypheVolume(super().getComponentMean(c))
             # Revision 19/12/2024 >
             vol.copyAttributesFrom(self, display=False, acquisition=False)
@@ -2560,6 +2611,7 @@ class SisypheVolume(SisypheImage):
         if self.getNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # vol = SisypheVolume(super().getComponentStd())
+            # noinspection PyTypeChecker
             vol = SisypheVolume(super().getComponentStd(c))
             # Revision 19/12/2024 >
             vol.copyAttributesFrom(self, display=False, acquisition=False)
@@ -2590,6 +2642,7 @@ class SisypheVolume(SisypheImage):
         if self.getNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # vol = SisypheVolume(super().getComponentMin())
+            # noinspection PyTypeChecker
             vol = SisypheVolume(super().getComponentMin(c))
             # Revision 19/12/2024 >
             vol.copyAttributesFrom(self, display=False, acquisition=False)
@@ -2620,6 +2673,7 @@ class SisypheVolume(SisypheImage):
         if self.getNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # vol = SisypheVolume(super().getComponentMax())
+            # noinspection PyTypeChecker
             vol = SisypheVolume(super().getComponentMax(c))
             # Revision 19/12/2024 >
             vol.copyAttributesFrom(self, display=False, acquisition=False)
@@ -2652,6 +2706,7 @@ class SisypheVolume(SisypheImage):
         if self.getNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # vol = SisypheVolume(super().getComponentRange())
+            # noinspection PyTypeChecker
             vol = SisypheVolume(super().getComponentRange(c))
             # Revision 19/12/2024 >
             vol.copyAttributesFrom(self, display=False, acquisition=False)
@@ -2683,6 +2738,7 @@ class SisypheVolume(SisypheImage):
         if self.getNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # vol = SisypheVolume(super().getComponentMedian())
+            # noinspection PyTypeChecker
             vol = SisypheVolume(super().getComponentMedian(c))
             # Revision 19/12/2024 >
             vol.copyAttributesFrom(self, display=False, acquisition=False)
@@ -2715,6 +2771,7 @@ class SisypheVolume(SisypheImage):
         if self.getNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # vol = SisypheVolume(super().getComponentPercentile(perc))
+            # noinspection PyTypeChecker
             vol = SisypheVolume(super().getComponentPercentile(perc, c))
             # Revision 19/12/2024 >
             vol.copyAttributesFrom(self, display=False, acquisition=False)
@@ -3362,7 +3419,7 @@ class SisypheVolume(SisypheImage):
 
         Parameters
         ----------
-        p : list[float, float, float] | tuple[float, float, float]
+        p : list[float] | tuple[float, float, float]
             World coordinates
 
         Returns
@@ -3382,7 +3439,7 @@ class SisypheVolume(SisypheImage):
 
         Parameters
         ----------
-        p : list[float, float, float] | tuple[float, float, float]
+        p : list[float] | tuple[float, float, float]
             ICBM coordinates
 
         Returns
@@ -3425,7 +3482,7 @@ class SisypheVolume(SisypheImage):
 
         Parameters
         ----------
-        p : list[float, float, float] | tuple[float, float, float]
+        p : list[float] | tuple[float, float, float]
             World coordinates
 
         Returns
@@ -3438,12 +3495,12 @@ class SisypheVolume(SisypheImage):
 
     def getWorldfromLEKSELL(self, p: vectorFloat3) -> vectorFloat3 | None:
         """
-        Convert LEKSELL coordinates to world coordinates Returns None if the transforms attribute of the current
+        Convert LEKSELL coordinates to world coordinates. Returns None if the transforms attribute of the current
         SisypheVolume instance does not contain the 'LEKSELL' ID.
 
         Parameters
         ----------
-        p : list[float, float, float] | tuple[float, float, float]
+        p : list[float] | tuple[float, float, float]
             LEKSELL coordinates
 
         Returns
@@ -3463,7 +3520,7 @@ class SisypheVolume(SisypheImage):
         ----------
         ID : str | SisypheVolume
             ID or SisypheVolume ID attribute
-        p : list[float, float, float] | tuple[float, float, float]
+        p : list[float] | tuple[float, float, float]
             point coordinates
 
         Returns
@@ -3823,8 +3880,8 @@ class SisypheVolume(SisypheImage):
             PySisyphe Volume file name (optional). if filename is empty ('', default), the file name attribute of the
             current SisypheVolume instance is used
         single : bool
-            - if True, saved in a single file (xml part + binary part)
-            - if False, The xml part is saved in .xvol file and the binary part in .raw file
+            - if True, saved in a single file (XML part + binary part)
+            - if False, The XML part is saved in .xvol file and the binary part in .raw file
         """
         if not self.isEmpty():
             if filename != '': self.setFilename(filename)
@@ -3834,22 +3891,22 @@ class SisypheVolume(SisypheImage):
 
     def parseXML(self, doc: minidom.Document) -> dict:
         """
-        Read the current SisypheVolume instance attributes from xml instance. This method is called by load() method,
+        Read the current SisypheVolume instance attributes from XML instance. This method is called by load() method,
         it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
 
         Returns
         -------
         dict[str]
             Key / Value
-                - 'size': list[int, int, int], image size in each axis
+                - 'size': list[int], image size in each axis
                 - 'components': int, number of components
-                - 'spacing': list[float, float, float], voxel size in each axis
-                - 'origin': list[float, float, float], origin coordinates
+                - 'spacing': list[float], voxel size in each axis
+                - 'origin': list[float], origin coordinates
                 - 'datatype': str, numpy datatype
                 - 'directions': list[float], direction vectors
                 - 'array': bytes, array image
@@ -3939,7 +3996,7 @@ class SisypheVolume(SisypheImage):
             PySisyphe Volume file name (optional). If filename is empty ('', default), the file name attribute of the
             current SisypheVolume instance is used
         binary : bool
-            if False, load only xml part (attributes), not binary part (array), default is True (load xml and binary
+            if False, load only XML part (attributes), not binary part (array), default is True (load XML and binary
             parts)
         """
         if filename == '' and self.hasFilename(): filename = self._filename
@@ -4010,16 +4067,16 @@ class SisypheVolume(SisypheImage):
 
     def createXML(self, doc: minidom.Document, single: bool = True) -> None:
         """
-        Write the current SisypheVolume instance attributes to xml instance. This method is called by save() and
+        Write the current SisypheVolume instance attributes to XML instance. This method is called by save() and
         saveAs() methods, it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         single : bool
-            - if True, saved in a single file (xml part + binary part)
-            - if False, The xml part is saved in .xvol file and the binary part in .raw file
+            - if True, saved in a single file (XML part + binary part)
+            - if False, The XML part is saved in .xvol file and the binary part in .raw file
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -4092,7 +4149,7 @@ class SisypheVolume(SisypheImage):
             # Array
             node = doc.createElement('array')
             root.appendChild(node)
-            if single is True: txt = doc.createTextNode('self')
+            if single: txt = doc.createTextNode('self')
             else:
                 filename = '{}.raw'.format(splitext(self._filename)[0])
                 txt = doc.createTextNode(basename(filename))
@@ -4108,8 +4165,8 @@ class SisypheVolume(SisypheImage):
         filename : str
             PySisyphe Volume file name
         single : bool
-            - if True, saved in a single file (xml part + binary part)
-            - if False, The xml part is saved in .xvol file and the binary part in .raw file
+            - if True, saved in a single file (XML part + binary part)
+            - if False, The XML part is saved in .xvol file and the binary part in .raw file
         """
         # single = True, write single hybrid file with XML part followed by binary array part
         # if False, write two files *.xvol for XML part and *.raw for binary array part
@@ -4129,7 +4186,7 @@ class SisypheVolume(SisypheImage):
                 # Save XML part
                 f.write(buffxml)
                 # Binary array part
-                if single is True:
+                if single:
                     # Write in same file after XML part
                     f.write(buffarray)
                 else:
@@ -4683,26 +4740,31 @@ class SisypheVolumeCollection(object):
                             if prefix == 'get':
                                 return [vol.identity.__getattribute__(name)() for vol in self]
                             else:
+                                # noinspection PyInconsistentReturns
                                 for vol in self: vol.identity.__getattribute__(name)()
                         elif name in SisypheAcquisition.__dict__:
                             if prefix == 'get':
                                 return [vol.acquisition.__getattribute__(name)() for vol in self]
                             else:
+                                # noinspection PyInconsistentReturns
                                 for vol in self: vol.acquisition.__getattribute__(name)()
                         elif name in SisypheDisplay.__dict__:
                             if prefix == 'get':
                                 return [vol.display.__getattribute__(name)() for vol in self]
                             else:
+                                # noinspection PyInconsistentReturns
                                 for vol in self: vol.display.__getattribute__(name)()
                         elif name in SisypheACPC.__dict__:
                             if prefix == 'get':
                                 return [vol.acpc.__getattribute__(name)() for vol in self]
                             else:
+                                # noinspection PyInconsistentReturns
                                 for vol in self: vol.acpc.__getattribute__(name)()
                         elif flag:
                             if prefix == 'get':
                                 return [vol.__getattribute__(name)() for vol in self]
                             else:
+                                # noinspection PyInconsistentReturns
                                 for vol in self: vol.__getattribute__(name)()
                         else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
                     else: raise AttributeError('Not get/set method.')
@@ -4719,22 +4781,27 @@ class SisypheVolumeCollection(object):
                             if name in SisypheIdentity.__dict__:
                                 # noinspection PyUnresolvedReferences
                                 i: cython.int
+                                # noinspection PyInconsistentReturns
                                 for i in range(n): self[i].identity.__getattribute__(name)(p[i])
                             elif name in SisypheAcquisition.__dict__:
                                 # noinspection PyUnresolvedReferences
                                 i: cython.int
+                                # noinspection PyInconsistentReturns
                                 for i in range(n): self[i].acquisition.__getattribute__(name)(p[i])
                             elif name in SisypheDisplay.__dict__:
                                 # noinspection PyUnresolvedReferences
                                 i: cython.int
+                                # noinspection PyInconsistentReturns
                                 for i in range(n): self[i].display.__getattribute__(name)(p[i])
                             elif name in SisypheACPC.__dict__:
                                 # noinspection PyUnresolvedReferences
                                 i: cython.int
+                                # noinspection PyInconsistentReturns
                                 for i in range(n): self[i].acpc.__getattribute__(name)(p[i])
                             elif flag:
                                 # noinspection PyUnresolvedReferences
                                 i: cython.int
+                                # noinspection PyInconsistentReturns
                                 for i in range(n): self[i].__getattribute__(name)(p[i])
                             else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
                         else: raise ValueError('Number of items in list ({}) '
@@ -4745,26 +4812,31 @@ class SisypheVolumeCollection(object):
                             if prefix == 'get':
                                 return [vol.identity.__getattribute__(name)(p) for vol in self]
                             else:
+                                # noinspection PyInconsistentReturns
                                 for vol in self: vol.identity.__getattribute__(name)(p)
                         elif name in SisypheAcquisition.__dict__:
                             if prefix == 'get':
                                 return [vol.acquisition.__getattribute__(name)(p) for vol in self]
                             else:
+                                # noinspection PyInconsistentReturns
                                 for vol in self: vol.acquisition.__getattribute__(name)(p)
                         elif name in SisypheDisplay.__dict__:
                             if prefix == 'get':
                                 return [vol.display.__getattribute__(name)(p) for vol in self]
                             else:
+                                # noinspection PyInconsistentReturns
                                 for vol in self: vol.display.__getattribute__(name)(p)
                         elif name in SisypheACPC.__dict__:
                             if prefix == 'get':
                                 return [vol.acpc.__getattribute__(name)(p) for vol in self]
                             else:
+                                # noinspection PyInconsistentReturns
                                 for vol in self: vol.acpc.__getattribute__(name)(p)
                         elif flag:
                             if prefix == 'get':
                                 return [vol.__getattribute__(name)(p) for vol in self]
                             else:
+                                # noinspection PyInconsistentReturns
                                 for vol in self: vol.__getattribute__(name)(p)
                         else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
                 else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
@@ -5736,7 +5808,7 @@ class SisypheVolumeCollection(object):
             for vol in self:
                 if vol.hasFilename(): vol.save()
 
-    def saveToMulticomponentVolume(self, filename: str, copyattr: bool | dict[str: bool] = False) -> None:
+    def saveToMulticomponentVolume(self, filename: str, copyattr: bool | dict[str, bool] = False) -> None:
         """
         Save SisypheVolume elements of the current SisypheVolumeCollection instance container to a multi-component
         SisypheVolume.
@@ -5745,7 +5817,7 @@ class SisypheVolumeCollection(object):
         ----------
         filename : str
             file name
-        copyattr : bool | dict[str: bool]
+        copyattr : bool | dict[str, bool]
             - bool: copy all attributes if True (default False)
             - or dict, keys
                 - 'ID': bool, copy ID attribute if True
@@ -5760,13 +5832,13 @@ class SisypheVolumeCollection(object):
             if self.isHomogeneous():
                 v = self.copyToMultiComponentSisypheVolume()
                 if isinstance(copyattr, bool):
-                    if copyattr is True: copyattr = {'ID': True,
-                                                     'identity': True,
-                                                     'acquisition': True,
-                                                     'display': True,
-                                                     'acpc': True,
-                                                     'transform': True,
-                                                     'slope': True}
+                    if copyattr: copyattr = {'ID': True,
+                                             'identity': True,
+                                             'acquisition': True,
+                                             'display': True,
+                                             'acpc': True,
+                                             'transform': True,
+                                             'slope': True}
                 if isinstance(copyattr, dict):
                     if any(list(copyattr.values())):
                         if 'ID' in copyattr: id = copyattr['ID']

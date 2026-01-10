@@ -365,7 +365,7 @@ class SisypheDatabase(object):
 
     def setDatabasePathFromSettings(self) -> None:
         """
-        Set the default PySisyphe patient database folder from PySisyphe settings file (~/.PySisyphe/settings.xml in
+        Set the PySisyphe patient database folder from PySisyphe settings file (~/.PySisyphe/settings.xml in
         user folder).
         """
         settings = SisypheSettings()
@@ -375,10 +375,19 @@ class SisypheDatabase(object):
 
     def setDefaultDatabasePath(self) -> None:
         """
-        Set the PySisyphe patient database folder to ~/.PySisyphe/Database (in user folder).
+        Set the default PySisyphe patient database folder from PySisyphe settings file (~/.PySisyphe/settings.xml in
+        user folder). if this field is empty, set the PySisyphe patient database folder to ~/.PySisyphe/Database (in user folder).
         """
-        path = join(expanduser('~'), '.PySisyphe', 'database')
-        self.setDatabasePath(path)
+        # < Revision 04/12/2025
+        # path = join(expanduser('~'), '.PySisyphe', 'database')
+        # self.setDatabasePath(path)
+        settings = SisypheSettings()
+        path = settings.getFieldValue('Database', 'DefaultPath')
+        if path and exists(path): self.setDatabasePath(path)
+        else:
+            path = join(expanduser('~'), '.PySisyphe', 'database')
+            self.setDatabasePath(path)
+        # Revision 04/12/2025 >
 
     def getDatabasePath(self) -> str:
         """

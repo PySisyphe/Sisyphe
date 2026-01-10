@@ -348,7 +348,7 @@ def getAcquisitionFromDicom(filename: str, useacqnumber: bool = False) -> Sisyph
     else: raise TypeError('parameter type {} is not str'.format(type(filename)))
 
 
-def getDiffusionParametersFromDicom(filename: str) -> dict[str: float, str: list[float]]:
+def getDiffusionParametersFromDicom(filename: str) -> dict[str, float | list[float]]:
     """
     Get diffusion attributes B-value and gradient direction in DICOM file.
 
@@ -359,7 +359,7 @@ def getDiffusionParametersFromDicom(filename: str) -> dict[str: float, str: list
 
     Returns
     -------
-    dict[str: float, str: list[float]]
+    dict[str, float | list[float]]
         Key/Value
             - 'bval': float, B-value
             - 'bvec': list[float], gradient direction vector
@@ -436,7 +436,7 @@ def mosaicImageToVolume(slc: ndarray, n: int) -> ndarray:
 
 # noinspection PyShadowingBuiltins
 def saveBVal(filename: str,
-             bval: dict[str: float],
+             bval: dict[str, float],
              format: str = 'txt') -> None:
     """
     Save gradient B-values.
@@ -445,11 +445,11 @@ def saveBVal(filename: str,
     ----------
     filename : str
         file name (.bval, .xbval or .txt)
-    bval : dict[str: float]
+    bval : dict[str, float]
         - key str, diffusion weighted image file name (.xvol) or index number
         - value float, B value
     format : str
-        - 'xml', xml format <bvalue file=filename>v</bvector>
+        - 'xml', XML format <bvalue file=filename>v</bvector>
         - 'txt', txt format, v[0] -> v[1] ... -> v[n]
     """
     if format in ('txtbydim', 'txtbyvec', 'txt'):
@@ -476,7 +476,7 @@ def saveBVal(filename: str,
 
 # noinspection PyShadowingBuiltins
 def saveBVec(filename: str,
-             bvec: dict[str: [float, float, float]],
+             bvec: dict[str, list[float]],
              format='txtbydim') -> None:
     """
     Save gradient direction vector.
@@ -485,11 +485,11 @@ def saveBVec(filename: str,
     ----------
     filename : str
         file name (.bvec, .xbvec or .txt)
-    bvec : dict[str: [float, float, float]],
+    bvec : dict[str, list[float]],
         - key str, diffusion weighted image file name (.xvol) or index number
         - value [float, float, float], gradient direction vector
     format : str
-        - 'xml', xml format <bvector file=filename>v0[0] v0[1] v0[2]</bvector>
+        - 'xml', XML format <bvector file=filename>v0[0] v0[1] v0[2]</bvector>
         - 'txtbyvec', txt format, vector order, v0[0] -> v0[1] -> v0[2] -> ... -> vn[0] -> vn[1] -> vn[2]
         - 'txtbydim', txt format, dimension order, v0[0] -> ... -> vn[0], v0[1] -> ... -> vn[1], v0[2] -> ... -> vn[2]
     """
@@ -526,7 +526,7 @@ def saveBVec(filename: str,
 # noinspection PyShadowingBuiltins
 def loadBVal(filename: str,
              format='txt',
-             numpy=False) -> dict[str: float] | ndarray:
+             numpy=False) -> dict[str, float] | ndarray:
     """
     Load gradient B-values.
 
@@ -542,7 +542,7 @@ def loadBVal(filename: str,
 
     Returns
     -------
-    ndarray | dict[str: float]
+    ndarray | dict[str, float]
         if numpy parameter is False:
             - key str, diffusion weighted image file name (.xvol) or index number
             - value float, B-value
@@ -581,7 +581,7 @@ def loadBVal(filename: str,
 # noinspection PyShadowingBuiltins
 def loadBVec(filename: str,
              format='txtbydim',
-             numpy=False) -> dict[str: [float, float, float]] | ndarray:
+             numpy=False) -> dict[str, list[float]] | ndarray:
     """
     Load gradient direction vector.
 
@@ -590,7 +590,7 @@ def loadBVec(filename: str,
     filename : str
         file name (.bvec, .xbvec or .txt)
     format : str
-        - 'xml', xml format <bvector file=filename>v0[0] v0[1] v0[2]</bvector>
+        - 'xml', XML format <bvector file=filename>v0[0] v0[1] v0[2]</bvector>
         - 'txtbyvec', txt format, vector order, v0[0] -> v0[1] -> v0[2] -> ... -> vn[0] -> vn[1] -> vn[2]
         - 'txtbydim', txt format, dimension order, v0[0] -> ... -> vn[0], v0[1] -> ... -> vn[1], v0[2] -> ... -> vn[2]
     numpy : bool
@@ -598,7 +598,7 @@ def loadBVec(filename: str,
 
     Returns
     -------
-    ndarray | dict[str: [float, float, float]]
+    ndarray | dict[str, list[float]]
         if numpy parameter is False:
             - key str, diffusion weighted image file name (.xvol) or index number,
             - value [float, float, float], gradient direction vector
@@ -966,15 +966,21 @@ class DicomToXmlDicom(object):
                             if n < de.VM:
                                 if vr in ['FL', 'FD', 'DS']:
                                     buff = '|'.join(['0.0'] * de.VM)
-                                    if n > 0: buff[:n] = de.value
+                                    if n > 0:
+                                        # noinspection PyUnresolvedReferences
+                                        buff[:n] = de.value
                                     txt = doc.createTextNode(buff)
                                 elif vr in ['SL', 'SS', 'UL', 'US', 'IS']:
                                     buff = '|'.join(['0'] * de.VM)
-                                    if n > 0: buff[:n] = de.value
+                                    if n > 0:
+                                        # noinspection PyUnresolvedReferences
+                                        buff[:n] = de.value
                                     txt = doc.createTextNode(buff)
                                 else:
                                     buff = '|'.join(['None'] * de.VM)
-                                    if n > 0: buff[:n] = de.value
+                                    if n > 0:
+                                        # noinspection PyUnresolvedReferences
+                                        buff[:n] = de.value
                                     txt = doc.createTextNode(buff)
                             else: txt = doc.createTextNode('|'.join([str(v) for v in de.value]))
                             # Revision 27/03/2025 >
@@ -1025,15 +1031,21 @@ class DicomToXmlDicom(object):
                                     if n < de.VM:
                                         if vr in ['FL', 'FD', 'DS']:
                                             buff = '|'.join(['0.0'] * de.VM)
-                                            if n > 0: buff[:n] = dec.value
+                                            if n > 0:
+                                                # noinspection PyUnresolvedReferences
+                                                buff[:n] = dec.value
                                             txt = doc.createTextNode(buff)
                                         elif vr in ['SL', 'SS', 'UL', 'US', 'IS']:
                                             buff = '|'.join(['0'] * de.VM)
-                                            if n > 0: buff[:n] = dec.value
+                                            if n > 0:
+                                                # noinspection PyUnresolvedReferences
+                                                buff[:n] = dec.value
                                             txt = doc.createTextNode(buff)
                                         else:
                                             buff = '|'.join(['None'] * de.VM)
-                                            if n > 0: buff[:n] = dec.value
+                                            if n > 0:
+                                                # noinspection PyUnresolvedReferences
+                                                buff[:n] = dec.value
                                             txt = doc.createTextNode(buff)
                                     else:
                                         txt = doc.createTextNode('|'.join([str(v) for v in dec.value]))
@@ -1077,15 +1089,21 @@ class DicomToXmlDicom(object):
                                 if n < de.VM:
                                     if vr in ['FL', 'FD', 'DS']:
                                         buff = '|'.join(['0.0'] * de.VM)
-                                        if n > 0: buff[:n] = de.value
+                                        if n > 0:
+                                            # noinspection PyUnresolvedReferences
+                                            buff[:n] = de.value
                                         txt = doc.createTextNode(buff)
                                     elif vr in ['SL', 'SS', 'UL', 'US', 'IS']:
                                         buff = '|'.join(['0'] * de.VM)
-                                        if n > 0: buff[:n] = de.value
+                                        if n > 0:
+                                            # noinspection PyUnresolvedReferences
+                                            buff[:n] = de.value
                                         txt = doc.createTextNode(buff)
                                     else:
                                         buff = '|'.join(['None'] * de.VM)
-                                        if n > 0: buff[:n] = de.value
+                                        if n > 0:
+                                            # noinspection PyUnresolvedReferences
+                                            buff[:n] = de.value
                                         txt = doc.createTextNode(buff)
                                 else:
                                     txt = doc.createTextNode('|'.join([str(v) for v in de.value]))
@@ -1136,15 +1154,21 @@ class DicomToXmlDicom(object):
                                     if n < de.VM:
                                         if vr in ['FL', 'FD', 'DS']:
                                             buff = '|'.join(['0.0'] * de.VM)
-                                            if n > 0: buff[:n] = dec.value
+                                            if n > 0:
+                                                # noinspection PyUnresolvedReferences
+                                                buff[:n] = dec.value
                                             txt = doc.createTextNode(buff)
                                         elif vr in ['SL', 'SS', 'UL', 'US', 'IS']:
                                             buff = '|'.join(['0'] * de.VM)
-                                            if n > 0: buff[:n] = dec.value
+                                            if n > 0:
+                                                # noinspection PyUnresolvedReferences
+                                                buff[:n] = dec.value
                                             txt = doc.createTextNode(buff)
                                         else:
                                             buff = '|'.join(['None'] * de.VM)
-                                            if n > 0: buff[:n] = dec.value
+                                            if n > 0:
+                                                # noinspection PyUnresolvedReferences
+                                                buff[:n] = dec.value
                                             txt = doc.createTextNode(buff)
                                     else:
                                         txt = doc.createTextNode('|'.join([str(v) for v in dec.value]))
@@ -1524,7 +1548,7 @@ class XmlDicom(object):
                             # Revision 26/03/2025 >
                     else:
                         # < Revision 26/03/2025
-                        # return valid value if xml node is empty
+                        # return valid value if XML node is empty
                         if vr in ['FL', 'FD', 'DS']:
                             if vm < 2: data = 0.0
                             else: data = [0.0] * vm
@@ -2852,7 +2876,7 @@ class ImportFromDicom(object):
                 img = readFromDicomSeries(filenames)
                 img = flipImageToVTKDirectionConvention(img)
                 img = convertImageToAxialOrientation(img)[0]
-                if getdirs is False:
+                if not getdirs:
                     img.SetOrigin((0, 0, 0))
                     img.SetDirection(getRegularDirections())
                 # Attributes
@@ -3038,6 +3062,7 @@ class ImportFromRTDose(ImportFromDicom):
         if self.hasRTDoseFilename():
             super().execute(progress, getdirs=getdirs)
             self._rtdosevol.clear()
+            # noinspection PyInconsistentReturns
             for filename in self._rtdosefile:
                 if progress: progress.setInformationText('{} Dicom RTDose conversion...'.format(basename(filename)))
                 img = readFromDicomSeries([filename])
@@ -3349,7 +3374,7 @@ class ImportFromRTStruct(ImportFromDicom):
                             roi.setReferenceID(self._refvol.getID())
                             roi.setName(name)
                             roi.setColor(int(color[0]), int(color[1]), int(color[2]))
-                            if getdirs is False:
+                            if not getdirs:
                                 roi.setOrigin()
                                 roi.setDirections()
                             # Save SisypheROI
@@ -3363,7 +3388,7 @@ class ImportFromRTStruct(ImportFromDicom):
                                 if QApplication.instance() is not None: QApplication.processEvents()
                             self._rtroi.append(roi)
                 # Revision 29/07/2025 >
-                if getdirs is False:
+                if not getdirs:
                     self._refvol.setOrigin()
                     self._refvol.setDirections()
                 if self._savetag:

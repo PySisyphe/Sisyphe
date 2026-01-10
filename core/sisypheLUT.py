@@ -11,6 +11,8 @@ External packages/modules
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+import sys
+
 from os import stat
 
 from os.path import abspath
@@ -28,6 +30,9 @@ from numpy import uint8
 from numpy import ndarray
 from numpy import array
 
+if 'matplotlib' not in sys.modules:
+    import matplotlib
+    matplotlib.use('Qt5Agg')
 from matplotlib.cm import get_cmap
 from matplotlib.colors import ListedColormap
 from matplotlib.colors import LinearSegmentedColormap

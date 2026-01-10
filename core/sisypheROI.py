@@ -3,7 +3,7 @@ External packages/modules
 -------------------------
 
     - cython, static compiler, https://cython.org/
-    - ANTs, image registration, http://stnava.github.io/ANTs/
+    - ANTs, image registration, https://stnava.github.io/ANTs/
     - Numpy, scientific computing, https://numpy.org/
     - pandas, data analysis and manipulation tool, https://pandas.pydata.org/
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
@@ -64,6 +64,7 @@ from skimage.draw import ellipse
 from skimage.draw import rectangle
 from skimage.draw import polygon
 from skimage.draw import ellipsoid
+from skimage.draw import polygon2mask
 from skimage.measure import euler_number
 from skimage.morphology import flood
 from skimage.morphology import remove_objects_by_distance
@@ -192,7 +193,7 @@ Class hierarchy
 listImages = sitkImage | ndarray | SisypheImage
 listLibImages = listImages | vtkImageData | ANTsImage
 tupleInt2 = tuple[int, int]
-vectorInt2 = list[int] | tuple[int, int]
+vectorInt2 = list[int] | tupleInt2
 tupleInt3 = tuple[int, int, int]
 vectorInt3 = list[int] | tupleInt3
 tupleFloat3 = tuple[float, float, float]
@@ -221,16 +222,16 @@ class SisypheROI(SisypheBinaryImage):
 
     Scope of methods:
 
-        - display management (color, opacity, visibility),
-        - flip/shift,
-        - morphology operators (dilate, erode, closing, opening),
-        - fill holes,
-        - blob (connected component),
-        - 2D shape drawing (line, disk, ellipse, square, rectangle, polygon),
-        - 3D shape drawing (cube, Parallelepiped, sphere),
-        - mesh conversion,
-        - IO methods (native format and BrainVoyager VOI format),
-        - methods inherited from the SisypheImage class.
+        - display management (color, opacity, visibility)
+        - flip/shift
+        - morphology operators (dilate, erode, closing, opening)
+        - fill holes
+        - blob (connected component)
+        - 2D shape drawing (line, disk, ellipse, square, rectangle, polygon)
+        - 3D shape drawing (cube, Parallelepiped, sphere)
+        - mesh conversion
+        - IO methods (native format and BrainVoyager VOI format)
+        - methods inherited from the SisypheImage class
 
     Inheritance
     ~~~~~~~~~~~
@@ -238,7 +239,7 @@ class SisypheROI(SisypheBinaryImage):
     object -> SisypheImage -> SisypheBinaryImage -> SisypheROI
 
     Creation: 08/09/2022
-    Last revision: 21/09/2024
+    Last revision: 04/01/2026
     """
 
     __slots__ = ['_filename', '_referenceID', '_compression', '_name', '_color', '_alpha', '_visibility', '_lut']
@@ -345,13 +346,13 @@ class SisypheROI(SisypheBinaryImage):
             - if True, copy image to SisypheROI if datatype is unit8
             - if False, create only a new SisypheROI with the same image geometry (size, spacing, origin, orientation)
         **kargs :
-            - size : tuple[float, float, float] | list[float, float, float]
+            - size : tuple[float, float, float] | list[float]
             - datatype : str
-            - spacing : tuple[float, float, float] | list[float, float, float]
-            - direction : tuple[float * 9] | list[float * 9]
+            - spacing : tuple[float, float, float] | list[float]
+            - direction : tuple[float * 9] | list[float]
         """
         self.addInstance()
-        self._referenceID: str = ''
+        self._referenceID: str | None = ''
         # Copy SisypheVolume ID to reference ID
         if isinstance(image, SisypheVolume):
             self.setReferenceID(image.getID())
@@ -425,7 +426,7 @@ class SisypheROI(SisypheBinaryImage):
 
         Parameters
         ----------
-        idx : list[int, int, int], tuple[int, int, int] | slice
+        idx : list[int], tuple[int, int, int] | slice
             x, y, z int indices or pythonic slicing (i.e. python slice object, used the syntax first:last:step)
 
         Returns
@@ -1788,9 +1789,9 @@ class SisypheROI(SisypheBinaryImage):
 
         Parameters
         ----------
-        p0 : tuple[int, int, int] | list[int, int, int]
+        p0 : tuple[int, int, int] | list[int]
             x, y, z first point coordinates
-        p1 : tuple[int, int, int] | list[int, int, int]
+        p1 : tuple[int, int, int] | list[int]
             x, y, z second point coordinates
         orient : int
             slice orientation (0 axial, 1 coronal, 2 sagittal)
@@ -1818,7 +1819,7 @@ class SisypheROI(SisypheBinaryImage):
 
         Parameters
         ----------
-        p : tuple[int, int, int] | list[int, int, int]
+        p : tuple[int, int, int] | list[int]
             x, y, z center point coordinates
         radius : int
             disk radius (in voxels)
@@ -1848,9 +1849,9 @@ class SisypheROI(SisypheBinaryImage):
 
         Parameters
         ----------
-        p : tuple[int, int, int] | list[int, int, int]
+        p : tuple[int, int, int] | list[int]
             x, y, z center point coordinates
-        radius : tuple[int, int] | list[int, int]
+        radius : tuple[int, int] | list[int]
             radius in x and y axes (in voxels)
         rot : float
             set the ellipse rotation in radians (between -pi and pi, default 0.0)
@@ -1880,7 +1881,7 @@ class SisypheROI(SisypheBinaryImage):
 
         Parameters
         ----------
-        p : tuple[int, int, int] | list[int, int, int]
+        p : tuple[int, int, int] | list[int]
             x, y, z origin coordinates
         extent : int
             length of square sides (in voxels)
@@ -1911,14 +1912,17 @@ class SisypheROI(SisypheBinaryImage):
 
         Parameters
         ----------
-        p : tuple[int, int, int] | list[int, int, int]
+        p : tuple[int, int, int] | list[int]
             x, y, z origin coordinates
-        extent : tuple[int, int] | list[int, int]
+        extent : tuple[int, int] | list[int]
             width and height (in voxels)
         orient : int
             slice orientation (0 axial, 1 coronal, 2 sagittal)
         """
-        extent = extent[:, :, -1]
+        # < Revision 08/01/2026
+        # extent = extent[:,:,-1]
+        extent = extent[::-1]
+        # < Revision 08/01/2026
         img = self.getNumpy()
         if orient == 0:
             slc = img[p[2], :, :]
@@ -1976,7 +1980,7 @@ class SisypheROI(SisypheBinaryImage):
 
         Parameters
         ----------
-        p : tuple[int, int, int] | list[int, int, int]
+        p : tuple[int, int, int] | list[int]
             x, y, z origin coordinates
         extent : int
             length of cube sides (in voxels)
@@ -1992,9 +1996,9 @@ class SisypheROI(SisypheBinaryImage):
 
         Parameters
         ----------
-        p : tuple[int, int, int] | list[int, int, int]
+        p : tuple[int, int, int] | list[int]
             x, y, z origin coordinates
-        extent : tuple[int, int, int] | list[int, int, int]
+        extent : tuple[int, int, int] | list[int]
             width, height and depth (in voxels)
         """
         img = self.getNumpy()
@@ -2007,7 +2011,7 @@ class SisypheROI(SisypheBinaryImage):
 
         Parameters
         ----------
-        p : tuple[int, int, int] | list[int, int, int]
+        p : tuple[int, int, int] | list[int]
             x, y, z center coordinates
         radius : int
             sphere radius (in voxels)
@@ -2048,6 +2052,39 @@ class SisypheROI(SisypheBinaryImage):
             z2 = z + dz
             back = self.getNumpy()[z:z2, y:y2, x:x2]
             self.getNumpy()[z:z2, y:y2, x:x2] = bitwise_or(back, sph)
+
+    # < Revision 04/01/2026
+    def drawFilledPolygon(self,
+                          p: list[vectorInt2 | vectorInt3],
+                          orient: int = 0,
+                          sindex:int = 0) -> None:
+        """
+        Draw a filled polygon in the ROI image of the current SisypheROI instance. Polygon is drawn in a single slice
+        (all points must be within the same slice).
+
+        Parameters
+        ----------
+        p : list[list[int] | tuple[int, ...]]
+
+            - first int,  x coordinates of points
+            - second int, y coordinates of points
+            - third int,  z coordinates of points (optional)
+        orient : int
+            slice orientation (0 axial, 1 coronal, 2 sagittal)
+        sindex: int
+            slice index
+        """
+        if len(p[0]) > 2:
+            sindex = p[0][2 - orient]
+            if orient == 0: c = [(v[1], v[0]) for v in p]
+            elif orient == 1: c = [(v[2], v[0]) for v in p]
+            else: c = [(v[2], v[1]) for v in p]
+        else: c = [(v[1], v[0]) for v in p]
+        img = self.getNumpy()
+        if orient == 0: img[sindex, :, :] = polygon2mask(img.shape[1:], c)
+        elif orient == 1:  img[:, sindex, :] = polygon2mask(img.shape[::2], c)
+        else: img[:, :, sindex] = polygon2mask(img.shape[:-1], c)
+    # Revision 04/01/2026 >
 
     # Mesh conversion
 
@@ -2286,8 +2323,8 @@ class SisypheROI(SisypheBinaryImage):
             PySisyphe ROI file name (optional), if filename is empty ('', default), the file name attribute of the
             current SisypheROI instance is used
         single : bool
-            - if True, saved in a single file (xml part + binary part)
-            - if False, The xml part is saved in .xroi file and the binary part in .raw file
+            - if True, saved in a single file (XML part + binary part)
+            - if False, The XML part is saved in .xroi file and the binary part in .raw file
         """
         if not self.isEmpty():
             if filename != '': self.saveAs(filename, single)
@@ -2297,16 +2334,16 @@ class SisypheROI(SisypheBinaryImage):
 
     def createXML(self, doc: minidom.Document, single: bool = True) -> None:
         """
-        Write the current SisypheROI instance attributes to xml instance. This method is called by save() and saveAs()
+        Write the current SisypheROI instance attributes to XML instance. This method is called by save() and saveAs()
         methods, it is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         single : bool
-            - if True, saved in a single file (xml part + binary part)
-            - if False, The xml part is saved in .xroi file and the binary part in .raw file
+            - if True, saved in a single file (XML part + binary part)
+            - if False, The XML part is saved in .xroi file and the binary part in .raw file
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -2348,7 +2385,7 @@ class SisypheROI(SisypheBinaryImage):
             # Array node
             node = doc.createElement('array')
             root.appendChild(node)
-            if single is True: txt = doc.createTextNode('self')
+            if single: txt = doc.createTextNode('self')
             else:
                 filename = '{}.raw'.format(splitext(self._filename)[0])
                 txt = doc.createTextNode(basename(filename))
@@ -2364,8 +2401,8 @@ class SisypheROI(SisypheBinaryImage):
         filename : str
             PySisypheROI file name
         single : bool
-            - if True, saved in a single file (xml part + binary part)
-            - if False, The xml part is saved in .xroi file and the binary part in .raw file
+            - if True, saved in a single file (XML part + binary part)
+            - if False, The XML part is saved in .xroi file and the binary part in .raw file
         """
         # single = True, write single hybrid file with XML part followed by binary array part
         # if False, write two files *.xvol for XML part and *.raw for binary array part
@@ -2385,7 +2422,7 @@ class SisypheROI(SisypheBinaryImage):
                 # Save XML part
                 f.write(buffxml)
                 # Binary array part
-                if single is True:
+                if single:
                     # Write in same file after XML part
                     f.write(buffarray)
                 else:
@@ -2398,13 +2435,13 @@ class SisypheROI(SisypheBinaryImage):
     # noinspection PyTypeChecker
     def parseXML(self, doc: minidom.Document) -> dict:
         """
-        Read the current SisypheROI instance attributes from xml instance. This method is called by load() method, it
+        Read the current SisypheROI instance attributes from XML instance. This method is called by load() method, it
         is not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
 
         Returns
         -------
@@ -2588,14 +2625,14 @@ class SisypheROICollection(object):
 
     Scope of methods:
 
-        - resampling (apply geometric transformation),
-        - converting to and from SisypheVolume label,
-        - setter and getter methods of sisypheROI instances in the collection,
-        - set operators (union, intersection, difference, symmetric difference),
-        - flip/shift,
-        - morphology operators (dilate, erode, closing, opening),
-        - fill holes,
-        - IO methods.
+        - resampling (apply geometric transformation)
+        - converting to and from SisypheVolume label
+        - setter and getter methods of sisypheROI instances in the collection
+        - set operators (union, intersection, difference, symmetric difference)
+        - flip/shift
+        - morphology operators (dilate, erode, closing, opening)
+        - fill holes
+        - IO methods
 
     Inheritance
     ~~~~~~~~~~~
@@ -2827,6 +2864,7 @@ class SisypheROICollection(object):
                         if name in SisypheROI.__dict__:
                             if prefix == 'get': return [roi.__getattribute__(name)() for roi in self]
                             else:
+                                # noinspection PyInconsistentReturns
                                 for roi in self: roi.__getattribute__(name)()
                         else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
                     else: raise AttributeError('Not get/set method.')
@@ -2838,6 +2876,7 @@ class SisypheROICollection(object):
                         n = len(p)
                         if n == self.count():
                             if name in SisypheROI.__dict__:
+                                # noinspection PyInconsistentReturns
                                 for i in range(n): self[i].__getattribute__(name)(p[i])
                             else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
                         else: raise ValueError('Number of items in list ({}) '
@@ -2845,6 +2884,7 @@ class SisypheROICollection(object):
                     # SisypheROI set method argument is a single value (int, float, str, bool)
                     else:
                         if name in SisypheROI.__dict__:
+                            # noinspection PyInconsistentReturns
                             for roi in self: roi.__getattribute__(name)(p)
                         else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
                 else: raise AttributeError('{} object has no attribute {}.'.format(self.__class__, name))
@@ -3920,18 +3960,18 @@ class SisypheROIDraw(object):
 
     Scope of methods:
 
-        - drawing,
-        - flip/shift,
-        - copy/cut/paste (global or blob),
-        - blob selection,
-        - morphology operators (global or blob),
-        - fill holes,
-        - thresholding (global or blob),
-        - region growing (global or blob),
-        - active contour,
-        - slice interpolation,
-        - shape statistics,
-        - descriptive statistics.
+        - drawing
+        - flip/shift
+        - copy/cut/paste (global or blob)
+        - blob selection
+        - morphology operators (global or blob)
+        - fill holes
+        - thresholding (global or blob)
+        - region growing (global or blob)
+        - active contour
+        - slice interpolation
+        - shape statistics
+        - descriptive statistics
 
     Most of these methods are available in 2D (slice) and 3D.
 
@@ -3941,7 +3981,7 @@ class SisypheROIDraw(object):
     object -> SisypheROIDraw
 
     Creation: 08/09/2022
-    Last revision: 29/08/2025
+    Last revision: 04/01/2026
     """
 
     __slots__ = {'_volume', '_gradient', '_mask', '_brush', '_vbrush', '_roi', '_undo', '_undolifo', '_redolifo',
@@ -8421,9 +8461,9 @@ class SisypheROIDraw(object):
 
         Parameters
         ----------
-        p0 : tuple[int, int, int] | list[int, int, int]
+        p0 : tuple[int, int, int] | list[int]
             x, y, z first point coordinates
-        p1 : tuple[int, int, int] | list[int, int, int]
+        p1 : tuple[int, int, int] | list[int]
             x, y, z second point coordinates
         orient : int
             slice orientation (0 axial, 1 coronal, 2 sagittal)
@@ -8444,7 +8484,7 @@ class SisypheROIDraw(object):
 
         Parameters
         ----------
-        p : tuple[int, int, int] | list[int, int, int]
+        p : tuple[int, int, int] | list[int]
             x, y, z center point coordinates
         radius : int
             disk radius (in voxels)
@@ -8467,9 +8507,9 @@ class SisypheROIDraw(object):
 
         Parameters
         ----------
-        p : tuple[int, int, int] | list[int, int, int]
+        p : tuple[int, int, int] | list[int]
             x, y, z center point coordinates
-        radius : tuple[int, int] | list[int, int]
+        radius : tuple[int, int] | list[int]
             radius in x and y axes (in voxels)
         rot : float
             set the ellipse rotation in radians (between -pi and pi, default 0.0)
@@ -8492,7 +8532,7 @@ class SisypheROIDraw(object):
 
         Parameters
         ----------
-        p : tuple[int, int, int] | list[int, int, int]
+        p : tuple[int, int, int] | list[int]
             x, y, z origin coordinates
         extent : int
             length of square sides (in voxels)
@@ -8515,9 +8555,9 @@ class SisypheROIDraw(object):
 
         Parameters
         ----------
-        p : tuple[int, int, int] | list[int, int, int]
+        p : tuple[int, int, int] | list[int]
             x, y, z origin coordinates
-        extent : tuple[int, int] | list[int, int]
+        extent : tuple[int, int] | list[int]
             width and height (in voxels)
         orient : int
             slice orientation (0 axial, 1 coronal, 2 sagittal)
@@ -8563,7 +8603,7 @@ class SisypheROIDraw(object):
 
         Parameters
         ----------
-        p : tuple[int, int, int] | list[int, int, int]
+        p : tuple[int, int, int] | list[int]
             x, y, z origin coordinates
         extent : int
             length of cube sides (in voxels)
@@ -8581,9 +8621,9 @@ class SisypheROIDraw(object):
 
         Parameters
         ----------
-        p : tuple[int, int, int] | list[int, int, int]
+        p : tuple[int, int, int] | list[int]
             x, y, z origin coordinates
-        extent : tuple[int, int, int] | list[int, int, int]
+        extent : tuple[int, int, int] | list[int]
             width, height and depth (in voxels)
         """
         if self.hasROI():
@@ -8599,7 +8639,7 @@ class SisypheROIDraw(object):
 
         Parameters
         ----------
-        p : tuple[int, int, int] | list[int, int, int]
+        p : tuple[int, int, int] | list[int]
             x, y, z center coordinates
         radius : int
             sphere radius (in voxels)
@@ -8608,6 +8648,33 @@ class SisypheROIDraw(object):
             self._roi.drawParallelepiped(p, radius)
             if self._undo: self.appendVolumeToLIFO()
     # Revision 20/10/2024 >
+
+    # < Revision 04/01/2026
+    def drawFilledPolygon(self,
+                          p: list[vectorInt2 | vectorInt3],
+                          orient: int = 0,
+                          sindex: int = 0) -> None:
+        """
+        Draw a filled polygon in the ROI image of the current SisypheROI instance. Polygon is drawn in a single slice
+        (all points must be within the same slice).
+
+        Parameters
+        ----------
+        p : list[list[int] | tuple[int, ...]]
+
+            - first int,  x coordinates of points
+            - second int, y coordinates of points
+            - third int,  z coordinates of points (optional)
+        orient : int
+            slice orientation (0 axial, 1 coronal, 2 sagittal)
+        sindex: int
+            slice index
+        """
+        if self.hasROI():
+            if len(p[0]) > 2: sindex = p[0][2 - orient]
+            self._roi.drawFilledPolygon(p, sindex, orient)
+            if self._undo: self.appendSliceToLIFO(sindex, orient)
+    # Revision 04/01/2026 >
 
     # Statistics
 
@@ -8789,7 +8856,7 @@ class SisypheROIFeatures(object):
         - Gray Level Co-occurrence Matrix (GLCM, 24 features)
         - Gray Level Run Length Matrix (GLRM, 16 features)
         - Gray Level Size Zone Matrix (GLSZM, 16 features)
-        - Neighbouring Gray Tone Difference Matrix (NGTDM, 5 features)
+        - Neighboring Gray Tone Difference Matrix (NGTDM, 5 features)
         - Gray Level Dependence Matrix (GLDM, 14 features)
         - 3D Shape (16 features)
 
@@ -9313,7 +9380,7 @@ class SisypheROIFeatures(object):
                         r = flt.execute()
                         if i == 0: cols += r.keys()
                         item += r.values()
-                    # Neighbouring gray tone difference matrix features
+                    # Neighboring gray tone difference matrix features
                     if self._ngtdmTag:
                         if progress is not None:
                             progress.setInformationText('{} neighbouring gray tone difference matrix features.'

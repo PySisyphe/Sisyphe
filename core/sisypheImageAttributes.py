@@ -796,12 +796,12 @@ class SisypheIdentity(object):
 
     def parseXML(self, doc: minidom.Document) -> None:
         """
-        Read current SisypheIdentity instance attributes from xml instance.
+        Read current SisypheIdentity instance attributes from XML instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             ident = doc.getElementsByTagName('identity')
@@ -822,12 +822,12 @@ class SisypheIdentity(object):
 
     def saveToXML(self, filename: str) -> None:
         """
-        Save current SisypheIdentity instance attributes to xml file (.xidentity).
+        Save current SisypheIdentity instance attributes to XML file (.xidentity).
 
         Parameters
         ----------
         filename : str
-            xml file name (.xidentity)
+            XML file name (.xidentity)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -848,12 +848,12 @@ class SisypheIdentity(object):
 
     def loadFromXML(self, filename: str) -> None:
         """
-        Load current SisypheIdentity instance attributes from xml file (.xidentity).
+        Load current SisypheIdentity instance attributes from XML file (.xidentity).
 
         Parameters
         ----------
         filename : str
-            xml file name (.xidentity)
+            XML file name (.xidentity)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -895,8 +895,11 @@ class SisypheAcquisition(object):
     CT, CECT = 'CT', 'CE CT'
     FDG = 'FDG'
     HMPAO, ECD, FPCIT = 'HMPAO', 'ECD', 'FPCIT'
-    PMAP, TMAP, ZMAP, CMAP = 'P MAP', 'T MAP', 'Z MAP', 'CC MAP',
-    GM, SCGM, WM = 'GREY MATTER', 'SUBCORTICAL GREY MATTER', 'WHITE MATTER'
+    PMAP, TMAP, ZMAP, CMAP = 'P MAP', 'T MAP', 'Z MAP', 'CC MAP'
+    # < Revision 04/01/2026
+    # GM, SCGM, WM = 'GREY MATTER', 'SUBCORTICAL GREY MATTER', 'WHITE MATTER'
+    GM, SCGM, WM = 'GRAY MATTER', 'SUBCORTICAL GRAY MATTER', 'WHITE MATTER'
+    # Revision 04/01/2026 >
     CSF, BSTEM, CRBL = 'CEREBRO-SPINAL FLUID', 'BRAINSTEM', 'CEREBELLUM'
     CBF, CBV, MTT, TTP, DOSE, THICK = 'CBF', 'CBV', 'MTT', 'TTP', 'DOSE', 'CORTICAL THICKNESS'
     FA, ADC, DENSITY, BIAS, DIST = 'FA', 'ADC', 'DENSITY', 'BIAS FIELD', 'DISTANCE MAP'
@@ -2506,7 +2509,7 @@ class SisypheAcquisition(object):
         Returns
         -------
         bool
-            True if sequence is a grey matter map
+            True if sequence is a gray matter map
         """
         return self._sequence == self.GM
 
@@ -2517,7 +2520,7 @@ class SisypheAcquisition(object):
         Returns
         -------
         bool
-            True if sequence is a grey matter map
+            True if sequence is a gray matter map
         """
         return self._sequence == self.SCGM
 
@@ -3806,14 +3809,14 @@ class SisypheDisplay(object):
 
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
-        Write current SisypheDisplay instance attributes to xml instance.
+        Write current SisypheDisplay instance attributes to XML instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         currentnode : minidom.Element
-            xml root node
+            XML root node
         """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):
@@ -3854,12 +3857,12 @@ class SisypheDisplay(object):
 
     def parseXML(self, doc: minidom.Document) -> None:
         """
-        Read current SisypheDisplay instance attributes from xml instance.
+        Read current SisypheDisplay instance attributes from XML instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             display = doc.getElementsByTagName('display')
@@ -3886,12 +3889,12 @@ class SisypheDisplay(object):
 
     def saveToXML(self, filename: str) -> None:
         """
-        Save current SisypheDislpay instance attributes to xml file (.xdisplay).
+        Save current SisypheDislpay instance attributes to XML file (.xdisplay).
 
         Parameters
         ----------
         filename : str
-            xml file name (.xdisplay)
+            XML file name (.xdisplay)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -3912,12 +3915,12 @@ class SisypheDisplay(object):
 
     def loadFromXML(self, filename: str) -> None:
         """
-        Load current SisypheDisplay instance attributes from xml file (.xdisplay).
+        Load current SisypheDisplay instance attributes from XML file (.xdisplay).
 
         Parameters
         ----------
         filename : str
-            xml file name (.xdisplay)
+            XML file name (.xdisplay)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -4716,12 +4719,12 @@ class SisypheACPC(object):
 
     def parseXML(self, doc: minidom.Document) -> None:
         """
-        Read current SisypheACPC instance attributes from xml instance.
+        Read current SisypheACPC instance attributes from XML instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             item = doc.getElementsByTagName('ACPC')
@@ -4745,12 +4748,12 @@ class SisypheACPC(object):
 
     def saveToXML(self, filename: str) -> None:
         """
-        Save current SisypheACPC instance attributes to xml file (.xacpc).
+        Save current SisypheACPC instance attributes to XML file (.xacpc).
 
         Parameters
         ----------
         filename : str
-            xml file name (.xacpc)
+            XML file name (.xacpc)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -4768,12 +4771,12 @@ class SisypheACPC(object):
 
     def loadFromXML(self, filename: str) -> None:
         """
-        Load current SisypheACPC instance attributes from xml file (.xacpc).
+        Load current SisypheACPC instance attributes from XML file (.xacpc).
 
         Parameters
         ----------
         filename : str
-            xml file name (.xacpc)
+            XML file name (.xacpc)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
