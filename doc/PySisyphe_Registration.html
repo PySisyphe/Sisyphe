@@ -74,6 +74,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#ac-pc-selection">AC-PC selection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#volume-reorientation">Volume reorientation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#manual-registration">Manual registration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#frame-based-registration">Frame-based registration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rigid-registration">Rigid registration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#affine-registration">Affine registration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#displacement-field-registration">Displacement field registration</a></li>
@@ -90,7 +91,8 @@
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Mapping.html">Mapping menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Diffusion.html">Diffusion menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Window.html">Window menu</a></li>
-<li class="toctree-l1"><a class="reference internal" href="API/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API2/index.html">Widgets &amp; dialogs API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Versions.html">Version history</a></li>
@@ -127,6 +129,7 @@
 <li><p><a class="reference internal" href="#menu-section-acpc"><span class="std std-ref">AC-PC selection</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-reorient"><span class="std std-ref">Volume reorientation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-manual"><span class="std std-ref">Manual registration</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-frame"><span class="std std-ref">Frame-based registration</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-rigid"><span class="std std-ref">Rigid registration</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-affine"><span class="std std-ref">Affine registration</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-field"><span class="std std-ref">Displacement field registration</span></a></p></li>
@@ -204,6 +207,18 @@
 </ul>
 <p>Left-click <strong>Resample</strong> to resample the moving volume. A file dialog box is displayed to choose the name of the saved file. By default, it’s the same as the original prefixed with “<a href="#id3"><span class="problematic" id="id4">r_</span></a>”.</p>
 <p>Left-click <strong>Exit</strong> button to close dialog box.</p>
+</section>
+<section id="frame-based-registration">
+<span id="menu-section-frame"></span><h2>Frame-based registration<a class="headerlink" href="#frame-based-registration" title="Link to this heading"></a></h2>
+<p>This menu is used for frame-based coregistration of stereotactic volumes in which the fiducial markers of the Leksell frame have been previously detected (<a class="reference internal" href="#menu-section-stereo"><span class="std std-ref">Stereotactic frame detection</span></a>).</p>
+<p>The <strong>Frame-based registration</strong> dialog box is displayed.</p>
+<p>Use the file selection widget at the top to select the <strong>Fixed</strong> PySisyphe stereotactic volume.
+Use the files selection widget below to select the <strong>Moving</strong> PySisyphe stereotacitc volume(s) of the same patient with the same Leksell frame.</p>
+<p>Toggle <strong>Resample…</strong> button to show/hide resampling settings:
+- Select the interpolation algorithm (<em>linear</em>, <em>nearest neighbor</em>, <em>b-spline</em>, <em>gaussian</em>, <em>hamming windowed sinc</em>, <em>cosine windowed sinc</em>, <em>welch windowed sinc</em>, <em>lanczos windowed sinc</em>, <em>blackman windowed sinc</em>) used to resample the moving volume.
+- Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p>
+<p>Left-click <strong>Execute</strong> button to perform coregistration. PySisype XML xtrfs files associated with fixed and moving volumes are updated to store geometric transformations (geometric transformation for fixed volume coregistration will be added to the moving xtrfs, and geometric transformation for moving volume coregistration will be added to the fixed xtrfs).</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without coregistration.</p>
 </section>
 <section id="rigid-registration">
 <span id="menu-section-rigid"></span><h2>Rigid registration<a class="headerlink" href="#rigid-registration" title="Link to this heading"></a></h2>

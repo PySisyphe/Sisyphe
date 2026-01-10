@@ -134,7 +134,7 @@ Modules/Types/Functions imported into the environment are displayed in the list 
 <p>Variables are displayed in the list box at bottom-right (3). A tooltip pops when mouse cursor remains in front of a variable. It displays its value converted to string.</p>
 <ul class="simple">
 <li><p>Double-click on a SisypheVolume, sitkImage (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1Image.html">SimpleITK Image class</a>), ANTsImage (see <a class="reference external" href="https://antspy.readthedocs.io/en/latest/core.html">ANTs Image class</a>), vtkImageData (see <a class="reference external" href="https://vtk.org/doc/nightly/html/classvtkImageData.html">VTK Image class</a>) or ndarray variable (see <a class="reference external" href="https://antspy.readthedocs.io/en/latest/core.html">Numpy ndarray class</a>) opens it in the thumbnail bar.</p></li>
-<li><p>Right-click on 1D/2D ndarray or 2D sitkImage variables displays a popup menu that allows you to select various Matplotlib charts to draw at the current console prompt. A dialog box opens to select the display settings for each chart. Matplotlib Figure and Axes variables for the chart are created under the names ‘fig’ and ‘ax’.</p></li>
+<li><p>Right-click on 1D/2D ndarray, 2D sitkImage, or Pillow Image displays a popup menu that allows you to select various Matplotlib charts to draw at the current console prompt. A dialog box opens to select the display settings for each chart. Matplotlib Figure and Axes variables of the current chart are created under the names ‘fig’ and ‘ax’.</p></li>
 </ul>
 <p>The available charts are listed below:</p>
 <ul class="simple">
@@ -146,7 +146,7 @@ Modules/Types/Functions imported into the environment are displayed in the list 
 <li><p><strong>Histogram plot</strong>, 1D ndarray or 2D (one histogram for each row vector)</p></li>
 <li><p><strong>Scatter plot</strong>, 2D ndarray with 2 rows (1 row vector for x, 1 row vector for y) or 2 columns (1 column vector for x, 1 column vector for y)</p></li>
 <li><p><strong>Matrix plot</strong>, 2D ndarray</p></li>
-<li><p><strong>Image plot</strong>, 2D ndarray or SimpleITK Image variable</p></li>
+<li><p><strong>Image plot</strong>, 2D ndarray, SimpleITK Image or Pillow Image variable</p></li>
 </ul>
 <p>Five buttons (4):</p>
 <ul class="simple">
@@ -158,40 +158,54 @@ Modules/Types/Functions imported into the environment are displayed in the list 
 <p>Same functions (1, 2, 3 and 4) are accessible via the menu bar (Views -&gt; IPython)..</p>
 <section id="most-popular-commands">
 <h2>Most popular commands<a class="headerlink" href="#most-popular-commands" title="Link to this heading"></a></h2>
-<dl class="simple">
-<dt><strong>Up/Down</strong></dt><dd><p>keys to get command history.</p>
-</dd>
-</dl>
+<p><strong>Up/Down</strong> keys to get command history.</p>
 <p><strong>Tab key (-&gt;|)</strong> to display a popup menu with autocomplete suggestions for available modules/classes/methods/functions related to the string preceding the current cursor position on the prompt line.</p>
 <p>This popup menu with autocomplete suggestions also appears automatically after typing a <strong>dot</strong>.</p>
+<p><strong>CTRL-RETURN</strong> to enter more than one statements in a single input (multi-line editing), press CTRL-RETURN after the first line. Subsequently, just pressing RETURN will go on adding new line. To stop entering new lines and running, press RETURN key one more time at the end.</p>
 <dl class="simple">
 <dt><strong>?</strong></dt><dd><p>IPython help.</p>
 </dd>
 <dt><strong>&lt;object&gt;?</strong></dt><dd><p>Returns &lt;object&gt; docstring</p>
 </dd>
-<dt><strong>%cd</strong></dt><dd><p>Change the current working directory.
-%cd &lt;dir&gt;   changes to directory &lt;dir&gt;
-%cd ..      changes to previous directory
-%cd -       changes to last visited directory.</p>
+<dt><strong>%cd</strong></dt><dd><p>Change the current working directory.</p>
+<ul class="simple">
+<li><p>%cd &lt;dir&gt;   changes to directory &lt;dir&gt;</p></li>
+<li><p>%cd ..      changes to previous directory</p></li>
+<li><p>%cd -       changes to last visited directory.</p></li>
+</ul>
 </dd>
-<dt><strong>%colors &lt;scheme&gt;</strong></dt><dd><p>Switch color scheme for prompts, info system and exception handlers.
-Currently implemented schemes: nocolor, linux, lightbg.</p>
-</dd>
-</dl>
-<p><strong>%config &lt;class&gt;[.&lt;field&gt;=&lt;value&gt;]</strong>
-<strong>%config</strong> with no argument to see what &lt;classes&gt; are available.
-<strong>%config &lt;class&gt;</strong>, to view &lt;fields&gt; for a given class.
-<strong>%config &lt;class&gt;.&lt;field&gt;</strong> = &lt;value&gt;, setting &lt;value&gt; to &lt;field&gt;.&lt;class&gt;.</p>
-<dl class="simple">
-<dt><strong>%env &lt;var&gt; [&lt;value&gt;]</strong></dt><dd><p>Get, set, or list environment variables.
-%env with no argument, lists all environment variables/values.
-%env &lt;var&gt; get value for environment variable &lt;var&gt;.
-%env &lt;var&gt; &lt;value&gt; set &lt;value&gt; for &lt;var&gt;.</p>
+<dt><strong>%colors &lt;scheme&gt;</strong></dt><dd><p>Switch color scheme for prompts, info system and exception handlers. Currently implemented schemes: nocolor, linux, lightbg.</p>
 </dd>
 </dl>
-<p><strong>%ls</strong></p>
-<dl class="simple">
-<dt><strong>%notebook &lt;filename&gt;</strong></dt><dd><p>Export and convert IPython notebooks.</p>
+<p><strong>%config</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>%config &lt;class&gt;[.&lt;field&gt;=&lt;value&gt;]</strong></p></li>
+<li><p><strong>%config</strong> with no argument to see what &lt;classes&gt; are available.</p></li>
+<li><p><strong>%config &lt;class&gt;</strong>, to view &lt;fields&gt; for a given class.</p></li>
+<li><p><strong>%config &lt;class&gt;.&lt;field&gt;</strong> = &lt;value&gt;, setting &lt;value&gt; to &lt;field&gt;.&lt;class&gt;.</p></li>
+</ul>
+</div></blockquote>
+<dl>
+<dt><strong>%env &lt;var&gt; [&lt;value&gt;]</strong></dt><dd><p>Get, set, or list environment variables.</p>
+<ul class="simple">
+<li><p>%env with no argument, lists all environment variables/values.</p></li>
+<li><p>%env &lt;var&gt; get value for environment variable &lt;var&gt;.</p></li>
+<li><p>%env &lt;var&gt; &lt;value&gt; set &lt;value&gt; for &lt;var&gt;.</p></li>
+</ul>
+</dd>
+<dt><strong>%gemini</strong></dt><dd><p>Send a request to the Gemini AI model. Images or pdfs can be analyzed. The result is stored in the ‘r’ variable.</p>
+<p>args:</p>
+<blockquote>
+<div><p><strong>-p</strong> prompt, str
+<strong>-i</strong> image input to analyze, PIL.Image
+<strong>-pdf</strong> input to analyze, str or pathlib.Path
+<strong>-json</strong>, result in json format
+<strong>-model</strong>, print current ai model
+<strong>-key</strong>, print current api key</p>
+</div></blockquote>
+</dd>
+<dt><strong>%ls</strong></dt><dd><p>List directory contents</p>
 </dd>
 <dt><strong>%pwd</strong></dt><dd><p>Return the current working directory path.</p>
 </dd>

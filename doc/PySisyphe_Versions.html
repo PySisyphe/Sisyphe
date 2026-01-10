@@ -88,7 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-20-16-build-01-11-2025">version 0.20.16, build 01/11/2025</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-21-08-build-18-11-2025">version 0.21.08, build 18/11/2025</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-22-11-build-05-12-2025">version 0.22.11, build 05/12/2025</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-0-22-16-build-xx-xx-xxxx">version 0.22.16, build xx/xx/xxxx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-24-14-build-12-01-2026">version 0.24.14, build 12/01/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -130,7 +130,7 @@
 <li><p><a class="reference internal" href="#build01-11-2025"><span class="std std-ref">version 0.20.16, build 01/11/2025</span></a></p></li>
 <li><p><a class="reference internal" href="#build18-11-2025"><span class="std std-ref">version 0.21.08, build 18/11/2025</span></a></p></li>
 <li><p><a class="reference internal" href="#build05-12-2025"><span class="std std-ref">version 0.22.11, build 05/12/2025</span></a></p></li>
-<li><p><a class="reference internal" href="#buildxx-xx-xxxx"><span class="std std-ref">version 0.22.16, build xx/xx/xxxx</span></a></p></li>
+<li><p><a class="reference internal" href="#build12-01-2026"><span class="std std-ref">version 0.24.14, build 12/01/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -156,6 +156,7 @@
 <div><ul class="simple">
 <li><p>update html documentation</p></li>
 <li><p>new file, file update</p></li>
+<li><p>new function</p></li>
 <li><p>module update</p></li>
 </ul>
 </div></blockquote>
@@ -2176,7 +2177,7 @@
 <li><p>gui.dialogROIStatistics</p></li>
 <li><p>gui.windowSisyphe</p></li>
 <li><p>widgets.attributesWidgets</p></li>
-<li><p>widgets.iconViewWidgets</p></li>
+<li><p>widgets.iconBarViewWidgets</p></li>
 <li><p>widgets.functionsSettingsWidget</p></li>
 <li><p>widgets.consoleWidget</p></li>
 <li><p>widgets.imageWidgets</p></li>
@@ -2364,10 +2365,18 @@
 </ul>
 </div></blockquote>
 </li>
-<li><p>widgets.iconViewWidgets.IconBarWidget</p>
+<li><p>widgets.iconBarViewWidgets.IconBarWidget</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>update _onExpand() method</p></li>
+<li><p>add isTimerEnabled() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarViewWidgets.conBarViewWidgetCollection</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getSelectedSliceIndex() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -2632,10 +2641,18 @@
 </ul>
 </div></blockquote>
 </li>
-<li><p>widgets.iconViewWidgets.IconBarWidget._onExpand()</p>
+<li><p>widgets.iconBarViewWidgets.IconBarWidget._onExpand()</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>hide the grid icon when the view is expanded (expand icon selected)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarViewWidgets.conBarViewWidgetCollection.getSelectedSliceIndex()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 3963, widget that is displayed</p></li>
+<li><p>bug fix, line 3971, select the first cell if no cell is selected</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -2924,6 +2941,7 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>widgets.iconBarViewWidgets.IconBarWidget.isTimerEnabled()</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -2941,17 +2959,157 @@
 </ul>
 </div></blockquote>
 </section>
-<section id="version-0-22-16-build-xx-xx-xxxx">
-<span id="buildxx-xx-xxxx"></span><h2>version 0.22.16, build xx/xx/xxxx<a class="headerlink" href="#version-0-22-16-build-xx-xx-xxxx" title="Link to this heading"></a></h2>
+<section id="version-0-24-14-build-12-01-2026">
+<span id="build12-01-2026"></span><h2>version 0.24.14, build 12/01/2026<a class="headerlink" href="#version-0-24-14-build-12-01-2026" title="Link to this heading"></a></h2>
 <ul>
-<li><p><strong>updated modules</strong></p>
+<li><p><strong>updated html documentation</strong></p>
 <blockquote>
 <div><ul class="simple">
+<li><p>PySisyphe_ipython.rst</p></li>
+<li><p>PySisyphe_Registration.rst</p></li>
+<li><p>PySisyphe_dockroitools.rst</p></li>
+<li><p>PySisyphe_Mapping.rst</p></li>
+<li><p>version-histrory.rst update</p></li>
+<li><p>rebuild sphinx documentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated files</strong></p>
+<blockquote>
+<div><ul>
+<li><p>/Sisyphe/gui/doc/ipython.txt</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add %gemini command documentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>/Sisyphe/settings/settings.xml</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add &lt;Gemini&gt; section, &lt;APIKey&gt; field</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>/Sisyphe/templates/ICBM152/icbm152_sym_template_mask.xvol</p></li>
+<li><p>/Sisyphe/templates/ICBM152/icbm152_asym_template_mask.xvol</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>datatype conversion, from float32 to uint8</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new external module</strong></p>
+<blockquote>
+<div><ul>
+<li><p>google-genai</p></li>
+<li><p>esayocr</p></li>
+<li><p>pymupdf</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>rebuild pyinstaller with upx=False (EXE and COLLECT) options</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new plugins</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>SEEG</p></li>
+<li><p>REPORT</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new modules</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisyphePDF</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new SisyphePDF class</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogGemini</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new DialogGemini class</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated modules</strong></p>
+<blockquote>
+<div><ul>
 <li><p>core.sisypheSettings</p></li>
 <li><p>core.sisypheDatabase</p></li>
+<li><p>core.sisypheImage</p></li>
+<li><p>core.sisypheVolume</p></li>
+<li><p>core.sisypheROI</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new cython compilation of the updated core.sisypheROI module</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools</p></li>
+<li><p>core.sisypheFiducialBox</p></li>
+<li><p>processing.simpleItkFilters</p></li>
 <li><p>widgets.consoleWidget</p></li>
+<li><p>widgets.iconBarWidgets</p></li>
+<li><p>widgets.tabToolsWidgets</p></li>
+<li><p>widgets.sliceViewWidgets</p></li>
+<li><p>widgets.projectionViewWidget</p></li>
+<li><p>widgets.sliceViewFiducialBoxWidget</p></li>
+<li><p>widgets.multiComponentViewWidget</p></li>
+<li><p>widgets.attributesWidgets</p></li>
+<li><p>widgets.selectFileWidgets</p></li>
+<li><p>processing.dscFunctions</p></li>
 <li><p>gui.dialogDownload</p></li>
 <li><p>gui.dialogVolumeAttributes</p></li>
+<li><p>gui.dialogFunction</p></li>
+<li><p>gui.dialogDatatype</p></li>
+<li><p>gui.dialogSettings</p></li>
+<li><p>gui.dialogSplash</p></li>
+<li><p>gui.dialogManualRegistration</p></li>
+<li><p>gui.dialogRegistration</p></li>
+<li><p>gui.dialogPerfusion</p></li>
+<li><p>gui.windowSisyphe</p></li>
+<li><p>PySisyphe</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 15, hide console in frozen mode</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new functions</strong></p>
+<blockquote>
+<div><ul>
+<li><p>processing.dscFunctions.gamma_variate()</p></li>
+<li><p>processing.dscFunctions.fit_gamma_variate()</p></li>
+<li><p>processing.dscFunctions.generate_ttp()</p></li>
+<li><p>processing.dscFunctions.generate_leakage()</p></li>
+<li><p>processing.dscFunctions.generate_perfusion_maps()</p></li>
+<li><p>processing.dscFunctions.oSVD()</p></li>
+<li><p>processing.dscFunctions.boxNLR()</p></li>
+<li><p>processing.dscFunctions.fit_boxNLR()</p></li>
+<li><p>processing.dscFunctions.dscMaps2()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new MR perfusion processing using PyPeT implementation, dramatic improvement in processing time (less than 10s)</p></li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </div></blockquote>
 </li>
@@ -2961,14 +3119,58 @@
 <li><p>core.sisypheSettings.initPySisypheUserPath()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>line 185, set current and default database paths ($User/.PySisyphe/database) in the settings file</p></li>
+<li><p>line 185, set current and default database paths (~/.PySisyphe/database) in the settings file</p></li>
+<li><p>line 136, add ~/.PySisyphe/prompts directory</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>core.sisypheSettings.setUserSettingsToDefault()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>line 245, set current and default database paths ($User/.PySisyphe/database) in the settings file</p></li>
+<li><p>line 245, set current and default database paths (~/.PySisyphe/database) in the settings file</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.simpleItkFilters.regressionIntensityMatching()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 891, remove unnecessary flatten()</p></li>
+<li><p>line 910, cast result to original datatype</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core core.sisypheFiducialBox.LeksellProcessings</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>arc &amp; ring angles conversion between Leksell orientations</p></li>
+<li><p>calculate entry point from arc, ring, orientation, target point and trajectory length.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogGemini.DialogGemini</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>GUI dialog window, gemini LLM prompt for segmentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogRegistration.DialogFrameBasedRegistration</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>GUI dialog window for frame-based registration</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogPerfusion.DialogPerfusion2</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new MR perfusion processing using PyPeT implementation, dramatic improvement in processing time (less than 10s)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -2992,10 +3194,174 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>core.sisypheImage.SisypheImage</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getMaskROI() method</p></li>
+<li><p>add copyFromPillowImage() method</p></li>
+<li><p>add copyToPillowImage() method</p></li>
+<li><p>update getMask2() method</p></li>
+<li><p>update getMaskROI2() method</p></li>
+<li><p>update setOrigin() method</p></li>
+<li><p>update setDirections() method</p></li>
+<li><p>update getNumpy() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add copyToPillowImage() method</p></li>
+<li><p>update getMask2() method</p></li>
+<li><p>update getMaskROI2() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROI</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update drawRectangle() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.DistanceWidget</p></li>
+<li><p>core.sisypheTools.OrthogonalDistanceWidget</p></li>
+<li><p>core.sisypheTools.AngleWidget</p></li>
+<li><p>core.sisypheTools.BoxWidget</p></li>
+<li><p>core.sisypheTools.TextWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getVisibility() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _markersSearch() method</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>widgets.consoleWidget.ConsoleWidget</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>update _popupGlobals() method</p></li>
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.RichJupyterWidget2</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarWidgets.IconBarWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _onExpand() method</p></li>
+<li><p>update setViewWidget() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.widgets.tabToolsWidgets.TabROIToolsWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>add _popupGeminiMenu() method</p></li>
+<li><p>add _geminiClicked() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceOverlayViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _addToMenuVoxelOverlayValue() method</p></li>
+<li><p>update _getInfoValuesText() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.ProjectionViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update _updateProjection() method</p></li>
+<li><p>update setVolume() method</p></li>
+<li><p>update removeVolume() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.MultiProjectionViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update setVolume() method</p></li>
+<li><p>update removeVolume() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update open() method</p></li>
+<li><p>update saveall() method</p></li>
+<li><p>update removeall() method</p></li>
+<li><p>update remove() method</p></li>
+<li><p>update removeItem() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setLock() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update add() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.SelectionFilter</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update init() method</p></li>
+<li><p>add filterTransform() method</p></li>
+<li><p>add getTransformFilter() method</p></li>
+<li><p>update clearFilters() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FileSelectionWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update open() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update add() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -3012,6 +3378,54 @@
 <li><p>update __init__() method</p></li>
 <li><p>add _unlockSpacing() method</p></li>
 <li><p>add _unlockOrigin() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogFunction.DialogRegressionIntensityMatching</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update function() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDatatype.DialogEditID</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
+<li><p>add getreferenceSelectionWidget() method</p></li>
+<li><p>add setreferenceSelectionWidget() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSettings.DialogSettings</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update apply() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSplash.DialogSplash</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogManualRegistration.DialogManualRegistration</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update editID() method</p></li>
+<li><p>add frameRegistration() method</p></li>
+<li><p>update checkUpdate() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -3035,10 +3449,241 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>core.sisypheImage.SisypheImage.getMaskROI()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 2613, bug fix, avoid exception if morpho = ‘’</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.getMask2()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getMaskROI2()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add objstep parameter</p></li>
+<li><p>replace morphological operator iteration by the size of the structuring element</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheVolume.getMask2()</p></li>
+<li><p>core.sisypheImage.SisypheVolume.getMaskROI2()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add objstep parameter</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.setOrigin()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 2357, replace self._sitk_image.GetDepth() with self._sitk_image.GetDimension()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.setDirections()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 2304, 2D image management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.getnumpy()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 1552, replace self._numpy_array.ndim == 3 with self._numpy_array.ndim in (2, 3)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.drawRectangle()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 1922, replace extent[:,:,-1] with extent[::-1]</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.DistanceWidget.getVisibility()</p></li>
+<li><p>core.sisypheTools.OrthogonalDistanceWidget.getVisibility()</p></li>
+<li><p>core.sisypheTools.AngleWidget.getVisibility()</p></li>
+<li><p>core.sisypheTools.BoxWidget.getVisibility()</p></li>
+<li><p>core.sisypheTools.TextWidget.getVisibility()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Converting the return value from int to a bool</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox._markersSearch()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 670, expand the search for the first slice with the accurate number (6 or 9) of fiducial markers</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 418, to avoid displaying “chcp 65001” on the console</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>widgets.consoleWidget.ConsoleWidget._popupGlobals()</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>lines 483 &amp; 494, test data type, no popup for non-numeric types</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.RichJupyterWidget2.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._aikey attribute: str, google gemini api key</p></li>
+<li><p>add self._aimodel attribute: str, google gemini model</p></li>
+<li><p>add self._client attribute: genai.Client, google gemini client class</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.RichJupyterWidget2.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘%gemini’ magic command management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarWidgets.IconBarWidget._onExpand()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 710, if no view is selected, select the first one and expand it</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarWidgets.IconBarWidget.setViewWidget()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 1166, 1235 &amp; 1286, change iconbar button order</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.widgets.tabToolsWidgets.TabROIToolsWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add gemini button (self._btn[‘gemini’])</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceOverlayViewWidget._addToMenuVoxelOverlayValue()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 3801, remove self._ovlvalue = volume</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceOverlayViewWidget._getInfoValuesText()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 3759, display overlay value if overlay size match with reference</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.ProjectionViewWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._mask attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.ProjectionViewWidget._updateProjection()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._mask processing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.ProjectionViewWidget.setVolume()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._mask processing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.ProjectionViewWidget.removeVolume()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._mask = None</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.MultiProjectionViewWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._mask attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.MultiProjectionViewWidget.setVolume()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._mask processing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.MultiProjectionViewWidget.removeVolume()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._mask = None</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.open()</p></li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.saveall()</p></li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.removeall()</p></li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.remove()</p></li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.removeItem()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>self._collection purpose attribute management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 92, add tool.setHandleSize(5.0)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 143, increases the relative chart area</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget.setLock()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 1589, unlock tool</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.SelectionFilter.__init__()</p></li>
+<li><p>widgets.selectFileWidgets.SelectionFilter.clearFilters()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add transform filter attribute (self._reftrf)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FileSelectionWidget.open()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 1743, add transform filter management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget.add()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 3448, add transform filter management</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -3056,12 +3701,106 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.dialogFunction.DialogRegressionIntensityMatching.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._mask attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogFunction.DialogRegressionIntensityMatching.function()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 870, use self._mask attribute to store mask to avoid recalculating it</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDatatype.DialogEditID.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 446, replace self._files.clear() by self._files.clearall()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSettings.DialogSettings.apply()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 553, gemini button visibility in WindowSisyphe._tabROIList</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSplash.DialogSplash.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 180, add device context info (context = renderer.ReportCapabilities())</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogManualRegistration.DialogManualRegistration.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Reverse the order of the ‘OK’ and ‘Cancel’ buttons.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 459, gemini button visibility in self._tabROIList</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.editID()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 3375, setToolbarThumbnail to dialog file selection widgets</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.checkUpdate()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 3761, message for new modules</p></li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </div></blockquote>
 </li>
 <li><p><strong>new methods</strong></p>
 <blockquote>
 <div><ul>
+<li><p>core.sisypheImage.SisypheImage.copyFromPillowImage()</p></li>
+<li><p>core.sisypheImage.SisypheImage.copyToPillowImage()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>copy to Pillow image</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheImage.copyToPillowImage()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>copy to Pillow image</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.widgets.tabToolsWidgets.TabROIToolsWidget._popupGeminiMenu()</p></li>
+<li><p>widgets.widgets.tabToolsWidgets.TabROIToolsWidget._geminiClicked()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>gemini button menu management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.SelectionFilter.filterTransform()</p></li>
+<li><p>widgets.selectFileWidgets.SelectionFilter.getTransformFilter()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>set and get transform filter methods</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>gui.dialogVolumeAttributes.DialogVolumeAttributes._unlockSpacing()</p>
 <blockquote>
 <div><ul class="simple">
@@ -3073,6 +3812,15 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>called by QCheckBox self._unlocko toggled event</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDatatype.DialogEditID.getreferenceSelectionWidget()</p></li>
+<li><p>gui.dialogDatatype.DialogEditID.setreferenceSelectionWidget()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.frameRegistration()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>call the frame-based registration dialog box</p></li>
 </ul>
 </div></blockquote>
 </li>
