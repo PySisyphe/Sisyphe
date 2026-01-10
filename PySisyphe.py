@@ -7,46 +7,54 @@ External packages/modules
     - pywinstyles, customize window title bar for win32 platform, https://github.com/Akascape/py-window-styles
     - vtk, visualization, https://vtk.org/
 """
+"""
+External packages/modules
+-------------------------
 
-if __name__ == "__main__":
-    # noinspection PyUnresolvedReferences
-    from multiprocessing import freeze_support
-    """
-    Enable support for multiprocessing in frozen code
-    """
-    # < Revision 21/06/2025
-    # enable support for multiprocessing in frozen code
-    freeze_support()
-    # Revision 21/06/2025 >
+    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - PyQtDarkTheme, dark theme management for win32 platform, https://pyqtdarktheme.readthedocs.io/en/stable/index.html
+    - pywinstyles, customize window title bar for win32 platform, https://github.com/Akascape/py-window-styles
+    - vtk, visualization, https://vtk.org/
+"""
+
+# < Revision 21/06/2025
+# enable support for multiprocessing in frozen code
+from multiprocessing import freeze_support
+freeze_support()
+# Revision 21/06/2025 >
+
+import sys
+import ctypes
+
+# < Revision 10/01/2026
+# Force console hide for Windows Terminal compatibility (PyInstaller console=True)
+if sys.platform == 'win32' and hasattr(sys, '_MEIPASS'):
+    kernel32 = ctypes.WinDLL('kernel32')
+    user32 = ctypes.WinDLL('user32')
+    hWnd = kernel32.GetConsoleWindow()
+    if hWnd:
+        user32.ShowWindow(hWnd, 0) # 0 = SW_HIDE
+# Revision 10/01/2026 >
+
+# < Revision 10/01/2026
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+# Revision 10/01/2026 >
 
 import os
-
-# Disable debugger warnings from IPython frozen modules
-os.environ['PYDEVD_DISABLE_FILE_VALIDATION'] = '1'
-# Disable tensorflow warnings
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+os.environ['PYDEVD_DISABLE_FILE_VALIDATION'] = '1' # Disable IPython warnings
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0' # Disable tensorflow warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
+if sys.platform == 'darwin':
+    # fix Qt crash on macOS BigSur platform
+    os.environ["QT_MAC_WANTS_LAYER"] = "1"
 from os.path import exists
 from os.path import join
 from os.path import splitext
 from os.path import dirname
 from os.path import expanduser
 
-import sys
-
 import traceback
-
-import ctypes
-
-# fix Qt crash on macOS BigSur platform
-if sys.platform == 'darwin':
-    os.environ["QT_MAC_WANTS_LAYER"] = "1"
-
-from vtk import vtkObject
-
-from Sisyphe.core.sisypheVolume import SisypheVolume
-from Sisyphe.gui.dialogSplash import DialogSplash
 
 # < Revision 16/07/2025
 import matplotlib
@@ -67,13 +75,15 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QApplication
 
 if sys.platform == 'win32':
-    # noinspection PyUnresolvedReferences
     import pywinstyles
-    # noinspection PyUnresolvedReferences
     import qdarktheme
 
+from vtk import vtkObject
+
+from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.core.sisypheSettings import initPySisypheUserPath
+from Sisyphe.gui.dialogSplash import DialogSplash
 
 """
 PySisyphe main
@@ -158,13 +168,13 @@ class QApplicationEventHandler(QApplication):
     openFileRequest = pyqtSignal(QUrl, name='openFileRequest')
 
     def event(self, event):
+        # noinspection PyUnresolvedReferences
         if event.type() == QEvent.FileOpen:
             # noinspection PyUnresolvedReferences
             self.openFileRequest.emit(event.url())
             return True
         return super().event(event)
 # Revision 22/07/2025 >
-
 
 
 if __name__ == "__main__":
@@ -310,13 +320,14 @@ if __name__ == "__main__":
     QLocale.setDefault(QLocale(QLocale.English, QLocale.UnitedStates))
     # Revision 07/12/2024 >
 
-    # noinspection PyTypeChecker
+    # noinspection PyTypeChecker,PyUnresolvedReferences
     QApplication.setAttribute(Qt.AA_DontShowIconsInMenus, True)
-    # noinspection PyTypeChecker
+    # noinspection PyTypeChecker,PyUnresolvedReferences
     QApplication.setAttribute(Qt.AA_DontUseNativeMenuBar, False)
 
     if sys.platform == 'win32':
         # High DPI scaling bugfix
+        # noinspection PyUnresolvedReferences
         ctypes.windll.shcore.SetProcessDpiAwareness(2)
         # Set theme
         PALETTE = qdarktheme.load_palette('auto')

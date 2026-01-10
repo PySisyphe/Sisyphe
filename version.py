@@ -17,7 +17,8 @@ from xml.dom import minidom
 # __version__ = "0.18.9"
 # __version__ = "0.20.16" # 01-11-2025
 # __version__ = "0.21.08" # 18-11-2025
-__version__ = "0.22.11" # 05-12-2025
+# __version__ = "0.22.11" # 05-12-2025
+__version__ = "0.24.14" # 12-01-2026
 
 _V = b'70797369737970686540676d61696c2e636f6d'
 
@@ -64,7 +65,7 @@ def getVersionAsList() -> list[int]:
     return [int(v) for v in __version__.split('.')]
 
 
-def getVersionAsDict() -> dict[str: int]:
+def getVersionAsDict() -> dict[str, int]:
     r = dict()
     v = __version__.split('.')
     # noinspection PyUnresolvedReferences
@@ -88,7 +89,7 @@ def isOlderThan(version: str | list[int] | dict[str, int]) -> bool:
     else: raise TypeError('Invalid parameter type {}.'.format(type(version)))
 
 
-def isNewerThan(version: str | list[int] | dict[str: int]) -> bool:
+def isNewerThan(version: str | list[int] | dict[str, int]) -> bool:
     if isinstance(version, str): version = [int(v) for v in version.split('.')]
     elif isinstance(version, dict): version = [version['major'], version['minor'], version['patch']]
     if isinstance(version, list):
