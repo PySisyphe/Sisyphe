@@ -60,7 +60,7 @@ A large collection of atlases and templates (volumes, ROI, meshes, streamlines) 
 
 PySisyphe is plug-in extensible and provides a fully documented API that gives access to all of the software's advanced features and widgets for fast plug-in development. API classes are available in the PySisyphe's IPython console.
 
-[PySisyphe Website](https://pysisyphe.github.io/Sisyphe/home.html)
+[PySisyphe Website documentation](https://pysisyphe.github.io/Sisyphe/home.html)
 
 [PySisyphe NITRC website](https://www.nitrc.org/projects/pysisyphe/)
 
