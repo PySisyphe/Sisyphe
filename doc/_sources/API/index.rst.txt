@@ -19,6 +19,7 @@ Core API
    ./api_lut.rst
    ./api_mesh.rst
    ./api_meshio.rst
+   ./api_pdf.rst
    ./api_recent.rst
    ./api_roi.rst
    ./api_settings.rst

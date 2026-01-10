@@ -1,0 +1,5 @@
+Sisyphe.core.sisyphePDF
+=======================
+
+.. automodule:: Sisyphe.core.sisyphePDF
+   :members:

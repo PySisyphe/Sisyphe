@@ -11,8 +11,11 @@ __ https://github.com/albertosottile/darkdetect
 __ https://github.com/iitzco/deepbrain
 __ https://dipy.org/
 __ https://docs.dipy.org/stable/reference/index.html
+__ https://github.com/JaidedAI/EasyOCR
 __ https://py-pdf.github.io/fpdf2/index.html
 __ https://py-pdf.github.io/fpdf2/fpdf/
+__ https://github.com/googleapis/python-genai
+__ https://googleapis.github.io/python-genai/
 __ https://ipython.org/
 __ https://ipython.readthedocs.io/en/stable/
 __ https://itk.org/
@@ -29,6 +32,8 @@ __ https://numpy.org/doc/stable/reference/index.html#reference
 __ https://pandas.pydata.org/
 __ https://pandas.pydata.org/docs/reference/index.html#api
 __ https://github.com/ipython/pickleshare/tree/master
+__ https://github.com/pymupdf/PyMuPDF
+__ https://pymupdf.readthedocs.io/en/latest/
 __ https://pypi.org/project/PyQtDarkTheme-fork/
 __ https://pyqtdarktheme.readthedocs.io/en/stable/reference/index.html
 __ https://github.com/pydicom/pydicom
@@ -61,7 +66,9 @@ __ https://github.com/djeada/Vtk-Examples
 - Darkdetect `website`__
 - DeepBrain `website`__
 - DIPY (1.11.0) `website`__, `API documentation`__
+- EasyOCR `website`__
 - fpdf2 `website`__, `API documentation`__
+- Google Gen AI `website`__, `API documentation`__
 - IPython (8.33.0) `website`__, `API documentation`__
 - Insight Toolkit (ITK) `website`__, `API documentation`__
 - Matplotlib (3.6.3) `website`__, `API documentation`__
@@ -71,6 +78,7 @@ __ https://github.com/djeada/Vtk-Examples
 - NumPy `website`__, `API documentation`__
 - pandas `website`__, `API documentation`__
 - pickleshare `website`__
+- PyMuPDF `website`__, `API documentation`__
 - PyQtDarkTheme-fork `website`__, `API documentation`__
 - Pydicom `website`__, `API documentation`__
 - PyQt5 `website`__ (C++)
