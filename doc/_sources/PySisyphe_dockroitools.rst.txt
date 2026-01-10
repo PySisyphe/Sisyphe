@@ -54,70 +54,90 @@ Slice tools
 All tools in this section work in 2D and are applied to the selected slice displayed in the view widget (slice view or synchronized view in the central area), other slices are not affected. Left-click in the view widget to select a slice, the selected slice will be outlined in white. If no slice is selected, these tools will have no effect.
 
 |dilate|
-	Click for morphological dilatation (see `Morphology dilatation in wikipedia <https://en.wikipedia.org/wiki/Dilation_(morphology)>`_) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click for morphological dilatation (see `Morphology dilatation in wikipedia <https://en.wikipedia.org/wiki/Dilation_(morphology)>`_) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |erode|
-	Click for morphological erosion (see `Morphology erosion in wikipedia <https://en.wikipedia.org/wiki/Erosion_(morphology)>`_) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click for morphological erosion (see `Morphology erosion in wikipedia <https://en.wikipedia.org/wiki/Erosion_(morphology)>`_) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |morphoopen|
-	Click for morphological opening (see `Morphology opening in wikipedia <https://en.wikipedia.org/wiki/Opening_(morphology)>`_) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click for morphological opening (see `Morphology opening in wikipedia <https://en.wikipedia.org/wiki/Opening_(morphology)>`_) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |morphoclose|
-	Click for morphological closing (see `Morphology closing in wikipedia <https://en.wikipedia.org/wiki/Closing_(morphology)>`_) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click for morphological closing (see `Morphology closing in wikipedia <https://en.wikipedia.org/wiki/Closing_(morphology)>`_) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |invert|
-	Click to invert ROI pixels (binary not operator) of the selected slice.
+	Left-click to invert ROI pixels (binary not operator) of the selected slice.
 
 |bucket|
-	Click to automatically fill all detected holes of the selected slice.
+	Left-click to automatically fill all detected holes of the selected slice.
 
 |fill|
-	Click to select this button (blue border), and fill left-clicked hole in the view widget (slice view or synchronized view in the central area).
+	Left-click to select this button (blue border), and fill left-clicked hole in the view widget (slice view or synchronized view in the central area).
 
 |copy|
-	Click to copy the selected ROI slice to the clipboard.
+	Left-click to copy the selected ROI slice to the clipboard.
 
 |cut|
-	Click to cut the selected ROI slice to the clipboard.
+	Left-click to cut the selected ROI slice to the clipboard.
 
 |paste|
-	Click to paste the clipboard (if not empty) to the selected ROI slice.
+	Left-click to paste the clipboard (if not empty) to the selected ROI slice.
 
 |head|
-	Click for automatic object segmentation of the selected slice. The Algorithm used is defined in :ref:`tools-section-brush-settings`.
+	Left-click for automatic object segmentation of the selected slice. The Algorithm used is defined in :ref:`tools-section-brush-settings`.
 
 |ihead|
-	Click for automatic background segmentation of the selected slice. The Algorithm used is defined in :ref:`tools-section-brush-settings`.
+	Left-click for automatic background segmentation of the selected slice. The Algorithm used is defined in :ref:`tools-section-brush-settings`.
 
 |threshold2|
-	Click for thresholding the selected ROI slice. The upper and lower thresholds are set by |threshold|.
+	Left-click for thresholding the selected ROI slice. The upper and lower thresholds are set by |threshold|.
 
 |magic|
-	Click to display a menu with two segmentation algorithms:
+	Left-click to display a menu with two segmentation algorithms:
 
 	- **Region growing**, select and left-click in the view widget to calculate the region growing from the clicked seed pixel (see `SimpleITK ConnectedThresholdImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConnectedThresholdImageFilter.html>`_). The upper and lower thresholds used by this algorithm are set by |threshold|.
 	- **Confidence connected**, select and left-click in the view widget to calculate the confidence connected region from the clicked seed pixel (see `SimpleITK ConfidenceConnectedImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html>`_). Parameters used by this algorithm are defined in :ref:`tools-section-brush-settings`.
 
 |cross|
-	Click to clear the selected ROI slice.
+	Left-click to clear the selected ROI slice.
+
+|gemini|
+	Left-click to display a menu from which you can select a Gemini AI prompt that you previously saved in the 'prompts' subfolder of the user folder (~/.PySisype). Open the Gemini prompt dialog box by selecting the "New prompt..." menu.
+
+	This interface allows you to edit multimodal prompts, which combine text with a 2D image of the current slice displayed in the slice view widget.
+
+	- There is an edit box at the top where you can write the **prompt**.
+	- Left-click **Load** button to load an XML prompt file.
+	- Left-click **Save** button to save the current prompt to an XML file.
+	- Left-click **Clear** to erase the current promt.
+	- Left-click **Add spacing** to add pixel dimensions of the attached image to the text prompt.
+
+	Use the radio buttons to select the type of response to generate:
+
+	- **Text**, only text that will be displayed in the dialog box.
+	- **Bounding box**, a bounding box displayed as a ROI in the slice view of the object described in the text prompt. The JSON response is also displayed as text in the dialog box. 
+	- **Contour**, a filled contour displayed as a ROI in the slice view of the object described in the text prompt. The JSON response is also displayed as text in the dialog box.
+	- **Points**, points saved as Target tools (.xtools file) whose position must be described in the text prompt. The JSON response is also displayed as text in the dialog box.
+
+	- Left-click **Send** button to send the prompt to Gemini AI.
 
 |flipx|
-	Click to flip the selected ROI slice along the x-axis display (x-axis world if axial or coronal slice, z-axis world if sagittal slice).
+	Left-click to flip the selected ROI slice along the x-axis display (x-axis world if axial or coronal slice, z-axis world if sagittal slice).
 
 |flipy|
-	Click to flip the selected ROI slice along the y-axis display (y-axis world if axial slice, z-axis world if coronal or sagittal slice).
+	Left-click to flip the selected ROI slice along the y-axis display (y-axis world if axial slice, z-axis world if coronal or sagittal slice).
 
 |up|
-	Click for upward translation of the selected ROI slice (anterior translation if axial slice, cranial translation if coronal or sagittal slice).
+	Left-click for upward translation of the selected ROI slice (anterior translation if axial slice, cranial translation if coronal or sagittal slice).
 
 |down|
-	Click for downward translation of the selected ROI slice (posterior translation if axial slice, caudal translation if coronal or sagittal slice).
+	Left-click for downward translation of the selected ROI slice (posterior translation if axial slice, caudal translation if coronal or sagittal slice).
 
 |left|
-	Click to translate the selected ROI slice to the left (right translation if axial or coronal slice, anterior translation if sagittal slice).
+	Left-click to translate the selected ROI slice to the left (right translation if axial or coronal slice, anterior translation if sagittal slice).
 
 |right|
-	Click to translate the selected ROI slice to the right (left translation if axial or coronal slice, posterior translation if sagittal slice).
+	Left-click to translate the selected ROI slice to the right (left translation if axial or coronal slice, posterior translation if sagittal slice).
 
 .. _tools-section-slice-blob-box:
 Slice blob tools
@@ -129,40 +149,40 @@ Slice blob tools
 All tools in this section work on 2D blobs that are displayed in a slice of the view widget (see `Connected component in wikipedia <https://en.wikipedia.org/wiki/Connected_space#Connected_components>`_). Other blobs in the selected slice and other slices are not affected. First, select a tool button (blue border), then left-click on a blob in the view widget.
 
 |dilate|
-	Click to select this button (blue border). Left-click on a blob in the view widget for morphological dilatation (see `Morphology dilatation in wikipedia <https://en.wikipedia.org/wiki/Dilation_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological dilatation (see `Morphology dilatation in wikipedia <https://en.wikipedia.org/wiki/Dilation_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |erode|
-	Click to select this button (blue border). Left-click on a blob in the view widget for morphological erosion (see `Morphology erosion in wikipedia <https://en.wikipedia.org/wiki/Erosion_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological erosion (see `Morphology erosion in wikipedia <https://en.wikipedia.org/wiki/Erosion_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |morphoopen|
-	Click to select this button (blue border). Left-click on a blob in the view widget for morphological opening (see `Morphology opening in wikipedia <https://en.wikipedia.org/wiki/Opening_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological opening (see `Morphology opening in wikipedia <https://en.wikipedia.org/wiki/Opening_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |morphoclose|
-	Click to select this button (blue border). Left-click on a blob in the view widget for morphological closing (see `Morphology closing in wikipedia <https://en.wikipedia.org/wiki/Closing_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological closing (see `Morphology closing in wikipedia <https://en.wikipedia.org/wiki/Closing_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |copy|
-	Click to select this button (blue border). Left-click on a blob in the view widget to copy it to the clipboard.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to copy it to the clipboard.
 
 |cut|
-	Click to select this button (blue border). Left-click on a blob in the view widget to cut it to the clipboard.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to cut it to the clipboard.
 
 |paste|
-	Click to select this button (blue border). Left-click in the view widget to paste the clipboard (if not empty) to the selected ROI slice.
+	Left-click to select this button (blue border). Left-click in the view widget to paste the clipboard (if not empty) to the selected ROI slice.
 
 |select-keep|
-	Click to select this button (blue border). Left-click on a blob in the view widget to select it, all other blobs in the selected slice will be removed.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to select it, all other blobs in the selected slice will be removed.
 
 |select-remove|
-	Click to select this button (blue border). Left-click on a blob in the view widget to remove it.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to remove it.
 
 |extent|
-	Click to remove blobs of the selected slice with a pixel count less than a threshold. The extent threshold is defined in :ref:`tools-section-brush-settings`.
+	Left-click to remove blobs of the selected slice with a pixel count less than a threshold. The extent threshold is defined in :ref:`tools-section-brush-settings`.
 
 |threshold2|
-	Click to select this button. Left-click on a blob in the view widget to threshold it. The upper and lower thresholds are defined in |threshold|.
+	Left-click to select this button. Left-click on a blob in the view widget to threshold it. The upper and lower thresholds are defined in |threshold|.
 
 |magic|
-	Click to display a menu with two segmentation algorithms:
+	Left-click to display a menu with two segmentation algorithms:
 
 	- **Region growing**, select and left-click on a blob in the view widget to calculate the region growing from the clicked seed pixel (see `SimpleITK ConnectedThresholdImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConnectedThresholdImageFilter.html>`_). The upper and lower thresholds used by this algorithm are defined in |threshold|.
 	- **Confidence connected**, select and left-click on a blob in the view widget to calculate the confidence connected region from the clicked seed pixel (see `SimpleITK ConfidenceConnectedImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html>`_). Parameters used by this algorithm are defined in :ref:`tools-section-brush-settings`.
@@ -177,43 +197,43 @@ Volume tools
 All tools in this section work in 3D, in the full volume of the ROI.
 
 |dilate|
-	Click for morphological dilatation (see `Morphology dilatation in wikipedia <https://en.wikipedia.org/wiki/Dilation_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click for morphological dilatation (see `Morphology dilatation in wikipedia <https://en.wikipedia.org/wiki/Dilation_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |erode|
-	Click for morphological erosion (see `Morphology erosion in wikipedia <https://en.wikipedia.org/wiki/Erosion_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click for morphological erosion (see `Morphology erosion in wikipedia <https://en.wikipedia.org/wiki/Erosion_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |morphoopen|
-	Click for morphological opening (see `Morphology opening in wikipedia <https://en.wikipedia.org/wiki/Opening_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click for morphological opening (see `Morphology opening in wikipedia <https://en.wikipedia.org/wiki/Opening_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |morphoclose|
-	Click for morphological closing (see `Morphology closing in wikipedia <https://en.wikipedia.org/wiki/Closing_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click for morphological closing (see `Morphology closing in wikipedia <https://en.wikipedia.org/wiki/Closing_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |invert|
-	Click to invert ROI pixels (binary not operator).
+	Left-click to invert ROI pixels (binary not operator).
 
 |bucket|
-	Click to automatically fill all detected 3D holes.
+	Left-click to automatically fill all detected 3D holes.
 
 |fill|
-	Click to select this button (blue border), and fill 3D hole left-clicked in the view widget (slice view or synchronized view in the central area).
+	Left-click to select this button (blue border), and fill 3D hole left-clicked in the view widget (slice view or synchronized view in the central area).
 
 |expand2|
-	Click to expand ROI with an isotropic margin in mm. Margin value is defined in :ref:`tools-section-brush-settings`.
+	Left-click to expand ROI with an isotropic margin in mm. Margin value is defined in :ref:`tools-section-brush-settings`.
 
 |shrink2|
-	Click to shrink ROI with an isotropic margin in mm. Margin value is defined in :ref:`tools-section-brush-settings`.
+	Left-click to shrink ROI with an isotropic margin in mm. Margin value is defined in :ref:`tools-section-brush-settings`.
 
 |head|
-	Click for automatic object segmentation. The Algorithm used is defined in :ref:`tools-section-brush-settings`.
+	Left-click for automatic object segmentation. The Algorithm used is defined in :ref:`tools-section-brush-settings`.
 
 |ihead|
-	Click for automatic background segmentation. The Algorithm used is defined in :ref:`tools-section-brush-settings`.
+	Left-click for automatic background segmentation. The Algorithm used is defined in :ref:`tools-section-brush-settings`.
 
 |threshold2|
-	Click for thresholding. The upper and lower thresholds are defined in |threshold|.
+	Left-click for thresholding. The upper and lower thresholds are defined in |threshold|.
 
 |magic|
-	Click to display a menu with two segmentation algorithms:
+	Left-click to display a menu with two segmentation algorithms:
 
 	- **Region growing**, select and left-click in the view widget to calculate the region growing from the clicked seed voxel (see `SimpleITK ConnectedThresholdImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConnectedThresholdImageFilter.html>`_). The upper and lower thresholds used by this algorithm are defined in |threshold|.
 	- **Confidence connected**, select and left-click in the view widget to calculate the confidence connected region from the clicked seed voxel (see `SimpleITK ConfidenceConnectedImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html>`_). Parameters used by this algorithm are defined in :ref:`tools-section-brush-settings`.
@@ -231,28 +251,28 @@ All tools in this section work in 3D, in the full volume of the ROI.
 		- **Threshold factor**, Factor value x standard deviation of signal in seed sphere to estimate lower and upper thresholds used by threshold variant of the level set algorithm (default 3.0).
 
 |cross|
-	Click to clear ROI.
+	Left-click to clear ROI.
 
 |statistics|
 	Display signal and shape statistics of ROI(s) in a dialog box (see :ref:`tools-section-dialog-statistics`).
 
 |flipx|
-	Click to flip ROI along the x-axis display (x-axis world if axial or coronal display, z-axis world if sagittal display).
+	Left-click to flip ROI along the x-axis display (x-axis world if axial or coronal display, z-axis world if sagittal display).
 
 |flipy|
-	Click to flip ROI along the y-axis display (y-axis world if axial display, z-axis world if coronal or sagittal display).
+	Left-click to flip ROI along the y-axis display (y-axis world if axial display, z-axis world if coronal or sagittal display).
 
 |up|
-	Click for upward ROI translation (anterior translation if axial slice, cranial translation if coronal or sagittal slice).
+	Left-click for upward ROI translation (anterior translation if axial slice, cranial translation if coronal or sagittal slice).
 
 |down|
-	Click for downward ROI translation (posterior translation if axial display, caudal translation if coronal or sagittal dsiplay).
+	Left-click for downward ROI translation (posterior translation if axial display, caudal translation if coronal or sagittal dsiplay).
 
 |left|
-	Click to translate ROI to the left (right translation if axial or coronal display, anterior translation if sagittal display).
+	Left-click to translate ROI to the left (right translation if axial or coronal display, anterior translation if sagittal display).
 
 |right|
-	Click to translate ROI to the right (left translation if axial or coronal slice, posterior translation if sagittal display).
+	Left-click to translate ROI to the right (left translation if axial or coronal slice, posterior translation if sagittal display).
 
 .. _tools-section-volume-blob-box:
 Volume blob tools
@@ -264,46 +284,46 @@ Volume blob tools
 All tools in this section work in a selected 3D blob (see `Connected component in wikipedia <https://en.wikipedia.org/wiki/Connected_space#Connected_components>`_). Other blobs are not affected. First, select a tool button (blue border), then left-click on a blob in the view widget.
 
 |dilate|
-	Click to select this button (blue border). Left-click on a blob in the view widget for morphological dilatation (see `Morphology dilatation in wikipedia <https://en.wikipedia.org/wiki/Dilation_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological dilatation (see `Morphology dilatation in wikipedia <https://en.wikipedia.org/wiki/Dilation_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |erode|
-	Click to select this button (blue border). Left-click on a blob in the view widget for morphological erosion (see `Morphology erosion in wikipedia <https://en.wikipedia.org/wiki/Erosion_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological erosion (see `Morphology erosion in wikipedia <https://en.wikipedia.org/wiki/Erosion_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |morphoopen|
-	Click to select this button (blue border). Left-click on a blob in the view widget for morphological opening (see `Morphology opening in wikipedia <https://en.wikipedia.org/wiki/Opening_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological opening (see `Morphology opening in wikipedia <https://en.wikipedia.org/wiki/Opening_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |morphoclose|
-	Click to select this button (blue border). Left-click on a blob in the view widget for morphological closing (see `Morphology closing in wikipedia <https://en.wikipedia.org/wiki/Closing_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological closing (see `Morphology closing in wikipedia <https://en.wikipedia.org/wiki/Closing_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
 |copy|
-	Click to select this button (blue border). Left-click on a blob in the view widget to copy it to the clipboard.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to copy it to the clipboard.
 
 |cut|
-	Click to select this button (blue border). Left-click on a blob in the view widget to cut it to the clipboard.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to cut it to the clipboard.
 
 |paste|
-	Click to select this button (blue border). Left-click in the view widget to paste the clipboard (if not empty).
+	Left-click to select this button (blue border). Left-click in the view widget to paste the clipboard (if not empty).
 
 |expand2|
-	Click to select this button (blue border). Left-click on a blob in the view widget to expand it with an isotropic margin in mm. Margin value is defined in :ref:`tools-section-brush-settings`.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to expand it with an isotropic margin in mm. Margin value is defined in :ref:`tools-section-brush-settings`.
 
 |shrink2|
-	Click to select this button (blue border). Left-click on a blob in the view widget to shrink it with an isotropic margin in mm. Margin value is defined in :ref:`tools-section-brush-settings`.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to shrink it with an isotropic margin in mm. Margin value is defined in :ref:`tools-section-brush-settings`.
 
 |select-keep|
-	Click to select this button (blue border). Left-click on a blob in the view widget to select it, all other blobs will be removed.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to select it, all other blobs will be removed.
 
 |select-remove|
-	Click to select this button (blue border). Left-click on a blob in the view widget to remove it.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to remove it.
 
 |extent|
-	Click to remove blobs with a voxel count less than a threshold. The extent threshold is defined in :ref:`tools-section-brush-settings`.
+	Left-click to remove blobs with a voxel count less than a threshold. The extent threshold is defined in :ref:`tools-section-brush-settings`.
 
 |threshold2|
-	Click to select this button (blue border). Left-click on a blob in the view widget to threshold it. The upper and lower thresholds are set by |threshold|.
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to threshold it. The upper and lower thresholds are set by |threshold|.
 
 |magic|
-	Click to display a menu with two segmentation algorithms:
+	Left-click to display a menu with two segmentation algorithms:
 
 	- **Region growing**, select and left-click on a blob in the view widget to calculate the region growing from the clicked seed voxel (see `SimpleITK ConnectedThresholdImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConnectedThresholdImageFilter.html>`_). The upper and lower thresholds used by this algorithm are set by |threshold|.
 	- **Confidence connected**, select and left-click on a blob in the view widget to calculate the confidence connected region from the clicked seed voxel (see `SimpleITK ConfidenceConnectedImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html>`_). Parameters used by this algorithm are defined in :ref:`tools-section-brush-settings`.
@@ -457,4 +477,6 @@ Finally, there is a button bar at the bottom:
 .. |shrink2| image:: /GUI/dock/shrink2.png
    :scale: 50 %
 .. |statistics| image:: /GUI/dock/statistics.png
+   :scale: 50 %
+.. |gemini| image:: /GUI/dock/gemini.png
    :scale: 50 %

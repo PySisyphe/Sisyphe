@@ -29,7 +29,7 @@ Modules/Types/Functions imported into the environment are displayed in the list 
 Variables are displayed in the list box at bottom-right (3). A tooltip pops when mouse cursor remains in front of a variable. It displays its value converted to string. 
 
 - Double-click on a SisypheVolume, sitkImage (see `SimpleITK Image class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1Image.html>`_), ANTsImage (see `ANTs Image class <https://antspy.readthedocs.io/en/latest/core.html>`_), vtkImageData (see `VTK Image class <https://vtk.org/doc/nightly/html/classvtkImageData.html>`_) or ndarray variable (see `Numpy ndarray class <https://antspy.readthedocs.io/en/latest/core.html>`_) opens it in the thumbnail bar.
-- Right-click on 1D/2D ndarray or 2D sitkImage variables displays a popup menu that allows you to select various Matplotlib charts to draw at the current console prompt. A dialog box opens to select the display settings for each chart. Matplotlib Figure and Axes variables for the chart are created under the names 'fig' and 'ax'.
+- Right-click on 1D/2D ndarray, 2D sitkImage, or Pillow Image displays a popup menu that allows you to select various Matplotlib charts to draw at the current console prompt. A dialog box opens to select the display settings for each chart. Matplotlib Figure and Axes variables of the current chart are created under the names 'fig' and 'ax'.
 
 The available charts are listed below: 
 
@@ -41,7 +41,7 @@ The available charts are listed below:
 - **Histogram plot**, 1D ndarray or 2D (one histogram for each row vector)
 - **Scatter plot**, 2D ndarray with 2 rows (1 row vector for x, 1 row vector for y) or 2 columns (1 column vector for x, 1 column vector for y)
 - **Matrix plot**, 2D ndarray
-- **Image plot**, 2D ndarray or SimpleITK Image variable 
+- **Image plot**, 2D ndarray, SimpleITK Image or Pillow Image variable 
 
 Five buttons (4):
 
@@ -55,12 +55,13 @@ Same functions (1, 2, 3 and 4) are accessible via the menu bar (Views -> IPython
 Most popular commands
 ---------------------
 
-**Up/Down** 
-   keys to get command history.
+**Up/Down** keys to get command history.
 
 **Tab key (->|)** to display a popup menu with autocomplete suggestions for available modules/classes/methods/functions related to the string preceding the current cursor position on the prompt line.
 
 This popup menu with autocomplete suggestions also appears automatically after typing a **dot**.
+
+**CTRL-RETURN** to enter more than one statements in a single input (multi-line editing), press CTRL-RETURN after the first line. Subsequently, just pressing RETURN will go on adding new line. To stop entering new lines and running, press RETURN key one more time at the end.
 
 **?**
    IPython help.
@@ -70,29 +71,42 @@ This popup menu with autocomplete suggestions also appears automatically after t
 
 **%cd**
    Change the current working directory.
-   %cd <dir>   changes to directory <dir>
-   %cd ..      changes to previous directory
-   %cd -       changes to last visited directory.
+   
+   - %cd <dir>   changes to directory <dir>
+   - %cd ..      changes to previous directory
+   - %cd -       changes to last visited directory.
 
 **%colors <scheme>**
-   Switch color scheme for prompts, info system and exception handlers.
-   Currently implemented schemes: nocolor, linux, lightbg.
+   Switch color scheme for prompts, info system and exception handlers. Currently implemented schemes: nocolor, linux, lightbg.
 
-**%config <class>[.<field>=<value>]**
-**%config** with no argument to see what <classes> are available.
-**%config <class>**, to view <fields> for a given class.
-**%config <class>.<field>** = <value>, setting <value> to <field>.<class>.
+**%config**
+
+   - **%config <class>[.<field>=<value>]**
+   - **%config** with no argument to see what <classes> are available.
+   - **%config <class>**, to view <fields> for a given class.
+   - **%config <class>.<field>** = <value>, setting <value> to <field>.<class>.
 
 **%env <var> [<value>]**
    Get, set, or list environment variables.
-   %env with no argument, lists all environment variables/values.
-   %env <var> get value for environment variable <var>.
-   %env <var> <value> set <value> for <var>.
+   
+   - %env with no argument, lists all environment variables/values.
+   - %env <var> get value for environment variable <var>.
+   - %env <var> <value> set <value> for <var>.
+
+**%gemini**
+   Send a request to the Gemini AI model. Images or pdfs can be analyzed. The result is stored in the 'r' variable.
+
+   args:
+   
+      **-p** prompt, str
+      **-i** image input to analyze, PIL.Image
+      **-pdf** input to analyze, str or pathlib.Path
+      **-json**, result in json format
+      **-model**, print current ai model
+      **-key**, print current api key
 
 **%ls**
-
-**%notebook <filename>**
-   Export and convert IPython notebooks.
+   List directory contents
 
 **%pwd**
    Return the current working directory path.

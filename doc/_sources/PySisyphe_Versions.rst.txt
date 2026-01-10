@@ -13,7 +13,7 @@ Version history
 - :ref:`build01-11-2025`
 - :ref:`build18-11-2025`
 - :ref:`build05-12-2025`
-- :ref:`buildxx-xx-xxxx`
+- :ref:`build12-01-2026`
 
 .. _version-increment-rules:
 Version increment rules
@@ -33,6 +33,7 @@ Version increment rules
 
 	- update html documentation
 	- new file, file update
+	- new function
 	- module update
 
 .. _build26-07-2025:
@@ -1278,7 +1279,7 @@ version 0.22.11, build 05/12/2025
 	- gui.dialogROIStatistics
 	- gui.windowSisyphe
 	- widgets.attributesWidgets
-	- widgets.iconViewWidgets
+	- widgets.iconBarViewWidgets
 	- widgets.functionsSettingsWidget
 	- widgets.consoleWidget
 	- widgets.imageWidgets
@@ -1403,9 +1404,14 @@ version 0.22.11, build 05/12/2025
 
 		- update setDefaultAttributesFromSettings() method
 
-	- widgets.iconViewWidgets.IconBarWidget
+	- widgets.iconBarViewWidgets.IconBarWidget
 
 		- update _onExpand() method
+		- add isTimerEnabled() method
+
+	- widgets.iconBarViewWidgets.conBarViewWidgetCollection
+
+		- update getSelectedSliceIndex() method
 
 	- widgets.functionsSettingsWidget.SettingsWidget
 
@@ -1565,9 +1571,14 @@ version 0.22.11, build 05/12/2025
 
 		- bug fix, line 1525, add self._color.setFloatColor(v[0], v[1], v[2], signal=False) to update button color
 
-	- widgets.iconViewWidgets.IconBarWidget._onExpand()
+	- widgets.iconBarViewWidgets.IconBarWidget._onExpand()
 
 		- hide the grid icon when the view is expanded (expand icon selected)
+
+	- widgets.iconBarViewWidgets.conBarViewWidgetCollection.getSelectedSliceIndex()
+
+		- bug fix, line 3963, widget that is displayed
+		- bug fix, line 3971, select the first cell if no cell is selected
 
 	- widgets.functionsSettingsWidget.SettingsWidget.__init__()
 
@@ -1741,33 +1752,150 @@ version 0.22.11, build 05/12/2025
 
 		- bug fix, line 4736, add self._renderwindow.Render() to update VolumeView display
 
+	- widgets.iconBarViewWidgets.IconBarWidget.isTimerEnabled()
+
 **updated function**
 
 	- version.isNewerThan()
 
 		- bug fix, line 100, replace < by > between current[2] and version[2]
 
-.. _buildxx-xx-xxxx:
-version 0.22.16, build xx/xx/xxxx
+.. _build12-01-2026:
+version 0.24.14, build 12/01/2026
 ---------------------------------
+
+- **updated html documentation**
+
+	- PySisyphe_ipython.rst
+	- PySisyphe_Registration.rst
+	- PySisyphe_dockroitools.rst
+	- PySisyphe_Mapping.rst
+	- version-histrory.rst update
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- /Sisyphe/gui/doc/ipython.txt
+
+		- add %gemini command documentation
+
+	- /Sisyphe/settings/settings.xml
+
+		- add <Gemini> section, <APIKey> field
+
+	- /Sisyphe/templates/ICBM152/icbm152_sym_template_mask.xvol
+	- /Sisyphe/templates/ICBM152/icbm152_asym_template_mask.xvol
+
+		- datatype conversion, from float32 to uint8
+
+- **new external module** 
+
+	- google-genai
+	- esayocr
+	- pymupdf
+
+		- rebuild pyinstaller with upx=False (EXE and COLLECT) options
+
+- **new plugins**
+
+	- SEEG
+	- REPORT
+
+- **new modules**
+
+	- core.sisyphePDF
+
+		- new SisyphePDF class
+
+	- gui.dialogGemini
+
+		- new DialogGemini class
 
 - **updated modules**
 
 	- core.sisypheSettings
 	- core.sisypheDatabase
+	- core.sisypheImage
+	- core.sisypheVolume
+	- core.sisypheROI
+
+		- new cython compilation of the updated core.sisypheROI module
+
+	- core.sisypheTools
+	- core.sisypheFiducialBox
+	- processing.simpleItkFilters
 	- widgets.consoleWidget
+	- widgets.iconBarWidgets
+	- widgets.tabToolsWidgets
+	- widgets.sliceViewWidgets
+	- widgets.projectionViewWidget
+	- widgets.sliceViewFiducialBoxWidget
+	- widgets.multiComponentViewWidget
+	- widgets.attributesWidgets
+	- widgets.selectFileWidgets
+	- processing.dscFunctions
 	- gui.dialogDownload
 	- gui.dialogVolumeAttributes
+	- gui.dialogFunction
+	- gui.dialogDatatype
+	- gui.dialogSettings
+	- gui.dialogSplash
+	- gui.dialogManualRegistration
+	- gui.dialogRegistration
+	- gui.dialogPerfusion
+	- gui.windowSisyphe
+	- PySisyphe
+
+		- line 15, hide console in frozen mode
+
+- **new functions**
+
+	- processing.dscFunctions.gamma_variate()
+	- processing.dscFunctions.fit_gamma_variate()
+	- processing.dscFunctions.generate_ttp()
+	- processing.dscFunctions.generate_leakage()
+	- processing.dscFunctions.generate_perfusion_maps()
+	- processing.dscFunctions.oSVD()
+	- processing.dscFunctions.boxNLR()
+	- processing.dscFunctions.fit_boxNLR()
+	- processing.dscFunctions.dscMaps2()
+
+		- new MR perfusion processing using PyPeT implementation, dramatic improvement in processing time (less than 10s)
 
 - **updated functions**
 
 	- core.sisypheSettings.initPySisypheUserPath()
 	
-		- line 185, set current and default database paths ($User/.PySisyphe/database) in the settings file
+		- line 185, set current and default database paths (~/.PySisyphe/database) in the settings file
+		- line 136, add ~/.PySisyphe/prompts directory
 
 	- core.sisypheSettings.setUserSettingsToDefault()
 
-		- line 245, set current and default database paths ($User/.PySisyphe/database) in the settings file 
+		- line 245, set current and default database paths (~/.PySisyphe/database) in the settings file
+
+	- processing.simpleItkFilters.regressionIntensityMatching()
+
+		- line 891, remove unnecessary flatten()
+		- line 910, cast result to original datatype
+
+- **new classes**
+
+	- core core.sisypheFiducialBox.LeksellProcessings
+
+		- arc & ring angles conversion between Leksell orientations
+		- calculate entry point from arc, ring, orientation, target point and trajectory length.
+
+	- gui.dialogGemini.DialogGemini
+
+		- GUI dialog window, gemini LLM prompt for segmentation
+
+	- gui.dialogRegistration.DialogFrameBasedRegistration
+
+		- GUI dialog window for frame-based registration
+
+	- gui.dialogPerfusion.DialogPerfusion2
+
+		- new MR perfusion processing using PyPeT implementation, dramatic improvement in processing time (less than 10s)
 
 - **updated classes**
 
@@ -1779,9 +1907,116 @@ version 0.22.16, build xx/xx/xxxx
 
 		- update setDefaultDatabasePath() method
 
+	- core.sisypheImage.SisypheImage
+
+		- update getMaskROI() method
+		- add copyFromPillowImage() method
+		- add copyToPillowImage() method
+		- update getMask2() method
+		- update getMaskROI2() method
+		- update setOrigin() method
+		- update setDirections() method
+		- update getNumpy() method
+
+	- core.sisypheVolume.SisypheVolume
+
+		- add copyToPillowImage() method
+		- update getMask2() method
+		- update getMaskROI2() method
+
+	- core.sisypheROI.SisypheROI
+
+		- update drawRectangle() method
+
+	- core.sisypheTools.DistanceWidget
+	- core.sisypheTools.OrthogonalDistanceWidget
+	- core.sisypheTools.AngleWidget
+	- core.sisypheTools.BoxWidget
+	- core.sisypheTools.TextWidget
+
+		- update getVisibility() method
+
+	- core.sisypheFiducialBox.SisypheFiducialBox
+
+		- update _markersSearch() method
+
 	- widgets.consoleWidget.ConsoleWidget
 
 		- update _popupGlobals() method
+		- update __init__() method
+
+	- widgets.consoleWidget.RichJupyterWidget2
+
+		- update __init__() method
+		- update execute() method
+
+	- widgets.iconBarWidgets.IconBarWidget
+
+		- update _onExpand() method
+		- update setViewWidget() method
+
+	- widgets.widgets.tabToolsWidgets.TabROIToolsWidget
+
+		- update __init__() method
+		- add _popupGeminiMenu() method
+		- add _geminiClicked() method
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget
+
+		- update _addToMenuVoxelOverlayValue() method
+		- update _getInfoValuesText() method
+
+	- widgets.projectionViewWidget.ProjectionViewWidget
+
+		- update __init__() method
+		- update _updateProjection() method
+		- update setVolume() method
+		- update removeVolume() method
+
+	- widgets.projectionViewWidget.MultiProjectionViewWidget
+
+		- update __init__() method
+		- update setVolume() method
+		- update removeVolume() method
+
+	- widgets.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget
+
+		- update __init__() method
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget
+
+		- update __init__() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- update open() method
+		- update saveall() method
+		- update removeall() method
+		- update remove() method
+		- update removeItem() method
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget
+
+		- update setLock() method
+
+	- widgets.selectFileWidgets.FilesSelectionWidget
+
+		- update add() method
+
+	- widgets.selectFileWidgets.SelectionFilter
+
+		- update init() method
+		- add filterTransform() method
+		- add getTransformFilter() method
+		- update clearFilters() method
+
+	- widgets.selectFileWidgets.FileSelectionWidget
+
+		- update open() method
+
+	- widgets.selectFileWidgets.FilesSelectionWidget
+
+		- update add() method
 
 	- gui.dialogDownload.DialogDownload
 
@@ -1793,6 +2028,36 @@ version 0.22.16, build xx/xx/xxxx
 		- add _unlockSpacing() method
 		- add _unlockOrigin() method
 
+	- gui.dialogFunction.DialogRegressionIntensityMatching
+
+		- update __init__() method
+		- update function() method
+
+	- gui.dialogDatatype.DialogEditID
+
+		- update execute() method
+		- add getreferenceSelectionWidget() method
+		- add setreferenceSelectionWidget() method
+
+	- gui.dialogSettings.DialogSettings
+
+		- update apply() method
+
+	- gui.dialogSplash.DialogSplash
+
+		- update __init__() method
+
+	- gui.dialogManualRegistration.DialogManualRegistration
+
+		- update __init__() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update __init__() method
+		- update editID() method
+		- add frameRegistration() method
+		- update checkUpdate() method
+
 - **updated methods**
 
 	- core.sisypheSettings.SisypheSettings.getUserSettings()
@@ -1803,10 +2068,148 @@ version 0.22.16, build xx/xx/xxxx
 
 		- line 381, set default database path from 'DefaultPath' field of the settings file. If this field is empty, set the PySisyphe patient database folder to ~/.PySisyphe/Database (in user folder)
 
+	- core.sisypheImage.SisypheImage.getMaskROI()
+
+		- line 2613, bug fix, avoid exception if morpho = ''
+
+	- core.sisypheImage.SisypheImage.getMask2()
+	- core.sisypheImage.SisypheImage.getMaskROI2()
+
+		- add objstep parameter
+		- replace morphological operator iteration by the size of the structuring element
+
+	- core.sisypheImage.SisypheVolume.getMask2()
+	- core.sisypheImage.SisypheVolume.getMaskROI2()
+
+		- add objstep parameter
+
+	- core.sisypheImage.SisypheImage.setOrigin()
+
+		- bug fix, line 2357, replace self._sitk_image.GetDepth() with self._sitk_image.GetDimension()
+	
+	- core.sisypheImage.SisypheImage.setDirections()
+
+		- bug fix, line 2304, 2D image management
+
+	- core.sisypheImage.SisypheImage.getnumpy()
+
+		- bug fix, line 1552, replace self._numpy_array.ndim == 3 with self._numpy_array.ndim in (2, 3)
+
+	- core.sisypheROI.drawRectangle()
+
+		- bug fix, line 1922, replace extent[:,:,-1] with extent[::-1]
+
+	- core.sisypheTools.DistanceWidget.getVisibility()
+	- core.sisypheTools.OrthogonalDistanceWidget.getVisibility()
+	- core.sisypheTools.AngleWidget.getVisibility()
+	- core.sisypheTools.BoxWidget.getVisibility()
+	- core.sisypheTools.TextWidget.getVisibility()
+
+		- Converting the return value from int to a bool
+
+	- core.sisypheFiducialBox.SisypheFiducialBox._markersSearch()
+
+		- bug fix, line 670, expand the search for the first slice with the accurate number (6 or 9) of fiducial markers
+
+	- widgets.consoleWidget.ConsoleWidget.__init__()
+
+		- line 418, to avoid displaying "chcp 65001" on the console
+
 	- widgets.consoleWidget.ConsoleWidget._popupGlobals()
 
 		- lines 483 & 494, test data type, no popup for non-numeric types
 
+	- widgets.consoleWidget.RichJupyterWidget2.__init__()
+
+		- add self._aikey attribute: str, google gemini api key
+		- add self._aimodel attribute: str, google gemini model
+		- add self._client attribute: genai.Client, google gemini client class
+
+	- widgets.consoleWidget.RichJupyterWidget2.execute()
+
+		- '%gemini' magic command management
+
+	- widgets.iconBarWidgets.IconBarWidget._onExpand()
+
+		- line 710, if no view is selected, select the first one and expand it
+
+	- widgets.iconBarWidgets.IconBarWidget.setViewWidget()
+
+		- lines 1166, 1235 & 1286, change iconbar button order
+
+	- widgets.widgets.tabToolsWidgets.TabROIToolsWidget.__init__()
+
+		- add gemini button (self._btn['gemini'])
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget._addToMenuVoxelOverlayValue()
+
+		- line 3801, remove self._ovlvalue = volume
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget._getInfoValuesText()
+
+		- line 3759, display overlay value if overlay size match with reference
+
+	- widgets.projectionViewWidget.ProjectionViewWidget.__init__()
+
+		- add self._mask attribute
+
+	- widgets.projectionViewWidget.ProjectionViewWidget._updateProjection()
+
+		- add self._mask processing
+
+	- widgets.projectionViewWidget.ProjectionViewWidget.setVolume()
+
+		- add self._mask processing
+
+	- widgets.projectionViewWidget.ProjectionViewWidget.removeVolume()
+
+		- add self._mask = None
+
+	- widgets.projectionViewWidget.MultiProjectionViewWidget.__init__()
+
+		- add self._mask attribute
+
+	- widgets.projectionViewWidget.MultiProjectionViewWidget.setVolume()
+
+		- add self._mask processing
+
+	- widgets.projectionViewWidget.MultiProjectionViewWidget.removeVolume()
+
+		- add self._mask = None
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.open()
+	- widgets.attributesWidgets.ListToolAttributesWidget.saveall()
+	- widgets.attributesWidgets.ListToolAttributesWidget.removeall()
+	- widgets.attributesWidgets.ListToolAttributesWidget.remove()
+	- widgets.attributesWidgets.ListToolAttributesWidget.removeItem()
+
+		- self._collection purpose attribute management
+
+	- widgets.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget.__init__()
+
+		- line 92, add tool.setHandleSize(5.0)
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget.__init__()
+
+		- line 143, increases the relative chart area
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget.setLock()
+
+		- bug fix, line 1589, unlock tool
+
+	- widgets.selectFileWidgets.SelectionFilter.__init__()
+	- widgets.selectFileWidgets.SelectionFilter.clearFilters()
+		
+		- add transform filter attribute (self._reftrf) 
+
+	- widgets.selectFileWidgets.FileSelectionWidget.open()
+
+		- line 1743, add transform filter management
+
+	- widgets.selectFileWidgets.FilesSelectionWidget.add()
+
+		- line 3448, add transform filter management
+		
 	- gui.dialogDownload.DialogDownload.download()
 
 		- line 261, add information dialog boxes after the download is complete
@@ -1815,7 +2218,62 @@ version 0.22.16, build xx/xx/xxxx
 
 		- add QCheckBox self._unlocksp and self._unlocko before spacing/origin
 
+	- gui.dialogFunction.DialogRegressionIntensityMatching.__init__()
+
+		- add self._mask attribute
+
+	- gui.dialogFunction.DialogRegressionIntensityMatching.function()
+	
+		- line 870, use self._mask attribute to store mask to avoid recalculating it
+
+	- gui.dialogDatatype.DialogEditID.execute()
+
+		- line 446, replace self._files.clear() by self._files.clearall()
+
+	- gui.dialogSettings.DialogSettings.apply()
+
+		- line 553, gemini button visibility in WindowSisyphe._tabROIList
+
+	- gui.dialogSplash.DialogSplash.__init__()
+
+		- line 180, add device context info (context = renderer.ReportCapabilities())
+
+	- gui.dialogManualRegistration.DialogManualRegistration.__init__()
+
+		- Reverse the order of the 'OK' and 'Cancel' buttons.
+
+	- gui.windowSisyphe.WindowSisyphe.__init__()
+
+		- line 459, gemini button visibility in self._tabROIList
+
+	- gui.windowSisyphe.WindowSisyphe.editID()
+
+		- line 3375, setToolbarThumbnail to dialog file selection widgets
+
+	- gui.windowSisyphe.WindowSisyphe.checkUpdate()
+
+		- line 3761, message for new modules 
+
 - **new methods**
+
+	- core.sisypheImage.SisypheImage.copyFromPillowImage()
+	- core.sisypheImage.SisypheImage.copyToPillowImage()
+
+		- copy to Pillow image
+
+	- core.sisypheVolume.SisypheImage.copyToPillowImage()
+
+		- copy to Pillow image
+
+	- widgets.widgets.tabToolsWidgets.TabROIToolsWidget._popupGeminiMenu()
+	- widgets.widgets.tabToolsWidgets.TabROIToolsWidget._geminiClicked()
+
+		- gemini button menu management
+
+	- widgets.selectFileWidgets.SelectionFilter.filterTransform()
+	- widgets.selectFileWidgets.SelectionFilter.getTransformFilter()
+
+		- set and get transform filter methods
 
 	- gui.dialogVolumeAttributes.DialogVolumeAttributes._unlockSpacing()
 
@@ -1824,3 +2282,10 @@ version 0.22.16, build xx/xx/xxxx
 	- gui.dialogVolumeAttributes.DialogVolumeAttributes._unlockOrigin()
 
 		- called by QCheckBox self._unlocko toggled event
+
+	- gui.dialogDatatype.DialogEditID.getreferenceSelectionWidget()
+	- gui.dialogDatatype.DialogEditID.setreferenceSelectionWidget()
+
+	- gui.windowSisyphe.WindowSisyphe.frameRegistration()
+
+		- call the frame-based registration dialog box

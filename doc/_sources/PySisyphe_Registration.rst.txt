@@ -7,6 +7,7 @@ Registration menu
 - :ref:`menu-section-acpc`
 - :ref:`menu-section-reorient`
 - :ref:`menu-section-manual`
+- :ref:`menu-section-frame`
 - :ref:`menu-section-rigid`
 - :ref:`menu-section-affine`
 - :ref:`menu-section-field`
@@ -114,6 +115,25 @@ A button bar is displayed below the view:
 Left-click **Resample** to resample the moving volume. A file dialog box is displayed to choose the name of the saved file. By default, it's the same as the original prefixed with "r_".
 
 Left-click **Exit** button to close dialog box.
+
+.. _menu-section-frame:
+Frame-based registration
+------------------------
+
+This menu is used for frame-based coregistration of stereotactic volumes in which the fiducial markers of the Leksell frame have been previously detected (:ref:`menu-section-stereo`).
+
+The **Frame-based registration** dialog box is displayed.
+
+Use the file selection widget at the top to select the **Fixed** PySisyphe stereotactic volume.
+Use the files selection widget below to select the **Moving** PySisyphe stereotacitc volume(s) of the same patient with the same Leksell frame.
+
+Toggle **Resample...** button to show/hide resampling settings:
+- Select the interpolation algorithm (*linear*, *nearest neighbor*, *b-spline*, *gaussian*, *hamming windowed sinc*, *cosine windowed sinc*, *welch windowed sinc*, *lanczos windowed sinc*, *blackman windowed sinc*) used to resample the moving volume.
+- Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the **prefix** and **suffix** parameters.
+
+Left-click **Execute** button to perform coregistration. PySisype XML xtrfs files associated with fixed and moving volumes are updated to store geometric transformations (geometric transformation for fixed volume coregistration will be added to the moving xtrfs, and geometric transformation for moving volume coregistration will be added to the fixed xtrfs).
+
+Left-click **Cancel** button to close dialog box without coregistration.
 
 .. _menu-section-rigid:
 Rigid registration
