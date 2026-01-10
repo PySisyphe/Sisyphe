@@ -88,6 +88,7 @@ from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import colorDialog
 from Sisyphe.widgets.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from vtk import vtkObject
     from vtk import vtkRenderWindow

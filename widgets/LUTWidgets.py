@@ -88,6 +88,7 @@ from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.multiViewWidgets import MultiViewWidget
 from Sisyphe.widgets.volumeViewWidget import VolumeViewWidget
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from Sisyphe.widgets.iconBarViewWidgets import IconBarWidget
     from Sisyphe.widgets.iconBarViewWidgets import IconBarViewWidgetCollection

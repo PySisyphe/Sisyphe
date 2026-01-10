@@ -52,6 +52,7 @@ from Sisyphe.widgets.multiViewWidgets import MultiViewWidget
 from Sisyphe.widgets.iconBarViewWidgets import IconBarWidget
 from Sisyphe.widgets.screenshotsGridWidget import ScreenshotsGridWidget
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from PyQt5.QtWidgets import QWidget
     from matplotlib.backend_bases import PickEvent
@@ -104,7 +105,7 @@ class MultiComponentViewWidget(MultiViewWidget):
     QWidget -> MultiViewWidget -> GridViewWidget -> MultiComponentViewWidget
 
     Creation: 10/12/2024
-    Last revision: 10/10/2025
+    Last revision: 08/01/2026
     """
 
     # Special method
@@ -140,7 +141,10 @@ class MultiComponentViewWidget(MultiViewWidget):
         self._axe: Axes | None = None
         self._canvas = FigureCanvas(self._fig)
         self._canvas.mpl_connect('pick_event', self._chartClicked)
-        self._layout.addWidget(self._canvas, 3, 0, 1, 3)
+        # < Revision 08/01/2026
+        # self._layout.addWidget(self._canvas, 3, 0, 1, 3)
+        self._layout.addWidget(self._canvas, 3, 0, 2, 3)
+        # Revision 08/01/2026 >
 
     """
     Private attributes
@@ -211,10 +215,11 @@ class MultiComponentViewWidget(MultiViewWidget):
             self._group_nbviews.addAction(action['33'])
             popup = w.getPopup()
             menuNumberOfVisibleViews = QMenu('Number of views', popup)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             menuNumberOfVisibleViews.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             menuNumberOfVisibleViews.setWindowFlag(Qt.FramelessWindowHint, True)
+            # noinspection PyUnresolvedReferences
             menuNumberOfVisibleViews.setAttribute(Qt.WA_TranslucentBackground, True)
             menuNumberOfVisibleViews.addAction(action['11'])
             menuNumberOfVisibleViews.addAction(action['12'])
@@ -245,10 +250,11 @@ class MultiComponentViewWidget(MultiViewWidget):
             action['clipbrdchart'].triggered.connect(self.copyChartToClipboard)
             action['scrnshotchart'].triggered.connect(self.copyChartToScreenshot)
             menucurves = QMenu('Curves', popup)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             menucurves.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             menucurves.setWindowFlag(Qt.FramelessWindowHint, True)
+            # noinspection PyUnresolvedReferences
             menucurves.setAttribute(Qt.WA_TranslucentBackground, True)
             menucurves.addAction(action['addcurve'])
             menucurves.addAction(action['removecurve'])
@@ -291,6 +297,7 @@ class MultiComponentViewWidget(MultiViewWidget):
                 p = self[0, 0].getCursorArrayPosition()
                 n = self._multi.getNumberOfComponentsPerPixel()
                 xdata = list(range(n))
+                # noinspection PyTypeChecker
                 ydata = list(self._multi[p[0], p[1], p[2]])
                 if self._line is None:
                     self._line, = self._axe.plot(xdata, ydata, 'o-', label='voxel {} {} {}'.format(p[0], p[1], p[2]))
@@ -905,10 +912,11 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
             self._icons['colorbar'].setMenu(view1.getPopupColorbarPosition())
             self._icons['ruler'].setMenu(view1.getPopupRulerPosition())
             submenu = QMenu()
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+            # noinspection PyUnresolvedReferences
             submenu.setAttribute(Qt.WA_TranslucentBackground, True)
             submenu.addAction('Copy grid capture to clipboard')
             submenu.addAction('Copy selected view capture to clipboard')
@@ -935,9 +943,11 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
             self._shcutS.activated.connect(lambda: menu.actions()[2].trigger())
             # noinspection PyUnresolvedReferences
             self._icons['compplus'].clicked.connect(self.nextComponent)
+            # noinspection PyUnresolvedReferences
             self._icons['compplus'].setShortcut(Qt.Key_PageDown)
             # noinspection PyUnresolvedReferences
             self._icons['compminus'].clicked.connect(self.previousComponent)
+            # noinspection PyUnresolvedReferences
             self._icons['compminus'].setShortcut(Qt.Key_PageUp)
             # noinspection PyUnresolvedReferences
             self._icons['sliceminus'].clicked.connect(view1.slicePlus)
@@ -1016,16 +1026,18 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
             # noinspection PyUnresolvedReferences
             self._shcutg.activated.connect(lambda: self._icons['show'].menu().actions()[7].trigger())
             submenu = QMenu()
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+            # noinspection PyUnresolvedReferences
             submenu.setAttribute(Qt.WA_TranslucentBackground, True)
             submenu.addAction('Save grid capture...')
             submenu.addAction('Save selected view capture...')
             submenu.addAction('Save captures from slice series...')
             submenu.addSeparator()
             action = submenu.addAction('Send selected view capture to screenshots preview')
+            # noinspection PyUnresolvedReferences
             action.setShortcut(Qt.Key_Space)
             # noinspection PyUnresolvedReferences
             submenu.triggered.connect(self._onMenuSaveCapture)

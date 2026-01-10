@@ -33,6 +33,7 @@ from Sisyphe.widgets.sliceViewWidgets import SliceOverlayViewWidget
 from Sisyphe.core.sisypheTools import HandleWidget
 from Sisyphe.core.sisypheTools import LineWidget
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from vtk import vtkObject
     from vtk import vtk3DWidget

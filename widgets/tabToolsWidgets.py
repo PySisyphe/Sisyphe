@@ -4,16 +4,22 @@ External packages/modules
 
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
+
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sys import platform
+
+from os import mkdir
 
 from os.path import join
 from os.path import exists
 from os.path import abspath
 from os.path import dirname
 from os.path import basename
+from os.path import splitext
+
+from pathlib import Path
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSize
@@ -37,6 +43,7 @@ from PyQt5.QtWidgets import QApplication
 from Sisyphe.core.sisypheTracts import SisypheStreamlines
 from Sisyphe.core.sisypheROI import SisypheROI
 from Sisyphe.core.sisypheROI import SisypheROICollection
+from Sisyphe.core.sisypheSettings import getUserPySisyphePath
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import IconPushButton
 from Sisyphe.widgets.basicWidgets import LabeledSlider
@@ -57,8 +64,12 @@ from Sisyphe.gui.dialogROIStatistics import DialogROIStatistics
 from Sisyphe.gui.dialogDiffusionBundle import DialogStreamlinesROISelection
 from Sisyphe.gui.dialogDiffusionBundle import DialogStreamlinesAtlasSelection
 from Sisyphe.gui.dialogSettings import DialogFunctionSetting
+# < Revision 11/12/2025
+from Sisyphe.gui.dialogGemini import DialogGemini
+# Revision 11/12/2025 >
 from Sisyphe.gui.dialogWait import DialogWait
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from Sisyphe.gui.windowSisyphe import WindowSisyphe
 
@@ -429,7 +440,7 @@ class TabROIToolsWidget(TabWidget):
 
     QWidget -> TabROIToolsWidget
 
-    Last revision: 14/11/2025
+    Last revision: 22/12/2025
     """
 
     # Special method
@@ -489,6 +500,22 @@ class TabROIToolsWidget(TabWidget):
         self._updateActiveContourParameters()
         # Revision 24/03/2025 >
 
+        # < Revision 14/12/2025
+        try:
+            import google.genai
+            # < Revision 11/12/2025
+            self._geminiDialog = DialogGemini()
+            if self._mainwindow is not None:
+                self._geminiDialog.setConsoleWidget(self._mainwindow.getConsole())
+            if platform == 'win32':
+                import pywinstyles
+                cl = self.palette().base().color()
+                c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                pywinstyles.change_header_color(self._geminiDialog, c)
+            # Revision 11/12/2025 >
+        except: pass
+        # Revision 14/12/2025 >
+
         # Widgets
 
         self._brushtype = LabeledComboBox(title='Shape', fontsize=12)
@@ -501,7 +528,7 @@ class TabROIToolsWidget(TabWidget):
         self._brushtype.currentIndexChanged.connect(self._brushTypeChanged)
         self._brushtype.setToolTip('Brush shape and behavior.')
 
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._brushsize = LabeledSlider(Qt.Horizontal, title='Radius', fontsize=12)
         self._brushsize.setRange(1, 20)
         self._brushsize.setValue(10)
@@ -575,9 +602,9 @@ class TabROIToolsWidget(TabWidget):
         # Popup menu
 
         # self._menuThreshold = QMenu(self)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menuThreshold.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menuThreshold.setWindowFlag(Qt.FramelessWindowHint, True)
         # self._menuThreshold.setAttribute(Qt.WA_TranslucentBackground, True)
         self._menuThreshold.addAction(self._athreshold)
@@ -590,10 +617,11 @@ class TabROIToolsWidget(TabWidget):
         self._btn['threshold'].setMenu(self._menuThreshold)
 
         self._menu2DRegion = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu2DRegion.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu2DRegion.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu2DRegion.setAttribute(Qt.WA_TranslucentBackground, True)
         self._rg2DRegion = self._menu2DRegion.addAction('Region growing')
         self._rg2DRegion.setCheckable(True)
@@ -609,10 +637,11 @@ class TabROIToolsWidget(TabWidget):
         self._btn['2Dregion'].clicked.connect(self._2DregionClicked)
 
         self._menu2DBlobRegion = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu2DBlobRegion.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu2DBlobRegion.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu2DBlobRegion.setAttribute(Qt.WA_TranslucentBackground, True)
         self._rg2DBlobRegion = self._menu2DBlobRegion.addAction('Region growing')
         self._rg2DBlobRegion.setCheckable(True)
@@ -628,10 +657,11 @@ class TabROIToolsWidget(TabWidget):
         self._btn['2Dblobregion'].clicked.connect(self._2DBlobregionClicked)
 
         self._menu3DRegion = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu3DRegion.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu3DRegion.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu3DRegion.setAttribute(Qt.WA_TranslucentBackground, True)
         self._rg3DRegion = self._menu3DRegion.addAction('Region growing')
         self._rg3DRegion.setCheckable(True)
@@ -656,10 +686,11 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dregion'].clicked.connect(self._3DregionClicked)
 
         self._menu3DBlobRegion = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu3DBlobRegion.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu3DBlobRegion.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu3DBlobRegion.setAttribute(Qt.WA_TranslucentBackground, True)
         self._rg3DBlobRegion = self._menu3DBlobRegion.addAction('Region growing')
         self._rg3DBlobRegion.setCheckable(True)
@@ -675,10 +706,11 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dblobregion'].clicked.connect(self._3DBlobregionClicked)
 
         self._menu3DHoles = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu3DHoles.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu3DHoles.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu3DHoles.setAttribute(Qt.WA_TranslucentBackground, True)
         action = self._menu3DHoles.addAction('3D fill holes')
         # noinspection PyUnresolvedReferences
@@ -693,6 +725,21 @@ class TabROIToolsWidget(TabWidget):
         # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda: self.voi2DHoles(2))
         self._btn['3Dholes'].setMenu(self._menu3DHoles)
+
+        # < Revision 10/12/2025
+        self._menuGemini = QMenu()
+        # noinspection PyTypeChecker,PyUnresolvedReferences
+        self._menuGemini.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyTypeChecker,PyUnresolvedReferences
+        self._menuGemini.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
+        self._menuGemini.setAttribute(Qt.WA_TranslucentBackground, True)
+        # noinspection PyUnresolvedReferences
+        self._menuGemini.aboutToShow.connect(self._popupGeminiMenu)
+        # noinspection PyUnresolvedReferences
+        self._menuGemini.triggered.connect(self._geminiClicked)
+        self._btn['gemini'].setMenu(self._menuGemini)
+        # Revision 10/12/2025 >
 
         # Layout
 
@@ -781,6 +828,9 @@ class TabROIToolsWidget(TabWidget):
         self._btn['2Ddown'] = IconPushButton('down.png', size=TabWidget._VSIZE)
         self._btn['2Dleft'] = IconPushButton('left.png', size=TabWidget._VSIZE)
         self._btn['2Dright'] = IconPushButton('right.png', size=TabWidget._VSIZE)
+        # < Revision 10/12/2025
+        self._btn['gemini'] = IconPushButton('gemini.png', size=TabWidget._VSIZE)
+        # Revision 10/12/2025 >
 
         self._btngroup.addButton(self._btn['2Dregion'])
         self._btn['2Dregion'].setCheckable(True)
@@ -808,6 +858,9 @@ class TabROIToolsWidget(TabWidget):
         self._btn['2Ddown'].setToolTip('Move down current slice and orientation')
         self._btn['2Dleft'].setToolTip('Move left current slice and orientation')
         self._btn['2Dright'].setToolTip('Move right current slice and orientation')
+        # < Revision 10/12/2025
+        self._btn['gemini'].setToolTip('Gemini AI prompt using the current slice')
+        # Revision 10/12/2025 >
 
         self._btn['2Ddilate'].pressed.connect(self.slcDilate)
         self._btn['2Derode'].pressed.connect(self.slcErode)
@@ -857,6 +910,14 @@ class TabROIToolsWidget(TabWidget):
         lyout.addWidget(self._btn['2Dthreshold'])
         lyout.addWidget(self._btn['2Dregion'])
         lyout.addWidget(self._btn['2Dclear'])
+        lyout.addSpacing(10)
+        # < Revision 10/12/2025
+        lyout.addWidget(self._btn['gemini'])
+        # < Revision 14/12/2025
+        try: import google.genai
+        except: self._btn['gemini'].setVisible(False)
+        # Revision 14/12/2025 >
+        # Revision 10/12/2025 >
         lyout.addStretch()
         vlyout.addLayout(lyout)
         lyout = QHBoxLayout()
@@ -1185,6 +1246,78 @@ class TabROIToolsWidget(TabWidget):
         vlyout.addLayout(lyout)
         self._volumeblobgroupbox.setLayout(vlyout)
 
+    def _popupGeminiMenu(self):
+        path = join(getUserPySisyphePath(), 'prompts')
+        if not exists(path): mkdir(path)
+        p = Path(path)
+        self._menuGemini.clear()
+        # list of subdirectories
+        dirs = list()
+        buff = [d for d in p.iterdir() if d.is_dir()]
+        while len(buff) > 0:
+            current = buff.pop()
+            dirs.append(current)
+            p = Path(current)
+            subdirs = [d for d in p.iterdir() if d.is_dir()]
+            if len(subdirs) > 0:
+                buff += subdirs
+        # < Revision 12/12/2025
+        # root files
+        files = list(Path(path).glob('*.xml'))
+        if len(files) > 0:
+            files.sort()
+            for f in files:
+                action = self._menuGemini.addAction(splitext(basename(f))[0])
+                action.setData(f)
+        # Revision 12/12/2025 >
+        # tree of subdirectories
+        tree = dict()
+        n = len(Path(path).parts)
+        for current in dirs:
+            p = Path(current).parts
+            n2 = len(p) - n
+            buff = tree
+            submenu = self._menuGemini
+            if n2 > 1:
+                for i in range(-n2, -1):
+                    submenu = buff[p[i]][1]
+                    buff = buff[p[i]][0]
+            files = list(Path(current).glob('*.xml'))
+            if len(files) > 0 and p[-1][0] != '_':
+                newmenu = submenu.addMenu(p[-1])
+                buff[p[-1]] = (dict(), newmenu)
+                # Add prompts
+                files.sort()
+                for f in files:
+                    action = newmenu.addAction(splitext(basename(f))[0])
+                    action.setData(f)
+            else: buff[p[-1]] = (dict(), submenu)
+        # New prompt menu
+        if len(self._menuGemini.actions()) > 0:
+            self._menuGemini.addSeparator()
+        self._menuGemini.addAction('New prompt...')
+
+    # < Revision 11/12/2025
+    def _geminiClicked(self, action: QAction | None):
+        self._geminiDialog.clear()
+        self._geminiDialog.setReferenceVolume(self._views.getVolume())
+        # < Revision 22/12/2025
+        mainwindow = self.getMainWindow()
+        if mainwindow is not None:
+            self._geminiDialog.setConsoleWidget(mainwindow.getConsole())
+        # Revision 22/12/2025 >
+        self._geminiDialog.setROIDraw(self._draw,
+                                      self._views.getSelectedSliceIndex(),
+                                      self._views.getCurrentOrientation(),
+                                      self._views)
+        file = str(action.data())
+        if not action.text() == 'New prompt...' and exists(file):
+            self._geminiDialog.loadPrompt(file)
+            self._geminiDialog.exec()
+        else: self._geminiDialog.exec()
+
+    # Revision 11/12/2025 >
+
     def _updateROIDisplay(self):
         if self.hasViewCollection() and self.hasCollection():
             self._views.updateROIDisplay()
@@ -1472,6 +1605,16 @@ class TabROIToolsWidget(TabWidget):
             if self._threshold.getVolume() is None: self._threshold.setVolume(vol)
             elif vol != self._threshold.getVolume(): self._threshold.setVolume(vol)
     # Revision 09/03/2025 >
+
+    # < Revision 12/12/2025
+    def setGeminiAvailability(self, v: bool) -> None:
+        self._btn['gemini'].setVisible(v)
+    # Revision 12/12/2025 >
+
+    # < Revision 12/12/2025
+    def getGeminiAvailability(self) -> bool:
+        return self._btn['gemini'].isVisible()
+    # Revision 12/12/2025 >
 
     # Public tools methods
 
@@ -2561,10 +2704,11 @@ class TabMeshListWidget(TabWidget):
         self._settings.setParameterVisibility('MaxCount', False)
 
         self._popupDilate = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._popupDilate.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._popupDilate.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popupDilate.setAttribute(Qt.WA_TranslucentBackground, True)
         self._dmm = LabeledDoubleSpinBox()
         self._dmm.setTitle('Dilate')
@@ -2584,10 +2728,11 @@ class TabMeshListWidget(TabWidget):
         self._dilate.setMenu(self._popupDilate)
 
         self._popupErode = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._popupErode.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._popupErode.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popupErode.setAttribute(Qt.WA_TranslucentBackground, True)
         self._emm = LabeledDoubleSpinBox()
         self._emm.setTitle('Erode')
@@ -3185,6 +3330,7 @@ class TabHelpWidget(QWidget):
 
         btlyout = QHBoxLayout()
         btlyout.setContentsMargins(0, 0, 0, 0)
+        # noinspection PyUnresolvedReferences
         btlyout.setSizeConstraint(QHBoxLayout.SetMinimumSize)
         btlyout.setSpacing(5)
         btlyout.addWidget(self._home)

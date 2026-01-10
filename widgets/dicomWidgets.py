@@ -74,6 +74,7 @@ from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import MenuPushButton
 from Sisyphe.gui.dialogWait import DialogWait
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from PyQt5.QtCore import QObject
     from PyQt5.QtCore import QModelIndex

@@ -201,6 +201,7 @@ class ItemAttributesWidget(QFrame):
         self._remove.setVisible(False)
 
         lyout = QHBoxLayout()
+        # noinspection PyUnresolvedReferences
         lyout.setAlignment(Qt.AlignVCenter)
         lyout.setContentsMargins(5, 0, 5, 0)
         lyout.setSpacing(5)
@@ -341,6 +342,7 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
         font = QFont('Arial', 10)
         self._label.setFont(font)
 
+        # noinspection PyUnresolvedReferences
         self._opacity = QSlider(Qt.Horizontal)
         self._opacity.setTickPosition(QSlider.NoTicks)
         self._opacity.setMaximum(100)
@@ -757,10 +759,11 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         # noinspection PyUnresolvedReferences
         self._trf.clicked.connect(lambda dummy: self.transform())
         trf = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         trf.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         trf.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         trf.setAttribute(Qt.WA_TranslucentBackground, True)
         self._tx = LabeledDoubleSpinBox(title='Tx', fontsize=12)
         self._tx.setDecimals(1)
@@ -1052,10 +1055,11 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             self._color.setVisible(False)
             self._properties.setVisible(False)
             popup = QMenu()
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             popup.setWindowFlag(Qt.FramelessWindowHint, True)
+            # noinspection PyUnresolvedReferences
             popup.setAttribute(Qt.WA_TranslucentBackground, True)
             action = QWidgetAction(self)
             action.setDefaultWidget(self._lutwidget)
@@ -1136,6 +1140,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
 
     def eventFilter(self, obj, event):
         from PyQt5.QtCore import QEvent
+        # noinspection PyUnresolvedReferences
         if event.type() == QEvent.MouseButtonDblClick:
             # Redirect child mouse double click event to self
             self.mouseDoubleClickEvent(event)
@@ -1163,7 +1168,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
     QFrame -> ItemAttributesWidget -> ItemToolAttributesWidget
 
-    Last revision: 04/12/2025
+    Last revision: 17/12/2025
     """
 
     # Special method
@@ -1459,8 +1464,12 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             settings.getParameterWidget('TextTarget').setText(self._item.getLegend())
             settings.getParameterWidget('HandleLineWidth').setValue(self._item.getLineWidth())
             settings.getParameterWidget('SafetyRadius').setValue(self._item.getSphereRadius())
-            if self._item.getSphereVisibility() is True: v = Qt.Checked
-            else: v = Qt.Unchecked
+            if self._item.getSphereVisibility():
+                # noinspection PyUnresolvedReferences
+                v = Qt.Checked
+            else:
+                # noinspection PyUnresolvedReferences
+                v = Qt.Unchecked
             settings.getParameterWidget('SafetyVisibility').setCheckState(v)
         elif isinstance(self._item, LineWidget):
             v = self._item.getLegend()
@@ -1470,23 +1479,39 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             settings.getParameterWidget('LineWidth').setValue(self._item.getLineWidth())
             settings.getParameterWidget('HandleLineWidth').setValue(self._item.getHandleLineWidth())
             settings.getParameterWidget('SafetyRadius').setValue(self._item.getTubeRadius())
-            if self._item.getTubeVisibility() is True: v = Qt.Checked
-            else: v = Qt.Unchecked
+            if self._item.getTubeVisibility():
+                # noinspection PyUnresolvedReferences
+                v = Qt.Checked
+            else:
+                # noinspection PyUnresolvedReferences
+                v = Qt.Unchecked
             settings.getParameterWidget('SafetyVisibility').setCheckState(v)
         settings.getParameterWidget('HandleSize').setValue(self._item.getHandleSize())
         settings.getParameterWidget('FontSize').setValue(self._item.getFontSize())
         settings.getParameterWidget('FontFamily').setCurrentText(self._item.getFontFamily())
-        if self._item.getFontBold() is True: v = Qt.Checked
-        else: v = Qt.Unchecked
+        if self._item.getFontBold():
+            # noinspection PyUnresolvedReferences
+            v = Qt.Checked
+        else:
+            # noinspection PyUnresolvedReferences
+            v = Qt.Unchecked
         settings.getParameterWidget('FontBold').setCheckState(v)
-        if self._item.getFontItalic() is True: v = Qt.Checked
-        else: v = Qt.Unchecked
+        if self._item.getFontItalic():
+            # noinspection PyUnresolvedReferences
+            v = Qt.Checked
+        else:
+            # noinspection PyUnresolvedReferences
+            v = Qt.Unchecked
         settings.getParameterWidget('FontItalic').setCheckState(v)
         v = self._item.getTextOffset()
         settings.getParameterWidget('TextOffset')[0].setValue(v[0])
         settings.getParameterWidget('TextOffset')[1].setValue(v[1])
-        if self._item.getTextVisibility() is True: v = Qt.Checked
-        else: v = Qt.Unchecked
+        if self._item.getTextVisibility():
+            # noinspection PyUnresolvedReferences
+            v = Qt.Checked
+        else:
+            # noinspection PyUnresolvedReferences
+            v = Qt.Unchecked
         settings.getParameterWidget('TextVisibility').setCheckState(v)
         settings.getParameterWidget('Tolerance').setValue(self._item.getTolerance())
 
@@ -1586,7 +1611,13 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         if isinstance(v, bool):
             self._lock.setLockStateIcon(v)
             if not v:
-                self._item.setStatic()
+                # < Revision 17/12/2025
+                # self._item.setStatic()
+                view = self._views.getVolumeView()
+                if view is not None:
+                    if v: view.lockTool(self._item, signal=True)
+                    else: view.unlockTool(self._item, signal=True)
+                # Revision 17/12/2025 >
                 self._logger.info('Lock Tool {}'.format(self._item.getName()))
             else: self._logger.info('Unlock Tool {}'.format(self._item.getName()))
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
@@ -2009,6 +2040,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
     def eventFilter(self, obj, event):
         from PyQt5.QtCore import QEvent
+        # noinspection PyUnresolvedReferences
         if event.type() == QEvent.MouseButtonDblClick:
             # Redirect child mouse double click event to self
             self.mouseDoubleClickEvent(event)
@@ -2852,10 +2884,11 @@ class ListROIAttributesWidget(ListAttributesWidget):
         # Revision 13/11/2025 >
 
         self._popup = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action = dict()
         self._action['xvol'] = QAction('Export to PySisyphe format')
@@ -2890,10 +2923,11 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
         # < Revision 18/11/2025
         self._popupDist = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupDist.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupDist.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popupDist.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['outside'] = QAction('Outside positive')
         self._action['inside'] = QAction('Inside positive')
@@ -3536,6 +3570,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                     console.update()
                     messageBox(self,
                                'Copy ROI(s) to console',
+                               icon=QMessageBox.Information,
                                text='ROI(s) is(are) available in the PySisyphe console '
                                     'as a list variable called \"{}\".'.format(name))
                 except:
@@ -3661,10 +3696,11 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         # Revision 13/11/2025 >
 
         self._popupExport = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupExport.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupExport.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popupExport.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action = dict()
         self._action['obj'] = QAction('Export to OBJ format')
@@ -3686,10 +3722,11 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._export.setMenu(self._popupExport)
 
         self._popupCube = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupCube.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupCube.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popupCube.setAttribute(Qt.WA_TranslucentBackground, True)
         self._cubex = LabeledDoubleSpinBox()
         self._cubex.setTitle('Size x')
@@ -3732,10 +3769,11 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._cube.setMenu(self._popupCube)
 
         self._popupSphere = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupSphere.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupSphere.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popupSphere.setAttribute(Qt.WA_TranslucentBackground, True)
         self._spherer = LabeledDoubleSpinBox()
         self._spherer.setTitle('Radius')
@@ -3757,10 +3795,11 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
         self._ractions = list()
         self._popupRoi = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupRoi.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupRoi.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popupRoi.setAttribute(Qt.WA_TranslucentBackground, True)
         # noinspection PyUnresolvedReferences
         self._popupRoi.aboutToShow.connect(self._roiMenu)
@@ -3768,16 +3807,18 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
         self._oactions: list[QAction] = list()
         self._popupOverlay = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupOverlay.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupOverlay.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popupOverlay.setAttribute(Qt.WA_TranslucentBackground, True)
         # noinspection PyUnresolvedReferences
         self._popupOverlay.aboutToShow.connect(self._overlayMenu)
         self._overlay.setMenu(self._popupOverlay)
 
         self._depth = LabeledSpinBox('Depth', parent=self._popupOverlay)
+        # noinspection PyUnresolvedReferences
         self._depth.setAlignment(Qt.AlignCenter)
         self._depth.setSuffix(' mm')
         self._depth.setRange(0, 10)
@@ -4878,6 +4919,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     console.update()
                     messageBox(self,
                                'Copy mesh(es) to console',
+                               icon=QMessageBox.Information,
                                text='Mesh(es) is(are) available in the PySisyphe console '
                                     'as a list variable called \"{}\".'.format(name))
                 except:
@@ -4924,7 +4966,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListToolAttributesWidget
 
-    Last revision: 29/11/2025
+    Last revision: 17/12/2025
     """
 
     # Special method
@@ -5254,6 +5296,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     vol = self._views.getVolume()
                                     if tools is not None and vol is not None:
                                         if tools.hasSameID(vol):
+                                            # < Revision 17/12/2025
+                                            self._collection.setPurpose(tools.getPurpose())
+                                            # Revision 17/12/2025 >
                                             # < Revision 13/11/2025
                                             n2 = len(tools)
                                             if n2 > 1:
@@ -5716,19 +5761,31 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                                     # toolr target
                                                     if subi == 0:
                                                         # toolr target, toolc target
-                                                        if subj == 0: r.append(dr[6])
+                                                        if subj == 0:
+                                                            # noinspection PyTypeChecker
+                                                            r.append(dr[6])
                                                         # toolr target, toolc entry
-                                                        elif subj == 1: r.append(dr[4])
+                                                        elif subj == 1:
+                                                            # noinspection PyTypeChecker
+                                                            r.append(dr[4])
                                                         # toolr target,  toolc line
-                                                        else: r.append(dr[1])
+                                                        else:
+                                                            # noinspection PyTypeChecker
+                                                            r.append(dr[1])
                                                     # toolr entry
                                                     elif subi == 1:
                                                         # toolr entry, toolc target
-                                                        if subj == 0: r.append(dr[5])
+                                                        if subj == 0:
+                                                            # noinspection PyTypeChecker
+                                                            r.append(dr[5])
                                                         # toolr entry, toolc entry
-                                                        elif subj == 1: r.append(dr[3])
+                                                        elif subj == 1:
+                                                            # noinspection PyTypeChecker
+                                                            r.append(dr[3])
                                                         # toolr entry, toolc line
-                                                        else: r.append(dr[0])
+                                                        else:
+                                                            # noinspection PyTypeChecker
+                                                            r.append(dr[0])
                                                     # toolr line
                                                     elif subi == 2:
                                                         # toolr line, toolc target
@@ -5736,7 +5793,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                                         # toolr line, toolc entry
                                                         elif subj == 1: r.append(dc[0])
                                                         # toolr line, toolc line
-                                                        else: r.append(dr[2])
+                                                        else:
+                                                            # noinspection PyTypeChecker
+                                                            r.append(dr[2])
                                 self._dialogfeatures.addTreeWidgetRow(1, r, d=1)
                     """                  
                         Display dialog                    
@@ -5942,7 +6001,11 @@ class ListToolAttributesWidget(ListAttributesWidget):
             if tools is not None and len(tools) > 0:
                 for tool in tools:
                     view = self._views.getVolumeView()
-                    if view is not None: view.removeTool(tool.getName())
+                    if view is not None:
+                        view.removeTool(tool.getName())
+                        # < Revision 17/12/2025
+                        if self._collection.isEmpty(): self._collection.setPurpose('')
+                        # Revision 17/12/2025 >
                     super().remove()
                     self._logger.info('Remove tool {}'.format(tool.getName()))
             mainwindow = self._getMainWindow()
@@ -5953,7 +6016,11 @@ class ListToolAttributesWidget(ListAttributesWidget):
         if self.hasViewCollection():
             tool = w.getTool()
             view = self._views.getVolumeView()
-            if view is not None: view.removeTool(tool.getName())
+            if view is not None:
+                view.removeTool(tool.getName())
+                # < Revision 17/12/2025
+                if self._collection.isEmpty(): self._collection.setPurpose('')
+                # Revision 17/12/2025 >
             mainwindow = self._getMainWindow()
             if mainwindow is not None:
                 mainwindow.setStatusBarMessage('{} tool removed.'.format(tool.getName()))
@@ -5962,6 +6029,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
     def removeAll(self):
         if self.hasViewCollection():
             self._views.getVolumeView().removeAllTools()
+            # < Revision 17/12/2025
+            self._collection.setPurpose('')
+            # Revision 17/12/2025 >
         super().removeAll()
         self._logger.info('Remove all tools')
         mainwindow = self._getMainWindow()
@@ -6006,6 +6076,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     console.update()
                     messageBox(self,
                                'Copy tool(s) to console',
+                               icon=QMessageBox.Information,
                                text='Tool(s) is(are) available in the PySisyphe console '
                                     'as a list variable called \"{}\".'.format(name))
                 except:
@@ -6126,10 +6197,11 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._action = dict()
 
         self._popupInteractive = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupInteractive.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupInteractive.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popupInteractive.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['excl0'] = QAction('Exclude streamlines that cross cursor sphere')
         # noinspection PyUnresolvedReferences
@@ -6167,10 +6239,11 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._interactive.setMenu(self._popupInteractive)
 
         self._popupToROI = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupToROI.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupToROI.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popupToROI.setAttribute(Qt.WA_TranslucentBackground, True)
         a = QWidgetAction(self)
         a.setDefaultWidget(self._treshroi)
@@ -6182,10 +6255,11 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._toroi.setMenu(self._popupToROI)
 
         self._popupToMesh = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupToMesh.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupToMesh.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popupToMesh.setAttribute(Qt.WA_TranslucentBackground, True)
         a = QWidgetAction(self)
         a.setDefaultWidget(self._treshmesh)
@@ -6197,10 +6271,11 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._tomesh.setMenu(self._popupToMesh)
 
         self._popupDuplicate = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupDuplicate.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupDuplicate.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popupDuplicate.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['dup1'] = QAction('with original step...')
         # noinspection PyUnresolvedReferences
@@ -6225,10 +6300,11 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._duplicate.setMenu(self._popupDuplicate)
 
         self._popupStatistics = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupStatistics.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupStatistics.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popupStatistics.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['stat1'] = QAction('Cluster confidence statistics...')
         # noinspection PyUnresolvedReferences
@@ -7527,6 +7603,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     console.update()
                     messageBox(self,
                                'Copy bundle(s) to console',
+                               icon=QMessageBox.Information,
                                text='Bundle(s) is(are) available in the PySisyphe console '
                                     'as a list variable called \"{}\".'.format(name))
                 except:

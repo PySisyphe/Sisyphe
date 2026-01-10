@@ -68,6 +68,7 @@ from Sisyphe.gui.dialogWait import DialogWait
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import IconLabel
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from PyQt5.QtGui import QDragEnterEvent
     from PyQt5.QtGui import QDropEvent
@@ -113,7 +114,7 @@ class SelectionFilter(object):
 
     object -> SelectionFilter
 
-    Last Revision: 20/10/2025
+    Last Revision: 04/01/2026
     """
 
     # Class methods
@@ -199,6 +200,9 @@ class SelectionFilter(object):
         self._refnotwhole = False
         self._refcentroid = False
         self._refnotcentroid = False
+        # < Revision 04/01/2026
+        self._reftrf = None
+        # Revision 04/01/2026 >
 
     """
     Private attributes
@@ -228,6 +232,7 @@ class SelectionFilter(object):
     _refframe       bool, reference stereotactic frame
     _refcomponent   int, reference number of components
     _reftofirst     bool, reference volume is the first
+    _reftrf         str, has transform
     """
 
     # Public method
@@ -841,6 +846,13 @@ class SelectionFilter(object):
         """
         self._refnotcentroid = True
 
+    # < Revision 04/01/2026
+    # add filterTransform method
+    def filterTransform(self, v: str | SisypheVolume):
+        if isinstance(v, SisypheVolume): v = v.getID()
+        self._reftrf = v
+    # Revision 04/01/2026 >
+
     def getFOVFilter(self) -> tuple[float, float, float] | float | None:
         """
         Get the current Field of View (FOV) filter value.
@@ -962,6 +974,12 @@ class SelectionFilter(object):
         """
         return self._refcontains
 
+    # < Revision 04/01/2026
+    # add getTransformFilter method
+    def getTransformFilter(self) -> str | None:
+        return self._reftrf
+    # Revision 04/01/2026 >
+
     def clearFilters(self) -> None:
         """
         Clears all active filters and resets the internal state of the filter.
@@ -998,6 +1016,9 @@ class SelectionFilter(object):
         self._refnotwhole = False
         self._refcentroid = False
         self._refnotcentroid = False
+        # < Revision 04/01/2026
+        self._reftrf = None
+        # Revision 04/01/2026 >
 
 
 class FileSelectionWidget(QWidget, SelectionFilter):
@@ -1087,10 +1108,11 @@ class FileSelectionWidget(QWidget, SelectionFilter):
         self._clear.setToolTip('Clear field.')
 
         self._menuThumbnail = QMenu(self._current)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menuThumbnail.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menuThumbnail.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menuThumbnail.setAttribute(Qt.WA_TranslucentBackground, True)
         # noinspection PyUnresolvedReferences
         self._menuThumbnail.triggered.connect(self._onMenuThumbnailSelect)
@@ -1306,8 +1328,9 @@ class FileSelectionWidget(QWidget, SelectionFilter):
             # noinspection PyProtectedMember
             w2 = fm.horizontalAdvance(w._label.text())
             w1 = max(w1, w2)
+            # noinspection PyUnresolvedReferences
             self._label.setAlignment(Qt.AlignRight)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             w.getLabel().setAlignment(Qt.AlignRight)
             self._label.setFixedWidth(w1 + 20)
             w.getLabel().setFixedWidth(w1 + 20)
@@ -1524,7 +1547,7 @@ class FileSelectionWidget(QWidget, SelectionFilter):
                     chdir(dirname(filename))
                     img = SisypheVolume()
                     # < Revision 17/11/2024
-                    # load only xml part (attributes)
+                    # load only XML part (attributes)
                     # fast volume loading
                     # try: img.load(filename)
                     try: img.load(filename, binary=False)
@@ -1717,6 +1740,22 @@ class FileSelectionWidget(QWidget, SelectionFilter):
                                            self._refRange[0],
                                            self._refRange[1]))
                             return None
+                    # Transform verification
+                    # < Revision 04/01/2026
+                    if self._reftrf:
+                        if not img.hasTransform(self._reftrf):
+                            if self._reftrf == 'LEKSELL':
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} image has no geometric transformation to the '
+                                                'Leksell\'s stereotactic space.'.format(basename(filename)))
+                            else:
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} image has no transform to {}.'.format(
+                                               basename(filename), self._reftrf))
+                            return None
+                    # Revision 04/01/2026 >
                     self._path, self._name = split(filename)
                     self._field.setText(self._name)
                     self._field.setToolTip(str(img))
@@ -2224,7 +2263,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
 
     QWidget, SelectionFilter -> FilesSelectionWidget
 
-    Last revision: 30/11/2025
+    Last revision: 04/01/2026
     """
 
     # Custom Qt Signals
@@ -2278,6 +2317,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         self._list.setAlternatingRowColors(True)
         # noinspection PyUnresolvedReferences
         self._list.itemSelectionChanged.connect(self._selectionChanged)
+        # noinspection PyTypeChecker
         self._list.setSelectionMode(3)  # Extended selection
         # noinspection PyUnresolvedReferences
         self._list.itemDoubleClicked.connect(self._onDoubleClicked)
@@ -2357,10 +2397,11 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 self.add(v.getFilename())
             if n > 1:
                 menu = QMenu(self._current)
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 menu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 menu.setWindowFlag(Qt.FramelessWindowHint, True)
+                # noinspection PyUnresolvedReferences
                 menu.setAttribute(Qt.WA_TranslucentBackground, True)
                 for i in range(n):
                     v = self._thumbnail.getVolumeFromIndex(i)
@@ -2714,6 +2755,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         """
         if not self.isEmpty():
             if isinstance(index, str):
+                # noinspection PyTypeChecker
                 index = self._list.findItems(index, 0)
                 if len(index) > 0: index = index[0]
             if isinstance(index, int):
@@ -2783,6 +2825,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         """
         if isinstance(v, int):
             if 0 <= v < 5:
+                # noinspection PyTypeChecker
                 self._list.setSelectionMode(v)
             else: raise ValueError('parameter value {} is not between 0 and 4.'.format(v))
         else: raise TypeError('parameter type {} is not int.'.format(type(v)))
@@ -2791,18 +2834,21 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         """
         Set the selection mode of the list widget to single item selection.
         """
+        # noinspection PyTypeChecker
         self._list.setSelectionMode(1)
 
     def setSelectionModeToContiguous(self) -> None:
         """
         Set the selection mode of the list widget to contiguous item selection.
         """
+        # noinspection PyTypeChecker
         self._list.setSelectionMode(4)
 
     def setSelectionModeToExtended(self) -> None:
         """
         Set the selection mode of the list widget to extended item selection.
         """
+        # noinspection PyTypeChecker
         self._list.setSelectionMode(3)
 
     def getSelectionMode(self) -> int:
@@ -2924,6 +2970,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             True if the item is found, False otherwise.
         """
         if isinstance(v, QListWidgetItem):
+            # noinspection PyUnresolvedReferences
             items = self._list.findItems(v.text(), Qt.MatchExactly)
             if len(items) > 0:
                 for item in items:
@@ -3070,7 +3117,9 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 for directory in directories:
                     item = QListWidgetItem(directory)
                     item.setData(256, directory)
-                    if self._checkbox: item.setCheckState(Qt.Checked)
+                    if self._checkbox:
+                        # noinspection PyUnresolvedReferences
+                        item.setCheckState(Qt.Checked)
                     if self.containsItem(item):
                         messageBox(self,
                                    'Select directory',
@@ -3107,7 +3156,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                         wait.setInformationText('Add {}...'.format(basename(filename)))
                         img = SisypheVolume()
                         # < Revision 17/11/2024
-                        # load only xml part (attributes)
+                        # load only XML part (attributes)
                         # fast volume loading
                         # try: img.load(filename)
                         try: img.load(filename, binary=False)
@@ -3402,11 +3451,33 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                                 else:
                                     wait.show()
                                     continue
+                        # Transform verification
+                        # < Revision 04/01/2026
+                        if self._reftrf:
+                            if not img.hasTransform(self._reftrf):
+                                wait.hide()
+                                if self._reftrf == 'LEKSELL':
+                                    messageBox(self,
+                                               'PySisyphe volume file selector',
+                                               text='{} image has no geometric transformation to the '
+                                                    'Leksell\'s stereotactic space.'.format(basename(filename)))
+                                else:
+                                    messageBox(self,
+                                               'PySisyphe volume file selector',
+                                               text='{} image has no transform to {} .'.format(
+                                                   basename(filename), self._reftrf))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Revision 04/01/2026 >
                         # Item already in list ?
                         path, name = split(filename)
                         item = QListWidgetItem(name)
                         item.setData(256, filename)
-                        if self._checkbox: item.setCheckState(Qt.Checked)
+                        if self._checkbox:
+                            # noinspection PyUnresolvedReferences
+                            item.setCheckState(Qt.Checked)
                         if self.containsItem(item):
                             wait.hide()
                             messageBox(self,
@@ -3472,8 +3543,10 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                             if self._reftofirst: self._volume = img
                             if self._volume is not None:
                                 if self._refID is not None:
+                                    # noinspection PyUnresolvedReferences
                                     self._refID = self._volume.getReferenceID()
                                 if self._refSpaceID is not None:
+                                    # noinspection PyUnresolvedReferences
                                     self._refSpaceID = self._volume.getReferenceID()
                                 if self._refFOV is not None:
                                     self._refFOV = self._volume.getFieldOfView()
@@ -3578,7 +3651,9 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                         path, name = split(filename)
                         item = QListWidgetItem(name)
                         item.setData(256, filename)
-                        if self._checkbox: item.setCheckState(Qt.Checked)
+                        if self._checkbox:
+                            # noinspection PyUnresolvedReferences
+                            item.setCheckState(Qt.Checked)
                         if self.containsItem(item):
                             wait.hide()
                             messageBox(self,
@@ -3695,7 +3770,9 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                         path, name = split(filename)
                         item = QListWidgetItem(name)
                         item.setData(256, filename)
-                        if self._checkbox: item.setCheckState(Qt.Checked)
+                        if self._checkbox:
+                            # noinspection PyUnresolvedReferences
+                            item.setCheckState(Qt.Checked)
                         if self.containsItem(item):
                             wait.hide()
                             messageBox(self,
@@ -3886,7 +3963,9 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                         path, name = split(filename)
                         item = QListWidgetItem(name)
                         item.setData(256, filename)
-                        if self._checkbox: item.setCheckState(Qt.Checked)
+                        if self._checkbox:
+                            # noinspection PyUnresolvedReferences
+                            item.setCheckState(Qt.Checked)
                         if self.containsItem(item):
                             wait.hide()
                             messageBox(self,
@@ -3982,7 +4061,9 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                             path, name = split(filename)
                             item = QListWidgetItem(name)
                             item.setData(256, filename)
-                            if self._checkbox: item.setCheckState(Qt.Checked)
+                            if self._checkbox:
+                                # noinspection PyUnresolvedReferences
+                                item.setCheckState(Qt.Checked)
                             if self.containsItem(item):
                                 wait.hide()
                                 messageBox(self,
@@ -4083,7 +4164,9 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                         path, name = split(filename)
                         item = QListWidgetItem(name)
                         item.setData(256, filename)
-                        if self._checkbox: item.setCheckState(Qt.Checked)
+                        if self._checkbox:
+                            # noinspection PyUnresolvedReferences
+                            item.setCheckState(Qt.Checked)
                         if self.containsItem(item):
                             wait.hide()
                             messageBox(self,
@@ -4174,7 +4257,9 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                         path, name = split(filename)
                         item = QListWidgetItem(name)
                         item.setData(256, filename)
-                        if self._checkbox: item.setCheckState(Qt.Checked)
+                        if self._checkbox:
+                            # noinspection PyUnresolvedReferences
+                            item.setCheckState(Qt.Checked)
                         if self.containsItem(item):
                             wait.hide()
                             messageBox(self,

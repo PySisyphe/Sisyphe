@@ -31,6 +31,7 @@ from Sisyphe.widgets.iconBarViewWidgets import IconBarWidget
 from Sisyphe.widgets.basicWidgets import LabeledSpinBox
 from Sisyphe.gui.dialogWait import DialogWait
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from vtk import vtkObject
     from PyQt5.QtGui import QShowEvent
@@ -77,7 +78,7 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
     QFame -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> ProjectionViewWidget
 
     Creation: 12/10/2024
-    Last Revision: 10/10/2025
+    Last Revision: 11/12/2025
     """
 
     # Private method
@@ -92,16 +93,31 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
         if self._ref is not None:
             opacity = self.getProjectionOpacity()
             if self._cut == 0:
+                # < Revision 11/12/2025
+                # fimg = self._ref.getProjection(self._direction,
+                #                                self._thickness,
+                #                                self._operator,
+                #                                'native')
                 fimg = self._ref.getProjection(self._direction,
                                                self._thickness,
                                                self._operator,
-                                               'native')
+                                               'native',
+                                               self._mask)
+                # Revision 11/12/2025 >
             else:
+                # < Revision 11/12/2025
+                # fimg = self._ref.getCroppedProjection(self._cut,
+                #                                       self._direction,
+                #                                       self._thickness,
+                #                                       self._operator,
+                #                                       'native')
                 fimg = self._ref.getCroppedProjection(self._cut,
                                                       self._direction,
                                                       self._thickness,
                                                       self._operator,
-                                                      'native')
+                                                      'native',
+                                                      self._mask)
+                # Revision 11/12/2025 >
             super().setVolume(fimg)
             self._foreground = self._volumeslice
             if self._background is not None:
@@ -322,6 +338,7 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
         self._direction: str = direction
         self._operator: str | None = None
         self._thickness: float | None = None
+        self._mask: SisypheVolume | None = None
         super().__init__(parent)
 
         if direction == 'left':
@@ -399,6 +416,7 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
     _t1: SisypheVolume          projection of t1 atlas
     _aal: SisypheVolume         projection of aal atlas
     _brodmann: SisypheVolume    projection of brodmann atlas
+    _mask: SisypheVolume        mask to apply before projection processing
     _foreground: vtkImageSlice  vtkImageSlice of the reference volume displayed as foreground
     _background: vtkImageSlice  vtkImageSlice of the ICBM152 T1 atlas displayed as background
     """
@@ -452,11 +470,27 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
         if self._cut == 0:
             # < Revision 21/11/2024
             # add mask parameter
+            # < Revision 11/12/2025
+            if mask is not None: self._mask = mask
+            if self._mask is None:
+                if foreground.acquisition.isICBM152():
+                    path = join(getICBM152Path(), 'icbm152_asym_template_mask.xvol')
+                    if exists(path):
+                        self._mask = SisypheVolume()
+                        self._mask.load(path)
+                else:
+                    self._mask = foreground.getMask('otsu', fill='3d')
+            # < Revision 11/12/2025
+            # fimg = foreground.getProjection(self._direction,
+            #                                 self._thickness,
+            #                                 self._operator,
+            #                                 'native', mask)
             fimg = foreground.getProjection(self._direction,
                                             self._thickness,
                                             self._operator,
-                                            'native', mask)
-            # Revision 21/11/2024 >
+                                            'native',
+                                            self._mask)
+            # Revision 11/12/2025 >
             if foreground.acquisition.isICBM152():
                 path = join(getICBM152Path(), 'PROJECTIONS')
                 if exists(path):
@@ -502,18 +536,33 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
                 self._aal = None
                 self._brodmann = None
                 if background is not None:
+                    # < Revision 11/12/2025
+                    # bimg = background.getProjection(self._direction,
+                    #                                 self._thickness,
+                    #                                 self._operator,
+                    #                                 'native', mask)
                     bimg = background.getProjection(self._direction,
                                                     self._thickness,
                                                     self._operator,
-                                                    'native', mask)
+                                                    'native',
+                                                    self._mask)
+                    # Revision 11/12/2025 >
         else:
             # < Revision 21/11/2024
             # add mask parameter
+            # Revision 11/12/2025 >
+            # fimg = foreground.getCroppedProjection(self._cut,
+            #                                        self._direction,
+            #                                        self._thickness,
+            #                                        self._operator,
+            #                                        'native', mask)
             fimg = foreground.getCroppedProjection(self._cut,
                                                    self._direction,
                                                    self._thickness,
                                                    self._operator,
-                                                   'native', mask)
+                                                   'native',
+                                                   self._mask)
+            # Revision 11/12/2025 >
             # Revision 21/11/2024 >
             if foreground.acquisition.isICBM152():
                 path = join(getICBM152Path(), 'PROJECTIONS')
@@ -545,11 +594,19 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
                 self._aal = None
                 self._brodmann = None
                 if background is not None:
+                    # < Revision 11/12/2025
+                    # bimg = background.getCroppedProjection(self._cut,
+                    #                                        self._direction,
+                    #                                        self._thickness,
+                    #                                        self._operator,
+                    #                                        'native', mask)
                     bimg = background.getCroppedProjection(self._cut,
                                                            self._direction,
                                                            self._thickness,
                                                            self._operator,
-                                                           'native', mask)
+                                                           'native',
+                                                           self._mask)
+                    # Revision 11/12/2025 >
         self._ref = foreground
         super().setVolume(fimg)
         self._foreground = self._volumeslice
@@ -633,6 +690,9 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
         self._t1 = None
         self._aal = None
         self._brodmann = None
+        # < Revision 11/12/2025
+        self._mask = None
+        # Revision 11/12/2025 >
 
     def setDirectionOfProjection(self, d: str = 'left') -> None:
         """
@@ -1033,7 +1093,7 @@ class MultiProjectionViewWidget(MultiViewWidget):
     QWidget -> MultiViewWidget -> GridViewWidget -> MultiProjectionViewWidget
 
     Creation: 12/10/2024
-    Last revision: 10/10/2025
+    Last revision: 11/12/2025
     """
 
     # Special method
@@ -1050,6 +1110,9 @@ class MultiProjectionViewWidget(MultiViewWidget):
         super().__init__(2, 4, parent)
         self._initViews()
         self._initSynchronisationSignalConnect()
+        # < Revision 11/12/2025
+        self._mask: SisypheVolume | None = None
+        # Revision 11/12/2025 >
 
     # Private methods
 
@@ -1118,8 +1181,22 @@ class MultiProjectionViewWidget(MultiViewWidget):
             # Revision 07/12/2024 >
         self._views[(0, 1)].setCuttingSliceIndex(mid + 1)
         self._views[(1, 1)].setCuttingSliceIndex(mid - 1)
+        # < Revision 11/12/2025
+        if mask is not None: self._mask = mask
+        if self._mask is None:
+            if foreground.acquisition.isICBM152():
+                path = join(getICBM152Path(), 'icbm152_asym_template_mask.xvol')
+                if exists(path):
+                    self._mask = SisypheVolume()
+                    self._mask.load(path)
+            else:
+                self._mask = foreground.getMask('otsu', fill='3d')
+        # Revision 11/12/2025 >
         for k in self._views:
-            self._views[k].setVolume(foreground, background, mask)
+            # < Revision 11/12/2025
+            # self._views[k].setVolume(foreground, background, mask)
+            self._views[k].setVolume(foreground, background, self._mask)
+            # Revision 11/12/2025 >
     # Revision 21/11/2024 >
 
     # < Revision 18/10/2024
@@ -1166,6 +1243,9 @@ class MultiProjectionViewWidget(MultiViewWidget):
         """
         for k in self._views:
             self._views[k].removeVolume()
+        # < Revision 11/12/2025
+        self._mask = None
+        # Revision 11/12/2025 >
 
     def setOperatorOfProjection(self, v: str = 'max') -> None:
         """

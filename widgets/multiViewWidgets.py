@@ -58,6 +58,7 @@ from Sisyphe.widgets.sliceViewWidgets import SliceROIViewWidget
 from Sisyphe.widgets.volumeViewWidget import VolumeViewWidget
 from Sisyphe.widgets.sliceTrajectoryViewWidget import SliceTrajectoryViewWidget
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from Sisyphe.core.sisypheMesh import SisypheMesh
     from Sisyphe.core.sisypheROI import SisypheROICollection

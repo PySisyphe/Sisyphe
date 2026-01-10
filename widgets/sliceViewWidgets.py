@@ -95,6 +95,7 @@ from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.abstractViewWidget import AbstractViewWidget
 from Sisyphe.gui.dialogWait import DialogWait
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from vtk import vtkObject
     from PyQt5.QtGui import QShowEvent
@@ -324,10 +325,11 @@ class SliceViewWidget(AbstractViewWidget):
         self._group_orient.addAction(self._action['sagittal'])
         self._action['axial'].setChecked(True)
         self._menuOrientation = QMenu('Orientation', self._popup)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menuOrientation.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menuOrientation.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menuOrientation.setAttribute(Qt.WA_TranslucentBackground, True)
         self._menuOrientation.addAction(self._action['axial'])
         self._menuOrientation.addAction(self._action['coronal'])
@@ -513,7 +515,7 @@ class SliceViewWidget(AbstractViewWidget):
         offset = s * self._offset
         if isinstance(p, (list, tuple)):
             # p = (x, y, z) absolute world coordinate of the vtkCamera focal point
-            # no synchronisation because call from initialisation step or synchronisation event
+            # no synchronization because call from initialization step or synchronization event
             p = list(p)
             if self._roundedenabled:
                 p[d] = int(p[d] / s) * s + offset
@@ -837,7 +839,7 @@ class SliceViewWidget(AbstractViewWidget):
             self.getBottomRightInfo().SetInput(txt)
             self._renderwindow.Render()
 
-    # Public synchronisation event methods
+    # Public synchronization event methods
 
     def synchroniseTransformApplied(self, obj: QWidget,
                                     tx: float, ty: float, tz: float,
@@ -2230,6 +2232,7 @@ class SliceViewWidget(AbstractViewWidget):
                 # k = interactorstyle.GetKeySym()
                 # Zoom, Control Key (Cmd key on mac)
                 # if k == 'Control_L' or self.getZoomFlag() is True:
+                # noinspection PySimplifyBooleanCheck
                 if self._interactor.GetControlKey() or self.getZoomFlag() is True:
                     if interactorstyle.GetButton() == 1:
                         # Zoom
@@ -2295,6 +2298,7 @@ class SliceViewWidget(AbstractViewWidget):
         if self.hasVolume():
             # interactorstyle = self._window.GetInteractorStyle()
             # if k == 'Alt_L' or self.getMoveFlag() is True:
+            # noinspection PySimplifyBooleanCheck
             if self._interactor.GetKeySym() == 'Alt_L' or self.getMoveFlag() is True:
                 self._interactor.SetKeySym('')
                 self.setCentralCrossVisibilityOff()
@@ -2480,7 +2484,7 @@ class SliceReorientViewWidget(SliceViewWidget):
     _boxFovActor            vtkActor
     """
 
-    # Public synchronisation event methods
+    # Public synchronization event methods
 
     def synchroniseResliceCursorChanged(self, obj: QWidget,
                                         x: float, y: float, z: float,
@@ -3606,7 +3610,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
     _isocutter          vtkPlaneCutter
     _isolines           vtkActor, isolines
     _isolabels          vtkActor2D, label value of isolines
-    _isoindex           int, isolines of wich volume (-1 no isoline, 0 reference volume, >0 overlay volume
+    _isoindex           int, isolines of which volume (-1 no isoline, 0 reference volume, >0 overlay volume)
     _ovlvalue           SisypheVolume, overlay for which voxel value is displayed
     _ovlvaluetrf        SisypheTransform, applied to overlay for which voxel value is displayed
     _aligncenters       bool, align centers of reference volume and overlays
@@ -3756,11 +3760,19 @@ class SliceOverlayViewWidget(SliceViewWidget):
             # Add same spaceID management
             # Add trf identity management
             if not self._ovlvalue.hasSameID(self._volume):
-                if self._ovlvaluetrf is None: return txt
+                # < Revision 16/12/2025
+                # if self._ovlvaluetrf is None: return txt
+                # else:
+                #     if not self._ovlvaluetrf.isIdentity():
+                #         p = self._ovlvaluetrf.applyToPoint(p)
+                #         if p is None: return txt
+                if self._ovlvaluetrf is None:
+                    if not self._ovlvalue.hasSameSize(self._volume): return txt
                 else:
                     if not self._ovlvaluetrf.isIdentity():
                         p = self._ovlvaluetrf.applyToPoint(p)
                         if p is None: return txt
+                # Revision 16/12/2025 >
             # Revision 19/10/2024 >
             x, y, z = p[0], p[1], p[2]
             s = self._ovlvalue.getSize()
@@ -3798,7 +3810,9 @@ class SliceOverlayViewWidget(SliceViewWidget):
             overlay volume to add to the menu.
         """
         if isinstance(volume, SisypheVolume):
-            self._ovlvalue = volume
+            # < Revision 11/12/2025
+            # self._ovlvalue = volume
+            # Revision 11/12/2025 >
             # < Revision 19/10/2024
             # trf fixed to overlay, and not overlay to fixed
             if volume.hasSameID(self._volume): self._ovlvaluetrf = None
@@ -4024,7 +4038,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
         if self._isoindex > -1: self._updateIsoLines()
         if self._meshes is not None: self._updateMeshes()
 
-    # Public synchronisation event methods
+    # Public synchronization event methods
 
     def synchroniseViewOverlayMethodCalled(self, obj: QWidget, function: str, param1: Any, param2: Any) -> None:
         """
@@ -4725,8 +4739,10 @@ class SliceOverlayViewWidget(SliceViewWidget):
         if n > 0 and 0 <= index < n:
             trf = vtkTransform()
             t = self.getTranslations(index)
+            # noinspection PyUnresolvedReferences
             trf.SetPosition(t[0], t[1], t[2])
             r = self.getRotations(index, deg=True)
+            # noinspection PyUnresolvedReferences
             trf.SetOrientation(r[0], r[1], r[2])
             return trf
         else: raise IndexError('index parameter value {} is out of range.'.format(index))
@@ -5560,10 +5576,11 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
         self._popup.insertAction(self._action['capture'], self._action['regarea'])
 
         self._menuFloat = QMenu('Moving volume display', self._popup)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menuFloat.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menuFloat.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menuFloat.setAttribute(Qt.WA_TranslucentBackground, True)
         self._menuFloatGroup = QActionGroup(self._popup)
         self._menuFloatGroup.setExclusive(True)
@@ -5861,7 +5878,7 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
         if self._action['showtooltip'].isChecked(): self.setToolTip(self._tooltipstr)
         else: self.setToolTip('')
 
-    # Public synchronisation event method
+    # Public synchronization event method
 
     def synchroniseCropChanged(self, obj: QWidget, v: bool) -> None:
         """
@@ -6850,10 +6867,11 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             lambda: self.setROIVisibility(self._action['showROI'].isChecked()))
 
         self._2d = QMenu('2D functions', self._popup)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._2d.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._2d.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._2d.setAttribute(Qt.WA_TranslucentBackground, True)
         self._2d.addAction(self._action['2derode'])
         self._2d.addAction(self._action['2ddilate'])
@@ -6884,10 +6902,11 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         self._2d.addAction(self._action['2dclear'])
 
         self._3d = QMenu('3D functions', self._popup)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._3d.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._3d.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._3d.setAttribute(Qt.WA_TranslucentBackground, True)
         self._3d.addAction(self._action['3derode'])
         self._3d.addAction(self._action['3ddilate'])
@@ -6922,18 +6941,20 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         self._3d.addAction(self._action['3dclear'])
 
         self._currentroi = QMenu('Set active ROI', self._popup)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._currentroi.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._currentroi.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._currentroi.setAttribute(Qt.WA_TranslucentBackground, True)
         self._roigroup = None
 
         self._roitools = QMenu('ROI', self._popup)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._roitools.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._roitools.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._roitools.setAttribute(Qt.WA_TranslucentBackground, True)
         self._roitools.addAction(self._action['newroi'])
         self._roitools.addAction(self._action['addroi'])
@@ -7211,7 +7232,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         p = self._getWorldToMatrixCoordinate(p)
         return p
 
-    # Public synchronisation event methods
+    # Public synchronization event methods
 
     def synchroniseROISelectionChanged(self, obj: QWidget, r: str) -> None:
         """

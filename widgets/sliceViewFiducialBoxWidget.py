@@ -5,8 +5,9 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
-from typing import Any
+from __future__ import annotations
 from typing import TYPE_CHECKING
+from typing import Any
 
 from sys import platform
 
@@ -22,6 +23,7 @@ from Sisyphe.widgets.sliceViewWidgets import SliceViewWidget
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.iconBarViewWidgets import IconBarWidget
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from PyQt5.QtWidgets import QWidget
     from Sisyphe.core.sisypheVolume import SisypheVolume
@@ -57,7 +59,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
 
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceViewFiducialBoxWidget
 
-    Last revision: 10/10/2025
+    Last revision: 18/12/2025
     """
 
     # Special method
@@ -88,6 +90,9 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
         for i in range(10):
             self.addTarget(p=[0, 0, 0], name='', signal=False)
             tool = self.getTool(i)
+            # < Revision 18/12/2025
+            tool.setHandleSize(5.0)
+            # Revision 18/12/2025 >
             # < Revision 05/09/2025
             tool.setFontSize(fsize)
             tool.setTextOffset([20, 20])
@@ -435,5 +440,6 @@ class IconBarSliceViewFiducialBoxWidget(IconBarWidget):
         p = w.cursor().pos()
         p = w.mapFromGlobal(p)
         p.setY(w.height() - p.y() - 1)
+        # noinspection PyArgumentList
         interactor.SetEventInformation(p.x(), p.y())
         interactor.MouseMoveEvent()

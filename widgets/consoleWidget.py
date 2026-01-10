@@ -2,8 +2,13 @@
 External packages/modules
 -------------------------
 
+    - google-genai, gemini LLM API, https://googleapis.github.io/python-genai/
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - Numpy, Scientific computing, https://numpy.org/
+    - Pillow,  image processing, https://pillow.readthedocs.io/
+    - SimpleITK, medical image processing, https://simpleitk.org/
     - qtconsole, Python console widget, https://qtconsole.readthedocs.io/en/stable/
+    - vtk, visualization engine/3D rendering, https://vtk.org/
 """
 
 from sys import platform
@@ -13,17 +18,32 @@ from os.path import exists
 from os.path import abspath
 from os.path import dirname
 
+from pathlib import Path
+
 import types
 
 import pkgutil
+
+import traceback
+
+import json
 
 # < Revision 19/02/2025
 from ants.core.ants_image import ANTsImage
 # from Sisyphe.lib.ants.ants_image import ANTsImage
 # Revision 19/02/2025 >
 
+# < Revision 14/12/2025
+# from google import genai
+try: from google import genai
+except: pass
+# Revision 14/12/2025 >
+
 from numpy import array
 from numpy import ndarray
+from numpy import issubdtype
+from numpy import number
+from numpy import argwhere
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QPoint
@@ -39,10 +59,9 @@ from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QPushButton
 
+from PIL.Image import Image as pilImage
+
 from SimpleITK import Image as sitkImage
-# < Revision 02/12/2025
-from SimpleITK import GetArrayViewFromImage
-# Revision 02/12/2025 >
 
 from vtk import vtkImageData
 
@@ -51,10 +70,12 @@ import darkdetect
 from qtconsole.inprocess import QtInProcessKernelManager
 from qtconsole.rich_jupyter_widget import RichJupyterWidget
 
+from Sisyphe.core.sisypheSettings import SisypheSettings
 from Sisyphe.core.sisypheLUT import SisypheLut
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.gui.dialogFromXml import DialogFromXml
+from Sisyphe.gui.dialogWait import DialogWait
 
 __all__ = ['ConsoleWidget']
 
@@ -67,6 +88,22 @@ Class hierarchy
 """
 
 class RichJupyterWidget2(RichJupyterWidget):
+    """
+    Last revision: 14/12/2025
+    """
+
+    # < Revision 09/12/2025
+    # override __init__() method
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        settings = SisypheSettings()
+        self._aikey = settings.getFieldValue('Gemini', 'APIKey')
+        self._aimodel = settings.getFieldValue('Gemini', 'Model')
+        if self._aimodel is None or self._aimodel == '':
+            self._aimodel = 'gemini-2.5-flash'
+        self._client: genai.Client | None = None
+        self._update = None
+    # Revision 09/12/2025 >
 
     def _event_filter_console_keypress(self, event):
         # noinspection PyProtectedMember
@@ -97,6 +134,205 @@ class RichJupyterWidget2(RichJupyterWidget):
             self._control.moveCursor(9, 0)
             r = True
         return r
+
+    # < Revision 09/12/2025
+    # override execute method
+    # noinspection PyProtectedMember
+    def execute(self, source=None, hidden=False, interactive=False):
+        if source is None:
+            if self.input_buffer[:7] == '%gemini':
+                # history
+                history = self.input_buffer
+                history = history.rstrip()
+                if history and (not self._history or self._history[-1] != history):
+                    self._history.append(history)
+                # noinspection PyAttributeOutsideInit
+                self._history_index = len(self._history)
+                # parse args
+                nb = self._previous_prompt_obj.number + 1
+                buff = self.input_buffer.split(' \'')
+                buff2 = list()
+                for i in range(len(buff)):
+                    sbuff = buff[i].split('\'')
+                    if len(sbuff) == 1:
+                        sbuff2 = sbuff[0].split(' ')
+                        for j in range(len(sbuff2)):
+                            buff2.append(sbuff2[j])
+                    else:
+                        buff2.append(sbuff[0])
+                        sbuff2 = sbuff[1].split(' ')
+                        for j in range(len(sbuff2)):
+                            buff2.append(sbuff2[j])
+                buff = array(buff2[1:])
+                buff = buff[buff != '']
+                if self._aikey is not None:
+                    tag = True
+                    jsontag = False
+                    content = list()
+                    config = None
+                    if self._client is None:
+                        # < Revision 14/12/2025
+                        try: self._client = genai.Client(api_key=self._aikey)
+                        except:
+                            self._append_plain_text('\ngoogle module is not installed.\n'
+                                                    'Please perform a complete reinstallation of the latest version '
+                                                    'of PySisyphe, which can be downloaded from '
+                                                    'https://mega.nz/folder/hKEBzRTR#MUodQFh4N8LeukE2hbkzNA.')
+                            self._show_interpreter_prompt(nb)
+                            return
+                        # Revision 14/12/2025 >
+                    g = self.kernel_manager.kernel.shell.user_ns
+                    # help arg
+                    if '?' in buff or '-help' in buff:
+                        self._append_plain_text('\n%gemini args:\n'
+                                                '  -p prompt, str\n'
+                                                '  -i image input, PIL.Image\n'
+                                                '  -pdf input, str or pathlib.Path\n'
+                                                '  -json, reply format json\n'
+                                                '  -model, print ai model\n'
+                                                '  -key, print api key\n',
+                                                before_prompt=False)
+                        self._show_interpreter_prompt(nb)
+                        return
+                    # model arg
+                    if '-model' in buff:
+                        tag = False
+                        self._append_plain_text('\n%gemini model: {}'.format(self._aimodel))
+                    # key arg
+                    if '-key' in buff:
+                        tag = False
+                        if self._aikey in (None, ''): self._append_plain_text('\n%gemini api key: no api key')
+                        else: self._append_plain_text('\n%gemini api key: {}'.format(self._aikey))
+                    # json flag arg
+                    if '-json' in buff:
+                        jsontag = True
+                        config = genai.types.GenerateContentConfig(response_mime_type='application/json')
+                    # segmentation flag arg
+                    # if '-seg' in buff:
+                    #     config = genai.types.GenerateContentConfig(response_mime_type='application/json',
+                    #                                                thinking_config=genai.types.ThinkingConfig(thinking_budget=0))
+                    # prompt arg
+                    if '-p' in buff:
+                        i = argwhere(buff == '-p')[0][0]
+                        if i < len(buff) - 1 and buff[i + 1] != '-':
+                            buffp = buff[i + 1]
+                            # noinspection PyUnresolvedReferences
+                            if len(buffp.split(' ')) > 1: content.append(buffp[1:-1])
+                            else:
+                                if buffp in g.keys():
+                                    v = g[buffp]
+                                    if isinstance(v, str): content.append(v)
+                                    else:
+                                        self._append_plain_text('\n%gemini prompt error:\n'
+                                                                '{} type is not str.'.format(buffp),
+                                                                before_prompt=False)
+                                        self._show_interpreter_prompt(nb)
+                                        return
+                                else:
+                                    self._append_plain_text('\n%gemini prompt error:\n'
+                                                            '{} not exists.'.format(buffp),
+                                                            before_prompt=False)
+                                    self._show_interpreter_prompt(nb)
+                                    return
+                        else:
+                            self._append_plain_text('\n%gemini prompt error:\n'
+                                                    'no prompt specified.',
+                                                    before_prompt=False)
+                            self._show_interpreter_prompt(nb)
+                            return
+                    else:
+                        if tag:
+                            self._append_plain_text('\n%gemini prompt error:\n'
+                                                    'no prompt specified.',
+                                                    before_prompt=False)
+                        self._show_interpreter_prompt(nb)
+                        return
+                    # image arg
+                    if '-i' in buff:
+                        i = argwhere(buff == '-i')[0][0]
+                        if i < len(buff) - 1 and buff[i + 1] != '-':
+                            buffp = buff[i + 1]
+                            if buffp in g.keys():
+                                v = g[buffp]
+                                if isinstance(v, pilImage): content.append(v)
+                                else:
+                                    self._append_plain_text('\n%gemini image error:\n'
+                                                            '{} is not a Pillow image.'.format(buffp),
+                                                            before_prompt=False)
+                                    self._show_interpreter_prompt(nb)
+                                    return
+                            else:
+                                self._append_plain_text('\n%gemini error:\n'
+                                                        '{} not exists.'.format(buffp),
+                                                        before_prompt=False)
+                                self._show_interpreter_prompt(nb)
+                                return
+                        else:
+                            self._append_plain_text('\n%gemini error:\n'
+                                                    'no image specified.',
+                                                    before_prompt=False)
+                            self._show_interpreter_prompt(nb)
+                            return
+                    # pdf arg
+                    if '-pdf' in buff:
+                        i = argwhere(buff == '-i')[0][0]
+                        if i < len(buff) - 1 and buff[i + 1] != '-':
+                            v = None
+                            buffp = buff[i + 1]
+                            # noinspection PyTypeChecker
+                            if exists(buffp):
+                                # noinspection PyTypeChecker
+                                v = Path(buffp)
+                            if buffp in g.keys():
+                                v = g[buffp]
+                                if isinstance(v, str):
+                                    if exists(v): v = Path(v)
+                            if isinstance(v, Path):
+                                if v.exists():
+                                    content.append(genai.types.Part.from_bytes(data=v.read_bytes(),
+                                                                               mime_type='application/pdf'))
+                                else:
+                                    self._append_plain_text('\n%gemini error:\n'
+                                                            'no such file {}.'.format(v),
+                                                            before_prompt=False)
+                                    self._show_interpreter_prompt(nb)
+                                    return
+                            else:
+                                self._append_plain_text('\n%gemini error:\n'
+                                                        'invalid pdf {}.'.format(v),
+                                                        before_prompt=False)
+                                self._show_interpreter_prompt(nb)
+                                return
+                    # execute request
+                    wait = DialogWait()
+                    wait.open()
+                    wait.setInformationText('Waiting for gemini reponse...')
+                    try:
+                        r = self._client.models.generate_content(model=self._aimodel,
+                                                                 contents=content,
+                                                                 config=config)
+                        r = r.text
+                        if isinstance(r, str):
+                            self.kernel_manager.kernel.shell.push('r')
+                            if jsontag:
+                                self.execute('import json', hidden=True)
+                                self.execute('r = json.loads(r)', hidden=True)
+                                r = json.loads(r)
+                            self._append_plain_text('\n{}'.format(r))
+                            if self._update is not None: self._update()
+                    except:
+                        self._append_plain_text('\n%gemini client error:\n{}'.format(traceback.format_exc()),
+                                                before_prompt=False)
+                    finally:
+                        wait.close()
+                else:
+                    self._append_plain_text('\n%gemini API key error:\n'
+                                            'No API key is declared.',
+                                            before_prompt=False)
+                self._show_interpreter_prompt(nb)
+                return
+        super().execute(source, hidden, interactive)
+    # Revision 09/12/2025 >
 
 
 class ConsoleWidget(QWidget):
@@ -159,6 +395,9 @@ class ConsoleWidget(QWidget):
         self._console = RichJupyterWidget2(gui_completion='droplist',
                                            font_family=self.font().family(),
                                            font_size=self.font().pointSize())
+        # < Revision 09/12/2025
+        self._console._update = self.update
+        # Revision 09/12/2025 >
         # Revision 01/12/2025 >
         # Revision 08/03/2025 >
         if self.isDarkMode(): self._console.set_default_style('linux')
@@ -175,7 +414,10 @@ class ConsoleWidget(QWidget):
         if platform == 'win32':
             # bug fix of windows console encodings (code page 850 vs code page 1252)
             self._console.execute('import os', hidden=True)
-            self._console.execute('os.system("chcp 65001")', hidden=True)
+            # < Revision 22/12/2025
+            # self._console.execute('os.system("chcp 65001")', hidden=True)
+            self._console.execute('os.system("chcp 65001 > NUL")', hidden=True)
+            # Revision 22/12/2025 >
 
         path = join(self.getDocDirectory(), 'ipython.txt')
         if exists(path):
@@ -197,6 +439,7 @@ class ConsoleWidget(QWidget):
         self._globals.setToolTip('Variables')
         self._globals.setAlternatingRowColors(True)
         # < Revision 01/12/2025
+        # noinspection PyUnresolvedReferences
         self._globals.setContextMenuPolicy(Qt.CustomContextMenu)
         # noinspection PyUnresolvedReferences
         self._globals.customContextMenuRequested.connect(self._popupGlobals)
@@ -209,11 +452,13 @@ class ConsoleWidget(QWidget):
         splt = QSplitter()
         splt.addWidget(self._modules)
         splt.addWidget(self._globals)
+        # noinspection PyUnresolvedReferences
         splt.setOrientation(Qt.Vertical)
 
         splitter = QSplitter()
         splitter.addWidget(self._console)
         splitter.addWidget(splt)
+        # noinspection PyUnresolvedReferences
         splitter.setOrientation(Qt.Horizontal)
 
         # Buttons
@@ -281,10 +526,11 @@ class ConsoleWidget(QWidget):
         self._action['main'].triggered.connect(self.importMain)
 
         self._popup = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._popup.addAction(self._action['copy'])
         self._popup.addAction(self._action['clear'])
@@ -391,6 +637,7 @@ class ConsoleWidget(QWidget):
     # noinspection PyUnusedLocal
     def _globalsDblClicked(self, item, c):
         if self.hasMainWindow():
+            # noinspection PyUnresolvedReferences
             v = item.data(0, Qt.UserRole)
             if v != '':
                 g = self._console.kernel_manager.kernel.shell.user_ns
@@ -421,6 +668,7 @@ class ConsoleWidget(QWidget):
 
     # noinspection PyUnusedLocal
     def _globalsClicked(self, item, c):
+        # noinspection PyUnresolvedReferences
         v = item.data(0, Qt.UserRole)
         if v != '':
             g = self._console.kernel_manager.kernel.shell.user_ns
@@ -436,6 +684,7 @@ class ConsoleWidget(QWidget):
     # noinspection PyUnusedLocal
     def _modulesDblClicked(self, item, c):
         if self.hasMainWindow():
+            # noinspection PyUnresolvedReferences
             v = item.data(0, Qt.UserRole)
             if v != '':
                 g = self._console.kernel_manager.kernel.shell.user_ns
@@ -454,10 +703,14 @@ class ConsoleWidget(QWidget):
         if item is not None:
             g = self._console.kernel_manager.kernel.shell.user_ns
             try:
+                # noinspection PyUnresolvedReferences
                 v = g[item.data(0, Qt.UserRole)]
                 popup = QMenu()
+                # noinspection PyUnresolvedReferences
                 popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+                # noinspection PyUnresolvedReferences
                 popup.setWindowFlag(Qt.FramelessWindowHint, True)
+                # noinspection PyUnresolvedReferences
                 popup.setAttribute(Qt.WA_TranslucentBackground, True)
                 actions = dict()
                 actions['plot'] = QAction('Line plot')
@@ -479,39 +732,51 @@ class ConsoleWidget(QWidget):
                 actions['mat'].triggered.connect(lambda _: self._plot(7, item))
                 actions['image'].triggered.connect(lambda _: self._plot(8, item))
                 # Revision 01/12/2025 >
-                if isinstance(v, list): v = array(v)
-                if isinstance(v, sitkImage):
+                if isinstance(v, list):
+                    v = array(v)
+                    # < Revision 05/12/2025
+                    if not issubdtype(v.dtype, number): return
+                    # Revision 05/12/2025 >
+                if isinstance(v, ndarray):
+                    # < Revision 05/12/2025
+                    if issubdtype(v.dtype, number):
+                        # Revision 05/12/2025 >
+                        if v.ndim < 3:
+                            if v.ndim == 1:
+                                popup.addAction(actions['plot'])
+                                popup.addAction(actions['bar'])
+                                popup.addAction(actions['stairs'])
+                                popup.addAction(actions['box'])
+                                popup.addAction(actions['violin'])
+                                popup.addAction(actions['hist'])
+                            elif v.ndim == 2:
+                                if 2 in v.shape:
+                                    popup.addAction(actions['plot'])
+                                    popup.addAction(actions['bar'])
+                                    popup.addAction(actions['stairs'])
+                                    popup.addAction(actions['box'])
+                                    popup.addAction(actions['violin'])
+                                    popup.addAction(actions['hist'])
+                                    popup.addAction(actions['scatter'])
+                                else:
+                                    popup.addAction(actions['plot'])
+                                    popup.addAction(actions['bar'])
+                                    popup.addAction(actions['stairs'])
+                                    popup.addAction(actions['box'])
+                                    popup.addAction(actions['violin'])
+                                    popup.addAction(actions['hist'])
+                                    popup.addAction(actions['mat'])
+                                    popup.addAction(actions['image'])
+                            popup.exec(self._globals.mapToGlobal(p))
+                elif isinstance(v, sitkImage):
                     if v.GetDimension() == 2:
                         popup.addAction(actions['image'])
                         popup.exec(self._globals.mapToGlobal(p))
-                if isinstance(v, ndarray):
-                    if v.ndim < 3:
-                        if v.ndim == 1:
-                            popup.addAction(actions['plot'])
-                            popup.addAction(actions['bar'])
-                            popup.addAction(actions['stairs'])
-                            popup.addAction(actions['box'])
-                            popup.addAction(actions['violin'])
-                            popup.addAction(actions['hist'])
-                        elif v.ndim == 2:
-                            if 2 in v.shape:
-                                popup.addAction(actions['plot'])
-                                popup.addAction(actions['bar'])
-                                popup.addAction(actions['stairs'])
-                                popup.addAction(actions['box'])
-                                popup.addAction(actions['violin'])
-                                popup.addAction(actions['hist'])
-                                popup.addAction(actions['scatter'])
-                            else:
-                                popup.addAction(actions['plot'])
-                                popup.addAction(actions['bar'])
-                                popup.addAction(actions['stairs'])
-                                popup.addAction(actions['box'])
-                                popup.addAction(actions['violin'])
-                                popup.addAction(actions['hist'])
-                                popup.addAction(actions['mat'])
-                                popup.addAction(actions['image'])
-                        popup.exec(self._globals.mapToGlobal(p))
+                # < Revision 09/12/2025
+                elif isinstance(v, pilImage):
+                    popup.addAction(actions['image'])
+                    popup.exec(self._globals.mapToGlobal(p))
+                # Revision 09/12/2025 >
             except: pass
     # Revision 01/12/2025 >
 
@@ -520,12 +785,16 @@ class ConsoleWidget(QWidget):
     def _plot(self, chart: int, item: QTreeWidgetItem) -> None:
         g = self._console.kernel_manager.kernel.shell.user_ns
         try:
+            # noinspection PyUnresolvedReferences
             vstr = item.data(0, Qt.UserRole)
             v = g[vstr]
-            if isinstance(v, list): v = array(v)
-            if isinstance(v, sitkImage): v = GetArrayViewFromImage(v)
-            if isinstance(v, ndarray):
-                if v.ndim in (1, 2):
+            if isinstance(v, (list, ndarray, sitkImage, pilImage)):
+                if isinstance(v, list): ndim = 1
+                elif isinstance(v, ndarray): ndim = v.ndim
+                elif isinstance(v, sitkImage): ndim = v.GetDimension()
+                elif isinstance(v, pilImage): ndim = 2
+                else: ndim = 1
+                if ndim in (1, 2):
                     self._console.execute('import numpy as np', hidden=True)
                     self._console.execute('import matplotlib.pyplot as plt', hidden=True)
                     #
@@ -548,7 +817,7 @@ class ConsoleWidget(QWidget):
                             ylabel = settings['ylabel']
                             color = settings['color']
                             gcolor = settings['gcolor']
-                            if v.ndim == 1: buff = 'r = ax.plot(np.array({}), '.format(vstr)
+                            if ndim == 1: buff = 'r = ax.plot(np.array({}), '.format(vstr)
                             else: buff = 'r = plt.plot(np.array({}).T, '.format(vstr)
                             buff += 'ls=\'{}\', '.format(ls)
                             buff += 'lw={}, '.format(float(settings['linewidth']))
@@ -593,7 +862,7 @@ class ConsoleWidget(QWidget):
                             ylabel = settings['ylabel']
                             color = settings['color']
                             gcolor = settings['gcolor']
-                            if v.ndim == 1: buff = 'r = plt.bar(range(len({0})), np.array({0}), '.format(vstr)
+                            if ndim == 1: buff = 'r = plt.bar(range(len({0})), np.array({0}), '.format(vstr)
                             else: buff = 'r = plt.bar(range({0}.shape[1]), np.array({0}).T, '.format(vstr)
                             buff += 'width={}, '.format(float(settings['barwidth']))
                             buff += 'ls=\'{}\', '.format(ls)
@@ -637,7 +906,7 @@ class ConsoleWidget(QWidget):
                             ylabel = settings['ylabel']
                             color = settings['color']
                             gcolor = settings['gcolor']
-                            if v.ndim == 1: buff = 'r = plt.stairs(np.array({}), '.format(vstr)
+                            if ndim == 1: buff = 'r = plt.stairs(np.array({}), '.format(vstr)
                             else: buff = 'r = plt.stairs(np.array({}).T, '.format(vstr)
                             buff += 'fill={}, '.format(str(settings['fill']))
                             buff += 'ls=\'{}\', '.format(ls)
@@ -681,7 +950,7 @@ class ConsoleWidget(QWidget):
                             color = settings['color']
                             gcolor = settings['gcolor']
                             gls = settings['glinestyle'][0].split(' ')[0]
-                            if v.ndim == 1: buff = 'r = plt.boxplot(np.array({}), '.format(vstr)
+                            if ndim == 1: buff = 'r = plt.boxplot(np.array({}), '.format(vstr)
                             else: buff = 'r = plt.boxplot(np.array({}).T, '.format(vstr)
                             buff += 'notch={}, '.format(str(settings['notch']))
                             buff += 'sym=\'{}\', '.format(sym)
@@ -699,15 +968,10 @@ class ConsoleWidget(QWidget):
                             self._console.execute('ax.get_xaxis().set_visible({})'.format(str(settings['laxis'])), hidden=True)
                             self._console.execute('ax.get_yaxis().set_visible({})'.format(str(settings['baxis'])), hidden=True)
                             self._console.execute('ax.set_frame_on({})'.format(str(settings['frame'])), hidden=True)
-                            self._console.execute('ax.grid(visible={})'.format(str(settings['grid'])), hidden=True)
-
-                            self._console.execute('ax.get_xgridlines().set_linestyle(\'{}\')'.format(gls), hidden=True)
-                            self._console.execute('ax.get_xgridlines().set_linewidth({})'.format(float(settings['glinewidth'])), hidden=True)
-                            self._console.execute('ax.get_xgridlines().set_color(({}, {}, {}))'.format(gcolor[0], gcolor[1], gcolor[2]), hidden=True)
-                            self._console.execute('ax.get_ygridlines().set_linestyle(\'{}\')'.format(gls), hidden=True)
-                            self._console.execute('ax.get_ygridlines().set_linewidth({})'.format(float(settings['glinewidth'])), hidden=True)
-                            self._console.execute('ax.get_ygridlines().set_color(({}, {}, {}))'.format(gcolor[0], gcolor[1], gcolor[2]), hidden=True)
-
+                            self._console.execute('ax.grid(visible={}, color=({}, {}, {}), ls=\'{}\', lw={})'.format(str(settings['grid']),
+                                                                                                                     gcolor[0], gcolor[1], gcolor[2],
+                                                                                                                     gls,
+                                                                                                                     float(settings['glinewidth'])), hidden=True)
                             self._console.execute('ax.set_title(\'{}\')'.format(title), hidden=True)
                             self._console.execute('ax.set_xlabel(\'{}\')'.format(xlabel), hidden=True)
                             self._console.execute('ax.set_ylabel(\'{}\')'.format(ylabel), hidden=True)
@@ -733,7 +997,7 @@ class ConsoleWidget(QWidget):
                             color = settings['color']
                             gcolor = settings['gcolor']
                             gls = settings['glinestyle'][0].split(' ')[0]
-                            if v.ndim == 1: buff = 'r = plt.violinplot(np.array({}), '.format(vstr)
+                            if ndim == 1: buff = 'r = plt.violinplot(np.array({}), '.format(vstr)
                             else: buff = 'r = plt.violinplot(np.array({}).T, '.format(vstr)
                             buff += 'widths={}, '.format(float(settings['boxwidth']))
                             buff += 'showmeans={}, '.format(str(settings['showmeans']))
@@ -777,7 +1041,7 @@ class ConsoleWidget(QWidget):
                             color = settings['color']
                             gcolor = settings['gcolor']
                             gls = settings['glinestyle'][0].split(' ')[0]
-                            if v.ndim == 1: buff = 'r = plt.hist(np.array({}), '.format(vstr)
+                            if ndim == 1: buff = 'r = plt.hist(np.array({}), '.format(vstr)
                             else: buff = 'r = plt.hist(np.array({}).T, '.format(vstr)
                             buff += 'cumulative={}, '.format(str(settings['cumulative']))
                             buff += 'histtype=\'{}\')'.format(settings['histtype'][0])
@@ -892,7 +1156,7 @@ class ConsoleWidget(QWidget):
                     # Image plot
                     #
                     elif chart == 8:
-                        dialog = DialogFromXml('Matrix plot settings', 'MatrixPlot')
+                        dialog = DialogFromXml('Image plot settings', 'ImagePlot')
                         dialog.getFieldsWidget().getParameterWidget('cmap').removeFilesLut()
                         if platform == 'win32':
                             import pywinstyles
@@ -906,11 +1170,18 @@ class ConsoleWidget(QWidget):
                             xlabel = settings['xlabel']
                             ylabel = settings['ylabel']
                             color = settings['color']
-                            if isinstance(g[vstr], sitkImage):
+                            if isinstance(v, sitkImage):
                                 self._console.execute('from SimpleITK import GetArrayFromImage', hidden=True)
                                 self._console.execute('buff = GetArrayFromImage({})'.format(vstr), hidden=True)
-                            else: self._console.execute('buff = np.array({}), '.format(vstr), hidden=True)
-                            buff = 'r = ax.imshow(np.fliplr(buff), origin=\'lower\', '
+                            elif isinstance(v, pilImage):
+                                self._console.execute('from PIL.Image import Transpose', hidden=True)
+                                self._console.execute('buff = {}.convert(\'L\')'.format(vstr), hidden=True)
+                                self._console.execute('buff = np.array(buff.transpose(Transpose.ROTATE_180))', hidden=True)
+                                self._console.execute('del Transpose', hidden=True)
+                            elif isinstance(v, list):
+                                self._console.execute('buff = np.array({}), '.format(vstr), hidden=True)
+                            if isinstance(v, ndarray): buff = 'r = ax.imshow(np.fliplr({}.T), origin=\'lower\', '.format(vstr)
+                            else: buff = 'r = ax.imshow(np.fliplr(buff), origin=\'lower\', '
                             buff += 'cmap=\'{}\')'.format(cmap)
                             self._console.execute('plt.ioff()', hidden=True)
                             self._console.execute('fig, ax = plt.subplots()', hidden=True)
@@ -932,7 +1203,8 @@ class ConsoleWidget(QWidget):
                                 self._console.execute('fig.colorbar(r, cax=cax, orientation=\'vertical\')', hidden=True)
                                 self._console.execute('del d', hidden=True)
                                 self._console.execute('del cax', hidden=True)
-                            self._console.execute('del buff', hidden=True)
+                            if not isinstance(v, ndarray):
+                                self._console.execute('del buff', hidden=True)
                             self._console.execute('plt.ion()', hidden=True)
                             self._console.execute('plt.show(block=False)', hidden=False)
                             dialog.getFieldsWidget().saveSettings()
@@ -953,6 +1225,7 @@ class ConsoleWidget(QWidget):
                 item.setText(0, rep)
                 info = '{}:\n{}'.format(v, g[v].__doc__)
                 item.setToolTip(0, info)
+                # noinspection PyUnresolvedReferences
                 item.setData(0, Qt.UserRole, v)
                 self._modules.addTopLevelItem(item)
             elif isinstance(g[v], (types.ModuleType, types.FunctionType)):
@@ -966,9 +1239,11 @@ class ConsoleWidget(QWidget):
                 item = QTreeWidgetItem()
                 item.setText(0, '{} ({})'.format(v, type(g[v])))
                 if isinstance(g[v], (SisypheVolume, sitkImage, ANTsImage, vtkImageData, ndarray)):
+                    # noinspection PyUnresolvedReferences
                     item.setData(0, Qt.UserRole, v)
                     rep = '{}:\n{}'.format('Double-click to open in PSisyphe', str(g[v]))
                 else:
+                    # noinspection PyUnresolvedReferences
                     item.setData(0, Qt.UserRole, v)
                     rep = str(g[v])
                 item.setToolTip(0, rep)

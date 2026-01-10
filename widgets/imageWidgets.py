@@ -1234,6 +1234,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 console.update()
                 messageBox(self,
                            'Copy to console',
+                           icon=QMessageBox.Information,
                            text='{} is available in the PySisyphe console '
                                 'as a {} variable called \"{}\".'.format(self._volume.getBasename(), types[f], name))
             except:

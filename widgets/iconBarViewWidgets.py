@@ -55,6 +55,7 @@ from Sisyphe.widgets.basicWidgets import ColorSelectPushButton
 from Sisyphe.widgets.basicWidgets import OpacityPushButton
 from Sisyphe.widgets.LUTWidgets import TransferWidget
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from Sisyphe.gui.dialogWait import DialogWait
     from Sisyphe.widgets.toolBarThumbnail import ToolBarThumbnail
@@ -122,7 +123,7 @@ class IconBarWidget(QWidget):
     QWidget -> IconBarWidget
 
     Creation: 17/04/2022
-    Last revision: 17/11/2025
+    Last revision: 05/12/2025
     """
 
     _BTSIZE = 40    # default button size
@@ -240,10 +241,11 @@ class IconBarWidget(QWidget):
         self._icons['clipboard'].setToolTip('Copy capture to clipboard.')
 
         submenu = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         submenu.addAction('Distance')
         submenu.addAction('Orthogonal distances')
@@ -280,10 +282,11 @@ class IconBarWidget(QWidget):
         self._isoprop.setMaximumWidth(400)
 
         self._isoMenu = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._isoMenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._isoMenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._isoMenu.setAttribute(Qt.WA_TranslucentBackground, True)
         action = QWidgetAction(self)
         action.setDefaultWidget(self._isoprop)
@@ -304,7 +307,7 @@ class IconBarWidget(QWidget):
                                     'QToolTip#IconBar { color: #000000; background-color: #FFFFE0; border: 0px; font-size: 8pt; }')
         else:
             pal = self.palette()
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             pal.setColor(QPalette.Background, Qt.black)
             self.setAutoFillBackground(True)
             self.setPalette(pal)
@@ -333,6 +336,7 @@ class IconBarWidget(QWidget):
 
         # Shortcuts
 
+        # noinspection PyUnresolvedReferences
         self._icons['expand'].setShortcut(Qt.Key_Plus)
         self._icons['zoom1'].setShortcut('0')
         self._shcutp = QShortcut('p', self) # Pin shortcut
@@ -341,11 +345,17 @@ class IconBarWidget(QWidget):
         self._shcutA = QShortcut('A', self) # Axial shortcut
         self._shcutC = QShortcut('C', self) # Coronal shortcut
         self._shcutS = QShortcut('S', self) # Sagittal shortcut
+        # noinspection PyUnresolvedReferences
         self._shcut1 = QShortcut(Qt.Key_1, self) # Grid 1x1 shortcut
+        # noinspection PyUnresolvedReferences
         self._shcut2 = QShortcut(Qt.Key_2, self) # Grid 1x2 shortcut
+        # noinspection PyUnresolvedReferences
         self._shcut3 = QShortcut(Qt.Key_3, self) # Grid 1x3 shortcut
+        # noinspection PyUnresolvedReferences
         self._shcut4 = QShortcut(Qt.Key_4, self) # Grid 2x2 shortcut
+        # noinspection PyUnresolvedReferences
         self._shcut6 = QShortcut(Qt.Key_6, self) # Grid 2x3 shortcut
+        # noinspection PyUnresolvedReferences
         self._shcut9 = QShortcut(Qt.Key_9, self) # Grid 3x3 shortcut
         self._shcutx = QShortcut('x', self) # Show cursor shortcut
         self._shcuti = QShortcut('i', self) # Show information shortcut
@@ -369,6 +379,7 @@ class IconBarWidget(QWidget):
         self._layout = QHBoxLayout()
         self._layout.setSpacing(0)
         self._layout.setContentsMargins(0, 0, 0, 0)
+        # noinspection PyUnresolvedReferences
         self._layout.setAlignment(Qt.AlignVCenter)
         self._layout.addWidget(self._bar)
 
@@ -707,6 +718,12 @@ class IconBarWidget(QWidget):
         if self._widget is not None:
             if self._icons['expand'].isChecked():
                 w = self._widget.getSelectedViewWidget()
+                # < Revision 05/12/2025
+                # if no view is selected, select the first one
+                if w is None:
+                    w = self._widget.getFirstViewWidget()
+                    w.select(True)
+                # Revision 05/12/2025 >
                 if w is not None:
                     w.getAction()['expand'].toggle()
                     self._widget.expandViewWidget(w)
@@ -817,7 +834,7 @@ class IconBarWidget(QWidget):
     def finalize(self)  -> None:
         """
         Method to be called before IconBarWidget instance destruction.
-        It is used to avoid vtk error on windows platform (vtkWin32OpenGLRenderWindow error: 'wglMakeCurrent failed in
+        It is used to avoid vtk error on Windows platform (vtkWin32OpenGLRenderWindow error: 'wglMakeCurrent failed in
         MakeCurrent()').
         """
         if self._widget is not None:
@@ -843,6 +860,20 @@ class IconBarWidget(QWidget):
         if self._timerid is not None:
             self.killTimer(self._timerid)
             self._timerid = None
+
+    # < Revision 22/12/2025
+    def isTimerEnabled(self) -> bool:
+        """
+        Check if the timer to manage icon bar visibility is enabled.
+        The timer is only started if a SisypheVolume is displayed.
+
+        Returns
+        -------
+        bool
+            True if the timer is enabled, False otherwise.
+        """
+        return self._timerid is not None
+    # Revision 22/12/2025 >
 
     def updateRender(self) -> None:
         """
@@ -1121,10 +1152,11 @@ class IconBarWidget(QWidget):
             self._icons['colorbar'].setMenu(view1.getPopupColorbarPosition())
             self._icons['ruler'].setMenu(view1.getPopupRulerPosition())
             submenu = QMenu()
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+            # noinspection PyUnresolvedReferences
             submenu.setAttribute(Qt.WA_TranslucentBackground, True)
             submenu.addAction('Copy grid capture to clipboard')
             submenu.addAction('Copy selected view capture to clipboard')
@@ -1157,9 +1189,17 @@ class IconBarWidget(QWidget):
                 self._visibilityflags['sliceminus'] = True
                 self._visibilityflags['sliceplus'] = True
                 layout = self._bar.layout()
-                layout.insertWidget(3, self._icons['sliceplus'])
-                layout.insertWidget(3, self._icons['sliceminus'])
-                layout.insertWidget(3, self._icons['orient'])
+                # < Revision 05/12/2025
+                # layout.insertWidget(3, self._icons['sliceplus'])
+                # layout.insertWidget(3, self._icons['sliceminus'])
+                # layout.insertWidget(3, self._icons['orient'])
+                # noinspection PyUnresolvedReferences
+                layout.insertWidget(4, self._icons['sliceplus'])
+                # noinspection PyUnresolvedReferences
+                layout.insertWidget(4, self._icons['sliceminus'])
+                # noinspection PyUnresolvedReferences
+                layout.insertWidget(4, self._icons['orient'])
+                # Revision 05/12/2025 >
                 self._icons['sliceminus'].setToolTip('Previous slice.\n'
                                                      'Up or Left key\n'
                                                      'MouseWheel')
@@ -1221,20 +1261,26 @@ class IconBarWidget(QWidget):
                     self._shcut6.activated.connect(lambda: self._icons['grid'].menu().actions()[4].trigger())
                     # noinspection PyUnresolvedReferences
                     self._shcut9.activated.connect(lambda: self._icons['grid'].menu().actions()[5].trigger())
-                    layout.insertWidget(3, self._icons['grid'])
+                    # < Revision 05/12/2025
+                    # layout.insertWidget(3, self._icons['grid'])
+                    # noinspection PyUnresolvedReferences
+                    layout.insertWidget(4, self._icons['grid'])
+                    # Revision 05/12/2025 >
             if grid or orthoslc:
                 self._icons['show'].setMenu(view1.getPopupVisibility())
                 submenu = QMenu()
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+                # noinspection PyUnresolvedReferences
                 submenu.setAttribute(Qt.WA_TranslucentBackground, True)
                 submenu.addAction('Save grid capture...')
                 submenu.addAction('Save selected view capture...')
                 submenu.addAction('Save captures from slice series...')
                 submenu.addSeparator()
                 action = submenu.addAction('Send selected view capture to screenshots preview')
+                # noinspection PyUnresolvedReferences
                 action.setShortcut(Qt.Key_Space)
                 # noinspection PyUnresolvedReferences
                 submenu.triggered.connect(self._onMenuSaveCapture)
@@ -1258,10 +1304,11 @@ class IconBarWidget(QWidget):
                 self._transfer.gradientTransferVisibilityChanged.connect(self._onTransferMenuChanged)
 
                 submenu = QMenu()
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+                # noinspection PyUnresolvedReferences
                 submenu.setAttribute(Qt.WA_TranslucentBackground, True)
                 a = QWidgetAction(self)
                 a.setDefaultWidget(self._transfer)
@@ -1269,10 +1316,20 @@ class IconBarWidget(QWidget):
                 self._icons['transfer'].setMenu(submenu)
 
                 layout = self._bar.layout()
-                layout.insertWidget(3, self._icons['align'])
-                layout.insertWidget(3, self._icons['transfer'])
-                layout.insertWidget(3, self._icons['campos'])
-                layout.insertWidget(3, self._icons['texture'])
+                # < Revision 05/12/2025
+                # layout.insertWidget(3, self._icons['align'])
+                # layout.insertWidget(3, self._icons['transfer'])
+                # layout.insertWidget(3, self._icons['campos'])
+                # layout.insertWidget(3, self._icons['texture'])
+                # noinspection PyUnresolvedReferences
+                layout.insertWidget(4, self._icons['align'])
+                # noinspection PyUnresolvedReferences
+                layout.insertWidget(4, self._icons['transfer'])
+                # noinspection PyUnresolvedReferences
+                layout.insertWidget(4, self._icons['campos'])
+                # noinspection PyUnresolvedReferences
+                layout.insertWidget(4, self._icons['texture'])
+                # Revision 05/12/2025 >
 
                 self._icons['show'].setMenu(view2.getPopupVisibility())
                 self._icons['show'].setToolTip('Set visibility options.\n'
@@ -1310,10 +1367,11 @@ class IconBarWidget(QWidget):
                 self._icons['transfer'].setToolTip('Set color and alpha transfer functions.')
 
                 submenu = QMenu()
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+                # noinspection PyUnresolvedReferences
                 submenu.setAttribute(Qt.WA_TranslucentBackground, True)
                 submenu.addAction('Save grid capture...')
                 submenu.addAction('Save selected view capture...')
@@ -1321,6 +1379,7 @@ class IconBarWidget(QWidget):
                 submenu.addAction('Save single capture from multiple camera positions...')
                 submenu.addSeparator()
                 action = submenu.addAction('Send selected view capture to screenshots preview')
+                # noinspection PyUnresolvedReferences
                 action.setShortcut(Qt.Key_Space)
                 submenu.addAction('Send captures from multiple camera positions to screenshots preview')
                 # noinspection PyUnresolvedReferences
@@ -2101,7 +2160,7 @@ class IconBarOrthogonalRegistrationViewWidget(IconBarWidget):
         self.setIsoButtonAvailability(False)
         self._hideViewWidget()
 
-        # Registration area box synchronisation
+        # Registration area box synchronization
 
         for view1 in self.getViewWidget().getSliceViewWidgets():
             view1.setSelectable(False)
@@ -2380,7 +2439,7 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
                                       'QToolTip#TrfBar { color: #000000; background-color: #FFFFE0; border: 0px; font-size: 8pt; }')
         else:
             self._frame.setAutoFillBackground(True)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             self._frame.palette().setColor(QPalette.Window, Qt.black)
         self._frame.setLayout(layout)
         # Revision 22/05/2025 >
@@ -2811,10 +2870,11 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
         self._sthick.setSuffix(' mm')
 
         menu = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         menu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         menu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         menu.setAttribute(Qt.WA_TranslucentBackground, True)
         a = QWidgetAction(self)
         a.setDefaultWidget(self._sstep)
@@ -2856,6 +2916,7 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
         self._icons['thick'].setMenu(menu)
 
         layout = self._bar.layout()
+        # noinspection PyUnresolvedReferences
         layout.insertWidget(7, self._icons['thick'])
 
         # Sphere cursor
@@ -2865,10 +2926,11 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
 
         view = self._widget[0, 0]
         menu = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         menu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         menu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         menu.setAttribute(Qt.WA_TranslucentBackground, True)
         a = QWidgetAction(self)
         w = LabeledSlider(title='Cursor radius', fontsize=10)
@@ -2888,6 +2950,7 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
         menu.addAction(a)
         self._icons['sphere'].setMenu(menu)
 
+        # noinspection PyUnresolvedReferences
         layout.insertWidget(13, self._icons['sphere'])
 
         # < Revision 06/12/2024
@@ -3193,8 +3256,11 @@ class IconBarSliceViewWidget(IconBarWidget):
             self._visibilityflags['sliceminus'] = True
             self._visibilityflags['sliceplus'] = True
             layout = self._bar.layout()
+            # noinspection PyUnresolvedReferences
             layout.insertWidget(2, self._icons['sliceplus'])
+            # noinspection PyUnresolvedReferences
             layout.insertWidget(2, self._icons['sliceminus'])
+            # noinspection PyUnresolvedReferences
             layout.insertWidget(2, self._icons['orient'])
             self._icons['show'].setMenu(widget.getPopupVisibility())
             self._icons['actions'].setMenu(widget.getPopupActions())
@@ -3926,10 +3992,22 @@ class IconBarViewWidgetCollection(QObject):
         """
         if self.count() > 0:
             for widget in self:
-                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
-                    sliceview = widget().getSelectedViewWidget()
-                    if sliceview is not None: return sliceview.getSliceIndex()
-                    else: return None
+                # < Revision 22/12/2025
+                if widget.isTimerEnabled():  # True if displayed
+                # Revision 22/12/2025 >
+                    if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                        sliceview = widget().getSelectedViewWidget()
+                        if sliceview is not None:
+                            return sliceview.getSliceIndex()
+                        else:
+                            # < Revision 22/12/2025
+                            # return None
+                            sliceview =  widget().getFirstViewWidget()
+                            sliceview.select(True)
+                            if sliceview is not None:
+                                return sliceview.getSliceIndex()
+                            else: return None
+                            # Revision 22/12/2025 >
         return None
 
     def getCurrentOrientation(self) -> int | None:

@@ -72,6 +72,7 @@ from Sisyphe.widgets.abstractViewWidget import AbstractViewWidget
 from Sisyphe.gui.dialogMeshProperties import DialogMeshProperties
 from Sisyphe.gui.dialogWait import DialogWait
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from vtk import vtkObject
 
@@ -2007,7 +2008,7 @@ class VolumeViewWidget(AbstractViewWidget):
 
     def _onMiddlePressEvent(self, obj: vtkObject, evt_name: str) -> None:
         """
-        Handles the middle mouse button press event, wich does nothing.
+        Handles the middle mouse button press event, which does nothing.
         Currently, this method overrides superclass's implementation.
         """
         pass
