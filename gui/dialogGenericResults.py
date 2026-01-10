@@ -46,6 +46,7 @@ from PyQt5.QtWidgets import QTreeWidget
 from PyQt5.QtWidgets import QHeaderView
 from PyQt5.QtWidgets import QTreeWidgetItem
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from scipy.stats import describe
@@ -223,6 +224,7 @@ class DialogGenericResults(QDialog):
                     self._console.update()
                     messageBox(self,
                                'Copy dataset to console',
+                               icon=QMessageBox.Information,
                                text='The current dataset is available in the PySisyphe console '
                                     'as a list variable called \"{}\".'.format(name))
                 except:

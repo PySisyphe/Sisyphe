@@ -114,6 +114,7 @@ from Sisyphe.widgets.projectionViewWidget import IconBarMultiProjectionViewWidge
 import __main__
 from PyQt5.QtWidgets import QApplication
 
+
 """
 Class hierarchy
 ~~~~~~~~~~~~~~~
@@ -134,7 +135,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 03/12/2025
+    Last revision: 04/01/2026
     """
 
     # Class constants
@@ -416,7 +417,7 @@ class WindowSisyphe(QMainWindow):
         v = self._settings.getFieldValue('GUI', 'ThumbnailSize')
         if v is None: v = self._THUMBNAILSIZE
         self._thumbnail = ToolBarThumbnail(size=v, mainwindow=self, views=self._views, parent=self)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.addToolBar(Qt.TopToolBarArea, self._thumbnail)
         self._sliceview.setThumbnail(self._thumbnail)
         self._orthoview.setThumbnail(self._thumbnail)
@@ -456,6 +457,11 @@ class WindowSisyphe(QMainWindow):
         # < Revision 03/12/2025
         self._tabROITools.setMainWindow(self)
         # Revision 03/12/2025 >
+        # < Revision 12/12/2025
+        apikey = self._settings.getFieldValue('Gemini', 'APIKey')
+        if apikey is None: apikey = ''
+        self._tabROITools.setGeminiAvailability(apikey != '')
+        # Revision 12/12/2025 >
         self._tabROITools.setContentsMargins(10, 10, 10, 10)
         self._tabROITools.setViewCollection(self._views)
         self._tabROITools.setEnabled(False)
@@ -570,7 +576,7 @@ class WindowSisyphe(QMainWindow):
         self.resize(QApplication.primaryScreen().availableSize())
         self.move(0, 0)
         self.show()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowState(Qt.WindowMaximized)
         width = ItemAttributesWidget.getDefaultMinimumWidth() + 80
         self._splitter.setSizes([sum(self._splitter.sizes()) - width, width])
@@ -597,8 +603,11 @@ class WindowSisyphe(QMainWindow):
 
         # Mac os
         if platform == 'darwin':
+            # noinspection PyUnresolvedReferences
             self._action['about'].setMenuRole(QAction.AboutRole)
+            # noinspection PyUnresolvedReferences
             self._action['pref'].setMenuRole(QAction.PreferencesRole)
+            # noinspection PyUnresolvedReferences
             self._action['exit'].setMenuRole(QAction.QuitRole)
 
         # Init Menus
@@ -614,8 +623,11 @@ class WindowSisyphe(QMainWindow):
 
     def _initFileMenu(self) -> None:
         self._menu['file'] = self._menubar.addMenu('File')
+        # noinspection PyUnresolvedReferences
         self._menu['file'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['file'].setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['file'].setAttribute(Qt.WA_TranslucentBackground, True)
 
         # Icons
@@ -657,12 +669,16 @@ class WindowSisyphe(QMainWindow):
 
         self._action['open'] = self._menu['file'].addAction(icload, 'Open...')
         self._menu['template'] = self._menu['file'].addMenu('Open template...')
+        # noinspection PyUnresolvedReferences
         self._menu['template'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
         self._menu['template'].triggered.connect(self._openTemplate)
         self._initTemplateMenu()
         submenu = self._menu['file'].addMenu('Open from format')
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['opennii'] = submenu.addAction(icopennii, 'Open Nifti...')
         self._action['opennrrd'] = submenu.addAction(icopennrrd, 'Open Nrrd...')
@@ -673,6 +689,7 @@ class WindowSisyphe(QMainWindow):
         self._action['openvtk'] = submenu.addAction(icopenvtk, 'Open VTK...')
 
         self._menu['recent'] = self._menu['file'].addMenu('Recent files...')
+        # noinspection PyUnresolvedReferences
         self._menu['recent'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
         self._menu['recent'].aboutToShow.connect(self._updateRecentMenu)
         self._menu['recent'].triggered.connect(self._openRecent)
@@ -685,8 +702,11 @@ class WindowSisyphe(QMainWindow):
         self._action['saveall'] = self._menu['file'].addAction(icsaveall, 'Save all')
         self._action['saveas'] = self._menu['file'].addAction(icsave, 'Save As...')
         submenu = self._menu['file'].addMenu('Save to format')
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['savenii'] = submenu.addAction(icosavenii, 'Save Nifti...')
         self._action['savenpy'] = submenu.addAction(icosavenpy, 'Save Numpy...')
@@ -722,8 +742,11 @@ class WindowSisyphe(QMainWindow):
 
         self._menu['file'].addSeparator()
         submenu = self._menu['file'].addMenu('Import')
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['importnifti'] = submenu.addAction(icimportnii, 'Import Nifti...')
         self._action['importminc'] = submenu.addAction(icimportmnc, 'Import Minc...')
@@ -731,8 +754,11 @@ class WindowSisyphe(QMainWindow):
         self._action['importvtk'] = submenu.addAction(icimportvtk, 'Import Vtk...')
         self._action['importsis'] = submenu.addAction(icimportvol, 'Import Sisyphe (*.vol)...')
         submenu = self._menu['file'].addMenu('Export')
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['exportnifti'] = submenu.addAction(icexport, 'Export Nifti...')
         self._action['exportminc'] = submenu.addAction(icexport, 'Export Minc...')
@@ -740,16 +766,22 @@ class WindowSisyphe(QMainWindow):
         self._action['exportvtk'] = submenu.addAction(icexport, 'Export Vtk...')
         self._action['exportnpy'] = submenu.addAction(icexport, 'Export Numpy...')
         submenu = self._menu['file'].addMenu('DICOM')
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['dcmimport'] = submenu.addAction(icimport, 'DICOM Import...')
         self._action['dcmrtimport'] = submenu.addAction(icimport, 'DICOM RT Import...')
         self._action['dcmexport'] = submenu.addAction(icexport, 'DICOM Export...')
         self._action['dcmquery'] = submenu.addAction(icimport, 'DICOM Query/Retrieve from DICOM SCP Server...')
         submenu.addSeparator()
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['dcmds'] = submenu.addAction('DICOM Dataset...')
         self._action['xdcm'] = submenu.addAction('Xml DICOM Attributes...')
@@ -766,6 +798,7 @@ class WindowSisyphe(QMainWindow):
         self._action['save'].setShortcut(QKeySequence.Save)
         self._action['saveas'].setShortcut(QKeySequence.SaveAs)
         self._action['close'].setShortcut(QKeySequence.Delete)
+        # noinspection PyUnresolvedReferences
         self._action['editattr'].setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Question))
 
         # Connect
@@ -866,8 +899,11 @@ class WindowSisyphe(QMainWindow):
                 Plugins >
         """
         self._menu['func'] = self._menubar.addMenu('Functions')
+        # noinspection PyUnresolvedReferences
         self._menu['func'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['func'].setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['func'].setAttribute(Qt.WA_TranslucentBackground, True)
 
         # Icons
@@ -903,8 +939,11 @@ class WindowSisyphe(QMainWindow):
 
         self._menu['func'].addSeparator()
         submenu = self._menu['func'].addMenu('Filters')
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['mean'] = submenu.addAction(icmean, 'Mean...')
         self._action['median'] = submenu.addAction(icmedian, 'Median...')
@@ -913,8 +952,11 @@ class WindowSisyphe(QMainWindow):
         self._action['laplacian'] = submenu.addAction(iclapl, 'Laplacian...')
         self._action['aniso'] = submenu.addAction(icaniso, 'Anisotropic diffusion...')
         submenu = self._menu['func'].addMenu('Intensity processing')
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['histmatch'] = submenu.addAction('Histogram intensity matching...')
         self._action['regmatch'] = submenu.addAction('Regression intensity matching...')
@@ -925,8 +967,11 @@ class WindowSisyphe(QMainWindow):
 
         self._menu['func'].addSeparator()
         submenu = self._menu['func'].addMenu('Voxel-by-voxel processing')
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['algmean'] = submenu.addAction('Mean volume...')
         self._action['algmedian'] = submenu.addAction('Median volume...')
@@ -995,8 +1040,11 @@ class WindowSisyphe(QMainWindow):
                 Statistics
         """
         self._menu['roi'] = self._menubar.addMenu('ROI')
+        # noinspection PyUnresolvedReferences
         self._menu['roi'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['roi'].setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['roi'].setAttribute(Qt.WA_TranslucentBackground, True)
 
     def _initRegistrationMenu(self) -> None:
@@ -1006,6 +1054,8 @@ class WindowSisyphe(QMainWindow):
                 Reorient
                 AC-PC selection
                 --
+                Manual registration
+                Frame-based registration
                 Rigid registration
                 Affine registration
                 Displacement field registration
@@ -1036,8 +1086,11 @@ class WindowSisyphe(QMainWindow):
         # Actions
 
         self._menu['reg'] = self._menubar.addMenu('Registration')
+        # noinspection PyUnresolvedReferences
         self._menu['reg'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['reg'].setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['reg'].setAttribute(Qt.WA_TranslucentBackground, True)
 
         self._action['frame'] = self._menu['reg'].addAction(icframe, 'Stereotactic frame detection...')
@@ -1046,6 +1099,9 @@ class WindowSisyphe(QMainWindow):
 
         self._menu['reg'].addSeparator()
         self._action['hand'] = self._menu['reg'].addAction(icmanual, 'Manual registration...')
+        # < Revision 04/01/2026
+        self._action['freg'] = self._menu['reg'].addAction(icmanual, 'Frame-based registration...')
+        # Revision 04/01/2026 >
         self._action['rigid'] = self._menu['reg'].addAction(icrigid, 'Rigid registration...')
         self._action['affine'] = self._menu['reg'].addAction(icaffine, 'Affine registration...')
         self._action['field'] = self._menu['reg'].addAction(icdiffeo, 'Displacement field registration...')
@@ -1073,6 +1129,9 @@ class WindowSisyphe(QMainWindow):
         self._action['acpc'].triggered.connect(lambda dummy: self.acpcSelection())
         self._action['orient'].triggered.connect(lambda dummy: self.reorient())
         self._action['hand'].triggered.connect(self.manualRegistration)
+        # < Revision 04/01/2026
+        self._action['freg'].triggered.connect(self.frameRegistration)
+        # Revision 04/01/2026 >
         self._action['rigid'].triggered.connect(lambda: self.rigidRegistration())
         self._action['affine'].triggered.connect(lambda: self.affineRegistration())
         self._action['field'].triggered.connect(lambda: self.displacementFieldRegistration())
@@ -1115,8 +1174,11 @@ class WindowSisyphe(QMainWindow):
         # Actions
 
         self._menu['seg'] = self._menubar.addMenu('Segmentation')
+        # noinspection PyUnresolvedReferences
         self._menu['seg'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['seg'].setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['seg'].setAttribute(Qt.WA_TranslucentBackground, True)
 
         self._action['kmeans1'] = self._menu['seg'].addAction('KMeans clustering...')
@@ -1128,24 +1190,33 @@ class WindowSisyphe(QMainWindow):
         self._menu['seg'].addSeparator()
         self._action['regseg'] = self._menu['seg'].addAction('Registration based segmentation...')
         self._menu['regseg'] = self._menu['seg'].addMenu('Structs')
+        # noinspection PyUnresolvedReferences
         self._menu['regseg'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['regseg'].setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['regseg'].setAttribute(Qt.WA_TranslucentBackground, True)
         # < Revision 02/10/2025
         self._menu['regseg'].aboutToShow.connect(self._updateStructsMenu)
         # Revision 02/10/2025 >
         self._initStructMenu()
         self._menu['userseg'] = self._menu['regseg'].addMenu('User')
+        # noinspection PyUnresolvedReferences
         self._menu['userseg'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['userseg'].setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['userseg'].setAttribute(Qt.WA_TranslucentBackground, True)
         self._menu['regseg'].triggered.connect(self._openStruct)
 
         self._menu['seg'].addSeparator()
 
         submenu = self._menu['seg'].addMenu('Deep learning segmentation')
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['hipp'] = submenu.addAction('Hippocampus segmentation...')
         self._action['lesion'] = submenu.addAction('Hypo-intensity lesion segmentation...')
@@ -1209,13 +1280,19 @@ class WindowSisyphe(QMainWindow):
         # Actions
 
         self._menu['statmap'] = self._menubar.addMenu('Mapping')
+        # noinspection PyUnresolvedReferences
         self._menu['statmap'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['statmap'].setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['statmap'].setAttribute(Qt.WA_TranslucentBackground, True)
 
         submenu = self._menu['statmap'].addMenu('Model')
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['fmricnd'] = submenu.addAction('fMRI conditions...')
         self._action['fmrisbj'] = submenu.addAction('fMRI subjects/conditions...')
@@ -1231,8 +1308,11 @@ class WindowSisyphe(QMainWindow):
         self._action['glmgrp3'] = submenu.addAction('GLM groups/subjects...')
         submenu.addSeparator()
         self._menu['model'] = submenu.addMenu('Models')
+        # noinspection PyUnresolvedReferences
         self._menu['model'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['model'].setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['model'].setAttribute(Qt.WA_TranslucentBackground, True)
         self._menu['model'].aboutToShow.connect(self._updateModelsMenu)
         self._menu['model'].triggered.connect(self._openModel)
@@ -1301,8 +1381,11 @@ class WindowSisyphe(QMainWindow):
         # Actions
 
         self._menu['diffusion'] = self._menubar.addMenu('Diffusion')
+        # noinspection PyUnresolvedReferences
         self._menu['diffusion'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['diffusion'].setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['diffusion'].setAttribute(Qt.WA_TranslucentBackground, True)
 
         self._action['grad'] = self._menu['diffusion'].addAction('Gradients...')
@@ -1333,44 +1416,47 @@ class WindowSisyphe(QMainWindow):
 
     def _initViewsMenu(self) -> None:
         self._menu['views'] = self._menubar.addMenu('Views')
+        # noinspection PyUnresolvedReferences
         self._menu['views'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['views'].setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['views'].setAttribute(Qt.WA_TranslucentBackground, True)
 
         sliceview = self._sliceview()[0, 0].getPopup()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         sliceview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         sliceview.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         sliceview.setAttribute(Qt.WA_TranslucentBackground, True)
         orthoview = self._orthoview()[0, 0].getPopup()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         orthoview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         orthoview.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         orthoview.setAttribute(Qt.WA_TranslucentBackground, True)
         synchroview = self._synchroview()[0, 0].getPopup()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         synchroview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         synchroview.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         synchroview.setAttribute(Qt.WA_TranslucentBackground, True)
         projview = self._projview()[0, 0].getPopup()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         projview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         projview.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         projview.setAttribute(Qt.WA_TranslucentBackground, True)
         compview = self._compview()[0, 0].getPopup()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         compview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         compview.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         compview.setAttribute(Qt.WA_TranslucentBackground, True)
         sliceview.setTitle(self._tabview.tabText(0))
         orthoview.setTitle(self._tabview.tabText(1))
@@ -1388,20 +1474,29 @@ class WindowSisyphe(QMainWindow):
         self._menuView[3].setEnabled(False)
         self._menuView[4].setEnabled(False)
         database = self._database.getPopup()
+        # noinspection PyUnresolvedReferences
         database.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         database.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         database.setAttribute(Qt.WA_TranslucentBackground, True)
         database.setTitle(self._tabview.tabText(5))
         self._menu['views'].addMenu(database)
         capview = self._captures.getPopup()
+        # noinspection PyUnresolvedReferences
         capview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         capview.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         capview.setAttribute(Qt.WA_TranslucentBackground, True)
         capview.setTitle(self._tabview.tabText(6))
         self._menu['views'].addMenu(capview)
         console = self._console.getPopup()
+        # noinspection PyUnresolvedReferences
         console.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         console.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         console.setAttribute(Qt.WA_TranslucentBackground, True)
         console.setTitle(self._tabview.tabText(7))
         self._menu['views'].addMenu(console)
@@ -1431,8 +1526,11 @@ class WindowSisyphe(QMainWindow):
         icfullscrn = QIcon(join(icpath, 'fullscreen.png'))
 
         self._menu['window'] = self._menubar.addMenu('Window')
+        # noinspection PyUnresolvedReferences
         self._menu['window'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['window'].setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu['window'].setAttribute(Qt.WA_TranslucentBackground, True)
 
         self._menu['window'].addAction(self._action['about'])
@@ -1498,23 +1596,34 @@ class WindowSisyphe(QMainWindow):
 
         self._action['wmin'].setShortcut(QKeySequence.ZoomOut)
         self._action['wmax'].setShortcut(QKeySequence.ZoomIn)
+        # noinspection PyUnresolvedReferences
         self._action['fullscrn'].setShortcut(QKeySequence(Qt.Key_F11))
+        # noinspection PyUnresolvedReferences
         self._action['next'].setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Right))
+        # noinspection PyUnresolvedReferences
         self._action['previous'].setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Left))
+        # noinspection PyUnresolvedReferences
         self._action['slice'].setShortcut(QKeySequence(Qt.Key_F1))
+        # noinspection PyUnresolvedReferences
         self._action['ortho'].setShortcut(QKeySequence(Qt.Key_F2))
+        # noinspection PyUnresolvedReferences
         self._action['synchro'].setShortcut(QKeySequence(Qt.Key_F3))
+        # noinspection PyUnresolvedReferences
         self._action['proj'].setShortcut(QKeySequence(Qt.Key_F4))
+        # noinspection PyUnresolvedReferences
         self._action['multi'].setShortcut(QKeySequence(Qt.Key_F5))
+        # noinspection PyUnresolvedReferences
         self._action['database'].setShortcut(QKeySequence(Qt.Key_F6))
+        # noinspection PyUnresolvedReferences
         self._action['scrshots'].setShortcut(QKeySequence(Qt.Key_F7))
+        # noinspection PyUnresolvedReferences
         self._action['ipython'].setShortcut(QKeySequence(Qt.Key_F8))
 
         # Connect
 
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._action['wmin'].triggered.connect(lambda dummy: self.setWindowState(Qt.WindowMinimized))
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._action['wmax'].triggered.connect(lambda dummy: self.setWindowState(Qt.WindowMaximized))
         self._action['fullscrn'].triggered.connect(lambda dummy: self.toggleFullscreen())
         self._action['next'].triggered.connect(self._nextTab)
@@ -1610,9 +1719,9 @@ class WindowSisyphe(QMainWindow):
         if self._settings.getFieldValue('ToolbarIcons', 'exit'): self._toolbar.addAction(self._action['exit'])
         n = len(self._toolbar.actions())
         if n > 0 and self._toolbar.actions()[n-1].isSeparator(): self._toolbar.removeAction(self._toolbar.actions()[n-1])
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.addToolBar(Qt.TopToolBarArea, self._toolbar)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.addToolBarBreak(Qt.TopToolBarArea)
         self._toolbar.setStyleSheet('QToolButton:pressed {border-color: rgb(176, 176, 176); border-style: '
                                     'solid; border-width: 1px; border-radius: 6px;}')
@@ -1871,10 +1980,11 @@ class WindowSisyphe(QMainWindow):
                            'Plugin...',
                            '{} import failed.'.format(name))
                 return
-            try: mod.main(self)
-            except: messageBox(self,
-                               'Plugin...',
-                               '{} error.'.format(name))
+            # try:
+            mod.main(self)
+            # except: messageBox(self,
+            #                    'Plugin...',
+            #                    '{} error.'.format(name))
         else: messageBox(self,
                          'Plugin...',
                          'No such file {}'.format(action.text() + '.py'))
@@ -1905,6 +2015,18 @@ class WindowSisyphe(QMainWindow):
             if i == index:  w.timerEnabled()
             else: w.timerDisabled()
             self._menuView[i].setEnabled(self._tabview.isTabVisible(i))
+        # < Revision 05/12/2025
+        try:
+            if index == 0: self._tabHelp.setPage('PySisyphe_sliceview.html')
+            elif index == 1: self._tabHelp.setPage('PySisyphe_orthogonalview.html')
+            elif index == 2: self._tabHelp.setPage('PySisyphe_synchronizedview.html')
+            elif index == 3: self._tabHelp.setPage('PySisyphe_projectionview.html')
+            elif index == 4: self._tabHelp.setPage('PySisyphe_multicomponentview.html')
+            elif index == 5: self._tabHelp.setPage('PySisyphe_database.html')
+            elif index == 6: self._tabHelp.setPage('PySisyphe_screenshots.html')
+            elif index == 7: self._tabHelp.setPage('PySisyphe_ipython.html')
+        except: pass
+        # Revision 05/12/2025 >
 
     # Settings public methods
 
@@ -2544,7 +2666,7 @@ class WindowSisyphe(QMainWindow):
             self._dock.setTabVisible(3, v)
             self._tabTrackingList.setEnabled(v)
             self._dock.setTabVisible(4, v)
-            if v is True:
+            if v:
                 self._tabROIList.setViewCollection(self._views)
                 self._tabROITools.setViewCollection(self._views)
                 self._tabMeshList.setViewCollection(self._views)
@@ -2690,7 +2812,7 @@ class WindowSisyphe(QMainWindow):
                 else:
                     messageBox(self,
                                'Display in multi-component view...',
-                               '{} reference volume is single-component.'.format(v.getBasename()))
+                               '{} is not a multi-component volume.'.format(v.getBasename()))
             except Exception as err:
                 messageBox(self, 'Display in multi-component view error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
@@ -3354,6 +3476,10 @@ class WindowSisyphe(QMainWindow):
         # dialog = DialogEditID(parent=self)
         self._dialog = DialogEditID()
         # Revision 16/04/2025 >
+        # < Revision 16/12/2025
+        self._dialog.getreferenceSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        # Revision 16/12/2025 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
@@ -3611,13 +3737,7 @@ class WindowSisyphe(QMainWindow):
                        'Check for update',
                        'Host connection failed.')
             return
-        if version.isCurrentVersion(v):
-            wait.close()
-            messageBox(self,
-                       'Check for update',
-                       'PySisyphe is up-to-date'.format(version.__version__),
-                       icon=QMessageBox.Information)
-        elif version.isOlderThan(v):
+        if version.isOlderThan(v):
             wait.hide()
             r = messageBox(self,
                            'Check for update',
@@ -3631,12 +3751,21 @@ class WindowSisyphe(QMainWindow):
                 wait.setInformationText('Update to version {}...'.format(v))
                 wait.show()
                 updatePySisyphe(wait)
-                # < Revision 17/10/2025
                 wait.hide()
+                # < Revision 08/01/2026
+                try: import google.genai
+                except ImportError:
+                    messageBox(self,
+                               'Check for update',
+                               'The new modules Google GenAI, PyMuPDF, and EasyOCR cannot be installed with this update.'
+                               'You will therefore not be able to benefit from the new features related to these modules.'
+                               'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
+                # Revision 08/01/2026 >
+                # < Revision 17/10/2025
                 r = messageBox(self,
                                'Check for update',
                                'You must close and restart the application to complete '
-                               'the installation. Do you want to exit now ?',
+                               'the update. Do you want to exit now ?',
                                icon=QMessageBox.Question,
                                buttons=QMessageBox.Yes | QMessageBox.No,
                                default=QMessageBox.No)
@@ -3645,6 +3774,12 @@ class WindowSisyphe(QMainWindow):
                     self.exit()
                 # Revision 17/10/2025 >
             wait.close()
+        else:
+            wait.close()
+            messageBox(self,
+                       'Check for update',
+                       'PySisyphe is up-to-date'.format(version.__version__),
+                       icon=QMessageBox.Information)
 
     def lutEdit(self) -> None:
         from Sisyphe.gui.dialogLutEdit import DialogLutEdit
@@ -4800,9 +4935,9 @@ class WindowSisyphe(QMainWindow):
                 self._menubar.setEnabled(False)
                 self.repaint()
                 self._dialog.setEnabled(True)
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 self._dialog.setAttribute(Qt.WA_DeleteOnClose)
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 self._dialog.setWindowFlag(Qt.WindowStaysOnTopHint)
                 # noinspection PyUnresolvedReferences
                 self._dialog.finished.connect(lambda: self.setEnabled(True))
@@ -4957,6 +5092,19 @@ class WindowSisyphe(QMainWindow):
             except Exception as err:
                 messageBox(self, 'Manual registration dialog error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
+
+    # < Revision 04/01/2025
+    def frameRegistration(self) -> None:
+        from Sisyphe.gui.dialogRegistration import DialogFrameBasedRegistration
+        self._dialog = DialogFrameBasedRegistration(parent=self)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        try:
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogRegistration.DialogFrameBasedRegistration]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'Frame-based registration dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 04/01/2025 >
 
     def rigidRegistration(self,
                           fixed: str | None = None,
@@ -5645,9 +5793,9 @@ class WindowSisyphe(QMainWindow):
                     self._menubar.setEnabled(False)
                     self.repaint()
                     self._dialog.setEnabled(True)
-                    # noinspection PyTypeChecker
+                    # noinspection PyUnresolvedReferences
                     self._dialog.setAttribute(Qt.WA_DeleteOnClose)
-                    # noinspection PyTypeChecker
+                    # noinspection PyUnresolvedReferences
                     self._dialog.setWindowFlag(Qt.WindowStaysOnTopHint)
                     # noinspection PyUnresolvedReferences
                     self._dialog.finished.connect(lambda: self.setEnabled(True))
@@ -5832,10 +5980,16 @@ class WindowSisyphe(QMainWindow):
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def perfusion(self) -> None:
-        from Sisyphe.gui.dialogPerfusion import DialogPerfusion
+        # < Revision 08/01/2026
+        # from Sisyphe.gui.dialogPerfusion import DialogPerfusion
+        from Sisyphe.gui.dialogPerfusion import DialogPerfusion2
+        # Revision 08/01/2026 >
         # < Revision 16/04/2025
         # self._dialog = DialogPerfusion(parent=self)
-        self._dialog = DialogPerfusion()
+        # < Revision 08/01/2026
+        # self._dialog = DialogPerfusion()
+        self._dialog = DialogPerfusion2()
+        # Revision 08/01/2026 >
         # < Revision 15/10/2025
         self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
         # Revision 15/10/2025 >
@@ -6061,7 +6215,9 @@ class WindowSisyphe(QMainWindow):
     def keyPressEvent(self, a0: QKeyEvent) -> None:
         # win32 bug fix, lost shortcuts in fullscreen mode
         if platform == 'win32':
+            # noinspection PyUnresolvedReferences
             if self.windowState() == Qt.WindowFullScreen:
+                # noinspection PyUnresolvedReferences
                 if a0.key() == Qt.Key_Escape: self.toggleFullscreen()
                 elif a0.key() == Qt.Key_F11: self.toggleFullscreen()
                 elif a0.matches(Qt.Quit): self.exit()

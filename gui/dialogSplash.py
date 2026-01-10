@@ -81,7 +81,7 @@ class DialogSplash(QDialog):
 
     QDialog -> DialogSplash
 
-    Last revision: 18/07/2025
+    Last revision: 14/12/2025
     """
 
     # Class method
@@ -175,8 +175,16 @@ class DialogSplash(QDialog):
         renderer = inter.GetRenderWindow()
         renderer.SetOffScreenRendering(1)
         backend = renderer.GetRenderingBackend()
-        if renderer.IsDirect() > 0: backend += ', hardware acceleration'
-        else: backend += ', no hardware acceleration'
+        context = renderer.ReportCapabilities()
+        context = context.split('\n')
+        # < Revision 14/12/2025
+        if context[0] == 'no device context': backend += ', no hardware acceleration'
+        else:
+            try: backend += ', hardware acceleration\n{0[0]}\n{0[1]}\n{0[2]}'.format(context)
+            except: pass
+        # from vtkmodules import vtkRenderingOpenGL2
+        # print(vtkRenderingOpenGL2)
+        # Revision 14/12/2025 >
         if hasattr(sys, '_MEIPASS'): eenv = 'stand-alone frozen execution'
         else: eenv = 'venv execution'
         # < Revision 24/07/2025

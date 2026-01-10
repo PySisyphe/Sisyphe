@@ -24,6 +24,7 @@ from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from PyQt5.QtWidgets import QWidget
     from Sisyphe.widgets.toolBarThumbnail import ToolBarThumbnail

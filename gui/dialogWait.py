@@ -47,6 +47,7 @@ from SimpleITK import ImageFilter as sitkImageFilter
 # noinspection PyCompatibility
 import __main__
 
+# to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from PyQt5.QtWidgets import QWidget
 

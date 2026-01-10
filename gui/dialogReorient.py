@@ -69,7 +69,7 @@ class DialogReorient(QDialog):
 
     QDialog -> DialogReorient
 
-    Last revision: 08/03/2025
+    Last revision: 12/12/2025
     """
 
     # Special method
@@ -227,7 +227,9 @@ class DialogReorient(QDialog):
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
-        cancel = QPushButton('Exit')
+        # < Revision 12/12/2025
+        cancel = QPushButton('Close')
+        # Revision 12/12/2025 >
         # < Revision 11/09/2025
         # cancel.setFixedWidth(100)
         # Revision 11/09/2025 >

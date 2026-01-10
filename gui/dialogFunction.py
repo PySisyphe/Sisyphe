@@ -40,10 +40,10 @@ from Sisyphe.processing.simpleItkFilters import curvatureFlowFilter
 from Sisyphe.processing.simpleItkFilters import biasFieldCorrection
 from Sisyphe.processing.simpleItkFilters import histogramIntensityMatching
 from Sisyphe.processing.simpleItkFilters import regressionIntensityMatching
-from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
 from Sisyphe.widgets.functionsSettingsWidget import FunctionSettingsWidget
+from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.gui.dialogWait import DialogWait
 from Sisyphe.gui.dialogGenericResults import DialogGenericResults
 
@@ -103,19 +103,11 @@ class AbstractDialogFunction(QDialog):
 
     # Special method
 
-    """
-    Private attributes
-
-    _files      FilesSelectionWidget
-    _settings   FunctionSettingsWidget
-    _funcname   str, function name
-    """
-
     def __init__(self, funcname, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('{} function'.format(funcname))
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -148,6 +140,7 @@ class AbstractDialogFunction(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('Close')
         self._ok.setFixedWidth(100)
@@ -167,6 +160,14 @@ class AbstractDialogFunction(QDialog):
         self._ok.clicked.connect(self.accept)
         # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
+
+    """
+    Private attributes
+
+    _files      FilesSelectionWidget
+    _settings   FunctionSettingsWidget
+    _funcname   str, function name
+    """
 
     # Public methods
 
@@ -192,7 +193,7 @@ class AbstractDialogFunction(QDialog):
                         messageBox(self,
                                    title=self._funcname,
                                    text='{} error: {}\n{}.'.format(basename(filename), type(err), str(err)))
-                    break
+                        break
             wait.close()
             self._files.clearall()
 
@@ -805,7 +806,7 @@ class DialogRegressionIntensityMatching(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogRegressionIntensityMatching
 
     Creation: 23/10/2024
-    Last revision: 15/10/2025
+    Last revision: 05/12/2025
     """
 
     # Special method
@@ -831,6 +832,10 @@ class DialogRegressionIntensityMatching(AbstractDialogFunction):
         self._reference.setToolTip('Set regression intensity matching reference volume.\n'
                                    'All volumes are normalized to this reference volume.')
         lyout.insertWidget(0, self._reference)
+
+        # < Revision 25/12/2025
+        self._mask = None
+        # Revision 25/12/2025 >
 
     # Private method
 
@@ -862,9 +867,15 @@ class DialogRegressionIntensityMatching(AbstractDialogFunction):
         prefix = self.getParameterValue('Prefix')
         suffix = self.getParameterValue('Suffix')
 
-        if exclude: mask = ref.getMask(fill='2D')
-        else: mask = None
-        rimg = regressionIntensityMatching(img, ref, mask, order, truncate)
+        # < Revision 05/12/2025
+        # if exclude: mask = ref.getMask(fill='2D')
+        if exclude:
+            if self._mask is None:
+                self._mask = ref.getMask(fill='2d')
+        # else: mask = None
+        # rimg = regressionIntensityMatching(img, ref, mask, order, truncate)
+        rimg = regressionIntensityMatching(img, ref, self._mask, order, truncate)
+        # Revision 05/12/2025 >
 
         rimg.setFilename(filename)
         rimg.setFilenamePrefix(prefix)

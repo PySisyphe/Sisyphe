@@ -47,6 +47,7 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QComboBox
 from PyQt5.QtWidgets import QTabWidget
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheSheet import SisypheSheet
@@ -743,6 +744,7 @@ class DialogROIStatistics(QDialog):
                 self._console.update()
                 messageBox(self,
                            'Copy ROI statistics to console',
+                           icon=QMessageBox.Information,
                            text='ROI statistics are available in the PySisyphe console '
                                 'as a dict variable called \"{}\".'.format(name))
             except:
@@ -765,6 +767,7 @@ class DialogROIStatistics(QDialog):
             self._console.update()
             messageBox(self,
                        'Copy histograms to console',
+                       icon=QMessageBox.Information,
                        text='Histograms are available in the PySisyphe console '
                             'as a dict variable called \"{}\".'.format(name))
             # except:

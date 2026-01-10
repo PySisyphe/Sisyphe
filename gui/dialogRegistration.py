@@ -16,6 +16,7 @@ from os import chdir
 from os.path import join
 from os.path import split
 from os.path import dirname
+from os.path import basename
 from os.path import abspath
 from os.path import exists
 from os.path import isfile
@@ -66,6 +67,7 @@ from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
 from Sisyphe.widgets.functionsSettingsWidget import FunctionSettingsWidget
+from Sisyphe.gui.dialogWait import DialogWait
 from Sisyphe.gui.dialogWait import DialogWaitRegistration
 from Sisyphe.gui.dialogManualRegistration import DialogManualRegistration
 
@@ -73,7 +75,8 @@ __all__ = ['DialogRegistration',
            'DialogICBMNormalization',
            'DialogBatchRegistration',
            'DialogAsymmetry',
-           'DialogEddyCurrentCorrection']
+           'DialogEddyCurrentCorrection',
+           'DialogFrameBasedRegistration']
 
 """
 Class hierarchy
@@ -84,6 +87,7 @@ Class hierarchy
                                     -> DialogBatchRegistration
                                     -> DialogAsymmetry
                                     -> DialogEddyCurrentCorrection
+              -> DialogFrameBasedRegistration
 """
 
 class DialogRegistration(QDialog):
@@ -149,7 +153,7 @@ class DialogRegistration(QDialog):
 
         self._reg = transform
         self.setWindowTitle('{} Registration'.format(self._reg))
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init non-GUI attributes
@@ -238,6 +242,7 @@ class DialogRegistration(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._cancel = QPushButton('Cancel')
         # self._cancel.setFixedWidth(100)
@@ -268,6 +273,7 @@ class DialogRegistration(QDialog):
         self._movingSelect.setMinimumWidth(int(screen.width() * 0.33))
         self.adjustSize()
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
@@ -616,7 +622,7 @@ class DialogRegistration(QDialog):
                 elif algo == 'AntsSplineDiffeomorphic':
                     # < Revision 14/11/2024
                     # regtype = 'antsRegistrationSyN[s]'
-                    # s subtype transform is SyN, b is BSpline
+                    # subtype transform s is SyN, b is BSpline
                     regtype = 'antsRegistrationSyN[b]'
                     # Revision 14/11/2024 >
                     self._stages = ['Rigid', 'Affine', 'Spline Diffeomorphic']
@@ -626,7 +632,7 @@ class DialogRegistration(QDialog):
                 elif algo == 'AntsDiffeomorphic':
                     # < Revision 14/11/2024
                     # regtype = 'antsRegistrationSyN[b]'
-                    # s subtype transform is SyN, b is BSpline
+                    # subtype transform s is SyN, b is BSpline
                     regtype = 'antsRegistrationSyN[s]'
                     # Revision 14/11/2024 >
                     self._stages = ['Rigid', 'Affine', 'Diffeomorphic']
@@ -636,7 +642,7 @@ class DialogRegistration(QDialog):
                 elif algo == 'AntsFastSplineDiffeomorphic':
                     # < Revision 14/11/2024
                     # regtype = 'antsRegistrationSyNQuick[s]'
-                    # s subtype transform is SyN, b is BSpline
+                    # subtype transform s is SyN, b is BSpline
                     regtype = 'antsRegistrationSyNQuick[b]'
                     # Revision 14/11/2024 >
                     self._stages = ['Rigid', 'Affine', 'Fast Spline Diffeomorphic']
@@ -646,7 +652,7 @@ class DialogRegistration(QDialog):
                 elif algo == 'AntsFastDiffeomorphic':
                     # < Revision 14/11/2024
                     # regtype = 'antsRegistrationSyNQuick[b]'
-                    # s subtype transform is SyN, b is BSpline
+                    # subtype transform s is SyN, b is BSpline
                     regtype = 'antsRegistrationSyNQuick[s]'
                     # Revision 14/11/2024 >
                     self._stages = ['Rigid', 'Affine', 'Fast Diffeomorphic']
@@ -656,7 +662,7 @@ class DialogRegistration(QDialog):
                 elif algo == 'AntsRigidSplineDiffeomorphic':
                     # < Revision 14/11/2024
                     # regtype = 'antsRegistrationSyN[sr]'
-                    # s subtype transform is SyN, b is BSpline
+                    # subtype transform s is SyN, b is BSpline
                     regtype = 'antsRegistrationSyN[br]'
                     # Revision 14/11/2024 >
                     self._stages = ['Rigid', 'Spline Diffeomorphic']
@@ -666,7 +672,7 @@ class DialogRegistration(QDialog):
                 elif algo == 'AntsRigidDiffeomorphic':
                     # < Revision 14/11/2024
                     # regtype = 'antsRegistrationSyN[br]'
-                    # s subtype transform is SyN, b is BSpline
+                    # subtype transform s is SyN, b is BSpline
                     regtype = 'antsRegistrationSyN[sr]'
                     # Revision 14/11/2024 >
                     self._stages = ['Rigid', 'Diffeomorphic']
@@ -676,7 +682,7 @@ class DialogRegistration(QDialog):
                 elif algo == 'AntsFastRigidSplineDiffeomorphic':
                     # < Revision 14/11/2024
                     # regtype = 'antsRegistrationSyNQuick[sr]'
-                    # s subtype transform is SyN, b is BSpline
+                    # subtype transform s is SyN, b is BSpline
                     regtype = 'antsRegistrationSyNQuick[br]'
                     # Revision 14/11/2024 >
                     self._stages = ['Rigid', 'Fast Spline Diffeomorphic']
@@ -686,7 +692,7 @@ class DialogRegistration(QDialog):
                 elif algo == 'AntsFastRigidDiffeomorphic':
                     # < Revision 14/11/2024
                     # regtype = 'antsRegistrationSyNQuick[br]'
-                    # s subtype transform is SyN, b is BSpline
+                    # subtype transform s is SyN, b is BSpline
                     regtype = 'antsRegistrationSyNQuick[sr]'
                     # Revision 14/11/2024 >
                     self._stages = ['Rigid', 'Fast Diffeomorphic']
@@ -696,7 +702,7 @@ class DialogRegistration(QDialog):
                 elif algo == 'AntsSplineDiffeomorphicOnly':
                     # < Revision 14/11/2024
                     # regtype = 'antsRegistrationSyN[so]'
-                    # s subtype transform is SyN, b is BSpline
+                    # subtype transform s is SyN, b is BSpline
                     regtype = 'antsRegistrationSyN[bo]'
                     # Revision 14/11/2024 >
                     self._stages = ['Spline Diffeomorphic']
@@ -706,7 +712,7 @@ class DialogRegistration(QDialog):
                 elif algo == 'AntsDiffeomorphicOnly':
                     # < Revision 14/11/2024
                     # regtype = 'antsRegistrationSyN[bo]'
-                    # s subtype transform is SyN, b is BSpline
+                    # subtype transform s is SyN, b is BSpline
                     regtype = 'antsRegistrationSyN[so]'
                     # Revision 14/11/2024 >
                     self._stages = ['Diffeomorphic']
@@ -716,7 +722,7 @@ class DialogRegistration(QDialog):
                 elif algo == 'AntsFastSplineDiffeomorphicOnly':
                     # < Revision 14/11/2024
                     # regtype = 'antsRegistrationSyNQuick[so]'
-                    # s subtype transform is SyN, b is BSpline
+                    # subtype transform s is SyN, b is BSpline
                     regtype = 'antsRegistrationSyNQuick[bo]'
                     # Revision 14/11/2024 >
                     self._stages = ['Fast Spline Diffeomorphic']
@@ -726,7 +732,7 @@ class DialogRegistration(QDialog):
                 elif algo == 'AntsFastDiffeomorphicOnly':
                     # < Revision 14/11/2024
                     # regtype = 'antsRegistrationSyN[bo]'
-                    # s subtype transform is SyN, b is BSpline
+                    # subtype transform s is SyN, b is BSpline
                     regtype = 'antsRegistrationSyNQuick[so]'
                     # Revision 14/11/2024 >
                     self._stages = ['Fast Diffeomorphic']
@@ -736,7 +742,7 @@ class DialogRegistration(QDialog):
                 else:  # Ants Fast Spline Diffeomorphic, default
                     # < Revision 14/11/2024
                     # regtype = 'antsRegistrationSyN[s]'
-                    # s subtype transform is SyN, b is BSpline
+                    # subtype transform s is SyN, b is BSpline
                     regtype = 'antsRegistrationSyNQuick[b]'
                     # Revision 14/11/2024 >
                     self._stages = ['Rigid', 'Affine', 'Fast Spline Diffeomorphic']
@@ -1472,3 +1478,182 @@ class DialogEddyCurrentCorrection(DialogRegistration):
             index += 1
         self._batch.clearall()
         self._fixedSelect.clear()
+
+
+class DialogFrameBasedRegistration(QDialog):
+    """
+    DialogFrameBasedRegistration
+
+    Description
+    ~~~~~~~~~~~
+
+    GUI dialog for frame-based registration.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> DialogFrameBasedRegistration
+
+    Creation: 04/01/2026
+    """
+
+    # Special method
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setWindowTitle('Frame-based registration')
+        # noinspection PyUnresolvedReferences
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # Init QLayout
+
+        self._layout = QVBoxLayout()
+        if platform == 'win32': self._layout.setContentsMargins(10, 0, 10, 0)
+        # < Revision 17/07/2025
+        elif platform == 'darwin': self._layout.setContentsMargins(0, 10, 0, 0)
+        # Revision 17/07/2025 >
+        self._layout.setSpacing(0)
+        self.setLayout(self._layout)
+
+        # Init widgets
+
+        self._fixedSelect = FileSelectionWidget(parent=self)
+        self._fixedSelect.filterSisypheVolume()
+        self._fixedSelect.filterTransform('LEKSELL')
+        self._fixedSelect.setTextLabel('Fixed volume')
+        self._fixedSelect.setCurrentVolumeButtonVisibility(True)
+        self._fixedSelect.FieldChanged.connect(self._updateFiles)
+        self._fixedSelect.FieldCleared.connect(self._updateFiles)
+
+        self._movingSelect = FilesSelectionWidget(parent=self)
+        self._movingSelect.filterSisypheVolume()
+        self._movingSelect.filterTransform('LEKSELL')
+        self._movingSelect.setTextLabel('Moving volume(s)')
+        self._movingSelect.setCurrentVolumeButtonVisibility(True)
+        self._movingSelect.FieldChanged.connect(self._updateFiles)
+        self._movingSelect.FieldCleared.connect(self._updateFiles)
+
+        self._resamplesettings = FunctionSettingsWidget('Resample', parent=self)
+        self._resamplesettings.VisibilityToggled.connect(self._center)
+        self._resamplesettings.setVisible(True)
+        self._resamplesettings.setSettingsButtonFunctionText()
+        self._resamplesettings.setParameterVisibility('NormalizationPrefix', False)
+        self._resamplesettings.setParameterVisibility('NormalizationSuffix', False)
+        self._resamplesettings.setParameterVisibility('Dialog', False)
+        self._resamplesettings.getParameterWidget('Dialog').setChecked(False)
+
+        self._layout.addWidget(self._fixedSelect)
+        self._layout.addWidget(self._movingSelect)
+        self._layout.addWidget(self._resamplesettings)
+
+        # Init default dialog buttons
+
+        layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
+        layout.setDirection(QHBoxLayout.RightToLeft)
+        self._cancel = QPushButton('Cancel')
+        # self._cancel.setFixedWidth(100)
+        self._execute = QPushButton('Execute')
+        # self._execute.setFixedSize(QSize(120, 32))
+        self._execute.setToolTip('Execute frame-based registration')
+        self._execute.setAutoDefault(True)
+        self._execute.setDefault(True)
+        self._execute.setEnabled(False)
+        layout.addWidget(self._execute)
+        layout.addWidget(self._cancel)
+        layout.addStretch()
+        self._layout.addLayout(layout)
+
+        # Qt Signals
+
+        # noinspection PyUnresolvedReferences
+        self._cancel.clicked.connect(self.reject)
+        # noinspection PyUnresolvedReferences
+        self._execute.clicked.connect(self.execute)
+
+        # < Revision 20/05/2025
+        # imposing dialog width -> set minimum width to a child widget of the main layout
+        screen = QApplication.primaryScreen().geometry()
+        self._fixedSelect.setMinimumWidth(int(screen.width() * 0.33))
+        self._movingSelect.setMinimumWidth(int(screen.width() * 0.33))
+        self.adjustSize()
+        # dialog resize off
+        # noinspection PyUnresolvedReferences
+        self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
+        # Revision 20/05/2025 >
+        self.setModal(True)
+
+    # Private method
+
+    # noinspection PyUnusedLocal
+    def _center(self, widget):
+        self.adjustSize()
+        # self.setFixedSize(self.size())
+        self.move(self.screen().availableGeometry().center() - self.rect().center())
+        QApplication.processEvents()
+
+    def _updateFiles(self):
+        if not (self._fixedSelect.isEmpty() or self._movingSelect.isEmpty()): self._execute.setEnabled(True)
+        else: self._execute.setEnabled(False)
+
+    # Public method
+
+    def execute(self):
+        if not (self._fixedSelect.isEmpty() or self._movingSelect.isEmpty()):
+            filenames = self._movingSelect.getFilenames()
+            n = len(filenames)
+            wait = DialogWait()
+            wait.setProgressRange(0, n+1)
+            wait.setCurrentProgressValue(0)
+            wait.setProgressVisibility(n > 1)
+            wait.open()
+            wait.setInformationText('Open {}...'.format(basename(self._fixedSelect.getFilename())))
+            fixed = SisypheVolume()
+            fixed.load(self._fixedSelect.getFilename())
+            trff = fixed.getLEKSELLTransform()
+            prefix = self._resamplesettings.getParameterValue('Prefix')
+            suffix = self._resamplesettings.getParameterValue('Suffix')
+            f = SisypheApplyTransform()
+            interpol = self._resamplesettings.getParameterValue('Interpolator')[0]
+            if interpol == 'NearestNeighbor': f.setInterpolator(sitkNearestNeighbor)
+            elif interpol == 'Linear': f.setInterpolator(sitkLinear)
+            elif interpol == 'Bspline': f.setInterpolator(sitkBSpline)
+            elif interpol == 'Gaussian': f.setInterpolator(sitkGaussian)
+            elif interpol == 'HammingSinc': f.setInterpolator(sitkHammingWindowedSinc)
+            elif interpol == 'CosineSinc': f.setInterpolator(sitkCosineWindowedSinc)
+            elif interpol == 'WelchSinc': f.setInterpolator(sitkWelchWindowedSinc)
+            elif interpol == 'LanczosSinc': f.setInterpolator(sitkLanczosWindowedSinc)
+            elif interpol == 'BlackmanSinc': f.setInterpolator(sitkBlackmanWindowedSinc)
+            else: f.setInterpolator(sitkLinear)
+            for filename in filenames:
+                wait.setInformationText('{} frame-based registration...'.format(basename(filename)))
+                wait.incCurrentProgressValue()
+                moving = SisypheVolume()
+                moving.load(filename)
+                trfm = moving.getLEKSELLTransform()
+                trf = trfm.copy()
+                trf.preMultiply(trff.getInverseTransform(), homogeneous=True)
+                trf.setSize(fixed.getSize())
+                trf.setSpacing(fixed.getSpacing())
+                f.setMoving(moving)
+                f.setTransform(trf)
+                f.resampleMoving(fixed, True, False, prefix, suffix)
+            """
+            Exit  
+            """
+            wait.close()
+            # _movingSelect is not enabled in DialogBatchRegistration instance
+            # The question of doing another registration is not asked in batch mode
+            r = messageBox(self,
+                           title=self.windowTitle(),
+                           text='Would you like to perform more frame-based coregistration ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
+            if r == QMessageBox.Yes:
+                self._fixedSelect.clear()
+                self._movingSelect.clearall()
+            else: self.accept()

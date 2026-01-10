@@ -26,6 +26,7 @@ from PyQt5.QtWidgets import QTreeWidget
 from PyQt5.QtWidgets import QTreeWidgetItem
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheSettings import getUserPySisyphePath
@@ -56,7 +57,7 @@ class DialogDownload(QDialog):
 
     QDialog -> DialogDownload
 
-    Last revision: 30/10/2024
+    Last revision: 05/12/2025
     """
 
     # class method
@@ -82,7 +83,7 @@ class DialogDownload(QDialog):
         self._main = None
 
         self.setWindowTitle('Download manager')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -127,6 +128,7 @@ class DialogDownload(QDialog):
         if platform == 'win32':
             layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('Close')
         self._ok.setFixedWidth(100)
@@ -137,6 +139,7 @@ class DialogDownload(QDialog):
         layout.addStretch()
         layout.addWidget(self._uncheckall)
         self._layout.addLayout(layout)
+        # noinspection PyUnresolvedReferences
         layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
 
         self._layout.addLayout(layout)
@@ -165,6 +168,7 @@ class DialogDownload(QDialog):
                 for section in sections:
                     folder = section.getAttribute('name')
                     lyout = QVBoxLayout()
+                    # noinspection PyUnresolvedReferences
                     lyout.setAlignment(Qt.AlignLeft)
                     widget = QWidget()
                     widget.setLayout(lyout)
@@ -193,10 +197,12 @@ class DialogDownload(QDialog):
                         scroll = QScrollArea()
                         scroll.setWidget(widget)
                         scroll.setFrameShape(QScrollArea.NoFrame)
+                        # noinspection PyUnresolvedReferences
                         scroll.setAlignment(Qt.AlignLeft)
                         self._stack.addWidget(scroll)
                         item = QTreeWidgetItem()
                         item.setText(0, folder)
+                        # noinspection PyUnresolvedReferences
                         item.setData(0, Qt.UserRole, self._stack.count() - 1)
                         self._sections.addTopLevelItem(item)
                         if self._sections.topLevelItemCount() == 1: item.setSelected(True)
@@ -220,6 +226,7 @@ class DialogDownload(QDialog):
 
     # noinspection PyUnusedLocal
     def _currentSelectedChanged(self, current, previous):
+        # noinspection PyUnresolvedReferences
         index = current.data(0, Qt.UserRole)
         if index >= 0: self._stack.setCurrentIndex(index)
 
@@ -255,7 +262,48 @@ class DialogDownload(QDialog):
                             wait.setInformationText('Downloading...')
                         path = item[0]
                         url = item[1]
-                        try: downloadFromHost(url, path, info=k, wait=wait)
+                        try:
+                            downloadFromHost(url, path, info=k, wait=wait)
+                            # < Revision 05/12/2025
+                            if folder == 'Templates':
+                                if wait is not None: wait.hide()
+                                if self._main is not None:
+                                    # noinspection PyProtectedMember
+                                    self._main._initTemplateMenu()
+                                messageBox(self,
+                                           icon=QMessageBox.Information,
+                                           title='Download manager',
+                                           text='{} is installed in the PySisyphe template folder.\n'
+                                                'Explore available templates by selecting the menu File > Open template.'.format(k))
+                                if wait is not None: wait.show()
+                            elif folder == 'Controls':
+                                if wait is not None: wait.hide()
+                                messageBox(self,
+                                           icon=QMessageBox.Information,
+                                           title='Download manager',
+                                           text='{} is copied in the PySisyphe ~/.PySisyphe/controls folder.\n'
+                                                'Open user folder by selecting the menu File > User folder.'.format(k))
+                                if wait is not None: wait.show()
+                            elif folder == 'Plugins':
+                                if wait is not None: wait.hide()
+                                if self._main is not None:
+                                    # noinspection PyProtectedMember
+                                    self._main._updatePluginsMenu()
+                                messageBox(self,
+                                           icon=QMessageBox.Information,
+                                           title='Download manager',
+                                           text='{} is installed in the PySisyphe plugins folder.\n'
+                                                'Explore available plugins by selecting the menu Functions > Plugins.'.format(k))
+                                if wait is not None: wait.show()
+                            elif folder == 'Samples':
+                                if wait is not None: wait.hide()
+                                messageBox(self,
+                                           icon=QMessageBox.Information,
+                                           title='Download manager',
+                                           text='{} is installed in the PySisyphe ~/.PySisyphe/samples folder.\n'
+                                                'Open user folder by selecting the menu File > User folder.'.format(k))
+                                if wait is not None: wait.show()
+                            # Revision 05/12/2025 >
                         except:
                             if wait is not None: wait.close()
                             messageBox(self,

@@ -57,12 +57,14 @@ from Sisyphe.core.sisypheConstants import addSuffixToFilename
 from Sisyphe.core.sisypheImageAttributes import SisypheAcquisition
 from Sisyphe.processing.dscFunctions import getArterialInputVoxels
 from Sisyphe.processing.dscFunctions import dscMaps
+from Sisyphe.processing.dscFunctions import dscMaps2
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.iconBarViewWidgets import IconBarSliceViewWidget
 from Sisyphe.widgets.screenshotsGridWidget import ScreenshotsGridWidget
 from Sisyphe.gui.dialogFunction import AbstractDialogFunction
 
 __all__ = ['DialogPerfusion',
+           'DialogPerfusion2',
            'DialogArterialInputFunction']
 
 """
@@ -88,7 +90,7 @@ class DialogPerfusion(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogPerfusion
 
     Creation: 23/12/2024
-    Last revision:
+    Last revision: 08/03/2025
     """
 
     # Special method
@@ -100,7 +102,8 @@ class DialogPerfusion(AbstractDialogFunction):
         # Init window
 
         self.setWindowTitle('DSC-MR perfusion analysis')
-        # noinspection PyTypeChecker
+        # PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         self._files.filterMultiComponent()
@@ -122,6 +125,7 @@ class DialogPerfusion(AbstractDialogFunction):
         screen = QApplication.primaryScreen().geometry()
         self._files.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 14/06/2025 >
         self.setModal(True)
@@ -166,6 +170,7 @@ class DialogPerfusion(AbstractDialogFunction):
 
     def _filesChanged(self):
         if len(self._files.getFilenames()) > 1:
+            # noinspection PyUnresolvedReferences
             self._settings.getParameterWidget('Dialog').setCheckState(Qt.Unchecked)
             self._settings.setParameterVisibility('Dialog', False)
         else:
@@ -210,6 +215,7 @@ class DialogPerfusion(AbstractDialogFunction):
             vols = SisypheVolume()
             vols.load(filename)
             mask = vols.getMask(algo=masking, kernel=2, morpho='open', fill='2d', c=0)
+            # noinspection PyUnresolvedReferences
             if self._settings.getParameterWidget('Dialog').checkState() == Qt.Checked:
                 dialog = DialogArterialInputFunction(parent=self)
                 if platform == 'win32':
@@ -235,6 +241,189 @@ class DialogPerfusion(AbstractDialogFunction):
                     # noinspection PyTypeChecker
                     r = dscMaps(vols, mask, aif, delt, te, baseline=baseline, recovery=recovery, dsc=dsc,
                                 smooth=smooth, fit=fit, deconvolve=deconvolve, leakage=leakage, wait=wait)
+                except Exception as err:
+                    wait.close()
+                    messageBox(self,
+                               title=self.windowTitle(),
+                               text='{} error: '
+                                    '{}\n{}.'.format(self.windowTitle(), type(err), str(err)))
+                    self._files.clear()
+                    return
+            for k in r:
+                wait.setInformationText('Save {}...'.format(r[k].getBasename()))
+                r[k].save()
+            """
+            Exit  
+            """
+            wait.close()
+            r = messageBox(self,
+                           self.windowTitle(),
+                           'Would you like to do\nmore DSC-MR perfusion analysis ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
+            if r == QMessageBox.Yes: self._files.clear()
+            else: self.accept()
+
+
+class DialogPerfusion2(AbstractDialogFunction):
+    """
+    DialogPerfusion2 class
+
+    Description
+    ~~~~~~~~~~~
+
+    Dialog to process MR perfusion maps.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> AbstractDialogFunction -> DialogPerfusion2
+
+    Creation: 08/01/2025
+    """
+
+    # Special method
+
+    def __init__(self, parent=None):
+        super().__init__('Perfusion2', parent)
+        self._settings.settingsVisibilityOn()
+
+        # Init window
+
+        self.setWindowTitle('DSC-MR perfusion analysis')
+        # PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        self._files.filterMultiComponent()
+        self._files.filterSameSequence(SisypheAcquisition.PWI)
+        self._files.FieldChanged.connect(self._filesChanged)
+        self._files.setTextLabel('DSC-MR multi-component volume(s)')
+        self._settings.setButtonsVisibility(False)
+        self._settings.getParameterWidget('DCM').hideRemoveButton()
+        self._settings.getParameterWidget('DCM').FieldChanged.connect(self._getFromDicom)
+
+        self._dialogChecked = self._settings.getParameterWidget('Dialog').checkState()
+
+        # < Revision 14/06/2025
+        self.adjustSize()
+        # imposing dialog width -> set minimum width to a child widget of the main layout
+        screen = QApplication.primaryScreen().geometry()
+        self._files.setMinimumWidth(int(screen.width() * 0.33))
+        # dialog resize off
+        # noinspection PyUnresolvedReferences
+        self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
+        # Revision 14/06/2025 >
+        self.setModal(True)
+
+    # Private method
+
+    def _getFromDicom(self):
+        widget = self._settings.getParameterWidget('DCM')
+        if widget is not None:
+            filename = widget.getFilename()
+            if exists(filename):
+                ext = splitext(filename)[1]
+                dcmext = getDicomExt()
+                dcmext.append('')
+                if ext in dcmext:
+                    try: ds = read_file(filename, stop_before_pixels=True)
+                    except:
+                        messageBox(self, 'Dicom read', 'Invalid dicom file.')
+                        return
+                    if 'EchoTime' in ds:
+                        te = float(ds['EchoTime'].value)
+                        widget = self._settings.getParameterWidget('TE')
+                        if widget is not None: widget.setValue(te)
+                    if 'RepetitionTime' in ds:
+                        tr = float(ds['RepetitionTime'].value)
+                        widget = self._settings.getParameterWidget('TR')
+                        if widget is not None: widget.setValue(tr)
+                elif ext == XmlDicom.getFileExt():
+                    ds = XmlDicom()
+                    try: ds.loadXmlDicomFilename(filename)
+                    except:
+                        messageBox(self, 'XmlDicom read', 'Invalid XmlDicom file.')
+                        return
+                    if ds.hasKeyword('EchoTime'):
+                        te = float(ds.getDataElementValue('EchoTime'))
+                        widget = self._settings.getParameterWidget('TE')
+                        if widget is not None: widget.setValue(te)
+                    if ds.hasKeyword('RepetitionTime'):
+                        tr = float(ds.getDataElementValue('RepetitionTime'))
+                        widget = self._settings.getParameterWidget('TR')
+                        if widget is not None: widget.setValue(tr)
+
+    def _filesChanged(self):
+        if len(self._files.getFilenames()) > 1:
+            # noinspection PyUnresolvedReferences
+            self._settings.getParameterWidget('Dialog').setCheckState(Qt.Unchecked)
+            self._settings.setParameterVisibility('Dialog', False)
+        else:
+            self._settings.getParameterWidget('Dialog').setCheckState(self._dialogChecked)
+            self._settings.setParameterVisibility('Dialog', True)
+
+    # noinspection PyUnusedLocal
+    def _center(self, widget):
+        self.adjustSize()
+        self.move(self.screen().availableGeometry().center() - self.rect().center())
+        QApplication.processEvents()
+
+    # Public method
+
+    def function(self, filename, wait):
+        if exists(filename):
+            wait.buttonVisibilityOff()
+            wait.setInformationText(self.windowTitle() + '...\n{}'.format(basename(filename)))
+            n = self._settings.getParameterValue('VoxelCount')
+            # TR in s (TR in ms / 1000.0)
+            delt = self._settings.getParameterValue('TR') / 1000.0
+            # TE in s (TE in ms / 1000.0)
+            te = self._settings.getParameterValue('TE') / 1000.0
+            masking = self._settings.getParameterValue('Masking')[0]
+            baseline = tuple(self._settings.getParameterValue('Baseline'))
+            fwhm = self._settings.getParameterValue('Smoothing')
+            v = self._settings.getParameterValue('Deconvolution')[0]
+            if v == 'Block-circulant SVD with Simpson’s rule': algo = 'bcSVD1'
+            elif v == 'Block-circulant SVD with manual matrix construction': algo = 'bcSVD2'
+            elif v == 'Oscillation index SVD': algo = 'oSVD'
+            elif v == 'Box non-linear regression': algo = 'boxNLR'
+            else: algo = 'SVD'
+            recovery = self._settings.getParameterValue('Recovery')
+            dsc = self._settings.getParameterValue('DSC')
+            leakage = self._settings.getParameterValue('Leakage')
+            vols = SisypheVolume()
+            vols.load(filename)
+            mask = vols.getMask(algo=masking, kernel=2, morpho='open', fill='2d', c=0)
+            # noinspection PyUnresolvedReferences
+            if self._settings.getParameterWidget('Dialog').checkState() == Qt.Checked:
+                dialog = DialogArterialInputFunction(parent=self)
+                if platform == 'win32':
+                    # noinspection PyUnresolvedReferences
+                    import pywinstyles
+                    cl = self.palette().base().color()
+                    c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                    pywinstyles.change_header_color(dialog, c)
+                dialog.setVolume(vols, mask, n)
+                wait.hide()
+                if dialog.exec() == QDialog.Accepted:
+                    wait.show()
+                    aif = dialog.getArterialInputFunction()
+                    # noinspection PyTypeChecker
+                    r = dscMaps2(vols, mask, aif, delt, te,
+                                 baseline=baseline, smooth=fwhm, recovery=recovery,
+                                 dsc=dsc, leakage=leakage, method=algo, wait=wait)
+                else: return
+                dialog.close()
+            else:
+                roi = getArterialInputVoxels(vols, mask, n)[0].getROI()
+                aif = array(vols.getMean(roi, c=None))
+                try:
+                    # noinspection PyTypeChecker
+                    r = dscMaps2(vols, mask, aif, delt, te,
+                                 baseline=baseline, smooth=fwhm, recovery=recovery,
+                                 dsc=dsc, leakage=leakage, method=algo, wait=wait)
                 except Exception as err:
                     wait.close()
                     messageBox(self,
@@ -301,9 +490,9 @@ class DialogArterialInputFunction(QDialog):
         # Init window
 
         self.setWindowTitle('Arterial input function')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
         screen = QApplication.primaryScreen().geometry()
         w = int(screen.width() * 0.75)
@@ -412,6 +601,7 @@ class DialogArterialInputFunction(QDialog):
         lyout = QHBoxLayout()
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         # noinspection PyUnresolvedReferences
@@ -472,6 +662,7 @@ class DialogArterialInputFunction(QDialog):
         self._lines[key].set_visible(True)
         # update aif curve
         curve = self._volume.getMean(self._roi, c=None)
+        # noinspection PyTypeChecker
         self._lines['aif'].set_ydata(curve)
         self._lines['aif'].set_visible(True)
         self._canvas.draw()
@@ -488,6 +679,7 @@ class DialogArterialInputFunction(QDialog):
         # update aif curve
         if not self._roi.isEmptyArray():
             curve = self._volume.getMean(self._roi, c=None)
+            # noinspection PyTypeChecker
             self._lines['aif'].set_ydata(curve)
         else: self._lines['aif'].set_visible(False)
         self._canvas.draw()

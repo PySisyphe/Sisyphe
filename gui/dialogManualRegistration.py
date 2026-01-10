@@ -53,7 +53,7 @@ class DialogManualRegistration(QDialog):
 
     QDialog -> DialogManualRegistration
 
-    Last revision: 08/03/2025
+    Last revision: 16/12/2025
     """
 
     # Special method
@@ -121,9 +121,16 @@ class DialogManualRegistration(QDialog):
         # Init default dialog buttons
 
         self._ok = QPushButton('Resample')
-        self._cancel = QPushButton('Exit')
-        self._cancel.setAutoDefault(True)
-        self._cancel.setDefault(True)
+        # < Revision 12/12/2025
+        # self._cancel = QPushButton('Exit')
+        self._cancel = QPushButton('Close')
+        # Revision 12/12/2025 >
+        # < Revision 16/12/2025
+        # self._cancel.setAutoDefault(True)
+        # self._cancel.setDefault(True)
+        self._ok.setAutoDefault(True)
+        self._ok.setDefault(True)
+        # Revision 16/12/2025 >
         self._interpolator = QComboBox(parent=self)
         settings = SisypheFunctionsSettings()
         items = settings.getFieldValue('Resample', 'Interpolator')
@@ -221,8 +228,12 @@ class DialogManualRegistration(QDialog):
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.addStretch()
-        layout.addWidget(self._ok)
+        # < Revision 16/12/2025
+        # layout.addWidget(self._ok)
+        # layout.addWidget(self._cancel)
         layout.addWidget(self._cancel)
+        layout.addWidget(self._ok)
+        # Revision 16/12/2025 >
         self._layout.addLayout(layout)
 
         # Qt Signals

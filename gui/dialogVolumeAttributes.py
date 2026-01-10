@@ -17,6 +17,9 @@ from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QComboBox
 from PyQt5.QtWidgets import QDateEdit
 from PyQt5.QtWidgets import QDoubleSpinBox
+# < Revision 05/12/2025
+from PyQt5.QtWidgets import QCheckBox
+# Revision 05/12/2025 >
 from PyQt5.QtWidgets import QPushButton
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
@@ -128,6 +131,14 @@ class DialogVolumeAttributes(QDialog):
         self._size.setReadOnly(True)
         self.adjustSize()
         # Spacing
+        # < Revision 25/12/2025
+        self._unlocksp = QCheckBox()
+        self._unlocksp.setChecked(True)
+        self._unlocksp.setToolTip('Lock/unlock spacing.\n'
+                                  'Locked spacing is not copied.')
+        # noinspection PyUnresolvedReferences
+        self._unlocksp.toggled.connect(self._unlockSpacing)
+        # Revision 25/12/2025 >
         self._spacingx = QDoubleSpinBox(self)
         self._spacingx.setSingleStep(0.01)
         self._spacingx.setMinimum(0.1)
@@ -136,6 +147,7 @@ class DialogVolumeAttributes(QDialog):
         self._spacingx.adjustSize()
         self._spacingx.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
         self._spacingx.setAlignment(Qt.AlignCenter)
+        self._spacingx.setEnabled(False)
         self._spacingy = QDoubleSpinBox(self)
         self._spacingy.setSingleStep(0.01)
         self._spacingy.setMinimum(0.1)
@@ -144,6 +156,7 @@ class DialogVolumeAttributes(QDialog):
         self._spacingy.adjustSize()
         self._spacingy.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
         self._spacingy.setAlignment(Qt.AlignCenter)
+        self._spacingy.setEnabled(False)
         self._spacingz = QDoubleSpinBox(self)
         self._spacingz.setSingleStep(0.01)
         self._spacingz.setMinimum(0.1)
@@ -152,12 +165,24 @@ class DialogVolumeAttributes(QDialog):
         self._spacingz.adjustSize()
         self._spacingz.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
         self._spacingz.setAlignment(Qt.AlignCenter)
+        self._spacingz.setEnabled(False)
         self._lspacing = QHBoxLayout()
         self._lspacing.setSpacing(5)
+        # < Revision 25/12/2025
+        self._lspacing.addWidget(self._unlocksp)
+        # Revision 25/12/2025 >
         self._lspacing.addWidget(self._spacingx)
         self._lspacing.addWidget(self._spacingy)
         self._lspacing.addWidget(self._spacingz)
         # Origin
+        # < Revision 25/12/2025
+        self._unlocko = QCheckBox()
+        self._unlocko.setChecked(True)
+        self._unlocko.setToolTip('Lock/unlock origin.\n'
+                                 'Locked origin is not copied.')
+        # noinspection PyUnresolvedReferences
+        self._unlocko.toggled.connect(self._unlockOrigin)
+        # Revision 25/12/2025 >
         self._originx = QDoubleSpinBox(self)
         self._originx.setSingleStep(0.1)
         self._originx.setMinimum(-512.0)
@@ -166,6 +191,7 @@ class DialogVolumeAttributes(QDialog):
         self._originx.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
         self._originx.setSuffix(' mm')
         self._originx.setAlignment(Qt.AlignCenter)
+        self._originx.setEnabled(False)
         self._originy = QDoubleSpinBox(self)
         self._originy.setSingleStep(0.1)
         self._originy.setMinimum(-512.0)
@@ -174,6 +200,7 @@ class DialogVolumeAttributes(QDialog):
         self._originy.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
         self._originy.setSuffix(' mm')
         self._originy.setAlignment(Qt.AlignCenter)
+        self._originy.setEnabled(False)
         self._originz = QDoubleSpinBox(self)
         self._originz.setSingleStep(0.1)
         self._originz.setMinimum(-512.0)
@@ -182,11 +209,21 @@ class DialogVolumeAttributes(QDialog):
         self._originz.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
         self._originz.setSuffix(' mm')
         self._originz.setAlignment(Qt.AlignCenter)
+        self._originz.setEnabled(False)
         self._lorigin = QHBoxLayout()
         self._lorigin.setSpacing(5)
+        # < Revision 25/12/2025
+        self._lorigin.addWidget(self._unlocko)
+        # Revision 25/12/2025 >
         self._lorigin.addWidget(self._originx)
         self._lorigin.addWidget(self._originy)
         self._lorigin.addWidget(self._originz)
+        self._originx.setFixedWidth(150)
+        self._originy.setFixedWidth(150)
+        self._originz.setFixedWidth(150)
+        self._spacingx.setFixedWidth(150)
+        self._spacingy.setFixedWidth(150)
+        self._spacingz.setFixedWidth(150)
         # Datatype
         self._datatype = QLineEdit(self)
         self._datatype.setFixedWidth(200)
@@ -476,8 +513,14 @@ class DialogVolumeAttributes(QDialog):
         self._vol.getAcquisition().setFrame(self._frame.currentIndex())
         # noinspection PyTypeChecker
         self._vol.getAcquisition().setDateOfScan(self._dos.date().toString(Qt.ISODate))
-        self._vol.setSpacing(self._spacingx.value(), self._spacingy.value(), self._spacingz.value())
-        self._vol.setOrigin((self._originx.value(), self._originy.value(), self._originz.value()))
+        # < Revision 25/12/2025
+        # self._vol.setSpacing(self._spacingx.value(), self._spacingy.value(), self._spacingz.value())
+        # self._vol.setOrigin((self._originx.value(), self._originy.value(), self._originz.value()))
+        if not self._unlocksp.isChecked():
+            self._vol.setSpacing(self._spacingx.value(), self._spacingy.value(), self._spacingz.value())
+        if not self._unlocko.isChecked():
+            self._vol.setOrigin((self._originx.value(), self._originy.value(), self._originz.value()))
+        # < Revision 25/12/2025
         self._vol.setOrientation(self._orient.currentIndex())
         self._vol.setSlope(self._slope.value())
         self._vol.setIntercept(self._inter.value())
@@ -540,6 +583,40 @@ class DialogVolumeAttributes(QDialog):
                 self._unit.setCurrentText(SisypheAcquisition.PERC)
         elif self._modality.currentText() in ('NM', 'PT'): self._unit.setCurrentText(SisypheAcquisition.COUNT)
         else: self._unit.setCurrentText(SisypheAcquisition.NOUNIT)
+
+    # < Revision 25/12/2025
+    # add _unlockSpacing method
+    def _unlockSpacing(self):
+        if self._unlocksp.isChecked():
+            self._spacingx.setEnabled(False)
+            self._spacingy.setEnabled(False)
+            self._spacingz.setEnabled(False)
+            buff = self._vol.getSpacing()
+            self._spacingx.setValue(buff[0])
+            self._spacingy.setValue(buff[1])
+            self._spacingz.setValue(buff[2])
+        else:
+            self._spacingx.setEnabled(True)
+            self._spacingy.setEnabled(True)
+            self._spacingz.setEnabled(True)
+    # Revision 25/12/2025 >
+
+    # < Revision 25/12/2025
+    # add _unlockOrigin method
+    def _unlockOrigin(self):
+        if self._unlocko.isChecked():
+            self._originx.setEnabled(False)
+            self._originy.setEnabled(False)
+            self._originz.setEnabled(False)
+            buff = self._vol.getOrigin()
+            self._originx.setValue(buff[0])
+            self._originy.setValue(buff[1])
+            self._originz.setValue(buff[2])
+        else:
+            self._originx.setEnabled(True)
+            self._originy.setEnabled(True)
+            self._originz.setEnabled(True)
+    # Revision 25/12/2025 >
 
     # Public method
 

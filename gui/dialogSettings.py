@@ -170,7 +170,7 @@ class DialogSettings(QDialog):
 
     QDialog -> DialogSettings
 
-    Last revision: 05/12/2025
+    Last revision: 12/12/2025
     """
 
     # Class method
@@ -550,6 +550,12 @@ class DialogSettings(QDialog):
                     if v is not None: window.setViewportsOrientationMarkerVisibility(v)
                     v = widget.getParameterValue('Align')
                     if v is not None: window.setViewportsAlign(v)
+                elif c == 'Gemini':
+                    # < Revision 12/12/2025
+                    v = widget.getParameterValue('APIKey')
+                    if v is None: v = ''
+                    window.getROIToolsWidget().setGeminiAvailability(v != '')
+                    # Revision 12/12/2025 >
         self._apply.setEnabled(False)
 
     def accept(self):

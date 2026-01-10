@@ -316,6 +316,8 @@ class DialogEditID(QDialog):
     ~~~~~~~~~~~
 
     QDialog -> DialogEditID
+
+    Last revision: 16/12/2025
     """
 
     # Special method
@@ -407,6 +409,16 @@ class DialogEditID(QDialog):
 
     # Public method
 
+    # < Revision 16/12/2025
+    def getreferenceSelectionWidget(self):
+        return self._ref
+    # Revision 16/12/2025 >
+
+    # < Revision 16/12/2025
+    def getFilesSelectionWidget(self):
+        return self._files
+    # Revision 16/12/2025 >
+
     def execute(self):
         n = self._files.filenamesCount()
         if n > 0:
@@ -441,4 +453,7 @@ class DialogEditID(QDialog):
                         v.save()
             wait.close()
             self._ref.clear()
-            self._files.clear()
+            # < Revision 11/12/2025
+            # self._files.clear()
+            self._files.clearall()
+            # Revision 11/12/2025 >
