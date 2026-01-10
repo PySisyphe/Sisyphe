@@ -74,7 +74,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Mapping.html">Mapping menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Diffusion.html">Diffusion menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Window.html">Window menu</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Core API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="api_packages.html">Packages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_constants.html">Sisyphe.core.sisypheConstants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_database.html">Sisyphe.core.sisypheDatabase</a></li>
@@ -403,6 +403,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api_lut.html">Sisyphe.core.sisypheLUT</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_mesh.html">Sisyphe.core.sisypheMesh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_meshio.html">Sisyphe.core.sisypheMeshIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_pdf.html">Sisyphe.core.sisyphePDF</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_recent.html">Sisyphe.core.sisypheRecent</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_roi.html">Sisyphe.core.sisypheROI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_settings.html">Sisyphe.core.sisypheSettings</a></li>
@@ -415,6 +416,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api_xml.html">Sisyphe.core.sisypheXml</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../API2/index.html">Widgets &amp; dialogs API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_contact.html">Contact</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Versions.html">Version history</a></li>
@@ -434,7 +436,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="index.html">API</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Core API</a></li>
       <li class="breadcrumb-item active">Sisyphe.core.sisypheImageAttributes</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/API/api_imageattributes.rst.txt" rel="nofollow"> View page source</a>
@@ -1058,11 +1060,11 @@ i.e. parent attribute is not None.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImageAttributes.SisypheACPC.loadFromXML">
 <span class="sig-name descname"><span class="pre">loadFromXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageAttributes.SisypheACPC.loadFromXML" title="Link to this definition"></a></dt>
-<dd><p>Load current SisypheACPC instance attributes from xml file (.xacpc).</p>
+<dd><p>Load current SisypheACPC instance attributes from XML file (.xacpc).</p>
 <section id="id41">
 <h3>Parameters<a class="headerlink" href="#id41" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>filename<span class="classifier">str</span></dt><dd><p>xml file name (.xacpc)</p>
+<dt>filename<span class="classifier">str</span></dt><dd><p>XML file name (.xacpc)</p>
 </dd>
 </dl>
 </section>
@@ -1071,11 +1073,11 @@ i.e. parent attribute is not None.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImageAttributes.SisypheACPC.parseXML">
 <span class="sig-name descname"><span class="pre">parseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageAttributes.SisypheACPC.parseXML" title="Link to this definition"></a></dt>
-<dd><p>Read current SisypheACPC instance attributes from xml instance.</p>
+<dd><p>Read current SisypheACPC instance attributes from XML instance.</p>
 <section id="id42">
 <h3>Parameters<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -1084,11 +1086,11 @@ i.e. parent attribute is not None.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImageAttributes.SisypheACPC.saveToXML">
 <span class="sig-name descname"><span class="pre">saveToXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageAttributes.SisypheACPC.saveToXML" title="Link to this definition"></a></dt>
-<dd><p>Save current SisypheACPC instance attributes to xml file (.xacpc).</p>
+<dd><p>Save current SisypheACPC instance attributes to XML file (.xacpc).</p>
 <section id="id43">
 <h3>Parameters<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>filename<span class="classifier">str</span></dt><dd><p>xml file name (.xacpc)</p>
+<dt>filename<span class="classifier">str</span></dt><dd><p>XML file name (.xacpc)</p>
 </dd>
 </dl>
 </section>
@@ -1168,7 +1170,7 @@ instance.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImageAttributes.SisypheAcquisition">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageAttributes.</span></span><span class="sig-name descname"><span class="pre">SisypheAcquisition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">date</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">datetime.date(2025,</span> <span class="pre">10,</span> <span class="pre">16)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'None'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheImageAttributes.SisypheAcquisition" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheImageAttributes.</span></span><span class="sig-name descname"><span class="pre">SisypheAcquisition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">date</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">datetime.date(2026,</span> <span class="pre">1,</span> <span class="pre">10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'None'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheImageAttributes.SisypheAcquisition" title="Link to this definition"></a></dt>
 <dd><section id="id49">
 <h2>Description<a class="headerlink" href="#id49" title="Link to this heading"></a></h2>
 <p>Class to manage acquisition attributes of images: modality, sequence, date of scan, frame, scalar value unit,
@@ -2121,7 +2123,7 @@ self == other -&gt; bool</p>
 <section id="id119">
 <h3>Returns<a class="headerlink" href="#id119" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>bool</dt><dd><p>True if sequence is a grey matter map</p>
+<dt>bool</dt><dd><p>True if sequence is a gray matter map</p>
 </dd>
 </dl>
 </section>
@@ -2315,7 +2317,7 @@ coeff. map.</p>
 <section id="id134">
 <h3>Returns<a class="headerlink" href="#id134" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>bool</dt><dd><p>True if sequence is a grey matter map</p>
+<dt>bool</dt><dd><p>True if sequence is a gray matter map</p>
 </dd>
 </dl>
 </section>
@@ -2476,7 +2478,7 @@ statistical maps.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImageAttributes.SisypheAcquisition.setDateOfScan">
-<span class="sig-name descname"><span class="pre">setDateOfScan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">date</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">datetime.datetime(2025,</span> <span class="pre">10,</span> <span class="pre">16,</span> <span class="pre">10,</span> <span class="pre">3,</span> <span class="pre">35,</span> <span class="pre">118414)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'%Y-%m-%d'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageAttributes.SisypheAcquisition.setDateOfScan" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">setDateOfScan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">date</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">datetime.datetime(2026,</span> <span class="pre">1,</span> <span class="pre">10,</span> <span class="pre">18,</span> <span class="pre">26,</span> <span class="pre">41,</span> <span class="pre">298406)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'%Y-%m-%d'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageAttributes.SisypheAcquisition.setDateOfScan" title="Link to this definition"></a></dt>
 <dd><p>Set the date of scan attribute of the current SisypheAcquisition instance.</p>
 <section id="id145">
 <h3>Parameters<a class="headerlink" href="#id145" title="Link to this heading"></a></h3>
@@ -3162,13 +3164,13 @@ Last revision: 13/12/2024</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImageAttributes.SisypheDisplay.createXML">
 <span class="sig-name descname"><span class="pre">createXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">currentnode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Element</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageAttributes.SisypheDisplay.createXML" title="Link to this definition"></a></dt>
-<dd><p>Write current SisypheDisplay instance attributes to xml instance.</p>
+<dd><p>Write current SisypheDisplay instance attributes to XML instance.</p>
 <section id="id161">
 <h3>Parameters<a class="headerlink" href="#id161" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
-<dt>currentnode<span class="classifier">minidom.Element</span></dt><dd><p>xml root node</p>
+<dt>currentnode<span class="classifier">minidom.Element</span></dt><dd><p>XML root node</p>
 </dd>
 </dl>
 </section>
@@ -3374,11 +3376,11 @@ i.e. parent attribute is not None.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImageAttributes.SisypheDisplay.loadFromXML">
 <span class="sig-name descname"><span class="pre">loadFromXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageAttributes.SisypheDisplay.loadFromXML" title="Link to this definition"></a></dt>
-<dd><p>Load current SisypheDisplay instance attributes from xml file (.xdisplay).</p>
+<dd><p>Load current SisypheDisplay instance attributes from XML file (.xdisplay).</p>
 <section id="id177">
 <h3>Parameters<a class="headerlink" href="#id177" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>filename<span class="classifier">str</span></dt><dd><p>xml file name (.xdisplay)</p>
+<dt>filename<span class="classifier">str</span></dt><dd><p>XML file name (.xdisplay)</p>
 </dd>
 </dl>
 </section>
@@ -3387,11 +3389,11 @@ i.e. parent attribute is not None.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImageAttributes.SisypheDisplay.parseXML">
 <span class="sig-name descname"><span class="pre">parseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageAttributes.SisypheDisplay.parseXML" title="Link to this definition"></a></dt>
-<dd><p>Read current SisypheDisplay instance attributes from xml instance.</p>
+<dd><p>Read current SisypheDisplay instance attributes from XML instance.</p>
 <section id="id178">
 <h3>Parameters<a class="headerlink" href="#id178" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -3400,11 +3402,11 @@ i.e. parent attribute is not None.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImageAttributes.SisypheDisplay.saveToXML">
 <span class="sig-name descname"><span class="pre">saveToXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageAttributes.SisypheDisplay.saveToXML" title="Link to this definition"></a></dt>
-<dd><p>Save current SisypheDislpay instance attributes to xml file (.xdisplay).</p>
+<dd><p>Save current SisypheDislpay instance attributes to XML file (.xdisplay).</p>
 <section id="id179">
 <h3>Parameters<a class="headerlink" href="#id179" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>filename<span class="classifier">str</span></dt><dd><p>xml file name (.xdisplay)</p>
+<dt>filename<span class="classifier">str</span></dt><dd><p>XML file name (.xdisplay)</p>
 </dd>
 </dl>
 </section>
@@ -3977,11 +3979,11 @@ calculated from parameter.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImageAttributes.SisypheIdentity.loadFromXML">
 <span class="sig-name descname"><span class="pre">loadFromXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageAttributes.SisypheIdentity.loadFromXML" title="Link to this definition"></a></dt>
-<dd><p>Load current SisypheIdentity instance attributes from xml file (.xidentity).</p>
+<dd><p>Load current SisypheIdentity instance attributes from XML file (.xidentity).</p>
 <section id="id220">
 <h3>Parameters<a class="headerlink" href="#id220" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>filename<span class="classifier">str</span></dt><dd><p>xml file name (.xidentity)</p>
+<dt>filename<span class="classifier">str</span></dt><dd><p>XML file name (.xidentity)</p>
 </dd>
 </dl>
 </section>
@@ -3990,11 +3992,11 @@ calculated from parameter.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImageAttributes.SisypheIdentity.parseXML">
 <span class="sig-name descname"><span class="pre">parseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageAttributes.SisypheIdentity.parseXML" title="Link to this definition"></a></dt>
-<dd><p>Read current SisypheIdentity instance attributes from xml instance.</p>
+<dd><p>Read current SisypheIdentity instance attributes from XML instance.</p>
 <section id="id221">
 <h3>Parameters<a class="headerlink" href="#id221" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -4016,11 +4018,11 @@ calculated from parameter.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheImageAttributes.SisypheIdentity.saveToXML">
 <span class="sig-name descname"><span class="pre">saveToXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheImageAttributes.SisypheIdentity.saveToXML" title="Link to this definition"></a></dt>
-<dd><p>Save current SisypheIdentity instance attributes to xml file (.xidentity).</p>
+<dd><p>Save current SisypheIdentity instance attributes to XML file (.xidentity).</p>
 <section id="id223">
 <h3>Parameters<a class="headerlink" href="#id223" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>filename<span class="classifier">str</span></dt><dd><p>xml file name (.xidentity)</p>
+<dt>filename<span class="classifier">str</span></dt><dd><p>XML file name (.xidentity)</p>
 </dd>
 </dl>
 </section>

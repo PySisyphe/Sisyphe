@@ -74,7 +74,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Mapping.html">Mapping menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Diffusion.html">Diffusion menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Window.html">Window menu</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Core API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="api_packages.html">Packages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_constants.html">Sisyphe.core.sisypheConstants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_database.html">Sisyphe.core.sisypheDatabase</a></li>
@@ -249,6 +249,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api_lut.html">Sisyphe.core.sisypheLUT</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_mesh.html">Sisyphe.core.sisypheMesh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_meshio.html">Sisyphe.core.sisypheMeshIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_pdf.html">Sisyphe.core.sisyphePDF</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_recent.html">Sisyphe.core.sisypheRecent</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_roi.html">Sisyphe.core.sisypheROI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_settings.html">Sisyphe.core.sisypheSettings</a></li>
@@ -261,6 +262,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api_xml.html">Sisyphe.core.sisypheXml</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../API2/index.html">Widgets &amp; dialogs API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_contact.html">Contact</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Versions.html">Version history</a></li>
@@ -280,7 +282,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="index.html">API</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Core API</a></li>
       <li class="breadcrumb-item active">Sisyphe.core.sisypheDicom</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/API/api_dicom.rst.txt" rel="nofollow"> View page source</a>
@@ -867,7 +869,7 @@ Last revision: 03/09/2025</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDicom.ExportToDicom.execute">
-<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DialogWait</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.ExportToDicom.execute" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.ExportToDicom.execute" title="Link to this definition"></a></dt>
 <dd><p>Run PySisyphe volume (.xvol) to Dicom conversion.</p>
 <section id="id39">
 <h3>Parameters<a class="headerlink" href="#id39" title="Link to this heading"></a></h3>
@@ -1048,7 +1050,7 @@ volume.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDicom.ExportToRTStruct.execute">
-<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DialogWait</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.ExportToRTStruct.execute" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.ExportToRTStruct.execute" title="Link to this definition"></a></dt>
 <dd><p>Run PySisyphe ROI (.xroi) to Dicom RTSTRUCT conversion.</p>
 <section id="id53">
 <h3>Parameters<a class="headerlink" href="#id53" title="Link to this heading"></a></h3>
@@ -1200,7 +1202,7 @@ Last revision: 07/03/2025</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDicom.ImportFromDicom.execute">
-<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DialogWait</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getdirs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.ImportFromDicom.execute" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getdirs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.ImportFromDicom.execute" title="Link to this definition"></a></dt>
 <dd><p>Run Dicom to PySisyphe volume (.xvol) conversion.</p>
 <section id="id65">
 <h3>Parameters<a class="headerlink" href="#id65" title="Link to this heading"></a></h3>
@@ -1363,7 +1365,7 @@ volume origin and direction attributes to default</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDicom.ImportFromDicom.saveReferenceVolume">
-<span class="sig-name descname"><span class="pre">saveReferenceVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DialogWait</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.ImportFromDicom.saveReferenceVolume" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">saveReferenceVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.ImportFromDicom.saveReferenceVolume" title="Link to this definition"></a></dt>
 <dd><p>Save converted PySisyphe volume.</p>
 <section id="id78">
 <h3>Parameters<a class="headerlink" href="#id78" title="Link to this heading"></a></h3>
@@ -1461,7 +1463,7 @@ Dicom fields used:</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDicom.ImportFromRTDose.execute">
-<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DialogWait</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getdirs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolumeCollection" title="Sisyphe.core.sisypheVolume.SisypheVolumeCollection"><span class="pre">SisypheVolumeCollection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.ImportFromRTDose.execute" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getdirs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolumeCollection" title="Sisyphe.core.sisypheVolume.SisypheVolumeCollection"><span class="pre">SisypheVolumeCollection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.ImportFromRTDose.execute" title="Link to this definition"></a></dt>
 <dd><p>Run Dicom RTDose to PySisyphe volume (.xvol) conversion.</p>
 <section id="id85">
 <h3>Parameters<a class="headerlink" href="#id85" title="Link to this heading"></a></h3>
@@ -1578,7 +1580,7 @@ Dicom fields used:</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDicom.ImportFromRTStruct.execute">
-<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DialogWait</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getdirs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROICollection" title="Sisyphe.core.sisypheROI.SisypheROICollection"><span class="pre">SisypheROICollection</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.ImportFromRTStruct.execute" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getdirs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROICollection" title="Sisyphe.core.sisypheROI.SisypheROICollection"><span class="pre">SisypheROICollection</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.ImportFromRTStruct.execute" title="Link to this definition"></a></dt>
 <dd><p>Run Dicom RTStruct to PySisyphe roi (.xroi) conversion.</p>
 <section id="id94">
 <h3>Parameters<a class="headerlink" href="#id94" title="Link to this heading"></a></h3>
@@ -2145,7 +2147,7 @@ DICOM modality format is two-chars str for images.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDicom.getDiffusionParametersFromDicom">
-<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDicom.</span></span><span class="sig-name descname"><span class="pre">getDiffusionParametersFromDicom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict[slice(&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">None),</span> <span class="pre">slice(&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">list[float],</span> <span class="pre">None)]</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.getDiffusionParametersFromDicom" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDicom.</span></span><span class="sig-name descname"><span class="pre">getDiffusionParametersFromDicom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.getDiffusionParametersFromDicom" title="Link to this definition"></a></dt>
 <dd><p>Get diffusion attributes B-value and gradient direction in DICOM file.</p>
 <section id="id139">
 <h2>Parameters<a class="headerlink" href="#id139" title="Link to this heading"></a></h2>
@@ -2157,7 +2159,7 @@ DICOM modality format is two-chars str for images.</p>
 <section id="id140">
 <h2>Returns<a class="headerlink" href="#id140" title="Link to this heading"></a></h2>
 <dl class="simple">
-<dt>dict[str: float, str: list[float]]</dt><dd><dl class="simple">
+<dt>dict[str, float | list[float]]</dt><dd><dl class="simple">
 <dt>Key/Value</dt><dd><ul class="simple">
 <li><p>‘bval’: float, B-value</p></li>
 <li><p>‘bvec’: list[float], gradient direction vector</p></li>
@@ -2199,7 +2201,7 @@ DICOM modality format is two-chars str for images.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDicom.loadBVal">
-<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDicom.</span></span><span class="sig-name descname"><span class="pre">loadBVal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'txt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict[slice(&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">None)]</span> <span class="pre">|</span> <span class="pre">~numpy.ndarray</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.loadBVal" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDicom.</span></span><span class="sig-name descname"><span class="pre">loadBVal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'txt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.loadBVal" title="Link to this definition"></a></dt>
 <dd><p>Load gradient B-values.</p>
 <section id="id143">
 <h2>Parameters<a class="headerlink" href="#id143" title="Link to this heading"></a></h2>
@@ -2218,7 +2220,7 @@ DICOM modality format is two-chars str for images.</p>
 <section id="id144">
 <h2>Returns<a class="headerlink" href="#id144" title="Link to this heading"></a></h2>
 <dl class="simple">
-<dt>ndarray | dict[str: float]</dt><dd><dl class="simple">
+<dt>ndarray | dict[str, float]</dt><dd><dl class="simple">
 <dt>if numpy parameter is False:</dt><dd><ul class="simple">
 <li><p>key str, diffusion weighted image file name (.xvol) or index number</p></li>
 <li><p>value float, B-value</p></li>
@@ -2232,7 +2234,7 @@ DICOM modality format is two-chars str for images.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDicom.loadBVec">
-<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDicom.</span></span><span class="sig-name descname"><span class="pre">loadBVec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'txtbydim'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict[slice(&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">[&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;],</span> <span class="pre">None)]</span> <span class="pre">|</span> <span class="pre">~numpy.ndarray</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.loadBVec" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDicom.</span></span><span class="sig-name descname"><span class="pre">loadBVec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'txtbydim'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.loadBVec" title="Link to this definition"></a></dt>
 <dd><p>Load gradient direction vector.</p>
 <section id="id145">
 <h2>Parameters<a class="headerlink" href="#id145" title="Link to this heading"></a></h2>
@@ -2240,7 +2242,7 @@ DICOM modality format is two-chars str for images.</p>
 <dt>filename<span class="classifier">str</span></dt><dd><p>file name (.bvec, .xbvec or .txt)</p>
 </dd>
 <dt>format<span class="classifier">str</span></dt><dd><ul class="simple">
-<li><p>‘xml’, xml format &lt;bvector file=filename&gt;v0[0] v0[1] v0[2]&lt;/bvector&gt;</p></li>
+<li><p>‘xml’, XML format &lt;bvector file=filename&gt;v0[0] v0[1] v0[2]&lt;/bvector&gt;</p></li>
 <li><p>‘txtbyvec’, txt format, vector order, v0[0] -&gt; v0[1] -&gt; v0[2] -&gt; … -&gt; vn[0] -&gt; vn[1] -&gt; vn[2]</p></li>
 <li><p>‘txtbydim’, txt format, dimension order, v0[0] -&gt; … -&gt; vn[0], v0[1] -&gt; … -&gt; vn[1], v0[2] -&gt; … -&gt; vn[2]</p></li>
 </ul>
@@ -2252,7 +2254,7 @@ DICOM modality format is two-chars str for images.</p>
 <section id="id146">
 <h2>Returns<a class="headerlink" href="#id146" title="Link to this heading"></a></h2>
 <dl class="simple">
-<dt>ndarray | dict[str: [float, float, float]]</dt><dd><dl class="simple">
+<dt>ndarray | dict[str, list[float]]</dt><dd><dl class="simple">
 <dt>if numpy parameter is False:</dt><dd><ul class="simple">
 <li><p>key str, diffusion weighted image file name (.xvol) or index number,</p></li>
 <li><p>value [float, float, float], gradient direction vector</p></li>
@@ -2310,20 +2312,20 @@ ex: ‘../image_01.xvol’ -&gt; ‘../image.xvol’</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDicom.saveBVal">
-<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDicom.</span></span><span class="sig-name descname"><span class="pre">saveBVal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">filename:</span> <span class="pre">str,</span> <span class="pre">bval:</span> <span class="pre">dict[slice(&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">None)],</span> <span class="pre">format:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'txt'</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.saveBVal" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDicom.</span></span><span class="sig-name descname"><span class="pre">saveBVal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'txt'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.saveBVal" title="Link to this definition"></a></dt>
 <dd><p>Save gradient B-values.</p>
 <section id="id151">
 <h2>Parameters<a class="headerlink" href="#id151" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>file name (.bval, .xbval or .txt)</p>
 </dd>
-<dt>bval<span class="classifier">dict[str: float]</span></dt><dd><ul class="simple">
+<dt>bval<span class="classifier">dict[str, float]</span></dt><dd><ul class="simple">
 <li><p>key str, diffusion weighted image file name (.xvol) or index number</p></li>
 <li><p>value float, B value</p></li>
 </ul>
 </dd>
 <dt>format<span class="classifier">str</span></dt><dd><ul class="simple">
-<li><p>‘xml’, xml format &lt;bvalue file=filename&gt;v&lt;/bvector&gt;</p></li>
+<li><p>‘xml’, XML format &lt;bvalue file=filename&gt;v&lt;/bvector&gt;</p></li>
 <li><p>‘txt’, txt format, v[0] -&gt; v[1] … -&gt; v[n]</p></li>
 </ul>
 </dd>
@@ -2333,20 +2335,20 @@ ex: ‘../image_01.xvol’ -&gt; ‘../image.xvol’</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDicom.saveBVec">
-<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDicom.</span></span><span class="sig-name descname"><span class="pre">saveBVec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">filename:</span> <span class="pre">str,</span> <span class="pre">bvec:</span> <span class="pre">dict[slice(&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">[&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;],</span> <span class="pre">None)],</span> <span class="pre">format='txtbydim'</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.saveBVec" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDicom.</span></span><span class="sig-name descname"><span class="pre">saveBVec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bvec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'txtbydim'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDicom.saveBVec" title="Link to this definition"></a></dt>
 <dd><p>Save gradient direction vector.</p>
 <section id="id152">
 <h2>Parameters<a class="headerlink" href="#id152" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>file name (.bvec, .xbvec or .txt)</p>
 </dd>
-<dt>bvec<span class="classifier">dict[str: [float, float, float]],</span></dt><dd><ul class="simple">
+<dt>bvec<span class="classifier">dict[str, list[float]],</span></dt><dd><ul class="simple">
 <li><p>key str, diffusion weighted image file name (.xvol) or index number</p></li>
 <li><p>value [float, float, float], gradient direction vector</p></li>
 </ul>
 </dd>
 <dt>format<span class="classifier">str</span></dt><dd><ul class="simple">
-<li><p>‘xml’, xml format &lt;bvector file=filename&gt;v0[0] v0[1] v0[2]&lt;/bvector&gt;</p></li>
+<li><p>‘xml’, XML format &lt;bvector file=filename&gt;v0[0] v0[1] v0[2]&lt;/bvector&gt;</p></li>
 <li><p>‘txtbyvec’, txt format, vector order, v0[0] -&gt; v0[1] -&gt; v0[2] -&gt; … -&gt; vn[0] -&gt; vn[1] -&gt; vn[2]</p></li>
 <li><p>‘txtbydim’, txt format, dimension order, v0[0] -&gt; … -&gt; vn[0], v0[1] -&gt; … -&gt; vn[1], v0[2] -&gt; … -&gt; vn[2]</p></li>
 </ul>

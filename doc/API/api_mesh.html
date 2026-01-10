@@ -74,7 +74,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Mapping.html">Mapping menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Diffusion.html">Diffusion menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Window.html">Window menu</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Core API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="api_packages.html">Packages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_constants.html">Sisyphe.core.sisypheConstants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_database.html">Sisyphe.core.sisypheDatabase</a></li>
@@ -312,6 +312,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api_meshio.html">Sisyphe.core.sisypheMeshIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_pdf.html">Sisyphe.core.sisyphePDF</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_recent.html">Sisyphe.core.sisypheRecent</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_roi.html">Sisyphe.core.sisypheROI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_settings.html">Sisyphe.core.sisypheSettings</a></li>
@@ -324,6 +325,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api_xml.html">Sisyphe.core.sisypheXml</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../API2/index.html">Widgets &amp; dialogs API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_contact.html">Contact</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Versions.html">Version history</a></li>
@@ -343,7 +345,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="index.html">API</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Core API</a></li>
       <li class="breadcrumb-item active">Sisyphe.core.sisypheMesh</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/API/api_mesh.rst.txt" rel="nofollow"> View page source</a>
@@ -404,11 +406,11 @@ Last revision: 22/03/2025</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheMesh.SisypheMesh.ParseXML">
 <span class="sig-name descname"><span class="pre">ParseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheMesh.SisypheMesh.ParseXML" title="Link to this definition"></a></dt>
 <dd><p>Read the current SisypheMesh instance attributes
-from xml document instance.</p>
+from XML document instance.</p>
 <section id="parameters">
 <h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -618,7 +620,7 @@ vtkActor parameter (deep copy).</p>
 </dd>
 <dt>dz<span class="classifier">float</span></dt><dd><p>length of the cube in the z-direction (mm)</p>
 </dd>
-<dt>p<span class="classifier">list[float, float, float]</span></dt><dd><p>position coordinates</p>
+<dt>p<span class="classifier">list[float]</span></dt><dd><p>position coordinates</p>
 </dd>
 </dl>
 </section>
@@ -695,9 +697,9 @@ vtkActor parameter (deep copy).</p>
 <section id="id17">
 <h3>Parameters<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>p1<span class="classifier">list[float, float, float]</span></dt><dd><p>first point coordinates</p>
+<dt>p1<span class="classifier">list[float]</span></dt><dd><p>first point coordinates</p>
 </dd>
-<dt>p2<span class="classifier">list[float, float, float]</span></dt><dd><p>second point coordinates</p>
+<dt>p2<span class="classifier">list[float]</span></dt><dd><p>second point coordinates</p>
 </dd>
 <dt>d<span class="classifier">float</span></dt><dd><p>line width (mm)</p>
 </dd>
@@ -750,7 +752,7 @@ vtkActor parameter (deep copy).</p>
 <dl class="simple">
 <dt>r<span class="classifier">float</span></dt><dd><p>sphere radius (mm)</p>
 </dd>
-<dt>p<span class="classifier">list[float, float, float]</span></dt><dd><p>center coordinates</p>
+<dt>p<span class="classifier">list[float]</span></dt><dd><p>center coordinates</p>
 </dd>
 <dt>res<span class="classifier">int</span></dt><dd><p>set the number of points in the latitude and longitude directions (default 64)</p>
 </dd>
@@ -765,9 +767,9 @@ vtkActor parameter (deep copy).</p>
 <section id="id20">
 <h3>Parameters<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>p1<span class="classifier">list[float, float, float]</span></dt><dd><p>first point coordinates</p>
+<dt>p1<span class="classifier">list[float]</span></dt><dd><p>first point coordinates</p>
 </dd>
-<dt>p2<span class="classifier">list[float, float, float]</span></dt><dd><p>second point coordinates</p>
+<dt>p2<span class="classifier">list[float]</span></dt><dd><p>second point coordinates</p>
 </dd>
 <dt>r<span class="classifier">float</span></dt><dd><p>tube radius (mm)</p>
 </dd>
@@ -784,9 +786,9 @@ vtkActor parameter (deep copy).</p>
 <section id="id21">
 <h3>Parameters<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
-<dt>currentnode<span class="classifier">minidom.Element</span></dt><dd><p>xml root node</p>
+<dt>currentnode<span class="classifier">minidom.Element</span></dt><dd><p>XML root node</p>
 </dd>
 </dl>
 </section>
@@ -1013,9 +1015,9 @@ All rotations take place around this point.</p>
 <section id="id37">
 <h3>Returns<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>tuple[float, list[float, float, float]]</dt><dd><ul class="simple">
+<dt>tuple[float, list[float]]</dt><dd><ul class="simple">
 <li><p>float, distance between p and surface of the mesh</p></li>
-<li><p>list[float, float, float], coordinates of the closest surface point of the mesh</p></li>
+<li><p>list[float], coordinates of the closest surface point of the mesh</p></li>
 </ul>
 </dd>
 </dl>
@@ -2341,7 +2343,7 @@ the file name attribute of a SisypheVolume parameter.</p>
 <dl class="simple">
 <dt>idx<span class="classifier">int</span></dt><dd><p>point index in the vtkPolyData</p>
 </dd>
-<dt>p<span class="classifier">tuple[float, float, float] | list[float, float, float]</span></dt><dd><p>point coordinates</p>
+<dt>p<span class="classifier">tuple[float, float, float] | list[float]</span></dt><dd><p>point coordinates</p>
 </dd>
 </dl>
 </section>
@@ -2349,7 +2351,7 @@ the file name attribute of a SisypheVolume parameter.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheMesh.SisypheMesh.setPointScalarColorFromVolume">
-<span class="sig-name descname"><span class="pre">setPointScalarColorFromVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DialogWait</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheMesh.SisypheMesh.setPointScalarColorFromVolume" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">setPointScalarColorFromVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheMesh.SisypheMesh.setPointScalarColorFromVolume" title="Link to this definition"></a></dt>
 <dd><p>Calculate scalar values associated to each vtkPolydata point from scalars values in the reference SisypheVolume
 image array.</p>
 <p>Several scalar values are accumulated for each vtkPolydata point, the first being the scalar value in the
@@ -3054,7 +3056,7 @@ None, removes and returns the last element.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheMesh.SisypheMeshCollection.resample">
-<span class="sig-name descname"><span class="pre">resample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform" title="Sisyphe.core.sisypheTransform.SisypheTransform"><span class="pre">SisypheTransform</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialog</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DialogWait</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheMesh.SisypheMeshCollection.resample" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">resample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform" title="Sisyphe.core.sisypheTransform.SisypheTransform"><span class="pre">SisypheTransform</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialog</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheMesh.SisypheMeshCollection.resample" title="Link to this definition"></a></dt>
 <dd><p>Apply an affine geometric transformation to all the SisypheMesh elements of the current SisypheMeshCollection
 instance container. This method performs a resampling of the vtkPolyData points.</p>
 <section id="id177">
@@ -3084,7 +3086,7 @@ instance container. This method performs a resampling of the vtkPolyData points.
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheMesh.SisypheMeshCollection.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DialogWait</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheMesh.SisypheMeshCollection.save" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheMesh.SisypheMeshCollection.save" title="Link to this definition"></a></dt>
 <dd><p>Iteratively save SisypheMesh elements in the current SisypheMeshCollection instance container.</p>
 </dd></dl>
 
