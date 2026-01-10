@@ -884,12 +884,16 @@ def regressionIntensityMatching(img: SisypheVolume,
             mask = mask.getNumpy().flatten()
             src = expand_dims(img.getNumpy().flatten()[where(mask != 0)], axis=1)
             ref = expand_dims(rimg.getNumpy().flatten()[where(mask != 0)], axis=1)
+        # < Revision 25/12/2025
+        dtype = src.dtype
+        # Revision 25/12/2025 >
         poly = PolynomialFeatures(degree=order)
         srcpoly = poly.fit_transform(src)
         model = LinearRegression()
         model.fit(srcpoly, ref)
         if mask is not None:
-            srcpoly = poly.fit_transform(expand_dims(img.getNumpy().flatten().flatten(), axis=1))
+            # srcpoly = poly.fit_transform(expand_dims(img.getNumpy().flatten().flatten(), axis=1))
+            srcpoly = poly.fit_transform(expand_dims(img.getNumpy().flatten(), axis=1))
         matched = model.predict(srcpoly)
         if truncate:
             # noinspection PyArgumentList
@@ -903,7 +907,11 @@ def regressionIntensityMatching(img: SisypheVolume,
         matched = matched.reshape(img.getNumpy().shape)
         # Revision 29/11/2024 >
         r = SisypheVolume()
-        r.copyFromNumpyArray(matched, spacing=img.getSpacing())
+        # < Revision 25/12/2025
+        # cast to original datatype
+        # r.copyFromNumpyArray(matched, spacing=img.getSpacing())
+        r.copyFromNumpyArray(matched.astype(dtype), spacing=img.getSpacing())
+        # Revision 25/12/2025 >
         r.copyPropertiesFrom(img, slope=False)
         return r
     else: raise ValueError('Source and reference images have not the same size.')

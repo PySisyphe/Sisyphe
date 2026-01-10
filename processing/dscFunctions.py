@@ -12,6 +12,8 @@ import cython
 
 from datetime import datetime
 
+from math import sqrt
+
 from numpy import e
 from numpy import abs
 from numpy import log
@@ -38,12 +40,29 @@ from numpy import convolve
 from numpy import unravel_index
 from numpy import nan_to_num
 from numpy import ndarray
+from numpy import float64
+from numpy import maximum
+from numpy import zeros_like
+from numpy import stack
+from numpy import pad
+from numpy import vstack
+from numpy import hstack
+from numpy import diff
+from numpy import diag
+from numpy import einsum
+from numpy import concatenate
+from numpy import cumsum
 from numpy.linalg import svd
 
 from typing import Union
 
 from scipy.special import gamma
+from scipy.linalg import svd
+from scipy.linalg import toeplitz
 from scipy.optimize import minimize
+from scipy.optimize import curve_fit
+from scipy.interpolate import interp1d
+from scipy.ndimage import gaussian_filter
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheVolume import SisypheVolumeCollection
@@ -57,7 +76,16 @@ __all__ = ['getArterialInputVoxels',
            'signalToContrastConcentration',
            'deconvolveContrastConcentration',
            'signalRecoveryMaps',
-           'dscMaps']
+           'dscMaps',
+           'gamma_variate',
+           'fit_gamma_variate',
+           'generate_ttp',
+           'generate_leakage',
+           'generate_perfusion_maps',
+           'oSVD',
+           'boxNLR',
+           'fit_boxNLR',
+           'dscMaps2']
 
 """
 functions
@@ -98,7 +126,7 @@ def getArterialInputVoxels(vols: list[SisypheVolume] | SisypheVolumeCollection |
     Returns
     -------
         tuple[SisypheVolume, list[float]]
-            - SisypheVolume: aif voxels, each voxel is labelled according to its sorting rank
+            - SisypheVolume: aif voxels, each voxel is labeled according to its sorting rank
             - list[float]: mean curve
     """
     if isinstance(vols, list):
@@ -116,6 +144,7 @@ def getArterialInputVoxels(vols: list[SisypheVolume] | SisypheVolumeCollection |
             mask = mask.cast('float32')
             # noinspection PyTypeChecker
             mask2 = (vargmin > (mmin // 2)).cast('float32')
+            # noinspection PyTypeChecker
             vargmin = (mmin - vargmin).cast('float32')
             vrange = vols.getComponentMean(slice(3)).cast('float32') - vols.getComponentMin().cast('float32')
             vparam = vrange * vargmin * mask * mask2
@@ -124,7 +153,7 @@ def getArterialInputVoxels(vols: list[SisypheVolume] | SisypheVolumeCollection |
             threshold = sort(vparam.getNumpy().flatten())[-n]
             vrange = vrange * (vparam >= threshold).cast('float32')
             # Sort aif voxels according to vrange
-            # Each voxel is labelled according to its sorting rank.
+            # Each voxel is labeled according to its sorting rank.
             vrange2 = vrange.getNumpy()
             idx = unravel_index(argsort(vrange2, axis=None)[::-1], shape=vrange2.shape)
             aifv = zeros(vrange2.shape)
@@ -270,6 +299,7 @@ def gammaVariateFitting(cc: ndarray,
     p0 = array([peak / 2, 1.0, 1.0, 1.0])
     # noinspection PyTypeChecker
     bnd = ((peak / 2, peak), (0.0, None), (1.0, 100.0), (1.0, 100.0))
+    # noinspection PyTypeChecker
     optim = minimize(func, p0,
                      args=[x, cc],
                      method=optim,
@@ -493,7 +523,7 @@ def signalRecoveryMaps(vols: SisypheVolume,
         SR and PSR maps
     """
     if wait is not None:
-        wait.setInformationText('SR/PSR maps processing...')
+        wait.setInformationText('Recovery maps processing...')
         wait.setProgressVisibility(False)
         wait.buttonVisibilityOff()
     n = baseline[1] - baseline[0] + 1
@@ -605,7 +635,7 @@ def dscMaps(vols: SisypheVolume,
     Returns
     -------
     dict[str, SisypheVolume]
-        perfusion maps, dict keys: 'cbf', 'cbv', 'mtt', 'lkv', 'ttp', 'ttb', 'sr', 'psr'
+        perfusion maps, dict keys: 'cbf', 'cbv', 'mtt', 'lkv', 'ttp', 'tmax', 'sr', 'psr'
     """
     r: dict[str, SisypheVolume] = dict()
     # signal to contrast concentration
@@ -629,7 +659,7 @@ def dscMaps(vols: SisypheVolume,
     
     - tissue-to-artery concentration scale factor ratio = 0.1369
     - x 1 / brain density rho, rho = 0.104 g / ml, rho = 0.0104 100 g / ml
-    - x (1 - Ha) / (1 - Ht) = 0.55 / 0.75
+    - x (1 - Ha) / (1 - Ht) = 0.55 / 0.75 = 0.73
     - hematocrit in large arterial Ha = 0.45, plasma in large arterial (1 - Ha) = 0.55
     - hematocrit in the tissue capillary bed Ht = 0.25, plasma in tissue capillary bed (1 - Ht) = 0.75
     - x 60, s to min conversion
@@ -806,4 +836,835 @@ def dscMaps(vols: SisypheVolume,
             r['lkv'].display.getLUT().setLut('inserm')
             r['lkv'].setFilename(vols.getFilename())
             r['lkv'].setFilenameSuffix('lkv')
+    return r
+
+"""
+functions
+~~~~~~~~~
+
+PyPeT Python Perfusion Tool implementation from Borghouts et al. 2025
+https://github.com/Marijn311/CT-and-MR-Perfusion-Tool
+
+reference: PyPeT: A Python Perfusion Tool for Automated Quantitative Brain CT and MR Perfusion Analysis. Borghouts M. 
+& Su R. arXiv:2511.13310v1 [eess.IV] 17 Nov 2025.
+"""
+
+
+def gamma_variate(t: ndarray | list[float],
+                  t0: float,
+                  alpha: float,
+                  beta: float,
+                  k: float = 1.0) -> ndarray:
+    """
+    Gamma variate function for modeling arterial input function.
+    Standard gamma variate: k * (t-t0)^alpha * exp(-(t-t0)/beta) for t > t0
+
+    Parameters
+    ----------
+    t : ndarray
+        1D time array, same length as the contrast curve. Contains a time value for each time point.
+    t0 : float
+        time delay/onset time.
+    alpha : float
+        shape parameter.
+    beta : float
+        time constant.
+    k : float
+        peak amplitude scaling factor.
+
+    Returns
+    -------
+        ndarray
+            1D array of modeled arterial input function
+    """
+    t = array(t)
+    t_shifted = maximum(0, t - t0)
+    r = zeros_like(t_shifted)
+    mask = t > t0
+    r[mask] = k * (t_shifted[mask] ** alpha) * exp(-t_shifted[mask] / beta)
+    return r
+
+
+def fit_gamma_variate(time_index: ndarray,
+                      curve: ndarray,
+                      sigma: ndarray | None = None) -> ndarray:
+    """
+    Fit a gamma variate function to the given contrast curve using non-linear least squares optimization.
+
+    Parameters
+    ----------
+    time_index : ndarray
+        1D array of time points corresponding to the contrast curve.
+    curve : ndarray
+        1D array of contrast values to fit the gamma variate to.
+    sigma : ndarray | None (optional)
+        1D array of standard deviations for each point in the curve, used as weights in fitting (default None)
+
+    Returns
+    -------
+    ndarray
+        1D array containing the optimized parameters [t0, alpha, beta, k] for the fitted gamma variate function.
+    """
+    # Parameter search bounds
+    # Minimum: t0 = 0.0, alpha = 0.1, beta = 0.1, k = 0.0
+    # Maximum: t0 = 20.0, alpha = 8, beta = 8, k = max(curve) * 2
+    r, _ = curve_fit(gamma_variate,
+                     time_index,
+                     curve,
+                     bounds=([0, 0.1, 0.1, 0], [20, 8, 8, max(curve) * 2]),
+                     sigma=sigma)
+    return r
+
+
+def generate_ttp(ctc: ndarray | list[ndarray],
+                 time_index: list[float] | ndarray,
+                 s0_index: int,
+                 mask: ndarray,
+                 outside_value: float = 0.0,
+                 wait: DialogWait | None = None) -> ndarray:
+    """
+    Generate the Time to Peak (TTP) map from contrast time curves (ctc). TTP is the time at which the CTC reaches its
+    maximum value.
+
+    Parameters
+    ----------
+    ctc : ndarray | list[ndarray]
+        4D ndarray (shape=[n,z,y,x]) or list of 3D ndarray (shape=[z,y,x]) representing contrast time curves.
+    time_index : list | ndarray
+        list of time indexes corresponding to each timepoint in ctc.
+    s0_index : int
+        Starting index for analysis. Time points before this index are excluded from TTP calculation (e.g., baseline measurements).
+    mask : ndarray
+        Binary 3D ndarray (shape=[z,y,x]) of the brain mask.
+    outside_value : float (optional)
+        Value assigned to voxels outside the brain mask (default 0.0).
+    wait : DialogWait | None
+        progress bar dialog (default None).
+
+    Returns
+    -------
+    ndarray
+        3D ndarray (shape=[z,y,x]) of time to peak map.
+    """
+    if wait is not None:
+        wait.setInformationText('Time to peak map processing...')
+    if isinstance(ctc, list): ctc = stack(ctc, axis=0)
+    if isinstance(time_index, list): time_index = array(time_index)
+    time_index = time_index[s0_index:] - time_index[s0_index]
+    ctc = ctc[s0_index:, :, :, :]
+    ttp = time_index[ctc.argmax(axis=0)]
+    ttp[mask == 0] = outside_value
+    return ttp
+
+
+def generate_leakage(ctc: ndarray | list[ndarray],
+                     time_index: list[float] | ndarray,
+                     mask: ndarray,
+                     outside_value: float = 0.0,
+                     wait: DialogWait | None = None) -> ndarray:
+    """
+    Generate leakage map from contrast time curves (CTC).
+
+    Parameters
+    ----------
+    ctc : ndarray | list[ndarray]
+        4D ndarray (shape=[n,z,y,x]) or list of 3D ndarray (shape=[z,y,x]) representing contrast time curves.
+    time_index : list[float] | ndarray
+        list of time indexes corresponding to the ctc.
+    mask : ndarray
+        Binary 3D ndarray (shape=[z,y,x]) of the brain mask.
+    outside_value : float (optional)
+        Value assigned to voxels outside the brain mask (default 0.0).
+    wait : DialogWait | None
+        progress bar dialog (default None).
+
+    Returns
+    -------
+    ndarray
+        3D ndarray (shape=[z,y,x]) leakage map.
+    """
+    if wait is not None:
+        wait.setInformationText('Leakage map processing...')
+        wait.setProgressRange(0, mask.shape[0])
+        wait.setCurrentProgressValue(0)
+        wait.setProgressVisibility(True)
+    r = zeros(shape=mask.shape)
+    zi: cython.int
+    yi: cython.int
+    xi: cython.int
+    for zi in range(ctc.shape[0]):
+        for yi in range(ctc.shape[1]):
+            for xi in range(ctc.shape[2]):
+                if mask[zi, yi, xi] != 0.0:
+                    cc = ctc[zi, yi, xi, :]
+                    p = fit_gamma_variate(time_index, cc)
+                    gcc = gamma_variate(time_index, *p)
+                    r[zi, yi, xi] = trapz(cc - gcc)
+                else: r[zi, yi, xi] = outside_value
+        if wait is not None:
+            wait.incCurrentProgressValue()
+    if wait is not None: wait.setProgressVisibility(False)
+    return r
+
+
+def generate_perfusion_maps(ctc: ndarray | list[ndarray],
+                            time_index: list[float] | ndarray,
+                            mask: ndarray,
+                            aif_properties: ndarray,
+                            method: str = 'bcSVD1',
+                            SVD_truncation_threshold: float = 0.1,
+                            oSVD_OI_threshold: float = 0.035,
+                            outside_value: float = 0.0,
+                            rho: float = 1.05,
+                            hcf: float = 0.73,
+                            wait: DialogWait | None = None) -> tuple[ndarray, ndarray, ndarray, ndarray]:
+    """
+    Generate perfusion maps (MTT, CBV, CBF, TMAX) from contrast time curves (CTC) via deconvolution with the arterial
+    input function (AIF). This function supports multiple SVD-based deconvolution methods. Additionally, there is the
+    option to use the box-shaped model with non-linear regression optimization, as described in Bennink et al.
+    
+    Reference: Bennink E., Oosterbroek J., Kudo K., Viergever M.A., Velthuis B.K., de Jong H.W.A.M., Fast nonlinear 
+    regression method for CT brain perfusion analysis, J. Med. Imag. 3(2),026003 (2016)
+
+    Parameters
+    ----------
+    ctc : ndarray | list[ndarray]
+        4D ndarray (shape=[n,z,y,x]) or list of 3D ndarray (shape=[z,y,x]) representing contrast time curves.
+    time_index : list[float] | ndarray 
+        list of time indexes corresponding to the ctc.
+    mask : ndarray
+        Binary 3D ndarray (shape=[z,y,x]) of the brain mask.
+    aif_properties : ndarray
+        1D array with 4 elements [t0, alpha, beta, k] representing the parameters of the fitted gamma variate function for the AIF.
+    method : str (optional)
+        Deconvolution method to use, either 'bcSVD1' (default), 'bcSVD2', 'SVD', 'oSVD', or 'boxNLR'.
+    SVD_truncation_threshold : float (optional)
+        Threshold for SVD regularization as fraction of maximum singular value (default 0.1).
+    oSVD_OI_threshold : float (optional)
+        Threshold for oscillation index in oSVD method (default 0.035).
+    outside_value : float (optional)
+        Value assigned to voxels outside the brain mask (default 0.0)
+    rho : float (optional)
+        Tissue density in g/ml (default 1.05)
+    hcf : float (optional)
+        Hematocrit correction factor (default 0.73)
+    wait : DialogWait | None
+        progress bar dialog (default None).
+
+    Returns
+    -------
+    tuple[ndarray, ndarray, ndarray, ndarray]
+    
+        - mtt, 3D ndarray (shape=[z,y,x]) containing the Mean Transit Time in seconds.
+        - cbv, 3D ndarray (shape=[z,y,x]) containing the Cerebral Blood Volume in ml/100g.
+        - cbf, 3D ndarray (shape=[z,y,x]) containing the Cerebral Blood Flow in ml/100g/min.
+        - tmax, 3D ndarray (shape=[z,y,x]) containing the Time to maximum of residue function in seconds.
+    """
+    if wait is not None:
+        wait.setInformationText('CBF, CBV, MTT, TMAX maps processing...')
+    aif = gamma_variate(time_index, *aif_properties)
+    # Calculate time step for numerical integration
+    deltaT = mean(diff(time_index))
+    # Get number of time points
+    nr_timepoints = len(time_index)
+    # Construct convolution matrix G based on selected deconvolution method
+    if method == 'SVD':
+        # Original SVD method using standard Toeplitz matrix
+        G = toeplitz(aif, zeros(nr_timepoints))
+        ctc_pad = ctc
+    elif method == 'bcSVD1':
+        # Block-circulant SVD method 1 with Simpson's rule integration
+        colG = zeros(2 * nr_timepoints)
+        colG[0] = aif[0]
+        # Apply Simpson's rule for numerical integration at boundaries
+        colG[nr_timepoints - 1] = (aif[nr_timepoints - 2] + 4 * aif[nr_timepoints - 1]) / 6
+        colG[nr_timepoints] = aif[nr_timepoints - 1] / 6
+        # Apply Simpson's rule for interior points
+        for k in range(1, nr_timepoints - 1):
+            colG[k] = (aif[k - 1] + 4 * aif[k] + aif[k + 1]) / 6
+        # Construct row vector for circulant matrix
+        rowG = zeros(2 * nr_timepoints)
+        rowG[0] = colG[0]
+        for k in range(1, 2 * nr_timepoints):
+            rowG[k] = colG[2 * nr_timepoints - k]
+        # Create block-circulant matrix
+        G = toeplitz(colG, rowG)
+        # Pad contrast data by doubling temporal dimension
+        # noinspection PyTypeChecker
+        ctc_pad = pad(ctc, [(0, len(ctc)), ] + [(0, 0)] * 3)
+    elif method == 'bcSVD2':
+        # Block-circulant SVD method 2 with manual matrix construction
+        cmat = zeros([nr_timepoints, nr_timepoints])
+        B = zeros([nr_timepoints, nr_timepoints])
+        # Build circulant and anti-circulant blocks
+        for i in range(nr_timepoints):
+            for j in range(nr_timepoints):
+                if i == j: cmat[i, j] = aif[0]
+                elif i > j: cmat[i, j] = aif[(i - j)]
+                else: B[i, j] = aif[nr_timepoints - (j - i)]
+        # Construct 2x2 block matrix
+        G = vstack([hstack([cmat, B]), hstack([B, cmat])])
+        # Pad contrast data by doubling temporal dimension
+        # noinspection PyTypeChecker
+        ctc_pad = pad(ctc, [(0, len(ctc)), ] + [(0, 0)] * 3)
+    elif method == 'oSVD':
+        # Oscillation index SVD method with adaptive regularization
+        # Uses block-circulant matrix construction similar to bcSVD1
+        colG = zeros(2 * nr_timepoints)
+        colG[0] = aif[0]
+        # Apply Simpson's rule for numerical integration at boundaries
+        colG[nr_timepoints - 1] = (aif[nr_timepoints - 2] + 4 * aif[nr_timepoints - 1]) / 6
+        colG[nr_timepoints] = aif[nr_timepoints - 1] / 6
+        # Apply Simpson's rule for interior points
+        for k in range(1, nr_timepoints - 1):
+            colG[k] = (aif[k - 1] + 4 * aif[k] + aif[k + 1]) / 6
+        # Construct row vector for circulant matrix
+        rowG = zeros(2 * nr_timepoints)
+        rowG[0] = colG[0]
+        for k in range(1, 2 * nr_timepoints):
+            rowG[k] = colG[2 * nr_timepoints - k]
+        # Create block-circulant matrix
+        G = toeplitz(colG, rowG)
+        # Pad contrast data by doubling temporal dimension
+        # noinspection PyTypeChecker
+        ctc_volumes_pad = pad(ctc, [(0, len(ctc)), ] + [(0, 0)] * 3)
+        # Use oSVD-specific processing instead of standard SVD approach
+        # noinspection PyTypeChecker
+        mtt, cbv, cbf, tmax = oSVD(ctc_volumes_pad, G, deltaT, mask, oSVD_OI_threshold, nr_timepoints, outside_value,
+                                   rho, hcf, time_index, wait=wait)
+        return mtt, cbv, cbf, tmax
+    elif method == 'boxNLR':
+        # noinspection PyTypeChecker
+        mtt, cbv, cbf, tmax = boxNLR(ctc, aif, deltaT, mask, outside_value=-1, wait=wait)
+        return mtt, cbv, cbf, tmax
+    # Perform SVD decomposition on scaled convolution matrix
+    # noinspection PyUnboundLocalVariable
+    U, S, V = svd(G * deltaT)
+    # Apply threshold-based regularization to singular values
+    thres = SVD_truncation_threshold * max(S)
+    filteredS = 1 / (S + 1e-5)  # Add small epsilon to avoid division by zero
+    filteredS[S < thres] = 0  # Zero out small singular values below threshold
+    # Reconstruct pseudo-inverse matrix using filtered singular values
+    Ginv = V.T @ diag(filteredS) @ U.T
+    # Perform deconvolution to obtain residue function R
+    # noinspection PyUnboundLocalVariable
+    R = abs(einsum('ab, bcde->acde', Ginv, ctc_pad))
+    # Truncate residue function to original temporal length
+    R = R[:nr_timepoints]
+    # Calculate perfusion parameters from residue function
+    # tissue-to-artery concentration scale factor ratio = 0.1369
+    # CBF Maximum of residue function scaled by physiological constants (ml/100g/min)
+    cbf = hcf / rho * R.max(axis=0) * 60 * 100 * 0.1369
+    # CBV Area under residue function scaled by physiological constants (ml/100g)
+    cbv = hcf / rho * R.sum(axis=0) * 100 * 0.1369
+    # MTT Mean transit time calculated as CBV/CBF ratio (seconds)
+    mtt = divide(cbv, cbf, out=zeros_like(cbv), where=cbf != 0) * 60
+    # Calculate time to maximum of residue function (tmax)
+    time_index = array(time_index, dtype=int)
+    tmax = time_index[R.argmax(axis=0)]
+    tmax = tmax.astype(float64)
+    # Apply brain mask to set outside values for all perfusion maps
+    tmax[mask == 0] = outside_value
+    cbv[mask == 0] = outside_value
+    cbf[mask == 0] = outside_value
+    mtt[mask == 0] = outside_value
+    return mtt, cbv, cbf, tmax
+
+
+def oSVD(ctc_pad: ndarray,
+         G: ndarray,
+         deltaT: float,
+         mask: ndarray,
+         oSVD_OI_threshold : float,
+         nr_timepoints: int,
+         outside_value: float,
+         rho: float,
+         hcf: float,
+         time_index: list[float] | ndarray,
+         wait: DialogWait | None = None) -> tuple[ndarray, ndarray, ndarray, ndarray]:
+    """
+    This function implements the oscillation index SVD method which adaptively selects the optimal SVD truncation
+    threshold for each voxel based on minimizing oscillations in the residue function.
+
+    Parameters
+    ----------
+    ctc_pad : ndarray
+        4D array of padded contrast time curves.
+    G : ndarray)
+        Block-circulant convolution matrix.
+    deltaT : float
+        Time step for numerical integration.
+    mask : ndarray
+        Binary 3D ndarray (shape=[z,y,x]) of the brain mask.
+    oSVD_OI_threshold : float
+        Oscillation index threshold.
+    nr_timepoints : int
+        Number of original timepoints.
+    outside_value : float
+        Value for voxels outside mask.
+    rho : float
+        Tissue density
+    hcf : float
+        Hematocrit correction factor
+    time_index : list[float] | ndarray
+        Time indices
+    wait : DialogWait | None
+        progress bar dialog (default None).
+
+    Returns
+    -------
+    tuple[ndarray, ndarray, ndarray, ndarray]
+
+        - mtt, 3D ndarray (shape=[z,y,x]) containing the Mean Transit Time in seconds.
+        - cbv, 3D ndarray (shape=[z,y,x]) containing the Cerebral Blood Volume in ml/100g.
+        - cbf, 3D ndarray (shape=[z,y,x]) containing the Cerebral Blood Flow in ml/100g/min.
+        - tmax, 3D ndarray (shape=[z,y,x]) containing the Time to maximum of residue function in seconds.
+    """
+    # Perform SVD decomposition on scaled convolution matrix
+    U, S, V = svd(G * deltaT)
+    # Initialize output arrays
+    z, y, x = mask.shape
+    cbf = zeros((z, y, x))
+    cbv = zeros((z, y, x))
+    mtt = zeros((z, y, x))
+    tmax = zeros((z, y, x))
+    # Process each voxel individually for adaptive threshold selection
+    if wait is not None:
+        wait.addInformationText('Oscillation index SVD method, '
+                                'this process may take longer than traditional SVD methods.')
+        wait.setProgressRange(0, mask.shape[0])
+        wait.setCurrentProgressValue(0)
+        wait.setProgressVisibility(True)
+    zi: cython.int
+    yi: cython.int
+    xi: cython.int
+    for zi in range(z):
+        for yi in range(y):
+            for xi in range(x):
+                if mask[zi, yi, xi]:
+                    # Extract concentration time curve for current voxel
+                    vett_conc = ctc_pad[:, zi, yi, xi]
+                    # Find optimal threshold using oscillation index
+                    best_residue = None
+                    # Test thresholds from 5% to 95% of maximum singular value
+                    for threshold_percent in range(5, 100, 5):
+                        threshold = (threshold_percent / 100.0) * S[0]
+                        # Create filtered inverse matrix
+                        filtered_S = 1.0 / (S + 1e-5)
+                        filtered_S[S < threshold] = 0
+                        G_inv = V.T @ diag(filtered_S) @ U.T
+                        # Calculate residue function
+                        residue = G_inv @ vett_conc
+                        residue = abs(residue)
+                        # Calculate oscillation index
+                        oscillation = 0.0
+                        L = len(residue)
+                        for j in range(2, L):
+                            oscillation += abs(residue[j] - 2 * residue[j - 1] + residue[j - 2])
+                        max_residue = max(residue)
+                        if max_residue > 0: OI = (1.0 / L) * (1.0 / max_residue) * oscillation
+                        else: OI = float('inf')
+                        # Use this threshold if oscillation index is below threshold
+                        if OI < oSVD_OI_threshold:
+                            best_residue = residue
+                            break
+                    # If no threshold met criteria, use the most restrictive one
+                    if best_residue is None:
+                        threshold = 0.95 * S[0]
+                        filtered_S = 1.0 / (S + 1e-5)
+                        filtered_S[S < threshold] = 0
+                        G_inv = V.T @ diag(filtered_S) @ U.T
+                        best_residue = abs(G_inv @ vett_conc)
+                    # Truncate residue function to original temporal length
+                    residue_truncated = best_residue[:nr_timepoints]
+                    # Calculate perfusion parameters for this voxel
+                    cbf[zi, yi, xi] = hcf / rho * max(residue_truncated) * 60 * 100
+                    cbv[zi, yi, xi] = hcf / rho * sum(residue_truncated) * 100
+                    if cbf[zi, yi, xi] != 0:
+                        mtt[zi, yi, xi] = (cbv[zi, yi, xi] / cbf[zi, yi, xi]) * 60
+                    # Calculate time to maximum
+                    time_index_array = array(time_index[:nr_timepoints], dtype=int)
+                    tmax[zi, yi, xi] = float(time_index_array[argmax(residue_truncated)])
+        if wait is not None:
+            wait.incCurrentProgressValue()
+    if wait is not None: wait.setProgressVisibility(False)
+    # Apply brain mask to set outside values
+    tmax[mask == 0] = outside_value
+    cbv[mask == 0] = outside_value
+    cbf[mask == 0] = outside_value
+    mtt[mask == 0] = outside_value
+    return mtt, cbv, cbf, tmax
+
+
+def boxNLR(ctc: ndarray | list[ndarray],
+           aif: ndarray,
+           dt: float,
+           mask: ndarray,
+           outside_value: float = 0.0,
+           wait: DialogWait | None = None):
+    """
+    This is the main function which generates perfusion maps using the boxNLR (box Non-Linear Regression) approach by
+    bennink et al.
+
+    Reference: Bennink E., Oosterbroek J., Kudo K., Viergever M.A., Velthuis B.K., de Jong H.W.A.M., Fast nonlinear
+    regression method for CT brain perfusion analysis, J. Med. Imag. 3(2),026003 (2016)
+
+    Be aware that this is just my attempt at implementing the method, this approach is very slow, and I am not sure it
+    is implemented correctly. So please use with caution and verify results carefully.
+
+    Parameters
+    ----------
+    ctc :  ndarray | list[ndarray]
+        4D ndarray (shape=[n,z,y,x]) or list of 3D ndarray (shape=[z,y,x]) representing contrast time curves.
+    aif : ndarray
+        1D array containing the AIF signal.
+    dt : float
+        Time step (sampling interval) in seconds.
+    mask : ndarray
+        Binary 3D ndarray (shape=[z,y,x]) of the brain mask.
+    outside_value : float (optional)
+        Value to assign to voxels outside the brain mask in the output maps.
+    wait : DialogWait | None
+        progress bar dialog (default None).
+
+    Returns
+    -------
+    tuple[ndarray, ndarray, ndarray, ndarray]
+
+        - mtt, 3D ndarray (shape=[z,y,x]) containing the Mean Transit Time in seconds.
+        - cbv, 3D ndarray (shape=[z,y,x]) containing the Cerebral Blood Volume in ml/100g.
+        - cbf, 3D ndarray (shape=[z,y,x]) containing the Cerebral Blood Flow in ml/100g/min.
+        - tmax, 3D ndarray (shape=[z,y,x]) containing the Time to maximum of residue function in seconds.
+    """
+
+    # Non-linear regression method using boxNLR model
+    if wait is not None:
+        wait.addInformationText('Using box non linear regression method, '
+                                'this process may take much longer than SVD methods.')
+        wait.setProgressRange(0, mask.shape[0])
+        wait.setCurrentProgressValue(0)
+        wait.setProgressVisibility(True)
+    # Convert list of 3D volumes to a 4D array (t, z, y, x)
+    if isinstance(ctc, list): ctc = stack(ctc, axis=0)
+    # Initialize output arrays
+    cbf =zeros(ctc.shape[1:])
+    cbv = zeros(ctc.shape[1:])
+    mtt = zeros(ctc.shape[1:])
+    tmax = zeros(ctc.shape[1:])
+    # Get brain voxel coordinates
+    brain_coords = where(mask == 1)
+    total_voxels = len(brain_coords[0])
+    # Process each brain voxel
+    z: cython.int
+    y: cython.int
+    x: cython.int
+    idx: cython.int
+    for idx, (z, y, x) in enumerate(zip(*brain_coords)):
+        if idx % 1000 == 0 and wait is not None:
+            wait.setCurrentProgressValuePercent(int(100 * idx / total_voxels), idx)
+        # Extract tissue curve for this voxel
+        ctc = ctc[:, z, y, x]
+        # Fit NLR model
+        fit_result = fit_boxNLR(aif, ctc, dt)
+        # Store results
+        cbf[z, y, x] = fit_result['cbf']
+        cbv[z, y, x] = fit_result['cbv']
+        mtt[z, y, x] = fit_result['mtt']
+        tmax[z, y, x] = fit_result['tmax']
+    # Apply brain mask to set outside values for all perfusion maps
+    cbf[mask == 0] = outside_value
+    cbv[mask == 0] = outside_value
+    mtt[mask == 0] = outside_value
+    tmax[mask == 0] = outside_value
+    if wait is not None: wait.setProgressVisibility(False)
+    return mtt, cbv, cbf, tmax
+
+
+def fit_boxNLR(aif: ndarray,
+               ctc: ndarray,
+               dt: float) -> dict[str, float]:
+    """
+    Optimize (fit) the box-shaped residue function such that it explains the measured CTC with the given AIF. The
+    box-shaped residue function is defined by three parameter: CBV, MTT, and delay. The function returns the optimal
+    values for these parameters. Hence by fitting the box-shaped residue function, we obtain perfusion parameters
+    directly.
+
+    Parameters
+    ----------
+    aif : ndarray
+        1D array containing the arterial input function.
+    ctc : ndarray
+        1D array containing the contrast time curve for a single voxel.
+    dt : float
+        Sample interval (time step).
+
+    Returns
+    -------
+    dict
+        Dictionary containing the optimized perfusion parameters ['cbf', 'mtt', 'cbv', 'tmax'].
+    """
+
+    def objective(p):
+        pcbf, pmtt, pdelay = p
+        n = len(auc)
+        # Create interpolation indices with half sample shift correction
+        indices = arange(1, n + 1) - 0.5 - pdelay
+        indices_shifted = arange(1, n + 1) - 0.5 - pdelay - pmtt
+        # Create interpolation function for AUC
+        auc_interp = interp1d(arange(len(auc)), auc, kind='linear', bounds_error=False, fill_value=0)
+        # Interpolate at shifted indices
+        a = auc_interp(indices)
+        b = auc_interp(indices_shifted)
+        # Handle NaN values (set to 0)
+        a = nan_to_num(a, nan=0.0)
+        b = nan_to_num(b, nan=0.0)
+        # Calculate TAC as difference of shifted integrands
+        ctc_estimated = pcbf * (a - b)
+        sse = sum((ctc_estimated - ctc_band_limited) ** 2)
+        return sse
+
+    # Initial estimates for CBV, MTT, and delay, respectively.
+    # Divide MTT and delay by dt seconds to convert to unitless values.
+    params = array([0.05, 4 / dt, 1 / dt])
+    # Create a 3-point bandlimiting kernel with a FWHM of 2 samples.
+    kernel = array([0.25, 0.5, 0.25])
+    # Extend arrays with nearest neighbor extrapolation, such that convolution does not reduce length
+    # noinspection PyTypeChecker
+    aif_extended = concatenate([[aif[0]], aif, [aif[-1]]])
+    # noinspection PyTypeChecker
+    ctc_extended = concatenate([[ctc[0]], ctc, [ctc[-1]]])
+    # Convolve the AIF and measured CTC with the kernel to obtain bandlimited versions
+    aif_band_limited = convolve(aif_extended, kernel, mode='valid')
+    ctc_band_limited = convolve(ctc_extended, kernel, mode='valid')
+    # Calculate the numerical integrand of the bandlimited AIF.
+    # Note that this cumulative sum introduces a half sample shift.
+    auc = cumsum(aif_band_limited)
+    # Use scipy minimize with Nelder-Mead method to find the optimal parameters for the box-shaped residue function.
+    # Optimal is defined as the box-model parameters that minimize the sum of squared errors between the measured CTC and the estimated CTC.
+    # The estimated CTC is generated from the AIF (auc) and the box-shaped residue function.
+    optimal_params = minimize(objective, params, method='Nelder-Mead').x
+    # Multiply MTT and delay by dt seconds to convert from unitless values.
+    optimal_params = array([optimal_params[0], optimal_params[1] * dt, optimal_params[2] * dt])
+    cbv, mtt, delay = optimal_params
+    cbf = cbv / (mtt / 60) if mtt > 0 else 0  # Convert MTT from seconds to minutes for CBF calculation
+    # Calculate tmax as delay + mtt/2 (center of box function)
+    tmax = delay + mtt / 2
+    r = {'cbf': cbf * 60,  # Convert to ml/100g/min
+         'mtt': mtt,  # Already in seconds
+         'cbv': cbv * 100,  # Convert to ml/100g
+         'tmax': tmax}
+    return r
+
+def dscMaps2(vols: SisypheVolume,
+             mask: SisypheVolume,
+             aif: ndarray,
+             tr: float, te: float,
+             baseline: tuple[int, int] = (0, 4),
+             smooth: float = 0.0,
+             recovery: bool = True,
+             dsc: bool = True,
+             leakage: bool = True,
+             method: str = 'bcSVD1',
+             svdtuncation: float = 0.1,
+             osvdoi : float = 0.035,
+             outsidev : float = 0.0,
+             wait: DialogWait | None = None) -> dict[str, SisypheVolume]:
+    """
+    Dynamic susceptibility contrast MR perfusion maps processing:
+    - cerebral blood flow (CBF), in ml / min / 100g
+    - cerebral blood volume (CBV), in ml / 100g
+    - mean transit time (MTT), in s
+    - leakage volume (LKV), in ml / 100g
+    - time to pic (TTP), in s
+    - time to maximum (TMAX), in s
+    - signal recovery (SR)
+    - percentage signal recovery (PSR)
+
+    PyPeT Python Perfusion Tool implementation
+    https://github.com/Marijn311/CT-and-MR-Perfusion-Tool
+
+    Reference: PyPeT: A Python Perfusion Tool for Automated Quantitative Brain CT and MR Perfusion Analysis.
+    Borghouts M. & Su R. arXiv:2511.13310v1 [eess.IV] 17 Nov 2025.
+
+    Parameters
+    ----------
+    vols : Sisyphe.core.sisypheVolume.SisypheVolume
+        time series of perfusion weighted images
+    mask : Sisyphe.core.sisypheVolume.SisypheVolume
+        brain mask
+    aif : ndarray
+        arterial input function (as signal, not contrast concentration)
+    tr : float
+        repetition time (TR) in s
+    te : float
+        echo time (TE) in s
+    baseline : tuple[int, int]
+        range (start, end) of volume indices used as baseline signal
+        (default first 4 volumes, start=0, end=4)
+    smooth : float (optional)
+        time series fwhm smoothing if true (default 0.0, no smoothing)
+    recovery : bool
+        Signal recovery maps processing if True
+    dsc : bool
+        CBF, CBV, MTT, TMAX, TTP maps processing if True
+    leakage : bool
+        Leakage correction of contrast concentration maps if True (default)
+    method : str (optional)
+        Deconvolution method to use, either 'bcSVD1' (default), 'bcSVD2', 'SVD', 'oSVD', or 'boxNLR'.
+    svdtuncation : float (optional)
+        Threshold for SVD regularization as fraction of maximum singular value (default 0.1).
+    osvdoi : float (optional)
+        Threshold for oscillation index in oSVD method (default 0.035).
+    outsidev : float (optional)
+        Value assigned to voxels outside the brain mask (default 0.0).
+    wait : Sisyphe.gui.dialogWait.DialogWait | None
+        progress bar dialog (default None)
+
+    Returns
+    -------
+    dict[str, SisypheVolume]
+        dsc maps, dict keys: 'cbf', 'cbv', 'mtt', 'ttp', 'tmax', 'lkv', 'sr', 'psr'
+    """
+    r: dict[str, SisypheVolume] = dict()
+    # smooth
+    if smooth > 0.0:
+        if wait is not None:
+            wait.setInformationText('Smoothing...')
+            wait.setProgressRange(0, vols.getNumberOfComponentsPerPixel())
+            wait.setCurrentProgressValue(0)
+            wait.setProgressVisibility(True)
+        c = 2 * sqrt(2 * log(2))
+        sigma = smooth / c
+        v = vols.copyToNumpyArray(defaultshape=True)
+        tag = mask.isIsotropic()
+        for i in range(v.shape[0]):
+            slc = v[i, :, :, :]
+            if tag: v[i, :, :, :] = gaussian_filter(slc, sigma)  # 3D smoothing if isotropic
+            else: v[i, :, :, :] = gaussian_filter(slc, sigma, axes=(0, 1, 1))  # 2D smoothing if anostropic
+            if wait is not None: wait.incCurrentProgressValue()
+        vols.copyFromNumpyArray(v, defaultshape=True)
+        if wait is not None: wait.setProgressVisibility(False)
+    # signal to contrast concentration
+    if wait is not None:
+        wait.setInformationText('Signal to concentration processing...')
+    ctc_vols = signalToContrastConcentration(vols, mask, te, baseline)
+    ctc_vols.setFilename(vols.getFilename())
+    ctc_vols.setFilenameSuffix('cc')
+    ctc_vols.save()
+    # arterial input function processing
+    if wait is not None:
+        wait.setInformationText('Arterial input function processing...')
+    time_index = array([i * tr for i in range(ctc_vols.getNumberOfComponentsPerPixel())])
+    s0 = mean(aif[baseline[0]:baseline[1]])
+    aif = (-1 / te) * (log(aif / s0))
+    aif = where(aif <= 0.0, 0.0, aif)
+    aif_properties = fit_gamma_variate(time_index, aif)
+    if recovery:
+        # SR/PSR maps processing
+        t0 = where(aif.cumsum() == 0.0)[0]
+        if len(t0) > 0: t0 = t0[-1]
+        else: t0 = 0
+        v = signalRecoveryMaps(vols, mask, t0, tr, baseline, wait)
+        r['sr'] = v['sr']
+        r['psr'] = v['psr']
+    if dsc:
+        ttp = generate_ttp(ctc_vols.getNumpy(defaultshape=True),
+                           time_index,
+                           baseline[1],
+                           mask.getNumpy(defaultshape=True),
+                           outsidev,
+                           wait)
+        mtt, cbv, cbf, tmax = generate_perfusion_maps(ctc_vols.getNumpy(defaultshape=True),
+                                                      time_index,
+                                                      mask.getNumpy(defaultshape=True),
+                                                      aif_properties,
+                                                      method,
+                                                      svdtuncation,
+                                                      osvdoi,
+                                                      outsidev)
+        # TTP, Time to Peak
+        r['ttp'] = SisypheVolume()
+        r['ttp'].copyFromNumpyArray(ttp,
+                                    spacing=mask.getSpacing(),
+                                    origin=vols.getOrigin(),
+                                    direction=vols.getDirections(),
+                                    defaultshape=True)
+        r['ttp'].copyAttributesFrom(vols, display=False, slope=False, acquisition=False)
+        r['ttp'].acquisition.setSequenceToMeanTransitTimeMap()
+        r['ttp'].acquisition.setUnit('s')
+        r['ttp'].display.getLUT().setLut('inserm')
+        r['ttp'].setFilename(vols.getFilename())
+        r['ttp'].setFilenameSuffix('ttp')
+        # CBV, Cerebral Blood Volume
+        r['cbv'] = SisypheVolume()
+        r['cbv'].copyFromNumpyArray(cbv,
+                                    spacing=mask.getSpacing(),
+                                    origin=vols.getOrigin(),
+                                    direction=vols.getDirections(),
+                                    defaultshape=True)
+        r['cbv'].copyAttributesFrom(vols, display=False, slope=False, acquisition=False)
+        r['cbv'].acquisition.setSequenceToCerebralBloodVolumeMap()
+        r['cbv'].acquisition.setUnit('ml / 100g')
+        r['cbv'].display.getLUT().setLut('inserm')
+        r['cbv'].setFilename(vols.getFilename())
+        r['cbv'].setFilenameSuffix('cbv')
+        # CBF, Cerebral Blood Flow
+        r['cbf'] = SisypheVolume()
+        r['cbf'].copyFromNumpyArray(cbf,
+                                    spacing=mask.getSpacing(),
+                                    origin=vols.getOrigin(),
+                                    direction=vols.getDirections(),
+                                    defaultshape=True)
+        r['cbf'].copyAttributesFrom(vols, display=False, slope=False, acquisition=False)
+        r['cbf'].acquisition.setSequenceToCerebralBloodFlowMap()
+        r['cbf'].acquisition.setUnit('ml / min / 100g')
+        r['cbf'].display.getLUT().setLut('inserm')
+        r['cbf'].setFilename(vols.getFilename())
+        r['cbf'].setFilenameSuffix('cbf')
+        # MTT, Mean Transit Time
+        r['mtt'] = SisypheVolume()
+        r['mtt'].copyFromNumpyArray(mtt,
+                                    spacing=mask.getSpacing(),
+                                    origin=vols.getOrigin(),
+                                    direction=vols.getDirections(),
+                                    defaultshape=True)
+        r['mtt'].copyAttributesFrom(vols, display=False, slope=False, acquisition=False)
+        r['mtt'].acquisition.setSequenceToMeanTransitTimeMap()
+        r['mtt'].acquisition.setUnit('s')
+        r['mtt'].display.getLUT().setLut('inserm')
+        r['mtt'].setFilename(vols.getFilename())
+        r['mtt'].setFilenameSuffix('mtt')
+        # TMAX, Mean Transit Time
+        r['tmax'] = SisypheVolume()
+        r['tmax'].copyFromNumpyArray(tmax,
+                                     spacing=mask.getSpacing(),
+                                     origin=vols.getOrigin(),
+                                     direction=vols.getDirections(),
+                                     defaultshape=True)
+        r['tmax'].copyAttributesFrom(vols, display=False, slope=False, acquisition=False)
+        r['tmax'].acquisition.setSequenceToMeanTransitTimeMap()
+        r['tmax'].acquisition.setUnit('s')
+        r['tmax'].display.getLUT().setLut('inserm')
+        r['tmax'].setFilename(vols.getFilename())
+        r['tmax'].setFilenameSuffix('tmax')
+    if leakage:
+        lkv = generate_leakage(ctc_vols.getNumpy(defaultshape=True),
+                               time_index,
+                               mask.getNumpy(),
+                               outsidev,
+                               wait)
+        lkv = nan_to_num(lkv, nan=0.0, posinf=0.0, neginf=0.0)
+        r['lkv'] = SisypheVolume()
+        r['lkv'].copyFromNumpyArray(lkv,
+                                    spacing=mask.getSpacing(),
+                                    origin=vols.getOrigin(),
+                                    direction=vols.getDirections(),
+                                    defaultshape=True)
+        r['lkv'].copyAttributesFrom(vols, display=False, slope=False, acquisition=False)
+        r['lkv'].acquisition.setModalityToOT()
+        r['lkv'].acquisition.setSequence('LKV')
+        r['lkv'].acquisition.setUnit('ml / 100g')
+        r['lkv'].display.getLUT().setLut('inserm')
+        r['lkv'].setFilename(vols.getFilename())
+        r['lkv'].setFilenameSuffix('lkv')
     return r
