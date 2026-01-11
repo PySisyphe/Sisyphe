@@ -246,6 +246,10 @@ def setUserSettingsToDefault() -> None:
         if v < 24: v = 24
         if v > 64: v = 64
         settings.setFieldValue('Viewport', 'IconSize', v)
+    # < Revision 11/01/2026
+    if sys.platform == 'darwin':
+        settings.setFieldValue('Viewport', 'FontSize', 12)
+    # Revision 11/01/2026 >
     # Revision 11/10/2025 >
     # < Revision 04/12/2025
     database = join(getUserPySisyphePath(), 'database')
