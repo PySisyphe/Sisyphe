@@ -109,7 +109,7 @@ def getUserPySisyphePath() -> str:
 
 def initPySisypheUserPath() -> None:
     """
-    Creates user PySisyphe directory. Creates database, models and segmentation subdirectories. Copy default xml files
+    Creates user PySisyphe directory. Creates database, models and segmentation subdirectories. Copy default XML files
     (settings.xml and functions.xml) to PySisyphe user directory.
     """
     path = join(getUserPath(), '.PySisyphe')
@@ -188,6 +188,10 @@ def initPySisypheUserPath() -> None:
             if v > 64: v = 64
             settings.setFieldValue('Viewport', 'IconSize', v)
         # Revision 11/10/2025 >
+        # < Revision 11/01/2026
+        if sys.platform == 'darwin':
+            settings.setFieldValue('GUI', 'FontSize', 12)
+        # Revision 11/01/2026 >
         # < Revision 04/12/2025
         settings.setFieldValue('Database', 'CurrentPath', database)
         settings.setFieldValue('Database', 'DefaultPath', database)
@@ -201,7 +205,7 @@ def initPySisypheUserPath() -> None:
 
 def setUserSettingsToDefault() -> None:
     """
-    Copy default xml files (settings.xml and functions.xml) to PySisyphe user directory.
+    Copy default XML files (settings.xml and functions.xml) to PySisyphe user directory.
     """
     upath = getUserPySisyphePath()
     import Sisyphe.settings
@@ -248,7 +252,7 @@ def setUserSettingsToDefault() -> None:
         settings.setFieldValue('Viewport', 'IconSize', v)
     # < Revision 11/01/2026
     if sys.platform == 'darwin':
-        settings.setFieldValue('Viewport', 'FontSize', 12)
+        settings.setFieldValue('GUI', 'FontSize', 12)
     # Revision 11/01/2026 >
     # Revision 11/10/2025 >
     # < Revision 04/12/2025
@@ -331,13 +335,13 @@ class SisypheSettings(object):
     @classmethod
     def getUserSettings(cls) -> str:
         """
-        Get user settings xml file name (~/.PySisyphe/settings/settings.xml). if user settings xml file does not exist,
-        create it from a copy of the default xml file.
+        Get user settings XML file name (~/.PySisyphe/settings/settings.xml). if user settings XML file does not exist,
+        create it from a copy of the default XML file.
 
         Returns
         -------
         str
-            user settings xml file name
+            user settings XML file name
         """
         path = join(getUserPySisyphePath(), 'settings.xml')
         if not exists(path):
@@ -393,7 +397,7 @@ class SisypheSettings(object):
     @classmethod
     def getAttributes(cls) -> tuple[str, ...]:
         """
-        Get node attribute names of the xml settings file format.
+        Get node attribute names of the XML settings file format.
 
         Returns
         -------
@@ -405,7 +409,7 @@ class SisypheSettings(object):
     @classmethod
     def isValidAttribute(cls, v: str) -> bool:
         """
-        Check whether a str is a valid node attribute name of the xml settings file format.
+        Check whether a str is a valid node attribute name of the XML settings file format.
 
         Parameters
         ----------
@@ -422,7 +426,7 @@ class SisypheSettings(object):
     @classmethod
     def getVartypes(cls):
         """
-        Get vartype names of the xml settings file format.
+        Get vartype names of the XML settings file format.
 
         Returns
         -------
@@ -434,7 +438,7 @@ class SisypheSettings(object):
     @classmethod
     def isValidVartype(cls, v: str) -> bool:
         """
-        Check whether a str is a valid vartype name of the xml settings file format.
+        Check whether a str is a valid vartype name of the XML settings file format.
 
         Parameters
         ----------
@@ -468,7 +472,7 @@ class SisypheSettings(object):
             - 'default', load settings.xml from application ./settings path
             - 'xxx', load /user path/xxx.xml, xxx is a basename without extension
             - 'xxx', load xxx, xxx is a file name with absolute path and extension
-            - creates empty xml if xxx does not exist
+            - creates empty XML if xxx does not exist
         """
         super().__init__()
         self._filename = ''
@@ -1127,12 +1131,12 @@ class SisypheSettings(object):
 
     def loadCustomFileSettings(self, filename: str) -> None:
         """
-        Load the current SisypheSettings from a custom xml settings file.
+        Load the current SisypheSettings from a custom XML settings file.
 
         Parameters
         ----------
         filename : str
-            custom xml settings file name, filename becomes the current save name used by save() method and the
+            custom XML settings file name, filename becomes the current save name used by save() method and the
             instance becomes custom
         """
         if exists(filename):
@@ -1160,7 +1164,7 @@ class SisypheSettings(object):
 
     def isCustom(self) -> bool:
         """
-        Check whether the current SisypheSettings is a custom settings instance. In this case, the associated xml
+        Check whether the current SisypheSettings is a custom settings instance. In this case, the associated XML
         settings file is defined in a custom save name attribute.
 
         Returns
@@ -1172,7 +1176,7 @@ class SisypheSettings(object):
 
     def isUser(self) -> bool:
         """
-        Check whether the current SisypheSettings is a user settings instance. In this case, the associated xml
+        Check whether the current SisypheSettings is a user settings instance. In this case, the associated XML
         settings file is ~/.PySisyphe/settings/settings.xml and the custom save name attribute is empty ('').
 
         Returns
@@ -1190,7 +1194,7 @@ class SisypheSettings(object):
         Returns
         -------
         str
-            xml file name
+            XML file name
         """
         return self._filename
 
@@ -1212,16 +1216,16 @@ class SisypheSettings(object):
 
     def saveAs(self, filename: str, current: bool = True, pretty: bool = False) -> None:
         """
-        Save the current SisypheSettings instance to a xml file.
+        Save the current SisypheSettings instance to an XML file.
 
         Parameters
         ----------
         filename : str
-            xml file name
+            XML file name
         current : bool
             if True, filename becomes the current save name used by save() method and the instance becomes custom
         pretty : bool
-            if True, pretty xml formatting
+            if True, pretty XML formatting
         """
         if pretty: xml = self._doc.toprettyxml()
         else: xml = self._doc.toxml()
@@ -1252,12 +1256,12 @@ class SisypheFunctionsSettings(SisypheSettings):
     @classmethod
     def getDefaultSettings(cls) -> str:
         """
-        Get default function settings xml file name (./Sisyphe/settings/functions.xml).
+        Get default function settings XML file name (./Sisyphe/settings/functions.xml).
 
         Returns
         -------
         str
-            default function settings xml file name
+            default function settings XML file name
         """
         import Sisyphe.settings
         return join(dirname(abspath(Sisyphe.settings.__file__)), 'functions.xml')
@@ -1265,13 +1269,13 @@ class SisypheFunctionsSettings(SisypheSettings):
     @classmethod
     def getUserSettings(cls) -> str:
         """
-        Get user function settings xml file name (~/.PySisyphe/settings/functions.xml). If user function settings xml
-        file does not exist, create it from a copy of the default xml file.
+        Get user function settings XML file name (~/.PySisyphe/settings/functions.xml). If user function settings XML
+        file does not exist, create it from a copy of the default XML file.
 
         Returns
         -------
         str
-            user function settings xml file name
+            user function settings XML file name
         """
         path = join(getUserPySisyphePath(), 'functions.xml')
         if not exists(path):
@@ -1435,12 +1439,12 @@ class SisypheTooltips(SisypheSettings):
     @classmethod
     def getDefaultSettings(cls) -> str:
         """
-        Get tooltips xml file name (./Sisyphe/settings/tooltips.xml).
+        Get tooltips XML file name (./Sisyphe/settings/tooltips.xml).
 
         Returns
         -------
         str
-            tooltips xml file name
+            tooltips XML file name
         """
         import Sisyphe.settings
         return join(dirname(abspath(Sisyphe.settings.__file__)), 'tooltips.xml')
