@@ -3,7 +3,7 @@
 	<GUI>
 		<ToolbarSize varmax="64" varmin="16" vartype="int">24</ToolbarSize>
 		<ToolbarVisibility vartype="bool">True</ToolbarVisibility>
-		<ThumbnailSize varmax="256" varmin="64" vartype="int">90</ThumbnailSize>
+		<ThumbnailSize varmax="256" varmin="64" vartype="int">92</ThumbnailSize>
 		<IconSize varmax="64" varmin="24" vartype="int">32</IconSize>
 		<FontFamily vartype="font"></FontFamily>
 		<FontSize varmax="24" varmin="8" vartype="int">10</FontSize>
@@ -173,6 +173,10 @@
 		<CurrentPath vartype="dir"/>
 		<DefaultPath vartype="dir"/>
 	</Database>
+	<Gemini>
+		<APIKey label="API Key" vartype="str"/>
+		<Model label="Gemini model" vartype="str">gemini-2.5-flash</Model>
+	</Gemini>
 	<DicomHost>
 		<AET label="DICOM SCP host AE title" vartype="str">ANY-SCP</AET>
 		<URL label="DICOM SCP host URL/IP" vartype="str">www.dicomserver.co.uk</URL>
