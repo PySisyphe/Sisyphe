@@ -172,7 +172,7 @@ class DialogSettings(QDialog):
 
     QDialog -> DialogSettings
 
-    Last revision: 16/01/2026
+    Last revision: 19/01/2026
     """
 
     # Class method
@@ -450,6 +450,9 @@ class DialogSettings(QDialog):
     def default(self):
         # noinspection PyUnresolvedReferences
         c = self._sections.currentItem().data(0, Qt.UserRole)
+        # < Revision 19/01/2026
+        if c < 0: c = 0
+        # Revision 19/01/2026 >
         widget = self._stack.widget(c).widget()
         widget.resetSettings(default=True)
 

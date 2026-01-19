@@ -3745,7 +3745,7 @@ class WindowSisyphe(QMainWindow):
             wait.hide()
             r = messageBox(self,
                            'Check for update',
-                           'A more recent version of PySisyphe is available.'
+                           'A more recent version of PySisyphe is available.\n'
                            'Would you like to install it ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
@@ -3768,8 +3768,8 @@ class WindowSisyphe(QMainWindow):
                 # < Revision 17/10/2025
                 r = messageBox(self,
                                'Check for update',
-                               'You must close and restart the application to complete '
-                               'the update. Do you want to exit now ?',
+                               'You must close and restart the application to complete the update.\n'
+                               'Do you want to exit now ?',
                                icon=QMessageBox.Question,
                                buttons=QMessageBox.Yes | QMessageBox.No,
                                default=QMessageBox.No)
