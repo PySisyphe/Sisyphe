@@ -23,6 +23,12 @@ from math import atan2
 from math import acos
 from math import degrees
 
+from numpy import array
+from numpy import dot
+from numpy import clip
+from numpy import arccos
+from numpy.linalg import norm
+
 from dipy.tracking.distances import lee_perpendicular_distance
 
 from vtk import vtkActor
@@ -3595,7 +3601,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
     (vtkDistanceWidget, NamedWidget) -> LineWidget
 
     Creation: 05/04/2022
-    Last revision: 20/11/2025
+    Last revision: 13/01/2026
     """
 
     _FILEEXT = '.xline'
@@ -4496,9 +4502,18 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         """
         return self.GetLineRepresentation().GetPoint2WorldPosition()
 
-    def getVector(self, length: float = 1.0) -> vectorFloat3:
+    # < Revision 13/01/2026
+    # method aliases
+    setEntryPosition = setPosition1
+    getEntryPosition = getPosition1
+    setTargetPosition = setPosition2
+    getTargetPosition = getPosition2
+    # Revision 13/01/2026 >
+
+    def getVector(self, length: float = 1.0) -> tuple[float, float, float]:
         """
         Get the direction vector of the current LineWidget instance.
+        The vector direction is from the target point to the entry point (v = entry point - target point).
 
         Parameters
         ----------
@@ -4507,17 +4522,24 @@ class LineWidget(vtkLineWidget2, NamedWidget):
 
         Returns
         -------
-        list[float]
+        tuple[float, float, float]
             direction vector
         """
         r = self.GetLineRepresentation()
+        # Entry point
         p1 = r.GetPoint1WorldPosition()
+        # Target point
         p2 = r.GetPoint2WorldPosition()
-        v = list()
-        v.append((p1[0] - p2[0]) * length)
-        v.append((p1[1] - p2[1]) * length)
-        v.append((p1[2] - p2[2]) * length)
-        return v
+        # < Revision 13/01/2026
+        # v = list()
+        # v.append((p1[0] - p2[0]) * length)
+        # v.append((p1[1] - p2[1]) * length)
+        # v.append((p1[2] - p2[2]) * length)
+        # entry - target points
+        v = array(p1) - array(p2)
+        v = v / norm(v) * length
+        # Revision 13/01/2026 >
+        return tuple(v)
 
     def setTrajectoryAngles(self, r: vectorFloat2, length: float = 50.0, deg: bool = True) -> None:
         """
@@ -4628,6 +4650,12 @@ class LineWidget(vtkLineWidget2, NamedWidget):
             self.setPosition2(p)
         else: raise TypeError('parameter type {} is not float.'.format(type(mm)))
 
+    # < Revision 13/01/2026
+    # method aliases
+    extendEntryPosition = extendPosition1
+    extendTargetPosition = extendPosition2
+    # Revision 13/01/2026 >
+
     def extendPosition1ToPlane(self, plane: vtkPlane | vtkImageSlice | SliceViewWidget) -> None:
         """
         Projecting the target point of the current LineWidget instance onto a plane along the trajectory direction.
@@ -4668,14 +4696,25 @@ class LineWidget(vtkLineWidget2, NamedWidget):
             plane.IntersectWithLine(self.getPosition1(), self.getPosition2(), t, p)
             self.setPosition2(p)
 
-    def extendPosition1ToMeshSurface(self, mesh: SisypheMesh) -> int:
+    # < Revision 13/01/2026
+    # method aliases
+    extendEntryPositionToPlane = extendPosition1ToPlane
+    extendTargetPositionToPlane = extendPosition2ToPlane
+    # Revision 13/01/2026 >
+
+    def extendPosition1ToMeshSurface(self, mesh: SisypheMesh, direction: str = 'both') -> int:
         """
-        Projecting the target point of the current LineWidget instance onto a mesh surface along the trajectory direction.
+        Projecting the entry point of the current LineWidget instance onto a mesh surface along the trajectory direction.
 
         Parameters
         ----------
         mesh : Sisyphe.core.sisypheMesh.SisypheMesh
             projection mesh
+        direction : str
+
+            - 'both', in 2 directions, target to entry and entry to target
+            - 'entry' beyond entry in target to entry direction
+            - 'target' beyond target in entry to target direction
 
         Returns
         -------
@@ -4691,33 +4730,66 @@ class LineWidget(vtkLineWidget2, NamedWidget):
             r = self.GetLineRepresentation()
             p = r.GetPoint1WorldPosition()
             v = self.getVector(200.0)
-            p1 = [p[0] + v[0],
-                  p[1] + v[1],
-                  p[2] + v[2]]
-            p2 = [p[0] - v[0],
-                  p[1] - v[1],
-                  p[2] - v[2]]
+            # < Revision 13/01/2026
+            # p1 = [p[0] + v[0],
+            #       p[1] + v[1],
+            #       p[2] + v[2]]
+            # p2 = [p[0] - v[0],
+            #       p[1] - v[1],
+            #       p[2] - v[2]]
+            if direction == 'entry':
+                p1 = [p[0] + v[0],
+                      p[1] + v[1],
+                      p[2] + v[2]]
+                p2 = p
+            elif direction == 'target':
+                p1 = p
+                p2 = [p[0] - v[0],
+                      p[1] - v[1],
+                      p[2] - v[2]]
+            else: # both
+                p1 = [p[0] + v[0],
+                      p[1] + v[1],
+                      p[2] + v[2]]
+                p2 = [p[0] - v[0],
+                      p[1] - v[1],
+                      p[2] - v[2]]
+            # Revision 13/01/2026 >
             inter = f.IntersectWithLine(p1, p2, ps, None)
             if inter != 0:
                 n = ps.GetNumberOfPoints()
                 if n > 0:
-                    d = list()
-                    for i in range(n):
-                        pr = ps.GetPoint(i)
-                        d.append(sqrt((p[0] - pr[0])**2 + (p[1] - pr[1])**2 + (p[2] - pr[2])**2))
-                    self.setPosition1(ps.GetPoint(d.index(min(d))))
+                    # < Revision 16/01/2026
+                    # d = list()
+                    # for i in range(n):
+                    #     pr = ps.GetPoint(i)
+                    #     d.append(sqrt((p[0] - pr[0]) ** 2 + (p[1] - pr[1]) ** 2 + (p[2] - pr[2]) ** 2))
+                    # self.setPosition1(ps.GetPoint(d.index(min(d))))
+                    if n == 1: self.setPosition1(ps.GetPoint(0))
+                    else:
+                        d = list()
+                        for i in range(n):
+                            pr = ps.GetPoint(i)
+                            d.append(sqrt((p[0] - pr[0])**2 + (p[1] - pr[1])**2 + (p[2] - pr[2])**2))
+                        self.setPosition1(ps.GetPoint(d.index(min(d))))
+                    # Revision 16/01/2026 >
             return inter
         else: raise TypeError('parameter type {} is not SisypheMesh.'.format(type(mesh)))
 
-    def extendPosition2ToMeshSurface(self, mesh: SisypheMesh) -> int:
+    def extendPosition2ToMeshSurface(self, mesh: SisypheMesh, direction: str = 'both') -> int:
         """
-        Projecting the entry point of the current LineWidget instance onto a mesh surface
+        Projecting the target point of the current LineWidget instance onto a mesh surface
         along the trajectory direction.
 
         Parameters
         ----------
         mesh : Sisyphe.core.sisypheMesh.SisypheMesh
             projection mesh
+        direction : str
+
+            - 'both', in 2 directions, target to entry and entry to target
+            - 'entry' beyond entry in target to entry direction
+            - 'target' beyond target in entry to target direction
 
         Returns
         -------
@@ -4733,26 +4805,57 @@ class LineWidget(vtkLineWidget2, NamedWidget):
             r = self.GetLineRepresentation()
             p = r.GetPoint2WorldPosition()
             v = self.getVector(200.0)
-            p1 = [p[0] + v[0],
-                  p[1] + v[1],
-                  p[2] + v[2]]
-            p2 = [p[0] - v[0],
-                  p[1] - v[1],
-                  p[2] - v[2]]
+            # < Revision 13/01/2026
+            # p1 = [p[0] + v[0],
+            #       p[1] + v[1],
+            #       p[2] + v[2]]
+            # p2 = [p[0] - v[0],
+            #       p[1] - v[1],
+            #       p[2] - v[2]]
+            if direction == 'entry':
+                p1 = [p[0] + v[0],
+                      p[1] + v[1],
+                      p[2] + v[2]]
+                p2 = p
+            elif direction == 'target':
+                p1 = p
+                p2 = [p[0] - v[0],
+                      p[1] - v[1],
+                      p[2] - v[2]]
+            else: # both
+                p1 = [p[0] + v[0],
+                      p[1] + v[1],
+                      p[2] + v[2]]
+                p2 = [p[0] - v[0],
+                      p[1] - v[1],
+                      p[2] - v[2]]
+            # Revision 13/01/2026 >
             inter = f.IntersectWithLine(p1, p2, ps, None)
             if inter != 0:
                 n = ps.GetNumberOfPoints()
                 if n > 0:
-                    d = list()
-                    for i in range(n):
-                        pr = ps.GetPoint(i)
-                        d.append(sqrt((p[0] - pr[0])**2 + (p[1] - pr[1])**2 + (p[2] - pr[2])**2))
-                    # < Revision 07/03/2025
-                    # self.setPosition2(ps.getPoint(d.index(min(d))))
-                    self.setPosition2(ps.GetPoint(d.index(min(d))))
-                    # Revision 07/03/2025
+                    # < Revision 16/01/2026
+                    # d = list()
+                    # for i in range(n):
+                    #     pr = ps.GetPoint(i)
+                    #     d.append(sqrt((p[0] - pr[0]) ** 2 + (p[1] - pr[1]) ** 2 + (p[2] - pr[2]) ** 2))
+                    # self.setPosition2(ps.GetPoint(d.index(min(d))))
+                    if n == 1: self.setPosition2(ps.GetPoint(0))
+                    else:
+                        d = list()
+                        for i in range(n):
+                            pr = ps.GetPoint(i)
+                            d.append(sqrt((p[0] - pr[0])**2 + (p[1] - pr[1])**2 + (p[2] - pr[2])**2))
+                        self.setPosition2(ps.GetPoint(d.index(min(d))))
+                    # Revision 16/01/2026 >
             return inter
         else: raise TypeError('parameter type {} is not SisypheMesh.'.format(type(mesh)))
+
+    # < Revision 13/01/2026
+    # method aliases
+    extendEntryPositionToMeshSurface = extendPosition1ToMeshSurface
+    extendTargetPositionToMeshSurface = extendPosition2ToMeshSurface
+    # Revision 13/01/2026 >
 
     def extendPosition1ToMeshCenterOfMass(self, mesh: SisypheMesh) -> None:
         """
@@ -4782,6 +4885,12 @@ class LineWidget(vtkLineWidget2, NamedWidget):
             self.setPosition2(p)
         else: raise TypeError('parameter type {} is not SisypheMesh.'.format(type(mesh)))
 
+    # < Revision 13/01/2026
+    # method aliases
+    extendEntryPositionToMeshCenterOfMass = extendPosition1ToMeshCenterOfMass
+    extendTargetPositionToMeshCenterOfMass = extendPosition2ToMeshCenterOfMass
+    # Revision 13/01/2026 >
+
     def extendPosition1ToMeshCenter(self, mesh: SisypheMesh) -> None:
         """
         Move the target point of the current LineWidget instance to the center of a mesh (vtk.vtkActor center).
@@ -4809,6 +4918,12 @@ class LineWidget(vtkLineWidget2, NamedWidget):
             p = mesh.getActor().GetCenter()
             self.setPosition2(p)
         else: raise TypeError('parameter type {} is not SisypheMesh.'.format(type(mesh)))
+
+    # < Revision 13/01/2026
+    # method aliases
+    extendEntryPositionToMeshCenter = extendPosition1ToMeshCenter
+    extendTargetPositionToMeshCenter = extendPosition2ToMeshCenter
+    # Revision 13/01/2026 >
 
     def setLineWidth(self, width: float) -> None:
         """
@@ -5507,9 +5622,9 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         Returns
         -------
         list[float]
-            - first element, distance between parameter point and target point
-            - second element, distance between parameter point and entry point
-            - third element, minimum distance between parameter point and line
+            - first element, euclidean distance between parameter point and entry point
+            - second element, euclidean distance between parameter point and target point
+            - third element,radial distance between parameter point and line
         """
         r = list()
         p1 = self.getPosition1()
@@ -5532,9 +5647,9 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         Returns
         -------
         list[float]
-            - first element, distance between handle parameter and target point
-            - second element, distance between handle parameter and entry point
-            - third element, minimum distance between handle parameter and line
+            - first element, euclidean distance between handle parameter and entry point
+            - second element, euclidean distance between handle parameter and target point
+            - third element, radial distance between handle parameter and line
         """
         if isinstance(hw, HandleWidget):
             return self.getDistancesToPoint(hw.getPosition())
@@ -5554,7 +5669,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         Returns
         -------
         float
-            minimal perpendicular distance metric between two line segments
+            minimal distance metric between two line segments
         """
         sp1 = self.getPosition1()
         sp2 = self.getPosition2()
@@ -5574,23 +5689,23 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         Returns
         -------
         list[float | list[float]]
-            - first element, distance between line parameter and target point
-            - second element, distance between line parameter and entry point
-            - third element, distance between line parameter and LineWidget line
-            - fourth element, distance between p1 parameter and target point
-            - fifth element, distance between p1 parameter and entry point
-            - sixth element, distance between p2 parameter and target point
-            - seventh element, distance between p2 parameter and entry point
-            - ninth element, coordinates of the closest point on line parameter
-            - tenth element, coordinates of the closest point on LineWidget line
+            - first element, radial distance between line parameter and entry point
+            - second element, radial distance between line parameter and target point
+            - third element, minimal distance between line parameter and LineWidget line
+            - fourth element, euclidean distance between p1 parameter and entry point
+            - fifth element, euclideandistance between p1 parameter and target point
+            - sixth element, euclidean distance between p2 parameter and entry point
+            - seventh element, euclidean distance between p2 parameter and target point
+            - eighth element, coordinates of the closest point on line parameter
+            - ninth element, coordinates of the closest point on LineWidget line
         """
         r = list()
         line = vtkLine()
         sp1 = self.getPosition1()
         sp2 = self.getPosition2()
-        # r[0], distance between line parameter and self LineWidget point1
+        # r[0], radial distance between line parameter and self LineWidget point1 (entry point)
         r.append(sqrt(line.DistanceToLine(sp1, p1, p2)))
-        # r[1], distance between line parameter and self LineWidget point2
+        # r[1], radial distance between line parameter and self LineWidget point2 (target point)
         r.append(sqrt(line.DistanceToLine(sp2, p1, p2)))
         cp1 = [0.0, 0.0, 0.0]
         cp2 = [0.0, 0.0, 0.0]
@@ -5605,7 +5720,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         r.append(sqrt((p1[0] - sp2[0])**2 + (p1[1] - sp2[1])**2 + (p1[2] - sp2[2])**2))
         # r[5], distance between point2 parameter and self LineWidget point1
         r.append(sqrt((p2[0] - sp1[0]) ** 2 + (p2[1] - sp1[1]) ** 2 + (p2[2] - sp1[2]) ** 2))
-        # r[6], distance between point2 parameter and self LineWidget point1
+        # r[6], distance between point2 parameter and self LineWidget point2
         r.append(sqrt((p2[0] - sp2[0]) ** 2 + (p2[1] - sp2[1]) ** 2 + (p2[2] - sp2[2]) ** 2))
         # r[7], closest point on line parameter
         r.append(cp1)
@@ -5625,15 +5740,15 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         Returns
         -------
         list[float | list[float]]
-            - first element, distance between LineWidget parameter and current target point
-            - second element, distance between LineWidget parameter and current entry point
-            - third element, distance between LineWidget parameter and current LineWidget line
-            - fourth element, distance between LineWidget target parameter and current target point
-            - fifth element, distance between LineWidget target parameter and current entry point
-            - sixth element, distance between LineWidget entry parameter and current target point
-            - seventh element, distance between LineWidget entry parameter and current entry point
-            - ninth element, coordinates of the closest point on LineWidget parameter
-            - tenth element, coordinates of the closest point on current LineWidget line
+            - first element, radial distance between line parameter and entry point
+            - second element, radial distance between line parameter and target point
+            - third element, minimal distance between line parameter and LineWidget line
+            - fourth element, euclidean distance between p1 parameter and entry point
+            - fifth element, euclidean distance between p1 parameter and target point
+            - sixth element, euclidean distance between p2 parameter and entry point
+            - seventh element, euclidean distance between p2 parameter and target point
+            - eighth element, coordinates of the closest point on line parameter
+            - ninth element, coordinates of the closest point on LineWidget line
         """
         if isinstance(lw, LineWidget):
             return self.getDistancesToLine(lw.getPosition1(), lw.getPosition2())
@@ -5651,8 +5766,8 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         Returns
         -------
         list[float | list[float]]
-            - first element, distance between plane parameter and target point
-            - second element, distance between plane parameter and entry point
+            - first element, euclidean distance between plane parameter and entry point
+            - second element, euclidean distance between plane parameter and target point
             - third element, coordinates of the line projection on the plane
         """
         from Sisyphe.widgets.sliceViewWidgets import SliceViewWidget
@@ -5670,6 +5785,30 @@ class LineWidget(vtkLineWidget2, NamedWidget):
             r.append(pp)
             return r
         else: raise TypeError('parameter type {} is not SliceViewWidget, vtkImageSlice or vtkPlane.'.format(type(p)))
+
+    # < Revision 13/01/2026
+    # add getAngleToLineWidget() method
+    def getAngleToLineWidget(self, lw: LineWidget, deg: bool = True) -> float:
+        """
+        Get angle between a LineWidget and the current LineWidget instance.
+
+        Parameters
+        ----------
+        lw : LineWidget
+        deg : bool
+            if deg is True, angle is returned is degrees, in radians otherwise.
+
+        Returns
+        -------
+        float
+            angle.
+        """
+        v1 = self.getVector()
+        v2 = lw.getVector()
+        angle = arccos(clip(dot(v1, v2), -1.0, 1.0))
+        if deg: angle = degrees(angle)
+        return angle
+    # Revision 13/01/2026 >
 
     # IO methods
 
@@ -6044,7 +6183,7 @@ class ToolWidgetCollection(object):
     object -> ToolWidgetCollection
 
     Creation: 05/04/2022
-    Last revision: 22/11/2025
+    Last revision: 16/01/2026
     """
 
     __slots__ = ['_referenceID', '_filename', '_tools', '_index', '_color', '_scolor',
@@ -6617,6 +6756,33 @@ class ToolWidgetCollection(object):
                 self._filename = path
             else: self._filename = ''
         else: raise TypeError('parameter type {} is not SisypheVolume'.format(type(img)))
+
+    # < Revision 16/01/2026
+    # add verifyName() method
+    def verifyName(self, name: str) -> str:
+        """
+        Check if a tool name is already in the current ToolWidgetCollection instance. If so, a new name is returned
+        with a numeric suffix (e.g. #1 ...), the same name is returned otherwise.
+
+        Parameters
+        ----------
+        name : str
+            name to verify
+
+        Returns
+        -------
+        str
+        """
+        if name in self:
+            parts = name.split('#')
+            if len(parts) > 1:
+                suffix = parts[-1]
+                root = '#'.join(parts[:-1])
+                if suffix.isnumeric(): return root + '#{}'.format(int(suffix) + 1)
+                else: return name + '#1'
+            else: return name + '#1'
+        else: return name
+    # Revision 16/01/2026 >
 
     def setColor(self, c: vectorFloat3) -> None:
         """

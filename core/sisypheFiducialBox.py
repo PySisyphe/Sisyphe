@@ -59,12 +59,20 @@ class LeksellProcessings(object):
         - convert Leksell trajectory angles (arc and ring) from one orientation to another.
         - calculate entry point from arc, ring, orientation, target point and trajectory length.
 
+    4 orientations: lateral right, lateral left, sagittal anterior, sagitall posterior
+
+    Lateral right orientation:
+
+        - arc, rotation around y-axis, 0° right to 180° left
+        - ring, rotation around x-axis, 0° posterior to 180° anterior
+
     Inheritance
     ~~~~~~~~~~~
 
     object -> LeksellAngleConversion
 
     Creation: 18/12/2025
+    Last revision: 13/01/2026
     """
 
     # Class methods
@@ -102,26 +110,40 @@ class LeksellProcessings(object):
         if deg:
             arc = radians(arc)
             ring = radians(ring)
-        if orient == 'lr':  # Lateral Right
+        # < Revision 13/01/2026
+        # Lateral Right
+        if orient == 'lr':
             v = np.array([-np.cos(arc),
                           np.sin(arc) * np.cos(ring),
-                          np.sin(arc) * np.sin(ring)])
-        elif orient == 'll':  # Lateral Left
+                          -np.sin(arc) * np.sin(ring)])
+        # Lateral Left
+        elif orient == 'll':
+            # v = np.array([np.cos(arc),
+            #               np.sin(arc) * np.cos(ring),
+            #               np.sin(arc) * np.sin(ring)])
             v = np.array([np.cos(arc),
-                          np.sin(arc) * np.cos(ring),
-                          np.sin(arc) * np.sin(ring)])
-        elif orient == 'sa':  # Sagittal Anterior
+                          -np.sin(arc) * np.cos(ring),
+                          -np.sin(arc) * np.sin(ring)])
+        # Sagittal Anterior
+        elif orient == 'sa':
             v = np.array([np.sin(arc) * np.cos(ring),
                           np.cos(arc),
-                          np.sin(arc) * np.sin(ring)])
-        elif orient == 'sp':  # Sagittal Posterior
-            v = np.array([np.sin(arc) * np.cos(ring),
+                          -np.sin(arc) * np.sin(ring)])
+        # Sagittal Posterior
+        elif orient == 'sp':
+            # v = np.array([np.sin(arc) * np.cos(ring),
+            #               -np.cos(arc),
+            #               np.sin(arc) * np.sin(ring)])
+            v = np.array([-np.sin(arc) * np.cos(ring),
                           -np.cos(arc),
-                          np.sin(arc) * np.sin(ring)])
+                          -np.sin(arc) * np.sin(ring)])
         else: raise ValueError('{} invalid orientation'.format(orient))
-        v = v / np.linalg.norm(v)
+        # v = v / np.linalg.norm(v)
+        v = v / np.linalg.norm(v) * length
         target = np.array(p, dtype=float)
-        entry = target - length * v
+        # entry = target - length * v
+        entry = target + v
+        # Revision 13/01/2026 >
         return tuple(entry)
 
     @classmethod
@@ -166,10 +188,14 @@ class LeksellProcessings(object):
         LeksellAngleConversion instance constructor.
         """
         self._r: dict[str, np.ndarray] = dict()
-        self._r['lr'] = np.array([[-1, 0, 0], [0, 1, 0], [0, 0, 1]])  # Lateral Right
-        self._r['ll'] = np.array([[1, 0, 0], [0, -1, 0], [0, 0, 1]])  # Lateral Left
-        self._r['sa'] = np.array([[0, 1, 0], [1, 0, 0], [0, 0, 1]])   # Sagittal Anterior
-        self._r['sp'] = np.array([[0, -1, 0], [-1, 0, 0], [0, 0, 1]]) # Sagittal Posterior
+        # Lateral Right
+        self._r['lr'] = np.array([[-1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        # Lateral Left
+        self._r['ll'] = np.array([[1, 0, 0], [0, -1, 0], [0, 0, 1]])
+        # Sagittal Anterior
+        self._r['sa'] = np.array([[0, 1, 0], [1, 0, 0], [0, 0, 1]])
+        # Sagittal Posterior
+        self._r['sp'] = np.array([[0, -1, 0], [-1, 0, 0], [0, 0, 1]])
 
     """
     Private attributes
@@ -209,14 +235,17 @@ class LeksellProcessings(object):
         if deg:
             arc = radians(arc)
             ring = radians(ring)
+        # < Revision 13/01/2026
         # local vector in the original orientation to global vector
         vlocal = np.array([np.cos(arc),
                            np.sin(arc) * np.cos(ring),
                            np.sin(arc) * np.sin(ring)])
         vglobal = self._r[orientfrom] @ vlocal
-        vglobal / np.linalg.norm(vglobal)
+        # vglobal / np.linalg.norm(vglobal)
         # global vector to local vector in the new orientation
-        vlocal = np.linalg.inv(self._r[orientto]) @ vglobal
+        # vlocal = np.linalg.inv(self._r[orientto]) @ vglobal
+        vlocal = self._r[orientto] @ vglobal
+        # Revision 13/01/2026 >
         x, y, z = vlocal
         arc = np.arccos(x)
         ring = degrees(np.arctan2(z, y)) % 360.0
@@ -276,10 +305,14 @@ class SisypheFiducialBox(QObject):
     Fiducial Leksell coordinates:
 
         - Fiducial              x       y       z
-        - anterior right  ->    5.0     160.0   40.0 cranial to 160.0 caudal
-        - anterior left   ->    195.0   160.0   40.0 cranial to 160.0 caudal
-        - posterior right ->    5.0     40.0    40.0 cranial to 160.0 caudal
-        - posterior left  ->    195.0   40.0    40.0 cranial to 160.0 caudal
+        - right anterior  ->    5.0     160.0   40.0 cranial to 160.0 caudal
+        - right posterior ->    5.0     40.0    40.0 cranial to 160.0 caudal
+        - left anterior   ->    195.0   160.0   40.0 cranial to 160.0 caudal
+        - left posterior  ->    195.0   40.0    40.0 cranial to 160.0 caudal
+        - anterior right  ->    40.0    215.0   40.0 cranial to 160.0 caudal
+        - anterior left   ->    160.0   215.0   40.0 cranial to 160.0 caudal
+        - posterior right ->    40.0    -15.0   40.0 cranial to 160.0 caudal
+        - posterior left  ->    160.0   -15.0   40.0 cranial to 160.0 caudal
 
     Inheritance
     ~~~~~~~~~~~

@@ -48,7 +48,7 @@ class SisypheParsePdf(object):
     object -> SisypheParsePdf
 
     Creation: 15/12/2025
-    Last revision: 10/01/2026
+    Last revision: 16/01/2026
     """
 
     __slots__ = ['_fields', '_exclude', '_types']
@@ -165,9 +165,9 @@ class SisypheParsePdf(object):
 
     # Public methods
 
-    def parse(self, filename: str, wait: DialogWait | None = None) -> tuple[DataFrame, list]:
+    def parseOCR(self, filename: str, linc: float = 0.98, wait: DialogWait | None = None) -> tuple[DataFrame, list]:
         """
-        PDF parsing:
+        PDF OCR parsing:
 
         - OCR processing to extract all strings from the PDF
         - search table fields (table column header)
@@ -177,6 +177,8 @@ class SisypheParsePdf(object):
         ----------
         filename : str
             PDF file to parse.
+        linc : float
+            line increment threshold (0.9 to 0.9999)
         wait : DialogWait
             progress dialog.
 
@@ -260,11 +262,17 @@ class SisypheParsePdf(object):
                                 for k in range(len(self._fields)):
                                     idx, x1, x2 = fields[self._fields[k]]
                                     if x1 < x < x2:
-                                        if c < 0.95: key += 1
+                                        # < Revision 16/01/2026
+                                        # if c < 0.95: key += 1
+                                        if c < linc: key += 1
+                                        # Revision 16/01/2026 >
                                         if wait is not None: wait.addInformationText(
                                             'Page {} - row {}, field {}...'.format(i + 1, key, self._fields[k]))
                                         if key not in rows: rows[key] = [''] * len(self._fields)
                                         rows[key][idx] = r[j][1]
+                                        # < Revision 16/01/2026
+                                        break
+                                        # Revision 16/01/2026 >
                             # append DataFrame
                             if len(rows) > 0:
                                 ndf = len(df)
@@ -277,6 +285,95 @@ class SisypheParsePdf(object):
                 return df, r2
             else: raise IOError('No such file {}.'.format(filename))
         else: raise ValueError('{} is not a PDF file.'.format(basename(filename)))
+
+    # < Revision 16/01/2026
+    # add parseRenishawReport method
+    def parseRenishawReport(self, filename: str) -> tuple[DataFrame, str]:
+        """
+        Renishaw robotic neurosurgery system report parsing:
+
+        - search table fields (table column header)
+        - extract table field values
+        - extract orientation: 'lr' lateral right, 'll' lateral left, 'sa' sagittal anterior, 'sp' sagittal posterior
+
+        Parameters
+        ----------
+        filename : str
+            PDF Renishaw report to parse.
+
+        Returns
+        -------
+        Tuple[DataFrame, str]
+
+            - Dataframe of extracted table values
+            - orientation str
+        """
+
+        def inFields(v: str) -> str:
+            for field in self._fields:
+                if field in v: return field
+            return ''
+
+        if self._fields is None or len(self._fields) == 0:
+            self._fields = list()
+            self._fields.append('Trajectory Name')
+            self._fields.append('Lat [X]')
+            self._fields.append('A-P [Y]')
+            self._fields.append('Vert [Z]')
+            self._fields.append('Arc')
+            self._fields.append('Ring')
+        doc = pymupdf.open(filename)
+        fields = dict()
+        page = doc.load_page(0)
+        # search orientation
+        d = page.get_text('text')
+        if 'Sagittal Anterior' in d: orient = 'sa'
+        elif 'Lateral Right' in d: orient = 'lr'
+        elif 'Sagittal Posterior' in d: orient = 'sp'
+        elif 'Lateral Left' in d: orient = 'll'
+        else: orient = 'lr'
+        # search fields to extract
+        d = page.get_text('dict')['blocks']
+        idx = 0
+        for j in range(len(d)):
+            if 'lines' in d[j]:
+                for k in range(len(d[j]['lines'])):
+                    item = d[j]['lines'][k]['spans'][0]
+                    if inFields(item['text']) != '':
+                        bbox = item['bbox']
+                        fields[item['text']] = (idx, bbox[0], bbox[2])
+                        idx += 1
+            if len(fields) == 6: break
+        # search field values to extract
+        key = 0
+        rows = dict()
+        for i in range(doc.page_count):
+            page = doc.load_page(i)
+            d = page.get_text('dict')['blocks']
+            for j in range(len(d)):
+                if 'lines' in d[j]:
+                    n = len(d[j]['lines'])
+                    if n == 8:
+                        for k in range(len(d[j]['lines'])):
+                            item = d[j]['lines'][k]['spans'][0]
+                            origin = item['origin'][0]
+                            for f in fields:
+                                idx, x1, x2 = fields[f]
+                                if x1 <= origin < x2:
+                                    if key not in rows: rows[key] = [''] * len(self._fields)
+                                    try: rows[key][idx] = float(item['text'])
+                                    except: rows[key][idx] = item['text']
+                                    break
+                        key += 1
+        # append DataFrame
+        df = DataFrame(columns=self._fields)
+        if len(rows) > 0:
+            ndf = len(df)
+            for key in rows:
+                if all([v != '' for v in rows[key]]):
+                    df.loc[ndf + key] = rows[key]
+        return df, orient
+    # Revision 16/01/2026 >
 
     def setFieldNamesToExclude(self, fields: list[str]) -> None:
         """
@@ -309,6 +406,9 @@ class SisypheParsePdf(object):
         fields : str | list[str]
             list of strings to exclude.
         """
+        # < Revision 16/01/2026
+        if self._exclude is None: self._exclude = list()
+        # Revision 16/01/2026 >
         if isinstance(fields, str): fields = [fields]
         self._exclude += fields
 
@@ -344,6 +444,9 @@ class SisypheParsePdf(object):
         fields : str | list[str]
             list of fields to be searched in the PDF.
         """
+        # < Revision 16/01/2026
+        if self._fields is None: self._fields = list()
+        # Revision 16/01/2026 >
         if isinstance(fields, str): fields = [fields]
         self._fields += fields
 
@@ -385,28 +488,33 @@ class SisypheParsePdf(object):
         ----------
         filename : str
         """
-        if filename != '' and len(self._fields) > 0:
-            path, ext = splitext(filename)
-            if ext.lower() != '.xml': filename = path + '.xml'
-            doc = minidom.Document()
-            root = doc.createElement('SEEGReport')
-            root.setAttribute('version', '1.0')
-            doc.appendChild(root)
-            for i in range(len(self._fields)):
-                field = self._fields[i]
-                node = doc.createElement('field')
-                root.appendChild(node)
-                txt = doc.createTextNode(field)
-                node.appendChild(txt)
-            for i in range(len(self._exclude)):
-                field = self._exclude[i]
-                node = doc.createElement('exclude')
-                root.appendChild(node)
-                txt = doc.createTextNode(field)
-                node.appendChild(txt)
-            xml = doc.toprettyxml()
-            with open(filename, 'w') as f:
-                f.write(xml)
+        if self._fields is not None:
+            if filename != '' and len(self._fields) > 0:
+                path, ext = splitext(filename)
+                if ext.lower() != '.xml': filename = path + '.xml'
+                doc = minidom.Document()
+                root = doc.createElement('SEEGReport')
+                root.setAttribute('version', '1.0')
+                doc.appendChild(root)
+                for i in range(len(self._fields)):
+                    field = self._fields[i]
+                    node = doc.createElement('field')
+                    root.appendChild(node)
+                    # noinspection PyTypeChecker
+                    txt = doc.createTextNode(field)
+                    node.appendChild(txt)
+                if self._fields is not None and len(self._fields) > 0:
+                    for i in range(len(self._exclude)):
+                        field = self._exclude[i]
+                        node = doc.createElement('exclude')
+                        root.appendChild(node)
+                        txt = doc.createTextNode(field)
+                        node.appendChild(txt)
+                xml = doc.toprettyxml()
+                with open(filename, 'w') as f:
+                    f.write(xml)
+            else: raise AttributeError('No field name to save.')
+        else: raise AttributeError('No field name to save.')
 
     def loadFieldNames(self, filename: str) -> None:
         """
@@ -421,6 +529,10 @@ class SisypheParsePdf(object):
             if ext.lower() != '.xml': filename = path + '.xml'
             if exists(filename):
                 self.clearFieldNames()
+                # < Revision 16/01/2026
+                self._fields = list()
+                self._exclude = list()
+                # Revision 16/01/2026 >
                 doc = minidom.parse(filename)
                 root = doc.documentElement
                 if root.nodeName == 'SEEGReport' and root.getAttribute('version') == '1.0':
@@ -434,4 +546,7 @@ class SisypheParsePdf(object):
                             data = node.firstChild.data
                             if data is not None and data != '':
                                 self._exclude.append(data)
+                        # < Revision 16/01/2026
+                        node = node.nextSibling
+                        # Revision 16/01/2026 >
             else: raise IOError('No such file : {}'.format(basename(filename)))

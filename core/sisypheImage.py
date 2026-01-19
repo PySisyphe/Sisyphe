@@ -25,6 +25,9 @@ import cython
 
 from copy import deepcopy
 
+from math import atan2
+from math import degrees
+
 from numpy import iinfo
 from numpy import can_cast
 from numpy import array
@@ -134,6 +137,7 @@ from SimpleITK import RelabelComponent as sitkRelabelComponent
 from SimpleITK import RescaleIntensityImageFilter
 from SimpleITK import NormalizeImageFilter
 from SimpleITK import IntensityWindowingImageFilter
+from SimpleITK import LabelShapeStatisticsImageFilter
 
 from vtk import VTK_CHAR
 from vtk import VTK_UNSIGNED_CHAR
@@ -297,7 +301,7 @@ class SisypheImage(object):
     object -> SisypheImage
 
     Creation: 12/01/2021
-    Last revision: 08/01/2026
+    Last revision: 19/01/2026
     """
     __slots__ = ['_sitk_image', '_itk_image', '_vtk_image', '_numpy_array', '_attr']
 
@@ -2524,6 +2528,41 @@ class SisypheImage(object):
         self.getNumpy().fill(v)
     # Revision 26/10/2024
 
+    # < Revision 19/01/2026
+    # add clearSlices method
+    def fillSlicesWith(self, sl: int | list[int] | slice, v: float = 0.0, orient: int = 0) -> None:
+        """
+        Fill slices of the current SisypheImage instance with a given value.
+
+        Parameters
+        ----------
+        sl : int | list[int] | slice
+            index of slices to be filled.
+        v : float
+            value to fill the slice with (default 0.0)
+        orient : int
+            slice orientation (0 axial, 1 coronal, 2 sagittal).
+        """
+        if isinstance(sl, int): sl = [sl]
+        elif isinstance(sl, slice):
+            start = sl.start
+            stop = sl.stop
+            step = sl.step
+            if step is None: step = 1
+            if sl.start is None: start = 0
+            print(start, stop, step)
+            sl = list(range(start,stop, step))
+        if isinstance(sl, list):
+            if self.isIntegerDatatype(): v = int(v)
+            img = self.getNumpy()
+            print(img.shape)
+            for i in sl:
+                if orient == 0: img[i,:,:] = v
+                elif orient == 1: img[:,i,:] = v
+                else: img[:,:,i] = v
+        else: raise TypeError('sl parameter type {} is not int, list[int] or slice.'.format(type(sl)))
+    # Revision 19/01/2026 >
+
     def isEmpty(self) -> bool:
         """
         Check whether image buffer is allocated.
@@ -3979,6 +4018,48 @@ class SisypheImage(object):
             return self[:, :, inf:sup+1]
         else: raise ValueError('Not implemented for multi-component images.')
     # Revision 04/10/2024 >
+
+    # < Revision 19/01/2026
+    # add getReorientRotations method
+    def getReorient(self, f: float = 1.8) -> tuple[float, tuple[float, float, float]]:
+        """
+        Get the z-axis rotations to automatically reorient the current SisypheImage instance.
+
+        Parameters
+        ----------
+        f : float
+            multiplicative factor to adjust the neck slice. Lower values remove more slices, higher values keep more
+            slices (between 1.5 and 2.0, default 1.8 close to the foramen magnum for most MR images)
+
+        Returns
+        -------
+        tuple[float, tuple[float, float, float]]
+            - first, z-axis rotation
+            - second, centroid
+        """
+        # remove neck slices
+        z = self.getSize()[2]
+        r = self.sliceHeadSurface('a')
+        sup = r['a'][2]
+        n = sup - r['a'][0]
+        inf = sup - int(f * n)
+        if inf < r['a'][1]: inf = r['a'][1]
+        if inf > 0: self.fillSlicesWith(slice(0, inf))
+        if sup + 1 <= z: self.fillSlicesWith(slice(sup+1, z))
+        # head mask
+        mask = self.getMask2(objstep=False)
+        # head centroid
+        f = LabelShapeStatisticsImageFilter()
+        f.Execute(mask.getSITKImage())
+        p = f.GetCentroid(1)
+        slax = mask.getSITKImage()[:,:,int(p[2])]
+        # axial, z-axis angle
+        f.ComputeOrientedBoundingBoxOn()
+        f.Execute(slax)
+        d = f.GetOrientedBoundingBoxDirection(1)
+        rz = degrees(atan2(d[1], d[0]))
+        return -rz, p
+    # Revision 19/01/2026 >
 
     # Descriptive statistics public methods
 
