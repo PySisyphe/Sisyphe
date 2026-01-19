@@ -89,6 +89,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-21-08-build-18-11-2025">version 0.21.08, build 18/11/2025</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-22-11-build-05-12-2025">version 0.22.11, build 05/12/2025</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-24-14-build-12-01-2026">version 0.24.14, build 12/01/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-25-02-build-20-01-2026">version 0.25.02, build 20/01/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -131,6 +132,7 @@
 <li><p><a class="reference internal" href="#build18-11-2025"><span class="std std-ref">version 0.21.08, build 18/11/2025</span></a></p></li>
 <li><p><a class="reference internal" href="#build05-12-2025"><span class="std std-ref">version 0.22.11, build 05/12/2025</span></a></p></li>
 <li><p><a class="reference internal" href="#build12-01-2026"><span class="std std-ref">version 0.24.14, build 12/01/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build20-01-2026"><span class="std std-ref">version 0.25.02, build 20/01/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -168,6 +170,7 @@
 <ul class="simple">
 <li><p>First distributed version.</p></li>
 <li><p>Github page deployment: <a class="reference external" href="https://github.com/PySisyphe/Sisyphe">https://github.com/PySisyphe/Sisyphe</a></p></li>
+<li><p>NITRC page deployment: <a class="reference external" href="https://www.nitrc.org/projects/pysisyphe/">https://www.nitrc.org/projects/pysisyphe/</a></p></li>
 <li><p>First PyInstaller stand alone frozen version for Windows and MacOS platforms (x64 CPU)</p></li>
 <li><p>Shared link to Mega repository for downloading frozen versions: <a class="reference external" href="https://mega.nz/folder/hKEBzRTR#MUodQFh4N8LeukE2hbkzNA">https://mega.nz/folder/hKEBzRTR#MUodQFh4N8LeukE2hbkzNA</a></p></li>
 </ul>
@@ -632,7 +635,7 @@
 <li><p>/Sisyphe/settings/MR.xdcm</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>fix error, line 79, in PixelSpacing value, from 1.0/1.L0 to 1.0/1.0</p></li>
+<li><p>bug fix, line 79, in PixelSpacing value, from 1.0/1.L0 to 1.0/1.0</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -1742,8 +1745,8 @@
 <li><p>widgets.sliceTrajectoryViewWidget</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>update import: add from Sisyphe.core.sisypheTools import HandleWidget</p></li>
-<li><p>update import: add from Sisyphe.core.sisypheTools import LineWidget</p></li>
+<li><p>update import, add from Sisyphe.core.sisypheTools import HandleWidget</p></li>
+<li><p>update import, add from Sisyphe.core.sisypheTools import LineWidget</p></li>
 <li><p>remove these imports from TYPE_CHECKING</p></li>
 </ul>
 </div></blockquote>
@@ -2966,7 +2969,9 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>PySisyphe_ipython.rst</p></li>
+<li><p>PySisyphe_installation.rst</p></li>
 <li><p>PySisyphe_Registration.rst</p></li>
+<li><p>PySisyphe_Segmentation.rst</p></li>
 <li><p>PySisyphe_dockroitools.rst</p></li>
 <li><p>PySisyphe_Mapping.rst</p></li>
 <li><p>version-histrory.rst update</p></li>
@@ -3170,7 +3175,7 @@
 <li><p>gui.dialogPerfusion.DialogPerfusion2</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>new MR perfusion processing using PyPeT implementation, dramatic improvement in processing time (less than 10s)</p></li>
+<li><p>there is a dramatic improvement in processing time (less than 10s) with the new MR perfusion processing using PyPeT implementation</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -3508,7 +3513,7 @@
 <li><p>core.sisypheTools.TextWidget.getVisibility()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Converting the return value from int to a bool</p></li>
+<li><p>converting the return value from int to a bool</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -3739,7 +3744,7 @@
 <li><p>gui.dialogManualRegistration.DialogManualRegistration.__init__()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Reverse the order of the ‘OK’ and ‘Cancel’ buttons.</p></li>
+<li><p>reverse the order of the ‘OK’ and ‘Cancel’ buttons.</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -3821,6 +3826,344 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>call the frame-based registration dialog box</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="version-0-25-02-build-20-01-2026">
+<span id="build20-01-2026"></span><h2>version 0.25.02, build 20/01/2026<a class="headerlink" href="#version-0-25-02-build-20-01-2026" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>updated html documentation</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>API/api_tools.rst</p></li>
+<li><p>API/api_fiducial.rst</p></li>
+<li><p>version-histrory.rst update</p></li>
+<li><p>rebuild sphinx documentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated file</strong></p>
+<blockquote>
+<div><ul>
+<li><p>settings/functions.xml</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>fix xml error, line 386, remove “‘s” in Block-circulant SVD with Simpson’s rule</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated modules</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>core.sisypheTools</p></li>
+<li><p>core.sisypheFiducialBox</p></li>
+<li><p>core.sisypheTools</p></li>
+<li><p>core.sisyphePDF</p></li>
+<li><p>core.sisypheImage</p></li>
+<li><p>widgets.sliceViewWidgets</p></li>
+<li><p>widgets.attributesWidgets</p></li>
+<li><p>gui.dialogPerfusion</p></li>
+<li><p>gui.dialogSettings</p></li>
+<li><p>gui.dialogReorient</p></li>
+<li><p>gui.windowSisyphe</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheTools.LineWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getVector() method</p></li>
+<li><p>new method getAngleToLineWidget()</p></li>
+<li><p>new alias method setEntryPosition()</p></li>
+<li><p>new alias method getEntryPosition()</p></li>
+<li><p>new alias method setTargetPosition()</p></li>
+<li><p>new alias method getTargetPosition()</p></li>
+<li><p>new alias method extendEntryPosition()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>new alias method extendTargetPosition()</p></li>
+<li><p>new alias method extendEntryPositionToPlane()</p></li>
+<li><p>new alias method extendTargetPositionToPlane()</p></li>
+<li><p>new alias method extendEntryPositionToMeshSurface()</p></li>
+<li><dl class="simple">
+<dt>new alias method extendTargetPositionToMeshSurface()</dt><dd><ul class="simple">
+<li><p>new alias method extendEntryPositionToMeshCenterOfMass()</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>new alias method extendTargetPositionToMeshCenterOfMass()</dt><dd><ul class="simple">
+<li><p>new alias method extendEntryPositionToMeshCenter()</p></li>
+<li><p>new alias method extendTargetPositionToMeshCenter()</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>core.sisypheFiducialBox.LeksellProcessings</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update computeEntryPoint() method</p></li>
+<li><p>update convertAngles() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.ToolWidgetCollection</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new verifyName() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisyphePDF.SisypheParsePdf</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update loadFieldNames() method</p></li>
+<li><p>update parse() method</p></li>
+<li><p>new parseRenishawReport() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new fillSlicesWith() method</p></li>
+<li><p>new getReorient() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update displayOn() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update open() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogPerfusion.DialogPerfusion2</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update function() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSettings.DialogSettings</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update apply() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogReorient.DialogReorient</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update autoTransform() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new methods</strong></p>
+<blockquote>
+<div><blockquote>
+<div><ul>
+<li><p>core.sisypheTools.LineWidget.getAngleToLineWidget()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get angle between a LineWidget and the current LineWidget instance</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.LineWidget.setEntryPosition()</p></li>
+<li><p>core.sisypheTools.LineWidget.getEntryPosition()</p></li>
+<li><p>core.sisypheTools.LineWidget.setTargetPosition()</p></li>
+<li><p>core.sisypheTools.LineWidget.getTargetPosition()</p></li>
+<li><p>core.sisypheTools.LineWidget.extendEntryPosition()</p></li>
+</ul>
+</div></blockquote>
+<ul>
+<li><p>core.sisypheTools.LineWidget.extendTargetPosition()</p></li>
+<li><p>core.sisypheTools.LineWidget.extendEntryPositionToPlane()</p></li>
+<li><p>core.sisypheTools.LineWidget.extendTargetPositionToPlane()</p></li>
+<li><p>core.sisypheTools.LineWidget.extendEntryPositionToMeshSurface()</p></li>
+<li><dl class="simple">
+<dt>core.sisypheTools.LineWidget.extendTargetPositionToMeshSurface()</dt><dd><ul class="simple">
+<li><p>core.sisypheTools.LineWidget.extendEntryPositionToMeshCenterOfMass()</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>core.sisypheTools.LineWidget.extendTargetPositionToMeshCenterOfMass()</dt><dd><ul>
+<li><p>core.sisypheTools.LineWidget.extendEntryPositionToMeshCenter()</p></li>
+<li><p>core.sisypheTools.LineWidget.extendTargetPositionToMeshCenter()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>method aliases</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.ToolWidgetCollection.verifyName()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>check if a tool name is already in the current ToolWidgetCollection instance. If so, a new name is returned</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>with a numeric suffix (e.g. #1 …), the same name is returned otherwise</p>
+</dd>
+</dl>
+</li>
+<li><p>core.sisyphePDF.SisypheParsePdf.parseRenishawReport()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Renishaw robotic neurosurgery system report parsing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.fillSlicesWith()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>fill slices with a given value</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.getReorient()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Get the rotations (y-axis and z-axis) to automatically reorient the volume</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheTools.LineWidget.getVector()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 4519</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.LineWidget.extendPosition1ToMeshSurface()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>search direction management (both, target to entry direction or entry to target direction)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTools.LineWidget.extendPosition2ToMeshSurface()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>search direction management (both, target to entry direction or entry to target direction)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.LeksellProcessings.computeEntryPoint()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, changing the sign of the z-value of vectors</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.LeksellProcessings.convertAngles()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>removal of vector normalization and matrix inversion, which are unnecessary</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisyphePDF.SisypheParsePdf.loadFieldNames()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 437, add line node = node.nextSibling</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>ucore.sisyphePDF.SisypheParsePdf.parse()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 264, modifiy relative threshold to detect line increments (from 0.95 to 0.98)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceViewWidget.displayOn()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 994, self._action[‘showicbm’] &amp; self._action[‘showframe’] visibility condition</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.open()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, lines 5313, 5390 &amp; 5429, rename tool if its name is already in the ListToolAttributesWidget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogPerfusion.DialogPerfusion2.function()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 389, remove “‘s” from “Block-circulant SVD with Simpson’s rule”</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSettings.DialogSettings.apply()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 563, DockWidgets setMaxCount()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogReorient.DialogReorient.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 178, add self._auto button</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogReorient.DialogReorient.autoTransform()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace autoTransform method, automatic reorientation processing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 584, add chdir(self.getUserDirectory())</p></li>
 </ul>
 </div></blockquote>
 </li>
