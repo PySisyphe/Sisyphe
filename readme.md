@@ -70,5 +70,5 @@ Download Binary archive
 [Download folder](https://mega.nz/folder/hKEBzRTR#MUodQFh4N8LeukE2hbkzNA)
 
 Direct link to binary archives:
-- Windows binary [PySisyphe 0.24.14 build 12-01-2026](https://mega.nz/file/RDEXUAIZ#_lkCb743Md1fStYMkGhN0t3XPhCHGYpycd9z2XRnovM)
+- Windows binary [PySisyphe 0.25.02 build 20-01-2026](https://mega.nz/file/IPVx3AQB#mDnvyFIuEsQk4q15KfWcIBPKTpHr5DXLORzhazO5mek)
 - MacOS 11+ intel binary [PySisyphe 0.24.14 build 12-01-2026](https://mega.nz/file/lb0HBDTD#TdZ8rAthLSKK-TRcvHL3-vkPxil6jqKYwC8ygsofBHo)
