@@ -73,9 +73,9 @@
 		<SetDirections label="Set directions to default" vartype="bool">False</SetDirections>
 	</Attributes>
 	<LinePlot>
-		<title label="Title" vartype="str"></title>
-		<xlabel label="x-axis label" vartype="str"></xlabel>
-		<ylabel label="y-axis label" vartype="str"></ylabel>
+		<title label="Title" vartype="str"/>
+		<xlabel label="x-axis label" vartype="str"/>
+		<ylabel label="y-axis label" vartype="str"/>
 		<yscale label="y-axis scale" vartype="lstr">linear|log</yscale>
 		<frame label="Frame" vartype="bool">True</frame>
 		<taxis label="Top axis" vartype="bool">False</taxis>
@@ -121,13 +121,13 @@
 		<raxis label="Right axis" vartype="bool">False</raxis>
 		<baxis label="Bottom axis" vartype="bool">True</baxis>
 		<laxis label="Left axis" vartype="bool">True</laxis>
-		<grid label="Grid" vartype="bool">True</grid>
+		<grid label="Grid" vartype="bool">False</grid>
 		<glinestyle label="Grid line style" vartype="lstr">-- dashed| none|- solid|-. dashdot|: dotted</glinestyle>
 		<glinewidth label="Grid line width" vartype="int">1</glinewidth>
 		<gcolor label="Grid color" vartype="color">1.0 1.0 1.0</gcolor>
 		<color label="Background color" vartype="color">1.0 1.0 1.0</color>
-		<linestyle label="Line style" vartype="lstr"> none|- solid|-- dashed|-. dashdot|: dotted</linestyle>
-		<linewidth label="Line width" vartype="int">1</linewidth>
+		<linestyle label="Line style" vartype="lstr">- solid| none|-- dashed|-. dashdot|: dotted</linestyle>
+		<linewidth label="Line width" vartype="int">2</linewidth>
 		<fill label="Fill" vartype="bool">False</fill>
 	</StairsPlot>
 	<WhiskerPlot>
@@ -140,7 +140,7 @@
 		<raxis label="Right axis" vartype="bool">False</raxis>
 		<baxis label="Bottom axis" vartype="bool">True</baxis>
 		<laxis label="Left axis" vartype="bool">True</laxis>
-		<grid label="Grid" vartype="bool">True</grid>
+		<grid label="Grid" vartype="bool">False</grid>
 		<glinestyle label="Grid line style" vartype="lstr">-- dashed| none|- solid|-. dashdot|: dotted</glinestyle>
 		<glinewidth label="Grid line width" vartype="int">1</glinewidth>
 		<gcolor label="Grid color" vartype="color">1.0 1.0 1.0</gcolor>
@@ -217,13 +217,13 @@
 		<taxis label="Top axis" vartype="bool">False</taxis>
 		<raxis label="Right axis" vartype="bool">False</raxis>
 		<color label="Background color" vartype="color">1.0 1.0 1.0</color>
-		<cmap label="Colormap" vartype="lut">gray</cmap>
+		<cmap label="Colormap" vartype="lut">ncar</cmap>
 		<colorbar label="Colorbar" vartype="bool">True</colorbar>
 	</MatrixPlot>
 	<ImagePlot>
-		<title label="Title" vartype="str"/>
-		<xlabel label="x-axis label" vartype="str"/>
-		<ylabel label="y-axis label" vartype="str"/>
+		<title label="Title" vartype="str"></title>
+		<xlabel label="x-axis label" vartype="str"></xlabel>
+		<ylabel label="y-axis label" vartype="str"></ylabel>
 		<yscale label="y-axis scale" vartype="lstr">linear|log</yscale>
 		<frame label="Frame" vartype="bool">True</frame>
 		<taxis label="Top axis" vartype="bool">False</taxis>

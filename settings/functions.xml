@@ -375,6 +375,20 @@
 		<Deconvolution vartype="bool">True</Deconvolution>
 		<Leakage label="Leakage" vartype="bool">False</Leakage>
 	</Perfusion>
+	<Perfusion2>
+		<DCM label="Get TR/TE from dicom file" vartype="dcm"/>
+		<TR label="TR (ms)" varmax="10000.0" varmin="1.0" vartype="float">2000.0</TR>
+		<TE label="TE (ms)" varmax="10000.0" varmin="1.0" vartype="float">20.0</TE>
+		<Masking label="Masking algorithm" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximumentropy|Kittler|Isodata|Moments</Masking>
+		<Baseline label="Baseline indices (first, last)" varmax="10" varmin="0" vartype="lint">0 4</Baseline>
+		<VoxelCount label="Number of AIF voxels" varmax="100" varmin="10" vartype="int">10</VoxelCount>
+		<Dialog label="AIF dialog"  vartype="bool">True</Dialog>
+		<Deconvolution label="Deconvolution algorithm" vartype="lstr">Block-circulant SVD with Simpson rule|Block-circulant SVD with manual matrix construction|SVD|Oscillation index SVD|Box non-linear regression</Deconvolution>
+		<Smoothing label='FWHM gaussian smoothing' varmax="12.0" varmin="0.0" vartype="float">0.0</Smoothing>
+		<Recovery label="Signal recovery maps processing" vartype="bool">True</Recovery>
+		<DSC label="DSC maps processing" vartype="bool">True</DSC>
+		<Leakage label="Leakage map processing" vartype="bool">False</Leakage>
+	</Perfusion2>
 	<DiffusionPreprocessing>
 		<Mask vartype="bool">True</Mask>
 		<Algo label="Background thresholding algorithm (mask)" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximum Entropy|Kittler|Isodata|Moments</Algo>
