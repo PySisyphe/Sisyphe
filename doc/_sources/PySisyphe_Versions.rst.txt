@@ -14,6 +14,7 @@ Version history
 - :ref:`build18-11-2025`
 - :ref:`build05-12-2025`
 - :ref:`build12-01-2026`
+- :ref:`build20-01-2026`
 
 .. _version-increment-rules:
 Version increment rules
@@ -42,6 +43,7 @@ version 0.9.1, build 26/07/2025
 
 - First distributed version.
 - Github page deployment: https://github.com/PySisyphe/Sisyphe
+- NITRC page deployment: https://www.nitrc.org/projects/pysisyphe/
 - First PyInstaller stand alone frozen version for Windows and MacOS platforms (x64 CPU)
 - Shared link to Mega repository for downloading frozen versions: https://mega.nz/folder/hKEBzRTR#MUodQFh4N8LeukE2hbkzNA
 
@@ -325,7 +327,7 @@ version 0.16.5, build 13/10/2025
 
 	- /Sisyphe/settings/MR.xdcm
 	
-		- fix error, line 79, in PixelSpacing value, from 1.0/1.L0 to 1.0/1.0
+		- bug fix, line 79, in PixelSpacing value, from 1.0/1.L0 to 1.0/1.0
 	
 	- /Sisyphe/settings/dialogs.xml
 	- /Sisyphe/settings/tootips.xml
@@ -1005,8 +1007,8 @@ version 0.21.08, build 18/11/2025
 	- widgets.sliceViewWidgets
 	- widgets.sliceTrajectoryViewWidget
 
-		- update import: add from Sisyphe.core.sisypheTools import HandleWidget
-		- update import: add from Sisyphe.core.sisypheTools import LineWidget
+		- update import, add from Sisyphe.core.sisypheTools import HandleWidget
+		- update import, add from Sisyphe.core.sisypheTools import LineWidget
 		- remove these imports from TYPE_CHECKING
 
 	- widgets.abstractViewWidget
@@ -1631,6 +1633,7 @@ version 0.22.11, build 05/12/2025
 			- key { displays {}
 			- key quote displays ''
 			- key double-quote displays ""
+
 		- line 196, add _globals QTreeWidget popup menu management
 
 	- widgets.tabToolsWidgets.TabWidget.__init__()
@@ -1767,7 +1770,9 @@ version 0.24.14, build 12/01/2026
 - **updated html documentation**
 
 	- PySisyphe_ipython.rst
+	- PySisyphe_installation.rst
 	- PySisyphe_Registration.rst
+	- PySisyphe_Segmentation.rst
 	- PySisyphe_dockroitools.rst
 	- PySisyphe_Mapping.rst
 	- version-histrory.rst update
@@ -1895,7 +1900,7 @@ version 0.24.14, build 12/01/2026
 
 	- gui.dialogPerfusion.DialogPerfusion2
 
-		- new MR perfusion processing using PyPeT implementation, dramatic improvement in processing time (less than 10s)
+		- there is a dramatic improvement in processing time (less than 10s) with the new MR perfusion processing using PyPeT implementation
 
 - **updated classes**
 
@@ -2105,7 +2110,7 @@ version 0.24.14, build 12/01/2026
 	- core.sisypheTools.BoxWidget.getVisibility()
 	- core.sisypheTools.TextWidget.getVisibility()
 
-		- Converting the return value from int to a bool
+		- converting the return value from int to a bool
 
 	- core.sisypheFiducialBox.SisypheFiducialBox._markersSearch()
 
@@ -2240,7 +2245,7 @@ version 0.24.14, build 12/01/2026
 
 	- gui.dialogManualRegistration.DialogManualRegistration.__init__()
 
-		- Reverse the order of the 'OK' and 'Cancel' buttons.
+		- reverse the order of the 'OK' and 'Cancel' buttons.
 
 	- gui.windowSisyphe.WindowSisyphe.__init__()
 
@@ -2289,3 +2294,198 @@ version 0.24.14, build 12/01/2026
 	- gui.windowSisyphe.WindowSisyphe.frameRegistration()
 
 		- call the frame-based registration dialog box
+
+.. _build20-01-2026:
+version 0.25.02, build 20/01/2026
+---------------------------------
+
+- **updated html documentation**
+
+	- API/api_tools.rst
+	- API/api_fiducial.rst
+	- version-histrory.rst update
+	- rebuild sphinx documentation
+
+- **updated file**
+
+	- settings/functions.xml
+
+		- fix xml error, line 386, remove "'s" in Block-circulant SVD with Simpson's rule
+
+- **updated modules**
+
+	- core.sisypheTools
+	- core.sisypheFiducialBox
+	- core.sisypheTools
+	- core.sisyphePDF
+	- core.sisypheImage
+	- widgets.sliceViewWidgets
+	- widgets.attributesWidgets
+	- gui.dialogPerfusion
+	- gui.dialogSettings
+	- gui.dialogReorient
+	- gui.windowSisyphe
+
+- **updated classes**
+
+	- core.sisypheTools.LineWidget
+
+		- update getVector() method
+		- new method getAngleToLineWidget()
+		- new alias method setEntryPosition()
+		- new alias method getEntryPosition()
+		- new alias method setTargetPosition()
+		- new alias method getTargetPosition()
+		- new alias method extendEntryPosition()
+    	- new alias method extendTargetPosition()
+    	- new alias method extendEntryPositionToPlane()
+    	- new alias method extendTargetPositionToPlane()
+    	- new alias method extendEntryPositionToMeshSurface()
+    	- new alias method extendTargetPositionToMeshSurface()
+		- new alias method extendEntryPositionToMeshCenterOfMass()
+    	- new alias method extendTargetPositionToMeshCenterOfMass()
+		- new alias method extendEntryPositionToMeshCenter()
+		- new alias method extendTargetPositionToMeshCenter()
+
+	- core.sisypheFiducialBox.LeksellProcessings
+
+		- update computeEntryPoint() method
+		- update convertAngles() method
+
+	- core.sisypheTools.ToolWidgetCollection
+
+		- new verifyName() method
+
+	- core.sisyphePDF.SisypheParsePdf
+
+		- update loadFieldNames() method
+		- update parse() method
+		- new parseRenishawReport() method
+
+	- core.sisypheImage.SisypheImage
+
+		- new fillSlicesWith() method
+		- new getReorient() method
+
+	- widgets.sliceViewWidgets.SliceViewWidget
+
+		- update displayOn() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- update open() method
+
+	- gui.dialogPerfusion.DialogPerfusion2
+
+		- update function() method
+
+	- gui.dialogSettings.DialogSettings
+
+		- update apply() method
+
+	- gui.dialogReorient.DialogReorient
+
+		- update __init__() method
+		- update autoTransform() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update __init__() method
+
+- **new methods**
+
+	- core.sisypheTools.LineWidget.getAngleToLineWidget()
+
+		- get angle between a LineWidget and the current LineWidget instance
+
+	- core.sisypheTools.LineWidget.setEntryPosition()
+	- core.sisypheTools.LineWidget.getEntryPosition()
+	- core.sisypheTools.LineWidget.setTargetPosition()
+	- core.sisypheTools.LineWidget.getTargetPosition()
+	- core.sisypheTools.LineWidget.extendEntryPosition()
+    - core.sisypheTools.LineWidget.extendTargetPosition()
+    - core.sisypheTools.LineWidget.extendEntryPositionToPlane()
+    - core.sisypheTools.LineWidget.extendTargetPositionToPlane()
+    - core.sisypheTools.LineWidget.extendEntryPositionToMeshSurface()
+    - core.sisypheTools.LineWidget.extendTargetPositionToMeshSurface()
+	- core.sisypheTools.LineWidget.extendEntryPositionToMeshCenterOfMass()
+    - core.sisypheTools.LineWidget.extendTargetPositionToMeshCenterOfMass()
+	- core.sisypheTools.LineWidget.extendEntryPositionToMeshCenter()
+	- core.sisypheTools.LineWidget.extendTargetPositionToMeshCenter()
+
+		- method aliases
+
+	- core.sisypheTools.ToolWidgetCollection.verifyName()
+
+		- check if a tool name is already in the current ToolWidgetCollection instance. If so, a new name is returned
+        with a numeric suffix (e.g. #1 ...), the same name is returned otherwise
+
+    - core.sisyphePDF.SisypheParsePdf.parseRenishawReport()
+
+    	- Renishaw robotic neurosurgery system report parsing
+
+    - core.sisypheImage.SisypheImage.fillSlicesWith()
+
+    	- fill slices with a given value
+
+    - core.sisypheImage.SisypheImage.getReorient()
+
+    	- Get the rotations (y-axis and z-axis) to automatically reorient the volume
+
+- **updated methods**
+
+	- core.sisypheTools.LineWidget.getVector()
+
+		- bug fix, line 4519
+
+	- core.sisypheTools.LineWidget.extendPosition1ToMeshSurface()
+
+		- search direction management (both, target to entry direction or entry to target direction)
+
+	- core.sisypheTools.LineWidget.extendPosition2ToMeshSurface()
+
+		- search direction management (both, target to entry direction or entry to target direction)
+
+	- core.sisypheFiducialBox.LeksellProcessings.computeEntryPoint()
+	
+		- bug fix, changing the sign of the z-value of vectors
+
+	- core.sisypheFiducialBox.LeksellProcessings.convertAngles()
+
+		- removal of vector normalization and matrix inversion, which are unnecessary
+
+	- core.sisyphePDF.SisypheParsePdf.loadFieldNames()
+
+		- bug fix, line 437, add line node = node.nextSibling
+
+	- ucore.sisyphePDF.SisypheParsePdf.parse()
+
+		- line 264, modifiy relative threshold to detect line increments (from 0.95 to 0.98)
+
+	- widgets.sliceViewWidgets.SliceViewWidget.displayOn()
+
+		- bug fix, line 994, self._action['showicbm'] & self._action['showframe'] visibility condition
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.open()
+
+		- bug fix, lines 5313, 5390 & 5429, rename tool if its name is already in the ListToolAttributesWidget
+
+	- gui.dialogPerfusion.DialogPerfusion2.function()
+
+		- line 389, remove "'s" from "Block-circulant SVD with Simpson's rule"
+
+	- gui.dialogSettings.DialogSettings.apply()
+
+		- line 563, DockWidgets setMaxCount()
+
+	- gui.dialogReorient.DialogReorient.__init__()
+
+		- line 178, add self._auto button
+
+	- gui.dialogReorient.DialogReorient.autoTransform()
+
+		- replace autoTransform method, automatic reorientation processing
+
+	- gui.windowSisyphe.WindowSisyphe.__init__()
+
+		- line 584, add chdir(self.getUserDirectory())
