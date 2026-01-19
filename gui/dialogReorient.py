@@ -30,10 +30,8 @@ from SimpleITK import sitkWelchWindowedSinc
 from SimpleITK import sitkLanczosWindowedSinc
 from SimpleITK import sitkBlackmanWindowedSinc
 from SimpleITK import sitkNearestNeighbor
-from SimpleITK import LabelShapeStatisticsImageFilter
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
-from Sisyphe.core.sisypheTransform import SisypheTransform
 from Sisyphe.core.sisypheTransform import SisypheApplyTransform
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.LUTWidgets import LutWidget
@@ -97,11 +95,11 @@ class DialogReorient(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Volume reorientation')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
@@ -131,8 +129,11 @@ class DialogReorient(QDialog):
         self._sizex = QSpinBox()
         self._sizey = QSpinBox()
         self._sizez = QSpinBox()
+        # noinspection PyUnresolvedReferences
         self._sizex.setAlignment(Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._sizey.setAlignment(Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._sizez.setAlignment(Qt.AlignCenter)
         # self._sizex.setFixedWidth(60)
         # self._sizey.setFixedWidth(60)
@@ -147,8 +148,11 @@ class DialogReorient(QDialog):
         self._spacex = QDoubleSpinBox()
         self._spacey = QDoubleSpinBox()
         self._spacez = QDoubleSpinBox()
+        # noinspection PyUnresolvedReferences
         self._spacex.setAlignment(Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._spacey.setAlignment(Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._spacez.setAlignment(Qt.AlignCenter)
         # self._spacex.setFixedWidth(60)
         # self._spacey.setFixedWidth(60)
@@ -173,10 +177,9 @@ class DialogReorient(QDialog):
         self._resettrf.pressed.connect(self.resetTransform)
         # < Revision 11/09/2025
         # remove auto button
-        # self._auto = QPushButton('Auto')
-        # noinspection PyUnresolvedReferences
-        # self._auto.pressed.connect(self.autoTransform)
-        # self._auto.setToolTip('Automatic reorientation on principal axes.')
+        self._auto = QPushButton('Auto')
+        self._auto.pressed.connect(self.autoTransform)
+        self._auto.setToolTip('Automatic axial reorientation.')
         # Revision 11/09/2025 >
         self._opacity = LabeledSlider(title='Reslice cursor opacity')
         self._opacity.setRange(0, 100)
@@ -188,6 +191,7 @@ class DialogReorient(QDialog):
         self._width = LabeledDoubleSpinBox('Reslice cursor width')
         self._width.setSingleStep(0.5)
         self._width.setRange(0.5, 5.0)
+        # noinspection PyUnresolvedReferences
         self._width.setAlignment(Qt.AlignCenter)
         self._width.setValue(self._views().getFirstViewWidget().getLineWidth())
         # noinspection PyUnresolvedReferences
@@ -211,7 +215,7 @@ class DialogReorient(QDialog):
         lyout.addWidget(self._resetfov)
         lyout.addWidget(self._resettrf)
         # < Revision 11/09/2025
-        # lyout.addWidget(self._auto)
+        lyout.addWidget(self._auto)
         # Revision 11/09/2025 >
         lyout.addStretch()
         lyout.addWidget(self._opacity)
@@ -226,6 +230,7 @@ class DialogReorient(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         # < Revision 12/12/2025
         cancel = QPushButton('Close')
@@ -315,54 +320,20 @@ class DialogReorient(QDialog):
     def resetTransform(self):
         self._views().getFirstSliceViewWidget().reset()
 
+    # < Revision 19/01/2026
+    # update autoTransform method
     def autoTransform(self):
-        m = self.getVolume().getNumpy().flatten().mean()
-        mask = self.getVolume().getSITKImage() > m
-        f = LabelShapeStatisticsImageFilter()
-        f.Execute(mask)
-        # Translations
-        c = f.GetCentroid(1)
+        wait = DialogWait()
+        wait.open()
+        wait.setInformationText('Automatic reorientation...')
+        rz, c = self.getVolume().getReorient()
         cv = self.getVolume().getCenter()
         self._views().getFirstViewWidget().setTranslations(c[0] - cv[0],
                                                            c[1] - cv[1],
-                                                           c[2] - cv[2])
-        r = f.GetPrincipalAxes(1)
-        v = dict()
-        # Sort x, y, z axis
-        vi = [abs(i) for i in r[:3]]
-        v[vi.index(max(vi))] = r[:3]
-        vi = [abs(i) for i in r[3:6]]
-        v[vi.index(max(vi))] = r[3:6]
-        vi = [abs(i) for i in r[6:]]
-        v[vi.index(max(vi))] = r[6:]
-        v = v[0] + v[1] + v[2]
-        trf = SisypheTransform()
-        trf.setIdentity()
-        trf.setFlattenMatrix(v, bycolumn=True)
-        trf = trf.getInverseTransform()
-        # < Revision 04/09/2024
-        # use only z rotation
-        r = trf.getRotations(deg=True)
-        ry = r[1]
-        rz = r[2]
-        ary = abs(ry)
-        arz = abs(rz)
-        if ary > 90.0 and arz > 90.0:
-            if ry > 0: ry = ry - 180.0
-            else: ry = 180.0 + ry
-            if rz > 0: rz = rz - 180.0
-            else: rz = 180.0 + rz
-        elif ary > 90.0 >= arz:
-            if ry > 0: ry = ry - 180.0
-            else: ry = 180.0 + ry
-            rz = -rz
-        elif ary <= 90.0 < arz:
-            if rz > 0: rz = rz - 180.0
-            else: rz = 180.0 + rz
-            ry = -ry
-        # self._views().getFirstViewWidget().setRotations(r[0], r[1], r[2])
-        self._views().getFirstViewWidget().setRotations(0.0, ry, rz)
-        # Revision 04/09/2024 >
+                                                           0.0)
+        self._views().getFirstViewWidget().setRotations(0.0, 0.0, rz)
+        wait.close()
+    # Revision 19/01/2026 >
 
     def setVolume(self, vol):
         if isinstance(vol, SisypheVolume):

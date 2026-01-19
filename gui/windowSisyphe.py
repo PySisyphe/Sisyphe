@@ -135,7 +135,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 04/01/2026
+    Last revision: 11/01/2026
     """
 
     # Class constants
@@ -580,6 +580,10 @@ class WindowSisyphe(QMainWindow):
         self.setWindowState(Qt.WindowMaximized)
         width = ItemAttributesWidget.getDefaultMinimumWidth() + 80
         self._splitter.setSizes([sum(self._splitter.sizes()) - width, width])
+
+        # < Revision 11/01/2026
+        chdir(self.getUserDirectory())
+        # Revision 11/01/2026
 
     # Private methods
 

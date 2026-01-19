@@ -281,6 +281,7 @@ class DialogPerfusion2(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogPerfusion2
 
     Creation: 08/01/2025
+    Last revision: 16/01/2026
     """
 
     # Special method
@@ -385,7 +386,9 @@ class DialogPerfusion2(AbstractDialogFunction):
             baseline = tuple(self._settings.getParameterValue('Baseline'))
             fwhm = self._settings.getParameterValue('Smoothing')
             v = self._settings.getParameterValue('Deconvolution')[0]
-            if v == 'Block-circulant SVD with Simpson’s rule': algo = 'bcSVD1'
+            # < Revision 16/01/2026
+            if v == 'Block-circulant SVD with Simpson rule': algo = 'bcSVD1'
+            # Revision 16/01/2026 >
             elif v == 'Block-circulant SVD with manual matrix construction': algo = 'bcSVD2'
             elif v == 'Oscillation index SVD': algo = 'oSVD'
             elif v == 'Box non-linear regression': algo = 'boxNLR'

@@ -112,7 +112,7 @@ class DialogSeriesRealignment(QDialog):
         # Init window
 
         self.setWindowTitle('Time series realignment')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -147,6 +147,7 @@ class DialogSeriesRealignment(QDialog):
         self._resamplesettings = FunctionSettingsWidget('Resample')
         self._resamplesettings.hideIOButtons()
         self._resamplesettings.setParameterVisibility('Dialog', False)
+        # noinspection PyUnresolvedReferences
         self._resamplesettings.getParameterWidget('Dialog').setCheckState(Qt.Unchecked)
         self._resamplesettings.setParameterVisibility('NormalizationPrefix', False)
         self._resamplesettings.setParameterVisibility('NormalizationSuffix', False)
@@ -163,6 +164,7 @@ class DialogSeriesRealignment(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)

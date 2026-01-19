@@ -58,9 +58,9 @@ class DialogFiducialBox(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Stereotactic frame detection')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
@@ -77,6 +77,7 @@ class DialogFiducialBox(QDialog):
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         else: lyout.setContentsMargins(0, 0, 0, 0)
         lyout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)

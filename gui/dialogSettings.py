@@ -76,7 +76,7 @@ class DialogSetting(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle(self.formatLabel(section))
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -98,6 +98,7 @@ class DialogSetting(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         self._ok.setFixedWidth(100)
@@ -109,6 +110,7 @@ class DialogSetting(QDialog):
         layout.addWidget(self._cancel)
         layout.addStretch()
         self._layout.addLayout(layout)
+        # noinspection PyUnresolvedReferences
         layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
 
         self._layout.addLayout(layout)
@@ -170,7 +172,7 @@ class DialogSettings(QDialog):
 
     QDialog -> DialogSettings
 
-    Last revision: 12/12/2025
+    Last revision: 16/01/2026
     """
 
     # Class method
@@ -203,7 +205,7 @@ class DialogSettings(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Preferences')
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.5))
@@ -235,6 +237,7 @@ class DialogSettings(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         self._ok.setFixedWidth(100)
@@ -287,10 +290,12 @@ class DialogSettings(QDialog):
             scroll = QScrollArea()
             scroll.setWidget(widget)
             scroll.setFrameShape(QScrollArea.NoFrame)
+            # noinspection PyUnresolvedReferences
             scroll.setAlignment(Qt.AlignHCenter)
             self._stack.addWidget(scroll)
             item = QTreeWidgetItem()
             item.setText(0, self.formatLabel(section))
+            # noinspection PyUnresolvedReferences
             item.setData(0, Qt.UserRole, self._stack.count() - 1)
             fitems['General'].addChild(item)
             self._sections.addTopLevelItem(fitems['General'])
@@ -305,6 +310,7 @@ class DialogSettings(QDialog):
         fitems['Diffusion'] = QTreeWidgetItem()
         for k in fitems:
             fitems[k].setText(0, k)
+            # noinspection PyUnresolvedReferences
             fitems[k].setData(0, Qt.UserRole, -1)
             self._sections.addTopLevelItem(fitems[k])
         settings = SisypheFunctionsSettings()
@@ -320,10 +326,12 @@ class DialogSettings(QDialog):
             scroll = QScrollArea()
             scroll.setWidget(widget)
             scroll.setFrameShape(QScrollArea.NoFrame)
+            # noinspection PyUnresolvedReferences
             scroll.setAlignment(Qt.AlignHCenter)
             self._stack.addWidget(scroll)
             item = QTreeWidgetItem()
             item.setText(0, self.formatLabel(function))
+            # noinspection PyUnresolvedReferences
             item.setData(0, Qt.UserRole, self._stack.count() - 1)
             if function in ('RemoveNeckSlices',
                             'MeanImageFilter',
@@ -433,12 +441,14 @@ class DialogSettings(QDialog):
 
     # noinspection PyUnusedLocal
     def _currentSelectedChanged(self, current, previous):
+        # noinspection PyUnresolvedReferences
         index = current.data(0, Qt.UserRole)
         if index >= 0: self._stack.setCurrentIndex(index)
 
     # Public method
 
     def default(self):
+        # noinspection PyUnresolvedReferences
         c = self._sections.currentItem().data(0, Qt.UserRole)
         widget = self._stack.widget(c).widget()
         widget.resetSettings(default=True)
@@ -550,6 +560,20 @@ class DialogSettings(QDialog):
                     if v is not None: window.setViewportsOrientationMarkerVisibility(v)
                     v = widget.getParameterValue('Align')
                     if v is not None: window.setViewportsAlign(v)
+                # < Revision 16/01/2026
+                elif c == 'ROI':
+                    v = widget.getParameterValue('MaxCount')
+                    if v is not None: window.getROIListWidget().setMaxCount(v)
+                elif c == 'Mesh':
+                    v = widget.getParameterValue('MaxCount')
+                    if v is not None: window.getMeshListWidget().setMaxCount(v)
+                elif c == 'Tools':
+                    v = widget.getParameterValue('MaxCount')
+                    if v is not None: window.getTargetListWidget().setMaxCount(v)
+                elif c == 'Bundles':
+                    v = widget.getParameterValue('MaxCount')
+                    if v is not None: window.getTrackingListWidget().setMaxCount(v)
+                # Revision 16/01/2026 >
                 elif c == 'Gemini':
                     # < Revision 12/12/2025
                     v = widget.getParameterValue('APIKey')

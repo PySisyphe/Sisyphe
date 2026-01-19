@@ -76,7 +76,7 @@ class DialogGenericResults(QDialog):
     Description
     ~~~~~~~~~~~
 
-    Generic dialog to display statistical results.
+    Generic dialog to display statistical results as table(s) and/or chart(s).
 
     Inheritance
     ~~~~~~~~~~~
@@ -100,7 +100,7 @@ class DialogGenericResults(QDialog):
         """
         super().__init__(parent)
 
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         self._plotlist = list()
@@ -116,6 +116,7 @@ class DialogGenericResults(QDialog):
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
         lyout.setContentsMargins(0, 0, 0, 0)
+        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -282,6 +283,7 @@ class DialogGenericResults(QDialog):
         if self.isFigureVisible(index):
             c = item.treeWidget().currentIndex().column()
             if c > 0:
+                # noinspection PyUnresolvedReferences
                 data = self._treelist[index].headerItem().data(c, Qt.UserRole)['chart']
                 if data == 'bar': self.chartBarFromTreeWidgetColumn(index, c)
                 elif data == 'plot': self.chartPlotFromTreeWidgetColumn(index, c)
@@ -997,7 +999,9 @@ class DialogGenericResults(QDialog):
                     if charts is None: charts = [''] * c
                     if len(charts) < c: charts += [''] * (c - len(charts))
                     for i in range(c):
+                        # noinspection PyUnresolvedReferences
                         tree.headerItem().setData(i, Qt.UserRole, {'unit': units[i], 'chart': charts[i]})
+                        # noinspection PyUnresolvedReferences
                         tree.headerItem().setTextAlignment(i, Qt.AlignCenter)
                     tree.header().setSectionResizeMode(QHeaderView.ResizeToContents)
                     tree.header().setSectionsClickable(False)
@@ -1031,7 +1035,9 @@ class DialogGenericResults(QDialog):
                     item = QTreeWidgetItem(tree)
                     for i in range(n):
                         if isinstance(row[i], float):
-                            if d == 0: item.setText(i, int(row[i]))
+                            if d == 0:
+                                # noinspection PyTypeChecker
+                                item.setText(i, int(row[i]))
                             else: item.setText(i, f.format(row[i]))
                         elif isinstance(row[i], str): item.setText(i, row[i])
                         elif isinstance(row[i], (list, tuple)):
@@ -1041,6 +1047,7 @@ class DialogGenericResults(QDialog):
                                 else: buff.append(r)
                             item.setText(i, ' '.join(buff))
                         else: item.setText(i, str(row[i]))
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(i, Qt.AlignCenter)
                     tree.addTopLevelItem(item)
                 else: raise TypeError('row parameter type {} is not list, tuple or ndarray.'.format(type(row)))
@@ -1065,8 +1072,10 @@ class DialogGenericResults(QDialog):
                 tree = self._treelist[index]
                 n = tree.headerItem().columnCount()
                 if 0 < col < n:
+                    # noinspection PyUnresolvedReferences
                     data = tree.headerItem().data(col, Qt.UserRole)
                     data['chart'] = chart
+                    # noinspection PyUnresolvedReferences
                     tree.headerItem().setData(col, Qt.UserRole, data)
                 else: raise ValueError('col parameter value {} is out of range.'.format(col))
             else: raise ValueError('index parameter value {} is out of range.'.format(index))
@@ -1090,8 +1099,10 @@ class DialogGenericResults(QDialog):
                 tree = self._treelist[index]
                 n = tree.headerItem().columnCount()
                 if 0 < col < n:
+                    # noinspection PyUnresolvedReferences
                     data = tree.headerItem().data(col, Qt.UserRole)
                     data['unit'] = unit
+                    # noinspection PyUnresolvedReferences
                     tree.headerItem().setData(col, Qt.UserRole, data)
                 else: raise ValueError('col parameter value {} is out of range.'.format(col))
             else: raise ValueError('index parameter value {} is out of range.'.format(index))
@@ -1111,8 +1122,10 @@ class DialogGenericResults(QDialog):
                 tree = self._treelist[index]
                 n = tree.headerItem().columnCount()
                 for i in range(n):
+                    # noinspection PyUnresolvedReferences
                     data = tree.headerItem().data(i, Qt.UserRole)
                     data['chart'] = ''
+                    # noinspection PyUnresolvedReferences
                     tree.headerItem().setData(i, Qt.UserRole, data)
             else: raise ValueError('index parameter value {} is out of range.'.format(index))
         else: raise TypeError('index parameter type {} is not int.'.format(type(index)))
@@ -1131,8 +1144,10 @@ class DialogGenericResults(QDialog):
                 tree = self._treelist[index]
                 n = tree.headerItem().columnCount()
                 for i in range(n):
+                    # noinspection PyUnresolvedReferences
                     data = tree.headerItem().data(i, Qt.UserRole)
                     data['unit'] = ''
+                    # noinspection PyUnresolvedReferences
                     tree.headerItem().setData(i, Qt.UserRole, data)
             else: raise ValueError('index parameter value {} is out of range.'.format(index))
         else: raise TypeError('index parameter type {} is not int.'.format(type(index)))
@@ -1166,6 +1181,7 @@ class DialogGenericResults(QDialog):
                         else: return
                     fig = self._plotlist[index].figure
                     fig.clear()
+                    # noinspection PyUnresolvedReferences
                     unit = tree.headerItem().data(col, Qt.UserRole)['unit']
                     if nv == 1:
                         ax = fig.add_subplot(111)
@@ -1234,6 +1250,7 @@ class DialogGenericResults(QDialog):
                             values = [j[i] for j in vd.values()]
                             ax.plot(list(vd.keys()), values, label=tree.headerItem().text(col) + '#{}'.format(i))
                     else: raise ValueError('')
+                    # noinspection PyUnresolvedReferences
                     unit = tree.headerItem().data(col, Qt.UserRole)['unit']
                     ylabel = tree.headerItem().text(col)
                     if unit != '': ylabel += ' ({})'.format(unit)
@@ -1276,6 +1293,7 @@ class DialogGenericResults(QDialog):
                     ax = fig.add_subplot(111)
                     ax.spines['top'].set_visible(False)
                     ax.spines['right'].set_visible(False)
+                    # noinspection PyUnresolvedReferences
                     unit = tree.headerItem().data(col, Qt.UserRole)['unit']
                     ylabel = tree.headerItem().text(col)
                     if unit != '': ylabel += ' ({})'.format(unit)
@@ -1402,6 +1420,7 @@ class DialogGenericResults(QDialog):
                                 elif isinstance(arr[i, k], float): item.setText(j, fd[k].format(arr[i, k]))
                                 elif isinstance(arr[i, k], str): item.setText(j, arr[i, k])
                                 else: item.setText(j, str(arr[i, k]))
+                                # noinspection PyUnresolvedReferences
                                 item.setTextAlignment(j, Qt.AlignCenter)
                             tree.addTopLevelItem(item)
                 else: raise TypeError('array parameter type {} is not ndarray.'.format(type(arr)))
@@ -1452,6 +1471,7 @@ class DialogGenericResults(QDialog):
                                     else: raise ValueError('dict element type {} is not int, float or str.'.format(type(r)))
                                 item.setText(j, ' '.join(buff))
                             else: item.setText(j, str(arr[k][i]))
+                            # noinspection PyUnresolvedReferences
                             item.setTextAlignment(j, Qt.AlignCenter)
                         tree.addTopLevelItem(item)
                 else: raise TypeError('array parameter type {} is not dict.'.format(type(arr)))
