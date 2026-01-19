@@ -160,7 +160,6 @@ def installFromHost(urls: str | list[str],
                 dst2 = join(dst, base)
                 # Revision 15/10/2025 >
                 if not exists(dst): mkdir(dst2)
-                if wait is not None: wait.setInformationText('Copy {}...'.format(filename))
                 # < Revision 24/07/2024
                 # Copy src only if the file is more recent
                 # copy(src, dst)
@@ -175,7 +174,9 @@ def installFromHost(urls: str | list[str],
                 # if exists(dst)
                 if exists(dst2):
                     # if getmtime(src) > getmtime(dst): copy(src, dst)
-                    if getmtime(src) > getmtime(dst): copy(src, dst2)
+                    if getmtime(src) > getmtime(dst):
+                        if wait is not None: wait.setInformationText('Copy {}...'.format(filename))
+                        copy(src, dst2)
                 # else: copy(src, dst)
                 else: copy(src, dst2)
                 # < Revision 19/01/2026
@@ -206,9 +207,10 @@ def installFromHost(urls: str | list[str],
         #    for folder in folders:
         #        rmdir(folder)
         # Revision 15/10/2025 >
-        if exists(temp): rmtree(temp)
+        # if exists(temp): rmtree(temp)
         chdir(previous)
         # < Revision 19/01/2026
+        if wait is not None: wait.setInformationText('Set default settings...')
         userdir = join(expanduser('~'), '.PySisyphe')
         if not exists(userdir): initPySisypheUserPath()
         else: setUserSettingsToDefault()
