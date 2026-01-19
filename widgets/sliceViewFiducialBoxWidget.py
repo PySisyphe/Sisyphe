@@ -316,10 +316,11 @@ class IconBarSliceViewFiducialBoxWidget(IconBarWidget):
         super().__init__(parent)
 
         self._markermenu = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._markermenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._markermenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._markermenu.setAttribute(Qt.WA_TranslucentBackground, True)
 
         if isinstance(fid, SisypheFiducialBox):

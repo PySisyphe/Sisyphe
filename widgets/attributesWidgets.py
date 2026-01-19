@@ -4966,7 +4966,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListToolAttributesWidget
 
-    Last revision: 17/12/2025
+    Last revision: 16/01/2026
     """
 
     # Special method
@@ -5310,6 +5310,10 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                             # Revision 13/11/2025 >
                                             for tool in tools:
                                                 if self.count() < self.getMaxCount():
+                                                    # < Revision 16/01/2026
+                                                    if tool.getName() in self._collection:
+                                                        tool.setName(self._collection.verifyName(tool.getName()))
+                                                    # Revision 16/01/2026 >
                                                     if isinstance(tool, HandleWidget):
                                                         p = tool.getPosition()
                                                         item = view.addTarget(p, tool.getName())
@@ -5383,6 +5387,10 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                             messageBox(self, 'open tools', text='{}'.format(err))
                                             tool = None
                                         if tool is not None:
+                                            # < Revision 16/01/2026
+                                            if tool.getName() in self._collection:
+                                                tool.setName(self._collection.verifyName(tool.getName()))
+                                            # Revision 16/01/2026 >
                                             p = tool.getPosition()
                                             item = view.addTarget(p, tool.getName())
                                             tool.copyAttributesTo(item)
@@ -5418,6 +5426,10 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                             messageBox(self, 'open tools', text='{}'.format(err))
                                             tool = None
                                         if tool is not None:
+                                            # < Revision 16/01/2026
+                                            if tool.getName() in self._collection:
+                                                tool.setName(self._collection.verifyName(tool.getName()))
+                                            # Revision 16/01/2026 >
                                             p = tool.getPosition2()
                                             item = view.addTrajectory(p1=tool.getPosition1(),
                                                                       p2=p,

@@ -138,7 +138,7 @@ class SliceViewWidget(AbstractViewWidget):
     QWidget -> AbstractViewWidget -> SliceViewWidget
 
     Creation: 30/03/2022
-    Last revision: 20/10/2025
+    Last revision: 13/01/2026
     """
 
     # Class constants
@@ -991,10 +991,14 @@ class SliceViewWidget(AbstractViewWidget):
             self._action['showac'].setVisible(v)
             self._action['showpc'].setVisible(v)
             self._action['showacpc'].setVisible(v)
-            self._action['showicbm'].setVisible(self._volume.hasICBMTransform() and
-                                                self._action['showicbm'].isChecked())
-            self._action['showframe'].setVisible(self._volume.hasLEKSELLTransform() and
-                                                 self._action['showframe'].isChecked())
+            # < Revision 13/01/20206
+            # self._action['showicbm'].setVisible(self._volume.hasICBMTransform() and
+            #                                     self._action['showicbm'].isChecked())
+            # self._action['showframe'].setVisible(self._volume.hasLEKSELLTransform() and
+            #                                      self._action['showframe'].isChecked())
+            self._action['showicbm'].setVisible(self._volume.hasICBMTransform())
+            self._action['showframe'].setVisible(self._volume.hasLEKSELLTransform())
+            # Revision 13/01/20206 >
             # Orientation labels
             self._info['topcenter'].SetVisibility(self._action['showorientation'].isChecked())
             self._info['leftcenter'].SetVisibility(self._action['showorientation'].isChecked())

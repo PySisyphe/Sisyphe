@@ -290,10 +290,11 @@ class AbstractViewWidget(QFrame):
         """
 
         self._popup = QMenu('Main menu')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action = dict()
         self._action['noflag'] = QAction('No action', self)
@@ -582,10 +583,11 @@ class AbstractViewWidget(QFrame):
         # Init tool popup menu
 
         self._toolpopup = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._toolpopup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._toolpopup.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._toolpopup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['toolcolor'] = QAction('Color...', self)
         self._action['textprop'] = QAction('Text properties...', self)
@@ -608,6 +610,7 @@ class AbstractViewWidget(QFrame):
 
         # Init QLineEdit, edit TextWidget text
 
+        # noinspection PyUnresolvedReferences
         self._dialog = QDialog(self, flags=Qt.Dialog | Qt.FramelessWindowHint)
         self._dialog.resize(100, 20)
         self._dialog.setWindowOpacity(1.0)
@@ -694,9 +697,11 @@ class AbstractViewWidget(QFrame):
         self._ruler.SetRulerDistance(0.1)
         self._ruler.SetTickLength(10)
         self._ruler.SetNumberOfMinorTicks(0)
+        # noinspection PyTypeChecker
         self._ruler.GetProperty().SetLineWidth(self._lwidth)
-        # noinspection PyUnresolvedReferences
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._ruler.GetProperty().SetColor(self._lcolor[0], self._lcolor[1], self._lcolor[2])
+        # noinspection PyTypeChecker
         self._ruler.GetProperty().SetOpacity(self._lalpha)
         self._ruler.LabelVisibilityOff()
         self._ruler.TitleVisibilityOff()
@@ -1378,8 +1383,12 @@ class AbstractViewWidget(QFrame):
             name = ''.join(rep.GetInput().split(sep='\n')[1])
             for widget in self._tools:
                 if widget.getName() == name:
-                    if isinstance(widget, vtkPointHandleRepresentation3D): rep = widget.GetHandleRepresentation()
-                    elif isinstance(widget, vtkLineRepresentation): rep = widget.GetLineRepresentation()
+                    if isinstance(widget, vtkPointHandleRepresentation3D):
+                        # noinspection PyUnresolvedReferences
+                        rep = widget.GetHandleRepresentation()
+                    elif isinstance(widget, vtkLineRepresentation):
+                        # noinspection PyUnresolvedReferences
+                        rep = widget.GetLineRepresentation()
         for widget in self._tools:
             if widget.GetRepresentation() == rep:
                 # < Revision 18/03/2025
@@ -1456,11 +1465,11 @@ class AbstractViewWidget(QFrame):
                 # Revision 10/11/2025 >
         self._menuMoveTarget.menuAction().setVisible(v)
 
-    # Public synchronisation event methods
+    # Public synchronization event methods
 
     def synchroniseCursorPositionChanged(self, obj: QWidget, x: float, y: float, z: float) -> None:
         """
-        Method of synchronisation between AbstractViewWidget instances.
+        Method of synchronization between AbstractViewWidget instances.
         This method is called by CursorPositionChanged PyQt signal.
         It is responsible for synchronizing the cross-shaped cursor position between AbstractViewWidget instances.
 
@@ -1476,7 +1485,7 @@ class AbstractViewWidget(QFrame):
             z-axis world coordinate of the cross-shaped cursor.
         """
         # < Revision 17/11/2025
-        # use synchronisation flag attribute
+        # use synchronization flag attribute
         # if self != obj and self.hasVolume():
         if self != obj and self.hasVolume() and self.isSynchronised():
             self.setCursorWorldPosition(x, y, z, signal=False)
@@ -1500,7 +1509,7 @@ class AbstractViewWidget(QFrame):
 
     def synchroniseToolRemoved(self, obj: QWidget, tool: HandleWidget | LineWidget | None, alltools: bool = False) -> None:
         """
-        Method of synchronisation between AbstractViewWidget instances.
+        Method of synchronization between AbstractViewWidget instances.
         This method is called by ToolRemoved PyQt signal.
         It is responsible for synchronizing tool removal between AbstractViewWidget instances.
 
@@ -1529,7 +1538,7 @@ class AbstractViewWidget(QFrame):
 
     def synchroniseToolMoved(self, obj: QWidget, tool: HandleWidget | LineWidget) -> None:
         """
-        Method of synchronisation between AbstractViewWidget instances.
+        Method of synchronization between AbstractViewWidget instances.
         This method is called by ToolMoved PyQt signal.
         It is responsible for synchronizing tool movement between AbstractViewWidget instances.
 
@@ -1544,7 +1553,7 @@ class AbstractViewWidget(QFrame):
             if isinstance(tool, (HandleWidget, LineWidget)):
                 if tool.getName() in self._tools:
                     w = self._tools[tool.getName()]
-                    # Synchronise only HandleWidget or LineWidget (not 2D Widgets)
+                    # Synchronize only HandleWidget or LineWidget (not 2D Widgets)
                     if isinstance(w, HandleWidget):
                         w.setPosition(tool.getPosition())
                     elif isinstance(w, LineWidget):
@@ -1556,7 +1565,7 @@ class AbstractViewWidget(QFrame):
 
     def synchroniseToolColorChanged(self, obj: QWidget, tool: HandleWidget | LineWidget) -> None:
         """
-        Method of synchronisation between AbstractViewWidget instances.
+        Method of synchronization between AbstractViewWidget instances.
         This method is called by ToolColorChanged PyQt signal.
         It is responsible for synchronizing tool color between AbstractViewWidget instances.
 
@@ -1579,7 +1588,7 @@ class AbstractViewWidget(QFrame):
 
     def synchroniseToolAttributesChanged(self, obj: QWidget, tool: HandleWidget | LineWidget) -> None:
         """
-        Method of synchronisation between AbstractViewWidget instances.
+        Method of synchronization between AbstractViewWidget instances.
         This method is called by ToolAttributesChanged PyQt signal.
         It is responsible for synchronizing tool attributes between AbstractViewWidget instances.
 
@@ -1607,7 +1616,7 @@ class AbstractViewWidget(QFrame):
 
     def synchroniseToolAdded(self, obj: QWidget, tool: HandleWidget | LineWidget) -> None:
         """
-        Method of synchronisation between AbstractViewWidget instances.
+        Method of synchronization between AbstractViewWidget instances.
         This method is called by ToolAdded PyQt signal.
         It is responsible for synchronizing tool creation between AbstractViewWidget instances.
 
@@ -1629,7 +1638,7 @@ class AbstractViewWidget(QFrame):
 
     def synchroniseToolRenamed(self, obj: QWidget, tool: HandleWidget | LineWidget, name: str) -> None:
         """
-        Method of synchronisation between AbstractViewWidget instances.
+        Method of synchronization between AbstractViewWidget instances.
         This method is called by ToolRenamed PyQt signal.
         It is responsible for synchronizing tool name between AbstractViewWidget instances.
 
@@ -1651,7 +1660,7 @@ class AbstractViewWidget(QFrame):
 
     def synchroniseViewMethodCalled(self, obj: QWidget, function: str, param: Any) -> None:
         """
-        Method of synchronisation between AbstractViewWidget instances.
+        Method of synchronization between AbstractViewWidget instances.
         This method is called by ViewMethodCalled PyQt signal.
 
         Parameters
@@ -1659,9 +1668,9 @@ class AbstractViewWidget(QFrame):
         obj : QWidget
             AbstractViewWidget instances that emit ViewMethodCalled signal.
         function : str
-            name of the synchronisation function.
+            name of the synchronization function.
         param : Any
-            parameter of the synchronisation function.
+            parameter of the synchronization function.
         """
         if obj != self and self.hasVolume():
             if hasattr(self, function):
@@ -1677,7 +1686,7 @@ class AbstractViewWidget(QFrame):
     def finalize(self) -> None:
         """
         Method to be called before AbstractViewWidget instance destruction.
-        It is used to avoid vtk error on windows platform (vtkWin32OpenGLRenderWindow error: 'wglMakeCurrent failed in
+        It is used to avoid vtk error on Windows platform (vtkWin32OpenGLRenderWindow error: 'wglMakeCurrent failed in
         MakeCurrent()')
         """
         self._window.Finalize()
@@ -2834,7 +2843,7 @@ class AbstractViewWidget(QFrame):
             If True, emits the ViewMethodCalled signal for synchronization (default True).
         """
         if isinstance(v, bool):
-            if v is True: self.setToolTip(self._tooltipstr)
+            if v: self.setToolTip(self._tooltipstr)
             else: self.setToolTip('')
             self._action['showtooltip'].setChecked(v)
             self._renderwindow.Render()
@@ -4830,7 +4839,7 @@ class AbstractViewWidget(QFrame):
         if isinstance(key, (HandleWidget, LineWidget)):
             if key.getName() in self._tools:
                 index = self._tools.index(key.getName())
-                if v is True:
+                if v:
                     # noinspection PyUnresolvedReferences
                     self._tools[index].On()
                 else:
@@ -5047,6 +5056,7 @@ class AbstractViewWidget(QFrame):
         event : Any
             event parameter.
         """
+        # noinspection PyUnresolvedReferences
         p = widget.getPosition()
         self.setCursorWorldPosition(p[0], p[1], p[2], signal=True)
         # noinspection PyUnresolvedReferences
@@ -5090,6 +5100,7 @@ class AbstractViewWidget(QFrame):
         event : Any
             event parameter.
         """
+        # noinspection PyUnresolvedReferences
         p = widget.getPosition2()  # Target point position
         self.setCursorWorldPosition(p[0], p[1], p[2], signal=True)
         # noinspection PyUnresolvedReferences
