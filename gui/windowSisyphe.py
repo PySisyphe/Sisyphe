@@ -25,8 +25,6 @@ from os.path import splitext
 from os.path import basename
 from os.path import expanduser
 
-from shutil import copy
-
 import importlib
 import subprocess
 import traceback
@@ -76,7 +74,6 @@ import darkdetect
 from Sisyphe import version
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.core.sisypheConstants import removeAllPrefixesFromFilename
-from Sisyphe.core.sisypheSettings import getDPIScaleFactor
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheVolume import multiComponentSisypheVolumeFromList
 from Sisyphe.core.sisypheImageAttributes import SisypheAcquisition
@@ -84,6 +81,7 @@ from Sisyphe.core.sisypheRecent import SisypheRecent
 from Sisyphe.core.sisypheROI import SisypheROIDraw
 from Sisyphe.core.sisypheROI import SisypheROICollection
 from Sisyphe.core.sisypheSettings import initPySisypheUserPath
+from Sisyphe.core.sisypheSettings import setUserSettingsToDefault
 from Sisyphe.core.sisypheSettings import SisypheSettings
 from Sisyphe.core.sisypheStatistics import SisypheDesign
 from Sisyphe.core.sisypheFiducialBox import SisypheFiducialBox
@@ -187,7 +185,11 @@ class WindowSisyphe(QMainWindow):
         # < Revision 15/10/2025
         tagfile = join(cls.getMainDirectory(), 'tag')
         if not exists(userdir): initPySisypheUserPath()
+        # < Revision 19/01/2026
+        # elif exists(tagfile):
         elif exists(tagfile):
+            setUserSettingsToDefault()
+            """
             # Update the functions.xml and settings.xml files when running a new installation for the first time
             copy(join(cls.getMainDirectory(), 'settings', 'functions.xml'), userdir)
             copy(join(cls.getMainDirectory(), 'settings', 'settings.xml'), userdir)
@@ -233,7 +235,9 @@ class WindowSisyphe(QMainWindow):
                 settings.setFieldValue('Viewport', 'IconSize', v)
             settings.save()
             # Revision 19/10/2025 >
+            """
             remove(tagfile)
+        # Revision 19/01/2026 >
         # Revision 15/10/2025 >
         return userdir
 
