@@ -87,6 +87,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api_lut.html">Sisyphe.core.sisypheLUT</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_mesh.html">Sisyphe.core.sisypheMesh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_meshio.html">Sisyphe.core.sisypheMeshIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_pdf.html">Sisyphe.core.sisyphePDF</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_recent.html">Sisyphe.core.sisypheRecent</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_roi.html">Sisyphe.core.sisypheROI</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Sisyphe.core.sisypheSettings</a><ul>
@@ -322,11 +323,11 @@ Last revision: 15/12/2023</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheFunctionsSettings.getDefaultSettings">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getDefaultSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheFunctionsSettings.getDefaultSettings" title="Link to this definition"></a></dt>
-<dd><p>Get default function settings xml file name (./Sisyphe/settings/functions.xml).</p>
+<dd><p>Get default function settings XML file name (./Sisyphe/settings/functions.xml).</p>
 <section id="id9">
 <h3>Returns<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>str</dt><dd><p>default function settings xml file name</p>
+<dt>str</dt><dd><p>default function settings XML file name</p>
 </dd>
 </dl>
 </section>
@@ -335,12 +336,12 @@ Last revision: 15/12/2023</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheFunctionsSettings.getUserSettings">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getUserSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheFunctionsSettings.getUserSettings" title="Link to this definition"></a></dt>
-<dd><p>Get user function settings xml file name (~/.PySisyphe/settings/functions.xml). If user function settings xml
-file does not exist, create it from a copy of the default xml file.</p>
+<dd><p>Get user function settings XML file name (~/.PySisyphe/settings/functions.xml). If user function settings XML
+file does not exist, create it from a copy of the default XML file.</p>
 <section id="id10">
 <h3>Returns<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>str</dt><dd><p>user function settings xml file name</p>
+<dt>str</dt><dd><p>user function settings XML file name</p>
 </dd>
 </dl>
 </section>
@@ -393,7 +394,7 @@ Last revisions: 04/12/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.getAttributes">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getAttributes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.getAttributes" title="Link to this definition"></a></dt>
-<dd><p>Get node attribute names of the xml settings file format.</p>
+<dd><p>Get node attribute names of the XML settings file format.</p>
 <section id="id15">
 <h3>Returns<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -543,7 +544,7 @@ instance. Save name is empty in a user instance.</p>
 <section id="id23">
 <h3>Returns<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>str</dt><dd><p>xml file name</p>
+<dt>str</dt><dd><p>XML file name</p>
 </dd>
 </dl>
 </section>
@@ -605,12 +606,12 @@ instance. Save name is empty in a user instance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.getUserSettings">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getUserSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.getUserSettings" title="Link to this definition"></a></dt>
-<dd><p>Get user settings xml file name (~/.PySisyphe/settings/settings.xml). if user settings xml file does not exist,
-create it from a copy of the default xml file.</p>
+<dd><p>Get user settings XML file name (~/.PySisyphe/settings/settings.xml). if user settings XML file does not exist,
+create it from a copy of the default XML file.</p>
 <section id="id29">
 <h3>Returns<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>str</dt><dd><p>user settings xml file name</p>
+<dt>str</dt><dd><p>user settings XML file name</p>
 </dd>
 </dl>
 </section>
@@ -619,7 +620,7 @@ create it from a copy of the default xml file.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.getVartypes">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getVartypes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.getVartypes" title="Link to this definition"></a></dt>
-<dd><p>Get vartype names of the xml settings file format.</p>
+<dd><p>Get vartype names of the XML settings file format.</p>
 <section id="id30">
 <h3>Returns<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -674,7 +675,7 @@ create it from a copy of the default xml file.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.isCustom">
 <span class="sig-name descname"><span class="pre">isCustom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.isCustom" title="Link to this definition"></a></dt>
-<dd><p>Check whether the current SisypheSettings is a custom settings instance. In this case, the associated xml
+<dd><p>Check whether the current SisypheSettings is a custom settings instance. In this case, the associated XML
 settings file is defined in a custom save name attribute.</p>
 <section id="id35">
 <h3>Returns<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
@@ -701,7 +702,7 @@ settings file is defined in a custom save name attribute.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.isUser">
 <span class="sig-name descname"><span class="pre">isUser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.isUser" title="Link to this definition"></a></dt>
-<dd><p>Check whether the current SisypheSettings is a user settings instance. In this case, the associated xml
+<dd><p>Check whether the current SisypheSettings is a user settings instance. In this case, the associated XML
 settings file is ~/.PySisyphe/settings/settings.xml and the custom save name attribute is empty (‘’).</p>
 <section id="id37">
 <h3>Returns<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
@@ -715,7 +716,7 @@ settings file is ~/.PySisyphe/settings/settings.xml and the custom save name att
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.isValidAttribute">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isValidAttribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.isValidAttribute" title="Link to this definition"></a></dt>
-<dd><p>Check whether a str is a valid node attribute name of the xml settings file format.</p>
+<dd><p>Check whether a str is a valid node attribute name of the XML settings file format.</p>
 <section id="id38">
 <h3>Parameters<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -735,7 +736,7 @@ settings file is ~/.PySisyphe/settings/settings.xml and the custom save name att
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.isValidVartype">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isValidVartype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.isValidVartype" title="Link to this definition"></a></dt>
-<dd><p>Check whether a str is a valid vartype name of the xml settings file format.</p>
+<dd><p>Check whether a str is a valid vartype name of the XML settings file format.</p>
 <section id="id40">
 <h3>Parameters<a class="headerlink" href="#id40" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -755,11 +756,11 @@ settings file is ~/.PySisyphe/settings/settings.xml and the custom save name att
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.loadCustomFileSettings">
 <span class="sig-name descname"><span class="pre">loadCustomFileSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.loadCustomFileSettings" title="Link to this definition"></a></dt>
-<dd><p>Load the current SisypheSettings from a custom xml settings file.</p>
+<dd><p>Load the current SisypheSettings from a custom XML settings file.</p>
 <section id="id42">
 <h3>Parameters<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>filename<span class="classifier">str</span></dt><dd><p>custom xml settings file name, filename becomes the current save name used by save() method and the
+<dt>filename<span class="classifier">str</span></dt><dd><p>custom XML settings file name, filename becomes the current save name used by save() method and the
 instance becomes custom</p>
 </dd>
 </dl>
@@ -828,15 +829,15 @@ attribute. In case of user instance, saved in ~/.PySisyphe/settings/settings.xml
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheSettings.saveAs">
 <span class="sig-name descname"><span class="pre">saveAs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheSettings.saveAs" title="Link to this definition"></a></dt>
-<dd><p>Save the current SisypheSettings instance to a xml file.</p>
+<dd><p>Save the current SisypheSettings instance to an XML file.</p>
 <section id="id45">
 <h3>Parameters<a class="headerlink" href="#id45" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>filename<span class="classifier">str</span></dt><dd><p>xml file name</p>
+<dt>filename<span class="classifier">str</span></dt><dd><p>XML file name</p>
 </dd>
 <dt>current<span class="classifier">bool</span></dt><dd><p>if True, filename becomes the current save name used by save() method and the instance becomes custom</p>
 </dd>
-<dt>pretty<span class="classifier">bool</span></dt><dd><p>if True, pretty xml formatting</p>
+<dt>pretty<span class="classifier">bool</span></dt><dd><p>if True, pretty XML formatting</p>
 </dd>
 </dl>
 </section>
@@ -911,11 +912,11 @@ original settings are lost and the file may be corrupted (./Sisyphe/settings/set
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.SisypheTooltips.getDefaultSettings">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getDefaultSettings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.SisypheTooltips.getDefaultSettings" title="Link to this definition"></a></dt>
-<dd><p>Get tooltips xml file name (./Sisyphe/settings/tooltips.xml).</p>
+<dd><p>Get tooltips XML file name (./Sisyphe/settings/tooltips.xml).</p>
 <section id="id49">
 <h3>Returns<a class="headerlink" href="#id49" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>str</dt><dd><p>tooltips xml file name</p>
+<dt>str</dt><dd><p>tooltips XML file name</p>
 </dd>
 </dl>
 </section>
@@ -994,14 +995,14 @@ will ensure a consistent display regardless of the screen’s DPI. This zoom is 
 <dl class="py function">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.initPySisypheUserPath">
 <span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheSettings.</span></span><span class="sig-name descname"><span class="pre">initPySisypheUserPath</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.initPySisypheUserPath" title="Link to this definition"></a></dt>
-<dd><p>Creates user PySisyphe directory. Creates database, models and segmentation subdirectories. Copy default xml files
+<dd><p>Creates user PySisyphe directory. Creates database, models and segmentation subdirectories. Copy default XML files
 (settings.xml and functions.xml) to PySisyphe user directory.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheSettings.setUserSettingsToDefault">
 <span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheSettings.</span></span><span class="sig-name descname"><span class="pre">setUserSettingsToDefault</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheSettings.setUserSettingsToDefault" title="Link to this definition"></a></dt>
-<dd><p>Copy default xml files (settings.xml and functions.xml) to PySisyphe user directory.</p>
+<dd><p>Copy default XML files (settings.xml and functions.xml) to PySisyphe user directory.</p>
 </dd></dl>
 
 </section>

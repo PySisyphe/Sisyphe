@@ -101,7 +101,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.hasFieldNamesToExtract"><code class="docutils literal notranslate"><span class="pre">SisypheParsePdf.hasFieldNamesToExtract()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.hasFields"><code class="docutils literal notranslate"><span class="pre">SisypheParsePdf.hasFields()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.loadFieldNames"><code class="docutils literal notranslate"><span class="pre">SisypheParsePdf.loadFieldNames()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.parse"><code class="docutils literal notranslate"><span class="pre">SisypheParsePdf.parse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.parseOCR"><code class="docutils literal notranslate"><span class="pre">SisypheParsePdf.parseOCR()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.parseRenishawReport"><code class="docutils literal notranslate"><span class="pre">SisypheParsePdf.parseRenishawReport()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.saveFieldNames"><code class="docutils literal notranslate"><span class="pre">SisypheParsePdf.saveFieldNames()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.setFieldNamesToExclude"><code class="docutils literal notranslate"><span class="pre">SisypheParsePdf.setFieldNamesToExclude()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.setFieldNamesToExtract"><code class="docutils literal notranslate"><span class="pre">SisypheParsePdf.setFieldNamesToExtract()</span></code></a></li>
@@ -180,7 +181,7 @@
 <h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
 <p>object -&gt; SisypheParsePdf</p>
 <p>Creation: 15/12/2025
-Last revision: 10/01/2026</p>
+Last revision: 16/01/2026</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisyphePDF.SisypheParsePdf.appendFieldNamesToExclude">
 <span class="sig-name descname"><span class="pre">appendFieldNamesToExclude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.appendFieldNamesToExclude" title="Link to this definition"></a></dt>
@@ -351,9 +352,9 @@ Last revision: 10/01/2026</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="Sisyphe.core.sisyphePDF.SisypheParsePdf.parse">
-<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.parse" title="Link to this definition"></a></dt>
-<dd><p>PDF parsing:</p>
+<dt class="sig sig-object py" id="Sisyphe.core.sisyphePDF.SisypheParsePdf.parseOCR">
+<span class="sig-name descname"><span class="pre">parseOCR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.98</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.parseOCR" title="Link to this definition"></a></dt>
+<dd><p>PDF OCR parsing:</p>
 <ul class="simple">
 <li><p>OCR processing to extract all strings from the PDF</p></li>
 <li><p>search table fields (table column header)</p></li>
@@ -363,6 +364,8 @@ Last revision: 10/01/2026</p>
 <h3>Parameters<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>PDF file to parse.</p>
+</dd>
+<dt>linc<span class="classifier">float</span></dt><dd><p>line increment threshold (0.9 to 0.9999)</p>
 </dd>
 <dt>wait<span class="classifier">DialogWait</span></dt><dd><p>progress dialog.</p>
 </dd>
@@ -381,11 +384,39 @@ Last revision: 10/01/2026</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.core.sisyphePDF.SisypheParsePdf.parseRenishawReport">
+<span class="sig-name descname"><span class="pre">parseRenishawReport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.parseRenishawReport" title="Link to this definition"></a></dt>
+<dd><p>Renishaw robotic neurosurgery system report parsing:</p>
+<ul class="simple">
+<li><p>search table fields (table column header)</p></li>
+<li><p>extract table field values</p></li>
+<li><p>extract orientation: ‘lr’ lateral right, ‘ll’ lateral left, ‘sa’ sagittal anterior, ‘sp’ sagittal posterior</p></li>
+</ul>
+<section id="id14">
+<h3>Parameters<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>PDF Renishaw report to parse.</p>
+</dd>
+</dl>
+</section>
+<section id="id15">
+<h3>Returns<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<p>Tuple[DataFrame, str]</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Dataframe of extracted table values</p></li>
+<li><p>orientation str</p></li>
+</ul>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisyphePDF.SisypheParsePdf.saveFieldNames">
 <span class="sig-name descname"><span class="pre">saveFieldNames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.saveFieldNames" title="Link to this definition"></a></dt>
 <dd><p>Save the XML file that stores the table fields to be searched in the PDF.</p>
-<section id="id14">
-<h3>Parameters<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<section id="id16">
+<h3>Parameters<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
 <p>filename : str</p>
 </section>
 </dd></dl>
@@ -394,8 +425,8 @@ Last revision: 10/01/2026</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisyphePDF.SisypheParsePdf.setFieldNamesToExclude">
 <span class="sig-name descname"><span class="pre">setFieldNamesToExclude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.setFieldNamesToExclude" title="Link to this definition"></a></dt>
 <dd><p>Set the list of strings to exclude from the OCR detection.</p>
-<section id="id15">
-<h3>Parameters<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<section id="id17">
+<h3>Parameters<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>fields<span class="classifier">str | list[str]</span></dt><dd><p>list of strings to exclude.</p>
 </dd>
@@ -407,8 +438,8 @@ Last revision: 10/01/2026</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisyphePDF.SisypheParsePdf.setFieldNamesToExtract">
 <span class="sig-name descname"><span class="pre">setFieldNamesToExtract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisyphePDF.SisypheParsePdf.setFieldNamesToExtract" title="Link to this definition"></a></dt>
 <dd><p>Set the list of table fields (header column) to be searched in the PDF.</p>
-<section id="id16">
-<h3>Parameters<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<section id="id18">
+<h3>Parameters<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>fields<span class="classifier">str | list[str]</span></dt><dd><p>list of fields to be searched in the PDF.</p>
 </dd>

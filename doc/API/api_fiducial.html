@@ -199,11 +199,20 @@
 <li><p>calculate entry point from arc, ring, orientation, target point and trajectory length.</p></li>
 </ul>
 </div></blockquote>
+<p>4 orientations: lateral right, lateral left, sagittal anterior, sagitall posterior</p>
+<p>Lateral right orientation:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>arc, rotation around y-axis, 0° right to 180° left</p></li>
+<li><p>ring, rotation around x-axis, 0° posterior to 180° anterior</p></li>
+</ul>
+</div></blockquote>
 </section>
 <section id="inheritance">
 <h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
 <p>object -&gt; LeksellAngleConversion</p>
-<p>Creation: 18/12/2025</p>
+<p>Creation: 18/12/2025
+Last revision: 13/01/2026</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.LeksellProcessings.computeEntryPoint">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">computeEntryPoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ring</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.LeksellProcessings.computeEntryPoint" title="Link to this definition"></a></dt>
@@ -345,10 +354,14 @@ the Leksell reference coordinates and the image coordinates, and vice versa.</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>Fiducial              x       y       z</p></li>
-<li><p>anterior right  -&gt;    5.0     160.0   40.0 cranial to 160.0 caudal</p></li>
-<li><p>anterior left   -&gt;    195.0   160.0   40.0 cranial to 160.0 caudal</p></li>
-<li><p>posterior right -&gt;    5.0     40.0    40.0 cranial to 160.0 caudal</p></li>
-<li><p>posterior left  -&gt;    195.0   40.0    40.0 cranial to 160.0 caudal</p></li>
+<li><p>right anterior  -&gt;    5.0     160.0   40.0 cranial to 160.0 caudal</p></li>
+<li><p>right posterior -&gt;    5.0     40.0    40.0 cranial to 160.0 caudal</p></li>
+<li><p>left anterior   -&gt;    195.0   160.0   40.0 cranial to 160.0 caudal</p></li>
+<li><p>left posterior  -&gt;    195.0   40.0    40.0 cranial to 160.0 caudal</p></li>
+<li><p>anterior right  -&gt;    40.0    215.0   40.0 cranial to 160.0 caudal</p></li>
+<li><p>anterior left   -&gt;    160.0   215.0   40.0 cranial to 160.0 caudal</p></li>
+<li><p>posterior right -&gt;    40.0    -15.0   40.0 cranial to 160.0 caudal</p></li>
+<li><p>posterior left  -&gt;    160.0   -15.0   40.0 cranial to 160.0 caudal</p></li>
 </ul>
 </div></blockquote>
 </section>
