@@ -39,6 +39,7 @@ from Sisyphe.version import getVersionFromHost
 from Sisyphe.lib.mega.mega import Mega
 from Sisyphe.gui.dialogWait import DialogWait
 from Sisyphe.core.sisypheSettings import initPySisypheUserPath
+from Sisyphe.core.sisypheSettings import setUserSettingsToDefault
 
 __all__ = ['downloadFromHost',
            'installFromHost',
@@ -54,7 +55,7 @@ Functions
     - installFromHost
     - updatePySisypheToNewerVersion
     
-Last revision: 17/10/2025
+Last revision: 19/01/2026
 """
 
 def downloadFromHost(urls: str | list[str],
@@ -177,15 +178,17 @@ def installFromHost(urls: str | list[str],
                     if getmtime(src) > getmtime(dst): copy(src, dst2)
                 # else: copy(src, dst)
                 else: copy(src, dst2)
+                # < Revision 19/01/2026
                 # copy new functions.xml and settings.xml to ~/.PySisyphe
-                if filename == 'functions.xml':
-                    userdir = join(expanduser('~'), '.PySisyphe')
-                    if not exists(userdir): initPySisypheUserPath()
-                    copy(src, userdir)
-                elif filename == 'settings.xml':
-                    userdir = join(expanduser('~'), '.PySisyphe')
-                    if not exists(userdir): initPySisypheUserPath()
-                    copy(src, userdir)
+                # if filename == 'functions.xml':
+                #     userdir = join(expanduser('~'), '.PySisyphe')
+                #     if not exists(userdir): initPySisypheUserPath()
+                #     copy(src, userdir)
+                # elif filename == 'settings.xml':
+                #     userdir = join(expanduser('~'), '.PySisyphe')
+                #     if not exists(userdir): initPySisypheUserPath()
+                #     copy(src, userdir)
+                # Revision 19/01/2026 >
                 # Revision 15/10/2025 >
                 # Revision 24/07/2024 >
                 # remove(src)
@@ -205,6 +208,11 @@ def installFromHost(urls: str | list[str],
         # Revision 15/10/2025 >
         if exists(temp): rmtree(temp)
         chdir(previous)
+        # < Revision 19/01/2026
+        userdir = join(expanduser('~'), '.PySisyphe')
+        if not exists(userdir): initPySisypheUserPath()
+        else: setUserSettingsToDefault()
+        # Revision 19/01/2026 >
 
 
 def updatePySisyphe(wait: DialogWait | None = None) -> None:
