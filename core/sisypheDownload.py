@@ -51,9 +51,9 @@ _V = b'70797369737970686540676d61696c2e636f6d'
 Functions
 ~~~~~~~~~
 
-    - downloadFromHost
-    - installFromHost
-    - updatePySisypheToNewerVersion
+- downloadFromHost
+- installFromHost
+- updatePySisypheToNewerVersion
     
 Last revision: 19/01/2026
 """
@@ -161,7 +161,7 @@ def installFromHost(urls: str | list[str],
                 # < Revision 15/10/2025
                 dst2 = join(dst, base)
                 # Revision 15/10/2025 >
-                if not exists(dst):
+                if not exists(dst2):
                     try:
                         mkdir(dst2)
                         if logger is not None: logger.info('mkdir {}'.format(dst2))
@@ -171,12 +171,8 @@ def installFromHost(urls: str | list[str],
                 # Copy src only if the file is more recent
                 # copy(src, dst)
                 ext = splitext(src)[1]
-                if sys.platform == 'win32' and ext == '.so':
-                    remove(src)
-                    continue
-                elif sys.platform == 'darwin' and ext == '.pyd':
-                    remove(src)
-                    continue
+                if sys.platform == 'win32' and ext == '.so': continue
+                elif sys.platform == 'darwin' and ext == '.pyd': continue
                 # < Revision 15/10/2025
                 # if exists(dst)
                 dstfile = join(dst2, filename)
