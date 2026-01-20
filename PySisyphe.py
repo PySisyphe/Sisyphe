@@ -161,6 +161,8 @@ def globalExceptionHandler(tp, value, tb):
     logging.error(msg)
 # Revision 04/07/2025 >
 
+sys.excepthook = globalExceptionHandler
+
 # < Revision 22/07/2025
 # add QApplicationEventHandler class
 class QApplicationEventHandler(QApplication):
@@ -313,8 +315,6 @@ if __name__ == "__main__":
     QApplication.setApplicationName('PySisyphe')
     QApplication.setWindowIcon(QIcon(join(WindowSisyphe.getDefaultIconDirectory(), 'pysisyphe.png')))
     # Revision 18/02/2025 >
-
-    sys.excepthook = globalExceptionHandler
 
     # < Revision 07/12/2024
     QLocale.setDefault(QLocale(QLocale.English, QLocale.UnitedStates))
