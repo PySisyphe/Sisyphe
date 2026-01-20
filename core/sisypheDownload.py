@@ -133,6 +133,8 @@ def installFromHost(urls: str | list[str],
     wait : Sisyphe.gui.dialogWait.DialogWait
         progress bar dialog (optional)
     """
+    import logging
+    logger = logging.getLogger(__name__)
     # < Revision 15/10/2025
     # downloadFromHost(urls, temp, wait=wait)
     downloadFromHost(urls, temp, wait=wait)
@@ -159,7 +161,12 @@ def installFromHost(urls: str | list[str],
                 # < Revision 15/10/2025
                 dst2 = join(dst, base)
                 # Revision 15/10/2025 >
-                if not exists(dst): mkdir(dst2)
+                if not exists(dst):
+                    try:
+                        mkdir(dst2)
+                        if logger is not None: logger.info('mkdir {}'.format(dst2))
+                    except:
+                        if logger is not None: logger.info('error: mkdir {}'.format(dst2))
                 # < Revision 24/07/2024
                 # Copy src only if the file is more recent
                 # copy(src, dst)
@@ -172,13 +179,25 @@ def installFromHost(urls: str | list[str],
                     continue
                 # < Revision 15/10/2025
                 # if exists(dst)
-                if exists(dst2):
+                dstfile = join(dst2, filename)
+                if exists(dstfile):
                     # if getmtime(src) > getmtime(dst): copy(src, dst)
-                    if getmtime(src) > getmtime(dst):
-                        if wait is not None: wait.setInformationText('Copy {}...'.format(filename))
-                        copy(src, dst2)
+                    # if getmtime(src) > getmtime(dst):
+                    if getmtime(src) > getmtime(dstfile):
+                        if wait is not None: wait.setInformationText('Update {}...'.format(filename))
+                        try:
+                            copy(src, dst2)
+                            if logger is not None: logger.info('update {}'.format(dstfile))
+                        except:
+                            if logger is not None: logger.info('error: update {}'.format(dstfile))
                 # else: copy(src, dst)
-                else: copy(src, dst2)
+                else:
+                    if wait is not None: wait.setInformationText('Copy {}...'.format(filename))
+                    try:
+                        copy(src, dst2)
+                        if logger is not None: logger.info('copy {}'.format(dstfile))
+                    except:
+                        if logger is not None: logger.info('error: copy {}'.format(dstfile))
                 # < Revision 19/01/2026
                 # copy new functions.xml and settings.xml to ~/.PySisyphe
                 # if filename == 'functions.xml':
@@ -198,7 +217,12 @@ def installFromHost(urls: str | list[str],
             # Revision 15/10/2025 >
             elif isdir(file):
                 dst2 = join(dst, file)
-                if not exists(dst2): mkdir(dst2)
+                if not exists(dst2):
+                    try:
+                        mkdir(dst2)
+                        if logger is not None: logger.info('mkdir {}'.format(dst2))
+                    except:
+                        if logger is not None: logger.info('error: mkdir {}'.format(dst2))
             # < Revision 06/11/2025
             # Revision 06/11/2025 >
             if wait is not None: wait.incCurrentProgressValue()
@@ -211,6 +235,7 @@ def installFromHost(urls: str | list[str],
         chdir(previous)
         # < Revision 19/01/2026
         if wait is not None: wait.setInformationText('Set default settings...')
+        if logger is not None: logger.info('Set default settings')
         userdir = join(expanduser('~'), '.PySisyphe')
         if not exists(userdir): initPySisypheUserPath()
         else: setUserSettingsToDefault()
