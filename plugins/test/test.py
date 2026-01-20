@@ -1,4 +1,9 @@
-from PyQt5.QtWidgets import QMessageBox
+from Sisyphe.widgets.basicWidgets import messageBox
+
+"""
+Test plugin
+"""
 
 def main(parent):
-    QMessageBox.warning(parent, 'Plugin...', 'Plugin executed successfully.')
+    messageBox(parent,'Test plugin...',
+               'Plugin executed successfully')
