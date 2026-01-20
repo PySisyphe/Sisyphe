@@ -30,14 +30,14 @@ List of available post-processings:
 - Datatype conversion
 - Image attributes conversion
 - Voxel by voxel algebra (mean, median, std, min, max, any numpy expression)
-- Automatic removing of caudal slices (neck slices, usually as part of a 3D sagittal acquisition)
+- Automatic removial of caudal slices (neck slices, usually as part of a 3D sagittal acquisition)
 - Filtering/denoising: median, mean, gaussian, anistropic diffusion, non-local means, gradient magnitude, laplacian
 - Intensity matching between volumes: histogram matching, regression matching
 - Intensity normalization (0-1, z-score...)
 - Texture analysis (first order, 2D and 3D Shape-based, gray level co-occurrence matrix, gray level run length matrix, gray level size zone matrix, neighbouring gray tone difference matrix, gray level dependence matrix)
 - Biais field correction
 - Fiducial markers detection of Leksell stereotaxic frame
-- Co-registration (manual, rigid, affine, displacement field, ICBM spatial normalization, batch)
+- Co-registration (manual, frame-based, rigid, affine, displacement field, ICBM spatial normalization, batch)
 - Time series realignment
 - Eddy current correction
 - Asymmetry analysis
@@ -71,4 +71,4 @@ Download Binary archive
 
 Direct link to binary archives:
 - Windows binary [PySisyphe 0.25.04 build 20-01-2026](https://mega.nz/file/secAESZB#nA6Z-LtpBBTtedFRMGNGUHc6-BlX4E5059ZqNk_MGFM)
-- MacOS 11+ intel binary [PySisyphe 0.24.14 build 12-01-2026](https://mega.nz/file/lb0HBDTD#TdZ8rAthLSKK-TRcvHL3-vkPxil6jqKYwC8ygsofBHo)
+- MacOS 11+ intel binary [PySisyphe 0.25.04 build 20-01-2026](https://mega.nz/file/dadxAZ4C#05W5H51E6daq_fZzKW6pXZ1pi8snXH6n4Rtw409ktiU)
