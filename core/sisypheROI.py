@@ -239,7 +239,7 @@ class SisypheROI(SisypheBinaryImage):
     object -> SisypheImage -> SisypheBinaryImage -> SisypheROI
 
     Creation: 08/09/2022
-    Last revision: 04/01/2026
+    Last revision: 25/01/2026
     """
 
     __slots__ = ['_filename', '_referenceID', '_compression', '_name', '_color', '_alpha', '_visibility', '_lut']
@@ -248,7 +248,10 @@ class SisypheROI(SisypheBinaryImage):
     # Class constants
 
     _FILEEXT = '.xroi'
-    _REGEXP = '^[_A-Za-z0-9#\-\_\s+,]+$'
+    # < Revision 25/01/2026
+    # _REGEXP = '^[_A-Za-z0-9#\-\_\s+,]+$'
+    _REGEXP = r'^[_A-Za-z0-9#\-\_\s+,]+$'
+    # Revision 25/01/2026 >
 
     # Class methods
 
@@ -755,7 +758,10 @@ class SisypheROI(SisypheBinaryImage):
                 # re = QRegExp(self._REGEXP)
                 # if re.exactMatch(name):
                 #     self._name = name
-                r = '[^A-Za-z0-9#\-\_\s,]'
+                # < Revision 25/01/2026
+                # r = '[^A-Za-z0-9#\-\_\s,]'
+                r = r'[^A-Za-z0-9#\-\_\s,]'
+                # Revision 25/01/2026 >
                 name = sub(r, '', name)
                 if name != '':
                     self._name = name

@@ -55,7 +55,7 @@ Functions
 - installFromHost
 - updatePySisypheToNewerVersion
     
-Last revision: 19/01/2026
+Last revision: 28/01/2026
 """
 
 def downloadFromHost(urls: str | list[str],
@@ -154,6 +154,9 @@ def installFromHost(urls: str | list[str],
             wait.setCurrentProgressValue(0)
             wait.progressVisibilityOn()
         # folders = list()
+        # < Revision 25/01/2025
+        v = 'cp{}{}'.format(sys.version_info.major, sys.version_info.minor)
+        # Revision 25/01/2025 >
         for i, file in enumerate(files):
             if isfile(file):
                 base, filename = split(file)
@@ -164,15 +167,23 @@ def installFromHost(urls: str | list[str],
                 if not exists(dst2):
                     try:
                         mkdir(dst2)
-                        if logger is not None: logger.info('mkdir {}'.format(dst2))
+                        if logger is not None:
+                            logger.info('mkdir {}'.format(dst2))
                     except:
-                        if logger is not None: logger.info('error: mkdir {}'.format(dst2))
+                        if logger is not None:
+                            logger.info('error: mkdir {}'.format(dst2))
                 # < Revision 24/07/2024
                 # Copy src only if the file is more recent
                 # copy(src, dst)
                 ext = splitext(src)[1]
-                if sys.platform == 'win32' and ext == '.so': continue
+                # < Revision 25/01/2025
+                # if sys.platform == 'win32' and ext == '.so': continue
+                if sys.platform == 'win32':
+                    if ext == '.so': continue
+                    elif ext == '.pyd':
+                        if v not in src: continue
                 elif sys.platform == 'darwin' and ext == '.pyd': continue
+                # Revision 25/01/2025 >
                 # < Revision 15/10/2025
                 # if exists(dst)
                 dstfile = join(dst2, filename)
@@ -183,17 +194,21 @@ def installFromHost(urls: str | list[str],
                         if wait is not None: wait.setInformationText('Update {}...'.format(filename))
                         try:
                             copy(src, dst2)
-                            if logger is not None: logger.info('update {}'.format(dstfile))
+                            if logger is not None:
+                                logger.info('update {}'.format(dstfile))
                         except:
-                            if logger is not None: logger.info('error: update {}'.format(dstfile))
+                            if logger is not None:
+                                logger.info('error: update {}'.format(dstfile))
                 # else: copy(src, dst)
                 else:
                     if wait is not None: wait.setInformationText('Copy {}...'.format(filename))
                     try:
                         copy(src, dst2)
-                        if logger is not None: logger.info('copy {}'.format(dstfile))
+                        if logger is not None:
+                            logger.info('copy {}'.format(dstfile))
                     except:
-                        if logger is not None: logger.info('error: copy {}'.format(dstfile))
+                        if logger is not None:
+                            logger.info('error: copy {}'.format(dstfile))
                 # < Revision 19/01/2026
                 # copy new functions.xml and settings.xml to ~/.PySisyphe
                 # if filename == 'functions.xml':
@@ -259,10 +274,16 @@ def updatePySisyphe(wait: DialogWait | None = None) -> None:
                 root = doc.documentElement
                 if root.nodeName == 'host' and root.getAttribute('version') == '1.0':
                     if hasattr(sys, '_MEIPASS'):
-                        # < Revision 15/10/2025
-                        # if sys.platform == 'win32': updatesec = 'updatepyc'
-                        updatesec = 'updatepyc'
-                        # Revision 15/10/2025 >
+                        # < Revision 28/01/2026
+                        vpython = '{}.{}'.format(sys.version_info.major, sys.version_info.minor)
+                        if vpython == '3.10':
+                            # < Revision 15/10/2025
+                            # if sys.platform == 'win32': updatesec = 'updatepyc'
+                            updatesec = 'updatepyc'
+                            # Revision 15/10/2025 >
+                        elif vpython == '3.12': updatesec = 'updatepyc312'
+                        else: raise ValueError('Python {} is not supported.'.format(vpython))
+                        # Revision 28/01/2026 >
                     else: updatesec = 'updatepy'
                     section = doc.getElementsByTagName(updatesec)
                     if len(section) > 0:

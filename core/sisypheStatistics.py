@@ -54,9 +54,11 @@ from numpy.linalg import matrix_rank
 from numpy.linalg import inv
 from numpy.linalg import pinv
 
+# noinspection PyFinal
 from scipy.stats import t as student
 from scipy.stats import norm
 from scipy.stats import chi2
+# noinspection PyFinal
 from scipy.stats import gamma as gamma2
 from scipy.linalg import toeplitz
 
@@ -2573,6 +2575,7 @@ class SisypheDesign(object):
                     for i in range(len(columns)):
                         c = columns[i].copy()
                         columns.append(c)
+                        # noinspection PyTypeChecker, PyUnresolvedReferences
                         name = 'boxcar ' + self._cdesign[i][0]
                         # < Revision 05/06/2025
                         # In fmri design, the boxcar column is the main effect, not the condition column
@@ -2626,6 +2629,7 @@ class SisypheDesign(object):
                     for i in range(len(columns)):
                         c = columns[i].copy()
                         columns.append(c)
+                        # noinspection PyTypeChecker,PyUnresolvedReferences
                         name = 'boxcar ' + self._cdesign[i][0]
                         # < Revision 05/06/2025
                         # In fmri design, the boxcar column is the main effect, not the condition column
@@ -2664,6 +2668,7 @@ class SisypheDesign(object):
                     for i in range(len(columns)):
                         c = columns[i].copy()
                         columns.append(c)
+                        # noinspection PyTypeChecker,PyUnresolvedReferences
                         name = 'boxcar ' + self._cdesign[i][0]
                         # < Revision 05/06/2025
                         # In fmri design, the boxcar column is the main effect, not the condition column
@@ -3562,6 +3567,7 @@ class SisypheDesign(object):
                                     # < Revision 15/11/2024
                                     # vhpass = zeros([n, ])
                                     vhpass = zeros([n2, ])
+                                    # noinspection PyUnresolvedReferences
                                     vhpass[idx:idx + n] = hpass[:, k].flatten()
                                     # vhpass = vhpass.reshape(n, 1)
                                     vhpass = vhpass.reshape((n2, 1))
@@ -4328,13 +4334,13 @@ class SisypheDesign(object):
 
     def parseXML(self, doc: minidom.Document) -> None:
         """
-        Read the current SisypheDesign instance attributes from xml instance. This method is called by load() method,
+        Read the current SisypheDesign instance attributes from XML instance. This method is called by load() method,
         not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -4476,13 +4482,13 @@ class SisypheDesign(object):
 
     def createXML(self, doc: minidom.Document) -> None:
         """
-        Write the current SisypheDesign instance attributes to xml instance. This method is called by save() and
+        Write the current SisypheDesign instance attributes to XML instance. This method is called by save() and
         saveAs() methods, not recommended for use.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.createElement(self._FILEEXT[1:])

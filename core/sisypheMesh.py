@@ -146,7 +146,7 @@ class SisypheMesh(object):
     object -> SisypheMesh
 
     Creation: 22/03/2023
-    Last revision: 22/03/2025
+    Last revision: 25/01/2026
     """
     __slots__ = ['_name', '_filename', '_referenceID', '_polydata', '_mapper', '_actor']
     _counter: int = 0
@@ -468,7 +468,10 @@ class SisypheMesh(object):
                 # re = QRegExp(self._REGEXP)
                 # if re.exactMatch(name):
                 #     self._name = name
-                r = '[^A-Za-z0-9#\-\_\s,]'
+                # < Revision 25/01/2026
+                # r = '[^A-Za-z0-9#\-\_\s,]'
+                r = r'[^A-Za-z0-9#\-\_\s,]'
+                # Revision 25/01/2026 >
                 name = sub(r, '', name)
                 if name != '':
                     self._name = name

@@ -2,7 +2,7 @@
 External packages/modules
 -------------------------
 
-    - ANTs, image registration, http://stnava.github.io/ANTs/
+    - ANTs, image registration, https://stnava.github.io/ANTs/
     - ITK, medical image processing, https://itk.org/
     - Numpy, scientific computing, https://numpy.org/
     - pydicom, DICOM library, https://pydicom.github.io/pydicom/stable/
@@ -250,6 +250,7 @@ def extractDataElementValuesFromDatasets(dslist: list[FileDataset | Dataset | st
             r = {}
             for tag in taglist:
                 r[tag] = []
+            # noinspection PyInconsistentReturns
             for ds in dslist:
                 if isinstance(ds, str):
                     if exists(ds):

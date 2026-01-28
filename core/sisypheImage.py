@@ -301,7 +301,7 @@ class SisypheImage(object):
     object -> SisypheImage
 
     Creation: 12/01/2021
-    Last revision: 19/01/2026
+    Last revision: 27/01/2026
     """
     __slots__ = ['_sitk_image', '_itk_image', '_vtk_image', '_numpy_array', '_attr']
 
@@ -3113,7 +3113,7 @@ class SisypheImage(object):
         else: raise TypeError('kernel parameter type {} is not int.'.format(type(kernel)))
         # Filling
         # < Revision 25/12/2025
-        if fill in ('2d', '3D'):
+        if fill in ('2d', '2D'):
             f = BinaryFillholeImageFilter()
             # noinspection PyUnresolvedReferences
             i: cython.int
@@ -4499,7 +4499,7 @@ class SisypheImage(object):
     # < Revision 16/12/2024
     #  multi-component management
     def getPercentile(self,
-                      perc: int = 25, mask: str | SisypheImage | SisypheBinaryImage | None = None,
+                      perc: int | float = 25, mask: str | SisypheImage | SisypheBinaryImage | None = None,
                       c: int | None = 0) -> float | list[float]:
         """
         Get percentile of image. Calculation is performed on the entire image (mask parameter = None) or in a mask.

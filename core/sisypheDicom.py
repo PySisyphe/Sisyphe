@@ -1341,7 +1341,14 @@ class XmlDicom(object):
         if isinstance(filename, str):
             filename = splitext(filename)
             filename = filename[0] + DicomToXmlDicom.getFileExt()
-            if exists(filename): self._doc = minidom.parse(filename)
+            if exists(filename):
+                # < Revision 26/01/2026
+                # self._doc = minidom.parse(filename)
+                with open(filename) as f:
+                    xml = f.read()
+                xml = u'{0}'.format(xml).encode('utf-8')
+                self._doc = minidom.parseString(xml)
+                # Revision 26/01/2026 >
             else: raise FileNotFoundError('No such file {}.'.format(filename))
         else: raise TypeError('parameter type {} is not str.'.format(type(filename)))
 

@@ -50,70 +50,70 @@ from PyQt5.QtGui import QImageReader
 Functions
 ~~~~~~~~~
 
-    - listToStr
-    - getIntStdDatatypes
-    - getFloatStdDatatypes
-    - getDatatypes
-    - isValidDatatype
-    - isValidLibraryName
-    - getLibraryDataType
-    - getSupportedITKDatatypes
-    - getSupportedITKStdDatatypes
-    - isITKSupportedType
-    - isITKSupportedStdType
-    - isUint8ITKImage
-    - isITKImageSupportedType
-    - getNiftiExt
-    - getNiftiCompressedExt
-    - getNrrdExt
-    - getMincExt
-    - getVtkExt
-    - getJsonExt
-    - getNumpyExt
-    - getSisypheExt
-    - getSisypheROIExt
-    - getFreeSurferExt
-    - getBrainVoyagerVMRExt
-    - getBrainVoyagerVOIExt
-    - getSisypheROIExt
-    - getDicomExt
-    - getBitmapExt
-    - getImageExt
-    - getLutExt
-    - getTractsExt
-    - getRegularDirections
-    - getVTKDirections
-    - getSisypheDirections
-    - getTemplatesID
-    - addPrefixToFilename
-    - addSuffixToFilename
-    - addPrefixSuffixToFilename
-    - replaceDirname
-    - getID_ATROPOS
-    - getID_ICBM152
-    - getID_ICBM452
-    - getID_NAC
-    - getID_SPL
-    - getID_SRI24
-    - getID_DISTAL
-    - isTemplateID
-    - isATROPOS
-    - isDISTAL
-    - isICBM152
-    - isICBM452
-    - isNAC
-    - isSPL
-    - isSRI24
-    - getShape_ICBM152
-    - getOrigin_ICBM152
-    - getTemplatePath
-    - getATROPOSPath
-    - getICBM152Path
-    - getICBM452Path
-    - getDISTALPath
-    - getNACPath
-    - getSPLPath
-    - getSRI24Path
+- listToStr
+- getIntStdDatatypes
+- getFloatStdDatatypes
+- getDatatypes
+- isValidDatatype
+- isValidLibraryName
+- getLibraryDataType
+- getSupportedITKDatatypes
+- getSupportedITKStdDatatypes
+- isITKSupportedType
+- isITKSupportedStdType
+- isUint8ITKImage
+- isITKImageSupportedType
+- getNiftiExt
+- getNiftiCompressedExt
+- getNrrdExt
+- getMincExt
+- getVtkExt
+- getJsonExt
+- getNumpyExt
+- getSisypheExt
+- getSisypheROIExt
+- getFreeSurferExt
+- getBrainVoyagerVMRExt
+- getBrainVoyagerVOIExt
+- getSisypheROIExt
+- getDicomExt
+- getBitmapExt
+- getImageExt
+- getLutExt
+- getTractsExt
+- getRegularDirections
+- getVTKDirections
+- getSisypheDirections
+- getTemplatesID
+- addPrefixToFilename
+- addSuffixToFilename
+- addPrefixSuffixToFilename
+- replaceDirname
+- getID_ATROPOS
+- getID_ICBM152
+- getID_ICBM452
+- getID_NAC
+- getID_SPL
+- getID_SRI24
+- getID_DISTAL
+- isTemplateID
+- isATROPOS
+- isDISTAL
+- isICBM152
+- isICBM452
+- isNAC
+- isSPL
+- isSRI24
+- getShape_ICBM152
+- getOrigin_ICBM152
+- getTemplatePath
+- getATROPOSPath
+- getICBM152Path
+- getICBM452Path
+- getDISTALPath
+- getNACPath
+- getSPLPath
+- getSRI24Path
 
 Creation: 08/09/2022
 Last revision: 22/07/2024

@@ -5,6 +5,7 @@ External packages/modules
     - Cython, static compiler, https://cython.org/
     - ANTs, image registration, https://stnava.github.io/ANTs/
     - ITK, medical image processing, https://itk.org/
+    - Matplotlib, Graph tool, https://matplotlib.org/
     - Numpy, scientific computing, https://numpy.org/
     - Pillow,  image processing, https://pillow.readthedocs.io/
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/

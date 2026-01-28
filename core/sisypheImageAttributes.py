@@ -884,7 +884,7 @@ class SisypheAcquisition(object):
     object -> SisypheIdentity
 
     Creation: 16/03/2021
-    Last revision: 14/10/2025
+    Last revision: 27/01/2026
     """
     __slots__ = ['_modality', '_sequence', '_type', '_dateofscan', '_frame', '_unit', '_labels',
                  '_df', '_autocorrx', '_autocorry', '_autocorrz', '_contrast', '_parent']
@@ -892,8 +892,8 @@ class SisypheAcquisition(object):
     # Class constants
 
     UK = 'UNKNOWN'
-    CT, CECT = 'CT', 'CE CT'
-    FDG = 'FDG'
+    CT, CECT, BONECT = 'CT', 'CE CT', 'CT BONE WINDOW'
+    FDG, FDOPA = 'FDG', 'FDOPA'
     HMPAO, ECD, FPCIT = 'HMPAO', 'ECD', 'FPCIT'
     PMAP, TMAP, ZMAP, CMAP = 'P MAP', 'T MAP', 'Z MAP', 'CC MAP'
     # < Revision 04/01/2026
@@ -904,7 +904,7 @@ class SisypheAcquisition(object):
     CBF, CBV, MTT, TTP, DOSE, THICK = 'CBF', 'CBV', 'MTT', 'TTP', 'DOSE', 'CORTICAL THICKNESS'
     FA, ADC, DENSITY, BIAS, DIST = 'FA', 'ADC', 'DENSITY', 'BIAS FIELD', 'DISTANCE MAP'
     MEDIAN, MEAN, MIN, MAX, STD, ALGEBRA = 'MEDIAN', 'MEAN', 'MIN', 'MAX', 'STD', 'ALGEBRA'
-    MASK, STRUCT, FIELD, JAC, LABELS, = 'MASK', 'STRUCT', 'DISPLACEMENT FIELD', 'JACOBIAN', 'LABELS'
+    MASK, FMASK, STRUCT, FIELD, JAC, LABELS, = 'MASK', 'FILLED MASK', 'STRUCT', 'DISPLACEMENT FIELD', 'JACOBIAN', 'LABELS'
     T1, T2, T2S, PD, FLAIR, CET1, CET2, CETOF = 'T1', 'T2', 'T2*', 'PD', 'FLAIR', 'CE T1', 'CE T2', 'CE TOF',
     CEFLAIR, EPI, B0, DWI, PWI, ASL, SWI, TOF = 'CE FLAIR', 'EPI', 'B0', 'DWI', 'PWI', 'ASL', 'SWI', 'TOF'
     NOFRAME, LEKSELL = 'NO FRAME', 'LEKSELL'
@@ -929,11 +929,11 @@ class SisypheAcquisition(object):
     _CODETOMODALITY = {0: 'OT', 1: 'MR', 2: 'CT', 3: 'PT', 4: 'NM', 5: 'LB', 6: 'TP', 7: 'PJ'}
     _OTSEQUENCE = (UK, PMAP, TMAP, ZMAP, GM, SCGM, WM, CSF, BSTEM, CRBL, THICK, CBF, CBV,
                    MTT, TTP, DOSE, FA, ADC, DENSITY, BIAS, DIST, MEDIAN, MEAN, MIN, MAX,
-                   STD, ALGEBRA, MASK, STRUCT, FIELD, JAC, LABELS)
+                   STD, ALGEBRA, MASK, FMASK, STRUCT, FIELD, JAC, LABELS)
     _MRSEQUENCE = (UK, T1, T2, T2S, PD, FLAIR, CET1, CET2, CEFLAIR, CETOF, EPI,
                    B0, DWI, PWI, ASL, SWI, TOF)
-    _CTSEQUENCE = (UK, CT, CECT)
-    _PTSEQUENCE = (UK, FDG)
+    _CTSEQUENCE = (UK, CT, CECT, BONECT)
+    _PTSEQUENCE = (UK, FDG, FDOPA)
     _NMSEQUENCE = (UK, HMPAO, ECD, FPCIT)
     _TPSEQUENCE = _OTSEQUENCE + _MRSEQUENCE + _CTSEQUENCE + _PTSEQUENCE + _NMSEQUENCE
     _PJSEQUENCE = _OTSEQUENCE + _MRSEQUENCE + _CTSEQUENCE + _PTSEQUENCE + _NMSEQUENCE
@@ -2112,6 +2112,14 @@ class SisypheAcquisition(object):
         self._sequence = self.MASK
         self.setNoUnit()
 
+    def setSequenceToFilledMask(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to filled mask.
+        """
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
+        self._sequence = self.FMASK
+        self.setNoUnit()
+
     def setSequenceToStructMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to struct.
@@ -2271,12 +2279,27 @@ class SisypheAcquisition(object):
         if not (self.isCT() or self.isTP()): self.setModalityToCT()
         self._sequence = self.CECT
 
+    def setSequenceToBoneWindowCT(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to bone window CT-scan.
+        """
+        if not (self.isCT() or self.isTP()): self.setModalityToCT()
+        self._sequence = self.BONECT
+
     def setSequenceToFDG(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to FDG.
         """
         if not (self.isPT() or self.isTP()): self.setModalityToPT()
         self._sequence = self.FDG
+        self.setNoUnit()
+
+    def setSequenceToFDOPA(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to FDOPA.
+        """
+        if not (self.isPT() or self.isTP()): self.setModalityToPT()
+        self._sequence = self.FDOPA
         self.setNoUnit()
 
     def setSequenceToHMPAO(self) -> None:
@@ -2302,6 +2325,622 @@ class SisypheAcquisition(object):
         if not (self.isNM() or self.isTP()): self.setModalityToNM()
         self._sequence = self.FPCIT
         self.setUnitToCount()
+
+    def isTMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a t-map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a t-map
+        """
+        return self._sequence == self.TMAP
+
+    def isZMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a z-map.
+
+        Returns
+        -------
+        bool, True if sequence is a z-map
+        """
+        return self._sequence == self.ZMAP
+
+    def isCMAP(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a correlation coeff. map.
+
+        Returns
+        -------
+        bool, True if sequence is a correlation coeff. map
+        """
+        return self._sequence == self.CMAP
+
+    def isPMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a correlation probability map.
+
+        Returns
+        -------
+        bool, True if sequence is a probability map
+        """
+        return self._sequence == self.PMAP
+
+    def isStatisticalMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a t-map, a z-map or a correlation
+        coeff. map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a t-map, a z-map or a correlation coeff. map
+        """
+        # < Revision 03/02/2025
+        # add isCMAP()
+        return self.isTMap() or self.isZMap() or self.isCMAP()
+        # Revision 03/02/2025 >
+
+    def isCMap(self) -> bool:
+        """
+                Check whether the current SisypheAcquisition instance sequence attribute is a correlation coeff. map.
+
+        Returns
+        -------
+        bool, True if sequence is a correlation coeff. map
+        """
+        return self._sequence == self.CMAP
+
+    def isGreyMatterMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a gray matter map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a gray matter map
+        """
+        return self._sequence == self.GM
+
+    def isSubCorticalGreyMatterMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a subcortical gray matter map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a gray matter map
+        """
+        return self._sequence == self.SCGM
+
+    def isWhiteMatterMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a white matter map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a white matter map
+        """
+        return self._sequence == self.WM
+
+    def isCerebroSpinalFluidMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a cerebro-spinal fluid map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a cerebro-spinal fluid map
+        """
+        return self._sequence == self.CSF
+
+    def isBrainstemMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a brainstem map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a brainstem map
+        """
+        return self._sequence == self.BSTEM
+
+    def isCerebellumMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a cerebellum map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a cerebellum map
+        """
+        return self._sequence == self.CRBL
+
+    def isCorticalThicknessMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a cortical thickness map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a cortical thickness map
+        """
+        return self._sequence == self.THICK
+
+    def isCerebralBloodFlowMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a cerebral blood flow map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a cerebral blood flow map
+        """
+        return self._sequence == self.CBF
+
+    def isCerebralBloodVolumeMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a cerebral blood volume map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a cerebral blood volume map
+        """
+        return self._sequence == self.CBV
+
+    def isMeanTransitTimeMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a mean transit time map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a mean transit time map
+        """
+        return self._sequence == self.MTT
+
+    def isTimeToPicMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a time to pic map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a time to pic map
+        """
+        return self._sequence == self.TTP
+
+    def isDoseMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a dose map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a dose map
+        """
+        return self._sequence == self.DOSE
+
+    def isFractionalAnisotropyMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a fractional anisotropy map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a fractional anisotropy map
+        """
+        return self._sequence == self.FA
+
+    def isApparentDiffusionMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is an apparent diffusion map.
+
+        Returns
+        -------
+        bool
+            True if sequence is an apparent diffusion map
+        """
+        return self._sequence == self.ADC
+
+    def isDensityMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a density map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a density map
+        """
+        return self._sequence == self.DENSITY
+
+    def isBiasFieldMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a bias field map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a bias field map
+        """
+        return self._sequence == self.BIAS
+
+    def isDistanceMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a euclidean distance map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a euclidean distance map
+        """
+        return self._sequence == self.DIST
+
+    def isMeanMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a mean map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a mean map
+        """
+        return self._sequence == self.MEAN
+
+    def isMedianMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a median map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a median map
+        """
+        return self._sequence == self.MEDIAN
+
+    def isMinimumMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a minimum map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a minimum map
+        """
+        return self._sequence == self.MIN
+
+    def isMaximumMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a maximum map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a maximum map
+        """
+        return self._sequence == self.MAX
+
+    def isStandardDeviationMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a standard deviation map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a standard deviation map
+        """
+        return self._sequence == self.STD
+
+    def isAlgebraMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is an algebra map.
+
+        Returns
+        -------
+        bool
+            True if sequence is an algebra map
+        """
+        return self._sequence == self.ALGEBRA
+
+    def isMask(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a mask.
+
+        Returns
+        -------
+        bool
+            True if sequence is a mask
+        """
+        return self._sequence == self.MASK
+
+    def isFilledMask(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a filled mask.
+
+        Returns
+        -------
+        bool
+            True if sequence is a filled mask
+        """
+        return self._sequence == self.FMASK
+
+    def isStructMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a struct map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a struct map
+        """
+        return self._sequence == self.STRUCT
+
+    def isLabelMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a label map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a label map
+        """
+        return self._sequence == self.LABELS
+
+    def isDisplacementFieldMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a displacement field map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a displacement field map
+        """
+        return self._sequence == self.FIELD
+
+    def isT1Weighted(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is T1 weighted.
+
+        Returns
+        -------
+        bool
+            True if sequence is T1 weighted
+        """
+        return self._sequence == self.T1
+
+    def isT2Weighted(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is T2 weighted.
+
+        Returns
+        -------
+        bool
+            True if sequence is T2 weighted
+        """
+        return self._sequence == self.T2
+
+    def isT2Star(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is T2*.
+
+        Returns
+        -------
+        bool
+            True if sequence is T2*
+        """
+        return self._sequence == self.T2S
+
+    def isProtonDensityWeighted(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is proton density weighted.
+
+        Returns
+        -------
+        bool
+            True if sequence is a proton density weighted
+        """
+        return self._sequence == self.PD
+
+    def isFLAIR(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is FLAIR.
+
+        Returns
+        -------
+        bool
+            True if sequence is FLAIR
+        """
+        return self._sequence == self.FLAIR
+
+    def isContrastEnhancedT1(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is contrast enhanced T1 weighted.
+
+        Returns
+        -------
+        bool
+            True if sequence is contrast enhanced T1 weighted
+        """
+        return self._sequence == self.CET1
+
+    def isContrastEnhancedT2(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is contrast enhanced T2 weighted.
+
+        Returns
+        -------
+        bool
+            True if sequence is contrast enhanced T2 weighted
+        """
+        return self._sequence == self.CET2
+
+    def isContrastEnhancedFLAIR(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is contrast enhanced FLAIR.
+
+        Returns
+        -------
+        bool
+            True if sequence is contrast enhanced FLAIR
+        """
+        return self._sequence == self.CEFLAIR
+
+    def isContrastEnhancedTOF(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is contrast enhanced TOF.
+
+        Returns
+        -------
+        bool
+            True if sequence is contrast enhanced TOF
+        """
+        return self._sequence == self.CETOF
+
+    def isEchoPlanar(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is echo-planar.
+
+        Returns
+        -------
+        bool
+            True if sequence is echo-planar
+        """
+        return self._sequence == self.EPI
+
+    def isB0(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is B0.
+
+        Returns
+        -------
+        bool
+            True if sequence is B0
+        """
+        return self._sequence == self.B0
+
+    def isDiffusionWeighted(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is diffusion weighted.
+
+        Returns
+        -------
+        bool
+            True if sequence is diffusion weighted
+        """
+        return self._sequence == self.DWI
+
+    def isPerfusionWeighted(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is perfusion weighted.
+
+        Returns
+        -------
+        bool
+            True if sequence is perfusion weighted
+        """
+        return self._sequence == self.PWI
+
+    def isSusceptibilityWeighted(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is susceptibility weighted.
+
+        Returns
+        -------
+        bool
+            True if sequence is susceptibility weighted
+        """
+        return self._sequence == self.SWI
+
+    def isTimeOfFlight(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is time of flight.
+
+        Returns
+        -------
+        bool
+            True if sequence is time of flight
+        """
+        return self._sequence == self.TOF
+
+    def isContrastEnhancedCT(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a contrast enhanced CT-scan.
+
+        Returns
+        -------
+        bool
+            True if sequence is a contrast enhanced CT-scan
+        """
+        return self._sequence == self.CECT
+
+    def isBoneWindowCT(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a bone window CT-scan.
+
+        Returns
+        -------
+        bool
+            True if sequence is a bone window CT-scan
+        """
+        return self._sequence == self.BONECT
+
+    def isFDG(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is FDC.
+
+        Returns
+        -------
+        bool
+            True if sequence is FDG
+        """
+        return self._sequence == self.FDG
+
+    def isFDOPA(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is FDOPA.
+
+        Returns
+        -------
+        bool
+            True if sequence is FDOPA
+        """
+        return self._sequence == self.FDOPA
+
+    def isHMPAO(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is HMPAO.
+
+        Returns
+        -------
+        bool
+            True if sequence is HMPAO
+        """
+        return self._sequence == self.HMPAO
+
+    def isECD(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is ECD.
+
+        Returns
+        -------
+        bool
+            True if sequence is ECD
+        """
+        return self._sequence == self.ECD
+
+    def isFPCIT(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is FPCIT.
+
+        Returns
+        -------
+        bool
+            True if sequence is FPCIT
+        """
+        return self._sequence == self.FPCIT
 
     def isStandardSequence(self) -> bool:
         """
@@ -2452,121 +3091,6 @@ class SisypheAcquisition(object):
             True if sequence is contrast enhanced
         """
         return self._sequence[:2] == 'CE'
-
-    def isTMap(self) -> bool:
-        """
-        Check whether the current SisypheAcquisition instance sequence attribute is a t-map.
-
-        Returns
-        -------
-        bool
-            True if sequence is a t-map
-        """
-        return self._sequence == self.TMAP
-
-    def isZMap(self) -> bool:
-        """
-        Check whether the current SisypheAcquisition instance sequence attribute is a z-map.
-
-        Returns
-        -------
-        bool, True if sequence is a z-map
-        """
-        return self._sequence == self.ZMAP
-
-    # < Revision 03/02/2025
-    # add isCMAP method
-    def isCMAP(self) -> bool:
-        """
-        Check whether the current SisypheAcquisition instance sequence attribute is a correlation coeff. map.
-
-        Returns
-        -------
-        bool, True if sequence is a correlation coeff. map
-        """
-        return self._sequence == self.CMAP
-    # Revision 03/02/2025 >
-
-    def isStatisticalMap(self) -> bool:
-        """
-        Check whether the current SisypheAcquisition instance sequence attribute is a t-map, a z-map or a correlation
-        coeff. map.
-
-        Returns
-        -------
-        bool
-            True if sequence is a t-map, a z-map or a correlation coeff. map
-        """
-        # < Revision 03/02/2025
-        # add isCMAP()
-        return self.isTMap() or self.isZMap() or self.isCMAP()
-        # Revision 03/02/2025 >
-
-    def isGreyMatterMap(self) -> bool:
-        """
-        Check whether the current SisypheAcquisition instance sequence attribute is a gray matter map.
-
-        Returns
-        -------
-        bool
-            True if sequence is a gray matter map
-        """
-        return self._sequence == self.GM
-
-    def isSubCorticalGreyMatterMap(self) -> bool:
-        """
-        Check whether the current SisypheAcquisition instance sequence attribute is a subcortical gray matter map.
-
-        Returns
-        -------
-        bool
-            True if sequence is a gray matter map
-        """
-        return self._sequence == self.SCGM
-
-    def isWhiteMatterMap(self) -> bool:
-        """
-        Check whether the current SisypheAcquisition instance sequence attribute is a white matter map.
-
-        Returns
-        -------
-        bool
-            True if sequence is a white matter map
-        """
-        return self._sequence == self.WM
-
-    def isCerebroSpinalFluidMap(self) -> bool:
-        """
-        Check whether the current SisypheAcquisition instance sequence attribute is a cerebro-spinal fluid map.
-
-        Returns
-        -------
-        bool
-            True if sequence is a cerebro-spinal fluid map
-        """
-        return self._sequence == self.CSF
-
-    def isBrainstemMap(self) -> bool:
-        """
-        Check whether the current SisypheAcquisition instance sequence attribute is a brainstem map.
-
-        Returns
-        -------
-        bool
-            True if sequence is a brainstem map
-        """
-        return self._sequence == self.BSTEM
-
-    def isCerebellumMap(self) -> bool:
-        """
-        Check whether the current SisypheAcquisition instance sequence attribute is a cerebellum map.
-
-        Returns
-        -------
-        bool
-            True if sequence is a cerebellum map
-        """
-        return self._sequence == self.CRBL
 
     def getSequence(self) -> str:
         """

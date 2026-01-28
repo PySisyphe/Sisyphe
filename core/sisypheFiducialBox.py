@@ -320,7 +320,7 @@ class SisypheFiducialBox(QObject):
     QObject -> SisypheFiducialBox
 
     Creation: 26/07/2022
-    Last revision: 04/01/2026
+    Last revision: 26/01/2026
     """
     # Class constant
 
@@ -553,8 +553,11 @@ class SisypheFiducialBox(QObject):
             minf = m // 2
             msup = m * 2
             for i in range(n - 1, -1, -1):
-                if minf < buff[i] or buff[i] > msup:
+                # < Revision 26/01/2026
+                # if minf < buff[i] or buff[i] > msup:
+                if buff[i] < minf or buff[i] > msup:
                     del labels[i]
+                # Revision 26/01/2026 >
         # vox = self._volume.getVoxelVolume()
         # buff = list()
         # for i in range(len(labels)):
@@ -789,9 +792,15 @@ class SisypheFiducialBox(QObject):
             try:
                 self._markersSearch(slc)
                 self._volume.getAcquisition().setFrameToLeksell()
+                # < Revision 26/01/2026
+                self._volume.save()
+                # Revision 26/01/2026 >
                 return True
             except:
                 self._volume.getAcquisition().setFrameToNo()
+                # < Revision 26/01/2026
+                self._volume.save()
+                # Revision 26/01/2026 >
                 return False
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
