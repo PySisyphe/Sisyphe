@@ -131,7 +131,7 @@ class AbstractViewWidget(QFrame):
     QWidget -> AbstractViewWidget
 
     Creation: 20/03/2022
-    Last Revision: 04/12/2025
+    Last Revision: 27/01/2026
     """
 
     _DEFAULTZOOM = 128.0  # Default zoom (vtk parallel scale) = conventional FOV of head imaging / 2
@@ -1655,6 +1655,9 @@ class AbstractViewWidget(QFrame):
             if isinstance(tool, (HandleWidget, LineWidget)):
                 if tool.getName() in self._tools:
                     self._tools[tool.getName()].setName(name)
+                    # < Revision 27/01/2026
+                    self._updateToolMenu()
+                    # Revision 27/01/2026 >
                 else: raise ValueError('tool name {} is not in SisypheToolCollection.'.format(tool.getName()))
             else: raise TypeError('parameter type {} is not HandleWidget or LineWidget.'.format(type(tool)))
 
@@ -4716,6 +4719,9 @@ class AbstractViewWidget(QFrame):
                     # noinspection PyUnresolvedReferences
                     self.ToolRenamed.emit(self, key, name)
                 self._tools[key.getName()].setName(name)
+                # < Revision 27/01/2026
+                self._updateToolMenu()
+                # Revision 27/01/2026 >
             else: raise ValueError('tool name {} is not in SisypheToolCollection.'.format(key.getName()))
         else: raise TypeError('parameter type {} is not int, str, HandleWidget or LineWidget.'.format(type(key)))
 

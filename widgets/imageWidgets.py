@@ -75,8 +75,8 @@ from Sisyphe.gui.dialogGenericResults import DialogGenericResults
 Class hierarchy
 ~~~~~~~~~~~~~~~
 
-    - QWidget -> ImagePreviewWidget -> SisypheImageViewWidget -> SisypheVolumeViewWidget
-    - QPushButton -> SisypheVolumeThumbnailButtonWidget
+- QWidget -> ImagePreviewWidget -> SisypheImageViewWidget -> SisypheVolumeViewWidget
+- QPushButton -> SisypheVolumeThumbnailButtonWidget
 """
 
 

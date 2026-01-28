@@ -109,10 +109,11 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         self._action['sagittal'].setText('Third orientation')
 
         self._menuAlign = QMenu('Alignment', self._popup)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menuAlign.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menuAlign.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menuAlign.setAttribute(Qt.WA_TranslucentBackground, True)
         self._menuAlignGroup = None
         self._popup.insertMenu(self._popup.actions()[6], self._menuAlign)
@@ -350,7 +351,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         for a in self._menuAlignGroup.actions():
             a.setChecked(a.text() == name)
 
-    def _getInfoValuesText(self, p: list[float] | tuple[float, float, float]) -> None:
+    def _getInfoValuesText(self, p: list[float] | tuple[float, float, float]) -> str:
         """
         Generates additional information text, including the distance from the current slice to the active target tool.
         Currently, this method calls superclass's implementation.
@@ -377,7 +378,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                                                                              legend[i], d[i])
         return txt + super()._getInfoValuesText(p)
 
-    # Public synchronisation event methods
+    # Public synchronization event methods
 
     def synchroniseTrajectoryToolAligned(self, obj: QWidget, name: str) -> None:
         """
@@ -1165,7 +1166,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                     self._volume.display.setWindow(wmin, wmax)
                     self._renderwindow.Render()
                     self._win0 = last
-            elif self.getFollowFlag() is True:
+            elif self.getFollowFlag():
                 # Update cursor position information and display
                 self.setCursorFromDisplayPosition(last[0], last[1])
                 p = self.getCursorWorldPosition()
@@ -1197,6 +1198,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         if self.isToolAligned():
             for a in self._menuAlignGroup.actions():
                 if a.isChecked():
+                    # noinspection PyUnresolvedReferences
                     name = widget.getName()
                     if name == a.text():
                         self.setTrajectoryFromLineWidget(name)

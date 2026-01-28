@@ -440,7 +440,7 @@ class TabROIToolsWidget(TabWidget):
 
     QWidget -> TabROIToolsWidget
 
-    Last revision: 22/12/2025
+    Last revision: 28/01/2026
     """
 
     # Special method
@@ -1736,9 +1736,14 @@ class TabROIToolsWidget(TabWidget):
                 index = self._views.getSelectedSliceIndex()
                 if index is not None:
                     orient = self._views.getCurrentOrientation()
-                    algo = self._algo.currentText().lower()
-                    algo = algo.replace(' ', '')
-                    if algo == 'morphology': algo = 'mean'
+                    # < Revision 28/01/2026
+                    # algo = self._algo.currentText().lower()
+                    # algo = algo.replace(' ', '')
+                    parts = self._algo.currentText().lower().split(' ')
+                    if parts[-1] == 'morphology': algo = ''.join(parts[:-1])
+                    else: algo = ''.join(parts)
+                    # if algo == 'morphology': algo = 'mean'
+                    # Revision 28/01/2026 >
                     self._draw.objectSegmentSlice(index, orient, algo)
                     self._updateROIDisplay()
                     if self._logger is not None: self._logger.info('ROI tools - Object segmentation slice {}'.format(index))
@@ -1749,9 +1754,14 @@ class TabROIToolsWidget(TabWidget):
                 index = self._views.getSelectedSliceIndex()
                 if index is not None:
                     orient = self._views.getCurrentOrientation()
-                    algo = self._algo.currentText().lower()
-                    algo = algo.replace(' ', '')
-                    if algo == 'morphology': algo = 'mean'
+                    # < Revision 28/01/2026
+                    # algo = self._algo.currentText().lower()
+                    # algo = algo.replace(' ', '')
+                    parts = self._algo.currentText().lower().split(' ')
+                    if parts[-1] == 'morphology': algo = ''.join(parts[:-1])
+                    else: algo = ''.join(parts)
+                    # if algo == 'morphology': algo = 'mean'
+                    # Revision 28/01/2026 >
                     self._draw.backgroundSegmentSlice(index, orient, algo)
                     self._updateROIDisplay()
                     if self._logger is not None: self._logger.info('ROI tools - Background segmentation slice {}'.format(index))
@@ -2224,11 +2234,23 @@ class TabROIToolsWidget(TabWidget):
                 wait = DialogWait()
                 wait.open()
                 wait.setInformationText('Object segmentation...')
+                wait.addInformationText('{} algorithm'.format(self._algo.currentText()))
                 QApplication.processEvents()
-                algo = self._algo.currentText().lower()
-                algo = algo.replace(' ', '')
-                if algo == 'morphology': self._draw.maskSegment2('huang')
-                else: self._draw.objectSegment(algo)
+                # < Revision 28/01/2026
+                # algo = self._algo.currentText().lower()
+                # algo = algo.replace(' ', '')
+                parts = self._algo.currentText().lower().split(' ')
+                morpho = (parts[-1] =='morphology')
+                size = self._structsize.value()
+                # if algo == 'morphology':
+                if morpho:
+                    # self._draw.maskSegment2('huang')
+                    algo = ''.join(parts[:-1])
+                    self._draw.maskSegment2(algo, morphoiter=1, kernel=size)
+                else:
+                    algo = ''.join(parts)
+                    self._draw.objectSegment(algo)
+                # Revision 28/01/2026 >
                 self._updateROIDisplay()
                 wait.close()
                 if self._logger is not None: self._logger.info('ROI tools - Object segmentation')
@@ -2239,11 +2261,23 @@ class TabROIToolsWidget(TabWidget):
                 wait = DialogWait()
                 wait.open()
                 wait.setInformationText('Background segmentation...')
+                wait.addInformationText('{} algorithm'.format(self._algo.currentText()))
                 QApplication.processEvents()
-                algo = self._algo.currentText().lower()
-                algo = algo.replace(' ', '')
-                if algo == 'morphology': self._draw.notMaskSegment2('huang')
-                else: self._draw.backgroundSegment(algo)
+                # < Revision 28/01/2026
+                # algo = self._algo.currentText().lower()
+                # algo = algo.replace(' ', '')
+                parts = self._algo.currentText().lower().split(' ')
+                morpho = (parts[-1] =='morphology')
+                size = self._structsize.value()
+                # if algo == 'morphology':
+                if morpho:
+                    # self._draw.notMaskSegment2('huang')
+                    algo = ''.join(parts[:-1])
+                    self._draw.notMaskSegment2(algo, morphoiter=1, kernel=size)
+                else:
+                    algo = ''.join(parts)
+                    self._draw.backgroundSegment(algo)
+                # Revision 28/01/2026 >
                 self._updateROIDisplay()
                 wait.close()
                 self._logger.info('ROI tools - Background segmentation')

@@ -285,7 +285,7 @@ class DicomVRLineEdit(QLineEdit):
 
     QLineEdit -> DicomVRLineEdit
 
-    Last revision: 20/10/2025
+    Last revision: 25/01/2026
     """
 
     # Special method
@@ -373,7 +373,10 @@ class DicomVRLineEdit(QLineEdit):
 
     def _initPN(self):
         self.setMaxLength(64)
-        self.setValidator(QRegExpValidator(QRegExp('[A-Za-z\-\s]+\^[A-Za-z\-\s]+')))
+        # < Revision 25/01/2026
+        # self.setValidator(QRegExpValidator(QRegExp('[A-Za-z\-\s]+\^[A-Za-z\-\s]+')))
+        self.setValidator(QRegExpValidator(QRegExp(r'[A-Za-z\-\s]+\^[A-Za-z\-\s]+')))
+        # Revision 25/01/2026 >
 
     def _initSH(self):
         self.setMaxLength(16)
@@ -400,7 +403,10 @@ class DicomVRLineEdit(QLineEdit):
 
     def _initUI(self):
         self.setMaxLength(64)
-        self.setValidator(QRegExpValidator(QRegExp('^[0-9][0-9\.]+[0-9]$')))
+        # < Revision 25/01/2026
+        # self.setValidator(QRegExpValidator(QRegExp('^[0-9][0-9\.]+[0-9]$')))
+        self.setValidator(QRegExpValidator(QRegExp(r'^[0-9][0-9\.]+[0-9]$')))
+        # Revision 25/01/2026 >
 
     def _initUL(self):
         if self._de.VM == 1:
@@ -453,8 +459,11 @@ class DicomHeaderTreeViewWidget(QTreeView):
     Last revision: 20/10/2025
     """
 
+    # noinspection PyUnresolvedReferences
     _EDITFLAG = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+    # noinspection PyUnresolvedReferences
     _NOEDITFLAG = Qt.ItemIsEnabled | Qt.ItemIsSelectable
+    # noinspection PyUnresolvedReferences
     _SELECTROWS = QItemSelectionModel.Select | QItemSelectionModel.Rows
 
     # Special method
@@ -525,8 +534,10 @@ class DicomHeaderTreeViewWidget(QTreeView):
                     # items[0]
                     if self._tag:
                         item = QStandardItem(str(k.tag))
+                        # noinspection PyUnresolvedReferences
                         item.setFlags(self._NOEDITFLAG | Qt.ItemIsUserCheckable)
                         item.setCheckable(True)
+                        # noinspection PyUnresolvedReferences
                         item.setCheckState(Qt.Unchecked)
                         item.setData(k.tag)  # DICOM Tag set in key.data()
                         items.append(item)
@@ -724,6 +735,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
                 # noinspection PyUnresolvedReferences
                 item = self.model().itemFromIndex(index)
                 if item.isCheckable():
+                    # noinspection PyUnresolvedReferences
                     item.setCheckState(Qt.Checked)
 
     def uncheckSelectedRows(self) -> None:
@@ -733,6 +745,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
                 # noinspection PyUnresolvedReferences
                 item = self.model().itemFromIndex(index)
                 if item.isCheckable():
+                    # noinspection PyUnresolvedReferences
                     item.setCheckState(Qt.Unchecked)
 
 
@@ -857,7 +870,7 @@ class DicomFilesTreeWidget(QTreeWidget):
 
     QTreeWidget -> DicomFilesTreeWidget
 
-    Last revision: 20/10/2025
+    Last revision: 26/01/2026
     """
 
     # Special method
@@ -928,27 +941,29 @@ class DicomFilesTreeWidget(QTreeWidget):
             if self._filter == '.*': flt = '**'
             else: flt = '*{}'.format(self._filter)
             filenames = glob(join(self._path[-1], flt), recursive=True)
+            # < Revision 26/01/2026
             """
-            0x0008, 0x0060 Modality
+            0x0008, 0x0020 Study date
+            0x0008, 0x0021 Series date
             0x0008, 0x0022 Acquisition date
+            0x0008, 0x0060 Modality
+            0x0008, 0x1030 Study description
             0x0008, 0x103e Series description
             0x0010, 0x0010 Patient's name
             0x0010, 0x0030 Patient's birth date
-            0x0018, 0x1310 Acquisition matrix
             0x0019, 0x100a Number of images in mosaic
-            0x0020, 0x000e Series instance UID
             0x0020, 0x0012 Acquisition number
             0x0020, 0x0013 Instance number
+            0x0020, 0x000e Series instance UID
             0x0020, 0x0100 Temporal position identifier
             0x0020, 0x1041 Slice location
-            0x0028, 0x0010 Rows
-            0x0028, 0x0011 Columns
             """
-            tags = [Tag(0x0008, 0x0060), Tag(0x0008, 0x0020), Tag(0x0008, 0x0021), Tag(0x0008, 0x0022),
-                    Tag(0x0008, 0x103e), Tag(0x0010, 0x0010), Tag(0x0010, 0x0030), Tag(0x0018, 0x0120),
-                    Tag(0x0018, 0x1310), Tag(0x0019, 0x100a), Tag(0x0020, 0x000e), Tag(0x0020, 0x000e),
-                    Tag(0x0020, 0x0012), Tag(0x0020, 0x0013), Tag(0x0020, 0x0100), Tag(0x0020, 0x1041),
-                    Tag(0x0028, 0x0010), Tag(0x0028, 0x0011)]
+            tags = [Tag(0x0008, 0x0020), Tag(0x0008, 0x0021), Tag(0x0008, 0x0022),
+                    Tag(0x0008, 0x0060), Tag(0x0008, 0x1030), Tag(0x0008, 0x103e),
+                    Tag(0x0010, 0x0010), Tag(0x0010, 0x0030), Tag(0x0019, 0x100a),
+                    Tag(0x0020, 0x0012), Tag(0x0020, 0x0013), Tag(0x0020, 0x000e),
+                    Tag(0x0020, 0x0100), Tag(0x0020, 0x1041)]
+            # Revision 26/01/2026 >
             wait = DialogWait(info='',
                               progress=True,
                               progressmin=0,
@@ -971,13 +986,19 @@ class DicomFilesTreeWidget(QTreeWidget):
                     else: continue
                     # Revision 20/06/2025 >
                     # Acquisition number
-                    if Tag(0x0020, 0x0012) in ds: acqn = int(ds[0x0020, 0x0012].value)
+                    if Tag(0x0020, 0x0012) in ds:
+                        try: acqn = int(ds[0x0020, 0x0012].value)
+                        except: acqn = 1
                     else: acqn = 1
                     # Instance number
-                    if Tag(0x0020, 0x0013) in ds: instn = int(ds[0x0020, 0x0013].value)
+                    if Tag(0x0020, 0x0013) in ds:
+                        try: instn = int(ds[0x0020, 0x0013].value)
+                        except: instn = 1
                     else: instn = 1
                     # Slice location
-                    if Tag(0x0020, 0x1041) in ds: loc = round(float(ds[0x0020, 0x1041].value), 2)
+                    if Tag(0x0020, 0x1041) in ds:
+                        try: loc = round(float(ds[0x0020, 0x1041].value), 2)
+                        except: loc = None
                     else: loc = None
                     # < Revision 20/09/2024
                     # Temporal position identifier
@@ -1024,7 +1045,10 @@ class DicomFilesTreeWidget(QTreeWidget):
                         self._dict[series]['acq'][acqn]['loc'] = list()
                     self._dict[series]['acq'][acqn]['index'].append(instn)
                     self._dict[series]['acq'][acqn]['files'].append(filename)
+                    # < Revision 26/01/2026
+                    if loc is None: loc = instn
                     self._dict[series]['acq'][acqn]['loc'].append(loc)
+                    # Revision 26/01/2026 >
                 wait.incCurrentProgressValue()
             # Sort self._dict
             wait.setCurrentProgressValue(len(filenames))
@@ -1107,6 +1131,7 @@ class DicomFilesTreeWidget(QTreeWidget):
                 item.setText(4, last)
                 item.setText(5, first)
                 item.setText(6, self._dict[series]['birthdate'])
+                # noinspection PyUnresolvedReferences
                 item.setCheckState(0, Qt.Checked)
                 acq = list(self._dict[series]['acq'].keys())
                 if len(acq) > 0:
@@ -1118,6 +1143,7 @@ class DicomFilesTreeWidget(QTreeWidget):
                         acqitem = QTreeWidgetItem(item)
                         n = len(self._dict[series]['acq'][acq[j]]['files'])
                         acqitem.setText(0, '{} ({} files)'.format(str(acq[j]), n))
+                        # noinspection PyUnresolvedReferences
                         acqitem.setCheckState(0, Qt.Checked)
                         item.addChild(acqitem)
                         for k in range(n):
@@ -1125,6 +1151,7 @@ class DicomFilesTreeWidget(QTreeWidget):
                             filename = self._dict[series]['acq'][acq[j]]['files'][k]
                             institem.setText(0, basename(filename))
                             institem.setToolTip(0, filename)
+                            # noinspection PyUnresolvedReferences
                             institem.setCheckState(0, Qt.Checked)
                             acqitem.addChild(institem)
                     self.addTopLevelItem(item)
@@ -1134,9 +1161,14 @@ class DicomFilesTreeWidget(QTreeWidget):
             self._pathToDict()
             self._dictToWidget()
         except:
+            # < Revision 26/01/2026
+            for w in QApplication.topLevelWindows():
+                if w.objectName() == 'DialogWaitWindow':
+                    w.close()
+            # Revision 26/01/2026 >
             messageBox(self,
-                       'DICOM file analysis...',
-                       text='DICOM file analysis error.')
+                       'DICOM file parsing...',
+                       text='DICOM file parsing error.')
 
     # Public methods
 
@@ -1161,6 +1193,7 @@ class DicomFilesTreeWidget(QTreeWidget):
         n = self.topLevelItemCount()
         for i in range(n):
             item = self.topLevelItem(i)
+            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked: c += 1
         return c
 
@@ -1172,6 +1205,7 @@ class DicomFilesTreeWidget(QTreeWidget):
             na = sitem.childCount()
             for j in range(na):
                 aitem = sitem.child(j)
+                # noinspection PyUnresolvedReferences
                 if aitem.checkState(0) == Qt.Checked: c += 1
         return c
 
@@ -1285,14 +1319,14 @@ class DicomFilesTreeWidget(QTreeWidget):
     def checkAll(self) -> None:
         for i in range(self.topLevelItemCount()):
             item = self.topLevelItem(i)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             item.setCheckState(0, Qt.Checked)
             self._onToggleCheckbox(item)
 
     def uncheckAll(self) -> None:
         for i in range(self.topLevelItemCount()):
             item = self.topLevelItem(i)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             item.setCheckState(0, Qt.Unchecked)
             self._onToggleCheckbox(item)
 
@@ -1300,7 +1334,7 @@ class DicomFilesTreeWidget(QTreeWidget):
         items = self.selectedItems()
         if len(items) > 0:
             for item in self.selectedItems():
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 item.setCheckState(0, Qt.Checked)
                 self._onToggleCheckbox(item)
 
@@ -1308,7 +1342,7 @@ class DicomFilesTreeWidget(QTreeWidget):
         items = self.selectedItems()
         if len(items) > 0:
             for item in self.selectedItems():
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 item.setCheckState(0, Qt.Unchecked)
                 self._onToggleCheckbox(item)
 
@@ -1561,7 +1595,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         self.setAlternatingRowColors(True)
         self.setDragEnabled(False)
         self.setHeaderLabels(['Tag', 'Name', 'VR', 'VM', 'Value'])
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.header().setDefaultAlignment(Qt.AlignCenter)
 
     # Public methods
@@ -1580,11 +1614,13 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 data = self._dcm.getDataElement(k)
                 if not isinstance(data, list):
                     item = QTreeWidgetItem([str(data.tag), data.keyword, data.VR, str(data.VM), str(data.value)])
+                    # noinspection PyUnresolvedReferences
                     item.setCheckState(0, Qt.Unchecked)
                     self.addTopLevelItem(item)
                 else:
                     if len(data) > 0:
                         root = QTreeWidgetItem([str(data[0].tag), data[0].keyword])
+                        # noinspection PyUnresolvedReferences
                         root.setCheckState(0, Qt.Unchecked)
                         self.addTopLevelItem(root)
                         for d in data:
@@ -1597,28 +1633,28 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         n = self.topLevelItemCount()
         for i in range(n):
             item = self.topLevelItem(i)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             item.setCheckState(0, Qt.Checked)
 
     def uncheckAll(self) -> None:
         n = self.topLevelItemCount()
         for i in range(n):
             item = self.topLevelItem(i)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             item.setCheckState(0, Qt.Unchecked)
 
     def checkSelected(self) -> None:
         items = self.selectedItems()
         if len(items) > 0:
             for item in self.selectedItems():
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 item.setCheckState(0, Qt.Checked)
 
     def uncheckSelected(self) -> None:
         items = self.selectedItems()
         if len(items) > 0:
             for item in self.selectedItems():
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 item.setCheckState(0, Qt.Unchecked)
 
     def saveCheckedDataElementsToXml(self, filename: str = '') -> None:
@@ -1661,6 +1697,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         skeys = list()
         for i in range(n):
             item = self.topLevelItem(i)
+            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
                 skeys.append(item.text(1))
         if len(skeys) > 0:
@@ -1711,6 +1748,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         skeys = list()
         for i in range(n):
             item = self.topLevelItem(i)
+            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
                 skeys.append(item.text(1))
         if len(skeys) > 0:
@@ -1727,6 +1765,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         skeys = list()
         for i in range(n):
             item = self.topLevelItem(i)
+            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
                 skeys.append(item.text(1))
         if len(skeys) > 0:

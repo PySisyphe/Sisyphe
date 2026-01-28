@@ -1434,12 +1434,17 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             name = self._name.getEditText()
             if name != self._item.getName():
                 if name in tools:
-                    messageBox(self, 'Rename error', text='The tool name {} is already in use.')
+                    messageBox(self,
+                               'Rename error',
+                               text='The tool name {} is already in use.'.format(name))
                     self._name.setEditText(self._item.getName())
                 else:
                     view = self._views.getVolumeView()
                     if view is not None: view.renameTool(self._item, name, signal=True)
-                    self._item.setName(self._name.getEditText())
+                    # < Revision 27/01/2026
+                    # self._item.setName(self._name.getEditText())
+                    self._item.setName(name)
+                    # Revision 27/01/2026 >
                 self.setToolTip(str(self._item))
 
     def _updateSettingsFromItem(self):
@@ -2574,7 +2579,7 @@ class ListAttributesWidget(QWidget):
             return widget
         else:
             # noinspection PyInconsistentReturns
-            messageBox(self, 'Add', text='{} is already open.'.format(item))
+            messageBox(self, 'Add', text='{} is already open.'.format(item.getName()))
 
     def _updateList(self):
         self._list.clear()
@@ -4966,7 +4971,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListToolAttributesWidget
 
-    Last revision: 16/01/2026
+    Last revision: 27/01/2026
     """
 
     # Special method
@@ -5506,9 +5511,13 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     p[2] += h
                                     if lat == ap == h == 0.0: name = '{} copy'.format(tool.getName())
                                     else: name = '{} #{:.1f} #{:.1f} #{:.1f}'.format(tool.getName(), ap, lat, h)
-                                    item = self._views.getVolumeView().addTarget(p, name)
-                                    item.setStatic()
+                                    # < Revision 27/01/2026
+                                    # item = self._views.getVolumeView().addTarget(p, name)
+                                    item = self._views.getVolumeView().addTarget(p, name=name)
                                     tool.copyAttributesTo(item)
+                                    item.setName(name)
+                                    item.setStatic()
+                                    # Revision 27/01/2026 >
                                     widget = self._addItem(item)
                                     widget.focusTarget()
                                     widget.updateSettingsFromAttributes()
@@ -5523,9 +5532,13 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     p2[2] += h
                                     if lat == ap == h == 0.0: name = '{} copy'.format(tool.getName())
                                     else: name = '{} #{:.1f} #{:.1f} #{:.1f}'.format(tool.getName(), ap, lat, h)
-                                    item = self._views.getVolumeView().addTrajectory(p1, p2, name)
-                                    item.setStatic()
+                                    # < Revision 27/01/2026
+                                    # item = self._views.getVolumeView().addTrajectory(p1, p2, name)
+                                    item = self._views.getVolumeView().addTrajectory(p1, p2, name=name)
                                     tool.copyAttributesTo(item)
+                                    item.setName(name)
+                                    item.setStatic()
+                                    # Revision 27/01/2026 >
                                     widget = self._addItem(item)
                                     widget.focusTarget()
                                     widget.updateSettingsFromAttributes()
@@ -5540,9 +5553,13 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     p[2] += v0[2] * lat + v1[2] * ap + v2[2] * h
                                     if lat == ap == h == 0.0: name = '{} copy'.format(tool.getName())
                                     else: name = '{} #{:.1f} #{:.1f} #{:.1f}'.format(tool.getName(), ap, lat, h)
-                                    item = self._views.getVolumeView().addTarget(p, name)
-                                    item.setStatic()
+                                    # < Revision 27/01/2026
+                                    # item = self._views.getVolumeView().addTarget(p, name)
+                                    item = self._views.getVolumeView().addTarget(p, name=name)
                                     tool.copyAttributesTo(item)
+                                    item.setName(name)
+                                    item.setStatic()
+                                    # Revision 27/01/2026 >
                                     widget = self._addItem(item)
                                     widget.focusTarget()
                                     widget.updateSettingsFromAttributes()
@@ -5557,8 +5574,13 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     p2[2] += v0[2] * lat + v1[2] * ap + v2[2] * h
                                     if lat == ap == h == 0.0: name = '{} copy'.format(tool.getName())
                                     else: name = '{} #{:.1f} #{:.1f} #{:.1f}'.format(tool.getName(), ap, lat, h)
-                                    item = self._views.getVolumeView().addTrajectory(p1, p2, name)
+                                    # < Revision 27/01/2026
+                                    # item = self._views.getVolumeView().addTrajectory(p1, p2, name)
+                                    item = self._views.getVolumeView().addTrajectory(p1, p2, name=name)
+                                    tool.copyAttributesTo(item)
+                                    item.setName(name)
                                     item.setStatic()
+                                    # Revision 27/01/2026 >
                                     widget = self._addItem(item)
                                     widget.focusTarget()
                                     widget.updateSettingsFromAttributes()
@@ -5568,9 +5590,13 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     p = vol.getACPC().getPointFromRelativeDistanceToReferencePoint((lat, ap, h), p)
                                     if lat == ap == h == 0.0: name = '{} copy'.format(tool.getName())
                                     else: name = '{} #{:.1f} #{:.1f} #{:.1f}'.format(tool.getName(), ap, lat, h)
-                                    item = self._views.getVolumeView().addTarget(p, name)
-                                    item.setStatic()
+                                    # < Revision 27/01/2026
+                                    # item = self._views.getVolumeView().addTarget(p, name)
+                                    item = self._views.getVolumeView().addTarget(p, name=name)
                                     tool.copyAttributesTo(item)
+                                    item.setName(name)
+                                    item.setStatic()
+                                    # Revision 27/01/2026 >
                                     widget = self._addItem(item)
                                     widget.focusTarget()
                                     widget.updateSettingsFromAttributes()
@@ -5581,9 +5607,13 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     p2 = vol.getACPC().getPointFromRelativeDistanceToReferencePoint((lat, ap, h), p2)
                                     if lat == ap == h == 0.0: name = '{} copy'.format(tool.getName())
                                     else: name = '{} #{:.1f} #{:.1f} #{:.1f}'.format(tool.getName(), ap, lat, h)
-                                    item = self._views.getVolumeView().addTrajectory(p1, p2, name)
-                                    item.setStatic()
+                                    # < Revision 27/01/2026
+                                    # item = self._views.getVolumeView().addTrajectory(p1, p2, name)
+                                    item = self._views.getVolumeView().addTrajectory(p1, p2, name=name)
                                     tool.copyAttributesTo(item)
+                                    item.setName(name)
+                                    item.setStatic()
+                                    # Revision 27/01/2026 >
                                     widget = self._addItem(item)
                                     widget.focusTarget()
                                     widget.updateSettingsFromAttributes()

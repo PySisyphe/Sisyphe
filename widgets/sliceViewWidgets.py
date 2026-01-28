@@ -6308,13 +6308,20 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
             default = [0, 0, 0] + list(self._volume.getSize())
             if r != default:
                 s = self._volume.getSize()
-                mask = zeros((s[2], s[1], s[0]), 'unit8')
+                # < Revision 26/01/2026
+                # mask = zeros((s[2], s[1], s[0]), 'unit8')
+                mask = zeros((s[2], s[1], s[0]), 'uint8')
+                # area = ones((r[5], r[4], r[3]), 'unit8')
                 # noinspection PyTypeChecker
-                area = ones((r[5], r[4], r[3]), 'unit8')
+                area = ones((r[5], r[4], r[3]), 'uint8')
+                # Revision 26/01/2026 >
                 mask[r[2]:r[2]+r[5], r[1]:r[1]+r[4], r[0]:r[0]+r[3]] = area
                 v = SisypheVolume()
                 v.copyFromNumpyArray(mask, self._volume.getSpacing())
                 v.copyAttributesFrom(self._volume, display=False, slope=False)
+                # < Revision 26/01/2026
+                v.setFilename(self._volume.getFilename())
+                # Revision 26/01/2026 >
                 v.setFilenamePrefix('mask_')
                 return v
             else: return None
