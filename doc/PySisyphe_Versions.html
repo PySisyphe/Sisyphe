@@ -89,7 +89,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-21-08-build-18-11-2025">version 0.21.08, build 18/11/2025</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-22-11-build-05-12-2025">version 0.22.11, build 05/12/2025</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-24-14-build-12-01-2026">version 0.24.14, build 12/01/2026</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-0-25-02-build-20-01-2026">version 0.25.02, build 20/01/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-25-04-build-20-01-2026">version 0.25.04, build 20/01/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-76-22-build-29-01-2026">version 0.76.22, build 29/01/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -132,32 +133,34 @@
 <li><p><a class="reference internal" href="#build18-11-2025"><span class="std std-ref">version 0.21.08, build 18/11/2025</span></a></p></li>
 <li><p><a class="reference internal" href="#build05-12-2025"><span class="std std-ref">version 0.22.11, build 05/12/2025</span></a></p></li>
 <li><p><a class="reference internal" href="#build12-01-2026"><span class="std std-ref">version 0.24.14, build 12/01/2026</span></a></p></li>
-<li><p><a class="reference internal" href="#build20-01-2026"><span class="std std-ref">version 0.25.02, build 20/01/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build20-01-2026"><span class="std std-ref">version 0.25.04, build 20/01/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build29-01-2026"><span class="std std-ref">version 0.76.22, build 29/01/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
 <ul>
-<li><p><strong>major version increment</strong>:</p>
+<li><p><strong>major version increment</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>new python interpreter version</p></li>
-<li><p>50 minor version increments</p></li>
+<li><p>100 minor version increments</p></li>
 </ul>
 </div></blockquote>
 </li>
-<li><p><strong>minor version increment</strong>:</p>
+<li><p><strong>minor version increment</strong></p>
 <blockquote>
 <div><ul class="simple">
+<li><p>new python interpreter version (+25 minor version increment)</p></li>
 <li><p>new module, new external module, external module upgrade</p></li>
 <li><p>25 patch version increments</p></li>
 </ul>
 </div></blockquote>
 </li>
-<li><p><strong>patch version increment</strong>:</p>
+<li><p><strong>patch version increment</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li><p>update html documentation</p></li>
-<li><p>new file, file update</p></li>
+<li><p>new file</p></li>
+<li><p>file update</p></li>
 <li><p>new function</p></li>
 <li><p>module update</p></li>
 </ul>
@@ -168,7 +171,7 @@
 <section id="version-0-9-1-build-26-07-2025">
 <span id="build26-07-2025"></span><h2>version 0.9.1, build 26/07/2025<a class="headerlink" href="#version-0-9-1-build-26-07-2025" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p>First distributed version.</p></li>
+<li><p>First distributed version</p></li>
 <li><p>Github page deployment: <a class="reference external" href="https://github.com/PySisyphe/Sisyphe">https://github.com/PySisyphe/Sisyphe</a></p></li>
 <li><p>NITRC page deployment: <a class="reference external" href="https://www.nitrc.org/projects/pysisyphe/">https://www.nitrc.org/projects/pysisyphe/</a></p></li>
 <li><p>First PyInstaller stand alone frozen version for Windows and MacOS platforms (x64 CPU)</p></li>
@@ -219,7 +222,7 @@
 <li><p>pydicom, upgrade 2.3.1 to 3.0.1</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>generate a bug in core.sisypheDicom.ImportFromRTStruct.execute() method</p></li>
+<li><p>this resulted in a bug in core.sisypheDicom.ImportFromRTStruct.execute() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -384,7 +387,7 @@
 <li><p>core.sisypheImageIO.isDicom</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, return value, from str to bool</p></li>
+<li><p>bug fix, change returned value, from str to bool</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -632,16 +635,16 @@
 <li><p><strong>updated files</strong></p>
 <blockquote>
 <div><ul>
-<li><p>/Sisyphe/settings/MR.xdcm</p>
+<li><p>settings/MR.xdcm</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>bug fix, line 79, in PixelSpacing value, from 1.0/1.L0 to 1.0/1.0</p></li>
 </ul>
 </div></blockquote>
 </li>
-<li><p>/Sisyphe/settings/dialogs.xml</p></li>
-<li><p>/Sisyphe/settings/tootips.xml</p></li>
-<li><p>/Sisyphe/settings/functions.xml</p></li>
+<li><p>settings/dialogs.xml</p></li>
+<li><p>settings/tootips.xml</p></li>
+<li><p>settings/functions.xml</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -1278,7 +1281,7 @@
 <li><p><strong>updated files</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>/Sisyphe/settings/functions.xml</p></li>
+<li><p>settings/functions.xml</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -1513,8 +1516,8 @@
 <li><p><strong>updated files</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>/Sisyphe/settings/tooltips.xml</p></li>
-<li><p>/Sisyphe/settings/functions.xml</p></li>
+<li><p>settings/tooltips.xml</p></li>
+<li><p>settings/functions.xml</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -1725,7 +1728,7 @@
 <li><p><strong>updated files</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>/Sisyphe/settings/settings.xml</p></li>
+<li><p>settings/settings.xml</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -2149,17 +2152,17 @@
 <li><p><strong>updated files</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>/Sisyphe/settings/settings.xml</p></li>
-<li><p>/Sisyphe/settings/dialogs.xml</p></li>
-<li><p>/Sisyphe/gui/doc/ipython.txt</p></li>
+<li><p>settings/settings.xml</p></li>
+<li><p>settings/dialogs.xml</p></li>
+<li><p>gui/doc/ipython.txt</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p><strong>new files</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>/Sisyphe/gui/lightroi/console.png</p></li>
-<li><p>/Sisyphe/gui/darkroi/console.png</p></li>
+<li><p>gui/lightroi/console.png</p></li>
+<li><p>gui/darkroi/console.png</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -2982,22 +2985,22 @@
 <li><p><strong>updated files</strong></p>
 <blockquote>
 <div><ul>
-<li><p>/Sisyphe/gui/doc/ipython.txt</p>
+<li><p>gui/doc/ipython.txt</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>add %gemini command documentation</p></li>
 </ul>
 </div></blockquote>
 </li>
-<li><p>/Sisyphe/settings/settings.xml</p>
+<li><p>settings/settings.xml</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>add &lt;Gemini&gt; section, &lt;APIKey&gt; field</p></li>
 </ul>
 </div></blockquote>
 </li>
-<li><p>/Sisyphe/templates/ICBM152/icbm152_sym_template_mask.xvol</p></li>
-<li><p>/Sisyphe/templates/ICBM152/icbm152_asym_template_mask.xvol</p>
+<li><p>templates/ICBM152/icbm152_sym_template_mask.xvol</p></li>
+<li><p>templates/ICBM152/icbm152_asym_template_mask.xvol</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>datatype conversion, from float32 to uint8</p></li>
@@ -3015,7 +3018,7 @@
 <li><p>pymupdf</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>rebuild pyinstaller with upx=False (EXE and COLLECT) options</p></li>
+<li><p>rebuild frozen version (pyinstaller with upx=False)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -3834,8 +3837,8 @@
 </li>
 </ul>
 </section>
-<section id="version-0-25-02-build-20-01-2026">
-<span id="build20-01-2026"></span><h2>version 0.25.02, build 20/01/2026<a class="headerlink" href="#version-0-25-02-build-20-01-2026" title="Link to this heading"></a></h2>
+<section id="version-0-25-04-build-20-01-2026">
+<span id="build20-01-2026"></span><h2>version 0.25.04, build 20/01/2026<a class="headerlink" href="#version-0-25-04-build-20-01-2026" title="Link to this heading"></a></h2>
 <ul>
 <li><p><strong>updated html documentation</strong></p>
 <blockquote>
@@ -3868,6 +3871,7 @@
 <li><p>core.sisypheTools</p></li>
 <li><p>core.sisyphePDF</p></li>
 <li><p>core.sisypheImage</p></li>
+<li><p>core.sisypheDownload</p></li>
 <li><p>widgets.sliceViewWidgets</p></li>
 <li><p>widgets.attributesWidgets</p></li>
 <li><p>gui.dialogPerfusion</p></li>
@@ -3944,6 +3948,13 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>core.sisypheDownload</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update installFromHost() method</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>widgets.sliceViewWidgets.SliceViewWidget</p>
 <blockquote>
 <div><ul class="simple">
@@ -3969,6 +3980,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>update apply() method</p></li>
+<li><p>update default() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -3984,6 +3996,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>update __init__() method</p></li>
+<li><p>update getUserDirectory() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -4111,10 +4124,19 @@
 </ul>
 </div></blockquote>
 </li>
-<li><p>ucore.sisyphePDF.SisypheParsePdf.parse()</p>
+<li><p>core.sisyphePDF.SisypheParsePdf.parse()</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>line 264, modifiy relative threshold to detect line increments (from 0.95 to 0.98)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheDownload.installFromHost()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 181 &amp; 211, call setUserSettingsToDefault()</p></li>
+<li><p>add exception management</p></li>
+<li><p>add logger information</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -4146,6 +4168,13 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.dialogSettings.DialogSettings.default()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 453, add line if c &lt; 0: c = 0</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>gui.dialogReorient.DialogReorient.__init__()</p>
 <blockquote>
 <div><ul class="simple">
@@ -4164,6 +4193,508 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>line 584, add chdir(self.getUserDirectory())</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.getUserDirectory()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 188, call setUserSettingsToDefault()</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="version-0-76-22-build-29-01-2026">
+<span id="build29-01-2026"></span><h2>version 0.76.22, build 29/01/2026<a class="headerlink" href="#version-0-76-22-build-29-01-2026" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>Python interpreter upgrade</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>from 3.10 to 3.12</p></li>
+<li><p>rebuild frozen version (pyinstaller)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>upgraded modules</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>itk, from 5.4.3 to 5.4.5</p></li>
+<li><p>vtk, from 9.4.2 to 9.5.2</p></li>
+<li><p>pyradiomics to pyradiomics-bhklab, from 3.0.1 to 3.1.4</p></li>
+<li><p>scikit-image, from 0.25.2 to 0.26.0</p></li>
+<li><p>scikit-learn, from 1.6.1 to 1.8.0</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated file</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update requirements.txt file for upgraded modules</p></li>
+<li><p>settings/functions.xml</p></li>
+<li><p>settings/settings.xml</p></li>
+<li><p>templates/ICBM152/icbm152_asym_template_gm.xvol</p></li>
+<li><p>templates/ICBM152/icbm152_sym_template_cortical_gm.xvol</p></li>
+<li><p>templates/ICBM152/icbm152_sym_template_subcortical_gm.xvol</p></li>
+<li><p>templates/ICBM152/icbm152_sym_template_gm.xvol</p></li>
+<li><p>templates/ATROPOS/atropos_template_prior_brainstem.xvol</p></li>
+<li><p>templates/ATROPOS/atropos_template_prior_cerebellum.xvol</p></li>
+<li><p>templates/ATROPOS/atropos_template_prior_cortical_gm.xvol</p></li>
+<li><p>templates/ATROPOS/atropos_template_prior_csf.xvol</p></li>
+<li><p>templates/ATROPOS/atropos_template_prior_gm.xvol</p></li>
+<li><p>templates/ATROPOS/atropos_template_prior_subcortical_gm.xvol</p></li>
+<li><p>templates/ATROPOS/atropos_template_prior_wm.xvol</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated html documentation</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PySisyphe_overview.rst</p></li>
+<li><p>version-histrory.rst update</p></li>
+<li><p>rebuild sphinx documentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>update plugins</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>SEEG</p></li>
+<li><p>REPORT</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated modules</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>version</p></li>
+<li><p>core.sisypheDownload</p></li>
+<li><p>core.sisypheMesh</p></li>
+<li><p>core.sisypheROI</p></li>
+<li><p>core.sisypheDicom</p></li>
+<li><p>core.sisypheFiducialBox</p></li>
+<li><p>core.sisypheImageAttributes</p></li>
+<li><p>core.sisypheImage</p></li>
+<li><p>widgets.dicomWidgets</p></li>
+<li><p>widgets.sliceViewWidgets</p></li>
+<li><p>widgets.attributesWidgets</p></li>
+<li><p>widgets.abstractViewWidget</p></li>
+<li><p>widgets.tabToolsWidgets</p></li>
+<li><p>dialog.dialogDicomImport</p></li>
+<li><p>dialog.dialogXmlDicom</p></li>
+<li><p>dialog.dialogRegistration</p></li>
+<li><p>dialog.dialogManualRegistration</p></li>
+<li><p>dialog.dialogSplash</p></li>
+<li><p>dialog.dialogSegmentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new functions</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>version.getBuildDate()</p></li>
+<li><p>version.getBuildDateAsStr()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated function</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheDownload.installFromHost()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 157 &amp; 179, python version management</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheMesh.SisypheMesh</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setName() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROI</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update the class constant to a raw string _REGEXP = r’^[_A-Za-z0-9#-_s+,]+$’</p></li>
+<li><p>update setName() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheDicom.XmlDicom</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update loadXmlDicomFilename() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update markersSearch() method</p></li>
+<li><p>update _firstSliceSearch() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new setSequenceToFilledMask() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getPercentile() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.dicomWidgets.DicomVRLineEdit</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _initPN() method</p></li>
+<li><p>update _initUI() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.dicomWidgets.DicomFilesTreeWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _pathToDict() method</p></li>
+<li><p>update _updateWidget() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceRegistrationViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getRegistrationBoxMaskArea() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update duplicate() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _nameChanged() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update synchroniseToolRenamed() method</p></li>
+<li><p>update renameTool() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update voiObject() method</p></li>
+<li><p>update voiBack() method</p></li>
+<li><p>update slcObject() method</p></li>
+<li><p>update slcBack() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>dialog.dialogDicomImport.DialogDicomImport</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update convert() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>dialog.dialogXmlDicom.DialogXmlDicom</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>dialog.dialogRegistration.DialogRegistration</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>dialog.dialogManualRegistration.DialogManualRegistration</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _resample() method</p></li>
+<li><p>update _estimate() method</p></li>
+<li><p>update calcMask() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>dialog.dialogSplash.DialogSplash</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>dialog.dialogSegmentation.DialogPriorBasedSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new methods</strong></p>
+<blockquote>
+<div><blockquote>
+<div><ul>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.setSequenceToFilledMask()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>filled hole mask sequence</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.setSequenceToBoneWindowCT()</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isGreyMatterMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isSubCorticalGreyMatterMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isWhiteMatterMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isCerebroSpinalFluidMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isBrainstemMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isCerebellumMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isCorticalThicknessMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isCerebralBloodFlowMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isCerebralBloodVolumeMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isMeanTransitTimeMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isTimeToPicMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isDoseMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isFractionalAnisotropyMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isApparentDiffusionMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isDensityMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isBiasFieldMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isDistanceMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isMeanMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isMedianMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isMinimumMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isMaximumMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isStandardDeviationMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isAlgebraMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isMask()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isFilledMask()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isStructMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isLabelMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isDisplacementFieldMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isT1Weighted()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isT2Weighted()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isT2Star()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isProtonDensityWeighted()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isFLAIR()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedT1()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedT2()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedFLAIR()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedTOF(s)</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isEchoPlanar()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isB0()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isDiffusionWeighted()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isPerfusionWeighted()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isSusceptibilityWeighted()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isTimeOfFlight()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedCT()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isBoneWindowCT()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isFDG()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isFDOPA()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isHMPAO()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isECD()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isFPCIT()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheMesh.SisypheMesh.setName()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 471, change r to a raw string r = r’[^A-Za-z0-9#-_s,]’</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROI.setName()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 761, change r to a raw string r = r’[^A-Za-z0-9#-_s,]’</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheDicom.XmlDicom.loadXmlDicomFilename()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 1345, UTF-8 non-English character management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox.markersSearch()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 792 &amp; 798, save self._volume</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox._firstSliceSearch()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 562, replace minf &lt; buff[i] or buff[i] &gt; msup by buff[i] &lt; minf or buff[i] &gt; msup</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.getPercentile()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>perc parameter includes the additional type float</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.dicomWidgets.DicomVRLineEdit._initPN()</p></li>
+<li><p>widgets.dicomWidgets.DicomVRLineEdit._initUI()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 376, change regex constant to a raw string r’[A-Za-z-s]+^[A-Za-z-s]+’</p></li>
+<li><p>line 406, change regex constant to a raw string r’^[0-9][0-9.]+[0-9]$’</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.dicomWidgets.DicomFilesTreeWidget._pathToDict()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 944, update dicom tag list</p></li>
+<li><p>line 1048, manage the absence of the DICOM “slice location” field</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.dicomWidgets.DicomFilesTreeWidget._updateWidget()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 1164, close wait dialog before displaying messageBox</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceRegistrationViewWidget.getRegistrationBoxMaskArea()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 6311, replace ‘unit8’ by ‘uint8’</p></li>
+<li><p>bug fix, line 6322, add v.setFilename(self._volume.getFilename())</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.duplicate()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, lines 5529,5569 &amp; 5599, replace addTrajectory(p1, p2, name) by addTrajectory(p1, p2, name=name)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget._nameChanged()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 1444, replace self._item.setName(self._name.getEditText()) by self._item.setName(name)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget.synchroniseToolRenamed()</p></li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget.renameTool()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, call self._updateToolMenu() after tool renaming</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiObject()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBack()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcObject()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBack()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 2231 &amp; 2250, change parameters values of maskSegment2() and notMaskSegment2()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>dialog.dialogDicomImport.DialogDicomImport.convert()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 242, 279 &amp; 292, hide/show wait box</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>dialog.dialogXmlDicom.DialogXmlDicom.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 122, remove the fixed width of the OK button</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>dialog.dialogRegistration.DialogRegistration.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 475 &amp; 499, hide/show wait box</p></li>
+<li><p>line 444, adaptative mask dilatation</p></li>
+<li><p>bug fix, line 467, add parent parameter to DialogManualRegistration</p></li>
+<li><p>bug fix, line 483, add deg=True to trf.setRotations()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>dialog.dialogRegistration.DialogRegistration.calcMask()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 118 &amp; 125, dilate parameter includes the additional types tuple and list</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>dialog.dialogManualRegistration.DialogManualRegistration._resample()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 300, close dialog after resampling</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>dialog.dialogManualRegistration.DialogManualRegistration._resample()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, lines 312 &amp; 323, cast images to float32</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>dialog.dialogSplash.DialogSplash.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 222, add build date</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>dialog.dialogSegmentation.DialogPriorBasedSegmentation.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 1425, replace grey by gray</p></li>
 </ul>
 </div></blockquote>
 </li>
