@@ -109,7 +109,7 @@
 		<MoveStep label="Move step (px)" varmax="20" varmin="1" vartype="int">1</MoveStep>
 		<BlobExtent label="Blob extent threshold (px)" varmax="65535" varmin="0" vartype="int">1</BlobExtent>
 		<Thickness label="Expand/shrink margin (mm)" varmax="50.0" varmin="1.0" vartype="float">1.0</Thickness>
-		<Algo label="Object/background algorithm" vartype="lstr">Huang|Intermodes|Isodata|Otsu|Kittler|Li|Maximum Entropy|Mean|Moments|Renyi|Shanbhag|Triangle|Yen|Morphology</Algo>
+		<Algo label="Object/background algorithm" vartype="lstr">Huang|Intermodes|Isodata|Otsu|Kittler|Li|Maximum Entropy|Mean|Moments|Renyi|Shanbhag|Triangle|Yen|Huang Morphology|Intermodes Morphology|Isodata Morphology|Otsu Morphology|Kittler Morphology|Li Morphology|Maximum Entropy Morphology|Mean Morphology|Moments Morphology|Renyi Morphology|Shanbhag Morphology|Triangle Morphology|Yen Morphology</Algo>
 		<Confidence label="Cluster confidence sigma" varmax="5.0" varmin="1.0" vartype="float">2.5</Confidence>
 		<ConfidenceIter label="Cluster confidence iterations" varmax="20" varmin="2" vartype="int">4</ConfidenceIter>
 	</ROI>

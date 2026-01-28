@@ -147,15 +147,15 @@
 		<PriorsRegistrationEstimation vartype="lstr">FOV center alignment|Center of mass alignment|No estimation</PriorsRegistrationEstimation>
 		<PriorMaskRadius label="Kernel radius dilatation of prior mask" varmax="10" varmin="0" vartype="int">4</PriorMaskRadius>
 		<BrainMaskRadius label="Kernel radius morphology for brain extraction" varmax="10" varmin="0" vartype="int">2</BrainMaskRadius>
-		<T1 label="T1 template" vartype="vol"/>
-		<Mask label="Mask template" vartype="vol"/>
-		<GMPrior label="Gray matter prior" vartype="vol"/>
-		<CGMPrior label="Cortical gray matter prior" vartype="vol"/>
-		<SCGMPrior label="Sub-cortical gray matter prior" vartype="vol"/>
-		<WMPrior label="White matter prior" vartype="vol"/>
-		<CSFPrior label="Cerebro-spinal fluid prior" vartype="vol"/>
-		<BrainstemPrior label="Brainstem prior" vartype="vol"/>
-		<CerebellumPrior label="Cerebellum prior" vartype="vol"/>
+		<T1 label="Custom T1 template" vartype="vol"/>
+		<Mask label="Custom mask template" vartype="vol"/>
+		<GMPrior label="Custom gray matter prior" vartype="vol"/>
+		<CGMPrior label="Custom cortical gray matter prior" vartype="vol"/>
+		<SCGMPrior label="Custom sub-cortical gray matter prior" vartype="vol"/>
+		<WMPrior label="Custom white matter prior" vartype="vol"/>
+		<CSFPrior label="Custom cerebro-spinal fluid prior" vartype="vol"/>
+		<BrainstemPrior label="Custom brainstem prior" vartype="vol"/>
+		<CerebellumPrior label="Custom cerebellum prior" vartype="vol"/>
 		<SkullStrip label="Skull strip" vartype="bool">True</SkullStrip>
 		<SegSGM label="Labeled volume excluding subcortical gray matter" vartype="bool">True</SegSGM>
 		<SegPrefix label="Labeled volume prefix" vartype="str">labels</SegPrefix>
