@@ -2,15 +2,7 @@
 External packages/modules
 -------------------------
 
-    - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
-    - PyQtDarkTheme, dark theme management for win32 platform, https://pyqtdarktheme.readthedocs.io/en/stable/index.html
-    - pywinstyles, customize window title bar for win32 platform, https://github.com/Akascape/py-window-styles
-    - vtk, visualization, https://vtk.org/
-"""
-"""
-External packages/modules
--------------------------
-
+    - Matplotlib, Graph tool, https://matplotlib.org/
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
     - PyQtDarkTheme, dark theme management for win32 platform, https://pyqtdarktheme.readthedocs.io/en/stable/index.html
     - pywinstyles, customize window title bar for win32 platform, https://github.com/Akascape/py-window-styles
@@ -88,7 +80,7 @@ from Sisyphe.gui.dialogSplash import DialogSplash
 """
 PySisyphe main
 
-Last revision: 22/07/2025
+Last revision: 27/01/2026
 """
 
 BACKGROUND: QColor | None = None
@@ -98,12 +90,19 @@ PALETTE: QPalette | None = None
 functions
 ~~~~~~~~~
 
-    - getPalette
-    - getBackgroundAsQColor
-    - getBackgroundAsStr
-    - getForegroundAsQColor
-    - getForegroundAsStr
-    - qtMessageHandler
+- getPalette
+- getBackgroundAsQColor
+- getBackgroundAsStr
+- getForegroundAsQColor
+- getForegroundAsStr
+- updateWindowTitleBarColor
+- qtMessageHandler
+- globalExceptionHandler
+
+Class
+~~~~~
+
+- QApplicationEventHandler
 """
 
 def getPalette() -> QPalette:

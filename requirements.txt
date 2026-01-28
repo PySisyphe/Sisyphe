@@ -5,6 +5,7 @@ numpy==1.26.4
 pandas==2.2.3
 cython==3.0.12
 matplotlib==3.6.3
+matplotlib-inline==0.1.7
 PyQt5==5.15.10
 PyQtWebEngine==5.15.7
 qtconsole==5.6.1
@@ -15,7 +16,7 @@ pydicom==3.0.1
 pynetdicom=3.0.3
 nibabel==5.3.2
 nilearn==0.11.1
-pyradiomics==3.0.1
+pyradiomics-bhklab==3.1.4
 dipy==1.11.0
 antspyx==0.5.4
 antspynet==0.2.9

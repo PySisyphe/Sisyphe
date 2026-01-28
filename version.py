@@ -9,17 +9,23 @@ from os.path import abspath
 
 from binascii import unhexlify
 
+from datetime import date
+
 from Sisyphe.lib.mega.mega import Mega
 
 from xml.dom import minidom
 
+__author__ = 'Lotterie J.-A.'
+__email__ = 'pysisyphe@gmail.com'
 # __version__ = "0.9.1"
 # __version__ = "0.18.9"
 # __version__ = "0.20.16" # 01-11-2025
 # __version__ = "0.21.08" # 18-11-2025
 # __version__ = "0.22.11" # 05-12-2025
 # __version__ = "0.24.14" # 12-01-2026
-__version__ = "0.25.04" # 20-01-2026
+# __version__ = "0.25.04" # 20-01-2026
+__version__ = "0.76.22" # xx-xx-2026
+__build__ = '20260129'
 
 _V = b'70797369737970686540676d61696c2e636f6d'
 
@@ -27,22 +33,25 @@ _V = b'70797369737970686540676d61696c2e636f6d'
 Functions
 ~~~~~~~~~
 
-   - getMajorVersion
-   - getMinorVersion
-   - getPatchVersion
-   - getVersion
-   - getVersionAsList
-   - getVersionAsDict
-   - isOlderThan
-   - isNewerThan
-   - isCurrentVersion
-   - getVersionFromHost
-   - isUpToDateVersion
-   - getVersionHistoryFromHost
-   - getUrlsToUpdate
+- getMajorVersion
+- getMinorVersion
+- getPatchVersion
+- getVersion
+- getVersionAsList
+- getVersionAsDict
+- getVersionAsTuple
+- getBuildDate
+- getBuildDateAsStr
+- isOlderThan
+- isNewerThan
+- isCurrentVersion
+- getVersionFromHost
+- isUpToDateVersion
+- getVersionHistoryFromHost
+- getUrlsToUpdate
        
 Creation: 04/11/2023
-Last revision: 30/10/2024
+Last revision: 27/01/2026
 """
 
 
@@ -74,6 +83,26 @@ def getVersionAsDict() -> dict[str, int]:
     r['minor'] = int(v[1])
     r['patch'] = int(v[2])
     return r
+
+
+# < Revision 27/01/2026
+def getVersionAsTuple() -> tuple[int, int, int]:
+    v = __version__.split('.')
+    return int(v[0]), int(v[1]), int(v[2])
+# Revision 27/01/2026 >
+
+
+# < Revision 27/01/2026
+def getBuildDate() -> date:
+    return date(int(__build__[0:4]), int(__build__[4:6]), int(__build__[6:8]))
+# Revision 27/01/2026 >
+
+
+# < Revision 27/01/2026
+def getBuildDateAsStr(f: str = '%Y-%m-%d') -> str:
+    d = getBuildDate()
+    return d.strftime(f)
+# Revision 27/01/2026 >
 
 
 def isOlderThan(version: str | list[int] | dict[str, int]) -> bool:
