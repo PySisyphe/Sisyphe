@@ -30,7 +30,7 @@ List of available post-processings:
 - Datatype conversion
 - Image attributes conversion
 - Voxel by voxel algebra (mean, median, std, min, max, any numpy expression)
-- Automatic removial of caudal slices (neck slices, usually as part of a 3D sagittal acquisition)
+- Automatic removal of caudal slices (neck slices, usually as part of a 3D sagittal acquisition)
 - Filtering/denoising: median, mean, gaussian, anistropic diffusion, non-local means, gradient magnitude, laplacian
 - Intensity matching between volumes: histogram matching, regression matching
 - Intensity normalization (0-1, z-score...)
