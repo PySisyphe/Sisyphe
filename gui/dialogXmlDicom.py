@@ -35,6 +35,8 @@ class DialogXmlDicom(QDialog):
     ~~~~~~~~~~~
 
     QDialog -> DialogXmlDicom
+
+    Last revision: 26/01/2026
     """
 
     # Special method
@@ -52,7 +54,7 @@ class DialogXmlDicom(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('DICOM dataset')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
@@ -117,7 +119,9 @@ class DialogXmlDicom(QDialog):
         self._unchecksel.clicked.connect(lambda: self._dcm.uncheckSelected())
 
         ok = QPushButton('Close')
-        ok.setFixedWidth(100)
+        # < Revision 26/01/2026
+        # ok.setFixedWidth(100)
+        # Revision 26/01/2026 >
         ok.setAutoDefault(True)
         ok.setDefault(True)
         # noinspection PyUnresolvedReferences

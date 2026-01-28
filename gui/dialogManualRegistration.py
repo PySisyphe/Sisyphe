@@ -2,13 +2,15 @@
 External packages/modules
 -------------------------
 
-    - ANTs, image registration, http://stnava.github.io/ANTs/
+    - ANTs, image registration, httpS://stnava.github.io/ANTs/
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
     - SimpleITK, medical image processing, https://simpleitk.org/
 """
 
 from sys import platform
 
+from SimpleITK import Cast
+from SimpleITK import sitkFloat32
 from SimpleITK import AffineTransform
 from SimpleITK import CenteredTransformInitializerFilter
 
@@ -53,7 +55,7 @@ class DialogManualRegistration(QDialog):
 
     QDialog -> DialogManualRegistration
 
-    Last revision: 16/12/2025
+    Last revision: 26/01/2026
     """
 
     # Special method
@@ -82,9 +84,9 @@ class DialogManualRegistration(QDialog):
         # Init window
 
         self.setWindowTitle('Manual registration')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowMinMaxButtonsHint, True)
         size = self.screen().availableSize()
         self.resize(int(size.width() * 0.8), int(size.height() * 0.8))
@@ -195,10 +197,11 @@ class DialogManualRegistration(QDialog):
         self._tooltip.pressed.connect(self._tooltipChanged)
 
         self._menuestimate = QMenu(self)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menuestimate.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menuestimate.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menuestimate.setAttribute(Qt.WA_TranslucentBackground, True)
         self._menuestimate.addAction('FOV center alignment')
         self._menuestimate.addAction('Center of mass alignment')
@@ -259,13 +262,16 @@ class DialogManualRegistration(QDialog):
         self._widget().getFirstSliceViewWidget().setOverlayOpacity(0, self._opacity.value() / 100)
 
     def _cropBoxChanged(self, state):
+        # noinspection PyUnresolvedReferences
         if state == Qt.Unchecked:
             self._widget().getFirstSliceViewWidget().cropOff()
             self._widget().getFirstSliceViewWidget().setOverlayOpacity(0, self._opacity.value() / 100)
         else: self._widget().getFirstSliceViewWidget().cropOn()
 
     def _regBoxChanged(self, state):
-        if state == Qt.Unchecked: self._widget().getFirstSliceViewWidget().registrationBoxOff()
+        # noinspection PyUnresolvedReferences
+        if state == Qt.Unchecked:
+            self._widget().getFirstSliceViewWidget().registrationBoxOff()
         else: self._widget().getFirstSliceViewWidget().registrationBoxOn()
 
     def _tooltipChanged(self):
@@ -293,6 +299,9 @@ class DialogManualRegistration(QDialog):
         f.setMoving(self._moving)
         f.setTransform(trf)
         f.execute(fixed=self._fixed, dialog=True)
+        # < Revision 26/01/2026
+        self.accept()
+        # Revision 26/01/2026 >
 
     def _estimate(self, action):
         ch = action.text()[0]
@@ -300,14 +309,24 @@ class DialogManualRegistration(QDialog):
         if ch == 'F':
             f = CenteredTransformInitializerFilter()
             f.GeometryOn()
-            t = AffineTransform(f.Execute(self._moving.getSITKImage(), self._fixed.getSITKImage(), AffineTransform(3)))
+            # < Revision 26/01/2026
+            img1 = Cast(self._fixed.getSITKImage(), sitkFloat32)
+            img2 = Cast(self._moving.getSITKImage(), sitkFloat32)
+            t = AffineTransform(f.Execute(img2, img1, AffineTransform(3)))
+            # t = AffineTransform(f.Execute(self._moving.getSITKImage(), self._fixed.getSITKImage(), AffineTransform(3)))
             self._widget().getFirstSliceViewWidget().setTranslations(t.GetTranslation(), index=0)
+            # Revision 26/01/2026 >
         # Translations estimation, center of mass alignment
         elif ch == 'C':
             f = CenteredTransformInitializerFilter()
             f.MomentsOn()
-            t = AffineTransform(f.Execute(self._moving.getSITKImage(), self._fixed.getSITKImage(), AffineTransform(3)))
+            # < Revision 26/01/2026
+            img1 = Cast(self._fixed.getSITKImage(), sitkFloat32)
+            img2 = Cast(self._moving.getSITKImage(), sitkFloat32)
+            t = AffineTransform(f.Execute(img2, img1, AffineTransform(3)))
+            # t = AffineTransform(f.Execute(self._moving.getSITKImage(), self._fixed.getSITKImage(), AffineTransform(3)))
             self._widget().getFirstSliceViewWidget().setTranslations(t.GetTranslation(), index=0)
+            # Revision 26/01/2026 >
 
     def _reset(self):
         self._widget().getFirstSliceViewWidget().setTranslations((0.0, 0.0, 0.0), index=0)

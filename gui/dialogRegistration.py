@@ -104,7 +104,7 @@ class DialogRegistration(QDialog):
 
     QDialog -> DialogRegistration
 
-    Last revision: 27/11/2025
+    Last revision: 26/01/2026
     """
     # Class method
 
@@ -114,10 +114,18 @@ class DialogRegistration(QDialog):
         return join(dirname(abspath(Sisyphe.gui.__file__)), 'icons')
 
     @classmethod
-    def calcMask(cls, vol, dilate=4):
+    def calcMask(cls, vol, dilate: int | list[int] | tuple[int, int, int] = 5):
+        # < Revision 26/01/2026
+        if isinstance(dilate, int): d = [dilate] * 3
+        elif isinstance(dilate, (list, tuple)): d = dilate[:3]
+        else: raise ValueError('dilate parameter type {} is not int, tuple or list.'.format(type(dilate)))
+        # Revision 26/01/2026 >
         img = vol.getSITKImage()
         mask = img >= mean(vol.getNumpy().flatten())
-        mask = BinaryDilate(mask, [dilate, dilate, dilate])
+        # < Revision 26/01/2026
+        # mask = BinaryDilate(mask, [dilate, dilate, dilate])
+        mask = BinaryDilate(mask, d)
+        # Revision 26/01/2026 >
         mask = BinaryFillhole(mask)
         r = SisypheVolume()
         r.setSITKImage(mask)
@@ -433,7 +441,12 @@ class DialogRegistration(QDialog):
         Automatic fixed mask processing
         """
         if self._settings.getParameterValue('FixedMask'):
-            mask = self.calcMask(fvol)
+            # < Revision 26/01/2026
+            # mask = self.calcMask(fvol)
+            self._wait.setInformationText('Registration mask processing...')
+            d = [int(10.0 / v) for v in fvol.getSpacing()]
+            mask = self.calcMask(fvol, d)
+            # Revision 26/01/2026 >
         else: mask = None
         """
         Estimating translations
@@ -464,7 +477,10 @@ class DialogRegistration(QDialog):
         Manual registration and registration area definition
         """
         if self._settings.getParameterValue('ManualRegistration') and self._reg in ('Rigid', 'Affine'):
-            dialog = DialogManualRegistration(fvol, mvol)
+            # < Revision 26/01/2026
+            # dialog = DialogManualRegistration(fvol, mvol)
+            dialog = DialogManualRegistration(fvol, mvol, parent=self)
+            # Revision 26/01/2026 >
             if platform == 'win32':
                 try: self._updateWindowTitleBarColor(dialog)
                 except: pass
@@ -472,9 +488,15 @@ class DialogRegistration(QDialog):
             trf = self._trf.getInverseTransform()
             dialog.setTranslations(trf.getTranslations())
             dialog.setRotations(trf.getRotations())
+            # < Revision 26/01/2026
+            self._wait.hide()
+            # Revision 26/01/2026 >
             if dialog.exec() == dialog.Accepted:
                 trf.setTranslations(dialog.getTranslations())
-                trf.setRotations(dialog.getRotations())
+                # < Revision 26/01/2026
+                # trf.setRotations(dialog.getRotations())
+                trf.setRotations(dialog.getRotations(), deg=True)
+                # Revision 26/01/2026 >
                 trf.setCenter(mvol.getCenter())
                 # Manual registration gives a forward geometric transform (from moving to fixed)
                 # with center of rotation at center of moving image
@@ -489,10 +511,16 @@ class DialogRegistration(QDialog):
                     else:
                         r = Cast(area.getSITKImage() * mask.getSITKImage(), sitkUInt8)
                         mask.setSITKImage(r)
+                        # mask.setFilename(fvol.getFilename())
+                        # mask.setFilenamePrefix('mask')
+                        # mask.save()
                 QApplication.processEvents()
             else:
                 self.done(QDialog.Rejected)
                 return
+            # < Revision 26/01/2026
+            self._wait.show()
+            # Revision 26/01/2026 >
         if self._trf is not None:
             """      
             Set parameters used to follow registration progression

@@ -24,6 +24,7 @@ from psutil import disk_usage
 
 import itk
 import vtk
+# noinspection PyFinal
 from numpy.version import version as vnumpy
 from matplotlib import __version__ as vmplt
 from pydicom import __version__ as vpdcm
@@ -34,6 +35,7 @@ from dipy import __version__ as vdipy
 from radiomics import __version__ as vradiomics
 from pandas import __version__ as vpandas
 from skimage import __version__ as vski
+# noinspection PyFinal
 from scipy import __version__ as vscipy
 from nibabel._version import __version__ as vnb
 from nilearn import __version__ as vnl
@@ -55,6 +57,7 @@ from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QApplication
 
+from Sisyphe.version import getBuildDateAsStr
 from Sisyphe.version import __version__ as versionSisyphe
 
 __all__ = ['DialogSplash']
@@ -63,7 +66,7 @@ __all__ = ['DialogSplash']
 Class hierarchy
 ~~~~~~~~~~~~~~~
     
-    - QDialog -> DialogSplash
+- QDialog -> DialogSplash
 """
 
 
@@ -81,7 +84,7 @@ class DialogSplash(QDialog):
 
     QDialog -> DialogSplash
 
-    Last revision: 14/12/2025
+    Last revision: 27/01/2026
     """
 
     # Class method
@@ -205,7 +208,7 @@ class DialogSplash(QDialog):
         self._info = QLabel()
         self._info.setFixedWidth(1000)
         self._info.setWordWrap(True)
-        self._info.setText('PySisyphe {} (2021), developed by Jean-Albert Lotterie, contact: pysisyphe@gmail.com\n\n'
+        self._info.setText('PySisyphe {} ({}), developed by J.-A. Lotterie, contact: pysisyphe@gmail.com\n\n'
                            'Python {}, Qt {}, Numpy {}, Pandas {}, Matplotlib {}, Pydicom {}, Pynetdicom {}, '
                            'SimpleITK {}, ITK {}, VTK {}, ANTs {}, Dipy {}, Nibabel {}, Nilearn {}, pyradiomics {}, '
                            'Scikit-image {}, SciPy {}, python-docx {}, fpdf {}, qtconsole {}\n\n'
@@ -216,7 +219,7 @@ class DialogSplash(QDialog):
                            'Memory {:.1f} GB\n'
                            'Screen size {}x{}, scaling factor {:.1f}, {:.1f} DPI\n'
                            'Primary disk {}, {} file system, {:.1f} '
-                           'GBytes, {:.1f}% free'.format(versionSisyphe,
+                           'GBytes, {:.1f}% free'.format(versionSisyphe, getBuildDateAsStr(),
                                                          vpython, PYQT_VERSION_STR, vnumpy,
                                                          vpandas, vmplt, vpdcm, vpndcm,
                                                          vsitk, vitk, vvtk, vants, vdipy, vnb, vnl, vradiomics[1:],
@@ -234,6 +237,7 @@ class DialogSplash(QDialog):
                                                          diskusage[0] / (1024 ** 3),
                                                          diskfree))
         self._message = QLabel(parent=self)
+        # noinspection PyUnresolvedReferences
         self._message.setAlignment(Qt.AlignCenter)
         self._message.setFixedWidth(1000)
         self._message.setText('Starting PySisyphe...')
@@ -241,6 +245,7 @@ class DialogSplash(QDialog):
         self._progress.setMinimum(0)
         self._progress.setMaximum(10)
         self._progress.setValue(0)
+        # noinspection PyUnresolvedReferences
         self._progress.setAlignment(Qt.AlignCenter)
         self._exit = QPushButton('Close', parent=self)
         self._exit.setFixedWidth(100)
@@ -251,6 +256,7 @@ class DialogSplash(QDialog):
 
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
+        # noinspection PyUnresolvedReferences
         layout.setAlignment(Qt.AlignCenter)
         layout.addWidget(self._pixmap)
         self._layout.addLayout(layout)
@@ -258,6 +264,7 @@ class DialogSplash(QDialog):
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(5)
+        # noinspection PyUnresolvedReferences
         layout.setAlignment(Qt.AlignCenter)
 
         dpi = QApplication.primaryScreen().logicalDotsPerInch()
@@ -377,6 +384,7 @@ class DialogSplash(QDialog):
         layout = QHBoxLayout()
         layout.setContentsMargins(40, 0, 40, 0)
         layout.setSpacing(5)
+        # noinspection PyUnresolvedReferences
         layout.setAlignment(Qt.AlignLeft)
         layout.addWidget(self._info)
         self._layout.addLayout(layout)
@@ -384,6 +392,7 @@ class DialogSplash(QDialog):
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 10, 0, 0)
         layout.setSpacing(5)
+        # noinspection PyUnresolvedReferences
         layout.setAlignment(Qt.AlignCenter)
         layout.addWidget(self._message)
         self._layout.addLayout(layout)
@@ -391,6 +400,7 @@ class DialogSplash(QDialog):
         layout = QHBoxLayout()
         layout.setContentsMargins(60, 0, 60, 10)
         layout.setSpacing(5)
+        # noinspection PyUnresolvedReferences
         layout.setAlignment(Qt.AlignCenter)
         layout.addWidget(self._progress)
         self._layout.addLayout(layout)
@@ -407,11 +417,12 @@ class DialogSplash(QDialog):
         if sys.platform == 'win32':
             # noinspection PyTypeChecker
             # self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+            # noinspection PyUnresolvedReferences
             self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
         elif sys.platform == 'darwin':
-            # noinspection PyTypeChecker
+            # noinspection PyTypeChecker,PyUnresolvedReferences
             self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowModality(Qt.WindowModal)
 
     # Private method

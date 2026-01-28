@@ -48,7 +48,7 @@ class DialogExport(QDialog):
 
     QDialog -> DialogExport
 
-    Last revision: 17/07/2025
+    Last revision: 03/09/2025
     """
 
     # Special method
@@ -89,14 +89,21 @@ class DialogExport(QDialog):
         self._savedir.filterDirectory()
         self._savedir.setTextLabel('Export directory')
         self._savedir.setContentsMargins(0, 0, 0, 0)
-        self._convert = QPushButton('Convert')
+        # < Revision 03/09/2025
+        # self._convert = QPushButton('Convert')
+        self._convert = QPushButton('Export')
+        # Revision 03/09/2025 >
         self._convert.setToolTip('Convert Sisyphe volumes to {} format.'.format(self._ioformat))
         # noinspection PyUnresolvedReferences
         self._convert.clicked.connect(self.convert)
         layout = QHBoxLayout()
         layout.setSpacing(10)
-        layout.addWidget(self._convert)
+        # < Revision 03/09/2025
+        # layout.addWidget(self._convert)
+        # layout.addWidget(self._savedir)
         layout.addWidget(self._savedir)
+        layout.addWidget(self._convert)
+        # Revision 03/09/2025 >
         self._layout.addLayout(layout)
 
         # Init default dialog buttons

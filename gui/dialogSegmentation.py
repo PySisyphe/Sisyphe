@@ -147,7 +147,7 @@ class DialogKMeansClustering(QDialog):
         # Init window
 
         self.setWindowTitle('KMeans clustering')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init non-GUI attributes
@@ -211,6 +211,7 @@ class DialogKMeansClustering(QDialog):
         layout = QHBoxLayout()
         if sys.platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)
@@ -238,6 +239,7 @@ class DialogKMeansClustering(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 22/05/2025 >
         self.setModal(True)
@@ -507,7 +509,7 @@ class DialogKMeansSegmentation(QDialog):
         # Init window
 
         self.setWindowTitle('KMeans segmentation')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -567,6 +569,7 @@ class DialogKMeansSegmentation(QDialog):
         layout = QHBoxLayout()
         if sys.platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)
@@ -594,6 +597,7 @@ class DialogKMeansSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 22/05/2025 >
         self.setModal(True)
@@ -913,7 +917,7 @@ class DialogPriorBasedSegmentation(QDialog):
         # Init window
 
         self.setWindowTitle('Tissue segmentation')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init non-GUI attributes
@@ -955,6 +959,7 @@ class DialogPriorBasedSegmentation(QDialog):
 
         self._settings3 = FunctionSettingsWidget('Resample')
         self._settings3.setSettingsButtonFunctionText()
+        # noinspection PyUnresolvedReferences
         self._settings3.getParameterWidget('Dialog').setCheckState(Qt.Checked)
         self._settings3.setParameterVisibility('Dialog', False)
         self._settings3.VisibilityToggled.connect(self._center)
@@ -982,6 +987,7 @@ class DialogPriorBasedSegmentation(QDialog):
         layout = QHBoxLayout()
         if sys.platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._cancel = QPushButton('Cancel')
         self._cancel.setFixedWidth(100)
@@ -1009,6 +1015,7 @@ class DialogPriorBasedSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 22/05/2025 >
         self.setModal(True)
@@ -1399,7 +1406,7 @@ class DialogPriorBasedSegmentation(QDialog):
                             fbstem = ''
                             fcereb = ''
                         priors = list()
-                        # 3 classes: cerebro-spinal fluid, grey matter, white matter,
+                        # 3 classes: cerebro-spinal fluid, gray matter, white matter,
                         if nclass >= 3:
                             if nclass > 4: fgm = fcgm
                             if fcsf is not None and exists(fcsf): priors.append(fcsf)
@@ -1412,10 +1419,10 @@ class DialogPriorBasedSegmentation(QDialog):
                             else:
                                 if nclass == 3: messageBox(self,
                                                            title=self.windowTitle(),
-                                                           text='Grey matter prior is missing.')
+                                                           text='Gray matter prior is missing.')
                                 else: messageBox(self,
                                                  title=self.windowTitle(),
-                                                 text='Cortical grey matter prior is missing.')
+                                                 text='Cortical gray matter prior is missing.')
                                 priors.clear()
                             if fwm is not None and exists(fwm): priors.append(fwm)
                             else:
@@ -1423,15 +1430,15 @@ class DialogPriorBasedSegmentation(QDialog):
                                            title=self.windowTitle(),
                                            text='White matter prior is missing.')
                                 priors.clear()
-                        # 4 classes: cortical grey matter , subcortical grey matter, white matter, cerebro-spinal fluid
+                        # 4 classes: cortical gray matter , subcortical gray matter, white matter, cerebro-spinal fluid
                         if nclass >= 4:
                             if fscgm is not None and exists(fscgm): priors.append(fscgm)
                             else:
                                 messageBox(self,
                                            title=self.windowTitle(),
-                                           text='Subcortical grey matter prior is missing.')
+                                           text='Subcortical gray matter prior is missing.')
                                 priors.clear()
-                        # 6 classes: cortical grey matter , subcortical Grey matter, white matter, cerebro-spinal fluid, brainstem, cerebellum
+                        # 6 classes: cortical gray matter , subcortical Gray matter, white matter, cerebro-spinal fluid, brainstem, cerebellum
                         if nclass == 6:
                             if fbstem is not None and exists(fbstem): priors.append(fbstem)
                             else:
@@ -1733,7 +1740,7 @@ class DialogCorticalThickness(QDialog):
         # Init window
 
         self.setWindowTitle('Cortical thickness')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1764,6 +1771,7 @@ class DialogCorticalThickness(QDialog):
         layout = QHBoxLayout()
         if sys.platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._cancel = QPushButton('Cancel')
         self._cancel.setFixedWidth(100)
@@ -1791,6 +1799,7 @@ class DialogCorticalThickness(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._select.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 22/05/2025 >
         self.setModal(True)
@@ -1994,7 +2003,7 @@ class DialogRegistrationBasedSegmentation(QDialog):
         if filename == '': title = 'Registration based segmentation'
         else: title = '{} registration based segmentation'.format(splitext(basename(filename))[0].capitalize())
         self.setWindowTitle(title)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -2058,6 +2067,7 @@ class DialogRegistrationBasedSegmentation(QDialog):
         layout = QHBoxLayout()
         if sys.platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)
@@ -2096,6 +2106,7 @@ class DialogRegistrationBasedSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 22/05/2025 >
         self.setModal(True)

@@ -70,7 +70,7 @@ class DialogDicomImport(QDialog):
 
     QDialog -> DialogDicomImport
 
-    Last revision: 27/03/2025
+    Last revision: 26/01/2026
     """
 
     # Special method
@@ -85,7 +85,7 @@ class DialogDicomImport(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('DICOM import')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.50), int(screen.height() * 0.50))
@@ -117,10 +117,13 @@ class DialogDicomImport(QDialog):
         self._series.setModalityFilterToImages()
 
         self._origin = QCheckBox('Keep Dicom origin')
+
+        # noinspection PyUnresolvedReferences
         self._origin.setCheckState(Qt.Unchecked)
         self._origin.setToolTip('Copy Dicom origin into converted volume.')
 
         self._acq = QCheckBox('Use acquisition number')
+        # noinspection PyUnresolvedReferences
         self._acq.setCheckState(Qt.Unchecked)
         self._acq.setToolTip('Use acquisition number as suffix in converted file name.')
 
@@ -150,6 +153,7 @@ class DialogDicomImport(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -182,6 +186,7 @@ class DialogDicomImport(QDialog):
         nseries = tree.topLevelItemCount()
         for i in range(nseries):
             seriesitem = tree.topLevelItem(i)
+            # noinspection PyUnresolvedReferences
             if seriesitem.checkState(0) == Qt.Checked:
                 btag = False
                 bval = dict()
@@ -192,6 +197,7 @@ class DialogDicomImport(QDialog):
                 # Acquisitions
                 for j in range(nacq):
                     acqitem = seriesitem.child(j)
+                    # noinspection PyUnresolvedReferences
                     if acqitem.checkState(0) == Qt.Checked:
                         if wait.getStopped():
                             tree.treeUpdate()
@@ -201,6 +207,7 @@ class DialogDicomImport(QDialog):
                         # Get DICOM filenames of the current acquisition
                         for k in range(nfiles):
                             fileitem = acqitem.child(k)
+                            # noinspection PyUnresolvedReferences
                             if fileitem.checkState(0) == Qt.Checked:
                                 filename = fileitem.toolTip(0)
                                 filenames.append(filename)
@@ -232,7 +239,9 @@ class DialogDicomImport(QDialog):
                             # DICOM filenames conversion to SimpleITK image
                             try: img = readFromDicomFilenames(filenames)
                             except:
+                                wait.hide()
                                 messageBox(self, 'DICOM import', 'DICOM read error.')
+                                wait.show()
                                 continue
                             # Siemens mosaic conversion
                             if tree.isMosaic(series):
@@ -267,9 +276,11 @@ class DialogDicomImport(QDialog):
                                 elif fmt == 4: writeToNumpy(img, savename)  # Numpy
                                 else: writeToVTK(img, savename)  # VTK
                             except:
+                                wait.hide()
                                 messageBox(self,
                                            'DICOM import',
                                            text='{} write error.'.format(basename(savename)))
+                                wait.show()
                                 continue
                             # Save XmlDicom
                             xml = DicomToXmlDicom()
@@ -278,9 +289,11 @@ class DialogDicomImport(QDialog):
                             if self._savedir.getPath() != '': xml.setBackupXmlDicomDirectory(dirname(savename))
                             try: xml.execute()
                             except:
+                                wait.hide()
                                 messageBox(self,
                                            'DICOM import',
                                            text='{} XML dicom conversion error.'.format(xml.getXmlDicomFilename()))
+                                wait.show()
                                 continue
                             if nacq > 1:
                                 r = getDiffusionParametersFromDicom(filenames[0])

@@ -134,14 +134,24 @@ class DialogDicomExport(QDialog):
                     progress.setInformationText('Load {}...'.format(basename(filename)))
                     try: vol.load(filename)
                     except:
+                        # < Revision 03/09/2025
+                        # hide progress dialog before message box
+                        progress.hide()
+                        # Revision 03/09/2025 >
                         messageBox(self,
                                    'DICOM export',
                                    text='{} read error.'.format(basename(filename)))
                     export.setVolume(vol)
                     if not self._savedir.isEmpty(): export.setBackupDicomDirectory(self._savedir.getPath())
                     progress.setInformationText('Export {} to DICOM...'.format(basename(filename)))
+                    export.execute()
                     try: export.execute()
-                    except: messageBox(self, 'DICOM export', 'DICOM write error.')
+                    except:
+                        # < Revision 03/09/2025
+                        # hide progress dialog before message box
+                        progress.hide()
+                        # Revision 03/09/2025 >
+                        messageBox(self, 'DICOM export', 'DICOM write error.')
                     progress.incCurrentProgressValue()
             finally:
                 progress.hide()
