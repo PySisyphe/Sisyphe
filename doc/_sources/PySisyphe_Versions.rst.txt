@@ -15,25 +15,27 @@ Version history
 - :ref:`build05-12-2025`
 - :ref:`build12-01-2026`
 - :ref:`build20-01-2026`
+- :ref:`build29-01-2026`
 
 .. _version-increment-rules:
 Version increment rules
 -----------------------
 
-- **major version increment**:
+- **major version increment**
 
-	- new python interpreter version
-	- 50 minor version increments
+	- 100 minor version increments
 
-- **minor version increment**:
+- **minor version increment**
 
+	- new python interpreter version (+25 minor version increment)
 	- new module, new external module, external module upgrade
 	- 25 patch version increments
 
-- **patch version increment**:
+- **patch version increment**
 
 	- update html documentation
-	- new file, file update
+	- new file
+	- file update
 	- new function
 	- module update
 
@@ -41,7 +43,7 @@ Version increment rules
 version 0.9.1, build 26/07/2025
 -------------------------------
 
-- First distributed version.
+- First distributed version
 - Github page deployment: https://github.com/PySisyphe/Sisyphe
 - NITRC page deployment: https://www.nitrc.org/projects/pysisyphe/
 - First PyInstaller stand alone frozen version for Windows and MacOS platforms (x64 CPU)
@@ -74,7 +76,7 @@ version 0.12.9, build 05/08/2025
 
 	- pydicom, upgrade 2.3.1 to 3.0.1
 	
-		- generate a bug in core.sisypheDicom.ImportFromRTStruct.execute() method
+		- this resulted in a bug in core.sisypheDicom.ImportFromRTStruct.execute() method
 
 - **new module**
 
@@ -168,7 +170,7 @@ version 0.12.9, build 05/08/2025
 
 	- core.sisypheImageIO.isDicom
 	
-		- bug fix, return value, from str to bool
+		- bug fix, change returned value, from str to bool
 
 .. _build28-08-2025:
 version 0.12.11, build 28/08/2025
@@ -325,13 +327,13 @@ version 0.16.5, build 13/10/2025
 
 - **updated files**
 
-	- /Sisyphe/settings/MR.xdcm
+	- settings/MR.xdcm
 	
 		- bug fix, line 79, in PixelSpacing value, from 1.0/1.L0 to 1.0/1.0
 	
-	- /Sisyphe/settings/dialogs.xml
-	- /Sisyphe/settings/tootips.xml
-	- /Sisyphe/settings/functions.xml
+	- settings/dialogs.xml
+	- settings/tootips.xml
+	- settings/functions.xml
 
 - **updated modules**
 
@@ -518,7 +520,6 @@ version 0.16.5, build 13/10/2025
 
 		- add setUrl() method
 		- add setPage() method
-
 
 - **updated methods**
 
@@ -707,7 +708,7 @@ version 0.18.3, build 16/10/2025
 
 - **updated files**
 
-	- /Sisyphe/settings/functions.xml
+	- settings/functions.xml
 
 - **updated modules**
 
@@ -855,8 +856,8 @@ version 0.20.16, build 01/11/2025
 
 - **updated files**
 
-	- /Sisyphe/settings/tooltips.xml
-	- /Sisyphe/settings/functions.xml
+	- settings/tooltips.xml
+	- settings/functions.xml
 
 - **updated docstrings & typing**
 
@@ -991,7 +992,7 @@ version 0.21.08, build 18/11/2025
 
 - **updated files**
 
-	- /Sisyphe/settings/settings.xml
+	- settings/settings.xml
 
 - **updated modules**
 
@@ -1256,14 +1257,14 @@ version 0.22.11, build 05/12/2025
 
 - **updated files**
 
-	- /Sisyphe/settings/settings.xml
-	- /Sisyphe/settings/dialogs.xml
-	- /Sisyphe/gui/doc/ipython.txt
+	- settings/settings.xml
+	- settings/dialogs.xml
+	- gui/doc/ipython.txt
 
 - **new files**
 
-	- /Sisyphe/gui/lightroi/console.png
-	- /Sisyphe/gui/darkroi/console.png
+	- gui/lightroi/console.png
+	- gui/darkroi/console.png
 
 - **updated modules**
 
@@ -1780,16 +1781,16 @@ version 0.24.14, build 12/01/2026
 
 - **updated files**
 
-	- /Sisyphe/gui/doc/ipython.txt
+	- gui/doc/ipython.txt
 
 		- add %gemini command documentation
 
-	- /Sisyphe/settings/settings.xml
+	- settings/settings.xml
 
 		- add <Gemini> section, <APIKey> field
 
-	- /Sisyphe/templates/ICBM152/icbm152_sym_template_mask.xvol
-	- /Sisyphe/templates/ICBM152/icbm152_asym_template_mask.xvol
+	- templates/ICBM152/icbm152_sym_template_mask.xvol
+	- templates/ICBM152/icbm152_asym_template_mask.xvol
 
 		- datatype conversion, from float32 to uint8
 
@@ -1799,7 +1800,7 @@ version 0.24.14, build 12/01/2026
 	- esayocr
 	- pymupdf
 
-		- rebuild pyinstaller with upx=False (EXE and COLLECT) options
+		- rebuild frozen version (pyinstaller with upx=False) 
 
 - **new plugins**
 
@@ -2296,7 +2297,7 @@ version 0.24.14, build 12/01/2026
 		- call the frame-based registration dialog box
 
 .. _build20-01-2026:
-version 0.25.02, build 20/01/2026
+version 0.25.04, build 20/01/2026
 ---------------------------------
 
 - **updated html documentation**
@@ -2319,6 +2320,7 @@ version 0.25.02, build 20/01/2026
 	- core.sisypheTools
 	- core.sisyphePDF
 	- core.sisypheImage
+	- core.sisypheDownload
 	- widgets.sliceViewWidgets
 	- widgets.attributesWidgets
 	- gui.dialogPerfusion
@@ -2367,6 +2369,10 @@ version 0.25.02, build 20/01/2026
 		- new fillSlicesWith() method
 		- new getReorient() method
 
+	- core.sisypheDownload
+
+		- update installFromHost() method
+
 	- widgets.sliceViewWidgets.SliceViewWidget
 
 		- update displayOn() method
@@ -2382,6 +2388,7 @@ version 0.25.02, build 20/01/2026
 	- gui.dialogSettings.DialogSettings
 
 		- update apply() method
+		- update default() method
 
 	- gui.dialogReorient.DialogReorient
 
@@ -2391,6 +2398,7 @@ version 0.25.02, build 20/01/2026
 	- gui.windowSisyphe.WindowSisyphe
 
 		- update __init__() method
+		- update getUserDirectory() method
 
 - **new methods**
 
@@ -2458,9 +2466,15 @@ version 0.25.02, build 20/01/2026
 
 		- bug fix, line 437, add line node = node.nextSibling
 
-	- ucore.sisyphePDF.SisypheParsePdf.parse()
+	- core.sisyphePDF.SisypheParsePdf.parse()
 
 		- line 264, modifiy relative threshold to detect line increments (from 0.95 to 0.98)
+
+	- core.sisypheDownload.installFromHost()
+
+		- lines 181 & 211, call setUserSettingsToDefault()
+		- add exception management
+		- add logger information
 
 	- widgets.sliceViewWidgets.SliceViewWidget.displayOn()
 
@@ -2478,6 +2492,10 @@ version 0.25.02, build 20/01/2026
 
 		- line 563, DockWidgets setMaxCount()
 
+	- gui.dialogSettings.DialogSettings.default()
+
+		- bug fix, line 453, add line if c < 0: c = 0
+
 	- gui.dialogReorient.DialogReorient.__init__()
 
 		- line 178, add self._auto button
@@ -2489,3 +2507,332 @@ version 0.25.02, build 20/01/2026
 	- gui.windowSisyphe.WindowSisyphe.__init__()
 
 		- line 584, add chdir(self.getUserDirectory())
+
+	- gui.windowSisyphe.WindowSisyphe.getUserDirectory()
+
+		- line 188, call setUserSettingsToDefault()
+
+.. _build29-01-2026:
+version 0.76.22, build 29/01/2026
+---------------------------------
+
+- **Python interpreter upgrade**
+
+	- from 3.10 to 3.12
+	- rebuild frozen version (pyinstaller)
+
+- **upgraded modules**
+
+	- itk, from 5.4.3 to 5.4.5
+	- vtk, from 9.4.2 to 9.5.2
+	- pyradiomics to pyradiomics-bhklab, from 3.0.1 to 3.1.4
+	- scikit-image, from 0.25.2 to 0.26.0
+	- scikit-learn, from 1.6.1 to 1.8.0
+
+- **updated file**
+
+	- update requirements.txt file for upgraded modules
+	- settings/functions.xml
+	- settings/settings.xml
+	- templates/ICBM152/icbm152_asym_template_gm.xvol
+	- templates/ICBM152/icbm152_sym_template_cortical_gm.xvol
+	- templates/ICBM152/icbm152_sym_template_subcortical_gm.xvol
+	- templates/ICBM152/icbm152_sym_template_gm.xvol
+	- templates/ATROPOS/atropos_template_prior_brainstem.xvol
+	- templates/ATROPOS/atropos_template_prior_cerebellum.xvol
+	- templates/ATROPOS/atropos_template_prior_cortical_gm.xvol
+	- templates/ATROPOS/atropos_template_prior_csf.xvol
+	- templates/ATROPOS/atropos_template_prior_gm.xvol
+	- templates/ATROPOS/atropos_template_prior_subcortical_gm.xvol
+	- templates/ATROPOS/atropos_template_prior_wm.xvol
+
+- **updated html documentation**
+
+	- PySisyphe_overview.rst
+	- version-histrory.rst update
+	- rebuild sphinx documentation
+
+- **update plugins**
+
+	- SEEG
+	- REPORT
+
+- **updated modules**
+
+	- version
+	- core.sisypheDownload
+	- core.sisypheMesh
+	- core.sisypheROI
+	- core.sisypheDicom
+	- core.sisypheFiducialBox
+	- core.sisypheImageAttributes
+	- core.sisypheImage
+	- widgets.dicomWidgets
+	- widgets.sliceViewWidgets
+	- widgets.attributesWidgets
+	- widgets.abstractViewWidget
+	- widgets.tabToolsWidgets
+	- dialog.dialogDicomImport
+	- dialog.dialogXmlDicom
+	- dialog.dialogRegistration
+	- dialog.dialogManualRegistration
+	- dialog.dialogSplash
+	- dialog.dialogSegmentation
+
+- **new functions**
+
+	- version.getBuildDate()
+	- version.getBuildDateAsStr()
+
+- **updated function**
+
+	- core.sisypheDownload.installFromHost()
+
+		- lines 157 & 179, python version management
+
+- **updated classes**
+
+	- core.sisypheMesh.SisypheMesh
+
+		- update setName() method
+
+	- core.sisypheROI.SisypheROI
+
+		- update the class constant to a raw string _REGEXP = r'^[_A-Za-z0-9#\-\_\s+,]+$'
+		- update setName() method
+
+	- core.sisypheDicom.XmlDicom
+
+		- update loadXmlDicomFilename() method
+
+	- core.sisypheFiducialBox.SisypheFiducialBox
+
+		- update markersSearch() method
+		- update _firstSliceSearch() method
+
+	- core.sisypheImageAttributes.SisypheAcquisition
+
+		- new setSequenceToFilledMask() method
+
+	- core.sisypheImage.SisypheImage
+
+		- update getPercentile() method
+
+	- widgets.dicomWidgets.DicomVRLineEdit
+
+		- update _initPN() method
+		- update _initUI() method
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget
+
+		- update _pathToDict() method
+		- update _updateWidget() method
+
+	- widgets.sliceViewWidgets.SliceRegistrationViewWidget
+
+		- update getRegistrationBoxMaskArea() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- update duplicate() method
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget
+
+		- update _nameChanged() method
+
+	- widgets.abstractViewWidget.AbstractViewWidget
+
+		- update synchroniseToolRenamed() method
+		- update renameTool() method
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+
+		- update voiObject() method
+		- update voiBack() method
+		- update slcObject() method
+		- update slcBack() method
+
+	- dialog.dialogDicomImport.DialogDicomImport
+
+		- update convert() method
+
+	- dialog.dialogXmlDicom.DialogXmlDicom
+
+		- update __init__() method
+
+	- dialog.dialogRegistration.DialogRegistration
+
+		- update execute() method
+
+	- dialog.dialogManualRegistration.DialogManualRegistration
+
+		- update _resample() method
+		- update _estimate() method
+		- update calcMask() method
+
+	- dialog.dialogSplash.DialogSplash
+
+		- update __init__() method
+
+	- dialog.dialogSegmentation.DialogPriorBasedSegmentation
+
+		- update execute() method
+
+- **new methods**
+
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToFilledMask()
+
+		- filled hole mask sequence
+
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToBoneWindowCT()
+    - core.sisypheImageAttributes.SisypheAcquisition.isGreyMatterMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isSubCorticalGreyMatterMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isWhiteMatterMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isCerebroSpinalFluidMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isBrainstemMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isCerebellumMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isCorticalThicknessMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isCerebralBloodFlowMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isCerebralBloodVolumeMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isMeanTransitTimeMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isTimeToPicMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isDoseMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isFractionalAnisotropyMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isApparentDiffusionMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isDensityMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isBiasFieldMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isDistanceMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isMeanMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isMedianMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isMinimumMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isMaximumMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isStandardDeviationMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isAlgebraMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isMask()
+    - core.sisypheImageAttributes.SisypheAcquisition.isFilledMask()
+    - core.sisypheImageAttributes.SisypheAcquisition.isStructMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isLabelMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isDisplacementFieldMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isT1Weighted()
+    - core.sisypheImageAttributes.SisypheAcquisition.isT2Weighted()
+    - core.sisypheImageAttributes.SisypheAcquisition.isT2Star()
+    - core.sisypheImageAttributes.SisypheAcquisition.isProtonDensityWeighted()
+    - core.sisypheImageAttributes.SisypheAcquisition.isFLAIR()
+    - core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedT1()
+    - core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedT2()
+    - core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedFLAIR()
+    - core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedTOF(s)
+    - core.sisypheImageAttributes.SisypheAcquisition.isEchoPlanar()
+    - core.sisypheImageAttributes.SisypheAcquisition.isB0()
+    - core.sisypheImageAttributes.SisypheAcquisition.isDiffusionWeighted()
+    - core.sisypheImageAttributes.SisypheAcquisition.isPerfusionWeighted()
+    - core.sisypheImageAttributes.SisypheAcquisition.isSusceptibilityWeighted()
+    - core.sisypheImageAttributes.SisypheAcquisition.isTimeOfFlight()
+    - core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedCT()
+    - core.sisypheImageAttributes.SisypheAcquisition.isBoneWindowCT()
+    - core.sisypheImageAttributes.SisypheAcquisition.isFDG()
+    - core.sisypheImageAttributes.SisypheAcquisition.isFDOPA()
+    - core.sisypheImageAttributes.SisypheAcquisition.isHMPAO()
+    - core.sisypheImageAttributes.SisypheAcquisition.isECD()
+    - core.sisypheImageAttributes.SisypheAcquisition.isFPCIT()
+
+- **updated methods**
+
+	- core.sisypheMesh.SisypheMesh.setName()
+
+		- line 471, change r to a raw string r = r'[^A-Za-z0-9#\-\_\s,]'
+
+	- core.sisypheROI.SisypheROI.setName()
+
+		- line 761, change r to a raw string r = r'[^A-Za-z0-9#\-\_\s,]'
+
+	- core.sisypheDicom.XmlDicom.loadXmlDicomFilename()
+
+		- bug fix, line 1345, UTF-8 non-English character management
+
+	- core.sisypheFiducialBox.SisypheFiducialBox.markersSearch()
+
+		- lines 792 & 798, save self._volume
+
+	- core.sisypheFiducialBox.SisypheFiducialBox._firstSliceSearch()
+
+		- bug fix, line 562, replace minf < buff[i] or buff[i] > msup by buff[i] < minf or buff[i] > msup
+
+	- core.sisypheImage.SisypheImage.getPercentile()
+
+		- perc parameter includes the additional type float
+
+	- widgets.dicomWidgets.DicomVRLineEdit._initPN()
+	- widgets.dicomWidgets.DicomVRLineEdit._initUI()
+
+		- line 376, change regex constant to a raw string r'[A-Za-z\-\s]+\^[A-Za-z\-\s]+'
+		- line 406, change regex constant to a raw string r'^[0-9][0-9\.]+[0-9]$'
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget._pathToDict()
+
+		- line 944, update dicom tag list
+		- line 1048, manage the absence of the DICOM "slice location" field
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget._updateWidget()
+
+		- line 1164, close wait dialog before displaying messageBox
+
+	- widgets.sliceViewWidgets.SliceRegistrationViewWidget.getRegistrationBoxMaskArea()
+
+		- bug fix, line 6311, replace 'unit8' by 'uint8'
+		- bug fix, line 6322, add v.setFilename(self._volume.getFilename())
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.duplicate()
+
+		- bug fix, lines 5529,5569 & 5599, replace addTrajectory(p1, p2, name) by addTrajectory(p1, p2, name=name)
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget._nameChanged()
+
+		- bug fix, line 1444, replace self._item.setName(self._name.getEditText()) by self._item.setName(name)
+
+	- widgets.abstractViewWidget.AbstractViewWidget.synchroniseToolRenamed()
+	- widgets.abstractViewWidget.AbstractViewWidget.renameTool()
+
+		- bug fix, call self._updateToolMenu() after tool renaming
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiObject()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBack()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcObject()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBack()
+
+		- lines 2231 & 2250, change parameters values of maskSegment2() and notMaskSegment2()
+
+	- dialog.dialogDicomImport.DialogDicomImport.convert()
+
+		- lines 242, 279 & 292, hide/show wait box
+
+	- dialog.dialogXmlDicom.DialogXmlDicom.__init__()
+
+		- line 122, remove the fixed width of the OK button
+
+	- dialog.dialogRegistration.DialogRegistration.execute()
+
+		- lines 475 & 499, hide/show wait box
+		- line 444, adaptative mask dilatation
+		- bug fix, line 467, add parent parameter to DialogManualRegistration
+		- bug fix, line 483, add deg=True to trf.setRotations()
+
+	- dialog.dialogRegistration.DialogRegistration.calcMask()
+
+		- lines 118 & 125, dilate parameter includes the additional types tuple and list
+
+	- dialog.dialogManualRegistration.DialogManualRegistration._resample()
+
+		- line 300, close dialog after resampling
+
+	- dialog.dialogManualRegistration.DialogManualRegistration._resample()
+
+		- bug fix, lines 312 & 323, cast images to float32
+
+	- dialog.dialogSplash.DialogSplash.__init__()
+
+		- line 222, add build date
+
+	- dialog.dialogSegmentation.DialogPriorBasedSegmentation.execute()
+
+		- line 1425, replace grey by gray
