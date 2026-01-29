@@ -16,6 +16,7 @@ Version history
 - :ref:`build12-01-2026`
 - :ref:`build20-01-2026`
 - :ref:`build29-01-2026`
+- :ref:`build30-01-2026`
 
 .. _version-increment-rules:
 Version increment rules
@@ -2836,3 +2837,52 @@ version 0.76.22, build 29/01/2026
 	- dialog.dialogSegmentation.DialogPriorBasedSegmentation.execute()
 
 		- line 1425, replace grey by gray
+
+.. _build30-01-2026:
+version 0.76.26, build 30/01/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- version-histrory.rst update
+	- rebuild sphinx documentation
+
+- **update plugins**
+
+	- SEEG Report, version 1.1
+	- SEEG Trajectories, version 1.2
+
+- **updated modules**
+
+	- core.sisypheTransform
+	- widgets.attributesWidgets
+
+- **updated classes**
+
+	- core.sisypheTransform.Sisyphe.SisypheApplyTransform
+
+		- update resampleMoving() method
+
+	- widgets.attributesWidgets.ListROIAttributesWidget
+
+		- update saveSisyphe() method
+		- update saveNifti() method
+		- update saveNRRD() method
+		- update saveMinc() method
+		- update saveNumpy() method
+		- update saveVTK() method
+
+- **updated methods**
+
+	- core.sisypheTransform.Sisyphe.SisypheApplyTransform.resampleMoving()
+
+		- line 3153, copy geometric tranform ID to resampled volume
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveSisyphe()
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveNifti()
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveNRRD()
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveMinc()
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveNumpy()
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveVTK()
+
+		- bug fix, replace item by roi
