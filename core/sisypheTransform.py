@@ -2414,7 +2414,7 @@ class SisypheApplyTransform(object):
     object -> SisypheApplyTransform
 
     Creation: 05/10/2021
-    Last revision: 22/05/2025
+    Last revision: 29/01/2025
     """
     __slots__ = ['_moving', '_roi', '_mesh', '_sl', '_transform', '_resample']
 
@@ -3149,6 +3149,11 @@ class SisypheApplyTransform(object):
                         # copy fixed volume  SisypheACPC image attribute to resampled volume
                         acpc = fixed.getACPC().copy()
                         resampled.acpc = acpc
+                else:
+                    # < Revision 29/01/2026
+                    if self._transform.hasID():
+                        resampled.setID(self._transform.getID())
+                    # Revision 29/01/2026 >
                 """
                     Update geometric transformations of moving, fixed and resampled volumes:
 

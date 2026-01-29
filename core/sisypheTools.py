@@ -7508,10 +7508,8 @@ class ToolWidgetCollection(object):
             PySisyphe tool collection file name
         """
         if not self.isEmpty():
-            if self.hasFilename():
-                filename = self._filename
-            if filename != '':
-                self.saveAs(filename)
+            if self.hasFilename(): filename = self._filename
+            if filename != '': self.saveAs(filename)
             else: raise AttributeError('filename attribute is empty.')
         else: raise AttributeError('ToolWidgetCollection instance is empty.')
 
