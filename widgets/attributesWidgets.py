@@ -2827,7 +2827,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListROIAttributesWidget
 
-    Last revision: 29/11/2025
+    Last revision: 29/01/2026
     """
 
     # Special method
@@ -3264,13 +3264,21 @@ class ListROIAttributesWidget(ListAttributesWidget):
             wait.setProgressVisibility(n > 1)
             ref = self.getViewCollection().getVolume()
             for roi in rois:
-                item = roi.getItem()
-                if not item.hasFilename(): filename = join(ref.getFilename(), roi.getName() + ref.getFileExt())
-                else: filename = item.getFilename()
+                # < Revision 29/01/2026
+                # item = roi.getItem()
+                # if not item.hasFilename(): filename = join(ref.getFilename(), roi.getName() + ref.getFileExt())
+                # else: filename = item.getFilename()
+                if not roi.hasFilename(): filename = join(ref.getFilename(), roi.getName() + ref.getFileExt())
+                else: filename = roi.getFilename()
+                # Revision 29/01/2026 >
                 wait.setInformationText('save {}'.format(basename(filename)))
                 wait.incCurrentProgressValue()
                 vol = SisypheVolume(roi)
                 ref.copyAttributesTo(vol)
+                # < Revision 29/01/2026
+                vol.acquisition.setModalityToOT()
+                vol.acquisition.setSequenceToMask()
+                # Revision 29/01/2026 >
                 vol.saveAs(filename)
                 self._logger.info('Save ROI {} to {}'.format(roi.getName(), filename))
             wait.close()
@@ -3289,11 +3297,17 @@ class ListROIAttributesWidget(ListAttributesWidget):
             wait.setProgressRange(0, n)
             wait.setProgressVisibility(n > 1)
             for roi in rois:
-                item = roi.getItem()
-                if not item.hasFilename():
+                # < Revision 29/01/2026
+                # item = roi.getItem()
+                # if not item.hasFilename():
+                #     path = self.getViewCollection().getVolume().getFilename()
+                #     filename = join(path, roi.getName() + getNiftiExt()[0])
+                # else: filename = item.getFilename()
+                if not roi.hasFilename():
                     path = self.getViewCollection().getVolume().getFilename()
                     filename = join(path, roi.getName() + getNiftiExt()[0])
-                else: filename = item.getFilename()
+                else: filename = roi.getFilename()
+                # Revision 29/01/2026 >
                 wait.setInformationText('save {}'.format(basename(filename)))
                 wait.incCurrentProgressValue()
                 roi.saveToNIFTI(filename)
@@ -3314,11 +3328,17 @@ class ListROIAttributesWidget(ListAttributesWidget):
             wait.setProgressRange(0, n)
             wait.setProgressVisibility(n > 1)
             for roi in rois:
-                item = roi.getItem()
-                if not item.hasFilename():
+                # < Revision 29/01/2026
+                # item = roi.getItem()
+                # if not item.hasFilename():
+                #     path = self.getViewCollection().getVolume().getFilename()
+                #     filename = join(path, roi.getName() + getNrrdExt()[0])
+                # else: filename = item.getFilename()
+                if not roi.hasFilename():
                     path = self.getViewCollection().getVolume().getFilename()
                     filename = join(path, roi.getName() + getNrrdExt()[0])
-                else: filename = item.getFilename()
+                else: filename = roi.getFilename()
+                # Revision 29/01/2026 >
                 wait.setInformationText('save {}'.format(basename(filename)))
                 wait.incCurrentProgressValue()
                 roi.saveToNRRD(filename)
@@ -3339,11 +3359,17 @@ class ListROIAttributesWidget(ListAttributesWidget):
             wait.setProgressRange(0, n)
             wait.setProgressVisibility(n > 1)
             for roi in rois:
-                item = roi.getItem()
-                if not item.hasFilename():
+                # < Revision 29/01/2026
+                # item = roi.getItem()
+                # if not item.hasFilename():
+                #     path = self.getViewCollection().getVolume().getFilename()
+                #     filename = join(path, roi.getName() + getMincExt()[0])
+                # else: filename = item.getFilename()
+                if not roi.hasFilename():
                     path = self.getViewCollection().getVolume().getFilename()
                     filename = join(path, roi.getName() + getMincExt()[0])
-                else: filename = item.getFilename()
+                else: filename = roi.getFilename()
+                # Revision 29/01/2026 >
                 wait.setInformationText('save {}'.format(basename(filename)))
                 wait.incCurrentProgressValue()
                 roi.saveToMINC(filename)
@@ -3364,11 +3390,17 @@ class ListROIAttributesWidget(ListAttributesWidget):
             wait.setProgressRange(0, n)
             wait.setProgressVisibility(n > 1)
             for roi in rois:
-                item = roi.getItem()
-                if not item.hasFilename():
+                # < Revision 29/01/2026
+                # item = roi.getItem()
+                # if not item.hasFilename():
+                #     path = self.getViewCollection().getVolume().getFilename()
+                #     filename = join(path, roi.getName() + getNumpyExt()[0])
+                # else: filename = item.getFilename()
+                if not roi.hasFilename():
                     path = self.getViewCollection().getVolume().getFilename()
                     filename = join(path, roi.getName() + getNumpyExt()[0])
-                else: filename = item.getFilename()
+                else: filename = roi.getFilename()
+                # Revision 29/01/2026 >
                 wait.setInformationText('save {}'.format(basename(filename)))
                 wait.incCurrentProgressValue()
                 roi.saveToNumpy(filename)
@@ -3389,11 +3421,17 @@ class ListROIAttributesWidget(ListAttributesWidget):
             wait.setProgressRange(0, n)
             wait.setProgressVisibility(n > 1)
             for roi in rois:
-                item = roi.getItem()
-                if not item.hasFilename():
+                # < Revision 29/01/2026
+                # item = roi.getItem()
+                # if not item.hasFilename():
+                #     path = self.getViewCollection().getVolume().getFilename()
+                #     filename = join(path, roi.getName() + getVtkExt()[0])
+                # else: filename = item.getFilename()
+                if not roi.hasFilename():
                     path = self.getViewCollection().getVolume().getFilename()
                     filename = join(path, roi.getName() + getVtkExt()[0])
-                else: filename = item.getFilename()
+                else: filename = roi.getFilename()
+                # Revision 29/01/2026 >
                 wait.setInformationText('save {}'.format(basename(filename)))
                 wait.incCurrentProgressValue()
                 roi.saveToVTK(filename)
