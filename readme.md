@@ -70,6 +70,6 @@ Download Binary archive
 [Download folder](https://mega.nz/folder/hKEBzRTR#MUodQFh4N8LeukE2hbkzNA)
 
 Direct link to binary archives:
-- Windows binary [PySisyphe 0.76.22 python 3.10 build 29-01-2026](https://mega.nz/file/1XsQkILb#dfyPOmjMrc-zFJK-m21o8sUECLcLW4yRstH7zunQIag)
-- Windows binary [PySisyphe 0.76.22 python 3.12 build 29-01-2026](https://mega.nz/file/5TkS2B5I#dTuFnKaTY9jx5T6KYnMao2PzsV66c_Qrm9Co57zaYyU)
+- Windows binary [PySisyphe 0.76.26 python 3.10 build 30-01-2026](https://mega.nz/file/RDU0QCZR#C6Yi_rdURQfC-GTCXFLdWw9kdvj-zEB4kY8_5E5B1W0)
+- Windows binary [PySisyphe 0.76.26 python 3.12 build 30-01-2026](https://mega.nz/file/QTEWzTRK#7_1muApf7ygkyvNDXrAZ0uVLt3NAHnBbsdY2dVNdgwc)
 - MacOS 11+ intel binary [PySisyphe 0.76.22 python 3.10 build 29-01-2026](https://mega.nz/file/4O0GETQB#0WzXe-MsMv0ZJSsefOTvV6Ss8RXHTqf3IAOraSv15ns)
