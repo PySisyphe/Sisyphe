@@ -98,7 +98,7 @@ class DialogResample(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Resample')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         self._strf = None
@@ -151,13 +151,17 @@ class DialogResample(QDialog):
         self._fixed.pressed.connect(self._getFixedID)
         self._layout.addWidget(self._list)
         self._layout.addWidget(self._fixed)
+        # noinspection PyUnresolvedReferences
         self._layout.setAlignment(self._fixed, Qt.AlignCenter)
 
         self._sizex = QSpinBox()
         self._sizey = QSpinBox()
         self._sizez = QSpinBox()
+        # noinspection PyUnresolvedReferences
         self._sizex.setAlignment(Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._sizey.setAlignment(Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._sizez.setAlignment(Qt.AlignCenter)
         self._sizex.setFixedWidth(100)
         self._sizey.setFixedWidth(100)
@@ -187,8 +191,11 @@ class DialogResample(QDialog):
         self._spacex = QDoubleSpinBox()
         self._spacey = QDoubleSpinBox()
         self._spacez = QDoubleSpinBox()
+        # noinspection PyUnresolvedReferences
         self._spacex.setAlignment(Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._spacey.setAlignment(Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._spacez.setAlignment(Qt.AlignCenter)
         self._spacex.setFixedWidth(100)
         self._spacey.setFixedWidth(100)
@@ -228,13 +235,17 @@ class DialogResample(QDialog):
         # noinspection PyUnresolvedReferences
         self._fixed2.pressed.connect(self._updateGeometryFromVolume)
         self._layout.addWidget(self._fixed2)
+        # noinspection PyUnresolvedReferences
         self._layout.setAlignment(self._fixed2, Qt.AlignHCenter)
 
         self._transx = QDoubleSpinBox()
         self._transy = QDoubleSpinBox()
         self._transz = QDoubleSpinBox()
+        # noinspection PyUnresolvedReferences
         self._transx.setAlignment(Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._transy.setAlignment(Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._transz.setAlignment(Qt.AlignCenter)
         self._transx.setDecimals(2)
         self._transy.setDecimals(2)
@@ -271,8 +282,11 @@ class DialogResample(QDialog):
         self._rotx = QDoubleSpinBox()
         self._roty = QDoubleSpinBox()
         self._rotz = QDoubleSpinBox()
+        # noinspection PyUnresolvedReferences
         self._rotx.setAlignment(Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._roty.setAlignment(Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._rotz.setAlignment(Qt.AlignCenter)
         self._rotx.setDecimals(2)
         self._roty.setDecimals(2)
@@ -400,6 +414,7 @@ class DialogResample(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)
