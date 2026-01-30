@@ -133,7 +133,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 11/01/2026
+    Last revision: 29/01/2026
     """
 
     # Class constants
@@ -1846,6 +1846,9 @@ class WindowSisyphe(QMainWindow):
         for d in glob(path):
             name = basename(d)
             if isdir(d) and name != '__pycache__':
+                # < Revision 30/01/2026
+                name = name.replace('_', ' ')
+                # Revision 30/01/2026 >
                 self._menu['plugins'].addAction(name)
                 self._menu['plugins'].setEnabled(True)
                 self._action['delplugin'].setEnabled(True)
@@ -1978,11 +1981,16 @@ class WindowSisyphe(QMainWindow):
             self._dialog.exec()
 
     def _openPlugin(self, action: QAction | None) -> None:
-        path = join(self.getMainDirectory(), 'plugins', action.text(), action.text() + '.py')
+        # < Revision 30/01/2026
+        mod = action.text()
+        mod = mod.replace(' ', '_')
+        # Revision 30/01/2026 >
+        path = join(self.getMainDirectory(), 'plugins', mod, mod + '.py')
         if exists(path):
-            m = ['Sisyphe', 'plugins', action.text(), action.text()]
+            m = ['Sisyphe', 'plugins', mod, mod]
             name = '.'.join(m)
-            try: mod = importlib.import_module(name)
+            try:
+                mod = importlib.import_module(name)
             except:
                 messageBox(self,
                            'Plugin...',
@@ -4783,15 +4791,18 @@ class WindowSisyphe(QMainWindow):
             self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-installplugin')
             # Revision 12/10/2025 >
             if plugin == '':
-                plugin = QFileDialog.getOpenFileName(self, 'Select a plugin zip archive...', getcwd(),
-                                                     filter='ZIP file (*.zip)')[0]
+                plugin = QFileDialog.getOpenFileName(self, 'Select a plugin zip archive...',
+                                                     getcwd(), filter='ZIP file (*.zip)')[0]
             if plugin:
-                chdir(dirname(plugin))
                 name = splitext(basename(plugin))[0]
                 if name not in self.getPluginList():
                     if is_zipfile(plugin):
                         with ZipFile(plugin, 'r') as fzip:
                             flist = fzip.namelist()
+                            # < Revision 30/01/2026
+                            if platform == 'win32':
+                                flist = [v.replace('/', '\\') for v in flist]
+                            # Revision 30/01/2026 >
                             r = join(name, '') in flist
                             r = r and (join(name, '__init__.py') in flist)
                             r = r and (join(name, '{}.py'.format(name)) in flist)
@@ -4845,7 +4856,9 @@ class WindowSisyphe(QMainWindow):
                                                               'Select plugin to remove...',
                                                               path, options=QFileDialog.ShowDirsOnly)
                     if plugin:
-                        chdir(dirname(plugin))
+                        # < Revision 29/01/2026
+                        plugin = abspath(plugin)
+                        # Revision 29/01/2026 >
                         if self.getMainDirectory() in plugin:
                             rmtree(plugin)
                             self._updatePluginsMenu()
