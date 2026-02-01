@@ -67,7 +67,7 @@ class DialogReorient(QDialog):
 
     QDialog -> DialogReorient
 
-    Last revision: 12/12/2025
+    Last revision: 31/01/2026
     """
 
     # Special method
@@ -238,8 +238,10 @@ class DialogReorient(QDialog):
         # < Revision 11/09/2025
         # cancel.setFixedWidth(100)
         # Revision 11/09/2025 >
-        cancel.setAutoDefault(True)
-        cancel.setDefault(True)
+        # < Revision 31/01/2026
+        # cancel.setAutoDefault(True)
+        # cancel.setDefault(True)
+        # Revision 31/01/2026 >
         self._execute = QPushButton('Resample')
         # < Revision 11/09/2025
         # self._execute.setFixedWidth(100)

@@ -55,7 +55,7 @@ class DialogManualRegistration(QDialog):
 
     QDialog -> DialogManualRegistration
 
-    Last revision: 26/01/2026
+    Last revision: 31/01/2026
     """
 
     # Special method
@@ -130,8 +130,10 @@ class DialogManualRegistration(QDialog):
         # < Revision 16/12/2025
         # self._cancel.setAutoDefault(True)
         # self._cancel.setDefault(True)
-        self._ok.setAutoDefault(True)
-        self._ok.setDefault(True)
+        # < Revision 31/01/2026
+        # self._ok.setAutoDefault(True)
+        # self._ok.setDefault(True)
+        # Revision 31/01/2026 >
         # Revision 16/12/2025 >
         self._interpolator = QComboBox(parent=self)
         settings = SisypheFunctionsSettings()

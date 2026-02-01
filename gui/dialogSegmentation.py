@@ -1857,7 +1857,7 @@ class DialogCorticalThickness(QDialog):
                 # noinspection PyUnusedLocal
                 rimg = None
                 fseg = self._select.getFilenames()['multiple']['Label map(s)'][i]
-                fgm = self._select.getFilenames()['multiple']['Grey matter map(s)'][i]
+                fgm = self._select.getFilenames()['multiple']['Gray matter map(s)'][i]
                 fwm = self._select.getFilenames()['multiple']['White matter map(s)'][i]
                 wait.buttonVisibilityOff()
                 wait.progressVisibilityOff()
@@ -1983,7 +1983,7 @@ class DialogRegistrationBasedSegmentation(QDialog):
 
     QDialog -> DialogRegistrationBasedSegmentation
 
-    Last revision 02/10/2025
+    Last revision 30/01/2026
     """
 
     # Special method
@@ -2029,7 +2029,7 @@ class DialogRegistrationBasedSegmentation(QDialog):
         self._volumeSelect = SynchronizedFilesSelectionWidget(parent=self,
                                                               single=None,
                                                               multiple=('T1',
-                                                                        'Grey matter map(s)',
+                                                                        'Gray matter map(s)',
                                                                         'White matter map(s)',
                                                                         'CSF map(s)'))
         self._volumeSelect.setSisypheVolumeFilters({'multiple': [True, True, True, True]})
@@ -2167,7 +2167,7 @@ class DialogRegistrationBasedSegmentation(QDialog):
             wait = DialogWait()
             wait.open()
             wait.setInformationText('Search for related tissue maps.')
-            wgm = self._volumeSelect.getSelectionWidget('Grey matter map(s)')
+            wgm = self._volumeSelect.getSelectionWidget('Gray matter map(s)')
             wwm = self._volumeSelect.getSelectionWidget('White matter map(s)')
             wcsf = self._volumeSelect.getSelectionWidget('CSF map(s)')
             filename = wt1.getFilenames()[-1]
@@ -2195,7 +2195,9 @@ class DialogRegistrationBasedSegmentation(QDialog):
             wait.close()
 
     def _structChange(self):
-        if self.isVisible():
+        # < Revision 30/01/2026
+        if self._structSelect.isEnabled():
+            # Revision 30/01/2026 >
             sw = self._structSelect.getSelectionWidget('Structure')
             tw = self._structSelect.getSelectionWidget('Template')
             if not sw.isEmpty():
@@ -2225,7 +2227,7 @@ class DialogRegistrationBasedSegmentation(QDialog):
         v = not ((sequence == 'T1') and (correction == 'No'))
         flags = self._volumeSelect.getAvailability()
         flags['multiple']['T1'] = True
-        flags['multiple']['Grey matter map(s)'] = v
+        flags['multiple']['Gray matter map(s)'] = v
         flags['multiple']['White matter map(s)'] = v
         flags['multiple']['CSF map(s)'] = v
         # < Revision 02/10/2025
@@ -2238,17 +2240,20 @@ class DialogRegistrationBasedSegmentation(QDialog):
         self._center(None)
 
     def _updateTemplateFilter(self):
-        sequence = self._settings.getParameterValue('RegistrationSequence')[0]
-        if sequence == 'T1': v = SisypheAcquisition.T1
-        elif sequence == 'GM': v = SisypheAcquisition.GM
-        elif sequence == 'WM': v = SisypheAcquisition.WM
-        else: v = SisypheAcquisition.CSF
-        flt = {'multiple': [(SisypheAcquisition.MASK,
-                             SisypheAcquisition.STRUCT,
-                             SisypheAcquisition.LABELS), v]}
-        self._structSelect.setSequenceFilters(flt)
-        self._structSelect.getSelectionWidget('Template').clear(signal=False)
-        self._center(None)
+        # < Revision 30/01/2026
+        if self._structSelect.isEnabled():
+            # Revision 30/01/2026 >
+            sequence = self._settings.getParameterValue('RegistrationSequence')[0]
+            if sequence == 'T1': v = SisypheAcquisition.T1
+            elif sequence == 'GM': v = SisypheAcquisition.GM
+            elif sequence == 'WM': v = SisypheAcquisition.WM
+            else: v = SisypheAcquisition.CSF
+            flt = {'multiple': [(SisypheAcquisition.MASK,
+                                 SisypheAcquisition.STRUCT,
+                                 SisypheAcquisition.LABELS), v]}
+            self._structSelect.setSequenceFilters(flt)
+            self._structSelect.getSelectionWidget('Template').clear(signal=False)
+            self._center(None)
 
     def _updateGlobalStageTransform(self):
         if self._settings.getParameterValue('LocalStage'):
@@ -2289,18 +2294,30 @@ class DialogRegistrationBasedSegmentation(QDialog):
             chdir(dirname(filename))
             settings = SisypheSettings(setting=filename)
             if settings.hasSection('RegistrationBasedSegmentation'):
+                # < Revision 30/01/2026
+                self._structSelect.setEnabled(False)
+                # Revision 30/01/2026 >
                 # Add structure
                 self._structSelect.clearall(signal=False)
                 struct = settings.getFieldValue('RegistrationBasedSegmentation', 'Struct')
                 if not isabs(struct): struct = abspath(join(getTemplatePath(), struct))
+                else: struct = abspath(struct)
                 if exists(struct):
                     self._structSelect.setFilenames({'single': {'Structure': struct}})
-                    if self.isVisible(): self._structSelect.getSelectionWidget('Template').clear(signal=False)
+                    self._structSelect.getSelectionWidget('Template').clear(signal=False)
                 # Add template
                 template = settings.getFieldValue('RegistrationBasedSegmentation', 'Template')
                 if not isabs(template): template = abspath(join(getTemplatePath(), template))
+                else: template = abspath(template)
                 if exists(template):
                     self._structSelect.setFilenames({'single': {'Template': template}})
+                # < Revision 30/01/2026
+                try:
+                    v = settings.getFieldValue('RegistrationBasedSegmentation', 'RegistrationSequence')[0]
+                    if v: self._settings.getParameterWidget('RegistrationSequence').setCurrentText(v)
+                    else: self._settings.getParameterWidget('RegistrationSequence').setCurrentText('T1')
+                except: self._settings.getParameterWidget('RegistrationSequence').setCurrentText('T1')
+                # Revision 30/01/2026 >
                 v = settings.getFieldValue('RegistrationBasedSegmentation', 'GlobalStageTransform1')[0]
                 self._settings.getParameterWidget('GlobalStageTransform1').setCurrentText(v)
                 v = settings.getFieldValue('RegistrationBasedSegmentation', 'GlobalStageTransform2')[0]
@@ -2315,7 +2332,6 @@ class DialogRegistrationBasedSegmentation(QDialog):
                 self._settings.getParameterWidget('StructureTissue').setCurrentText(v)
                 v = settings.getFieldValue('RegistrationBasedSegmentation', 'TissueCorrectionAlgorithm')[0]
                 self._settings.getParameterWidget('TissueCorrectionAlgorithm').setCurrentText(v)
-                self._structSelect.setVisible(False)
             else:
                 messageBox(self,
                            'Open registration based segmentation settings...',
@@ -2336,6 +2352,9 @@ class DialogRegistrationBasedSegmentation(QDialog):
             settings.newSection('RegistrationBasedSegmentation')
             settings.newField('RegistrationBasedSegmentation', 'Struct', attrs={'vartype': 'vol'})
             settings.newField('RegistrationBasedSegmentation', 'Template', attrs={'vartype': 'str'})
+            # < Revision 30/01/2026
+            settings.newField('RegistrationBasedSegmentation', 'RegistrationSequence', attrs={'vartype': 'lstr'})
+            # Revision 30/01/2026 >
             settings.newField('RegistrationBasedSegmentation', 'GlobalStageTransform1', attrs={'vartype': 'lstr'})
             settings.newField('RegistrationBasedSegmentation', 'GlobalStageTransform2', attrs={'vartype': 'lstr'})
             settings.newField('RegistrationBasedSegmentation', 'LocalStage', attrs={'vartype': 'bool'})
@@ -2345,6 +2364,9 @@ class DialogRegistrationBasedSegmentation(QDialog):
             settings.newField('RegistrationBasedSegmentation', 'TissueCorrectionAlgorithm', attrs={'vartype': 'lstr'})
             settings.setFieldValue('RegistrationBasedSegmentation', 'Struct', struct)
             settings.setFieldValue('RegistrationBasedSegmentation', 'Template', template)
+            # < Revision 30/01/2026
+            settings.setFieldValue('RegistrationBasedSegmentation', 'RegistrationSequence', self._settings.getParameterValue('RegistrationSequence'))
+            # Revision 30/01/2026 >
             settings.setFieldValue('RegistrationBasedSegmentation', 'GlobalStageTransform1', self._settings.getParameterValue('GlobalStageTransform1'))
             settings.setFieldValue('RegistrationBasedSegmentation', 'GlobalStageTransform2', self._settings.getParameterValue('GlobalStageTransform2'))
             settings.setFieldValue('RegistrationBasedSegmentation', 'LocalStage', self._settings.getParameterValue('LocalStage'))
@@ -2365,7 +2387,7 @@ class DialogRegistrationBasedSegmentation(QDialog):
         if self._volumeSelect.isReady() and self._structSelect.isReady():
             filenames = self._volumeSelect.getFilenames()
             filenames1 = filenames['multiple']['T1']
-            filenames2 = filenames['multiple']['Grey matter map(s)']
+            filenames2 = filenames['multiple']['Gray matter map(s)']
             filenames3 = filenames['multiple']['White matter map(s)']
             filenames4 = filenames['multiple']['CSF map(s)']
             sequence = self._settings.getParameterValue('RegistrationSequence')[0]
@@ -2881,3 +2903,9 @@ class DialogRegistrationBasedSegmentation(QDialog):
         self._updateAvailability()
         self._updateTemplateFilter()
         self._updateGlobalStageTransform()
+        # < Revision 30/01/2026
+        if not self._structSelect.isEnabled():
+            self._settings.settingsVisibilityOff()
+        self._structSelect.setEnabled(True)
+        # Revision 30/01/2026 >
+

@@ -156,7 +156,7 @@ class DialogWait(QDialog):
 
         self.setObjectName('DialogWait')
         if platform == 'win32':
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
             try: __main__.updateWindowTitleBarColor(self)
             except: pass
@@ -165,9 +165,9 @@ class DialogWait(QDialog):
         elif platform == 'darwin':
             # < Revision 17/07/2025
             # bug fix darwin platform, to get a dialog box with rounded border
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             self.setAttribute(Qt.WA_TranslucentBackground)
             from PyQt5.QtWidgets import QFrame
             self._frame = QFrame()
@@ -201,6 +201,7 @@ class DialogWait(QDialog):
         self._canvas = FigureCanvas(self._fig)
 
         self._info = QLabel(parent=self)
+        # noinspection PyUnresolvedReferences
         self._info.setAlignment(Qt.AlignCenter | Qt.AlignBottom)
         self._progress = QProgressBar(parent=self)
         self._progress.setFixedSize(200, 20)
@@ -864,7 +865,7 @@ class DialogWaitRegistration(DialogWait):
 
     QWidget - > QDialog -> DialogWait -> DialogWaitRegistration
 
-    Last revision: 03/06/2025
+    Last revision: 31/01/2026
     """
 
     # Special method
@@ -908,43 +909,53 @@ class DialogWaitRegistration(DialogWait):
 
     def setMultiResolutionIterations(self, v):
         if isinstance(v, list):
-            if self._nstages == 0: self._nstages = len(v)
-            if len(v) == self._nstages:
-                self._multir = v
-                # Reset attributes
-                self._clevel = None
-                self._cstage = None
-                self._time = None
-                self._pos = 0
-                self.setCurrentProgressValue(0)
-            else: raise ValueError('Incorrect number of items in list '
-                                   'parameter (set {} and must be {}).'.format(len(v), self._nstages))
+            # < Revision 31/01/2026
+            # if self._nstages == 0: self._nstages = len(v)
+            # if len(v) == self._nstages:
+            self._multir = v
+            # Reset attributes
+            self._clevel = None
+            self._cstage = None
+            self._time = None
+            self._pos = 0
+            self.setCurrentProgressValue(0)
+            # else: raise ValueError('Incorrect number of items in list '
+            #                        'parameter (set {} and must be {}).'.format(len(v), self._nstages))
+            # Revision 31/01/2026 >
         else: raise TypeError('parameter type {} is not list.'.format(type(v)))
 
     def setStages(self, v):
         if isinstance(v, list):
-            if self._nstages == 0: self._nstages = len(v)
-            if len(v) == self._nstages: self._stages = v
-            else: raise ValueError('Incorrect number of items in list '
-                                   'parameter (set {} and must be {}).'.format(len(v), self._nstages))
+            # < Revision 31/01/2026
+            # if self._nstages == 0: self._nstages = len(v)
+            # if len(v) == self._nstages: self._stages = v
+            self._nstages = len(v)
+            self._stages = v
+            # else: raise ValueError('Incorrect number of items in list '
+            #                        'parameter (set {} and must be {}).'.format(len(v), self._nstages))
+            # Revision 31/01/2026 >
         else: raise TypeError('parameter type {} is not list.'.format(type(v)))
 
     def setProgressByLevel(self, v):
         if isinstance(v, list):
-            if self._nstages == 0:
-                self._nstages = len(v)
-            if len(v) == self._nstages:
-                self._progbylevel = array(v)
-            else: raise ValueError('Incorrect number of items in list '
-                                   'parameter (set {} and must be {}).'.format(len(v), self._nstages))
+            # < Revision 31/01/2026
+            # if self._nstages == 0: self._nstages = len(v)
+            # if len(v) == self._nstages: self._progbylevel = array(v)
+            self._progbylevel = array(v)
+            # else: raise ValueError('Incorrect number of items in list '
+            #                        'parameter (set {} and must be {}).'.format(len(v), self._nstages))
+            # Revision 31/01/2026 >
         else: raise TypeError('parameter type {} is not list.'.format(type(v)))
 
     def setConvergenceThreshold(self, v):
         if isinstance(v, list):
-            if self._nstages == 0: self._nstages = len(v)
-            if len(v) == self._nstages: self._conv = v
-            else: raise ValueError('Incorrect number of items in list '
-                                   'parameter (set {} and must be {}).'.format(len(v), self._nstages))
+            # < Revision 31/01/2026
+            # if self._nstages == 0: self._nstages = len(v)
+            # if len(v) == self._nstages: self._conv = v
+            self._conv = v
+            # else: raise ValueError('Incorrect number of items in list '
+            #                        'parameter (set {} and must be {}).'.format(len(v), self._nstages))
+            # Revision 31/01/2026 >
         else: raise TypeError('parameter type {} is not list.'.format(type(v)))
 
     def setAntsRegistrationProgress(self, stdout):

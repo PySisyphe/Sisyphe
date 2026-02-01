@@ -2,7 +2,7 @@
 External packages/modules
 -------------------------
 
-    - ANTs, image registration, http://stnava.github.io/ANTs/
+    - ANTs, image registration, https://stnava.github.io/ANTs/
     - Numpy, scientific computing, https://numpy.org/
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
     - SimpleITK, medical image processing, https://simpleitk.org/
@@ -99,7 +99,7 @@ class DialogDeepTumorSegmentation(QDialog):
         # Init window
 
         self.setWindowTitle('U-net tumor segmentation')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -138,6 +138,7 @@ class DialogDeepTumorSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -165,6 +166,7 @@ class DialogDeepTumorSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
@@ -365,7 +367,7 @@ class DialogDeepHippocampusSegmentation(QDialog):
         # Init window
 
         self.setWindowTitle('U-net hippocampus segmentation')
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -396,6 +398,7 @@ class DialogDeepHippocampusSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -423,6 +426,7 @@ class DialogDeepHippocampusSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
@@ -480,7 +484,7 @@ class DialogDeepHippocampusSegmentation(QDialog):
                                 messageBox(self,
                                            title=self.windowTitle(),
                                            text='{} U-net hippocampus segmentation error: '
-                                                '{}\n{}.'.format(flair.getBasename(), type(err), str(err)))
+                                                '{}\n{}.'.format(t1.getBasename(), type(err), str(err)))
                                 return
                         finally:
                             # Remove temporary std::cout file
@@ -563,7 +567,7 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
         # Init window
 
         self.setWindowTitle('U-net medial temporal segmentation')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -599,6 +603,7 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -626,6 +631,7 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
@@ -700,7 +706,7 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                             messageBox(self,
                                        title=self.windowTitle(),
                                        text='{} U-net temporal segmentation error: '
-                                            '{}\n{}.'.format(flair.getBasename(), type(err), str(err)))
+                                            '{}\n{}.'.format(t1.getBasename(), type(err), str(err)))
                             return
                     finally:
                         # Remove temporary std::cout file
@@ -872,7 +878,7 @@ class DialogDeepLesionSegmentation(QDialog):
         # Init window
 
         self.setWindowTitle('U-net lesion segmentation')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -903,6 +909,7 @@ class DialogDeepLesionSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -930,6 +937,7 @@ class DialogDeepLesionSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
@@ -987,7 +995,7 @@ class DialogDeepLesionSegmentation(QDialog):
                                 messageBox(self,
                                            title=self.windowTitle(),
                                            text='{} U-net lesion segmentation error: '
-                                                '{}\n{}.'.format(flair.getBasename(), type(err), str(err)))
+                                                '{}\n{}.'.format(t1.getBasename(), type(err), str(err)))
                                 return
                         finally:
                             # Remove temporary std::cout file
@@ -1068,7 +1076,7 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
         # Init window
 
         self.setWindowTitle('U-net white matter hyper-intensities segmentation')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1109,6 +1117,7 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -1136,6 +1145,7 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
@@ -1302,6 +1312,7 @@ class DialogDeepTOFVesselSegmentation(QDialog):
     QDialog -> DialogDeepTOFVesselSegmentation
 
     Creation: 22/10/2024
+    Last revision: 31/01/2026
     """
 
     # Class method
@@ -1320,7 +1331,7 @@ class DialogDeepTOFVesselSegmentation(QDialog):
         # Init window
 
         self.setWindowTitle('U-net TOF vessel segmentation')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1351,6 +1362,7 @@ class DialogDeepTOFVesselSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -1378,6 +1390,7 @@ class DialogDeepTOFVesselSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
@@ -1429,13 +1442,16 @@ class DialogDeepTOFVesselSegmentation(QDialog):
                                     wait.progressVisibilityOff()
                                 if wait.getStopped(): extractor.terminate()
                         except Exception as err:
-                            if flt.is_alive(): flt.terminate()
+                            # < Revision 31/01/2026
+                            # if flt.is_alive(): flt.terminate()
+                            if extractor.is_alive(): extractor.terminate()
+                            # Revision 31/01/2026 >
                             wait.hide()
                             if not wait.getStopped():
                                 messageBox(self,
                                            title=self.windowTitle(),
                                            text='{} U-net vessel segmentation error: '
-                                                '{}\n{}.'.format(flair.getBasename(), type(err), str(err)))
+                                                '{}\n{}.'.format(tof.getBasename(), type(err), str(err)))
                                 return
                         finally:
                             # Remove temporary std::cout file
@@ -1498,7 +1514,7 @@ class DialogDeepTissueSegmentation(QDialog):
     QDialog -> DialogDeepTissueSegmentation
 
     Creation: 03/06/2025
-    Last revision: 03/06/2025
+    Last revision: 31/01/2025
     """
 
     # Class method
@@ -1517,7 +1533,7 @@ class DialogDeepTissueSegmentation(QDialog):
         # Init window
 
         self.setWindowTitle('U-net tissue segmentation')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1548,6 +1564,7 @@ class DialogDeepTissueSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -1575,6 +1592,7 @@ class DialogDeepTissueSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
@@ -1632,7 +1650,7 @@ class DialogDeepTissueSegmentation(QDialog):
                                 messageBox(self,
                                            title=self.windowTitle(),
                                            text='{} U-net tissue segmentation error: '
-                                                '{}\n{}.'.format(flair.getBasename(), type(err), str(err)))
+                                                '{}\n{}.'.format(t1.getBasename(), type(err), str(err)))
                                 return
                         finally:
                             # Remove temporary std::cout file
@@ -1711,9 +1729,20 @@ class DialogDeepTissueSegmentation(QDialog):
                                         v2.copyFromNumpyArray(r['prb'][j], spacing=t1.getSpacing(), defaultshape=False)
                                         v2.copyAttributesFrom(t1, display=False, slope=False)
                                         v2.acquisition.setModalityToOT()
-                                        v2.acquisition.setSequenceToStructMap()
+                                        # < Revision 31/01/2026
+                                        # v2.acquisition.setSequenceToStructMap()
+                                        seq = lbls2[j]
+                                        if seq == 'csf': v2.acquisition.setSequenceToCerebroSpinalFluidMap()
+                                        elif seq == 'gm': v2.acquisition.setSequenceToGreyMatterMap()
+                                        elif seq == 'wm': v2.acquisition.setSequenceToWhiteMatterMap()
+                                        elif seq == 'scgm': v2.acquisition.setSequenceToSubCorticalGreyMatterMap()
+                                        elif seq == 'bstem': v2.acquisition.setSequenceToBrainstemMap()
+                                        elif seq == 'crbl': v2.acquisition.setSequenceToCerebellumMap()
+                                        else: v2.acquisition.setSequenceToStructMap()
                                         v2.setFilename(filename)
-                                        v2.setFilenameSuffix(lbls2[j])
+                                        # v2.setFilenameSuffix(lbls2[j])
+                                        v2.setFilenameSuffix(seq)
+                                        # Revision 31/01/2026 >
                                         wait.setInformationText('Save {}...'.format(v2.getBasename()))
                                         v2.save()
                     wait.close()
