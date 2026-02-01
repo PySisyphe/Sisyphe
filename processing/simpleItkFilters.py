@@ -7,6 +7,8 @@ External packages/modules
     - scikit-learn, Machine Learning, https://scikit-learn.org/stable/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from math import sqrt, log, ceil
 
 from numpy import mean
@@ -46,6 +48,13 @@ from Sisyphe.core.sisypheImage import SisypheImage
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheImage import SisypheBinaryImage
 from Sisyphe.core.sisypheROI import SisypheROI
+
+# to avoid ImportError due to circular imports
+if TYPE_CHECKING:
+    from Sisyphe.core.sisypheImage import SisypheImage
+    from Sisyphe.core.sisypheVolume import SisypheVolume
+    from Sisyphe.gui.dialogWait import DialogWait
+
 
 __all__ = ['biasFieldCorrection',
            'kmeans',
@@ -93,18 +102,58 @@ Functions
 """
 
 
-def biasFieldCorrection(img, shrink=1, bins=200, biasfwhm=0.15, convergence=0.001, levels=4,
-                        splineorder=3, filternoise=0.01, points=4, niter=50, auto=True, wait=None):
+def biasFieldCorrection(img: SisypheVolume,
+                        shrink: int = 1,
+                        bins: int = 200,
+                        biasfwhm: float = 0.15,
+                        convergence: float = 0.001,
+                        levels: int = 4,
+                        splineorder: int = 3,
+                        filternoise: float = 0.01,
+                        points: int = 4,
+                        niter: int = 50,
+                        auto: bool = True,
+                        wait: DialogWait | None = None) -> tuple[SisypheVolume | SisypheImage | None, SisypheVolume | SisypheImage | None]:
     """
-        N4BiasFieldCorrectionImageFilter default parameter values
-        Shrink factor 1
-        Bias Field FWHM 0.15
-        Spline Order 3
-        Wiener filter noise 0.01
-        Convergence Threshold 0.001
-        Number of histogram bins 200
-        Number of control points (4, 4, 4)
-        Maximum number of iterations (50, 50, 50, 50)
+    Computes bias field correction of MR image(s).
+
+    Parameters
+    ----------
+    img : SisypheVolume
+        volume to correct for nonuniform intensity
+    shrink : int (optional)
+        perform the correction on a subsampled image (size / shrink factor,  default 1 no shrinking).
+    bins : int (optional)
+        number of histogram bins (default 200)
+    biasfwhm : float (optional)
+        bias field FWHM, full width at half maximum parameter characterizing the width of the gaussian deconvolution
+        (default 0.15)
+    convergence : float (optional)
+        convergence threshold, coefficient of variation of the difference image between the current bias field estimate
+         and the previous estimate (default 0.001)
+    levels : int (optional)
+        number of multiresolution levels (default 4)
+    splineorder : int (optional)
+        bspline order used to model bias field
+    filternoise : float (optional)
+        set the noise estimate defining the Wiener filter (default 0.01)
+    points : int (optional)
+        number of control points for spline fitting (default 4)
+    niter : int (optional)
+        maximum number of iterations by level (default 50)
+    auto : bool (optional)
+        automatic mask processing (default True)
+    wait : DialogWait | None (optional)
+        progress dialog (default None)
+
+    Returns
+    -------
+    tuple[SisypheVolume | SisypheImage | None, SisypheVolume | SisypheImage | None]
+
+        - first SisypheVolume, bias field corrected volume
+        - second SisypheVolume, bias field volume
+
+    Last revision: 01/02/2026
     """
     filtr = sitkBiasFieldCorrection()
     filtr.SetNumberOfHistogramBins(bins)
@@ -162,6 +211,9 @@ def biasFieldCorrection(img, shrink=1, bins=200, biasfwhm=0.15, convergence=0.00
     if wait is not None:
         stop = wait.getStopped()
         wait.buttonVisibilityOff()
+        # < Revision 01/02/2026
+        wait.setCurrentProgressValueToMaximum()
+        # Revision 01/02/2026 >
 
     if not stop:
         bimg = filtr.GetLogBiasFieldAsImage(refimg)
