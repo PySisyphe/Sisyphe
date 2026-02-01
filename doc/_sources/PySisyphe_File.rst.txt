@@ -83,7 +83,7 @@ Left-click the last submenu, **Clear**, to clear the list.
 Open user folder
 ----------------
 
-Open the PySisyphe user folder ($User/.PySisyphe) in the File Manager (Windows) or Finder (MacOS).
+Open the PySisyphe user folder (~/.PySisyphe) in the File Manager (Windows) or Finder (MacOS).
 
 This folder is used to store:
 

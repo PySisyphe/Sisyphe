@@ -291,7 +291,7 @@ Left-click **Cancel** button to close dialog box without segmentation.
 Deep-learning Tissue segmenation
 --------------------------------
 
-This menu is used to compute tissue segmentation (grey matter, white matter and cerebro-spinal fluid) using deep-learning U-net pre-trained model. This function serves as an alternative to the mixture model approach (:ref:`menu-section-atropos`). The segmentation is saved as a label volume. PySisyphe uses the `ANTsPyNet <https://github.com/ANTsX/ANTsPyNet>`_ library implemenentation.
+This menu is used to compute tissue segmentation (gray matter, white matter and cerebro-spinal fluid) using deep-learning U-net pre-trained model. This function serves as an alternative to the mixture model approach (:ref:`menu-section-atropos`). The segmentation is saved as a label volume. PySisyphe uses the `ANTsPyNet <https://github.com/ANTsX/ANTsPyNet>`_ library implemenentation.
 
 Use the :ref:`widgets-section-multi-file` widget at the top to select **T1** PySisyphe volume(s) to be segmented.
 

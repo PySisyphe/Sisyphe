@@ -149,8 +149,9 @@ Orthogonal view widget includes a vertical icon bar to the left:
 	- **Image attributes**, image attributes (ID, matrix size, field-of-view, voxel spacing, datatype) at top-right corner.
 	- **Acquisition attributes**, acquisition attributes (orientation, modality, sequence, date of scan) at bottom-left.
 	- **World coordinate**, world coordinates in mm at mouse position.
-	- **Leksell coordinate**, Leksell space coordinates at mouse position (if fiducial markers of a Leksell stereotaxic frame are first detected).
 	- **AC-PC**, relative AC-PC world coordinates in mm at mouse position (if anterior and posterior commissures are selected first).
+	- **ICBM coordinate**, MNI space coordinates at mouse position (if spatial normalization has been performed for the current volume).
+	- **Leksell coordinate**, Leksell space coordinates at mouse position (if fiducial markers of a Leksell stereotaxic frame are first detected).
 	- **Voxel value**, scalar value of voxel at mouse position.
 	- **Voxel overlay value**, overlay scalar value of voxel at mouse position.
 	- **Orientation marker shape**, Cube with **L**-**R**-**S**-**I**-**A**-**P** labels on its faces, 3D brain, 3D head, 3D bust, 3D body or 3D axes.

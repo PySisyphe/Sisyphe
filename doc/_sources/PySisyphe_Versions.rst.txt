@@ -16,7 +16,7 @@ Version history
 - :ref:`build12-01-2026`
 - :ref:`build20-01-2026`
 - :ref:`build29-01-2026`
-- :ref:`build30-01-2026`
+- :ref:`build01-02-2026`
 
 .. _version-increment-rules:
 Version increment rules
@@ -2530,7 +2530,7 @@ version 0.76.22, build 29/01/2026
 	- scikit-image, from 0.25.2 to 0.26.0
 	- scikit-learn, from 1.6.1 to 1.8.0
 
-- **updated file**
+- **updated files**
 
 	- update requirements.txt file for upgraded modules
 	- settings/functions.xml
@@ -2838,14 +2838,39 @@ version 0.76.22, build 29/01/2026
 
 		- line 1425, replace grey by gray
 
-.. _build30-01-2026:
-version 0.76.26, build 30/01/2026
+.. _build01-02-2026:
+version 0.78.08, build 01/02/2026
 ---------------------------------
 
 - **updated html documentation**
 	
 	- version-histrory.rst update
+	- PySisyphe_Segmentation.rst
+	- PySisyphe_sliceview.rst
+	- PySisyphe_orthogonalview.rst
+	- PySisyphe_synchronizedview.rst
+	- PySisyphe_multicomponentview.rst
+	- PySisyphe_Registration.rst
+	- PySisyphe_File.rst
 	- rebuild sphinx documentation
+
+- **updated files**
+
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_accumbens area left.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_accumbens area right.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_amygdala left.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_amygdala right.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_caudate left.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_caudate right.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_hippocampus left.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_hippocampus right.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_pallidum left.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_pallidum right.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_putamen left.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_putamen right.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_thalamus proper left.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_thalamus proper right.xml
+	- /settings/functions.xml
 
 - **update plugins**
 
@@ -2855,13 +2880,76 @@ version 0.76.26, build 30/01/2026
 - **updated modules**
 
 	- core.sisypheTransform
+	- core.sisypheDicom
+	- core.sisypheVolume
+	- processing.simpleItkFilters
+	- gui.windowSisyphe
+	- gui.dialogSegmentation
+	- gui.dialogDeepSegmentation
+	- gui.dialogWait
+	- gui.dialogManualRegistration
+	- gui.dialogReorient
 	- widgets.attributesWidgets
+	- widgets.toolBarThumnail
+	- widgets.sliceViewWidgets
+
+- **updated function**
+
+	- processing.simpleItkFilters.biasFieldCorrection()
+
+		- line 172, change number of iteration parameter 
 
 - **updated classes**
 
 	- core.sisypheTransform.Sisyphe.SisypheApplyTransform
 
 		- update resampleMoving() method
+
+	- core.sisypheDicom.XmlDicom
+
+		- update getDataElement() method
+
+	- core.sisypheVolume.SisypheVolume
+
+		- update getICBMfromWorld() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update _updatePluginsMenu() method
+		- update _openPluginsMenu() method
+		- update _addPlugin() method
+		- update _removePlugin() method
+
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation
+
+		- update load() method
+		- update save() method
+		- update showEvent() method
+		- update _structChange() method
+		- update _updateTemplateFilter() method
+
+	- gui.dialogDeepSegmentation.DialogDeepTOFVesselSegmentation
+
+		- update execute() method
+
+	- gui.dialogDeepSegmentation.DialogDeepTissueSegmentation
+
+		- update execute() method
+
+	- gui.dialogWait.DialogWaitRegistration
+
+		- update setStages() method
+		- update setProgressByLevel() method
+		- update setConvergenceThreshold() method
+		- update setMultiResolutionIterations() method
+
+	- gui.dialogManualRegistration.DialogManualRegistration
+
+		- update __init__() method
+
+	- gui.dialogReorient.DialogReorient
+
+		- update __init__() method
 
 	- widgets.attributesWidgets.ListROIAttributesWidget
 
@@ -2872,11 +2960,82 @@ version 0.76.26, build 30/01/2026
 		- update saveNumpy() method
 		- update saveVTK() method
 
+	- widgets.toolBarThumnail.ToolBarThumbnail
+
+		- update open() method
+		- update addVolume() method
+		- update saveSelected() method
+		- update saveSelectedAs() method
+		- update editAttributesSelected() method
+		- update dropEvent() method
+
+	- widgets.sliceViewWidgets.SliceViewWidget
+
+		- update _getInfoValuesText() method
+
 - **updated methods**
 
 	- core.sisypheTransform.Sisyphe.SisypheApplyTransform.resampleMoving()
 
 		- line 3153, copy geometric tranform ID to resampled volume
+
+	- core.sisypheDicom.XmlDicom.getDataElement()
+
+		- lines 1536 & 1548, try to split with ' ' if there is no separator '|''
+
+	- core.sisypheVolume.SisypheVolume.getICBMfromWorld()
+
+		- add the mni parameter (bool) to indicate whether or not to take the MNI origin (x=98.0,y=134.0,z=72.0) into account
+
+	- gui.windowSisyphe.WindowSisyphe._updatePluginsMenu()
+
+		- replace '_' with space in the plugin name
+
+	- gui.windowSisyphe.WindowSisyphe._openPluginsMenu()
+
+		- replace space with '_' in the plugin name
+
+	- gui.windowSisyphe.WindowSisyphe._addPlugin()
+
+		- bug fix windows platform, line 4801, replace '/' with '\\' in path strings
+	
+	- gui.windowSisyphe.WindowSisyphe._removePlugin()
+
+		- bug fix windows platform, line 4858, replace '/' with '\\' in path string using abspath
+
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation.load()
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation.save()
+
+		- add 'RegistrationSequence' XML field
+
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation.showEvent()
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation._structChange()
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation._updateTemplateFilter()
+
+		- bug fix, add self._structSelect.isEnabled() condition
+
+	- gui.dialogDeepSegmentation.DialogDeepTOFVesselSegmentation.execute()
+
+		- bug fix, line 1444, replace flt with extractor
+
+	- gui.dialogDeepSegmentation.DialogDeepTissueSegmentation.execute()
+
+		- line 1732, replace generic “struct” sequence with tissue sequences
+
+	- gui.dialogWait.DialogWaitRegistration.setStages()
+	- gui.dialogWait.DialogWaitRegistration.setProgressByLevel()
+	- gui.dialogWait.DialogWaitRegistration.setConvergenceThreshold()
+	- gui.dialogWait.DialogWaitRegistration.setMultiResolutionIterations()
+
+		- bug fix, remove unnecessary conditions
+
+	- gui.dialogManualRegistration.DialogManualRegistration.__init__()
+
+		- self._ok is no longer the default button
+
+	- gui.dialogReorient.DialogReorient.__init__()
+
+		- self._cancel is no longer the default button
 
 	- widgets.attributesWidgets.ListROIAttributesWidget.saveSisyphe()
 	- widgets.attributesWidgets.ListROIAttributesWidget.saveNifti()
@@ -2886,3 +3045,18 @@ version 0.76.26, build 30/01/2026
 	- widgets.attributesWidgets.ListROIAttributesWidget.saveVTK()
 
 		- bug fix, replace item by roi
+
+	- widgets.toolBarThumnail.ToolBarThumbnail.open()
+	- widgets.toolBarThumnail.ToolBarThumbnail.addVolume()
+	- widgets.toolBarThumnail.ToolBarThumbnail.saveSelected()
+	- widgets.toolBarThumnail.ToolBarThumbnail.saveSelectedAs()
+	- widgets.toolBarThumnail.ToolBarThumbnail.editAttributesSelected()
+	- widgets.toolBarThumnail.ToolBarThumbnail.dropEvent()
+
+		- replace messageBox parent (main window rather than self)
+
+	- widgets.sliceViewWidgets.SliceViewWidget._getInfoValuesText()
+
+		- display Leksell coordinates if self._action['showframe'].isChecked()
+		- display ICBM coordinates if self._action['showicbm'].isChecked()
+		- take the MNI origin (x=98.0, y=134.0, z=72.0) into account when calculating ICBM coordinates

@@ -128,6 +128,7 @@ Use the file selection widget at the top to select the **Fixed** PySisyphe stere
 Use the files selection widget below to select the **Moving** PySisyphe stereotacitc volume(s) of the same patient with the same Leksell frame.
 
 Toggle **Resample...** button to show/hide resampling settings:
+
 - Select the interpolation algorithm (*linear*, *nearest neighbor*, *b-spline*, *gaussian*, *hamming windowed sinc*, *cosine windowed sinc*, *welch windowed sinc*, *lanczos windowed sinc*, *blackman windowed sinc*) used to resample the moving volume.
 - Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the **prefix** and **suffix** parameters.
 
@@ -256,6 +257,19 @@ ICBM spatial normalization
 --------------------------
 
 This menu is used for spatial normalization in the MNI-ICBM152 atlas space (see `ICBM152 page <https://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009>`_) of a moving volume using ANTs registration methods. Symmetric and asymmetric versions of MNI-ICBM152 templates are provided for various modalities (MR, CT, SPECT, and PET) and sequences (T1, T2, PD, FLAIR, TOF, GM, WM, and CSF). These templates are used as fixed volumes in coregistration processing.
+
+.. admonition::
+	MNI-ICBM152 atlas space
+
+	The Montreal Neurological Institute (MNI) created a series of images similar to the Talairac brain that were based on the average of many normal magnetic resonance imaging (MRI) scans. The International Consortium of Brain Mapping (ICBM) has adopted these templates as an international standard.
+
+	The first MNI template, MNI305, was created using a two-stage process. The first stage was manual scaling to the Talairach brain: 241 brains were oriented and scaled to the Talairach brain using manually defined landmarks. The first-pass image was the average of these reoriented/rescaled brains. The MNI305 template is the average of 305 normal MRI scans that have been normalized to the first-pass image by an automated linear normalization. 
+
+	The current standard MNI template is known as the ICBM152, and is based on 152 brains that were registered to MNI305.
+
+	Although the MNI template is based on the Talairach brain, the two brains are not exactly the same size or shape. This is probably because the Talairach atlas brain is a rather odd shape, and it is difficult to match a standard brain to the atlas brain using an affine transform. As a result the MNI brains are slightly larger (in particular higher, deeper and longer) than the Talairach brain. The differences are larger as you get further from the middle of the brain, towards the outside, and are at maximum in the order of 10 mm. In particular, MNI brain is ~5mm taller (from the anterior commissure to the top of the brain) and ~5mm longer. The temporal lobes go about 10 mm deeper in MNI. The origin of the MNI space does not project exactly onto the anterior commissure, but approximately 4 mm above it.
+
+	These atlases are all oriented according to the RAS+ convention: left (-) to right (+) on the x-axis, posterior (-) to anterior (+) on the y-axis, and inferior (-) to superior (+) on the z-axis. The same convention has been adopted for the PySisyphe image format.
 
 The **ICBM normalization** dialog box is displayed.
 
