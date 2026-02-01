@@ -113,9 +113,12 @@ def messageBox(parent: QWidget | None = None,
     """
     msgbox = QMessageBox(parent)
     msgbox.setWindowTitle(title)
+    # noinspection PyTypeChecker
     msgbox.setIcon(icon)
     msgbox.setText(text)
+    # noinspection PyTypeChecker
     msgbox.setStandardButtons(buttons)
+    # noinspection PyTypeChecker
     msgbox.setDefaultButton(default)
     if platform == 'win32':
         try: __main__.updateWindowTitleBarColor(msgbox)
@@ -303,12 +306,12 @@ class RoundedButton(QPushButton):
         # Icons
 
         self._icn = QIcon()
-        if self._icn0 != '' and exists(self._icn0): self._icn.addPixmap(QPixmap(self._icn0),
-                                                                        mode=QIcon.Normal,
-                                                                        state=QIcon.Off)
-        if self._icn1 != '' and exists(self._icn1): self._icn.addPixmap(QPixmap(self._icn1),
-                                                                        mode=QIcon.Normal,
-                                                                        state=QIcon.On)
+        if self._icn0 != '' and exists(self._icn0):
+            # noinspection PyUnresolvedReferences
+            self._icn.addPixmap(QPixmap(self._icn0), mode=QIcon.Normal, state=QIcon.Off)
+        if self._icn1 != '' and exists(self._icn1):
+            # noinspection PyUnresolvedReferences
+            self._icn.addPixmap(QPixmap(self._icn1), mode=QIcon.Normal, state=QIcon.On)
         self.setIcon(self._icn)
         size = self._size - 16
         self.setIconSize(QSize(size, size))
@@ -696,10 +699,11 @@ class MenuPushButton(QPushButton):
         super().__init__(txt, parent)
 
         self._menu = QMenu(self)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menu.setAttribute(Qt.WA_TranslucentBackground, True)
 
         # noinspection PyUnresolvedReferences
@@ -878,6 +882,7 @@ class LabeledLineEdit(QWidget):
         super().mousePressEvent(event)
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
+        # noinspection PyUnresolvedReferences
         if event.type() == QEvent.MouseButtonPress:
             # Redirect child press event to self
             # noinspection PyTypeChecker
@@ -1129,6 +1134,7 @@ class LabeledSlider(QWidget):
     _percent    bool, display percent value
     """
 
+    # noinspection PyUnresolvedReferences
     def __init__(self,
                  orient: Qt.Orientations = Qt.Horizontal,
                  title: str = '',
@@ -1560,7 +1566,7 @@ class VisibilityLabel(QLabel):
     def setVisibilitySateIcon(self, v: bool) -> None:
         if isinstance(v, bool):
             self._visible = v
-            if v is True:
+            if v:
                 self.setPixmap(self._iconon)
                 self.setToolTip('Click to hide.')
             else:
@@ -1663,7 +1669,7 @@ class LockLabel(QLabel):
     def setLockStateIcon(self, v: bool) -> None:
         if isinstance(v, bool):
             self._locked = v
-            if v is True:
+            if v:
                 self.setPixmap(self._lock)
                 self.setToolTip('Click to unlock.')
             else:
@@ -1753,11 +1759,11 @@ class OpacityPushButton(QLabel):
         super().__init__(parent)
 
         self._popup: QMenu = QMenu(self)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
 
         self._label: QLabel = QLabel(self._popup)
@@ -1766,10 +1772,10 @@ class OpacityPushButton(QLabel):
         # < Revision 20/03/2025
         self._label.setFixedWidth(60)
         # Revision 20/03/2025 >
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._label.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._slider: QSlider = QSlider(Qt.Vertical, parent=self._popup)
         self._slider.setFixedHeight(80)
         # noinspection PyTypeChecker
@@ -1838,6 +1844,7 @@ class OpacityPushButton(QLabel):
         super().mousePressEvent(event)
         # noinspection PyUnresolvedReferences
         self.pressed.emit()
+        # noinspection PyUnresolvedReferences
         if event.button() == Qt.LeftButton:
             # < Revision 27/10/2024
             # use popup instead of exec
@@ -1917,11 +1924,11 @@ class WidthPushButton(QLabel):
         self._vmax: float = vmin + (step * n)
 
         self._popup: QMenu = QMenu(self)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
 
         self._label: QLabel = QLabel(self._popup)
@@ -1930,10 +1937,10 @@ class WidthPushButton(QLabel):
         # < Revision 20/03/2025
         self._label.setFixedWidth(60)
         # Revision 20/03/2025 >
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._label.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._slider: QSlider = QSlider(Qt.Vertical, parent=self._popup)
         self._slider.setFixedHeight(80)
         # noinspection PyTypeChecker
@@ -2036,6 +2043,7 @@ class WidthPushButton(QLabel):
         super().mousePressEvent(event)
         # noinspection PyUnresolvedReferences
         self.pressed.emit()
+        # noinspection PyUnresolvedReferences
         if event.button() == Qt.LeftButton:
             # < Revision 27/10/2024
             # use popup instead of exec

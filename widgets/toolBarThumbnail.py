@@ -63,7 +63,7 @@ class ToolBarThumbnail(QToolBar):
     QToolBar -> ToolBarThumbnail
 
     Creation: 02/11/2022
-    Last revision: 06/07/2025
+    Last revision: 31/01/2026
     """
 
     # Special method
@@ -117,10 +117,11 @@ class ToolBarThumbnail(QToolBar):
         # Init popup menu
 
         self._popup = QMenu(self)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action = dict()
         self._action['open'] = QAction('Open volume', self)
@@ -382,8 +383,12 @@ class ToolBarThumbnail(QToolBar):
                         self._mainwindow.setStatusBarMessage('{} opened.'.format(vol.getBasename()))
                     return True
                 else:
+                    # < Revision 31/01/2026
                     if wait is not None: wait.hide()
-                    messageBox(self,
+                    if self.parent() is not None: window = self.parent()
+                    # Revision 31/01/2026 >
+                    else: window = self
+                    messageBox(window,
                                'Add PySisyphe volume',
                                text='Thumbnail is full.\n'
                                     'Close a volume to open a new one.',
@@ -422,7 +427,11 @@ class ToolBarThumbnail(QToolBar):
                             vol.load(filename)
                             QApplication.processEvents()
                         except Exception as err:
-                            messageBox(self, 'Open PySisyphe volume', text='{}'.format(err))
+                            # < Revision 31/01/2026
+                            if self.parent() is not None: window = self.parent()
+                            else: window = self
+                            # Revision 31/01/2026 >
+                            messageBox(window, 'Open PySisyphe volume', text='{}'.format(err))
                         if not self.containsVolume(vol):
                             # < Revision 10/12/2024
                             # multi-component management
@@ -431,36 +440,53 @@ class ToolBarThumbnail(QToolBar):
                             QApplication.processEvents()
                         else:
                             wait.hide()
-                            messageBox(self,
+                            if self.parent() is not None: window = self.parent()
+                            else: window = self
+                            messageBox(window,
                                        title=title,
                                        text='This volume is already open.',
                                        icon=QMessageBox.Information)
                         if wait.getStopped(): break
                     wait.close()
         else:
-            messageBox(self,
+            # < Revision 31/01/2026
+            if self.parent() is not None: window = self.parent()
+            else: window = self
+            # Revision 31/01/2026 >
+            messageBox(window,
                        'Open PySisyphe volume',
                        text='Thumbnail is full.'
                             'Close a volume to open a new one.',
                        icon=QMessageBox.Information)
 
     def saveSelected(self):
+
         w = self.getSelectedWidget()
-        if w is not None: w.save()
-        else: messageBox(self,
-                         'Save PySisyphe volume',
-                         'No displayed volume to save.',
-                         icon=QMessageBox.Information)
+        if w is not None:w.save()
+        else:
+            # < Revision 31/01/2026
+            if self.parent() is not None: window = self.parent()
+            else: window = self
+            # Revision 31/01/2026 >
+            messageBox(window,
+                       'Save PySisyphe volume',
+                       'No displayed volume to save.',
+                       icon=QMessageBox.Information)
         if self.hasMainWindow():
             self._mainwindow.setStatusBarMessage('Reference volume saved.')
 
     def saveSelectedAs(self):
         w = self.getSelectedWidget()
         if w is not None: w.saveas()
-        else: messageBox(self,
-                         'Save PySisyphe volume',
-                         'No displayed volume to save.',
-                         icon=QMessageBox.Information)
+        else:
+            # < Revision 31/01/2026
+            if self.parent() is not None: window = self.parent()
+            else: window = self
+            # Revision 31/01/2026 >
+            messageBox(window,
+                       'Save PySisyphe volume',
+                       'No displayed volume to save.',
+                       icon=QMessageBox.Information)
         if self.hasMainWindow():
             self._mainwindow.setStatusBarMessage('Reference volume saved.')
 
@@ -478,10 +504,15 @@ class ToolBarThumbnail(QToolBar):
         w = self.getSelectedWidget()
         if w is not None:
             w.editAttributes()
-        else: messageBox(self,
-                         'Edit PySisyphe volume attributes',
-                         'No displayed volume to edit.',
-                         icon=QMessageBox.Information)
+        else:
+            # < Revision 31/01/2026
+            if self.parent() is not None: window = self.parent()
+            else: window = self
+            # Revision 31/01/2026 >
+            messageBox(window,
+                       'Edit PySisyphe volume attributes',
+                       'No displayed volume to edit.',
+                       icon=QMessageBox.Information)
 
     def removeSelected(self):
         if not self.isEmpty():
@@ -571,7 +602,11 @@ class ToolBarThumbnail(QToolBar):
                             vol.load(filename)
                             self.addVolume(vol)
                         except Exception as err:
-                            messageBox(self, 'Open PySisyphe volume', text='{}'.format(err))
+                            # < Revision 31/01/2026
+                            if self.parent() is not None: window = self.parent()
+                            else: window = self
+                            # Revision 31/01/2026 >
+                            messageBox(window, 'Open PySisyphe volume', text='{}'.format(err))
         else: event.ignore()
 
     def contextMenuEvent(self, event):

@@ -805,12 +805,16 @@ class SliceViewWidget(AbstractViewWidget):
                 p2 = acpc.getRelativeDistanceFromMidACPC(p)
                 # Revision 20/10/2025 >
                 txt += '\nMid AC-PC reference LAT {:.1f} AP {:.1f} H {:.1f}'.format(p2[0], p2[1], p2[2])
-        if self._action['showframe'].isVisible():
+        # < Revision 31/01/2026
+        # if self._action['showframe'].isVisible():
+        if self._action['showframe'].isVisible() and self._action['showframe'].isChecked():
             p2 = self._volume.getLEKSELLfromWorld(p)
             txt += '\nLeksell {:.1f} x {:.1f} x {:.1f}'.format(p2[0], p2[1], p2[2])
-        if self._action['showicbm'].isVisible():
-            p2 = self._volume.getICBMfromWorld(p)
+        # if self._action['showicbm'].isVisible():
+        if self._action['showicbm'].isVisible() and self._action['showicbm'].isChecked():
+            p2 = self._volume.getICBMfromWorld(p, mni=True)
             txt += '\nICBM {:.1f} x {:.1f} x {:.1f}'.format(p2[0], p2[1], p2[2])
+        # Revision 31/01/2026 >
         return txt
 
     def _updateBottomRightInfo(self) -> None:
