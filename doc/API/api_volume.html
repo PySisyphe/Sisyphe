@@ -412,7 +412,7 @@ IO methods for the most common neuroimaging file formats (BrainVoyager, FreeSurf
 <h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
 <p>object -&gt; SisypheImage -&gt; SisypheVolume</p>
 <p>Creation: 04/02/2021
-Last revisions: 18/12/2025</p>
+Last revisions: 31/01/2026</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheVolume.SisypheVolume.acpc">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">acpc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheACPC" title="Sisyphe.core.sisypheImageAttributes.SisypheACPC"><span class="pre">SisypheACPC</span></a></em><a class="headerlink" href="#Sisyphe.core.sisypheVolume.SisypheVolume.acpc" title="Link to this definition"></a></dt>
@@ -1453,7 +1453,7 @@ current SisypheVolume instance.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheVolume.SisypheVolume.getICBMfromWorld">
-<span class="sig-name descname"><span class="pre">getICBMfromWorld</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheVolume.SisypheVolume.getICBMfromWorld" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">getICBMfromWorld</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mni</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheVolume.SisypheVolume.getICBMfromWorld" title="Link to this definition"></a></dt>
 <dd><p>Convert world coordinates to ICBM coordinates. Returns None if the transforms attribute of the current
 SisypheVolume instance does not contain the ‘ICBM152’ ID.</p>
 <section id="id71">
@@ -1462,6 +1462,13 @@ SisypheVolume instance does not contain the ‘ICBM152’ ID.</p>
 <dt>p<span class="classifier">list[float] | tuple[float, float, float]</span></dt><dd><p>World coordinates</p>
 </dd>
 </dl>
+<p>mni : bool</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>if False (default), returns the coordinates without taking into account the origin (i.e., origin x=0.0, y=0.0, z=0.0 to left, posterior, inferior corner)</p></li>
+<li><p>if True (default), returns the coordinates relative to MNI origin (i.e.origin x=98.0, y=134.0, z=72.0)</p></li>
+</ul>
+</div></blockquote>
 </section>
 <section id="id72">
 <h3>Returns<a class="headerlink" href="#id72" title="Link to this heading"></a></h3>

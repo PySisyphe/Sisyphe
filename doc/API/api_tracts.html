@@ -618,7 +618,7 @@
 </section>
 <dl class="py class">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheBundle">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheTracts.</span></span><span class="sig-name descname"><span class="pre">SisypheBundle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheBundle" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheTracts.</span></span><span class="sig-name descname"><span class="pre">SisypheBundle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheBundle" title="Link to this definition"></a></dt>
 <dd><section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
 <p>Container of tracts (streamlines) indices in an associated SisypheStreamlines instance belonging to a bundle. The
@@ -1500,12 +1500,12 @@ Last revision: 09/07/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheDKIModel.createXML">
 <span class="sig-name descname"><span class="pre">createXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheDKIModel.createXML" title="Link to this definition"></a></dt>
-<dd><p>Write the current SisypheDKIModel instance attributes to xml instance. This method is called by save() method,
+<dd><p>Write the current SisypheDKIModel instance attributes to XML instance. This method is called by save() method,
 it is not recommended for use.</p>
 <section id="id57">
 <h3>Parameters<a class="headerlink" href="#id57" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -1636,7 +1636,7 @@ it is not recommended for use.</p>
 </dd>
 <dt>binary<span class="classifier">bool</span></dt><dd><ul class="simple">
 <li><p>if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)</p></li>
-<li><p>if False, only xml part is loaded</p></li>
+<li><p>if False, only XML part is loaded</p></li>
 </ul>
 </dd>
 <dt>wait<span class="classifier">DialogWait | multiprocessing.managers.DictProxy | None</span></dt><dd><p>optional progress dialog or multiprocessing shared dict (DictProxy)</p>
@@ -1655,12 +1655,12 @@ it is not recommended for use.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheDKIModel.parseXML">
 <span class="sig-name descname"><span class="pre">parseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheDKIModel.parseXML" title="Link to this definition"></a></dt>
-<dd><p>Read the current SisypheDKIModel instance attributes from xml instance. This method is called by load() method,
+<dd><p>Read the current SisypheDKIModel instance attributes from XML instance. This method is called by load() method,
 it is not recommended for use.</p>
 <section id="id68">
 <h3>Parameters<a class="headerlink" href="#id68" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -1732,12 +1732,12 @@ Last revision: 09/07/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheDSIDModel.createXML">
 <span class="sig-name descname"><span class="pre">createXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheDSIDModel.createXML" title="Link to this definition"></a></dt>
-<dd><p>Write the current SisypheDSIDModel instance attributes to xml instance. This method is called by save() method,
+<dd><p>Write the current SisypheDSIDModel instance attributes to XML instance. This method is called by save() method,
 it is not recommended for use.</p>
 <section id="id74">
 <h3>Parameters<a class="headerlink" href="#id74" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -1782,7 +1782,7 @@ it is not recommended for use.</p>
 </dd>
 <dt>binary<span class="classifier">bool</span></dt><dd><ul class="simple">
 <li><p>if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)</p></li>
-<li><p>if False, only xml part is loaded</p></li>
+<li><p>if False, only XML part is loaded</p></li>
 </ul>
 </dd>
 <dt>wait<span class="classifier">DialogWait | multiprocessing.managers.DictProxy | None</span></dt><dd><p>optional progress dialog or multiprocessing shared dict (DictProxy)</p>
@@ -1801,12 +1801,12 @@ it is not recommended for use.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheDSIDModel.parseXML">
 <span class="sig-name descname"><span class="pre">parseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheDSIDModel.parseXML" title="Link to this definition"></a></dt>
-<dd><p>Read the current SisypheDSIDModel instance attributes from xml instance. This method is called by load()
+<dd><p>Read the current SisypheDSIDModel instance attributes from XML instance. This method is called by load()
 method, it is not recommended for use.</p>
 <section id="id79">
 <h3>Parameters<a class="headerlink" href="#id79" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -1857,12 +1857,12 @@ Last revision: 09/07/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheDSIModel.createXML">
 <span class="sig-name descname"><span class="pre">createXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheDSIModel.createXML" title="Link to this definition"></a></dt>
-<dd><p>Write the current SisypheDSIModel instance attributes to xml instance. This method is called by save() method,
+<dd><p>Write the current SisypheDSIModel instance attributes to XML instance. This method is called by save() method,
 it is not recommended for use.</p>
 <section id="id84">
 <h3>Parameters<a class="headerlink" href="#id84" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -1907,7 +1907,7 @@ it is not recommended for use.</p>
 </dd>
 <dt>binary<span class="classifier">bool</span></dt><dd><ul class="simple">
 <li><p>if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)</p></li>
-<li><p>if False, only xml part is loaded</p></li>
+<li><p>if False, only XML part is loaded</p></li>
 </ul>
 </dd>
 <dt>wait<span class="classifier">DialogWait | multiprocessing.managers.DictProxy | None</span></dt><dd><p>optional progress dialog or multiprocessing shared dict (DictProxy)</p>
@@ -1926,12 +1926,12 @@ it is not recommended for use.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheDSIModel.parseXML">
 <span class="sig-name descname"><span class="pre">parseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheDSIModel.parseXML" title="Link to this definition"></a></dt>
-<dd><p>Read the current SisypheDSIModel instance attributes from xml instance. This method is called by load() method,
+<dd><p>Read the current SisypheDSIModel instance attributes from XML instance. This method is called by load() method,
 it is not recommended for use.</p>
 <section id="id89">
 <h3>Parameters<a class="headerlink" href="#id89" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -1994,12 +1994,12 @@ Last revision: 09/07/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheDTIModel.createXML">
 <span class="sig-name descname"><span class="pre">createXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheDTIModel.createXML" title="Link to this definition"></a></dt>
-<dd><p>Write the current SisypheDTIModel instance attributes to xml instance. This method is called by save() method,
+<dd><p>Write the current SisypheDTIModel instance attributes to XML instance. This method is called by save() method,
 it is not recommended for use.</p>
 <section id="id94">
 <h3>Parameters<a class="headerlink" href="#id94" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -2195,7 +2195,7 @@ it is not recommended for use.</p>
 </dd>
 <dt>binary<span class="classifier">bool</span></dt><dd><ul class="simple">
 <li><p>if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)</p></li>
-<li><p>if False, only xml part is loaded</p></li>
+<li><p>if False, only XML part is loaded</p></li>
 </ul>
 </dd>
 <dt>wait<span class="classifier">DialogWait | multiprocessing.managers.DictProxy | None</span></dt><dd><p>optional progress dialog or multiprocessing shared dict (DictProxy)</p>
@@ -2214,12 +2214,12 @@ it is not recommended for use.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheDTIModel.parseXML">
 <span class="sig-name descname"><span class="pre">parseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheDTIModel.parseXML" title="Link to this definition"></a></dt>
-<dd><p>Read the current SisypheDTIModel instance attributes from xml instance. This method is called by load() method,
+<dd><p>Read the current SisypheDTIModel instance attributes from XML instance. This method is called by load() method,
 it is not recommended for use.</p>
 <section id="id110">
 <h3>Parameters<a class="headerlink" href="#id110" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -2326,12 +2326,12 @@ Last revisions: 11/07/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheDiffusionModel.createXML">
 <span class="sig-name descname"><span class="pre">createXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheDiffusionModel.createXML" title="Link to this definition"></a></dt>
-<dd><p>Write the current SisypheDiffusionModel instance attributes to xml instance. This method is called by save()
+<dd><p>Write the current SisypheDiffusionModel instance attributes to XML instance. This method is called by save()
 method, it is not recommended for use.</p>
 <section id="id117">
 <h3>Parameters<a class="headerlink" href="#id117" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -2592,7 +2592,7 @@ to the current SisypheDiffusionModel instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheDiffusionModel.loadGradients">
 <span class="sig-name descname"><span class="pre">loadGradients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bvalsfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bvecsfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lpstoras</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheDiffusionModel.loadGradients" title="Link to this definition"></a></dt>
 <dd><p>Load gradient values/vectors attributes of the current SisypheDiffusionModel instance
-from text or xml files.</p>
+from text or XML files.</p>
 <section id="id137">
 <h3>Parameters<a class="headerlink" href="#id137" title="Link to this heading"></a></h3>
 <dl class="simple">
@@ -2630,7 +2630,7 @@ from text or xml files.</p>
 </dd>
 <dt>binary<span class="classifier">bool</span></dt><dd><ul class="simple">
 <li><p>if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)</p></li>
-<li><p>if False, only xml part is loaded</p></li>
+<li><p>if False, only XML part is loaded</p></li>
 </ul>
 </dd>
 <dt>wait<span class="classifier">DialogWait | multiprocessing.managers.DictProxy | None</span></dt><dd><p>optional progress dialog or multiprocessing shared dict (DictProxy)</p>
@@ -2652,7 +2652,7 @@ from text or xml files.</p>
 </dd>
 <dt>binary<span class="classifier">bool</span></dt><dd><ul class="simple">
 <li><p>if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)</p></li>
-<li><p>if False, only xml part is loaded</p></li>
+<li><p>if False, only XML part is loaded</p></li>
 </ul>
 </dd>
 <dt>wait<span class="classifier">DialogWait | multiprocessing.managers.DictProxy | None</span></dt><dd><p>optional progress dialog or multiprocessing shared dict (DictProxy)</p>
@@ -2671,12 +2671,12 @@ from text or xml files.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheDiffusionModel.parseXML">
 <span class="sig-name descname"><span class="pre">parseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheDiffusionModel.parseXML" title="Link to this definition"></a></dt>
-<dd><p>Read the current SisypheDiffusionModel instance attributes from xml instance. This method is called by load()
+<dd><p>Read the current SisypheDiffusionModel instance attributes from XML instance. This method is called by load()
 method, it is not recommended for use.</p>
 <section id="id142">
 <h3>Parameters<a class="headerlink" href="#id142" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -2815,12 +2815,12 @@ Last revision: 09/07/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheSHCSAModel.createXML">
 <span class="sig-name descname"><span class="pre">createXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheSHCSAModel.createXML" title="Link to this definition"></a></dt>
-<dd><p>Write the current SisypheSHCSAModel instance attributes to xml instance. This method is called by save()
+<dd><p>Write the current SisypheSHCSAModel instance attributes to XML instance. This method is called by save()
 method, it is not recommended for use.</p>
 <section id="id153">
 <h3>Parameters<a class="headerlink" href="#id153" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -2878,7 +2878,7 @@ method, it is not recommended for use.</p>
 </dd>
 <dt>binary<span class="classifier">bool</span></dt><dd><ul class="simple">
 <li><p>if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)</p></li>
-<li><p>if False, only xml part is loaded</p></li>
+<li><p>if False, only XML part is loaded</p></li>
 </ul>
 </dd>
 <dt>wait<span class="classifier">DialogWait | multiprocessing.managers.DictProxy | None</span></dt><dd><p>optional progress dialog or multiprocessing shared dict (DictProxy)</p>
@@ -2897,12 +2897,12 @@ method, it is not recommended for use.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheSHCSAModel.parseXML">
 <span class="sig-name descname"><span class="pre">parseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheSHCSAModel.parseXML" title="Link to this definition"></a></dt>
-<dd><p>Read the current SisypheSHCSAModel instance attributes from xml instance. This method is called by load()
+<dd><p>Read the current SisypheSHCSAModel instance attributes from XML instance. This method is called by load()
 method, it is not recommended for use.</p>
 <section id="id159">
 <h3>Parameters<a class="headerlink" href="#id159" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -2968,12 +2968,12 @@ Last revision: 09/07/2025</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheSHCSDModel.createXML">
 <span class="sig-name descname"><span class="pre">createXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheSHCSDModel.createXML" title="Link to this definition"></a></dt>
-<dd><p>Write the current SisypheSHCSDModel instance attributes to xml instance. This method is called by save()
+<dd><p>Write the current SisypheSHCSDModel instance attributes to XML instance. This method is called by save()
 method, it is not recommended for use.</p>
 <section id="id165">
 <h3>Parameters<a class="headerlink" href="#id165" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -3044,7 +3044,7 @@ method, it is not recommended for use.</p>
 </dd>
 <dt>binary<span class="classifier">bool</span></dt><dd><ul class="simple">
 <li><p>if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)</p></li>
-<li><p>if False, only xml part is loaded</p></li>
+<li><p>if False, only XML part is loaded</p></li>
 </ul>
 </dd>
 <dt>wait<span class="classifier">DialogWait | multiprocessing.managers.DictProxy | None</span></dt><dd><p>optional progress dialog or multiprocessing shared dict (DictProxy)</p>
@@ -3063,12 +3063,12 @@ method, it is not recommended for use.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheSHCSDModel.parseXML">
 <span class="sig-name descname"><span class="pre">parseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheSHCSDModel.parseXML" title="Link to this definition"></a></dt>
-<dd><p>Read the current SisypheSHCSDModel instance attributes from xml instance. This method is called by load()
+<dd><p>Read the current SisypheSHCSDModel instance attributes from XML instance. This method is called by load()
 method, it is not recommended for use.</p>
 <section id="id172">
 <h3>Parameters<a class="headerlink" href="#id172" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -4172,12 +4172,12 @@ from ICBM152 HCP space to current space.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheStreamlines.createXML">
 <span class="sig-name descname"><span class="pre">createXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bundle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheStreamlines.createXML" title="Link to this definition"></a></dt>
-<dd><p>Write a bundle of the current SisypheStreamlines instance attributes to xml instance. This method is called by
+<dd><p>Write a bundle of the current SisypheStreamlines instance attributes to XML instance. This method is called by
 save() and saveAs() methods, it is not recommended for use.</p>
 <section id="id248">
 <h3>Parameters<a class="headerlink" href="#id248" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 <dt>bundle<span class="classifier">str</span></dt><dd><p>bundle name or ‘all’ for all streamlines</p>
 </dd>
@@ -5272,12 +5272,12 @@ Whole brain state is assumed if more than 50% brain mask voxels are used as seed
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheStreamlines.parseXML">
 <span class="sig-name descname"><span class="pre">parseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheStreamlines.parseXML" title="Link to this definition"></a></dt>
-<dd><p>Read a bundle of the current SisypheStreamline instance attributes from xml instance. This method is called by
+<dd><p>Read a bundle of the current SisypheStreamline instance attributes from XML instance. This method is called by
 load() method, it is not recommended for use.</p>
 <section id="id342">
 <h3>Parameters<a class="headerlink" href="#id342" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>xml document</p>
+<dt>doc<span class="classifier">minidom.Document</span></dt><dd><p>XML document</p>
 </dd>
 </dl>
 </section>
@@ -6794,7 +6794,7 @@ reconstruction is stopped when the current point is in a voxel whose FA value is
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheTracts.SisypheTracking.setStoppingCriterionToMaps">
-<span class="sig-name descname"><span class="pre">setStoppingCriterionToMaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheTracking.setStoppingCriterionToMaps" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">setStoppingCriterionToMaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">wm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">csf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheTracts.SisypheTracking.setStoppingCriterionToMaps" title="Link to this definition"></a></dt>
 <dd><p>Set the stopping criterion attribute of the current SisypheTracking instance to maps. This stopping criterion
 uses gray matter, white matter and cerebro-spinal fluid maps. Streamline reconstruction is stopped when the
 current point is in a voxel belonging to gray matter (&gt; 0.5), cerebro-spinal fluid (&gt; 0.5) or background.</p>
