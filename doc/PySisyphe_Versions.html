@@ -91,7 +91,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-24-14-build-12-01-2026">version 0.24.14, build 12/01/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-25-04-build-20-01-2026">version 0.25.04, build 20/01/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-76-22-build-29-01-2026">version 0.76.22, build 29/01/2026</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-0-76-26-build-30-01-2026">version 0.76.26, build 30/01/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-78-08-build-01-02-2026">version 0.78.08, build 01/02/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -136,7 +136,7 @@
 <li><p><a class="reference internal" href="#build12-01-2026"><span class="std std-ref">version 0.24.14, build 12/01/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-01-2026"><span class="std std-ref">version 0.25.04, build 20/01/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build29-01-2026"><span class="std std-ref">version 0.76.22, build 29/01/2026</span></a></p></li>
-<li><p><a class="reference internal" href="#build30-01-2026"><span class="std std-ref">version 0.76.26, build 30/01/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build01-02-2026"><span class="std std-ref">version 0.78.08, build 01/02/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -4232,7 +4232,7 @@
 </ul>
 </div></blockquote>
 </li>
-<li><p><strong>updated file</strong></p>
+<li><p><strong>updated files</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li><p>update requirements.txt file for upgraded modules</p></li>
@@ -4705,14 +4705,42 @@
 </li>
 </ul>
 </section>
-<section id="version-0-76-26-build-30-01-2026">
-<span id="build30-01-2026"></span><h2>version 0.76.26, build 30/01/2026<a class="headerlink" href="#version-0-76-26-build-30-01-2026" title="Link to this heading"></a></h2>
+<section id="version-0-78-08-build-01-02-2026">
+<span id="build01-02-2026"></span><h2>version 0.78.08, build 01/02/2026<a class="headerlink" href="#version-0-78-08-build-01-02-2026" title="Link to this heading"></a></h2>
 <ul>
 <li><p><strong>updated html documentation</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li><p>version-histrory.rst update</p></li>
+<li><p>PySisyphe_Segmentation.rst</p></li>
+<li><p>PySisyphe_sliceview.rst</p></li>
+<li><p>PySisyphe_orthogonalview.rst</p></li>
+<li><p>PySisyphe_synchronizedview.rst</p></li>
+<li><p>PySisyphe_multicomponentview.rst</p></li>
+<li><p>PySisyphe_Registration.rst</p></li>
+<li><p>PySisyphe_File.rst</p></li>
 <li><p>rebuild sphinx documentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated files</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>/templates/ICBM152/DESIKAN/icbm152_IIT_accumbens area left.xml</p></li>
+<li><p>/templates/ICBM152/DESIKAN/icbm152_IIT_accumbens area right.xml</p></li>
+<li><p>/templates/ICBM152/DESIKAN/icbm152_IIT_amygdala left.xml</p></li>
+<li><p>/templates/ICBM152/DESIKAN/icbm152_IIT_amygdala right.xml</p></li>
+<li><p>/templates/ICBM152/DESIKAN/icbm152_IIT_caudate left.xml</p></li>
+<li><p>/templates/ICBM152/DESIKAN/icbm152_IIT_caudate right.xml</p></li>
+<li><p>/templates/ICBM152/DESIKAN/icbm152_IIT_hippocampus left.xml</p></li>
+<li><p>/templates/ICBM152/DESIKAN/icbm152_IIT_hippocampus right.xml</p></li>
+<li><p>/templates/ICBM152/DESIKAN/icbm152_IIT_pallidum left.xml</p></li>
+<li><p>/templates/ICBM152/DESIKAN/icbm152_IIT_pallidum right.xml</p></li>
+<li><p>/templates/ICBM152/DESIKAN/icbm152_IIT_putamen left.xml</p></li>
+<li><p>/templates/ICBM152/DESIKAN/icbm152_IIT_putamen right.xml</p></li>
+<li><p>/templates/ICBM152/DESIKAN/icbm152_IIT_thalamus proper left.xml</p></li>
+<li><p>/templates/ICBM152/DESIKAN/icbm152_IIT_thalamus proper right.xml</p></li>
+<li><p>/settings/functions.xml</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -4728,7 +4756,31 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>core.sisypheTransform</p></li>
+<li><p>core.sisypheDicom</p></li>
+<li><p>core.sisypheVolume</p></li>
+<li><p>processing.simpleItkFilters</p></li>
+<li><p>gui.windowSisyphe</p></li>
+<li><p>gui.dialogSegmentation</p></li>
+<li><p>gui.dialogDeepSegmentation</p></li>
+<li><p>gui.dialogWait</p></li>
+<li><p>gui.dialogManualRegistration</p></li>
+<li><p>gui.dialogReorient</p></li>
 <li><p>widgets.attributesWidgets</p></li>
+<li><p>widgets.toolBarThumnail</p></li>
+<li><p>widgets.sliceViewWidgets</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated function</strong></p>
+<blockquote>
+<div><ul>
+<li><p>processing.simpleItkFilters.biasFieldCorrection()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 172, change number of iteration parameter</p></li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </div></blockquote>
 </li>
@@ -4742,6 +4794,79 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>core.sisypheDicom.XmlDicom</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getDataElement() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getICBMfromWorld() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _updatePluginsMenu() method</p></li>
+<li><p>update _openPluginsMenu() method</p></li>
+<li><p>update _addPlugin() method</p></li>
+<li><p>update _removePlugin() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSegmentation.DialogRegistrationBasedSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update load() method</p></li>
+<li><p>update save() method</p></li>
+<li><p>update showEvent() method</p></li>
+<li><p>update _structChange() method</p></li>
+<li><p>update _updateTemplateFilter() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepTOFVesselSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepTissueSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogWait.DialogWaitRegistration</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setStages() method</p></li>
+<li><p>update setProgressByLevel() method</p></li>
+<li><p>update setConvergenceThreshold() method</p></li>
+<li><p>update setMultiResolutionIterations() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogManualRegistration.DialogManualRegistration</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogReorient.DialogReorient</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>widgets.attributesWidgets.ListROIAttributesWidget</p>
 <blockquote>
 <div><ul class="simple">
@@ -4751,6 +4876,25 @@
 <li><p>update saveMinc() method</p></li>
 <li><p>update saveNumpy() method</p></li>
 <li><p>update saveVTK() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.toolBarThumnail.ToolBarThumbnail</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update open() method</p></li>
+<li><p>update addVolume() method</p></li>
+<li><p>update saveSelected() method</p></li>
+<li><p>update saveSelectedAs() method</p></li>
+<li><p>update editAttributesSelected() method</p></li>
+<li><p>update dropEvent() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _getInfoValuesText() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -4767,6 +4911,103 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>core.sisypheDicom.XmlDicom.getDataElement()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 1536 &amp; 1548, try to split with ‘ ‘ if there is no separator ‘|’’</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume.getICBMfromWorld()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add the mni parameter (bool) to indicate whether or not to take the MNI origin (x=98.0,y=134.0,z=72.0) into account</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe._updatePluginsMenu()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace ‘_’ with space in the plugin name</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe._openPluginsMenu()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace space with ‘_’ in the plugin name</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe._addPlugin()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix windows platform, line 4801, replace ‘/’ with ‘\’ in path strings</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe._removePlugin()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix windows platform, line 4858, replace ‘/’ with ‘\’ in path string using abspath</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSegmentation.DialogRegistrationBasedSegmentation.load()</p></li>
+<li><p>gui.dialogSegmentation.DialogRegistrationBasedSegmentation.save()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add ‘RegistrationSequence’ XML field</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSegmentation.DialogRegistrationBasedSegmentation.showEvent()</p></li>
+<li><p>gui.dialogSegmentation.DialogRegistrationBasedSegmentation._structChange()</p></li>
+<li><p>gui.dialogSegmentation.DialogRegistrationBasedSegmentation._updateTemplateFilter()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, add self._structSelect.isEnabled() condition</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepTOFVesselSegmentation.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 1444, replace flt with extractor</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepTissueSegmentation.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 1732, replace generic “struct” sequence with tissue sequences</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogWait.DialogWaitRegistration.setStages()</p></li>
+<li><p>gui.dialogWait.DialogWaitRegistration.setProgressByLevel()</p></li>
+<li><p>gui.dialogWait.DialogWaitRegistration.setConvergenceThreshold()</p></li>
+<li><p>gui.dialogWait.DialogWaitRegistration.setMultiResolutionIterations()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, remove unnecessary conditions</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogManualRegistration.DialogManualRegistration.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>self._ok is no longer the default button</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogReorient.DialogReorient.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>self._cancel is no longer the default button</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>widgets.attributesWidgets.ListROIAttributesWidget.saveSisyphe()</p></li>
 <li><p>widgets.attributesWidgets.ListROIAttributesWidget.saveNifti()</p></li>
 <li><p>widgets.attributesWidgets.ListROIAttributesWidget.saveNRRD()</p></li>
@@ -4776,6 +5017,27 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>bug fix, replace item by roi</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.toolBarThumnail.ToolBarThumbnail.open()</p></li>
+<li><p>widgets.toolBarThumnail.ToolBarThumbnail.addVolume()</p></li>
+<li><p>widgets.toolBarThumnail.ToolBarThumbnail.saveSelected()</p></li>
+<li><p>widgets.toolBarThumnail.ToolBarThumbnail.saveSelectedAs()</p></li>
+<li><p>widgets.toolBarThumnail.ToolBarThumbnail.editAttributesSelected()</p></li>
+<li><p>widgets.toolBarThumnail.ToolBarThumbnail.dropEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace messageBox parent (main window rather than self)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceViewWidget._getInfoValuesText()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>display Leksell coordinates if self._action[‘showframe’].isChecked()</p></li>
+<li><p>display ICBM coordinates if self._action[‘showicbm’].isChecked()</p></li>
+<li><p>take the MNI origin (x=98.0, y=134.0, z=72.0) into account when calculating ICBM coordinates</p></li>
 </ul>
 </div></blockquote>
 </li>

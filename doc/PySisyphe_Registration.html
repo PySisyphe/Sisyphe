@@ -214,9 +214,11 @@
 <p>The <strong>Frame-based registration</strong> dialog box is displayed.</p>
 <p>Use the file selection widget at the top to select the <strong>Fixed</strong> PySisyphe stereotactic volume.
 Use the files selection widget below to select the <strong>Moving</strong> PySisyphe stereotacitc volume(s) of the same patient with the same Leksell frame.</p>
-<p>Toggle <strong>Resample…</strong> button to show/hide resampling settings:
-- Select the interpolation algorithm (<em>linear</em>, <em>nearest neighbor</em>, <em>b-spline</em>, <em>gaussian</em>, <em>hamming windowed sinc</em>, <em>cosine windowed sinc</em>, <em>welch windowed sinc</em>, <em>lanczos windowed sinc</em>, <em>blackman windowed sinc</em>) used to resample the moving volume.
-- Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p>
+<p>Toggle <strong>Resample…</strong> button to show/hide resampling settings:</p>
+<ul class="simple">
+<li><p>Select the interpolation algorithm (<em>linear</em>, <em>nearest neighbor</em>, <em>b-spline</em>, <em>gaussian</em>, <em>hamming windowed sinc</em>, <em>cosine windowed sinc</em>, <em>welch windowed sinc</em>, <em>lanczos windowed sinc</em>, <em>blackman windowed sinc</em>) used to resample the moving volume.</p></li>
+<li><p>Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
 <p>Left-click <strong>Execute</strong> button to perform coregistration. PySisype XML xtrfs files associated with fixed and moving volumes are updated to store geometric transformations (geometric transformation for fixed volume coregistration will be added to the moving xtrfs, and geometric transformation for moving volume coregistration will be added to the fixed xtrfs).</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without coregistration.</p>
 </section>
@@ -317,6 +319,14 @@ Use the files selection widget below to select the <strong>Moving</strong> PySis
 <section id="icbm-spatial-normalization">
 <span id="menu-section-icbm"></span><h2>ICBM spatial normalization<a class="headerlink" href="#icbm-spatial-normalization" title="Link to this heading"></a></h2>
 <p>This menu is used for spatial normalization in the MNI-ICBM152 atlas space (see <a class="reference external" href="https://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009">ICBM152 page</a>) of a moving volume using ANTs registration methods. Symmetric and asymmetric versions of MNI-ICBM152 templates are provided for various modalities (MR, CT, SPECT, and PET) and sequences (T1, T2, PD, FLAIR, TOF, GM, WM, and CSF). These templates are used as fixed volumes in coregistration processing.</p>
+<div class="admonition-mni-icbm152-atlas-space admonition">
+<p class="admonition-title">MNI-ICBM152 atlas space</p>
+<p>The Montreal Neurological Institute (MNI) created a series of images similar to the Talairac brain that were based on the average of many normal magnetic resonance imaging (MRI) scans. The International Consortium of Brain Mapping (ICBM) has adopted these templates as an international standard.</p>
+<p>The first MNI template, MNI305, was created using a two-stage process. The first stage was manual scaling to the Talairach brain: 241 brains were oriented and scaled to the Talairach brain using manually defined landmarks. The first-pass image was the average of these reoriented/rescaled brains. The MNI305 template is the average of 305 normal MRI scans that have been normalized to the first-pass image by an automated linear normalization.</p>
+<p>The current standard MNI template is known as the ICBM152, and is based on 152 brains that were registered to MNI305.</p>
+<p>Although the MNI template is based on the Talairach brain, the two brains are not exactly the same size or shape. This is probably because the Talairach atlas brain is a rather odd shape, and it is difficult to match a standard brain to the atlas brain using an affine transform. As a result the MNI brains are slightly larger (in particular higher, deeper and longer) than the Talairach brain. The differences are larger as you get further from the middle of the brain, towards the outside, and are at maximum in the order of 10 mm. In particular, MNI brain is ~5mm taller (from the anterior commissure to the top of the brain) and ~5mm longer. The temporal lobes go about 10 mm deeper in MNI. The origin of the MNI space does not project exactly onto the anterior commissure, but approximately 4 mm above it.</p>
+<p>These atlases are all oriented according to the RAS+ convention: left (-) to right (+) on the x-axis, posterior (-) to anterior (+) on the y-axis, and inferior (-) to superior (+) on the z-axis. The same convention has been adopted for the PySisyphe image format.</p>
+</div>
 <p>The <strong>ICBM normalization</strong> dialog box is displayed.</p>
 <p>Use the file selection widgets at the top to select <strong>Moving</strong> and <strong>Template</strong> PySisyphe volumes (.xvol). If an MNI-ICBM152 template is defined for this fixed-volume modality/sequence in the PySisyphe settings (see <a class="reference internal" href="PySisyphe_File.html#menu-section-preferences"><span class="std std-ref">Preferences</span></a>), it is automatically added to the template selection widget.</p>
 <p>Toggle <strong>Apply transformation to</strong> checkbox to resample a list of volumes with the calculated geometric transformation. This displays a <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a>. Selected volumes must have the same space/transform ID as the fixed volume (i.e. same FOV and already coregistered to the fixed volume).</p>
