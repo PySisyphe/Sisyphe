@@ -213,7 +213,7 @@ class SisypheVolume(SisypheImage):
     object -> SisypheImage -> SisypheVolume
 
     Creation: 04/02/2021
-    Last revisions: 18/12/2025
+    Last revisions: 31/01/2026
     """
     __slots__ = ['_ID', '_arrayID', '_filename', '_compression', '_identity', '_acquisition',
                  '_display', '_acpc', '_transforms', '_xdcm', '_slope', '_intercept', '_orientation']
@@ -3413,7 +3413,7 @@ class SisypheVolume(SisypheImage):
             return trf
         else: return None
 
-    def getICBMfromWorld(self, p: vectorFloat3) -> vectorFloat3 | None:
+    def getICBMfromWorld(self, p: vectorFloat3, mni: bool = False) -> vectorFloat3 | None:
         """
         Convert world coordinates to ICBM coordinates. Returns None if the transforms attribute of the current
         SisypheVolume instance does not contain the 'ICBM152' ID.
@@ -3422,6 +3422,10 @@ class SisypheVolume(SisypheImage):
         ----------
         p : list[float] | tuple[float, float, float]
             World coordinates
+        mni : bool
+
+            - if False (default), returns the coordinates without taking into account the origin (i.e., origin x=0.0, y=0.0, z=0.0 to left, posterior, inferior corner)
+            - if True (default), returns the coordinates relative to MNI origin (i.e.origin x=98.0, y=134.0, z=72.0)
 
         Returns
         -------
@@ -3429,9 +3433,19 @@ class SisypheVolume(SisypheImage):
             ICBM coordinates
         """
         icbmid = SisypheAcquisition.getTemplatesList()[0]  # ICBM152
-        if self.hasICBMTransform(): return self._transforms[icbmid].applyToPoint(p)
-        elif self.acquisition.isICBM152(): return p
+        # < Revision 31/01/2026
+        # if self.hasICBMTransform(): return self._transforms[icbmid].applyToPoint(p)
+        # elif self.acquisition.isICBM152(): return p
+        # else: return None
+        if self.acquisition.isICBM152(): picbm = p
+        elif self.hasICBMTransform(): picbm = self._transforms[icbmid].applyToPoint(p)
         else: return None
+        if mni:
+            return (picbm[0] - 98.0,
+                    picbm[1] - 134.0,
+                    picbm[2] - 72.0)
+        else: return picbm
+        # Revision 31/01/2026 >
 
     def getWorldfromICBM(self, p: vectorFloat3) -> vectorFloat3 | None:
         """

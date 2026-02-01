@@ -1212,7 +1212,7 @@ class XmlDicom(object):
     object -> XmlDicom
 
     Creation: 08/09/2022
-    Last revisions: 11/12/2023
+    Last revisions: 31/01/2026
     """
     __slots__ = ['_doc']
 
@@ -1536,7 +1536,8 @@ class XmlDicom(object):
                             else:
                                 # < Revision 26/03/2025
                                 # data = data.split(' ')
-                                data = data.split('|')
+                                if '|' in data: data = data.split('|')
+                                elif ' ' in data: data = data.split(' ')
                                 # Revision 26/03/2025 >
                                 data = [float(d) for d in data]
                         elif vr in ['SL', 'SS', 'UL', 'US', 'IS']:
@@ -1545,7 +1546,8 @@ class XmlDicom(object):
                             else:
                                 # < Revision 26/03/2025
                                 # data = data.split(' ')
-                                data = data.split('|')
+                                if '|' in data: data = data.split('|')
+                                elif ' ' in data: data = data.split(' ')
                                 # Revision 26/03/2025 >
                                 data = [int(d) for d in data]
                         else:
