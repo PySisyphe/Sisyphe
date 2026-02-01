@@ -89,9 +89,9 @@
 		<NumberOfFittingLevels varmax="10" varmin="1" vartype="int">4</NumberOfFittingLevels>
 		<NumberOfControlPoints varmax="20" varmin="1" vartype="int">4</NumberOfControlPoints>
 		<NumberOfIteration varmax="100" varmin="1" vartype="int">50</NumberOfIteration>
-		<ConvergenceThreshold varmax="0.01" varmin="1e-6" vartype="float">0.001</ConvergenceThreshold>
-		<WienerFilterNoise varmax="0.1" varmin="1e-6" vartype="float">0.01</WienerFilterNoise>
-		<BiasFieldFullWidthAtHalfMaximum varmax="1.0" varmin="1e-6" vartype="float">0.15</BiasFieldFullWidthAtHalfMaximum>
+		<ConvergenceThreshold varmax="0.01" varmin="0.000001" decimals="6" vartype="float">0.001</ConvergenceThreshold>
+		<WienerFilterNoise varmax="0.1" varmin="0.0001" decimals="4" vartype="float">0.01</WienerFilterNoise>
+		<BiasFieldFullWidthAtHalfMaximum varmax="1.0" varmin="0.01" decimals="2" vartype="float">0.15</BiasFieldFullWidthAtHalfMaximum>
 		<Prefix label="Bias field corrected prefix" vartype="str">f_bias</Prefix>
 		<Suffix label="Bias field corrected suffix" vartype="str"/>
 		<BiasFieldPrefix label="Bias field map prefix" vartype="str">biasfield</BiasFieldPrefix>
