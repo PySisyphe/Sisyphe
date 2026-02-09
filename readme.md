@@ -76,4 +76,4 @@ Direct link to binary archives:
 
 Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. **We recommend copying it to the user directory**. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time.
 
-**PySisyphe may trigger false alerts from antivirus software, mainly on the Windows platform (e.g., Avast One). In this case, be sure to add the PySisyphe.exe to the list of trusted software.**
+**PySisyphe may trigger false alerts from antivirus software, particularly on the Windows platform (e.g., Avast One). If this happens, be sure to add PySisyphe.exe to the list of trusted software.**
