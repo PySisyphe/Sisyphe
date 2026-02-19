@@ -225,37 +225,39 @@ if __name__ == "__main__":
                 flag = True
             # Install PySisyphe Windows registry
             if flag:
-                root = winreg.OpenKeyEx(winreg.HKEY_CURRENT_USER,r'Software\\Classes\\Applications')
-                k = winreg.CreateKey(root, r'PySisyphe.exe')
-                if k: winreg.CloseKey(k); k = None
-                k = winreg.CreateKey(root, r'PySisyphe.exe\\ApplicationCompany')
-                winreg.SetValue(root, r'PySisyphe.exe\\ApplicationCompany', winreg.REG_SZ, 'PySisyphe')
-                if k: winreg.CloseKey(k); k = None
-                k = winreg.CreateKey(root, r'PySisyphe.exe\\FriendlyAppName')
-                winreg.SetValue(root, r'PySisyphe.exe\\FriendlyAppName', winreg.REG_SZ, 'PySisyphe')
-                if k: winreg.CloseKey(k); k = None
-                k = winreg.CreateKey(root, r'PySisyphe.exe\\Path')
-                winreg.SetValue(root, r'PySisyphe.exe\\Path', winreg.REG_SZ, path)
-                if k: winreg.CloseKey(k); k = None
-                k = winreg.CreateKey(root, r'PySisyphe.exe\\Version')
-                winreg.SetValue(root, r'PySisyphe.exe\\Version', winreg.REG_SZ, getVersion())
-                if k: winreg.CloseKey(k); k = None
-                k = winreg.CreateKey(root, r'PySisyphe.exe\\Capabilities')
-                winreg.SetValueEx(k, 'ApplicationDescription', 0, winreg.REG_SZ, 'PySisyphe neuroimaging software')
-                winreg.SetValueEx(k, 'ApplicationName', 0, winreg.REG_SZ, 'PySisyphe')
-                if k: winreg.CloseKey(k); k = None
-                k = winreg.CreateKey(root, r'PySisyphe.exe\\shell')
-                if k: winreg.CloseKey(k); k = None
-                k = winreg.CreateKey(root, r'PySisyphe.exe\\shell\\open')
-                if k: winreg.CloseKey(k); k = None
-                k = winreg.CreateKey(root, r'PySisyphe.exe\\shell\\open\\command')
-                v = '\"{}\" \"%1\"'.format(sys.executable)
-                winreg.SetValue(root, r'PySisyphe.exe\\shell\\open\\command', winreg.REG_SZ, v)
-                if k: winreg.CloseKey(k); k = None
-                k = winreg.CreateKey(root, r'PySisyphe.exe\\SupportedTypes')
-                winreg.SetValue(root, r'PySisyphe.exe\\SupportedTypes', winreg.REG_SZ, '.xvol')
-                if k: winreg.CloseKey(k); k = None
-                if root: winreg.CloseKey(root)
+                try:
+                    root = winreg.OpenKeyEx(winreg.HKEY_CURRENT_USER,r'Software\\Classes\\Applications')
+                    k = winreg.CreateKey(root, r'PySisyphe.exe')
+                    if k: winreg.CloseKey(k); k = None
+                    k = winreg.CreateKey(root, r'PySisyphe.exe\\ApplicationCompany')
+                    winreg.SetValue(root, r'PySisyphe.exe\\ApplicationCompany', winreg.REG_SZ, 'PySisyphe')
+                    if k: winreg.CloseKey(k); k = None
+                    k = winreg.CreateKey(root, r'PySisyphe.exe\\FriendlyAppName')
+                    winreg.SetValue(root, r'PySisyphe.exe\\FriendlyAppName', winreg.REG_SZ, 'PySisyphe')
+                    if k: winreg.CloseKey(k); k = None
+                    k = winreg.CreateKey(root, r'PySisyphe.exe\\Path')
+                    winreg.SetValue(root, r'PySisyphe.exe\\Path', winreg.REG_SZ, path)
+                    if k: winreg.CloseKey(k); k = None
+                    k = winreg.CreateKey(root, r'PySisyphe.exe\\Version')
+                    winreg.SetValue(root, r'PySisyphe.exe\\Version', winreg.REG_SZ, getVersion())
+                    if k: winreg.CloseKey(k); k = None
+                    k = winreg.CreateKey(root, r'PySisyphe.exe\\Capabilities')
+                    winreg.SetValueEx(k, 'ApplicationDescription', 0, winreg.REG_SZ, 'PySisyphe neuroimaging software')
+                    winreg.SetValueEx(k, 'ApplicationName', 0, winreg.REG_SZ, 'PySisyphe')
+                    if k: winreg.CloseKey(k); k = None
+                    k = winreg.CreateKey(root, r'PySisyphe.exe\\shell')
+                    if k: winreg.CloseKey(k); k = None
+                    k = winreg.CreateKey(root, r'PySisyphe.exe\\shell\\open')
+                    if k: winreg.CloseKey(k); k = None
+                    k = winreg.CreateKey(root, r'PySisyphe.exe\\shell\\open\\command')
+                    v = '\"{}\" \"%1\"'.format(sys.executable)
+                    winreg.SetValue(root, r'PySisyphe.exe\\shell\\open\\command', winreg.REG_SZ, v)
+                    if k: winreg.CloseKey(k); k = None
+                    k = winreg.CreateKey(root, r'PySisyphe.exe\\SupportedTypes')
+                    winreg.SetValue(root, r'PySisyphe.exe\\SupportedTypes', winreg.REG_SZ, '.xvol')
+                    if k: winreg.CloseKey(k); k = None
+                    if root: winreg.CloseKey(root)
+                except: pass
             # Update PySisyphe Windows registry
             else:
                 try:
@@ -379,7 +381,11 @@ if __name__ == "__main__":
     elif sys.platform == 'darwin':
         # noinspection PyUnresolvedReferences
         app.openFileRequest.connect(main.open)
-    splash.close()
+    # < Revision 17/02/2026
+    # use a persistent DialogSplash to avoid further creation
+    # splash.close()
+    splash.hide()
+    # Revision 17/02/2026 >
 
     if filename is not None:
         if exists(filename):
