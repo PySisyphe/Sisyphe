@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_projectionview.html">Projection view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_browser.html">File browser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_screenshots.html">Screenshots manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_ipython.html">IPython console</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroi.html">ROI tab of the dock</a></li>
@@ -412,7 +413,7 @@ IO methods for the most common neuroimaging file formats (BrainVoyager, FreeSurf
 <h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
 <p>object -&gt; SisypheImage -&gt; SisypheVolume</p>
 <p>Creation: 04/02/2021
-Last revisions: 31/01/2026</p>
+Last revisions: 03/02/2026</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheVolume.SisypheVolume.acpc">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">acpc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheACPC" title="Sisyphe.core.sisypheImageAttributes.SisypheACPC"><span class="pre">SisypheACPC</span></a></em><a class="headerlink" href="#Sisyphe.core.sisypheVolume.SisypheVolume.acpc" title="Link to this definition"></a></dt>
@@ -1462,11 +1463,11 @@ SisypheVolume instance does not contain the ‘ICBM152’ ID.</p>
 <dt>p<span class="classifier">list[float] | tuple[float, float, float]</span></dt><dd><p>World coordinates</p>
 </dd>
 </dl>
-<p>mni : bool</p>
+<p>mni : bool (optional)</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>if False (default), returns the coordinates without taking into account the origin (i.e., origin x=0.0, y=0.0, z=0.0 to left, posterior, inferior corner)</p></li>
-<li><p>if True (default), returns the coordinates relative to MNI origin (i.e.origin x=98.0, y=134.0, z=72.0)</p></li>
+<li><p>if True, returns the coordinates relative to MNI origin (i.e.origin x=98.0, y=134.0, z=72.0)</p></li>
 </ul>
 </div></blockquote>
 </section>
@@ -1994,9 +1995,9 @@ the max and min truncate thresholds.</p>
 <dl class="simple">
 <dt>filename<span class="classifier">str</span></dt><dd><p>PySisyphe Volume file name</p>
 </dd>
-<dt>attr<span class="classifier">str</span></dt><dd><p>attribute name: ID, size, spacing, FOV, number of componentes, datatype, origin, directions, orientation,
-modality, sequence, date of scan, stereotactic frame, scalar unit, range, window, slope, intercept,
-lastname, firstname, gender, date of birthday</p>
+<dt>attr<span class="classifier">str</span></dt><dd><p>attribute keys: id, size, spacing, fov, components, datatype, origin, directions, orientation, modality,
+sequence, dateofscan, frame, unit, range, window, slope, intercept, lastname, firstname, gender,
+dateofbirthday</p>
 </dd>
 </dl>
 </section>
@@ -2023,9 +2024,9 @@ lastname, firstname, gender, date of birthday</p>
 <section id="id111">
 <h3>Returns<a class="headerlink" href="#id111" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>dict</dt><dd><p>attribute keys: ID, size, spacing, FOV, number of componentes, datatype, origin, directions, orientation,
-modality, sequence, date of scan, stereotactic frame, scalar unit, range, window, slope, intercept,
-lastname, firstname, gender, date of birthday</p>
+<dt>dict</dt><dd><p>attribute keys: id, size, spacing, fov, components, datatype, origin, directions, orientation, modality,
+sequence, dateofscan, frame, unit, range, window, slope, intercept, lastname, firstname, gender,
+dateofbirthday</p>
 </dd>
 </dl>
 </section>
@@ -2033,7 +2034,7 @@ lastname, firstname, gender, date of birthday</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheVolume.SisypheVolume.getWorldfromICBM">
-<span class="sig-name descname"><span class="pre">getWorldfromICBM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheVolume.SisypheVolume.getWorldfromICBM" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">getWorldfromICBM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mni</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheVolume.SisypheVolume.getWorldfromICBM" title="Link to this definition"></a></dt>
 <dd><p>Convert ICBM coordinates to world coordinates Returns None if the transforms attribute of the current
 SisypheVolume instance does not contain the ‘ICBM152’ ID.</p>
 <section id="id112">
@@ -2042,6 +2043,13 @@ SisypheVolume instance does not contain the ‘ICBM152’ ID.</p>
 <dt>p<span class="classifier">list[float] | tuple[float, float, float]</span></dt><dd><p>ICBM coordinates</p>
 </dd>
 </dl>
+<p>mni : bool (optional)</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>if False (default), coordinates are not relative to MNI origin (i.e., origin x=0.0, y=0.0, z=0.0 to left, posterior, inferior corner)</p></li>
+<li><p>if True, coordinates are relative to MNI origin (i.e.origin x=98.0, y=134.0, z=72.0)</p></li>
+</ul>
+</div></blockquote>
 </section>
 <section id="id113">
 <h3>Returns<a class="headerlink" href="#id113" title="Link to this heading"></a></h3>
@@ -2615,12 +2623,11 @@ current SisypheVolume instance is used</p>
 <dd><p>Save a bitmap capture of the current SisypheVolume instance.</p>
 <section id="id156">
 <h3>Parameters<a class="headerlink" href="#id156" title="Link to this heading"></a></h3>
-<p>filename : str
-index : int</p>
-<blockquote>
-<div><p>slice index</p>
-</div></blockquote>
 <dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>filename</p>
+</dd>
+<dt>index<span class="classifier">int</span></dt><dd><p>slice index</p>
+</dd>
 <dt>zoom<span class="classifier">float</span></dt><dd><p>zoom factor (default 1.0, no zoom)</p>
 </dd>
 <dt>orient<span class="classifier">int</span></dt><dd><p>slice orientation (‘a’ axial, ‘c’ coronal or ‘s’ sagittal)</p>
@@ -2906,10 +2913,9 @@ to save the current SisypheVolume instance.</p>
 <dd><p>Set the ID attribute of the current SisypheVolume instance.</p>
 <p>There are two ID types:</p>
 <ul class="simple">
-<li><p>ID is a space ID, it is not unique, all volumes sharing a common space have the same ID. This attribute is</p></li>
+<li><p>ID is a space ID, it is not unique, all volumes sharing a common space have the same ID. This attribute is used as key in the Sisyphe.core.sisypheTransform.SisypheTransforms instances</p></li>
+<li><p>Array ID, unique, calculated from scalar values (md5 algorithm). This cannot be edited.</p></li>
 </ul>
-<p>used as key in the Sisyphe.core.sisypheTransform.SisypheTransforms instances
-- Array ID, unique, calculated from scalar values (md5 algorithm). This cannot be edited.</p>
 <section id="id172">
 <h3>Parameters<a class="headerlink" href="#id172" title="Link to this heading"></a></h3>
 <dl class="simple">

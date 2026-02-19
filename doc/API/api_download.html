@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_projectionview.html">Projection view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_browser.html">File browser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_screenshots.html">Screenshots manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_ipython.html">IPython console</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroi.html">ROI tab of the dock</a></li>
@@ -82,7 +83,11 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Sisyphe.core.sisypheDownload</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#external-packages-modules">External packages/modules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheDownload.downloadFromHost"><code class="docutils literal notranslate"><span class="pre">downloadFromHost()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheDownload.getPackageFolder"><code class="docutils literal notranslate"><span class="pre">getPackageFolder()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheDownload.getPackageMetadata"><code class="docutils literal notranslate"><span class="pre">getPackageMetadata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheDownload.getPackagesToUpdate"><code class="docutils literal notranslate"><span class="pre">getPackagesToUpdate()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheDownload.installFromHost"><code class="docutils literal notranslate"><span class="pre">installFromHost()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheDownload.updatePackages"><code class="docutils literal notranslate"><span class="pre">updatePackages()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Sisyphe.core.sisypheDownload.updatePySisyphe"><code class="docutils literal notranslate"><span class="pre">updatePySisyphe()</span></code></a></li>
 </ul>
 </li>
@@ -162,11 +167,80 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="Sisyphe.core.sisypheDownload.installFromHost">
-<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDownload.</span></span><span class="sig-name descname"><span class="pre">installFromHost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'C:\\Users\\lotte\\PycharmProjects\\PythonProject3.10'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDownload.installFromHost" title="Link to this definition"></a></dt>
-<dd><p>Download and install files from mega.nz url links.</p>
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDownload.getPackageFolder">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDownload.</span></span><span class="sig-name descname"><span class="pre">getPackageFolder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDownload.getPackageFolder" title="Link to this definition"></a></dt>
+<dd><p>Get the package folder of the current Python environment:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>venv execution: ./.venv/Lib/site-packages</p></li>
+<li><p>frozen execution: ./_internal</p></li>
+</ul>
+</div></blockquote>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>package folder</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDownload.getPackageMetadata">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDownload.</span></span><span class="sig-name descname"><span class="pre">getPackageMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">packages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDownload.getPackageMetadata" title="Link to this definition"></a></dt>
+<dd><p>Extract metadata from packages: version, installation folders, and required packages.
+If no package is provided, all installed packages are processed.</p>
 <section id="id1">
 <h2>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>packages<span class="classifier">str | list[str] | None</span></dt><dd><p>list of packages for which metadata should be extracted. All installed packages if None.</p>
+</dd>
+<dt>wait<span class="classifier">DialogWait | None = None</span></dt><dd><p>progress dialog</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h2>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>dict[str, str | list[str]]</dt><dd><p>keys: ‘version’ = version, ‘folders’ = installation folder(s), ‘requires’ = required package(s)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDownload.getPackagesToUpdate">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDownload.</span></span><span class="sig-name descname"><span class="pre">getPackagesToUpdate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">packages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDownload.getPackagesToUpdate" title="Link to this definition"></a></dt>
+<dd><p>List of packages to check for installation or update.</p>
+<section id="id3">
+<h2>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p>packages : str | dict[str, str]</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>if str, path to a text file (line ‘name version’)</p></li>
+<li><p>if dict[str, str], key = package name, value = package version</p></li>
+</ul>
+</div></blockquote>
+<dl class="simple">
+<dt>wait<span class="classifier">DialogWait | None = None</span></dt><dd><p>progress dialog</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h2>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>dict[str, str]</dt><dd><p>Packages that need to be updated, keys: package name, values: package version</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDownload.installFromHost">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDownload.</span></span><span class="sig-name descname"><span class="pre">installFromHost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'C:\\Users\\lotte\\PycharmProjects\\PythonProject3.10'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDownload.installFromHost" title="Link to this definition"></a></dt>
+<dd><p>Download and install files from mega.nz url link(s).</p>
+<section id="id5">
+<h2>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>urls<span class="classifier">str | list[str]</span></dt><dd><p>list of url</p>
 </dd>
@@ -183,11 +257,30 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="Sisyphe.core.sisypheDownload.updatePackages">
+<span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDownload.</span></span><span class="sig-name descname"><span class="pre">updatePackages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'C:\\Users\\lotte\\PycharmProjects\\PythonProject3.10'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDownload.updatePackages" title="Link to this definition"></a></dt>
+<dd><p>Install or update package(s).</p>
+<section id="id6">
+<h2>Parameters<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt>temp<span class="classifier">str</span></dt><dd><p>temporary folder with the packages to be installed</p>
+</dd>
+<dt>dst<span class="classifier">str</span></dt><dd><p>destination folder, files are recursively copied from temp to dst</p>
+</dd>
+<dt>wait<span class="classifier">Sisyphe.gui.dialogWait.DialogWait</span></dt><dd><p>progress bar dialog (optional)</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheDownload.updatePySisyphe">
 <span class="sig-prename descclassname"><span class="pre">Sisyphe.core.sisypheDownload.</span></span><span class="sig-name descname"><span class="pre">updatePySisyphe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheDownload.updatePySisyphe" title="Link to this definition"></a></dt>
 <dd><p>Download and install last version of PySisyphe.</p>
-<section id="id2">
-<h2>Parameters<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<section id="id7">
+<h2>Parameters<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>wait<span class="classifier">Sisyphe.gui.dialogWait.DialogWait</span></dt><dd><p>progress bar dialog (Optional)</p>
 </dd>

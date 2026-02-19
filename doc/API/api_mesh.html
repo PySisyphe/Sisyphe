@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_projectionview.html">Projection view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_browser.html">File browser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_screenshots.html">Screenshots manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_ipython.html">IPython console</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroi.html">ROI tab of the dock</a></li>
@@ -401,7 +402,7 @@ idx is int index, or list/tuple of indices or pythonic slicing (i.e. python slic
 <h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
 <p>object -&gt; SisypheMesh</p>
 <p>Creation: 22/03/2023
-Last revision: 25/01/2026</p>
+Last revision: 16/02/2026</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheMesh.SisypheMesh.ParseXML">
 <span class="sig-name descname"><span class="pre">ParseXML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Document</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheMesh.SisypheMesh.ParseXML" title="Link to this definition"></a></dt>
@@ -471,12 +472,19 @@ instance.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheMesh.SisypheMesh.convertToSisypheROI">
-<span class="sig-name descname"><span class="pre">convertToSisypheROI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refimg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROI" title="Sisyphe.core.sisypheROI.SisypheROI"><span class="pre">SisypheROI</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheMesh.SisypheMesh.convertToSisypheROI" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">convertToSisypheROI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refimg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_roi.html#Sisyphe.core.sisypheROI.SisypheROI" title="Sisyphe.core.sisypheROI.SisypheROI"><span class="pre">SisypheROI</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheMesh.SisypheMesh.convertToSisypheROI" title="Link to this definition"></a></dt>
 <dd><p>Binary discretization of the current SisypheMesh instance mesh.</p>
 <section id="id4">
 <h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
-<dl class="simple">
+<dl>
 <dt>refimg<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | None</span></dt><dd><p>reference volume, mesh is discretized in this reference space</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>SisypheVolume, size and spacing attributes</p></li>
+<li><p>None or ‘default’, size = (256, 256, 256), spacing = (1.0, 1.0, 1.0)</p></li>
+<li><p>‘icbm’, size = (197, 233, 189), spacing = (1.0, 1.0, 1.0)</p></li>
+</ul>
+</div></blockquote>
 </dd>
 <dt>tol<span class="classifier">float</span></dt><dd><p>The tolerance for including a voxel inside the mask. This is in fractions of a voxel, and must be between
 0.0 and 1.0 (default 0.0, no tolerance, all the voxel volume must be inside mesh to become part of the mask)</p>
@@ -494,12 +502,19 @@ instance.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheMesh.SisypheMesh.convertToSisypheVolume">
-<span class="sig-name descname"><span class="pre">convertToSisypheVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refimg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheMesh.SisypheMesh.convertToSisypheVolume" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">convertToSisypheVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refimg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></span><a class="headerlink" href="#Sisyphe.core.sisypheMesh.SisypheMesh.convertToSisypheVolume" title="Link to this definition"></a></dt>
 <dd><p>Binary discretization of the current SisypheMesh instance mesh.</p>
 <section id="id5">
 <h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
-<dl class="simple">
+<dl>
 <dt>refimg<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume</span></dt><dd><p>reference volume, mesh is discretized in this reference space</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>SisypheVolume, size and spacing attributes</p></li>
+<li><p>None or ‘default’, size = (256, 256, 256), spacing = (1.0, 1.0, 1.0)</p></li>
+<li><p>‘icbm’, size = (197, 233, 189), spacing = (1.0, 1.0, 1.0)</p></li>
+</ul>
+</div></blockquote>
 </dd>
 <dt>tol<span class="classifier">float</span></dt><dd><p>The tolerance for including a voxel inside the mask. This is in fractions of a voxel, and must be between
 0.0 and 1.0 (default 0.0, no tolerance, all the voxel volume must be inside mesh to become part of the mask)</p>
@@ -517,12 +532,19 @@ instance.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheMesh.SisypheMesh.convertToVTKImage">
-<span class="sig-name descname"><span class="pre">convertToVTKImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refimg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">vtkImageData</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheMesh.SisypheMesh.convertToVTKImage" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">convertToVTKImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refimg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">vtkImageData</span></span></span><a class="headerlink" href="#Sisyphe.core.sisypheMesh.SisypheMesh.convertToVTKImage" title="Link to this definition"></a></dt>
 <dd><p>Binary discretization of the current SisypheMesh instance mesh.</p>
 <section id="id7">
 <h3>Parameters<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
-<dl class="simple">
-<dt>refimg<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | None</span></dt><dd><p>reference volume, mesh is discretized in this reference space</p>
+<dl>
+<dt>refimg<span class="classifier">Sisyphe.core.sisypheVolume.SisypheVolume | str | None</span></dt><dd><p>reference volume, mesh is discretized in this reference space</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>SisypheVolume, size and spacing attributes</p></li>
+<li><p>None or ‘default’, size = (256, 256, 256), spacing = (1.0, 1.0, 1.0)</p></li>
+<li><p>‘icbm’, size = (197, 233, 189), spacing = (1.0, 1.0, 1.0)</p></li>
+</ul>
+</div></blockquote>
 </dd>
 <dt>tol<span class="classifier">float</span></dt><dd><p>The tolerance for including a voxel inside the mask. This is in fractions of a voxel, and must be between
 0.0 and 1.0 (default 0.0, no tolerance, all the voxel volume must be inside mesh to become part of the mask)</p>
