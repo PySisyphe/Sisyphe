@@ -99,6 +99,8 @@ Functions
     - regressionIntensityMatching
     - CoronalToAxial
     - SagittalToAxial
+    
+    Last revision: 03/02/2026
 """
 
 
@@ -929,6 +931,10 @@ def regressionIntensityMatching(img: SisypheVolume,
     rimg    reference img
     """
     if img.hasSameSize(rimg):
+        # < Revision 03/02/2026
+        if img.getDatatype() != rimg.getDatatype():
+            img = img.cast(rimg.getDatatype())
+        # Revision 03/02/2026 >
         if mask is None:
             src = expand_dims(img.getNumpy().flatten(), axis=1)
             ref = expand_dims(rimg.getNumpy().flatten(), axis=1)
@@ -964,7 +970,10 @@ def regressionIntensityMatching(img: SisypheVolume,
         # r.copyFromNumpyArray(matched, spacing=img.getSpacing())
         r.copyFromNumpyArray(matched.astype(dtype), spacing=img.getSpacing())
         # Revision 25/12/2025 >
-        r.copyPropertiesFrom(img, slope=False)
+        # < Revision 04/02/2026
+        # r.copyPropertiesFrom(img, slope=False)
+        r.copyAttributesFrom(img, slope=False)
+        # Revision 04/02/2026 >
         return r
     else: raise ValueError('Source and reference images have not the same size.')
 # Revision 21/10/2024 >

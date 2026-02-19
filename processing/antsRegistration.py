@@ -2,7 +2,7 @@
 External packages/modules
 -------------------------
 
-    - ANTs, image registration, http://stnava.github.io/ANTs/
+    - ANTs, image registration, https://stnava.github.io/ANTs/
     - Numpy, scientific computing, https://numpy.org/
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
     - SimpleITK, medical image processing, https://simpleitk.org/
