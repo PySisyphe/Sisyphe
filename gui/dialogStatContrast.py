@@ -99,7 +99,7 @@ class DialogContrast(QDialog):
     QDialog -> DialogContrast
 
     Creation: 29/11/2022
-    Last revision: 22/11/2024
+    Last revision: 06/02/2026
     """
 
     # Special method
@@ -121,7 +121,7 @@ class DialogContrast(QDialog):
         # Init window
 
         self.setWindowTitle('Statistical contrast')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -145,6 +145,7 @@ class DialogContrast(QDialog):
 
         # Init widgets
 
+        # design matrix figure
         fig = Figure()
         fig.set_layout_engine('constrained')
         canvas = FigureCanvas(fig)
@@ -184,10 +185,11 @@ class DialogContrast(QDialog):
             w.setDecimals(1)
             w.setRange(-100.0, 100.0)
             w.setValue(0.0)
+            w.setVisible(False)
             self._flayout.addWidget(w)
             self._vector.append(w)
             """
-            estimable, int
+            estimable, int:
             
             - 0 confounding variable, not estimable
             - 1 estimable, main effect
@@ -202,14 +204,20 @@ class DialogContrast(QDialog):
                 else:
                     self._factors['Main'] = [i]
                     self._cfactors.addItem('Main factor')
-                w.setVisible(True)
+                # w.setVisible(True)
             else:
                 name = cdesign[i][0].split(' ')[0]
                 if name in self._factors: self._factors[name].append(i)
                 else:
                     self._factors[name] = [i]
                     if estimable > 0: self._cfactors.addItem(name)
-                w.setVisible(False)
+                # w.setVisible(False)
+        # < Revision 06/02/2026
+        self._cfactors.setCurrentIndex(0)
+        name =  self._cfactors.currentText()
+        for idx in self._factors[name]:
+            self._vector[idx].setVisible(True)
+        # Revision 06/02/2026 >
         self._flayout.addStretch()
 
         self._cfactors.setCurrentIndex(0)
@@ -225,6 +233,7 @@ class DialogContrast(QDialog):
         layout = QHBoxLayout(self)
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Close', parent=self)
         # < Revision 08/10/2005
@@ -250,6 +259,7 @@ class DialogContrast(QDialog):
         self._layout.addLayout(layout)
 
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         self.setModal(True)
         
@@ -365,7 +375,7 @@ class DialogConjunction(QDialog):
         # Init window
 
         self.setWindowTitle('Statistical map conjunction')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -393,6 +403,7 @@ class DialogConjunction(QDialog):
         layout = QHBoxLayout(self)
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Close', parent=self)
         # < Revision 08/10/2025
@@ -423,6 +434,7 @@ class DialogConjunction(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._files.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 06/06/2025 >
         self.setModal(True)
@@ -512,7 +524,7 @@ class DialogTMapToZMap(QDialog):
         # Init window
 
         self.setWindowTitle('t to z-map conversion')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -535,6 +547,7 @@ class DialogTMapToZMap(QDialog):
         layout = QHBoxLayout(self)
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel', parent=self)
         # < Revision 08/10/2025
@@ -565,6 +578,7 @@ class DialogTMapToZMap(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._files.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 06/06/2025 >
         self.setModal(True)
@@ -648,7 +662,7 @@ class DialogLateralityIndex(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Laterality index')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         self._sshot = None
@@ -770,6 +784,7 @@ class DialogLateralityIndex(QDialog):
         layout = QHBoxLayout(self)
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel', parent=self)
         self._ok = QPushButton('OK', parent=self)
@@ -794,6 +809,7 @@ class DialogLateralityIndex(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._map.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 06/06/2025 >
         self.setModal(True)
@@ -999,7 +1015,7 @@ class DialogLateralityIndex(QDialog):
                 cl = self.palette().base().color()
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(dlg, c)
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 dlg.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
             title = 'Lateraly index'.format(rmap.getBasename())
             tab1 = dlg.newTab(title, capture=True, clipbrd=True, scrshot=self._sshot, dataset=True)

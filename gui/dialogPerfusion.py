@@ -7,6 +7,7 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+import sys
 from sys import platform
 
 from os import getcwd
@@ -90,7 +91,7 @@ class DialogPerfusion(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogPerfusion
 
     Creation: 23/12/2024
-    Last revision: 08/03/2025
+    Last revision: 19/02/2026
     """
 
     # Special method
@@ -467,7 +468,7 @@ class DialogArterialInputFunction(QDialog):
     QDialog -> DialogArterialInputFunction
 
     Creation: 17/12/2024
-    Last revision: 08/03/2025
+    Last revision: 19/02/2026
     """
 
     # Special method
@@ -823,7 +824,29 @@ class DialogArterialInputFunction(QDialog):
                     elif ext == 'json': sheet.saveJSON(filename)
                     elif ext == 'tex': sheet.saveLATEX(filename)
                     elif ext == 'txt': sheet.saveTXT(filename)
-                    elif ext == 'xlsx': sheet.saveXLSX(filename)
+                    elif ext == 'xlsx':
+                        try: sheet.saveXLSX(filename)
+                        except:
+                            try:
+                                import openpyxl
+                                messageBox(self,
+                                           'Save chart dataset',
+                                           text='Save {} error.'.format(basename(filename)))
+                            except:
+                                # < Revision 19/02/2026
+                                if hasattr(sys, '_MEIPASS'):
+                                    messageBox(self,
+                                               'XLSX IO',
+                                               'OpenPyXL module is not installed.\n'
+                                               'Please perform a complete reinstallation of the latest version '
+                                               'of PySisyphe, which can be downloaded from '
+                                               'https://github.com/PySisyphe/Sisyphe.')
+                                else:
+                                    messageBox(self,
+                                               'XLSX IO',
+                                               'OpenPyXL module is not installed.\n'
+                                               'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                                # Revision 19/02/2026 >
                     elif ext == 'xsheet': sheet.save(filename)
                     else: raise ValueError('{} format is not supported.'.format(ext))
                 except Exception as err:

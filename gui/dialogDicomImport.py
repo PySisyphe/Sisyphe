@@ -70,7 +70,7 @@ class DialogDicomImport(QDialog):
 
     QDialog -> DialogDicomImport
 
-    Last revision: 26/01/2026
+    Last revision: 19/02/2026
     """
 
     # Special method
@@ -181,6 +181,9 @@ class DialogDicomImport(QDialog):
         wait.setProgressTextVisibility(True)
         wait.setButtonVisibility(True)
         wait.setProgressRange(0, self._series.getSelectedAcquisitionsCount())
+        # < Revision 19/02/2026
+        wait.setCurrentProgressValue(0)
+        # Revision 19/02/2026 >
         QApplication.processEvents()
         # Series
         nseries = tree.topLevelItemCount()

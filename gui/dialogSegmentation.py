@@ -1983,7 +1983,7 @@ class DialogRegistrationBasedSegmentation(QDialog):
 
     QDialog -> DialogRegistrationBasedSegmentation
 
-    Last revision 30/01/2026
+    Last revision 03/02/2026
     """
 
     # Special method
@@ -2739,7 +2739,10 @@ class DialogRegistrationBasedSegmentation(QDialog):
                         # Displacement field nifti filename
                         r = queue.get()
                         if r is not None and exists(r):
-                            wait.setInformationText('{} local registration\nSave displacement field...')
+                            # < Revision 03/02/2026
+                            wait.setInformationText('{} local registration\n'
+                                                    'Save displacement field...'.format(fixed.getBasename()))
+                            # < Revision 03/02/2026
                             # Open diffeomorphic displacement field
                             dfield = SisypheVolume()
                             dfield.loadFromNIFTI(r, reorient=False)
@@ -2884,6 +2887,17 @@ class DialogRegistrationBasedSegmentation(QDialog):
                     wait.setInformationText('Save {}...'.format(rstruct.getBasename()))
                     rstruct.save()
                     wait.close()
+                    # < Revision 03/02/2026
+                    """
+                    Save ROI
+                    """
+                    if structseq in (SisypheAcquisition.STRUCT, SisypheAcquisition.MASK):
+                        try: v = self._settings.getParameterWidget('SaveROI')
+                        except: v = False
+                        if v:
+                            roi = rstruct.getROI(0.5, '>=')
+                            roi.save(rstruct.getFilename())
+                    # Revision 03/02/2026 >
             """
             Exit  
             """

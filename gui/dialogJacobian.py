@@ -131,6 +131,7 @@ class DialogJacobian(QDialog):
         n = self._fields.filenamesCount()
         if n > 0:
             wait = DialogWait(title=self.windowTitle(), progressmin=0, progressmax=n, cancel=True)
+            wait.setCurrentProgressValue(0)
             wait.open()
             for filename in self._fields.getFilenames():
                 wait.setInformationText('{} Jacobian determinant processing...'.format(basename(filename)))

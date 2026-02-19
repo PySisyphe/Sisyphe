@@ -8,6 +8,7 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+import sys
 from sys import platform
 
 from os import remove
@@ -79,7 +80,7 @@ class DialogROIStatistics(QDialog):
 
     QWidget - > QDialog -> DialogROIStatistics
 
-    Last revision: 03/12/2025
+    Last revision: 19/02/2026
     """
     _DEFAULTBINS = 1
 
@@ -105,7 +106,7 @@ class DialogROIStatistics(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Class attributes
@@ -134,10 +135,11 @@ class DialogROIStatistics(QDialog):
         # Init QMenu
 
         self._menusavefig = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menusavefig.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menusavefig.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menusavefig.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action = dict()
 
@@ -159,10 +161,11 @@ class DialogROIStatistics(QDialog):
         self._menusavefig.addAction(self._action['saveallcharts2'])
 
         self._menusavestats = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menusavestats.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menusavestats.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menusavestats.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['savestats1'] = QAction('Save current statistics', self)
         self._action['savestats2'] = QAction('Save current statistics as...', self)
@@ -191,10 +194,11 @@ class DialogROIStatistics(QDialog):
 
         # < Revision 03/12/2025
         self._menucopystats = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menusavestats.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._menusavestats.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menusavestats.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['copystats'] = QAction('Copy signal & shape statistics to console...', self)
         self._action['copyhists'] = QAction('Copy histograms to console...', self)
@@ -257,6 +261,7 @@ class DialogROIStatistics(QDialog):
 
         self._graytab = QWidget()
         self._graylist = QTreeWidget()
+        # noinspection PyTypeChecker
         self._graylist.setSelectionMode(1)
         # < Revision 21/03/2025
         # color column removing
@@ -268,6 +273,7 @@ class DialogROIStatistics(QDialog):
                                         'Kurtosis'])
         # Revision 21/03/2025 >
         for i in range(self._graylist.headerItem().columnCount()):
+            # noinspection PyUnresolvedReferences
             self._graylist.headerItem().setTextAlignment(i, Qt.AlignCenter)
         # noinspection PyTypeChecker
         self._graylist.header().setSectionResizeMode(QHeaderView.ResizeToContents)
@@ -283,6 +289,7 @@ class DialogROIStatistics(QDialog):
 
         self._shapetab = QWidget()
         self._shapelist = QTreeWidget()
+        # noinspection PyTypeChecker
         self._shapelist.setSelectionMode(1)
         # < Revision 21/03/2025
         # color column removing
@@ -296,6 +303,7 @@ class DialogROIStatistics(QDialog):
                                          'Minor axis\nlength', 'Least axis\nlength', 'Elongation', 'Flatness'])
         # Revision 21/03/2025 >
         for i in range(self._shapelist.headerItem().columnCount()):
+            # noinspection PyUnresolvedReferences
             self._shapelist.headerItem().setTextAlignment(i, Qt.AlignCenter)
         # noinspection PyTypeChecker
         self._shapelist.header().setSectionResizeMode(QHeaderView.ResizeToContents)
@@ -356,6 +364,7 @@ class DialogROIStatistics(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -385,7 +394,7 @@ class DialogROIStatistics(QDialog):
 
         # Window
 
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowModality(Qt.ApplicationModal)
 
     # Class method
@@ -488,8 +497,10 @@ class DialogROIStatistics(QDialog):
                     item = QTreeWidgetItem(self._graylist)
                     item.setText(0, name)
                     item.font(0).setBold(True)
+                    # noinspection PyUnresolvedReferences
                     item.setTextAlignment(0, Qt.AlignHCenter)
                     item.setForeground(0, QBrush(roi.getQColor()))
+                    # noinspection PyUnresolvedReferences
                     item.setCheckState(0, Qt.Checked)
                     # < Revision 21/03/2025
                     # color column removing
@@ -509,12 +520,15 @@ class DialogROIStatistics(QDialog):
                     item.setText(12, '{:.2f}'.format(self._stats[name]['skewness']))
                     item.setText(13, '{:.2f}'.format(self._stats[name]['kurtosis']))
                     # Revision 21/03/2025 >
-                    for i in range(item.columnCount()): item.setTextAlignment(i, Qt.AlignCenter)
+                    for i in range(item.columnCount()):
+                        # noinspection PyUnresolvedReferences
+                        item.setTextAlignment(i, Qt.AlignCenter)
                     self._graylist.addTopLevelItem(item)
                     # Shape features
                     item = QTreeWidgetItem(self._shapelist)
                     item.setText(0, name)
                     item.font(0).setBold(True)
+                    # noinspection PyUnresolvedReferences
                     item.setTextAlignment(0, Qt.AlignHCenter)
                     item.setForeground(0, QBrush(roi.getQColor()))
                     # < Revision 21/03/2025
@@ -548,7 +562,9 @@ class DialogROIStatistics(QDialog):
                                         '(non-flat, sphere-like) and 0 (a flat object, or single-slice\n'
                                         'segmentation).')
                     # Revision 21/03/2025 >
-                    for i in range(item.columnCount()): item.setTextAlignment(i, Qt.AlignCenter)
+                    for i in range(item.columnCount()):
+                        # noinspection PyUnresolvedReferences
+                        item.setTextAlignment(i, Qt.AlignCenter)
                 self._graylist.topLevelItem(0).setSelected(True)
             else: raise AttributeError('ROI collection is empty.')
         else: raise AttributeError('ROI collection is not defined.')
@@ -685,17 +701,39 @@ class DialogROIStatistics(QDialog):
                 elif ext == 'json': sheet.saveJSON(filename)
                 elif ext == 'tex': sheet.saveLATEX(filename)
                 elif ext == 'txt': sheet.saveTXT(filename)
-                elif ext == 'xlsx': sheet.saveXLSX(filename)
+                elif ext == 'xlsx':
+                    try: sheet.saveXLSX(filename)
+                    except:
+                        # < Revision 19/02/2026
+                        try:
+                            import openpyxl
+                            messageBox(self,
+                                       title='Save statistics',
+                                       text='Save {} error.'.format(basename(filename)))
+                        except:
+                            if hasattr(sys, '_MEIPASS'):
+                                messageBox(self,
+                                           'XLSX IO',
+                                           'OpenPyXL module is not installed.\n'
+                                           'Please perform a complete reinstallation of the latest version '
+                                           'of PySisyphe, which can be downloaded from '
+                                           'https://github.com/PySisyphe/Sisyphe.')
+                            else:
+                                messageBox(self,
+                                           'XLSX IO',
+                                           'OpenPyXL module is not installed.\n'
+                                           'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                        # Revision 19/02/2026 >
                 elif ext == 'xsheet': sheet.save(filename)
                 else: raise ValueError('{} format is not supported.'.format(ext))
                 if default:
                     messageBox(self,
                                'Save statistics',
                                text='Saved statistics to {}.'.format(filename))
-            except Exception as msg:
+            except:
                 messageBox(self,
-                           title='Save {} error'.format(basename(filename)),
-                           text='{}'.format(msg))
+                           title='Save statistics',
+                           text='Save {} error.'.format(basename(filename)))
 
     def _saveAllStats(self, default=False):
         for i in range(2): self._saveStats(i, default)
@@ -719,7 +757,27 @@ class DialogROIStatistics(QDialog):
                     hists.append(DataFrame(self._hists[k]))
                 df = concat(hists, keys=groups)
                 if ext == 'csv': df.to_csv(filename)
-                else: df.to_excel(filename)
+                else:
+                    try: df.to_excel(filename)
+                    except:
+                        # < Revision 19/02/2026
+                        try:
+                            import openpyxl
+                            raise ValueError('{} format is not supported.'.format(ext))
+                        except:
+                            if hasattr(sys, '_MEIPASS'):
+                                messageBox(self,
+                                           'XLSX IO',
+                                           'OpenPyXL module is not installed.\n'
+                                           'Please perform a complete reinstallation of the latest version '
+                                           'of PySisyphe, which can be downloaded from '
+                                           'https://github.com/PySisyphe/Sisyphe.')
+                            else:
+                                messageBox(self,
+                                           'XLSX IO',
+                                           'OpenPyXL module is not installed.\n'
+                                           'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                        # Revision 19/02/2026 >
                 if default: messageBox(self,
                                        'Save histograms',
                                        text='Save histograms to {}.'.format(filename))

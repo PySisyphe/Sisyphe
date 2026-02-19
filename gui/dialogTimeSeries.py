@@ -7,6 +7,7 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+import sys
 from sys import platform
 
 from os import getcwd
@@ -116,7 +117,7 @@ class DialogSeriesPreprocessing(QDialog):
         # Init window
 
         self.setWindowTitle('Time series preprocessing')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -162,6 +163,7 @@ class DialogSeriesPreprocessing(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         exitb = QPushButton('Close')
         exitb.setAutoDefault(True)
@@ -190,6 +192,7 @@ class DialogSeriesPreprocessing(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._series.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 10/06/2025 >
         self.setModal(True)
@@ -225,9 +228,30 @@ class DialogSeriesPreprocessing(QDialog):
                 try:
                     v = SisypheSheet()
                     if ext == '.csv': v.loadCSV(filename)
-                    elif ext == '.xlsx': v.loadXLSX(filename)
+                    elif ext == '.xlsx':
+                        try: v.loadXLSX(filename)
+                        except:
+                            try:
+                                n = 0
+                                import openpyxl
+                                messageBox(self,
+                                           'Open confound variable',
+                                           text='Open {} error.'.format(basename(filename)))
+                            except:
+                                if hasattr(sys, '_MEIPASS'):
+                                    messageBox(self,
+                                               'XLSX IO',
+                                               'OpenPyXL module is not installed.\n'
+                                               'Please perform a complete reinstallation of the latest version '
+                                               'of PySisyphe, which can be downloaded from '
+                                               'https://github.com/PySisyphe/Sisyphe.')
+                                else:
+                                    messageBox(self,
+                                               'XLSX IO',
+                                               'OpenPyXL module is not installed.\n'
+                                               'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
                     elif ext == '.xsheet': v.load(filename)
-                    n = v.shape[1]
+                    if v: n = v.shape[1]
                 except Exception as err:
                     messageBox(self, 'Open confound variable', text='error: {}'.format(err))
                     n = 0
@@ -313,7 +337,28 @@ class DialogSeriesPreprocessing(QDialog):
                         try:
                             v = SisypheSheet()
                             if ext == '.csv': v.loadCSV(filename)
-                            elif ext == '.xlsx': v.loadXLSX(filename)
+                            elif ext == '.xlsx':
+                                try: v.loadXLSX(filename)
+                                except:
+                                    try:
+                                        import openpyxl
+                                        messageBox(self,
+                                                   'Open confound variable',
+                                                   text='Open {} error.'.format(basename(filename)))
+                                    except:
+                                        if hasattr(sys, '_MEIPASS'):
+                                            messageBox(self,
+                                                       'XLSX IO',
+                                                       'OpenPyXL module is not installed.\n'
+                                                       'Please perform a complete reinstallation of the latest version '
+                                                       'of PySisyphe, which can be downloaded from '
+                                                       'https://github.com/PySisyphe/Sisyphe.')
+                                        else:
+                                            messageBox(self,
+                                                       'XLSX IO',
+                                                       'OpenPyXL module is not installed.\n'
+                                                       'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                                    continue
                             elif ext == '.xsheet': v.load(filename)
                             hdr = v.columns
                             v = v.values
@@ -519,7 +564,27 @@ class DialogSeriesSeedToVoxel(DialogSeriesPreprocessing):
                                 if ext == '.csv':
                                     v.loadCSV(filename)
                                 elif ext == '.xlsx':
-                                    v.loadXLSX(filename)
+                                    try: v.loadXLSX(filename)
+                                    except:
+                                        try:
+                                            import openpyxl
+                                            messageBox(self,
+                                                       'Open confound variable',
+                                                       text='Open {} error.'.format(basename(filename)))
+                                        except:
+                                            if hasattr(sys, '_MEIPASS'):
+                                                messageBox(self,
+                                                           'XLSX IO',
+                                                           'OpenPyXL module is not installed.\n'
+                                                           'Please perform a complete reinstallation of the latest version '
+                                                           'of PySisyphe, which can be downloaded from '
+                                                           'https://github.com/PySisyphe/Sisyphe.')
+                                            else:
+                                                messageBox(self,
+                                                           'XLSX IO',
+                                                           'OpenPyXL module is not installed.\n'
+                                                           'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                                        continue
                                 elif ext == '.xsheet':
                                     v.load(filename)
                                 hdr = v.columns
@@ -719,7 +784,27 @@ class DialogSeriesFastICA(DialogSeriesPreprocessing):
                                 if ext == '.csv':
                                     v.loadCSV(filename)
                                 elif ext == '.xlsx':
-                                    v.loadXLSX(filename)
+                                    try: v.loadXLSX(filename)
+                                    except:
+                                        try:
+                                            import openpyxl
+                                            messageBox(self,
+                                                       'Open confound variable',
+                                                       text='Open {} error.'.format(basename(filename)))
+                                        except:
+                                            if hasattr(sys, '_MEIPASS'):
+                                                messageBox(self,
+                                                           'XLSX IO',
+                                                           'OpenPyXL module is not installed.\n'
+                                                           'Please perform a complete reinstallation of the latest version '
+                                                           'of PySisyphe, which can be downloaded from '
+                                                           'https://github.com/PySisyphe/Sisyphe.')
+                                            else:
+                                                messageBox(self,
+                                                           'XLSX IO',
+                                                           'OpenPyXL module is not installed.\n'
+                                                           'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                                        continue
                                 elif ext == '.xsheet':
                                     v.load(filename)
                                 hdr = v.columns
@@ -931,7 +1016,27 @@ class DialogSeriesConnectivityMatrix(DialogSeriesPreprocessing):
                                 if ext == '.csv':
                                     v.loadCSV(filename)
                                 elif ext == '.xlsx':
-                                    v.loadXLSX(filename)
+                                    try: v.loadXLSX(filename)
+                                    except:
+                                        try:
+                                            import openpyxl
+                                            messageBox(self,
+                                                       'Open confound variable',
+                                                       text='Open {} error.'.format(basename(filename)))
+                                        except:
+                                            if hasattr(sys, '_MEIPASS'):
+                                                messageBox(self,
+                                                           'XLSX IO',
+                                                           'OpenPyXL module is not installed.\n'
+                                                           'Please perform a complete reinstallation of the latest version '
+                                                           'of PySisyphe, which can be downloaded from '
+                                                           'https://github.com/PySisyphe/Sisyphe.')
+                                            else:
+                                                messageBox(self,
+                                                           'XLSX IO',
+                                                           'OpenPyXL module is not installed.\n'
+                                                           'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                                        continue
                                 elif ext == '.xsheet':
                                     v.load(filename)
                                 hdr = v.columns
@@ -1005,7 +1110,7 @@ class DialogSeriesConnectivityMatrix(DialogSeriesPreprocessing):
                     cl = self.palette().base().color()
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(dlg, c)
-                    # noinspection PyTypeChecker
+                    # noinspection PyUnresolvedReferences
                     dlg.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
                 labels = list(lbl.acquisition.getLabels().values())
                 title1 = 'Connectivity matrix'.format(vols.getBasename())
@@ -1081,7 +1186,7 @@ class DialogSeriesCanICA(QDialog):
         # Init window
 
         self.setWindowTitle('Multi-subject time Series ICA')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -1115,6 +1220,7 @@ class DialogSeriesCanICA(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         exitb = QPushButton('Close')
         exitb.setAutoDefault(True)

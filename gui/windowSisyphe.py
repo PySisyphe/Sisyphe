@@ -90,6 +90,7 @@ from Sisyphe.gui.dialogFileSelection import DialogFilesSelection
 from Sisyphe.gui.dialogWait import DialogWait
 from Sisyphe.gui.dialogSplash import DialogSplash
 from Sisyphe.gui.dialogSettings import DialogSettings
+from Sisyphe.widgets.fileBrowserWidget import FileBrowserWidget
 from Sisyphe.widgets.consoleWidget import ConsoleWidget
 from Sisyphe.widgets.databaseWidget import DatabaseWidget
 from Sisyphe.widgets.screenshotsGridWidget import ScreenshotsGridWidget
@@ -133,7 +134,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 29/01/2026
+    Last revision: 19/02/2026
     """
 
     # Class constants
@@ -295,7 +296,9 @@ class WindowSisyphe(QMainWindow):
         # Revision 15/10/2025 >
 
         if splash is not None:
-            splash.getProgressBar().setRange(0, 17)
+            # < Revision 10/02/2026
+            splash.getProgressBar().setRange(0, 18)
+            # Revision 10/02/2026 >
             splash.setMessage('Main window initialization...')
             splash.setProgressBarVisibility(True)
 
@@ -388,7 +391,9 @@ class WindowSisyphe(QMainWindow):
         # Menu bar
 
         if splash is not None:
+            # < Revision 10/02/2026
             splash.getProgressBar().setValue(9)
+            # Revision 10/02/2026 >
             splash.setMessage('Menu bar initialization...')
         self._action = dict()
         self._menu = dict()
@@ -410,7 +415,9 @@ class WindowSisyphe(QMainWindow):
                                'QStatusBar { border-style: none; }')
 
         if splash is not None:
+            # < Revision 10/02/2026
             splash.getProgressBar().setValue(10)
+            # Revision 10/02/2026 >
             splash.setMessage('Tool bar initialization...')
         self._toolbar = QToolBar(parent=self)
         self._initToolBar()
@@ -439,7 +446,9 @@ class WindowSisyphe(QMainWindow):
         self._splitter.addWidget(self._dock)
 
         if splash is not None:
+            # < Revision 10/02/2026
             splash.getProgressBar().setValue(11)
+            # Revision 10/02/2026 >
             splash.setMessage('ROI dock initialization...')
         self._tabROIList = TabROIListWidget(parent=self._dock)
         self._tabROIList.setContentsMargins(10, 10, 10, 10)
@@ -455,7 +464,9 @@ class WindowSisyphe(QMainWindow):
         self._dock.addTab(self._tabROIList, 'ROI')
 
         if splash is not None:
+            # < Revision 10/02/2026
             splash.getProgressBar().setValue(12)
+            # Revision 10/02/2026 >
             splash.setMessage('ROI tools dock initialization...')
         self._tabROITools = TabROIToolsWidget(parent=self._dock)
         # < Revision 03/12/2025
@@ -474,7 +485,9 @@ class WindowSisyphe(QMainWindow):
         self._tabROITools.setVisible(False)
 
         if splash is not None:
+            # < Revision 10/02/2026
             splash.getProgressBar().setValue(13)
+            # Revision 10/02/2026 >
             splash.setMessage('Mesh dock initialization...')
         self._tabMeshList = TabMeshListWidget(parent=self._dock)
         self._tabMeshList.setContentsMargins(10, 10, 10, 10)
@@ -488,7 +501,9 @@ class WindowSisyphe(QMainWindow):
         self._dock.addTab(self._tabMeshList, 'Mesh')
 
         if splash is not None:
+            # < Revision 10/02/2026
             splash.getProgressBar().setValue(14)
+            # Revision 10/02/2026 >
             splash.setMessage('Target dock initialization...')
         self._tabTargetList = TabTargetListWidget(parent=self._dock)
         self._tabTargetList.setContentsMargins(10, 10, 10, 10)
@@ -502,7 +517,9 @@ class WindowSisyphe(QMainWindow):
         self._dock.addTab(self._tabTargetList, 'Target')
 
         if splash is not None:
+            # < Revision 10/02/2026
             splash.getProgressBar().setValue(15)
+            # Revision 10/02/2026 >
             splash.setMessage('Tracking dock initialization...')
         self._tabTrackingList = TabTrackingWidget(parent=self._dock)
         self._tabTrackingList.setContentsMargins(10, 10, 10, 10)
@@ -516,7 +533,9 @@ class WindowSisyphe(QMainWindow):
         self._dock.addTab(self._tabTrackingList, 'Tracking')
 
         if splash is not None:
+            # < Revision 10/02/2026
             splash.getProgressBar().setValue(16)
+            # Revision 10/02/2026 >
             splash.setMessage('Help dock initialization...')
         self._tabHelp = TabHelpWidget(parent=self._dock)
         self._tabHelp.setContentsMargins(10, 10, 10, 10)
@@ -539,6 +558,15 @@ class WindowSisyphe(QMainWindow):
         # < Revision 16/10/2024
         self.setDockEnabled(False)
         # Revision 16/10/2024 >
+
+        # < Revision 10/02/2026
+        if splash is not None:
+            splash.getProgressBar().setValue(17)
+            splash.setMessage('File browser widget initialization...')
+        self._browser = FileBrowserWidget(parent=self._tabview)
+        self._browser.setMainWindow(self)
+        self._tabview.insertTab(6, self._browser, 'File browser')
+        # Revision 10/02/2026 >
 
         # Status bar
 
@@ -564,7 +592,9 @@ class WindowSisyphe(QMainWindow):
         # Dialog settings initialization
 
         if splash is not None:
-            splash.getProgressBar().setValue(17)
+            # < Revision 10/02/2026
+            splash.getProgressBar().setValue(18)
+            # Revision 10/02/2026 >
             splash.setMessage('Settings dialog initialization...')
         self._dialogSettings = DialogSettings()
         if platform == 'win32':
@@ -580,11 +610,20 @@ class WindowSisyphe(QMainWindow):
         self.resize(QApplication.primaryScreen().availableSize())
         self.move(0, 0)
         self.show()
+        # < Revision 10/02/2026
+        self._browser.initSplitterSize()
+        # Revision 10/02/2026 >
         # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowState(Qt.WindowMaximized)
         width = ItemAttributesWidget.getDefaultMinimumWidth() + 80
         self._splitter.setSizes([sum(self._splitter.sizes()) - width, width])
 
+        # < Revision 18/02/2026
+        if self._database.isEmpty():
+            self._tabview.setCurrentIndex(6)
+        # Revision 18/02/2026 >
+
+        # Revision 18/02/2026 >
         # < Revision 11/01/2026
         chdir(self.getUserDirectory())
         # Revision 11/01/2026
@@ -891,6 +930,11 @@ class WindowSisyphe(QMainWindow):
                 Texture features
                 Bias field correction
                 --
+                Atlas labeling
+                    ROI(s) atlas labeling
+                    Mesh(es) atlas labeling
+                    Tool(s) atlas labeling
+                --
                 Voxel-by-voxel processing
                     Mean volume
                     Median volume
@@ -988,6 +1032,20 @@ class WindowSisyphe(QMainWindow):
         self._action['algmax'] = submenu.addAction('Maximum volume...')
         self._action['algebra'] = submenu.addAction(icalgebra, 'Algebra...')
 
+        # < Revision 12/02/2026
+        self._menu['func'].addSeparator()
+        submenu = self._menu['func'].addMenu('Atlas labeling')
+        # noinspection PyUnresolvedReferences
+        submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
+        submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
+        submenu.setAttribute(Qt.WA_TranslucentBackground, True)
+        self._action['roiatlas'] = submenu.addAction('ROI(s) atlas labeling...')
+        self._action['meshatlas'] = submenu.addAction('Mesh(es) atlas labeling...')
+        self._action['toolatlas'] = submenu.addAction('Tool(s) atlas labeling...')
+        # Revision 12/02/2026 >
+
         self._menu['func'].addSeparator()
         self._action['workflow'] = self._menu['func'].addAction(icworkf, 'Workflow processing...')
         self._menu['workflows'] = self._menu['func'].addMenu('Workflows')
@@ -1028,6 +1086,11 @@ class WindowSisyphe(QMainWindow):
         self._action['histmatch'].triggered.connect(lambda: self.histmatch())
         self._action['regmatch'].triggered.connect(lambda: self.regmatch())
         self._action['signorm'].triggered.connect(lambda: self.signalNorm())
+        # < Revision 12/02/2026
+        self._action['roiatlas'].triggered.connect(lambda: self.labelingROI())
+        self._action['meshatlas'].triggered.connect(lambda: self.labelingMesh())
+        self._action['toolatlas'].triggered.connect(lambda: self.labelingTool())
+        # Revision 12/02/2026 >
         self._action['workflow'].triggered.connect(self.automate)
         self._action['addplugin'].triggered.connect(lambda: self.addPlugin())
         self._action['delplugin'].triggered.connect(lambda: self.removePlugin())
@@ -1260,7 +1323,6 @@ class WindowSisyphe(QMainWindow):
                     ---
                     One sample t-test
                     Two sample t-test
-                    ANOVA
                     ANCOVA
                     ----
                     GLM images conditions
@@ -1309,6 +1371,7 @@ class WindowSisyphe(QMainWindow):
         self._action['onettest'] = submenu.addAction('One sample t-test...')
         self._action['twottest'] = submenu.addAction('Two sample t-test...')
         self._action['pairedttest'] = submenu.addAction('Paired t-test...')
+        self._action['ancova'] = submenu.addAction('ANCOVA...')
         submenu.addSeparator()
         self._action['glmsbj'] = submenu.addAction('GLM subjects/conditions...')
         self._action['glmgrp'] = submenu.addAction('GLM groups/subjects/conditions...')
@@ -1349,10 +1412,11 @@ class WindowSisyphe(QMainWindow):
         self._action['onettest'].triggered.connect(lambda dummy: self.model(3))
         self._action['twottest'].triggered.connect(lambda dummy: self.model(4))
         self._action['pairedttest'].triggered.connect(lambda dummy: self.model(5))
+        self._action['ancova'].triggered.connect(lambda dummy: self.model(9))
         self._action['glmsbj'].triggered.connect(lambda dummy: self.model(6))
         self._action['glmgrp'].triggered.connect(lambda dummy: self.model(7))
         self._action['glmgrp2'].triggered.connect(lambda dummy: self.model(8))
-        self._action['glmgrp3'].triggered.connect(lambda dummy: self.model(9))
+        self._action['glmgrp3'].triggered.connect(lambda dummy: self.model(10))
         self._action['contrast'].triggered.connect(self.contrast)
         self._action['result'].triggered.connect(self.result)
         # < Revision 14/10/2025
@@ -1525,6 +1589,7 @@ class WindowSisyphe(QMainWindow):
                 Synchronized view
                 Projection view
                 Database view
+                File browser view
                 Screenshots view
                 IPython view
         """
@@ -1583,6 +1648,9 @@ class WindowSisyphe(QMainWindow):
         self._action['proj'] = QAction(QIcon(join(icpath, 'proj-view.png')), 'Projection view', parent=self)
         self._action['multi'] = QAction(QIcon(join(icpath, 'multi-view.png')), 'Multi-component view ', parent=self)
         self._action['database'] = QAction('Database', parent=self)
+        # < Revision 10/02/2026
+        self._action['browser'] = QAction('File browser', parent=self)
+        # Revision 10/02/2026 >
         self._action['scrshots'] = QAction('Screenshots', parent=self)
         self._action['ipython'] = QAction('IPython', parent=self)
         self._action['slice'].setToolTip('Slice view\nDisplays contiguous slices in a grid view.')
@@ -1597,6 +1665,9 @@ class WindowSisyphe(QMainWindow):
         self._menu['window'].addAction(self._action['proj'])
         self._menu['window'].addAction(self._action['multi'])
         self._menu['window'].addAction(self._action['database'])
+        # < Revision 10/02/2026
+        self._menu['window'].addAction(self._action['browser'])
+        # Revision 10/02/2026 >
         self._menu['window'].addAction(self._action['scrshots'])
         self._menu['window'].addAction(self._action['ipython'])
 
@@ -1622,10 +1693,14 @@ class WindowSisyphe(QMainWindow):
         self._action['multi'].setShortcut(QKeySequence(Qt.Key_F5))
         # noinspection PyUnresolvedReferences
         self._action['database'].setShortcut(QKeySequence(Qt.Key_F6))
+        # < Revision 10/02/2026
         # noinspection PyUnresolvedReferences
-        self._action['scrshots'].setShortcut(QKeySequence(Qt.Key_F7))
+        self._action['browser'].setShortcut(QKeySequence(Qt.Key_F7))
+        # Revision 10/02/2026 >
         # noinspection PyUnresolvedReferences
-        self._action['ipython'].setShortcut(QKeySequence(Qt.Key_F8))
+        self._action['scrshots'].setShortcut(QKeySequence(Qt.Key_F8))
+        # noinspection PyUnresolvedReferences
+        self._action['ipython'].setShortcut(QKeySequence(Qt.Key_F9))
 
         # Connect
 
@@ -1642,8 +1717,11 @@ class WindowSisyphe(QMainWindow):
         self._action['proj'].triggered.connect(self.displayInProjectionView)
         self._action['multi'].triggered.connect(self.displayInComponentView)
         self._action['database'].triggered.connect(lambda dummy: self._tabview.setCurrentIndex(5))
-        self._action['scrshots'].triggered.connect(lambda dummy: self._tabview.setCurrentIndex(6))
-        self._action['ipython'].triggered.connect(lambda dummy: self._tabview.setCurrentIndex(7))
+        # < Revision 10/02/2026
+        self._action['browser'].triggered.connect(lambda dummy: self._tabview.setCurrentIndex(6))
+        # Revision 10/02/2026 >
+        self._action['scrshots'].triggered.connect(lambda dummy: self._tabview.setCurrentIndex(7))
+        self._action['ipython'].triggered.connect(lambda dummy: self._tabview.setCurrentIndex(8))
 
     def _initToolBar(self) -> None:
         policy = QSizePolicy()
@@ -2039,8 +2117,11 @@ class WindowSisyphe(QMainWindow):
             elif index == 3: self._tabHelp.setPage('PySisyphe_projectionview.html')
             elif index == 4: self._tabHelp.setPage('PySisyphe_multicomponentview.html')
             elif index == 5: self._tabHelp.setPage('PySisyphe_database.html')
-            elif index == 6: self._tabHelp.setPage('PySisyphe_screenshots.html')
-            elif index == 7: self._tabHelp.setPage('PySisyphe_ipython.html')
+            # < Revision 10/02/2026
+            elif index == 6: self._tabHelp.setPage('PySisyphe_browser.html')
+            elif index == 7: self._tabHelp.setPage('PySisyphe_screenshots.html')
+            elif index == 8: self._tabHelp.setPage('PySisyphe_ipython.html')
+            # Revision 10/02/2026 >
         except: pass
         # Revision 05/12/2025 >
 
@@ -2478,6 +2559,12 @@ class WindowSisyphe(QMainWindow):
     def getDatabase(self) -> DatabaseWidget:
         return self._database
 
+    # < Revision 10/02/2026
+    # add getBrowser method
+    def getBrowser(self) -> FileBrowserWidget:
+        return self._browser
+    # Revision 10/02/2026 >
+
     def getScreenshots(self) -> ScreenshotsGridWidget:
         return self._captures
 
@@ -2631,33 +2718,75 @@ class WindowSisyphe(QMainWindow):
     def getDatabaseVisibility(self) -> bool:
         return self._tabview.isTabVisible(5)
 
-    def showCaptures(self) -> None:
+    # < Revision 10/02/2026
+    # add showBrowser method
+    def showBrowser(self) -> None:
         self._tabview.setTabVisible(6, True)
         self._tabview.setCurrentIndex(6)
+    # Revision 10/02/2026 >
 
-    def hideCaptures(self) -> None:
+    # < Revision 10/02/2026
+    # add hideBrowser method
+    def hideBrowser(self) -> None:
         self._tabview.setTabVisible(6, False)
+    # Revision 10/02/2026 >
 
-    def setCapturesVisibility(self, v: bool) -> None:
+    # < Revision 10/02/2026
+    # add setBrowserVisibility method
+    def setBrowserVisibility(self, v: bool) -> None:
         if isinstance(v, bool): self._tabview.setTabVisible(6, v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
+    # Revision 10/02/2026 >
 
-    def getCapturesVisibility(self) -> bool:
+    # < Revision 10/02/2026
+    # getBrowserVisibility method
+    def getBrowserVisibility(self) -> bool:
         return self._tabview.isTabVisible(6)
+    # Revision 10/02/2026 >
 
-    def showConsole(self) -> None:
+    def showCaptures(self) -> None:
+        # < Revision 10/02/2026
         self._tabview.setTabVisible(7, True)
         self._tabview.setCurrentIndex(7)
+        # Revision 10/02/2026 >
 
-    def hideConsole(self) -> None:
+    def hideCaptures(self) -> None:
+        # < Revision 10/02/2026
         self._tabview.setTabVisible(7, False)
+        # Revision 10/02/2026 >
 
-    def setConsoleVisibility(self, v: bool) -> None:
+    def setCapturesVisibility(self, v: bool) -> None:
+        # < Revision 10/02/2026
         if isinstance(v, bool): self._tabview.setTabVisible(7, v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
+        # Revision 10/02/2026 >
+
+    def getCapturesVisibility(self) -> bool:
+        # < Revision 10/02/2026
+        return self._tabview.isTabVisible(7)
+        # Revision 10/02/2026 >
+
+    def showConsole(self) -> None:
+        # < Revision 10/02/2026
+        self._tabview.setTabVisible(8, True)
+        self._tabview.setCurrentIndex(8)
+        # Revision 10/02/2026 >
+
+    def hideConsole(self) -> None:
+        # < Revision 10/02/2026
+        self._tabview.setTabVisible(8, False)
+        # Revision 10/02/2026 >
+
+    def setConsoleVisibility(self, v: bool) -> None:
+        # < Revision 10/02/2026
+        if isinstance(v, bool): self._tabview.setTabVisible(8, v)
+        else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
+        # Revision 10/02/2026 >
 
     def getConsoleVisibility(self) -> bool:
-        return self._tabview.isTabVisible(7)
+        # < Revision 10/02/2026
+        return self._tabview.isTabVisible(8)
+        # Revision 10/02/2026 >
 
     def setTabViewVisibility(self, index: int, v: bool) -> None:
         if isinstance(index, int):
@@ -2667,10 +2796,10 @@ class WindowSisyphe(QMainWindow):
         else: raise TypeError('first parameter type {} is not int.'.format(type(index)))
 
     def setCurrentTabView(self, index: int) -> None:
-        if 0 <= index < 8:
+        if 0 <= index < 9:
             self._tabview.setTabVisible(index, True)
             self._tabview.setCurrentIndex(index)
-        else: raise ValueError('index must be between 0 and 7.')
+        else: raise ValueError('index must be between 0 and 8.')
 
     def setDockEnabled(self, v: bool) -> None:
         if isinstance(v, bool):
@@ -2844,17 +2973,24 @@ class WindowSisyphe(QMainWindow):
         self.close()
 
     def about(self) -> None:
-        from Sisyphe.gui.dialogSplash import DialogSplash
-        self._dialog = DialogSplash()
-        if platform == 'win32':
-            try: __main__.updateWindowTitleBarColor(self._dialog)
-            except: pass
-        self._dialog.buttonVisibilityOn()
-        self._dialog.progressBarVisibilityOff()
-        try: self._dialog.exec()
-        except Exception as err:
-            messageBox(self, 'About dialog error', '{}\n{}'.format(type(err), str(err)))
-            if self._logger is not None: self._logger.error(traceback.format_exc())
+        # < Revision 17/02/2026
+        try:
+            __main__.splash.buttonVisibilityOn()
+            __main__.splash.progressBarVisibilityOff()
+            __main__.splash.show()
+        except:
+            from Sisyphe.gui.dialogSplash import DialogSplash
+            self._dialog = DialogSplash()
+            if platform == 'win32':
+                try: __main__.updateWindowTitleBarColor(self._dialog)
+                except: pass
+            self._dialog.buttonVisibilityOn()
+            self._dialog.progressBarVisibilityOff()
+            try: self._dialog.exec()
+            except Exception as err:
+                messageBox(self, 'About dialog error', '{}\n{}'.format(type(err), str(err)))
+                if self._logger is not None: self._logger.error(traceback.format_exc())
+        # Revision 17/02/2026 >
 
     def preferences(self) -> None:
         if self._dialogSettings is not None:
@@ -3443,9 +3579,12 @@ class WindowSisyphe(QMainWindow):
             messageBox(self, 'DICOM Query Retrieve dialog error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
-    def datasetDicom(self) -> None:
+    def datasetDicom(self, filename: str | None = None) -> None:
         from Sisyphe.gui.dialogDicomDataset import DialogDicomDataset
         self._dialog = DialogDicomDataset()
+        # < Revision 13/02/2026
+        if filename: self._dialog.setFilename(filename)
+        # Revision 13/02/2026 >
         if platform == 'win32':
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
@@ -3703,6 +3842,106 @@ class WindowSisyphe(QMainWindow):
             if self._logger is not None: self._logger.error(traceback.format_exc())
     # Revision 14/10/2025 >
 
+    # < Revision 12/02/2026
+    # add labelingROI method
+    def labelingROI(self, filenames: str | list[str] | None = None) -> None:
+        from Sisyphe.gui.dialogAtlasLabeling import DialogAtlasLabeling
+        self._dialog = DialogAtlasLabeling('ROI')
+        w = self._dialog.getFilesSelectionWidgets()
+        w[0].setToolbarThumbnail(self._thumbnail)
+        w[1].setToolbarThumbnail(self._thumbnail)
+        w[2].setToolbarThumbnail(self._thumbnail)
+        w[3].setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        if filenames is not None:
+            if isinstance(filenames, str): filenames = [filenames]
+            self._dialog.addROI(filenames)
+            try:
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogAtlasLabeling.DialogAtlasLabeling]')
+                self._dialog.execute()
+            except Exception as err:
+                messageBox(self, 'Atlas labeling dialog error', '{}\n{}'.format(type(err), str(err)))
+                if self._logger is not None: self._logger.error(traceback.format_exc())
+        else:
+            try:
+                # < Revision 19/02/2026
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-roi-labeling')
+                # Revision 19/02/2026 >
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogAtlasLabeling.DialogAtlasLabeling]')
+                self._dialog.exec()
+            except Exception as err:
+                messageBox(self, 'Atlas labeling dialog error', '{}\n{}'.format(type(err), str(err)))
+                if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 12/02/2026 >
+
+    # < Revision 12/02/2026
+    # add labelingMesh method
+    def labelingMesh(self, filenames: str | list[str] | None = None) -> None:
+        from Sisyphe.gui.dialogAtlasLabeling import DialogAtlasLabeling
+        self._dialog = DialogAtlasLabeling('Mesh')
+        w = self._dialog.getFilesSelectionWidgets()
+        w[0].setToolbarThumbnail(self._thumbnail)
+        w[1].setToolbarThumbnail(self._thumbnail)
+        w[2].setToolbarThumbnail(self._thumbnail)
+        w[3].setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        if filenames is not None:
+            if isinstance(filenames, str): filenames = [filenames]
+            self._dialog.addMesh(filenames)
+            try:
+                if self._logger is not None: self._logger.info(
+                    'Dialog exec [gui.dialogAtlasLabeling.DialogAtlasLabeling]')
+                self._dialog.execute()
+            except Exception as err:
+                messageBox(self, 'Atlas labeling dialog error', '{}\n{}'.format(type(err), str(err)))
+                if self._logger is not None: self._logger.error(traceback.format_exc())
+        else:
+            try:
+                # < Revision 19/02/2026
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-mesh-labeling')
+                # Revision 19/02/2026 >
+                if self._logger is not None: self._logger.info(
+                    'Dialog exec [gui.dialogAtlasLabeling.DialogAtlasLabeling]')
+                self._dialog.exec()
+            except Exception as err:
+                messageBox(self, 'Atlas labeling dialog error', '{}\n{}'.format(type(err), str(err)))
+                if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 12/02/2026 >
+
+    # < Revision 12/02/2026
+    # add labelingTool method
+    def labelingTool(self, filenames: str | list[str] | None = None) -> None:
+        from Sisyphe.gui.dialogAtlasLabeling import DialogAtlasLabeling
+        self._dialog = DialogAtlasLabeling('Tools')
+        w = self._dialog.getFilesSelectionWidgets()
+        w[0].setToolbarThumbnail(self._thumbnail)
+        w[1].setToolbarThumbnail(self._thumbnail)
+        w[2].setToolbarThumbnail(self._thumbnail)
+        w[3].setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        if filenames is not None:
+            if isinstance(filenames, str): filenames = [filenames]
+            self._dialog.addTool(filenames)
+            try:
+                if self._logger is not None: self._logger.info(
+                    'Dialog exec [gui.dialogAtlasLabeling.DialogAtlasLabeling]')
+                self._dialog.execute()
+            except Exception as err:
+                messageBox(self, 'Atlas labeling dialog error', '{}\n{}'.format(type(err), str(err)))
+                if self._logger is not None: self._logger.error(traceback.format_exc())
+        else:
+            try:
+                # < Revision 19/02/2026
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-tools-labeling')
+                # Revision 19/02/2026 >
+                if self._logger is not None: self._logger.info(
+                    'Dialog exec [gui.dialogAtlasLabeling.DialogAtlasLabeling]')
+                self._dialog.exec()
+            except Exception as err:
+                messageBox(self, 'Atlas labeling dialog error', '{}\n{}'.format(type(err), str(err)))
+                if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 12/02/2026 >
+
     def download(self) -> None:
         from Sisyphe.gui.dialogDownload import DialogDownload
         filename = join(DialogDownload.getSettingsFolder(), 'host.xml')
@@ -3942,9 +4181,9 @@ class WindowSisyphe(QMainWindow):
             try: __main__.updateWindowTitleBarColor(self._dialog)
             except: pass
         try:
-            # < Revision 12/10/2025
-            self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-attributes')
-            # Revision 12/10/2025 >
+            # < Revision 19/02/2026
+            self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-attrconv')
+            # Revision 19/02/2026 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDatatype.DialogAttributes]')
             self._dialog.exec()
         except Exception as err:
@@ -5693,6 +5932,11 @@ class WindowSisyphe(QMainWindow):
             groups = 0
             subjects = None
             conditions = None
+        elif model == 9:
+            title = 'ANCOVA model'
+            groups = -1
+            subjects = None
+            conditions = None
         else:
             title = 'GLM groups/subjects model'
             groups = 0
@@ -5718,7 +5962,7 @@ class WindowSisyphe(QMainWindow):
                 r = self._dialog.getTreeObsCount()
                 self._dialog.close()
                 from Sisyphe.gui.dialogStatModel import DialogModel
-                self._dialog = DialogModel(title, r, model < 3)
+                self._dialog = DialogModel(title, r, model < 3, model == 9)
                 if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
                 if self._dialog.exec():
                     design = self._dialog.getModel()

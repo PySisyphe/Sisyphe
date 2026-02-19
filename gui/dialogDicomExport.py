@@ -40,7 +40,7 @@ class DialogDicomExport(QDialog):
 
     QDialog -> DialogDicomExport
 
-    Last revision: 03/09/2025
+    Last revision: 19/02/2026
     """
 
     # Special method
@@ -49,7 +49,7 @@ class DialogDicomExport(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('DICOM export')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         # < Revision 17/07/2025
@@ -97,6 +97,7 @@ class DialogDicomExport(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -120,7 +121,9 @@ class DialogDicomExport(QDialog):
             # Set ProgressBar
             progress = DialogWait()
             progress.setProgressRange(0, n)
+            # < Revision 19/02/2026
             progress.setCurrentProgressValue(0)
+            # Revision 19/02/2026 >
             progress.buttonVisibilityOff()
             progress.progressTextVisibilityOn()
             progress.setProgressVisibility(n > 1)

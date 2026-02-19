@@ -9,6 +9,7 @@ External packages/modules
     - scipy, scientific computing, https://scipy.org/
 """
 
+import sys
 from sys import platform
 
 from os import getcwd
@@ -18,6 +19,7 @@ from os import chdir
 from os.path import join
 from os.path import exists
 from os.path import splitext
+from os.path import basename
 from os.path import dirname
 from os.path import abspath
 
@@ -84,7 +86,7 @@ class DialogGenericResults(QDialog):
     QDialog -> DialogGenericResults
 
     Creation: 25/11/2022
-    Last revision: 29/11/2025
+    Last revision: 19/02/2026
     """
 
     # Special method
@@ -263,7 +265,29 @@ class DialogGenericResults(QDialog):
                     elif ext == 'json': sheet.saveJSON(filename)
                     elif ext == 'tex': sheet.saveLATEX(filename)
                     elif ext == 'txt': sheet.saveTXT(filename)
-                    elif ext == 'xlsx': sheet.saveXLSX(filename)
+                    elif ext == 'xlsx':
+                        # < Revision 19/02/2026
+                        try: sheet.saveXLSX(filename)
+                        except:
+                            try:
+                                import openpyxl
+                                messageBox(self,
+                                           'Save Dataset',
+                                           text='Save {} error.'.format(basename(filename)))
+                            except:
+                                if hasattr(sys, '_MEIPASS'):
+                                    messageBox(self,
+                                               'XLSX IO',
+                                               'OpenPyXL module is not installed.\n'
+                                               'Please perform a complete reinstallation of the latest version '
+                                               'of PySisyphe, which can be downloaded from '
+                                               'https://github.com/PySisyphe/Sisyphe.')
+                                else:
+                                    messageBox(self,
+                                               'XLSX IO',
+                                               'OpenPyXL module is not installed.\n'
+                                               'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                        # Revision 19/02/2026 >
                     elif ext == 'xsheet': sheet.save(filename)
                     else: raise ValueError('{} format is not supported.'.format(ext))
                 except Exception as err:
@@ -1011,7 +1035,12 @@ class DialogGenericResults(QDialog):
             else: raise ValueError('parameter value {} is out of range.'.format(index))
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
 
-    def addTreeWidgetRow(self, index: int, row: list | tuple | ndarray, d: int | None = None) -> None:
+    # noinspection PyUnresolvedReferences
+    def addTreeWidgetRow(self,
+                         index: int,
+                         row: list | tuple | ndarray,
+                         d: int | None = None,
+                         align: int = Qt.AlignCenter) -> None:
         """
         Add a new row of data to a tree widget.
 
@@ -1023,6 +1052,8 @@ class DialogGenericResults(QDialog):
             The data for the new row.
         d : int | None, optional
             Number of decimals for formatting float values. Auto-detected if None.
+        align : int (optional)
+            set text alignment (default center alignment, Qt.AlignCenter).
         """
         if isinstance(index, int):
             if 0 <= index < self._tab.count():
@@ -1047,8 +1078,11 @@ class DialogGenericResults(QDialog):
                                 else: buff.append(r)
                             item.setText(i, ' '.join(buff))
                         else: item.setText(i, str(row[i]))
+                        # < Revision 16/02/2026
+                        # item.setTextAlignment(i, Qt.AlignCenter)
                         # noinspection PyUnresolvedReferences
-                        item.setTextAlignment(i, Qt.AlignCenter)
+                        item.setTextAlignment(i, align)
+                        # Revision 16/02/2026 >
                     tree.addTopLevelItem(item)
                 else: raise TypeError('row parameter type {} is not list, tuple or ndarray.'.format(type(row)))
             else: raise ValueError('index parameter value {} is out of range.'.format(index))
@@ -1370,11 +1404,13 @@ class DialogGenericResults(QDialog):
             else: raise ValueError('index parameter value {} is out of range.'.format(index))
         else: raise TypeError('index parameter type {} is not int.'.format(type(index)))
 
+    # noinspection PyUnresolvedReferences
     def setTreeWidgetArray(self,
                            index: int,
                            arr: ndarray | DataFrame,
                            d: int | None = None,
-                           rows: list[str] | None = None) -> None:
+                           rows: list[str] | None = None,
+                           align: int = Qt.AlignCenter) -> None:
         """
         Populate a tree widget from a NumPy array or pandas DataFrame.
 
@@ -1388,6 +1424,8 @@ class DialogGenericResults(QDialog):
             Number of decimals for formatting float values. Auto-detected if None.
         rows : list[str] | None, optional
             Labels for the rows. If provided, they are placed in the first column.
+        align : int (optional)
+            set text alignment (default center alignment, Qt.AlignCenter).
         """
         if isinstance(index, int):
             if 0 <= index < self._tab.count():
@@ -1420,14 +1458,22 @@ class DialogGenericResults(QDialog):
                                 elif isinstance(arr[i, k], float): item.setText(j, fd[k].format(arr[i, k]))
                                 elif isinstance(arr[i, k], str): item.setText(j, arr[i, k])
                                 else: item.setText(j, str(arr[i, k]))
+                                # < Revision 16/02/2026
+                                # item.setTextAlignment(j, Qt.AlignCenter)
                                 # noinspection PyUnresolvedReferences
-                                item.setTextAlignment(j, Qt.AlignCenter)
+                                item.setTextAlignment(j, align)
+                                # Revision 16/02/2026 >
                             tree.addTopLevelItem(item)
                 else: raise TypeError('array parameter type {} is not ndarray.'.format(type(arr)))
             else: raise ValueError('parameter value {} is out of range.'.format(index))
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
 
-    def setTreeWidgetDict(self, index: int, arr: dict, d: int | None = None):
+    # noinspection PyUnresolvedReferences
+    def setTreeWidgetDict(self,
+                          index: int,
+                          arr: dict,
+                          d: int | None = None,
+                          align: int = Qt.AlignCenter):
         """
         Populate a tree widget from a dictionary.
 
@@ -1437,8 +1483,10 @@ class DialogGenericResults(QDialog):
             The tab index.
         arr : dict
             The data dictionary. Keys are used as headers, and values are lists of column data.
-        d : int | None, optional
+        d : int | None (optional)
             Number of decimals for formatting float values. Auto-detected if None.
+        align : int (optional)
+            set text alignment (default center alignment, Qt.AlignCenter).
         """
         if isinstance(index, int):
             if 0 <= index < self._tab.count():
@@ -1471,8 +1519,11 @@ class DialogGenericResults(QDialog):
                                     else: raise ValueError('dict element type {} is not int, float or str.'.format(type(r)))
                                 item.setText(j, ' '.join(buff))
                             else: item.setText(j, str(arr[k][i]))
+                            # < Revision 16/02/2026
+                            # item.setTextAlignment(j, Qt.AlignCenter)
                             # noinspection PyUnresolvedReferences
-                            item.setTextAlignment(j, Qt.AlignCenter)
+                            item.setTextAlignment(j, align)
+                            # Revision 16/02/2026 >
                         tree.addTopLevelItem(item)
                 else: raise TypeError('array parameter type {} is not dict.'.format(type(arr)))
             else: raise ValueError('parameter value {} is out of range.'.format(index))

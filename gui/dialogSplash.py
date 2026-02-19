@@ -199,6 +199,24 @@ class DialogSplash(QDialog):
             backend += ' ({} {} GBytes)'.format(gpus.name, int(gpus.memoryTotal // 1024))
         # Revision 18/07/2025 >
 
+        # < Revision 17/02/2026
+        # easyocr
+        try:
+            import easyocr
+            veasyocr = ', EasyOCR {}'.format(easyocr.__version__)
+        except: veasyocr = ''
+        # google genai
+        try:
+            import google.genai
+            vgenai = ', Google GenAI {}'.format(google.genai.__version__)
+        except: vgenai = ''
+        # pymupdf
+        try:
+            import pymupdf
+            vpymupdf = ', PyMuPDF {}'.format(pymupdf.__version__)
+        except: vpymupdf = ''
+        # Revision 17/02/2026 >
+
         icndir = 'logos'
 
         self._pixmap = QLabel(parent=self)
@@ -211,7 +229,7 @@ class DialogSplash(QDialog):
         self._info.setText('PySisyphe {} ({}), developed by J.-A. Lotterie, contact: pysisyphe@gmail.com\n\n'
                            'Python {}, Qt {}, Numpy {}, Pandas {}, Matplotlib {}, Pydicom {}, Pynetdicom {}, '
                            'SimpleITK {}, ITK {}, VTK {}, ANTs {}, Dipy {}, Nibabel {}, Nilearn {}, pyradiomics {}, '
-                           'Scikit-image {}, SciPy {}, python-docx {}, fpdf {}, qtconsole {}\n\n'
+                           'Scikit-image {}, SciPy {}, python-docx {}, fpdf {}, qtconsole {}{}{}{}\n\n'
                            'User: {}, Home path: {}\n'
                            'Platform: {}, version {}, {}\n'
                            'VTK Renderer backend {}\n'
@@ -223,7 +241,7 @@ class DialogSplash(QDialog):
                                                          vpython, PYQT_VERSION_STR, vnumpy,
                                                          vpandas, vmplt, vpdcm, vpndcm,
                                                          vsitk, vitk, vvtk, vants, vdipy, vnb, vnl, vradiomics[1:],
-                                                         vski, vscipy, vdocx, vpdf, vcons,
+                                                         vski, vscipy, vdocx, vpdf, vcons, veasyocr, vgenai, vpymupdf,
                                                          vuser, vhome, vsysname,
                                                          vrelease, eenv, backend, vmachine,
                                                          cpu_freq().max / 1000, cpu_count(False),

@@ -52,7 +52,7 @@ class DialogAlgebra(QDialog):
 
     QDialog -> DialogAlgebra
 
-    Last revision: 10/11/2024
+    Last revision: 19/02/2026
     """
 
     # Special method
@@ -68,7 +68,7 @@ class DialogAlgebra(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Voxel by voxel algebraic calculation')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -92,7 +92,7 @@ class DialogAlgebra(QDialog):
         # Formula edit widget
 
         self._formula = LabeledLineEdit()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._formula.setFocusPolicy(Qt.StrongFocus)
         self._formula.setLabelText('Formula')
         self._formula.setToolTip('All functions and operators of the Numpy library can be used in formula.\n'
@@ -106,6 +106,7 @@ class DialogAlgebra(QDialog):
         lyout = QHBoxLayout()
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -137,7 +138,7 @@ class DialogAlgebra(QDialog):
             idx = self._files.getIndexFromItem(v)
             f = f[:i] + ' img[{}] '.format(idx) + f[i:]
             self._formula.setEditText(f)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             self._formula.setFocus(Qt.OtherFocusReason)
         else: raise TypeError('parameter type {} is not str.'.format(type(v)))
 
@@ -152,6 +153,9 @@ class DialogAlgebra(QDialog):
         if f != '' and self._files.filenamesCount() > 0:
             wait = DialogWait(title=title, progress=False, progressmin=0, progressmax=0,
                               progresstxt=False, cancel=False)
+            # < Revision 19/02/2026
+            wait.setCurrentProgressValue(0)
+            # Revision 19/02/2026 >
             wait.open()
             wait.setInformationText(title)
             QApplication.processEvents()

@@ -48,7 +48,7 @@ class DialogImport(QDialog):
 
     QDialog -> DialogImport
 
-    Last revision: 14/11/2024
+    Last revision: 19/02/2026
     """
 
     # Special method
@@ -64,7 +64,7 @@ class DialogImport(QDialog):
 
         self._ioformat = io
         self.setWindowTitle('{} import'.format(io))
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.50), int(screen.height() * 0.50))
@@ -110,6 +110,7 @@ class DialogImport(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -135,6 +136,9 @@ class DialogImport(QDialog):
                 # Set ProgressBar
                 progress = DialogWait(title='{} import'.format(self._ioformat),
                                       progressmin=0, progressmax=n, progresstxt=True, cancel=True)
+                # < Revision 19/02/2026
+                progress.setCurrentProgressValue(0)
+                # Revision 19/02/2026 >
                 progress.setProgressVisibility(n > 1)
                 progress.open()
                 try:

@@ -86,7 +86,7 @@ class DialogVOLtoLabel(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Probability volumes to Label volume')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -112,6 +112,7 @@ class DialogVOLtoLabel(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         self._ok.setFixedWidth(100)
@@ -123,6 +124,7 @@ class DialogVOLtoLabel(QDialog):
         layout.addStretch()
 
         self._layout.addLayout(layout)
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QVBoxLayout.SetFixedSize)
 
         # Qt Signals
@@ -152,6 +154,7 @@ class DialogVOLtoLabel(QDialog):
             vols = SisypheVolumeCollection()
             wait = DialogWait(info=self.windowTitle(),
                               progressmin=0, progressmax=self._list.filenamesCount())
+            wait.setCurrentProgressValue(0)
             wait.open()
             wait.progressVisibilityOn()
             wait.buttonVisibilityOff()
@@ -223,7 +226,7 @@ class DialogROItoLabel(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('ROI(s) to Label volume')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -248,6 +251,7 @@ class DialogROItoLabel(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         self._ok.setFixedWidth(100)
@@ -259,6 +263,7 @@ class DialogROItoLabel(QDialog):
         layout.addStretch()
 
         self._layout.addLayout(layout)
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QVBoxLayout.SetFixedSize)
 
         # Qt Signals
@@ -357,7 +362,7 @@ class DialogLabeltoROI(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Label volume(s) to ROI(s)')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -380,6 +385,7 @@ class DialogLabeltoROI(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         self._ok.setFixedWidth(100)
@@ -391,6 +397,7 @@ class DialogLabeltoROI(QDialog):
         layout.addStretch()
 
         self._layout.addLayout(layout)
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QVBoxLayout.SetFixedSize)
 
         # Qt Signals
@@ -481,7 +488,7 @@ class DialogLabeltoMask(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Label volume to mask')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -516,6 +523,7 @@ class DialogLabeltoMask(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         self._ok.setFixedWidth(100)
@@ -528,6 +536,7 @@ class DialogLabeltoMask(QDialog):
         layout.addStretch()
 
         self._layout.addLayout(layout)
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QVBoxLayout.SetFixedSize)
 
         # Qt Signals
@@ -561,14 +570,18 @@ class DialogLabeltoMask(QDialog):
                         # item = QListWidgetItem(v.acquisition.getLabel(k))
                         item = QListWidgetItem('#{} {}'.format(k, v.acquisition.getLabel(k)))
                         # Revision 15/10/2025 >
+                        # noinspection PyUnresolvedReferences
                         item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+                        # noinspection PyUnresolvedReferences
                         item.setCheckState(Qt.Unchecked)
+                        # noinspection PyUnresolvedReferences
                         item.setData(Qt.UserRole, k)
                         self._labels.addItem(item)
 
     def _hasChecked(self):
         for i in range(self._labels.count()):
             item = self._labels.item(i)
+            # noinspection PyUnresolvedReferences
             if item.checkState() == Qt.Checked:
                 self._ok.setEnabled(True)
                 return True
@@ -580,7 +593,7 @@ class DialogLabeltoMask(QDialog):
     def _uncheckAll(self):
         for i in range(self._labels.count()):
             item = self._labels.item(i)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             item.setCheckState(Qt.Unchecked)
     # Revision 14/10/2025 >
 
@@ -596,8 +609,13 @@ class DialogLabeltoMask(QDialog):
             cross = dict()
             for i in range(self._labels.count()):
                 item = self._labels.item(i)
-                if item.checkState() == Qt.Checked: cross[item.data(Qt.UserRole)] = 1
-                else: cross[item.data(Qt.UserRole)] = 0
+                # noinspection PyUnresolvedReferences
+                if item.checkState() == Qt.Checked:
+                    # noinspection PyUnresolvedReferences
+                    cross[item.data(Qt.UserRole)] = 1
+                else:
+                    # noinspection PyUnresolvedReferences
+                    cross[item.data(Qt.UserRole)] = 0
             mask = v.getRelabeled(cross)
             mask.acquisition.setModalityToOT()
             mask.acquisition.setSequenceToMask()
@@ -663,7 +681,7 @@ class DialogRelabel(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Remap label volume')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -686,7 +704,7 @@ class DialogRelabel(QDialog):
         self._labels.setHeaderLabels(['Old\nindexes', 'New\nindexes', 'Labels'])
         self._labels.setMinimumHeight(300)
         self._labels.header().setStretchLastSection(True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._labels.header().setDefaultAlignment(Qt.AlignCenter)
         self._labels.setColumnWidth(0, 75)
         self._labels.setColumnWidth(1, 75)
@@ -697,6 +715,7 @@ class DialogRelabel(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         self._ok.setFixedWidth(100)
@@ -709,6 +728,7 @@ class DialogRelabel(QDialog):
         layout.addStretch()
 
         self._layout.addLayout(layout)
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QVBoxLayout.SetFixedSize)
 
         # Qt Signals
@@ -739,8 +759,11 @@ class DialogRelabel(QDialog):
                     if k > 0:
                         item = QTreeWidgetItem(self._labels)
                         item.setText(0, str(k))
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(0, Qt.AlignCenter)
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(1, Qt.AlignCenter)
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(2, Qt.AlignCenter)
                         self._labels.addTopLevelItem(item)
                         label = QLineEdit()

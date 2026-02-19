@@ -7,6 +7,7 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+import sys
 from sys import platform
 
 from os import getcwd
@@ -80,7 +81,7 @@ class DialogModel(QDialog):
     QDialog -> DialogModel
 
     Creation: 29/11/2022
-    Last revision: 29/11/2024
+    Last revision: 19/02/2026
     """
 
     # Special method
@@ -90,10 +91,9 @@ class DialogModel(QDialog):
 
     _size       tuple[int, int, int]
     _spacing    tuple[float, float, float]
-    _fmri       bool
+    _fmri       bool, fmri model ?
+    _ancova     bool, ancova model ?
     _design     SisypheDesign
-    _obscnd
-    _obsgrp
     _treeobs    QTreeWidget
     _obsitem    QTreeWidgetItem
     _bcaritem   QTreeWidgetItem
@@ -103,13 +103,13 @@ class DialogModel(QDialog):
     _cndcovitem QTreeWidgetItem
     """
 
-    def __init__(self, title, treeobs, fmri, parent=None):
+    def __init__(self, title, treeobs, fmri, ancova=False, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle(title)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -123,14 +123,19 @@ class DialogModel(QDialog):
 
         self._size = None
         self._spacing = None
+        # < Revision 06/02/2026
         if isinstance(treeobs, SisypheDesign):
             self._design = treeobs
             self._fmri = self._design.isfMRIDesign()
+            self._ancova = self._design.isANCOVADesign()
         else:
             self._design = SisypheDesign()
             self._fmri = fmri
+            self._ancova = ancova
             if fmri: self._design.setfMRIDesign()
+            if ancova: self._design.setANCOVADesign()
             self._design.setDictDesign(treeobs)
+        # Revision 06/02/2026 >
         ngrp = self._design.getGroupCount()
         nsbj = self._design.getSubjectCount()
         ncnd = self._design.getConditionCount()
@@ -163,6 +168,7 @@ class DialogModel(QDialog):
             item = QTreeWidgetItem([name, '0 / {}'.format(obs[k][0])])
             # < Revision 05/06/2025
             # copy key to QTreeWidgetItem data
+            # noinspection PyUnresolvedReferences
             item.setData(0, Qt.UserRole, k)
             # Revision 05/06/2025 >
             item.setToolTip(0, 'Double-click to add image(s)')
@@ -175,6 +181,7 @@ class DialogModel(QDialog):
                     filename = fobs[k][i]
                     if exists(filename):
                         child = QTreeWidgetItem(['', basename(filename)])
+                        # noinspection PyUnresolvedReferences
                         child.setData(1, Qt.UserRole, filename)
                         item.addChild(child)
                         c += 1
@@ -204,7 +211,9 @@ class DialogModel(QDialog):
         # Revision 09/10/2025 >
         self._treeobs.addTopLevelItem(self._obsitem)
         self._treeobs.addTopLevelItem(self._glbcovitem)
-        if ngrp > 0: self._treeobs.addTopLevelItem(self._grpcovitem)
+        # < Revision 06/02/2026
+        if ngrp > 1: self._treeobs.addTopLevelItem(self._grpcovitem)
+        # Revision 06/02/2026 >
         if nsbj > 0: self._treeobs.addTopLevelItem(self._sbjcovitem)
         if ncnd > 0: self._treeobs.addTopLevelItem(self._cndcovitem)
         self._treeobs.expandAll()
@@ -219,7 +228,9 @@ class DialogModel(QDialog):
         self._covGlobal.clicked.connect(self.addGlobalCovariable)
         self._covByGroup = QPushButton('Add cov. by group', parent=self)
         self._covByGroup.setCheckable(False)
-        self._covByGroup.setVisible(ngrp > 0)
+        # < Revision 06/02/2026
+        self._covByGroup.setVisible(ngrp > 1)
+        # Revision 06/02/2026 >
         # noinspection PyUnresolvedReferences
         self._covByGroup.clicked.connect(self.addCovariableByGroup)
         self._covBySubject = QPushButton('Add cov. by subject', parent=self)
@@ -276,8 +287,20 @@ class DialogModel(QDialog):
         self._maskroi = self._params.getParameterWidget('Roi2')
         self._age = self._params.getParameterWidget('Age')
 
-        self._params.setParameterVisibility('Roi1', False)
-        self._params.setParameterVisibility('Roi2', False)
+        # < Revision 06/02/2026
+        if self._design.hasAnalysisROIFilename():
+            self._cmask.setCurrentText('ROI')
+            filename = self._design.getAnalysisROIFilename()
+            if exists(filename): self._maskroi.open(filename)
+            self._params.setParameterVisibility('Roi2', True)
+        else: self._params.setParameterVisibility('Roi2', False)
+        if self._design.hasNormalizationROIFilename():
+            filename = self._design.getNormalizationROIFilename()
+            if exists(filename): self._normroi.open(filename)
+            self._params.setParameterVisibility('Roi1', True)
+        else: self._params.setParameterVisibility('Roi1', False)
+        # Revision 06/02/2026 >
+
         self._params.setParameterVisibility('Ancova', False)
 
         self._cnorm.clear()
@@ -327,6 +350,7 @@ class DialogModel(QDialog):
         layout = QHBoxLayout(self)
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel', parent=self)
         cancel.setCheckable(False)
@@ -487,6 +511,7 @@ class DialogModel(QDialog):
             for i in range(self._cndcovitem.childCount()):
                 child = self._cndcovitem.child(i)
                 name = child.text(0)
+                # noinspection PyUnresolvedReferences
                 v = child.data(0, Qt.UserRole)
                 self._design.addCovariableByCondition(name, v, estimable=True)
         # Add covariate(s) by subject
@@ -494,6 +519,7 @@ class DialogModel(QDialog):
             for i in range(self._sbjcovitem.childCount()):
                 child = self._sbjcovitem.child(i)
                 name = child.text(0)
+                # noinspection PyUnresolvedReferences
                 v = child.data(0, Qt.UserRole)
                 self._design.addCovariableBySubject(name, v, estimable=True)
         # Add covariate(s) by group
@@ -501,6 +527,7 @@ class DialogModel(QDialog):
             for i in range(self._grpcovitem.childCount()):
                 child = self._grpcovitem.child(i)
                 name = child.text(0)
+                # noinspection PyUnresolvedReferences
                 v = child.data(0, Qt.UserRole)
                 self._design.addCovariableByGroup(name, v, estimable=True)
         # Add global covariate(s)
@@ -508,6 +535,7 @@ class DialogModel(QDialog):
             for i in range(self._glbcovitem.childCount()):
                 child = self._glbcovitem.child(i)
                 name = child.text(0)
+                # noinspection PyUnresolvedReferences
                 v = child.data(0, Qt.UserRole)
                 self._design.addGlobalCovariable(name, v, estimable=True)
 
@@ -568,8 +596,19 @@ class DialogModel(QDialog):
                 if n1 != n2:
                     self._ok.setEnabled(False)
                     return False
-            self._ok.setEnabled(True)
-            return True
+            # < Revision 06/02/2026
+            if self._ancova:
+                v = self._glbcovitem.childCount()
+                v += self._grpcovitem.childCount()
+                v += self._sbjcovitem.childCount()
+                v += self._cndcovitem.childCount()
+                r = v > 0
+                self._ok.setEnabled(r)
+                return r
+            else:
+                self._ok.setEnabled(True)
+                return True
+            # Revision 06/02/2026 >
         # Revision 29/11/2024 >
 
     def _isEmpty(self):
@@ -598,7 +637,17 @@ class DialogModel(QDialog):
                             chdir(dirname(filenames[0]))
                             if len(filenames) == n:
                                 item.takeChildren()
+                                # < Revision 04/02/2026
+                                wait = DialogWait()
+                                wait.open()
+                                wait.setProgressRange(0, n)
+                                wait.setProgressVisibility(n > 1)
+                                # Revision 04/02/2026 >
                                 for i in range(n):
+                                    # < Revision 04/02/2026
+                                    wait.setInformationText('Add {}...'.format(basename(filenames[i])))
+                                    wait.incCurrentProgressValue()
+                                    # Revision 04/02/2026 >
                                     filenames[i] = abspath(filenames[i])
                                     v = SisypheVolume()
                                     v.load(filenames[i])
@@ -609,18 +658,23 @@ class DialogModel(QDialog):
                                         self._maskroi.filterSameFOV(v)
                                     else:
                                         if v.getSize() != self._size or v.getSpacing() != self._spacing:
+                                            wait.hide()
                                             messageBox(self,
                                                        'Add observations',
                                                        text='{} FOV mismatch.'.format(v.getBasename()))
                                             item.takeChildren()
                                             break
                                     child = QTreeWidgetItem(['', basename(filenames[i])])
+                                    # noinspection PyUnresolvedReferences
                                     child.setData(1, Qt.UserRole, filenames[i])
                                     child.setToolTip(1, str(v))
                                     item.addChild(child)
                                 item.setExpanded(True)
                                 item.setText(1, '{} / {}'.format(n, n))
                                 self._isFull()
+                                # < Revision 04/02/2026
+                                wait.close()
+                                # Revision 04/02/2026 >
                             else:
                                 if n == 1: buff = 'is'
                                 else: buff = 'are'
@@ -689,7 +743,7 @@ class DialogModel(QDialog):
                     # noinspection PyUnusedLocal
                     cov = loadtxt(filename, delimiter=',')
                 except:
-                    messageBox(self, title=title, text='{} loading error.'.format(basename(filename)))
+                    messageBox(self, title=title, text='Load {} error.'.format(basename(filename)))
                     cov = None
             # CSV file
             elif ext == '.csv':
@@ -697,7 +751,7 @@ class DialogModel(QDialog):
                     # noinspection PyUnusedLocal
                     cov = genfromtxt(filename, delimiter=';')
                 except:
-                    messageBox(self, title=title, text='{} loading error.'.format(basename(filename)))
+                    messageBox(self, title=title, text='Load {} error.'.format(basename(filename)))
                     cov = None
             # Numpy file
             elif ext == '.npy':
@@ -705,14 +759,30 @@ class DialogModel(QDialog):
                     # noinspection PyUnusedLocal
                     cov = load(filename)
                 except:
-                    messageBox(self, title=title, text='{} loading error.'.format(basename(filename)))
+                    messageBox(self, title=title, text='Load {} error.'.format(basename(filename)))
                     cov = None
             # Excel
             else:
-                try:
-                    cov = read_excel(filename, engine='openpyxl')
+                try: cov = read_excel(filename, engine='openpyxl')
                 except:
-                    messageBox(self, title=title, text='{} loading error.'.format(basename(filename)))
+                    try:
+                        import openpyxl
+                        messageBox(self, title=title, text='Load {} error.'.format(basename(filename)))
+                    except:
+                        # < Revision 19/02/2026
+                        if hasattr(sys, '_MEIPASS'):
+                            messageBox(self,
+                                       'XLSX IO',
+                                       'OpenPyXL module is not installed.\n'
+                                       'Please perform a complete reinstallation of the latest version '
+                                       'of PySisyphe, which can be downloaded from '
+                                       'https://github.com/PySisyphe/Sisyphe.')
+                        else:
+                            messageBox(self,
+                                       'XLSX IO',
+                                       'OpenPyXL module is not installed.\n'
+                                       'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                        # Revision 19/02/2026 >
                     cov = None
             name = self._newName(name, 0)
             if cov is not None:
@@ -720,11 +790,16 @@ class DialogModel(QDialog):
                 if isinstance(cov, ndarray):
                     if cov.ndim == 1:
                         covitem = QTreeWidgetItem([name, ''])
+                        # noinspection PyUnresolvedReferences
                         covitem.setData(0, Qt.UserRole, cov)
+                        # noinspection PyUnresolvedReferences
                         covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                         covitem.setToolTip(0, str(cov))
                         self._glbcovitem.addChild(covitem)
                         self._glbcovitem.setExpanded(True)
+                        # < Revision 06/02/2026
+                        if self._ancova: self._isFull()
+                        # Revision 06/02/2026 >
                     elif cov.ndim == 2:
                         ch = [str(i) for i in range(cov.shape[1])]
                         ch.append('All')
@@ -740,22 +815,33 @@ class DialogModel(QDialog):
                                         break
                                     col = '{}#{}'.format(name, i)
                                     covitem = QTreeWidgetItem([col, ''])
+                                    # noinspection PyUnresolvedReferences
                                     covitem.setData(0, Qt.UserRole, v)
+                                    # noinspection PyUnresolvedReferences
                                     covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                                     covitem.setToolTip(0, str(v))
                                     self._glbcovitem.addChild(covitem)
                                     self._glbcovitem.setExpanded(True)
+                                    # < Revision 06/02/2026
+                                    if self._ancova: self._isFull()
+                                    # Revision 06/02/2026 >
                 # Pandas
                 elif isinstance(cov, DataFrame):
                     n = len(cov.columns)
                     if n == 1:
+                        # noinspection PyUnresolvedReferences
                         v = cov[0].to_numpy()
                         covitem = QTreeWidgetItem([name, ''])
+                        # noinspection PyUnresolvedReferences
                         covitem.setData(0, Qt.UserRole, v)
+                        # noinspection PyUnresolvedReferences
                         covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                         covitem.setToolTip(0, str(v))
                         self._glbcovitem.addChild(covitem)
                         self._glbcovitem.setExpanded(True)
+                        # < Revision 06/02/2026
+                        if self._ancova: self._isFull()
+                        # Revision 06/02/2026 >
                     elif n > 1:
                         ch = list(cov.columns)
                         ch.append('All')
@@ -764,6 +850,7 @@ class DialogModel(QDialog):
                             if r != 'All': r = list(cov.columns)
                             else: r = [r]
                             for col in r:
+                                # noinspection PyUnresolvedReferences
                                 v = cov[col].to_numpy()
                                 if len(v) != n:
                                     messageBox(self,
@@ -771,11 +858,16 @@ class DialogModel(QDialog):
                                                text='{} array elements but {} are required.'.format(len(v), name, n))
                                     break
                                 covitem = QTreeWidgetItem(['{}#{}'.format(name, col), ''])
+                                # noinspection PyUnresolvedReferences
                                 covitem.setData(0, Qt.UserRole, v)
+                                # noinspection PyUnresolvedReferences
                                 covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                                 covitem.setToolTip(0, str(v))
                                 self._glbcovitem.addChild(covitem)
                                 self._glbcovitem.setExpanded(True)
+                                # < Revision 06/02/2026
+                                if self._ancova: self._isFull()
+                                # Revision 06/02/2026 >
 
     def addCovariableByGroup(self):
         title = 'Add covariate(s) by group'
@@ -794,7 +886,7 @@ class DialogModel(QDialog):
                     # noinspection PyUnusedLocal
                     cov = loadtxt(filename, delimiter=',')
                 except:
-                    messageBox(self, title=title, text='{} loading error.'.format(basename(filename)))
+                    messageBox(self, title=title, text='Load {} error.'.format(basename(filename)))
                     cov = None
             # CSV file
             elif ext == '.csv':
@@ -802,7 +894,7 @@ class DialogModel(QDialog):
                     # noinspection PyUnusedLocal
                     cov = genfromtxt(filename, delimiter=';')
                 except:
-                    messageBox(self, title=title, text='{} loading error.'.format(basename(filename)))
+                    messageBox(self, title=title, text='Load {} error.'.format(basename(filename)))
                     cov = None
             # Numpy file
             elif ext == '.npy':
@@ -810,13 +902,30 @@ class DialogModel(QDialog):
                     # noinspection PyUnusedLocal
                     cov = load(filename)
                 except:
-                    messageBox(self, title=title,text= '{} loading error.'.format(basename(filename)))
+                    messageBox(self, title=title,text= 'Load {} error.'.format(basename(filename)))
                     cov = None
             # Excel
             else:
                 try: cov = read_excel(filename, engine='openpyxl')
                 except:
-                    messageBox(self, title=title, text='{} loading error.'.format(basename(filename)))
+                    try:
+                        import openpyxl
+                        messageBox(self, title=title, text='Laod {} error.'.format(basename(filename)))
+                    except:
+                        # < Revision 19/02/2026
+                        if hasattr(sys, '_MEIPASS'):
+                            messageBox(self,
+                                       'XLSX IO',
+                                       'OpenPyXL module is not installed.\n'
+                                       'Please perform a complete reinstallation of the latest version '
+                                       'of PySisyphe, which can be downloaded from '
+                                       'https://github.com/PySisyphe/Sisyphe.')
+                        else:
+                            messageBox(self,
+                                       'XLSX IO',
+                                       'OpenPyXL module is not installed.\n'
+                                       'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                        # Revision 19/02/2026 >
                     cov = None
             name = self._newName(name, 1)
             if cov is not None:
@@ -824,11 +933,16 @@ class DialogModel(QDialog):
                 if isinstance(cov, ndarray):
                     if cov.ndim == 1:
                         covitem = QTreeWidgetItem([name, ''])
+                        # noinspection PyUnresolvedReferences
                         covitem.setData(0, Qt.UserRole, cov)
+                        # noinspection PyUnresolvedReferences
                         covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                         covitem.setToolTip(0, str(cov))
                         self._grpcovitem.addChild(covitem)
                         self._grpcovitem.setExpanded(True)
+                        # < Revision 06/02/2026
+                        if self._ancova: self._isFull()
+                        # Revision 06/02/2026 >
                     elif cov.ndim == 2:
                         ch = [str(i) for i in range(cov.shape[1])]
                         ch.append('All')
@@ -844,22 +958,33 @@ class DialogModel(QDialog):
                                         break
                                     col = '{}#{}'.format(name, i)
                                     covitem = QTreeWidgetItem([col, ''])
+                                    # noinspection PyUnresolvedReferences
                                     covitem.setData(0, Qt.UserRole, v)
+                                    # noinspection PyUnresolvedReferences
                                     covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                                     covitem.setToolTip(0, str(v))
                                     self._grpcovitem.addChild(covitem)
                                     self._grpcovitem.setExpanded(True)
+                                    # < Revision 06/02/2026
+                                    if self._ancova: self._isFull()
+                                    # Revision 06/02/2026 >
                 # Pandas
                 elif isinstance(cov, DataFrame):
                     n = len(cov.columns)
                     if n == 1:
+                        # noinspection PyUnresolvedReferences
                         v = cov[0].to_numpy()
                         covitem = QTreeWidgetItem([name, ''])
+                        # noinspection PyUnresolvedReferences
                         covitem.setData(0, Qt.UserRole, v)
+                        # noinspection PyUnresolvedReferences
                         covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                         covitem.setToolTip(0, str(v))
                         self._grpcovitem.addChild(covitem)
                         self._grpcovitem.setExpanded(True)
+                        # < Revision 06/02/2026
+                        if self._ancova: self._isFull()
+                        # Revision 06/02/2026 >
                     elif n > 1:
                         ch = list(cov.columns)
                         ch.append('All')
@@ -868,6 +993,7 @@ class DialogModel(QDialog):
                             if r != 'All': r = list(cov.columns)
                             else: r = [r]
                             for col in r:
+                                # noinspection PyUnresolvedReferences
                                 v = cov[col].to_numpy()
                                 if len(v) != n:
                                     messageBox(self,
@@ -875,11 +1001,16 @@ class DialogModel(QDialog):
                                                text='{} array elements but {} are required.'.format(len(v), name, n))
                                     break
                                 covitem = QTreeWidgetItem(['{}#{}'.format(name, col), ''])
+                                # noinspection PyUnresolvedReferences
                                 covitem.setData(0, Qt.UserRole, v)
+                                # noinspection PyUnresolvedReferences
                                 covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                                 covitem.setToolTip(0, str(v))
                                 self._grpcovitem.addChild(covitem)
                                 self._grpcovitem.setExpanded(True)
+                                # < Revision 06/02/2026
+                                if self._ancova: self._isFull()
+                                # Revision 06/02/2026 >
 
     def addCovariableBySubject(self):
         title = 'Add covariate(s) by subject'
@@ -898,7 +1029,7 @@ class DialogModel(QDialog):
                     # noinspection PyUnusedLocal
                     cov = loadtxt(filename, delimiter=',')
                 except:
-                    messageBox(self, title=title, text='{} loading error.'.format(basename(filename)))
+                    messageBox(self, title=title, text='Load {} error.'.format(basename(filename)))
                     cov = None
             # CSV file
             elif ext == '.csv':
@@ -906,7 +1037,7 @@ class DialogModel(QDialog):
                     # noinspection PyUnusedLocal
                     cov = genfromtxt(filename, delimiter=';')
                 except:
-                    messageBox(self, title=title, text='{} loading error.'.format(basename(filename)))
+                    messageBox(self, title=title, text='Load {} error.'.format(basename(filename)))
                     cov = None
             # Numpy file
             elif ext == '.npy':
@@ -914,14 +1045,30 @@ class DialogModel(QDialog):
                     # noinspection PyUnusedLocal
                     cov = load(filename)
                 except:
-                    messageBox(self, title=title, text='{} loading error.'.format(basename(filename)))
+                    messageBox(self, title=title, text='Laod {} error.'.format(basename(filename)))
                     cov = None
             # Excel
             else:
-                try:
-                    cov = read_excel(filename, engine='openpyxl')
+                try: cov = read_excel(filename, engine='openpyxl')
                 except:
-                    messageBox(self, title=title, text='{} loading error.'.format(basename(filename)))
+                    try:
+                        import openpyxl
+                        messageBox(self, title=title, text='Load {} error.'.format(basename(filename)))
+                    except:
+                        # < Revision 19/02/2026
+                        if hasattr(sys, '_MEIPASS'):
+                            messageBox(self,
+                                       'XLSX IO',
+                                       'OpenPyXL module is not installed.\n'
+                                       'Please perform a complete reinstallation of the latest version '
+                                       'of PySisyphe, which can be downloaded from '
+                                       'https://github.com/PySisyphe/Sisyphe.')
+                        else:
+                            messageBox(self,
+                                       'XLSX IO',
+                                       'OpenPyXL module is not installed.\n'
+                                       'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                        # Revision 19/02/2026 >
                     cov = None
             name = self._newName(name, 2)
             if cov is not None:
@@ -929,11 +1076,16 @@ class DialogModel(QDialog):
                 if isinstance(cov, ndarray):
                     if cov.ndim == 1:
                         covitem = QTreeWidgetItem([name, ''])
+                        # noinspection PyUnresolvedReferences
                         covitem.setData(0, Qt.UserRole, cov)
+                        # noinspection PyUnresolvedReferences
                         covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                         covitem.setToolTip(0, str(cov))
                         self._sbjcovitem.addChild(covitem)
                         self._sbjcovitem.setExpanded(True)
+                        # < Revision 06/02/2026
+                        if self._ancova: self._isFull()
+                        # Revision 06/02/2026 >
                     elif cov.ndim == 2:
                         ch = [str(i) for i in range(cov.shape[1])]
                         ch.append('All')
@@ -949,22 +1101,33 @@ class DialogModel(QDialog):
                                         break
                                     col = '{}#{}'.format(name, i)
                                     covitem = QTreeWidgetItem([col, ''])
+                                    # noinspection PyUnresolvedReferences
                                     covitem.setData(0, Qt.UserRole, v)
+                                    # noinspection PyUnresolvedReferences
                                     covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                                     covitem.setToolTip(0, str(v))
                                     self._sbjcovitem.addChild(covitem)
                                     self._sbjcovitem.setExpanded(True)
+                                    # < Revision 06/02/2026
+                                    if self._ancova: self._isFull()
+                                    # Revision 06/02/2026 >
                 # Pandas
                 elif isinstance(cov, DataFrame):
                     n = len(cov.columns)
                     if n == 1:
+                        # noinspection PyUnresolvedReferences
                         v = cov[0].to_numpy()
                         covitem = QTreeWidgetItem([name, ''])
+                        # noinspection PyUnresolvedReferences
                         covitem.setData(0, Qt.UserRole, v)
+                        # noinspection PyUnresolvedReferences
                         covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                         covitem.setToolTip(0, str(v))
                         self._sbjcovitem.addChild(covitem)
                         self._sbjcovitem.setExpanded(True)
+                        # < Revision 06/02/2026
+                        if self._ancova: self._isFull()
+                        # Revision 06/02/2026 >
                     if n > 1:
                         ch = list(cov.columns)
                         ch.append('All')
@@ -973,6 +1136,7 @@ class DialogModel(QDialog):
                             if r != 'All': r = list(cov.columns)
                             else: r = [r]
                             for col in r:
+                                # noinspection PyUnresolvedReferences
                                 v = cov[col].to_numpy()
                                 if len(v) != n:
                                     messageBox(self,
@@ -980,11 +1144,16 @@ class DialogModel(QDialog):
                                                text='{} array elements but {} are required.'.format(len(v), name, n))
                                     break
                                 covitem = QTreeWidgetItem(['{}#{}'.format(name, col), ''])
+                                # noinspection PyUnresolvedReferences
                                 covitem.setData(0, Qt.UserRole, v)
+                                # noinspection PyUnresolvedReferences
                                 covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                                 covitem.setToolTip(0, str(v))
                                 self._sbjcovitem.addChild(covitem)
                                 self._sbjcovitem.setExpanded(True)
+                                # < Revision 06/02/2026
+                                if self._ancova: self._isFull()
+                                # Revision 06/02/2026 >
 
     def addCovariableByCondition(self):
         title = 'Add covariate(s) by condition'
@@ -1005,7 +1174,7 @@ class DialogModel(QDialog):
                 except:
                     messageBox(self,
                                title=title,
-                               text='{} loading error.'.format(basename(filename)))
+                               text='Load {} error.'.format(basename(filename)))
                     cov = None
             # CSV file
             elif ext == '.csv':
@@ -1015,7 +1184,7 @@ class DialogModel(QDialog):
                 except:
                     messageBox(self,
                                title=title,
-                               text='{} loading error.'.format(basename(filename)))
+                               text='Load {} error.'.format(basename(filename)))
                     cov = None
             # Numpy file
             elif ext == '.npy':
@@ -1025,16 +1194,30 @@ class DialogModel(QDialog):
                 except:
                     messageBox(self,
                                title=title,
-                               text='{} loading error.'.format(basename(filename)))
+                               text='Load {} error.'.format(basename(filename)))
                     cov = None
             # Excel
             else:
-                try:
-                    cov = read_excel(filename, engine='openpyxl')
+                try: cov = read_excel(filename, engine='openpyxl')
                 except:
-                    messageBox(self,
-                               title=title,
-                               text='{} loading error.'.format(basename(filename)))
+                    try:
+                        import openpyxl
+                        messageBox(self, title=title, text='Load {} error.'.format(basename(filename)))
+                    except:
+                        # < Revision 19/02/2026
+                        if hasattr(sys, '_MEIPASS'):
+                            messageBox(self,
+                                       'XLSX IO',
+                                       'OpenPyXL module is not installed.\n'
+                                       'Please perform a complete reinstallation of the latest version '
+                                       'of PySisyphe, which can be downloaded from '
+                                       'https://github.com/PySisyphe/Sisyphe.')
+                        else:
+                            messageBox(self,
+                                       'XLSX IO',
+                                       'OpenPyXL module is not installed.\n'
+                                       'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                        # Revision 19/02/2026 >
                     cov = None
             name = self._newName(name, 3)
             if cov is not None:
@@ -1042,11 +1225,16 @@ class DialogModel(QDialog):
                 if isinstance(cov, ndarray):
                     if cov.ndim == 1:
                         covitem = QTreeWidgetItem([name, ''])
+                        # noinspection PyUnresolvedReferences
                         covitem.setData(0, Qt.UserRole, cov)
+                        # noinspection PyUnresolvedReferences
                         covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                         covitem.setToolTip(0, str(cov))
                         self._cndcovitem.addChild(covitem)
                         self._cndcovitem.setExpanded(True)
+                        # < Revision 06/02/2026
+                        if self._ancova: self._isFull()
+                        # Revision 06/02/2026 >
                     elif cov.ndim == 2:
                         ch = [str(i) for i in range(cov.shape[1])]
                         ch.append('All')
@@ -1062,22 +1250,33 @@ class DialogModel(QDialog):
                                         break
                                     col = '{}#{}'.format(name, i)
                                     covitem = QTreeWidgetItem([col, ''])
+                                    # noinspection PyUnresolvedReferences
                                     covitem.setData(0, Qt.UserRole, v)
+                                    # noinspection PyUnresolvedReferences
                                     covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                                     covitem.setToolTip(0, str(v))
                                     self._cndcovitem.addChild(covitem)
                                     self._cndcovitem.setExpanded(True)
+                                    # < Revision 06/02/2026
+                                    if self._ancova: self._isFull()
+                                    # Revision 06/02/2026 >
                 # Pandas
                 elif isinstance(cov, DataFrame):
                     n = len(cov.columns)
                     if n == 1:
+                        # noinspection PyUnresolvedReferences
                         v = cov[0].to_numpy()
                         covitem = QTreeWidgetItem([name, ''])
+                        # noinspection PyUnresolvedReferences
                         covitem.setData(0, Qt.UserRole, v)
+                        # noinspection PyUnresolvedReferences
                         covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                         covitem.setToolTip(0, str(v))
                         self._cndcovitem.addChild(covitem)
                         self._cndcovitem.setExpanded(True)
+                        # < Revision 06/02/2026
+                        if self._ancova: self._isFull()
+                        # Revision 06/02/2026 >
                     if n > 1:
                         ch = list(cov.columns)
                         ch.append('All')
@@ -1086,6 +1285,7 @@ class DialogModel(QDialog):
                             if r != 'All': r = list(cov.columns)
                             else: r = [r]
                             for col in r:
+                                # noinspection PyUnresolvedReferences
                                 v = cov[col].to_numpy()
                                 if len(v) != n:
                                     messageBox(self,
@@ -1093,11 +1293,16 @@ class DialogModel(QDialog):
                                                text='{} array elements but {} are required.'.format(len(v), name, n))
                                     break
                                 covitem = QTreeWidgetItem(['{}#{}'.format(name, col), ''])
+                                # noinspection PyUnresolvedReferences
                                 covitem.setData(0, Qt.UserRole, v)
+                                # noinspection PyUnresolvedReferences
                                 covitem.setFlags(covitem.flags() | Qt.ItemIsEditable)
                                 covitem.setToolTip(0, str(v))
                                 self._cndcovitem.addChild(covitem)
                                 self._cndcovitem.setExpanded(True)
+                                # < Revision 06/02/2026
+                                if self._ancova: self._isFull()
+                                # Revision 06/02/2026 >
 
     def estimate(self):
         if self._isFull():
@@ -1110,9 +1315,11 @@ class DialogModel(QDialog):
                     # < Revision 05/06/2025
                     # get key from QTreeWidgetItem data, not from text
                     # key = item.text(0).split(' ')
+                    # noinspection PyUnresolvedReferences
                     key = item.data(0, Qt.UserRole)
                     # Revision 05/06/2025 >
                     for j in range(n):
+                        # noinspection PyUnresolvedReferences
                         filenames.append(item.child(j).data(1, Qt.UserRole))
                     self._design.setFileObsTo(filenames, key[0], key[1], key[2])
             # design matrix processing
@@ -1121,12 +1328,13 @@ class DialogModel(QDialog):
             wait = DialogWait()
             wait.open()
             mask = None
-            if not self._maskroi.isEmpty():
-                filename = self._maskroi.getFilename()
-                if exists(filename):
-                    wait.setInformationText('Open mask of analysis\n{}...'.format(basename(filename)))
-                    mask = SisypheROI()
-                    mask.load(filename)
+            if self._cmask.currentText() == 'ROI':
+                if not self._maskroi.isEmpty():
+                    filename = self._maskroi.getFilename()
+                    if exists(filename):
+                        wait.setInformationText('Open mask of analysis\n{}...'.format(basename(filename)))
+                        mask = SisypheROI()
+                        mask.load(filename)
             roi = None
             # open ROI
             if not self._normroi.isEmpty():
@@ -1156,7 +1364,17 @@ class DialogModel(QDialog):
             # save model
             self.saveModel()
             self.accept()
-        else: messageBox(self, 'Model estimation', 'Missing observation(s).')
+        else:
+            # < Revision 06/02/2026
+            if self._ancova:
+                messageBox(self,
+                           'Model estimation',
+                           'Missing observation(s) or no covariable.')
+            else:
+                messageBox(self,
+                           'Model estimation',
+                           'Missing observation(s).')
+            # Revision 06/02/2026 >
 
     def saveModel(self, filename=''):
         if filename != '': self._design.saveAs(filename)
@@ -1197,6 +1415,7 @@ class DialogModel(QDialog):
                         # < Revision 05/06/2025
                         # get key from QTreeWidgetItem data, not from text
                         # key = item.text(0).split(' ')
+                        # noinspection PyUnresolvedReferences
                         key = item.data(0, Qt.UserRole)
                         # Revision 05/06/2025 >
                         self._design.clearFileObsFrom(key[0], key[1], key[2])
@@ -1204,10 +1423,19 @@ class DialogModel(QDialog):
                         if n > 0:
                             filenames = list()
                             for j in range(n):
+                                # noinspection PyUnresolvedReferences
                                 filenames.append(item.child(j).data(1, Qt.UserRole))
                             self._design.appendFileObsTo(filenames, key[0], key[1], key[2])
                     # Revision 29/11/2024 >
                 self._design.setFilename(filename)
+                # < Revision 06/02/2026
+                if self._cmask.currentText() == 'ROI':
+                    if not self._maskroi.isEmpty():
+                        self._design.setAnalysisROIFilename(self._maskroi.getFilename())
+                if self._cnorm.currentIndex() in (4, 5, 6, 10, 11, 12):
+                    if not self._normroi.isEmpty():
+                        self._design.setNormalizationROIFilename(self._normroi.getFilename())
+                # Revision 06/02/2026 >
                 wait = DialogWait(title=self.windowTitle())
                 wait.open()
                 try: self._design.save(wait)
@@ -1260,7 +1488,7 @@ class DialogObs(QDialog):
         # Init window
 
         self.setWindowTitle(title)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1281,6 +1509,11 @@ class DialogObs(QDialog):
         self._cnd = LabeledSpinBox(title='Condition count', fontsize=14, parent=self)
         self._cnd.setRange(0, 50)
         self._cnd.setVisible(cnd == 0)
+        # < Revision 05/02/2026
+        if cnd == 0:
+            cnd = 1
+            self._cnd.setMinimum(1)
+        # Revision 05/02/2026 >
         if cnd is None: cnd = 0
         self._cnd.setValue(cnd)
         # noinspection PyUnresolvedReferences
@@ -1288,13 +1521,26 @@ class DialogObs(QDialog):
         self._sbj = LabeledSpinBox(title='  Subject count', fontsize=14, parent=self)
         self._sbj.setRange(0, 50)
         self._sbj.setVisible(sbj == 0)
+        # < Revision 05/02/2026
+        if sbj == 0:
+            sbj = 2
+            self._sbj.setMinimum(2)
+        # Revision 05/02/2026 >
         if sbj is None: sbj = 0
         self._sbj.setValue(sbj)
         # noinspection PyUnresolvedReferences
         self._sbj.valueChanged.connect(lambda: self._updateTreeObs())
         self._grp = LabeledSpinBox(title='    Group count', fontsize=14, parent=self)
         self._grp.setRange(0, 50)
-        self._grp.setVisible(grp == 0)
+        self._grp.setVisible(grp <= 0)
+        # < Revision 05/02/2026
+        if grp < 0:
+            grp = 1
+            self._grp.setMinimum(1)
+        elif grp == 0:
+            grp = 2
+            self._grp.setMinimum(2)
+        # Revision 05/02/2026 >
         if grp is None: grp = 0
         self._grp.setValue(grp)
         # noinspection PyUnresolvedReferences
@@ -1309,14 +1555,17 @@ class DialogObs(QDialog):
         self._treeobs.setHeaderItem(header)
         # noinspection PyTypeChecker
         self._treeobs.header().setSectionResizeMode(QHeaderView.Stretch)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._treeobs.header().setDefaultAlignment(Qt.AlignCenter)
         self._treeobs.header().setStretchLastSection(False)
         self._updateTreeObs()
         # self._treeobs.setFixedWidth(500)
 
+        # noinspection PyUnresolvedReferences
         self._layout.addWidget(self._cnd, alignment=Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._layout.addWidget(self._sbj, alignment=Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._layout.addWidget(self._grp, alignment=Qt.AlignCenter)
         self._layout.addWidget(self._treeobs)
 
@@ -1325,6 +1574,7 @@ class DialogObs(QDialog):
         layout = QHBoxLayout(self)
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel', parent=self)
         cancel.setCheckable(False)
@@ -1372,6 +1622,7 @@ class DialogObs(QDialog):
                 for i in range(self._grp.value()):
                     item = QTreeWidgetItem(grpitem)
                     item.setText(0, 'Group#{}'.format(i + 1))
+                    # noinspection PyUnresolvedReferences
                     item.setFlags(item.flags() | Qt.ItemIsEditable)
                     item.setToolTip(0, 'Double-click to edit group name')
             # Subject(s)
@@ -1382,6 +1633,7 @@ class DialogObs(QDialog):
                 for i in range(self._sbj.value()):
                     item = QTreeWidgetItem(sbjitem)
                     item.setText(0, 'Subject#{}'.format(i + 1))
+                    # noinspection PyUnresolvedReferences
                     item.setFlags(item.flags() | Qt.ItemIsEditable)
                     item.setToolTip(0, 'Double-click to edit subject name')
                     combo = LabeledComboBox(fontsize=10)
@@ -1397,6 +1649,7 @@ class DialogObs(QDialog):
                         spin = LabeledSpinBox()
                         spin.setRange(1, 500)
                         spin.setValue(1)
+                        # noinspection PyUnresolvedReferences
                         spin.setAlignment(Qt.AlignCenter)
                         spin.setTitle('Image count')
                         self._sbjs.append(item)
@@ -1410,11 +1663,13 @@ class DialogObs(QDialog):
                 for i in range(self._cnd.value()):
                     item = QTreeWidgetItem(cnditem)
                     item.setText(0, 'Condition#{}'.format(i+1))
+                    # noinspection PyUnresolvedReferences
                     item.setFlags(item.flags() | Qt.ItemIsEditable)
                     item.setToolTip(0, 'Double-click to edit condition name')
                     spin = LabeledSpinBox()
                     spin.setRange(1, 500)
                     spin.setValue(1)
+                    # noinspection PyUnresolvedReferences
                     spin.setAlignment(Qt.AlignCenter)
                     spin.setTitle('Image count')
                     self._cnds.append(item)
@@ -1428,11 +1683,13 @@ class DialogObs(QDialog):
             for i in range(self._grp.value()):
                 item = QTreeWidgetItem(grpitem)
                 item.setText(0, 'Group#{}'.format(i+1))
+                # noinspection PyUnresolvedReferences
                 item.setFlags(item.flags() | Qt.ItemIsEditable)
                 item.setToolTip(0, 'Double-click to edit group name')
                 spin = LabeledSpinBox()
                 spin.setRange(1, 500)
                 spin.setValue(1)
+                # noinspection PyUnresolvedReferences
                 spin.setAlignment(Qt.AlignCenter)
                 spin.setTitle('Image count')
                 self._grps.append(item)
@@ -1461,6 +1718,7 @@ class DialogObs(QDialog):
     def getGroupNames(self):
         r = list()
         if self._grp.value() > 0:
+            # noinspection PyUnresolvedReferences
             grpitem = self._treeobs.findItems('Group(s)', Qt.MatchExactly, column=0)
             if len(grpitem) > 0:
                 grpitem = grpitem[0]
@@ -1472,6 +1730,7 @@ class DialogObs(QDialog):
     def getSubjectNames(self):
         r = list()
         if self._sbj.value() > 0:
+            # noinspection PyUnresolvedReferences
             sbjitem = self._treeobs.findItems('Subject(s)', Qt.MatchExactly, column=0)
             if len(sbjitem) > 0:
                 sbjitem = sbjitem[0]
@@ -1480,6 +1739,7 @@ class DialogObs(QDialog):
                         for i in range(self._sbj.value()):
                             r.append(sbjitem.child(i).text(0))
                     else:
+                        # noinspection PyUnresolvedReferences
                         grpitem = self._treeobs.findItems('Group(s)', Qt.MatchExactly, column=0)
                         for i in range(self._sbj.value()):
                             item = sbjitem.child(i)
@@ -1490,6 +1750,7 @@ class DialogObs(QDialog):
     def getConditionNames(self):
         r = list()
         if self._cnd.value() > 0:
+            # noinspection PyUnresolvedReferences
             cnditem = self._treeobs.findItems('Condition(s)', Qt.MatchExactly, column=0)
             if len(cnditem) > 0:
                 cnditem = cnditem[0]
@@ -1500,6 +1761,7 @@ class DialogObs(QDialog):
 
     def getTreeObsCount(self):
         r = dict()
+        # noinspection PyUnresolvedReferences
         grpitems = self._treeobs.findItems('Group(s)', Qt.MatchExactly, column=0)
         if len(grpitems) > 0: grpitems = grpitems[0]
         if self._grp.value() > 0:
@@ -1507,8 +1769,10 @@ class DialogObs(QDialog):
                 item = grpitems.child(i)
                 r[(item.text(0), 0)] = dict()
         if self._sbj.value() > 0:
+            # noinspection PyUnresolvedReferences
             sbjitems = self._treeobs.findItems('Subject(s)', Qt.MatchExactly, column=0)[0]
             if self._cnd.value() > 0:
+                # noinspection PyUnresolvedReferences
                 cnditems = self._treeobs.findItems('Condition(s)', Qt.MatchExactly, column=0)[0]
                 for i in range(sbjitems.childCount()):
                     item = sbjitems.child(i)
@@ -1538,6 +1802,7 @@ class DialogObs(QDialog):
                     item = grpitems.child(i)
                     r[(item.text(0), 0)] = [self._treeobs.itemWidget(item, 1).value()]
             elif self._cnd.value() > 0:
+                # noinspection PyUnresolvedReferences
                 cnditems = self._treeobs.findItems('Condition(s)', Qt.MatchExactly, column=0)[0]
                 for i in range(cnditems.childCount()):
                     item = cnditems.child(i)
@@ -1586,7 +1851,7 @@ class DialogfMRIObs(QDialog):
         # Init window
 
         self.setWindowTitle(title)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1608,6 +1873,11 @@ class DialogfMRIObs(QDialog):
         # self._cnd.setFixedWidth(200)
         self._cnd.setRange(0, 50)
         self._cnd.setVisible(cnd == 0)
+        # < Revision 05/02/2026
+        if cnd == 0:
+            cnd = 1
+            self._cnd.setMinimum(1)
+        # Revision 05/02/2026 >
         if cnd is None: cnd = 0
         self._cnd.setValue(cnd)
         # noinspection PyUnresolvedReferences
@@ -1616,6 +1886,11 @@ class DialogfMRIObs(QDialog):
         # self._sbj.setFixedWidth(200)
         self._sbj.setRange(0, 50)
         self._sbj.setVisible(sbj == 0)
+        # < Revision 05/02/2026
+        if sbj == 0:
+            sbj = 2
+            self._sbj.setMinimum(2)
+        # Revision 05/02/2026 >
         if sbj is None: sbj = 0
         self._sbj.setValue(sbj)
         # noinspection PyUnresolvedReferences
@@ -1624,6 +1899,11 @@ class DialogfMRIObs(QDialog):
         # self._grp.setFixedWidth(200)
         self._grp.setRange(0, 50)
         self._grp.setVisible(grp == 0)
+        # < Revision 05/02/2026
+        if grp == 0:
+            grp = 2
+            self._grp.setMinimum(2)
+        # Revision 05/02/2026 >
         if grp is None: grp = 0
         self._grp.setValue(grp)
         # noinspection PyUnresolvedReferences
@@ -1642,13 +1922,16 @@ class DialogfMRIObs(QDialog):
         self._treeobs.setHeaderItem(header)
         # noinspection PyTypeChecker
         self._treeobs.header().setSectionResizeMode(QHeaderView.Stretch)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._treeobs.header().setDefaultAlignment(Qt.AlignCenter)
         self._treeobs.header().setStretchLastSection(False)
         self._updateTreeObs()
 
+        # noinspection PyUnresolvedReferences
         self._layout.addWidget(self._cnd, alignment=Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._layout.addWidget(self._sbj, alignment=Qt.AlignCenter)
+        # noinspection PyUnresolvedReferences
         self._layout.addWidget(self._grp, alignment=Qt.AlignCenter)
         self._layout.addWidget(self._treeobs)
 
@@ -1657,6 +1940,7 @@ class DialogfMRIObs(QDialog):
         layout = QHBoxLayout(self)
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel', parent=self)
         cancel.setCheckable(False)
@@ -1700,6 +1984,7 @@ class DialogfMRIObs(QDialog):
             for i in range(self._grp.value()):
                 item = QTreeWidgetItem(grpitem)
                 item.setText(0, 'Group#{}'.format(i + 1))
+                # noinspection PyUnresolvedReferences
                 item.setFlags(item.flags() | Qt.ItemIsEditable)
                 item.setToolTip(0, 'Double-click to edit group name')
         # Subject(s)
@@ -1709,6 +1994,7 @@ class DialogfMRIObs(QDialog):
             for i in range(self._sbj.value()):
                 item = QTreeWidgetItem(sbjitem)
                 item.setText(0, 'Subject#{}'.format(i + 1))
+                # noinspection PyUnresolvedReferences
                 item.setFlags(item.flags() | Qt.ItemIsEditable)
                 item.setToolTip(0, 'Double-click to edit subject name')
                 combo = LabeledComboBox(fontsize=10)
@@ -1729,31 +2015,37 @@ class DialogfMRIObs(QDialog):
             for i in range(self._cnd.value()):
                 item = QTreeWidgetItem(cnditem)
                 item.setText(0, 'Condition#{}'.format(i+1))
+                # noinspection PyUnresolvedReferences
                 item.setFlags(item.flags() | Qt.ItemIsEditable)
                 item.setToolTip(0, 'Double-click to edit condition name')
                 sfirst = LabeledSpinBox()
                 sfirst.setRange(1, 50)
                 sfirst.setValue(10)
+                # noinspection PyUnresolvedReferences
                 sfirst.setAlignment(Qt.AlignCenter)
                 sfirst.setToolTip('Number of images before first active block.')
                 sact = LabeledSpinBox()
                 sact.setRange(1, 50)
                 sact.setValue(10)
+                # noinspection PyUnresolvedReferences
                 sact.setAlignment(Qt.AlignCenter)
                 sact.setToolTip('Number of images in active blocks.')
                 srst = LabeledSpinBox()
                 srst.setRange(1, 50)
                 srst.setValue(10)
+                # noinspection PyUnresolvedReferences
                 srst.setAlignment(Qt.AlignCenter)
                 srst.setToolTip('Number of images in rest blocks.')
                 sblk = LabeledSpinBox()
                 sblk.setRange(1, 50)
                 sblk.setValue(5)
+                # noinspection PyUnresolvedReferences
                 sblk.setAlignment(Qt.AlignCenter)
                 sblk.setToolTip('Number of blocks, one block alternates between rest and activity.')
                 iscn = LabeledDoubleSpinBox()
                 iscn.setRange(1.0, 4.0)
                 iscn.setValue(2.0)
+                # noinspection PyUnresolvedReferences
                 iscn.setAlignment(Qt.AlignCenter)
                 iscn.setToolTip('Inter-scan interval (s), TR echo-planar time series.')
                 self._cnds.append([sfirst, sact, srst, sblk, iscn])
@@ -1780,6 +2072,7 @@ class DialogfMRIObs(QDialog):
         """
         r = list()
         if self._grp.value() > 0:
+            # noinspection PyUnresolvedReferences
             grpitem = self._treeobs.findItems('Group(s)', Qt.MatchExactly, column=0)
             if len(grpitem) > 0:
                 grpitem = grpitem[0]
@@ -1795,6 +2088,7 @@ class DialogfMRIObs(QDialog):
         """
         r = list()
         if self._sbj.value() > 0:
+            # noinspection PyUnresolvedReferences
             sbjitem = self._treeobs.findItems('Subject(s)', Qt.MatchExactly, column=0)
             if len(sbjitem) > 0:
                 sbjitem = sbjitem[0]
@@ -1811,6 +2105,7 @@ class DialogfMRIObs(QDialog):
         """
         r = list()
         if self._cnd.value() > 0:
+            # noinspection PyUnresolvedReferences
             cnditem = self._treeobs.findItems('Condition(s)', Qt.MatchExactly, column=0)
             if len(cnditem) > 0:
                 cnditem = cnditem[0]
@@ -1822,6 +2117,7 @@ class DialogfMRIObs(QDialog):
 
     def getTreeObsCount(self):
         r = dict()
+        # noinspection PyUnresolvedReferences
         grpitems = self._treeobs.findItems('Group(s)', Qt.MatchExactly, column=0)
         if len(grpitems) > 0: grpitems = grpitems[0]
         if self._grp.value() > 0:
@@ -1829,8 +2125,10 @@ class DialogfMRIObs(QDialog):
                 item = grpitems.child(i)
                 r[(item.text(0), 0)] = dict()
         if self._sbj.value() > 0:
+            # noinspection PyUnresolvedReferences
             sbjitems = self._treeobs.findItems('Subject(s)', Qt.MatchExactly, column=0)[0]
             if self._cnd.value() > 0:
+                # noinspection PyUnresolvedReferences
                 cnditems = self._treeobs.findItems('Condition(s)', Qt.MatchExactly, column=0)[0]
                 for i in range(sbjitems.childCount()):
                     item = sbjitems.child(i)
@@ -1861,6 +2159,7 @@ class DialogfMRIObs(QDialog):
                             r[(item.text(0), 1)][(cnd, 2)] = [n, first, act, rst, blk, iscn]
         else:
             if self._cnd.value() > 0:
+                # noinspection PyUnresolvedReferences
                 cnditems = self._treeobs.findItems('Condition(s)', Qt.MatchExactly, column=0)[0]
                 for i in range(cnditems.childCount()):
                     item = cnditems.child(i)

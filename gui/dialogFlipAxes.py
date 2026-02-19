@@ -39,7 +39,7 @@ class DialogFlipAxes(DialogFromXml):
 
     QDialog -> DialogFromXml -> DialogFlipAxes
 
-    Last revision: 15/10/2025
+    Last revision: 19/02/2026
     """
 
     # Special method
@@ -98,6 +98,9 @@ class DialogFlipAxes(DialogFromXml):
             else: progress, cancel = True, True
             wait = DialogWait(title='Flip axes', progress=progress, progressmin=0, progressmax=n,
                               progresstxt=True, cancel=cancel)
+            # < Revision 19/02/2026
+            wait.setCurrentProgressValue(0)
+            # Revision 19/02/2026 >
             for file in files:
                 if exists(file):
                     wait.setInformationText('Flip {} axes...'.format(basename(file)))

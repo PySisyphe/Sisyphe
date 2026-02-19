@@ -10,6 +10,7 @@ from sys import platform
 
 from os import rename
 from os import chdir
+from os import remove
 
 from os.path import exists
 from os.path import basename
@@ -34,6 +35,7 @@ from PyQt5.QtWidgets import QSpinBox
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QListWidget
 from PyQt5.QtWidgets import QListWidgetItem
+from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
@@ -67,7 +69,7 @@ class WorkflowItem(QWidget):
     QWidget -> WorkflowItem
 
     Creation: 13/02/2025
-    Last revision: 04/09/2025
+    Last revision: 03/02/2026
     """
 
     # Special method
@@ -86,6 +88,7 @@ class WorkflowItem(QWidget):
         # self._input1.setFixedWidth(60)
         self._input1.setFixedWidth(100)
         # Revision 04/09/2025 >
+        # noinspection PyUnresolvedReferences
         self._input1.setAlignment(Qt.AlignCenter)
         self._input1.setPrefix('img')
         self._input1.setWrapping(True)
@@ -96,6 +99,7 @@ class WorkflowItem(QWidget):
         # self._input2.setFixedWidth(60)
         self._input2.setFixedWidth(100)
         # Revision 04/09/2025 >
+        # noinspection PyUnresolvedReferences
         self._input2.setAlignment(Qt.AlignCenter)
         self._input2.setPrefix('img')
         self._input2.setWrapping(True)
@@ -131,15 +135,22 @@ class WorkflowItem(QWidget):
             self._outputs.setToolTip('Output:\nimg{} loaded'.format(last + 1))
             if self._dialog is None:
                 from Sisyphe.gui.dialogFileSelection import DialogFileSelection
-                self._dialog = DialogFileSelection(self)
+                self._dialog = DialogFileSelection()
                 if platform == 'win32':
                     import pywinstyles
-                    cl = self.palette().base().color()
+                    # < Revision 03/02/2026
+                    if self.parent() is not None: cl = self.parent().palette().base().color()
+                    else: cl = self.palette().base().color()
+                    # Revision 03/02/2026 >
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(self._dialog, c)
                 self._dialog.setTextLabel('Volume')
                 self._dialog.filterSisypheVolume()
-            self._edit.setText(basename(self._dialog.getFilename()))
+                self._dialog.adjustSize()
+            # < Revision 03/02/2026
+            # self._edit.setText(basename(self._dialog.getFilename()))
+            self._edit.setText(self._dialog.getFilename())
+            # Revision 03/02/2026 >
         elif name == 'flip':
             self._input1.setVisible(True)
             self._input1.setToolTip('Input: img{}'.format(self._input1.value()))
@@ -148,16 +159,23 @@ class WorkflowItem(QWidget):
             self._outputs.setToolTip('Output:\nimg{} axes flipped'.format(last + 1))
             if self._dialog is None:
                 from Sisyphe.gui.dialogFlipAxes import DialogFlipAxes
-                self._dialog = DialogFlipAxes(self)
+                self._dialog = DialogFlipAxes()
                 if platform == 'win32':
                     import pywinstyles
-                    cl = self.palette().base().color()
+                    # < Revision 03/02/2026
+                    if self.parent() is not None: cl = self.parent().palette().base().color()
+                    else: cl = self.palette().base().color()
+                    # Revision 03/02/2026 >
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(self._dialog, c)
                 # noinspection PyProtectedMember
                 self._dialog._ok.setVisible(False)
                 # noinspection PyProtectedMember
                 self._dialog._cancel.setText('OK')
+                # < Revision 03/02/2026
+                # noinspection PyProtectedMember
+                self._dialog._cancel.setFixedWidth(100)
+                # Revision 03/02/2026 >
                 # noinspection PyProtectedMember
                 self._dialog._files.setVisible(False)
                 self._dialog.adjustSize()
@@ -174,16 +192,23 @@ class WorkflowItem(QWidget):
             self._outputs.setToolTip('Output:\nimg{} axes swapped'.format(last + 1))
             if self._dialog is None:
                 from Sisyphe.gui.dialogSwapAxes import DialogSwapAxes
-                self._dialog = DialogSwapAxes(self)
+                self._dialog = DialogSwapAxes()
                 if platform == 'win32':
                     import pywinstyles
-                    cl = self.palette().base().color()
+                    # < Revision 03/02/2026
+                    if self.parent() is not None: cl = self.parent().palette().base().color()
+                    else: cl = self.palette().base().color()
+                    # Revision 03/02/2026 >
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(self._dialog, c)
                 # noinspection PyProtectedMember
                 self._dialog._ok.setVisible(False)
                 # noinspection PyProtectedMember
                 self._dialog._cancel.setText('OK')
+                # < Revision 03/02/2026
+                # noinspection PyProtectedMember
+                self._dialog._cancel.setFixedWidth(100)
+                # Revision 03/02/2026 >
                 # noinspection PyProtectedMember
                 self._dialog._files.setVisible(False)
                 self._dialog.adjustSize()
@@ -226,10 +251,13 @@ class WorkflowItem(QWidget):
             self._input2.setVisible(False)
             if self._dialog is None:
                 from Sisyphe.gui.dialogTexture import DialogTexture
-                self._dialog = DialogTexture(self)
+                self._dialog = DialogTexture()
                 if platform == 'win32':
                     import pywinstyles
-                    cl = self.palette().base().color()
+                    # < Revision 03/02/2026
+                    if self.parent() is not None: cl = self.parent().palette().base().color()
+                    else: cl = self.palette().base().color()
+                    # Revision 03/02/2026 >
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(self._dialog, c)
                 # noinspection PyProtectedMember
@@ -245,11 +273,14 @@ class WorkflowItem(QWidget):
                 buff1 = ''
                 buff2 = ''
                 for k1 in params:
-                    if k1 != 'Radius':
+                    # < Revision 03/02/2026
+                    # if k1 != 'Radius':
+                    if k1 not in ('Radius', 'Batch'):
                         for k2 in params[k1]:
                             c += 1
                             buff1 += 'img{} '.format(last + c)
                             buff2 += 'img{} {} {}\n'.format(last + c, k1, k2)
+                    # < Revision 03/02/2026
                 self._outputs.setText(buff1)
                 self._outputs.setToolTip('Output(s):\n{}'.format(buff2))
             else: self._outputs.setText('No output')
@@ -553,7 +584,10 @@ class WorkflowItem(QWidget):
             self._outputs.setToolTip('Output:\nimg{} registered'.format(last + 1))
             if self._dialog is None:
                 from Sisyphe.gui.dialogRegistration import DialogRegistration
-                self._dialog = DialogRegistration(transform='Rigid', parent=self)
+                # < Revision 03/02/2026
+                # self._dialog = DialogRegistration(transform='Rigid', parent=self)
+                self._dialog = DialogRegistration(transform='Rigid')
+                # Revision 03/02/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -562,7 +596,11 @@ class WorkflowItem(QWidget):
                 # noinspection PyProtectedMember
                 self._dialog._fixedSelect.setVisible(False)
                 # noinspection PyProtectedMember
+                self._dialog._fixedSelect.setEnabled(False)
+                # noinspection PyProtectedMember
                 self._dialog._movingSelect.setVisible(False)
+                # noinspection PyProtectedMember
+                self._dialog._movingSelect.setEnabled(False)
                 # noinspection PyProtectedMember
                 self._dialog._settings.settingsVisibilityOn()
                 # noinspection PyProtectedMember
@@ -573,6 +611,10 @@ class WorkflowItem(QWidget):
                 self._dialog._execute.setVisible(False)
                 # noinspection PyProtectedMember
                 self._dialog._cancel.setText('OK')
+                # < Revision 03/02/2026
+                # noinspection PyProtectedMember
+                self._dialog._cancel.setFixedWidth(100)
+                # Revision 03/02/2026 >
                 self._dialog.adjustSize()
             params = self._dialog.getParametersDict()
             buff = ['{}: {}'.format(k, str(v)) for k, v in params['registration'].items()]
@@ -588,7 +630,10 @@ class WorkflowItem(QWidget):
             self._outputs.setToolTip('Output:\nimg{} registered'.format(last + 1))
             if self._dialog is None:
                 from Sisyphe.gui.dialogRegistration import DialogRegistration
-                self._dialog = DialogRegistration(transform='Affine', parent=self)
+                # < Revision 03/02/2026
+                # self._dialog = DialogRegistration(transform='Affine', parent=self)
+                self._dialog = DialogRegistration(transform='Affine')
+                # Revision 03/02/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -597,7 +642,11 @@ class WorkflowItem(QWidget):
                 # noinspection PyProtectedMember
                 self._dialog._fixedSelect.setVisible(False)
                 # noinspection PyProtectedMember
+                self._dialog._fixedSelect.setEnabled(False)
+                # noinspection PyProtectedMember
                 self._dialog._movingSelect.setVisible(False)
+                # noinspection PyProtectedMember
+                self._dialog._movingSelect.setEnabled(False)
                 # noinspection PyProtectedMember
                 self._dialog._settings.settingsVisibilityOn()
                 # noinspection PyProtectedMember
@@ -608,6 +657,10 @@ class WorkflowItem(QWidget):
                 self._dialog._execute.setVisible(False)
                 # noinspection PyProtectedMember
                 self._dialog._cancel.setText('OK')
+                # < Revision 03/02/2026
+                # noinspection PyProtectedMember
+                self._dialog._cancel.setFixedWidth(100)
+                # Revision 03/02/2026 >
                 self._dialog.adjustSize()
             params = self._dialog.getParametersDict()
             buff = ['{}: {}'.format(k, str(v)) for k, v in params['registration'].items()]
@@ -623,7 +676,10 @@ class WorkflowItem(QWidget):
             self._outputs.setToolTip('Output:\nimg{} registered'.format(last + 1))
             if self._dialog is None:
                 from Sisyphe.gui.dialogRegistration import DialogRegistration
-                self._dialog = DialogRegistration(transform='DisplacementField', parent=self)
+                # < Revision 03/02/2026
+                # self._dialog = DialogRegistration(transform='DisplacementField', parent=self)
+                self._dialog = DialogRegistration(transform='DisplacementField')
+                # Revision 03/02/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -632,7 +688,11 @@ class WorkflowItem(QWidget):
                 # noinspection PyProtectedMember
                 self._dialog._fixedSelect.setVisible(False)
                 # noinspection PyProtectedMember
+                self._dialog._fixedSelect.setEnabled(False)
+                # noinspection PyProtectedMember
                 self._dialog._movingSelect.setVisible(False)
+                # noinspection PyProtectedMember
+                self._dialog._movingSelect.setEnabled(False)
                 # noinspection PyProtectedMember
                 self._dialog._settings.settingsVisibilityOn()
                 # noinspection PyProtectedMember
@@ -643,6 +703,10 @@ class WorkflowItem(QWidget):
                 self._dialog._execute.setVisible(False)
                 # noinspection PyProtectedMember
                 self._dialog._cancel.setText('OK')
+                # < Revision 03/02/2026
+                # noinspection PyProtectedMember
+                self._dialog._cancel.setFixedWidth(100)
+                # Revision 03/02/2026 >
                 self._dialog.adjustSize()
             params = self._dialog.getParametersDict()
             buff = ['{}: {}'.format(k, str(v)) for k, v in params['registration'].items()]
@@ -658,7 +722,10 @@ class WorkflowItem(QWidget):
             self._outputs.setToolTip('Output:\nimg{} spatial normalized'.format(last + 1))
             if self._dialog is None:
                 from Sisyphe.gui.dialogRegistration import DialogICBMNormalization
-                self._dialog = DialogICBMNormalization(self)
+                # < Revision 03/02/2026
+                # self._dialog = DialogICBMNormalization(self)
+                self._dialog = DialogICBMNormalization()
+                # Revision 03/02/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -667,7 +734,11 @@ class WorkflowItem(QWidget):
                 # noinspection PyProtectedMember
                 self._dialog._fixedSelect.setVisible(False)
                 # noinspection PyProtectedMember
+                self._dialog._fixedSelect.setEnabled(False)
+                # noinspection PyProtectedMember
                 self._dialog._movingSelect.setVisible(False)
+                # noinspection PyProtectedMember
+                self._dialog._movingSelect.setEnabled(False)
                 # noinspection PyProtectedMember
                 self._dialog._settings.settingsVisibilityOn()
                 # noinspection PyProtectedMember
@@ -678,6 +749,10 @@ class WorkflowItem(QWidget):
                 self._dialog._execute.setVisible(False)
                 # noinspection PyProtectedMember
                 self._dialog._cancel.setText('OK')
+                # < Revision 03/02/2026
+                # noinspection PyProtectedMember
+                self._dialog._cancel.setFixedWidth(100)
+                # Revision 03/02/2026 >
                 self._dialog.adjustSize()
             params = self._dialog.getParametersDict()
             buff = ['{}: {}'.format(k, str(v)) for k, v in params['registration'].items()]
@@ -718,7 +793,10 @@ class WorkflowItem(QWidget):
             self._input2.setVisible(False)
             if self._dialog is None:
                 from Sisyphe.gui.dialogSegmentation import DialogPriorBasedSegmentation
-                self._dialog = DialogPriorBasedSegmentation(self)
+                # < Revision 03/02/2026
+                # self._dialog = DialogPriorBasedSegmentation(self)
+                self._dialog = DialogPriorBasedSegmentation()
+                # Revision 03/02/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -887,8 +965,12 @@ class WorkflowItem(QWidget):
             self._dialog.setFilenames(input1)
             self._dialog.setReference(input2)
         elif name in ['rigid', 'affine', 'displacement', 'spatial']:
-            self._dialog.setMoving(input1)
-            self._dialog.setFixed(input2)
+            # < Revision 04/02/2026
+            # self._dialog.setMoving(input1)
+            # self._dialog.setFixed(input2)
+            self._dialog.setMoving(input1, editable=False)
+            self._dialog.setFixed(input2, editable=False)
+            # Revision 04/02/2026 >
         else:
             self._dialog.setFilenames(input1)
         self._old = input1
@@ -909,7 +991,7 @@ class DialogWorkflow(QDialog):
     QDialog -> DialogWorkflow
 
     Creation: 13/02/2025
-    Last revision: 15/10/2025
+    Last revision: 03/02/2026
     """
 
     # Class constants
@@ -963,7 +1045,7 @@ class DialogWorkflow(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Workflow processing')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         self._name = 'workflow'
@@ -984,6 +1066,7 @@ class DialogWorkflow(QDialog):
 
         self._worklist = QListWidget(self)
         self._worklist.setAlternatingRowColors(True)
+        # noinspection PyTypeChecker
         self._worklist.setSelectionMode(1)  # single selection
         # noinspection PyUnresolvedReferences
         self._worklist.itemDoubleClicked.connect(self._editParameters)
@@ -1022,6 +1105,11 @@ class DialogWorkflow(QDialog):
         self._open.setToolTip('Open workflow.')
         # noinspection PyUnresolvedReferences
         self._open.clicked.connect(lambda: self.load())
+        # < Revision 03/02/2026
+        self._erase = QCheckBox('Remove intermediates')
+        self._erase.setToolTip('Remove volumes of intermediate stages.')
+        self._erase.setChecked(True)
+        # Revision 03/02/2026
         lyout.addWidget(self._process)
         lyout.addWidget(self._add)
         lyout.addWidget(self._insert)
@@ -1030,6 +1118,9 @@ class DialogWorkflow(QDialog):
         lyout.addWidget(self._clear)
         lyout.addWidget(self._open)
         lyout.addWidget(self._save)
+        # < Revision 03/02/2026
+        lyout.addWidget(self._erase)
+        # Revision 03/02/2026
         lyout.addStretch()
         self._layout.addLayout(lyout)
 
@@ -1038,6 +1129,7 @@ class DialogWorkflow(QDialog):
         lyout = QHBoxLayout()
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -1090,7 +1182,10 @@ class DialogWorkflow(QDialog):
 
     def _addProcessing(self):
         last = self._getVolumeCount()
-        w = WorkflowItem(self._process.currentText(), last)
+        # < Revision 03/02/2026
+        # w = WorkflowItem(self._process.currentText(), last)
+        w = WorkflowItem(self._process.currentText(), last, parent=self)
+        # Revision 03/02/2026 >
         item = QListWidgetItem()
         item.setSizeHint(w.sizeHint())
         self._worklist.addItem(item)
@@ -1102,7 +1197,10 @@ class DialogWorkflow(QDialog):
             pitem = pitem[0]
             row = self._worklist.row(pitem)
             last = self._getVolumeCount(row)
-            w = WorkflowItem(self._process.currentText(), last)
+            # < Revision 03/02/2026
+            # w = WorkflowItem(self._process.currentText(), last)
+            w = WorkflowItem(self._process.currentText(), last, parent=self)
+            # Revision 03/02/2026 >
             item = QListWidgetItem()
             item.setSizeHint(w.sizeHint())
             self._worklist.insertItem(row, item)
@@ -1208,14 +1306,23 @@ class DialogWorkflow(QDialog):
                     if node.nodeType == node.ELEMENT_NODE:
                         # add processing
                         last = self._getVolumeCount()
-                        w = WorkflowItem(node.nodeName)
+                        # < Revision 03/02/2026
+                        # w = WorkflowItem(node.nodeName)
+                        w = WorkflowItem(node.nodeName, parent=self)
+                        # Revision 03/02/2026 >
                         item = QListWidgetItem()
                         item.setSizeHint(w.sizeHint())
                         self._worklist.addItem(item)
                         self._worklist.setItemWidget(item, w)
                         # read processing parameters
                         if node.nodeName in ['load', 'algebra']:
-                            w.setEdit(node.firstChild.data)
+                            # < Revision 03/02/2026
+                            w.init(last)
+                            if node.hasChildNodes():
+                                w.setEdit(node.firstChild.data)
+                                if node.nodeName == 'load':
+                                    w.getDialog().getFileSelectionWidget().open(node.firstChild.data)
+                            # Revision 03/02/2026 >
                         else:
                             # read parameter subnodes
                             params = dict()
@@ -1262,11 +1369,15 @@ class DialogWorkflow(QDialog):
                         wait = DialogWait()
                         wait.setInformationText('Load {}...'.format(basename(dialog.getFilename())))
                         nv += 1
+                        # < Revision 03/02/2026
+                        dst = addSuffixToFilename(filename, '#{}'.format(nv))
                         try:
-                            copyfile(dialog.getFilename(), dirname(filename))
-                            src = join(dirname(filename), dialog.getFilename())
-                            dst = addSuffixToFilename(filename, '#{}'.format(nv))
-                            rename(src, dst)
+                            copyfile(dialog.getFilename(), dst)
+                            # copyfile(dialog.getFilename(), dirname(filename))
+                            # src = join(dirname(filename), dialog.getFilename())
+                            # dst = addSuffixToFilename(filename, '#{}'.format(nv))
+                            # rename(src, dst)
+                        # Revision 03/02/2026 >
                         except Exception as err:
                             wait.close()
                             messageBox(self,
@@ -1377,7 +1488,7 @@ class DialogWorkflow(QDialog):
                             try:
                                 for j in range(no):
                                     nv += 1
-                                    if i == n - 1 and j == 0: dst = addPrefixToFilename(filename, self._name)
+                                    if i == n - 1 and j == 0: dst = addSuffixToFilename(filename, self._name)
                                     else: dst = addSuffixToFilename(filename, '#{}'.format(nv))
                                     rename(output[j], dst)
                             except Exception as err:
@@ -1386,6 +1497,15 @@ class DialogWorkflow(QDialog):
                                            text='Save output(s) stage#{} error.\n{}'.format(i, err))
                                 self._files.clear()
                                 return
+                # < Revision 03/02/2026
+                if self._erase.isChecked():
+                    i = 1
+                    buff = addSuffixToFilename(filename, '#1')
+                    while exists(buff):
+                        remove(buff)
+                        i += 1
+                        buff = addSuffixToFilename(filename, '#{}'.format(i))
+                # Revision 03/02/2026 >
             """
             Exit  
             """

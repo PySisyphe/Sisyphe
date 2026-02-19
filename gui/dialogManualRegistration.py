@@ -50,6 +50,11 @@ class DialogManualRegistration(QDialog):
     """
     DialogManualRegistration
 
+    Description
+    ~~~~~~~~~~~
+
+    GUI dialog for manual coregistration.
+
     Inheritance
     ~~~~~~~~~~~
 
@@ -249,7 +254,7 @@ class DialogManualRegistration(QDialog):
         self._cancel.clicked.connect(self.reject)
         self._widget.setMoveOverlayOn()
 
-    # Private method
+    # Private methods
 
     def _edgeSelectionChanged(self, index):
         if index == 0: self._widget().getFirstSliceViewWidget().displayNative()

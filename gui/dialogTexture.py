@@ -257,7 +257,7 @@ class DialogTexture(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Texture feature maps')
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -283,6 +283,7 @@ class DialogTexture(QDialog):
         self._features.itemChanged.connect(self._onFeatureCheck)
         for k in self._FEATURES.keys():
             item = QTreeWidgetItem(self._features)
+            # noinspection PyUnresolvedReferences
             item.setCheckState(0, Qt.Unchecked)
             if k == 'firstorder': title = 'First order features'
             elif k == 'glcm': title = 'Gray Level Co-occurrence Matrix features'
@@ -296,6 +297,7 @@ class DialogTexture(QDialog):
             self._features.addTopLevelItem(item)
             for f in self._FEATURES[k]:
                 subitem = QTreeWidgetItem(item)
+                # noinspection PyUnresolvedReferences
                 subitem.setCheckState(0, Qt.Unchecked)
                 subitem.setText(0, f)
                 item.addChild(subitem)
@@ -327,6 +329,7 @@ class DialogTexture(QDialog):
         lyout = QHBoxLayout()
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('Close')
         self._ok.setFixedWidth(100)
@@ -361,21 +364,21 @@ class DialogTexture(QDialog):
     def _onCheckAll(self):
         for i in range(self._features.topLevelItemCount()):
             item = self._features.topLevelItem(i)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             item.setCheckState(0, Qt.Checked)
             for j in range(item.childCount()):
                 subitem = item.child(j)
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 subitem.setCheckState(0, Qt.Checked)
 
     def _onUncheckAll(self):
         for i in range(self._features.topLevelItemCount()):
             item = self._features.topLevelItem(i)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             item.setCheckState(0, Qt.Unchecked)
             for j in range(item.childCount()):
                 subitem = item.child(j)
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 subitem.setCheckState(0, Qt.Unchecked)
 
     def _hasFeatureChecked(self):
@@ -383,6 +386,7 @@ class DialogTexture(QDialog):
             item = self._features.topLevelItem(i)
             for j in range(item.childCount()):
                 subitem = item.child(j)
+                # noinspection PyUnresolvedReferences
                 if subitem.checkState(0) == Qt.Checked: return True
         return False
 
@@ -415,6 +419,7 @@ class DialogTexture(QDialog):
             item = self._features.topLevelItem(i)
             for j in range(item.childCount()):
                 subitem = item.child(j)
+                # noinspection PyUnresolvedReferences
                 if subitem.checkState(0) == Qt.Checked:
                     # < Revision 18/02/2025
                     k1 = item.text(0).replace(' ', '_')
@@ -448,24 +453,24 @@ class DialogTexture(QDialog):
                     if k2 in params[k1]:
                         v = params[k1][k2]
                         if isinstance(v, bool):
-                            if v is True:
-                                # noinspection PyTypeChecker
+                            if v:
+                                # noinspection PyUnresolvedReferences
                                 subitem.setCheckState(0, Qt.Checked)
                             else:
-                                # noinspection PyTypeChecker
+                                # noinspection PyUnresolvedReferences
                                 subitem.setCheckState(0, Qt.Unchecked)
                         if isinstance(v, str):
                             if v == 'True':
-                                # noinspection PyTypeChecker
+                                # noinspection PyUnresolvedReferences
                                 subitem.setCheckState(0, Qt.Checked)
                             else:
-                                # noinspection PyTypeChecker
+                                # noinspection PyUnresolvedReferences
                                 subitem.setCheckState(0, Qt.Unchecked)
                     else:
-                        # noinspection PyTypeChecker
+                        # noinspection PyUnresolvedReferences
                         subitem.setCheckState(0, Qt.Unchecked)
                 else:
-                    # noinspection PyTypeChecker
+                    # noinspection PyUnresolvedReferences
                     subitem.setCheckState(0, Qt.Unchecked)
     # Revision 13/02/2025 >
 
@@ -504,6 +509,7 @@ class DialogTexture(QDialog):
                         item = self._features.topLevelItem(i)
                         for j in range(item.childCount()):
                             subitem = item.child(j)
+                            # noinspection PyUnresolvedReferences
                             if subitem.checkState(0) == Qt.Checked:
                                 wait.setInformationText('{}\n{} {} processing'.format(basename(filename),
                                                                                       item.text(0),
@@ -704,6 +710,7 @@ class DialogROITexture(DialogTexture):
                     item = self._features.topLevelItem(i)
                     for j in range(item.childCount()):
                         subitem = item.child(j)
+                        # noinspection PyUnresolvedReferences
                         if subitem.checkState(0) == Qt.Checked:
                             idx = self._features.indexOfTopLevelItem(item)
                             if idx == 0: features['first'].append(subitem.text(0))

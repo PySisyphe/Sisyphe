@@ -74,7 +74,7 @@ class DialogDatatype(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Datatype conversion')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -112,6 +112,7 @@ class DialogDatatype(QDialog):
         lyout = QHBoxLayout()
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -142,6 +143,7 @@ class DialogDatatype(QDialog):
             title = 'Datatype conversion'
             wait = DialogWait(title=title, progress=True, progressmin=0, progressmax=n,
                               progresstxt=True, cancel=False)
+            wait.setCurrentProgressValue(0)
             wait.open()
             dtype = self._datatype.currentText()
             for filename in self._files.getFilenames():
@@ -269,6 +271,7 @@ class DialogAttributes(DialogDatatype):
             title = 'Attributes conversion'
             wait = DialogWait(title=title, progress=True, progressmin=0, progressmax=n,
                               progresstxt=True, cancel=False)
+            wait.setCurrentProgressValue(0)
             wait.open()
             for filename in self._files.getFilenames():
                 wait.setInformationText('Convert {}'.format(basename(filename)))
@@ -317,7 +320,7 @@ class DialogEditID(QDialog):
 
     QDialog -> DialogEditID
 
-    Last revision: 16/12/2025
+    Last revision: 19/02/2026
     """
 
     # Special method
@@ -326,7 +329,7 @@ class DialogEditID(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('ID replacement')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -368,6 +371,7 @@ class DialogEditID(QDialog):
         lyout = QHBoxLayout()
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -396,7 +400,9 @@ class DialogEditID(QDialog):
             attr = SisypheVolume.getVolumeAttributes(filename)
             if exists(filename):
                 self._refid = attr['id']
+                # noinspection PyTypeChecker
                 self._files.filterSameSize(tuple(attr['size']))
+                # noinspection PyTypeChecker
                 self._files.filterSameFOV(tuple(attr['fov']))
                 self._files.setEnabled(True)
         else:
@@ -425,6 +431,9 @@ class DialogEditID(QDialog):
             title = 'ID replacement'
             wait = DialogWait(title=title, progress=True, progressmin=0, progressmax=n,
                               progresstxt=True, cancel=False)
+            # < Revision 19/02/2026
+            wait.setCurrentProgressValue(0)
+            # Revision 19/02/2026 >
             wait.open()
             for filename in self._files.getFilenames():
                 wait.setInformationText('{} ID replacement'.format(basename(filename)))

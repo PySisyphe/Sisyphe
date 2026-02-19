@@ -72,7 +72,7 @@ class DialogRTimport(QDialog):
 
     QDialog -> DialogRTimport
 
-    Last revision: 31/07/2025
+    Last revision: 19/02/2026
     """
 
     # Special method
@@ -90,7 +90,7 @@ class DialogRTimport(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('DICOM RT import')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.50), int(screen.height() * 0.50))
@@ -110,7 +110,9 @@ class DialogRTimport(QDialog):
 
         self._series = QTreeWidget()
         self._series.setAlternatingRowColors(True)
+        # noinspection PyTypeChecker
         self._series.setSelectionMode(3)
+        # noinspection PyTypeChecker
         self._series.setSelectionBehavior(1)
         self._series.setHeaderLabel('Dicom RT series')
         # noinspection PyUnresolvedReferences
@@ -183,6 +185,7 @@ class DialogRTimport(QDialog):
         lyout = QHBoxLayout()
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -213,14 +216,14 @@ class DialogRTimport(QDialog):
     def _checkAll(self):
         for i in range(self._series.topLevelItemCount()):
             item = self._series.topLevelItem(i)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             item.setCheckState(0, Qt.Checked)
             self._toggleCheckbox(item, None)
 
     def _uncheckAll(self):
         for i in range(self._series.topLevelItemCount()):
             item = self._series.topLevelItem(i)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             item.setCheckState(0, Qt.Unchecked)
             self._toggleCheckbox(item, None)
 
@@ -228,14 +231,14 @@ class DialogRTimport(QDialog):
         items = self._series.selectedItems()
         if items:
             for item in items:
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 item.setCheckState(0, Qt.Checked)
 
     def _uncheckSelectedRows(self):
         items = self._series.selectedItems()
         if items:
             for item in items:
-                # noinspection PyTypeChecker
+                # noinspection PyUnresolvedReferences
                 item.setCheckState(0, Qt.Unchecked)
 
     def _clear(self):
@@ -250,13 +253,18 @@ class DialogRTimport(QDialog):
                 for keyref in images:
                     itemref = QTreeWidgetItem(self._series)
                     itemref.setText(0, 'Frame of Reference UID: {}'.format(keyref))
+                    # noinspection PyUnresolvedReferences
                     itemref.setData(0, Qt.UserRole, self._dir.getPath())
+                    # noinspection PyUnresolvedReferences
                     itemref.setFlags(itemref.flags() | Qt.ItemIsUserCheckable)
+                    # noinspection PyUnresolvedReferences
                     itemref.setCheckState(0, Qt.Checked)
                     self._series.addTopLevelItem(itemref)
                     for keyseries in images[keyref]:
                         itemseries = QTreeWidgetItem(itemref)
+                        # noinspection PyUnresolvedReferences
                         itemseries.setFlags(itemseries.flags() | Qt.ItemIsUserCheckable)
+                        # noinspection PyUnresolvedReferences
                         itemseries.setCheckState(0, Qt.Checked)
                         if keyseries == 'rtstruct':
                             itemseries.setText(0, 'RTStruct')
@@ -271,10 +279,13 @@ class DialogRTimport(QDialog):
                         for filename in images[keyref][keyseries]:
                             itemfile = QTreeWidgetItem(itemseries)
                             if keyseries in ('rtstruct', 'rtdose'):
+                                # noinspection PyUnresolvedReferences
                                 itemfile.setFlags(itemfile.flags() | Qt.ItemIsUserCheckable)
+                                # noinspection PyUnresolvedReferences
                                 itemfile.setCheckState(0, Qt.Checked)
                             else: filename = filename[1]
                             itemfile.setText(0, basename(filename))
+                            # noinspection PyUnresolvedReferences
                             itemfile.setData(0, Qt.UserRole, dirname(filename))
                             itemseries.addChild(itemfile)
                         # itemseries.sortChildren(0, Qt.AscendingOrder)
@@ -297,7 +308,9 @@ class DialogRTimport(QDialog):
                 # Set ProgressBar
                 progress = DialogWait()
                 progress.setProgressRange(0, n)
+                # < Revision 19/02/2026
                 progress.setCurrentProgressValue(0)
+                # Revision 19/02/2026 >
                 progress.buttonVisibilityOff()
                 progress.progressTextVisibilityOn()
                 progress.setProgressVisibility(n > 1)
@@ -354,6 +367,7 @@ class DialogRTimport(QDialog):
                             images[ref][series].sort()
                             rtref = True
                         else: del images[ref][series]
+                # noinspection PySimplifyBooleanCheck
                 if (rtstruct or rtdose) and rtref is False: del images[ref]
                 elif rtref is False:
                     messageBox(self, 'DICOM RT import', text='{}\nA reference image is missing.'.format(ref))
@@ -491,6 +505,7 @@ class DialogRTimport(QDialog):
             for i in range(n1):
                 item = self._series.topLevelItem(i)
                 if item.checkState(0) > 0:
+                    # noinspection PyUnresolvedReferences
                     folder = item.data(0, Qt.UserRole)
                     if exists(folder):
                         n2 = item.childCount()
@@ -507,6 +522,7 @@ class DialogRTimport(QDialog):
                                                 child2 = child.child(k)
                                                 if child2.checkState(0) > 0:
                                                     # rtsructfiles.append(join(folder, child2.text(0)))
+                                                    # noinspection PyUnresolvedReferences
                                                     rtsructfiles.append(join(child2.data(0, Qt.UserRole), child2.text(0)))
                                     # convert RTDose
                                     # elif child.data(0, Qt.UserRole) == 'RTDose':
@@ -517,6 +533,7 @@ class DialogRTimport(QDialog):
                                                 child2 = child.child(k)
                                                 if child2.checkState(0) > 0:
                                                     # rtdosefiles.append(join(folder, child2.text(0)))
+                                                    # noinspection PyUnresolvedReferences
                                                     rtdosefiles.append(join(child2.data(0, Qt.UserRole), child2.text(0)))
                                     # convert DICOM reference series
                                     else:
@@ -525,13 +542,16 @@ class DialogRTimport(QDialog):
                                             for k in range(n3):
                                                 child2 = child.child(k)
                                                 # dcmfiles.append(join(folder, child2.text(0)))
+                                                # noinspection PyUnresolvedReferences
                                                 dcmfiles.append(join(child2.data(0, Qt.UserRole), child2.text(0)))
             # Convert
             n = len(rtdosefiles) + len(rtsructfiles) + int(len(dcmfiles) > 0)
             if n > 0:
                 progress = DialogWait()
                 progress.setProgressRange(0, n)
+                # < Revision 19/02/2026
                 progress.setCurrentProgressValue(0)
+                # Revision 19/02/2026 >
                 progress.buttonVisibilityOff()
                 progress.progressTextVisibilityOn()
                 progress.setProgressVisibility(n > 1)

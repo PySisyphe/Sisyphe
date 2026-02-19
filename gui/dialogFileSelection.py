@@ -56,7 +56,7 @@ class DialogFileSelection(QDialog):
     QDialog -> DialogFileSelection
 
     Creation: 15/11/2022
-    Last revision: 22/10/2025
+    Last revision: 03/02/2026
     """
 
     # Special method
@@ -71,7 +71,7 @@ class DialogFileSelection(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('File selection')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -128,21 +128,24 @@ class DialogFileSelection(QDialog):
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
         lyout.setContentsMargins(0, 0, 0, 0)
+        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
-        cancel = QPushButton('Cancel')
-        cancel.setFixedWidth(100)
-        ok = QPushButton('OK')
-        ok.setFixedWidth(100)
-        ok.setAutoDefault(True)
-        ok.setDefault(True)
-        lyout.addWidget(ok)
-        lyout.addWidget(cancel)
+        # < Revision 03/02/2026
+        self._cancel = QPushButton('Cancel')
+        self._cancel.setFixedWidth(100)
+        self._ok = QPushButton('OK')
+        self._ok.setFixedWidth(100)
+        self._ok.setAutoDefault(True)
+        self._ok.setDefault(True)
+        lyout.addWidget(self._ok)
+        lyout.addWidget(self._cancel)
         lyout.addStretch()
 
         # noinspection PyUnresolvedReferences
-        ok.clicked.connect(self._accept)
+        self._ok.clicked.connect(self._accept)
         # noinspection PyUnresolvedReferences
-        cancel.clicked.connect(self.reject)
+        self._cancel.clicked.connect(self.reject)
+        # Revision 03/02/2026 >
 
         # Init Layout
 
@@ -187,7 +190,7 @@ class DialogMultiFileSelection(QDialog):
     QDialog -> DialogMultipleFileSelection
 
     Creation: 15/11/2022
-    Last revision: 22/10/2025
+    Last revision: 03/02/2026
     """
 
     # Special methods
@@ -202,7 +205,7 @@ class DialogMultiFileSelection(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Files selection')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -216,21 +219,24 @@ class DialogMultiFileSelection(QDialog):
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         else: lyout.setContentsMargins(0, 0, 0, 0)
         lyout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
-        cancel = QPushButton('Cancel')
-        cancel.setFixedWidth(100)
-        ok = QPushButton('OK')
-        ok.setFixedWidth(100)
-        ok.setAutoDefault(True)
-        ok.setDefault(True)
-        lyout.addWidget(ok)
-        lyout.addWidget(cancel)
+        # < Revision 03/02/2026
+        self._cancel = QPushButton('Cancel')
+        self._cancel.setFixedWidth(100)
+        self._ok = QPushButton('OK')
+        self._ok.setFixedWidth(100)
+        self._ok.setAutoDefault(True)
+        self._ok.setDefault(True)
+        lyout.addWidget(self._ok)
+        lyout.addWidget(self._cancel)
         lyout.addStretch()
 
         # noinspection PyUnresolvedReferences
-        ok.clicked.connect(self._accept)
+        self._ok.clicked.connect(self._accept)
         # noinspection PyUnresolvedReferences
-        cancel.clicked.connect(self.reject)
+        self._cancel.clicked.connect(self.reject)
+        # Revision 03/02/2026 >
 
         # Init Layout
 
@@ -358,7 +364,7 @@ class DialogFilesSelection(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Files selection')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -423,21 +429,24 @@ class DialogFilesSelection(QDialog):
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         else: lyout.setContentsMargins(0, 0, 0, 0)
         lyout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
-        cancel = QPushButton('Cancel')
-        cancel.setFixedWidth(100)
-        ok = QPushButton('OK')
-        ok.setFixedWidth(100)
-        ok.setAutoDefault(True)
-        ok.setDefault(True)
-        lyout.addWidget(ok)
-        lyout.addWidget(cancel)
+        # < Revision 03/02/2026
+        self._cancel = QPushButton('Cancel')
+        self._cancel.setFixedWidth(100)
+        self._ok = QPushButton('OK')
+        self._ok.setFixedWidth(100)
+        self._ok.setAutoDefault(True)
+        self._ok.setDefault(True)
+        lyout.addWidget(self._ok)
+        lyout.addWidget(self._cancel)
         lyout.addStretch()
 
         # noinspection PyUnresolvedReferences
-        ok.clicked.connect(self._accept)
+        self._ok.clicked.connect(self._accept)
         # noinspection PyUnresolvedReferences
-        cancel.clicked.connect(self.reject)
+        self._cancel.clicked.connect(self.reject)
+        # Revision 03/02/2026 >
 
         # Init Layout
 

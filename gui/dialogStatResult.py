@@ -5,10 +5,11 @@ External packages/modules
     - Matplotlib, plotting library, https://matplotlib.org/
     - Numpy, scientific computing, https://numpy.org/
     - pandas, data analysis and manipulation tool, https://pandas.pydata.org/
-    - fpdf2, pdf document generation, https://py-pdf.github.io/fpdf2/index.html
+    - fpdf2, PDF document generation, https://py-pdf.github.io/fpdf2/index.html
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+import sys
 from sys import platform
 
 from os import getcwd
@@ -54,6 +55,7 @@ from PyQt5.QtWidgets import QTreeView
 from PyQt5.QtWidgets import QHeaderView
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QWidgetAction
 from PyQt5.QtWidgets import QApplication
 
 from fpdf import FPDF
@@ -87,9 +89,11 @@ from Sisyphe.core.sisypheStatistics import clusterCorrectedpvalueToExtent
 from Sisyphe.core.sisypheStatistics import thresholdMap
 from Sisyphe.core.sisypheStatistics import SisypheDesign
 from Sisyphe.core.sisypheSheet import SisypheSheet
+from Sisyphe.widgets.LUTWidgets import LutWidget
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import QDoubleSpinBox2
 from Sisyphe.widgets.basicWidgets import LabeledComboBox
+from Sisyphe.widgets.basicWidgets import MenuPushButton
 from Sisyphe.widgets.iconBarViewWidgets import IconBarOrthogonalSliceViewWidget
 from Sisyphe.widgets.projectionViewWidget import IconBarMultiProjectionViewWidget
 from Sisyphe.widgets.screenshotsGridWidget import ScreenshotsGridWidget
@@ -124,7 +128,7 @@ class DialogResult(QDialog):
     QDialog -> DialogResult
 
     Creation: 18/11/2024
-    Last revision: 09/10/2025
+    Last revision: 19/02/2026
     """
 
     # class method
@@ -182,9 +186,9 @@ class DialogResult(QDialog):
         # Init window
 
         self.setWindowTitle('Statistical results')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
 
         # Init non-GUI attributes
@@ -202,6 +206,9 @@ class DialogResult(QDialog):
         self._ec: float = 0.0
         self._ev: float = 0.0
         self._res: float = 0.0
+        # < Revision 05/02/2026
+        self._projUpdateFlag : bool = False
+        # Revision 05/02/2026 >
 
         # Init QLayout
 
@@ -213,11 +220,14 @@ class DialogResult(QDialog):
         # Init widgets
 
         self._views = QTabWidget()
-        # noinspection PyUnresolvedReferences
         self._views.currentChanged.connect(self._updateChart)
+        # < Revision 05/02/2026
+        self._views.currentChanged.connect(self._updateProjectionView)
+        # Revision 05/02/2026 >
         self._sliceView = IconBarOrthogonalSliceViewWidget()
         self._projectionView = IconBarMultiProjectionViewWidget()
 
+        # beta chart
         self._widget1 = QWidget()
         hlyout1 = QHBoxLayout()
         button1 = QPushButton('Save bitmap')
@@ -243,6 +253,7 @@ class DialogResult(QDialog):
         lyoutf1.addLayout(hlyout1)
         self._widget1.setLayout(lyoutf1)
 
+        # time series chart
         self._widget2 = QWidget()
         hlyout2 = QHBoxLayout()
         button1 = QPushButton('Save bitmap')
@@ -268,6 +279,7 @@ class DialogResult(QDialog):
         lyoutf2.addLayout(hlyout2)
         self._widget2.setLayout(lyoutf2)
 
+        # regression chart
         self._widget3 = QWidget()
         hlyout3 = QHBoxLayout()
         button1 = QPushButton('Save bitmap')
@@ -356,9 +368,22 @@ class DialogResult(QDialog):
         self._sbextent.valueChanged.connect(self._sbExtentValueChanged)
         # Revision 07/12/2024 >
 
+        # < Revision 05/02/2026
+        self._lut = LutWidget(size=256, view=self._sliceView)
+        self._btlut = MenuPushButton('LUT', parent=self)
+        self._btlut.setAutoDefault(False)
+        self._btlut.setDefault(False)
+        self._btlut.setToolTip('Statistical map LUT and windowing settings')
+        action = QWidgetAction(self)
+        action.setDefaultWidget(self._lut)
+        self._btlut.getPopupMenu().addAction(action)
+        # Revision 05/02/2026 >
+
         lyoutbt = QHBoxLayout()
         lyoutbt.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         lyoutbt.setDirection(QHBoxLayout.LeftToRight)
+        lyoutbt.addWidget(self._btlut)
         lyoutbt.addWidget(self._cbthreshold)
         lyoutbt.addWidget(self._sbthreshold)
         lyoutbt.addWidget(self._cbextent)
@@ -501,6 +526,7 @@ class DialogResult(QDialog):
 
         self._clusters = QTreeView()
         self._model = QStandardItemModel()
+        # noinspection PyUnresolvedReferences
         self._model.setSortRole(Qt.UserRole)
         self._clusters.setModel(self._model)
         self._clusters.setMinimumHeight(400)
@@ -522,12 +548,17 @@ class DialogResult(QDialog):
                         'Anatomical\nlocation']
         self._model.setHorizontalHeaderLabels(self._labels)
         self._clusters.setAlternatingRowColors(True)
-        # noinspection PyTypeChecker
-        self._clusters.header().setSectionResizeMode(QHeaderView.Stretch)
+        # < Revision 05/02/2026
+        # self._clusters.header().setSectionResizeMode(QHeaderView.Stretch)
+        for i in range(len(self._labels) - 2):
+            self._clusters.header().setSectionResizeMode(i, QHeaderView.Stretch)
+        self._clusters.header().setSectionResizeMode(16, QHeaderView.ResizeToContents)
+        self._clusters.header().setSectionResizeMode(17, QHeaderView.ResizeToContents)
+        # < Revision 05/02/2026
         self._clusters.header().setSectionsClickable(True)
         self._clusters.header().setSortIndicatorShown(True)
         self._clusters.header().setStretchLastSection(False)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._clusters.header().setDefaultAlignment(Qt.AlignCenter)
         # noinspection PyUnresolvedReferences
         self._clusters.header().sectionClicked.connect(self._sortColumn)
@@ -540,6 +571,7 @@ class DialogResult(QDialog):
         lyout = QHBoxLayout()
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('Close', parent=self)
         self._ok.setAutoDefault(False)
@@ -747,11 +779,27 @@ class DialogResult(QDialog):
             if self._brodmann is not None: vlabels.append(self._brodmann)
             if self._anatomy is not None: vlabels.append(self._anatomy)
             r = thresholdMap(v, self._extent, self._map, vlabels)
+            # < Revision 05/02/2026
+            if self._map.acquisition.isTMap(): r['map'].setFilename('t-map')
+            elif self._map.acquisition.isZMap(): r['map'].setFilename('z-map')
+            r['map'].display.setWindowMin(0.0)
+            # Revision 05/02/2026 >
             # update _views
+            if self._lut.hasVolume():
+                r['map'].display.setLUT(self._lut.getLut())
+            self._lut.setVolume(r['map'])
             self._sliceView.removeAllOverlays()
             self._sliceView.addOverlay(r['map'])
-            if self._anat is None: self._projectionView.setVolume(r['map'], self._mask, mask=self._mask)
-            else: self._projectionView.setVolume(r['map'], self._anat, mask=self._mask)
+            self._sliceView().setOverlayColorBar()
+            # < Revision 05/02/2026
+            # if self._anat is None: self._projectionView.setVolume(r['map'], self._mask, mask=self._mask)
+            # else: self._projectionView.setVolume(r['map'], self._anat, mask=self._mask)
+            if self._views.currentIndex() == 1:
+                if self._anat is None: self._projectionView.setVolume(r['map'], self._mask, mask=self._mask)
+                else: self._projectionView.setVolume(r['map'], self._anat, mask=self._mask)
+                self._projUpdateFlag = False
+            else: self._projUpdateFlag = True
+            # Revision 05/02/2026 >
             # update QTreeView
             # self._clusters.clear()
             self._model.invisibleRootItem().removeRows(0, self._model.rowCount())
@@ -764,22 +812,28 @@ class DialogResult(QDialog):
                     z = int(r['c'][i][2])
                     # x
                     item = QStandardItem()
+                    # noinspection PyUnresolvedReferences
                     item.setData(x, Qt.UserRole)
                     item.setText(str(x))
+                    # noinspection PyUnresolvedReferences
                     item.setTextAlignment(Qt.AlignCenter)
                     item.setEditable(False)
                     self._model.setItem(i, 0, item)
                     # y
                     item = QStandardItem()
+                    # noinspection PyUnresolvedReferences
                     item.setData(y, Qt.UserRole)
                     item.setText(str(y))
+                    # noinspection PyUnresolvedReferences
                     item.setTextAlignment(Qt.AlignCenter)
                     item.setEditable(False)
                     self._model.setItem(i, 1, item)
                     # z
                     item = QStandardItem()
+                    # noinspection PyUnresolvedReferences
                     item.setData(z, Qt.UserRole)
                     item.setText(str(z))
+                    # noinspection PyUnresolvedReferences
                     item.setTextAlignment(Qt.AlignCenter)
                     item.setEditable(False)
                     self._model.setItem(i, 2, item)
@@ -791,22 +845,28 @@ class DialogResult(QDialog):
                     z2 = (float(z) * spacing[2]) - origin[2]
                     # x world coordinate
                     item = QStandardItem()
+                    # noinspection PyUnresolvedReferences
                     item.setData(x2, Qt.UserRole)
                     item.setText('{:.1f}'.format(x2))
+                    # noinspection PyUnresolvedReferences
                     item.setTextAlignment(Qt.AlignCenter)
                     item.setEditable(False)
                     self._model.setItem(i, 3, item)
                     # y world coordinate
                     item = QStandardItem()
+                    # noinspection PyUnresolvedReferences
                     item.setData(y2, Qt.UserRole)
                     item.setText('{:.1f}'.format(y2))
+                    # noinspection PyUnresolvedReferences
                     item.setTextAlignment(Qt.AlignCenter)
                     item.setEditable(False)
                     self._model.setItem(i, 4, item)
                     # z world coordinate
                     item = QStandardItem()
+                    # noinspection PyUnresolvedReferences
                     item.setData(z2, Qt.UserRole)
                     item.setText('{:.1f}'.format(z2))
+                    # noinspection PyUnresolvedReferences
                     item.setTextAlignment(Qt.AlignCenter)
                     item.setEditable(False)
                     self._model.setItem(i, 5, item)
@@ -814,40 +874,50 @@ class DialogResult(QDialog):
                         # t-value
                         t = r['max'][i]
                         item = QStandardItem()
+                        # noinspection PyUnresolvedReferences
                         item.setData(t, Qt.UserRole)
                         item.setText('{:.2f}'.format(t))
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(Qt.AlignCenter)
                         item.setEditable(False)
                         self._model.setItem(i, 6, item)
                         # z-score
                         zs = tToz(t, df)
                         item = QStandardItem()
+                        # noinspection PyUnresolvedReferences
                         item.setData(zs, Qt.UserRole)
                         item.setText('{:.2f}'.format(zs))
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(Qt.AlignCenter)
                         item.setEditable(False)
                         self._model.setItem(i, 7, item)
                         # uncorrected p-value
                         puc = tTopvalue(t, df)
                         item = QStandardItem()
+                        # noinspection PyUnresolvedReferences
                         item.setData(puc, Qt.UserRole)
                         item.setText(self._getFormattedValue(puc))
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(Qt.AlignCenter)
                         item.setEditable(False)
                         self._model.setItem(i, 8, item)
                         # Bonferroni corrected p-value
                         pb = pCorrectedBonferroni(puc, self._nb)
                         item = QStandardItem()
+                        # noinspection PyUnresolvedReferences
                         item.setData(pb, Qt.UserRole)
                         item.setText(self._getFormattedValue(pb))
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(Qt.AlignCenter)
                         item.setEditable(False)
                         self._model.setItem(i, 9, item)
                         # gaussian-field corrected p-value
                         pg = tToVoxelCorrectedpvalue(t, df, self._rc[0], self._rc[1], self._rc[2], self._rc[3])
                         item = QStandardItem()
+                        # noinspection PyUnresolvedReferences
                         item.setData(pg, Qt.UserRole)
                         item.setText(self._getFormattedValue(pg))
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(Qt.AlignCenter)
                         item.setEditable(False)
                         self._model.setItem(i, 10, item)
@@ -857,8 +927,10 @@ class DialogResult(QDialog):
                         # t-value
                         t = 'na'
                         item = QStandardItem()
+                        # noinspection PyUnresolvedReferences
                         item.setData(0.0, Qt.UserRole)
                         item.setText(t)
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(Qt.AlignCenter)
                         item.setEditable(False)
                         self._model.setItem(i, 6, item)
@@ -866,32 +938,42 @@ class DialogResult(QDialog):
                         # z-score
                         zs = self._map[x, y, z]
                         item = QStandardItem()
+                        # noinspection PyUnresolvedReferences
                         item.setData(zs, Qt.UserRole)
+                        # noinspection PyStringFormat
                         item.setText('{:.2f}'.format(zs))
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(Qt.AlignCenter)
                         item.setEditable(False)
                         self._model.setItem(i, 7, item)
                         # uncorrected p-value
                         puc = zTopvalue(z)
                         item = QStandardItem()
+                        # noinspection PyUnresolvedReferences
                         item.setData(puc, Qt.UserRole)
                         item.setText(self._getFormattedValue(puc))
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(Qt.AlignCenter)
                         item.setEditable(False)
                         self._model.setItem(i, 8, item)
                         # Bonferroni corrected p-value
                         pb = pCorrectedBonferroni(puc, self._nb)
                         item = QStandardItem()
+                        # noinspection PyUnresolvedReferences
                         item.setData(pb, Qt.UserRole)
                         item.setText(self._getFormattedValue(pb))
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(Qt.AlignCenter)
                         item.setEditable(False)
                         self._model.setItem(i, 9, item)
                         # gaussian-field corrected p-value
+                        # noinspection PyTypeChecker
                         pg = zToVoxelCorrectedpvalue(zs, self._rc[0], self._rc[1], self._rc[2], self._rc[3])
                         item = QStandardItem()
+                        # noinspection PyUnresolvedReferences
                         item.setData(pg, Qt.UserRole)
                         item.setText(self._getFormattedValue(pg))
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(Qt.AlignCenter)
                         item.setEditable(False)
                         self._model.setItem(i, 10, item)
@@ -900,40 +982,50 @@ class DialogResult(QDialog):
                     # cluster, nb. of voxels
                     nbv = r['extent'][i]
                     item = QStandardItem()
+                    # noinspection PyUnresolvedReferences
                     item.setData(nbv, Qt.UserRole)
                     item.setText(str(nbv))
+                    # noinspection PyUnresolvedReferences
                     item.setTextAlignment(Qt.AlignCenter)
                     item.setEditable(False)
                     self._model.setItem(i, 11, item)
                     # cluster, nb. of resels
                     v = nbv / self._res
                     item = QStandardItem()
+                    # noinspection PyUnresolvedReferences
                     item.setData(v, Qt.UserRole)
                     item.setText('{:.1f}'.format(v))
+                    # noinspection PyUnresolvedReferences
                     item.setTextAlignment(Qt.AlignCenter)
                     item.setEditable(False)
                     self._model.setItem(i, 12, item)
                     # cluster, volume (mm3)
                     v = nbv * self._map.getVoxelVolume()
                     item = QStandardItem()
+                    # noinspection PyUnresolvedReferences
                     item.setData(v, Qt.UserRole)
                     item.setText('{:.1f}'.format(v))
+                    # noinspection PyUnresolvedReferences
                     item.setTextAlignment(Qt.AlignCenter)
                     item.setEditable(False)
                     self._model.setItem(i, 13, item)
                     # cluster uncorrected p-value
                     p = extentToClusterUncorrectedpvalue(nbv, ev, ec)
                     item = QStandardItem()
+                    # noinspection PyUnresolvedReferences
                     item.setData(p, Qt.UserRole)
                     item.setText(self._getFormattedValue(p))
+                    # noinspection PyUnresolvedReferences
                     item.setTextAlignment(Qt.AlignCenter)
                     item.setEditable(False)
                     self._model.setItem(i, 14, item)
                     # cluster corrected p-value
                     p = extentToClusterCorrectedpvalue(nbv, ev, ec)
                     item = QStandardItem()
+                    # noinspection PyUnresolvedReferences
                     item.setData(p, Qt.UserRole)
                     item.setText(self._getFormattedValue(p))
+                    # noinspection PyUnresolvedReferences
                     item.setTextAlignment(Qt.AlignCenter)
                     item.setEditable(False)
                     self._model.setItem(i, 15, item)
@@ -942,7 +1034,9 @@ class DialogResult(QDialog):
                         # Brodmann label of voxel
                         lb = self._brodmann[x, y, z]
                         item = QStandardItem()
+                        # noinspection PyUnresolvedReferences
                         item.setData(0.0, Qt.UserRole)
+                        # noinspection PyTypeChecker
                         item.setText(self._brodmann.acquisition.getLabel(lb))
                         item.setEditable(False)
                         self._model.setItem(i, 16, item)
@@ -973,7 +1067,9 @@ class DialogResult(QDialog):
                         # anatomy label of voxel
                         lb = self._anatomy[x, y, z]
                         item = QStandardItem()
+                        # noinspection PyUnresolvedReferences
                         item.setData(0.0, Qt.UserRole)
+                        # noinspection PyTypeChecker
                         item.setText(self._anatomy.acquisition.getLabel(lb))
                         item.setEditable(False)
                         self._model.setItem(i, 17, item)
@@ -1013,6 +1109,24 @@ class DialogResult(QDialog):
                 self._lbobsvc.setText('{:.1f} voxels per cluster'.format(nvoxels / nclusters))
             wait.close()
 
+    # < Revision 05/02/2026
+    # add _updateProjectionView method
+    def _updateProjectionView(self, index: int) -> None:
+        if index == 1:
+            if self._projUpdateFlag:
+                wait = DialogWait()
+                wait.open()
+                wait.setInformationText('Update projections...')
+                df = self._map.acquisition.getDegreesOfFreedom()
+                if self._map.acquisition.isTMap(): v = zTot(self._zscore, df)
+                else: v = self._zscore
+                r = thresholdMap(v, self._extent, self._map)
+                if self._anat is None: self._projectionView.setVolume(r['map'], self._mask, mask=self._mask)
+                else: self._projectionView.setVolume(r['map'], self._anat, mask=self._mask)
+                self._projUpdateFlag = False
+                wait.close()
+    # Revision 05/02/2026 >
+
     def _updateChart(self, index: int) -> None:
         if index == 2: self._updateBetaChart()
         elif index == 3: self._updateTimeSeriesChart()
@@ -1042,13 +1156,24 @@ class DialogResult(QDialog):
                             # remove global factor if fMRI design
                             # v[factors[i][0]] = beta[x, y, z][i]
                             factor = factors[i][0]
-                            if self._design.isfMRIDesign() and factor not in self._design.getConditionNames():
-                                v[factor] = beta[x, y, z][i]
+                            if self._design.isfMRIDesign():
+                                if factor not in self._design.getConditionNames():
+                                    v[factor] = beta[x, y, z][i]
+                            # < Revision 05/02/2026
+                            else: v[factor] = beta[x, y, z][i]
+                            # Revision 05/02/2026 >
                             # Revision 10/06/2025 >
-                        if len(v) > 0:
+                        # < Revision 05/02/2026
+                        nf  = len(v)
+                        if nf < 11:
+                            aspect = nf - 1
+                            if aspect == 0: aspect = 1
+                            ax.set_box_aspect(aspect=1/aspect)
+                        if nf > 0:
                             errors = [sqrt(pooled[x, y, z])] * len(v)
                             rects = ax.bar(list(v.keys()), list(v.values()), yerr=errors)
                             ax.bar_label(rects, fmt='%.2f', padding=3)
+                        # Revision 05/02/2026 >
                         lbls = ['\n'.join(lb.split()) for lb in list(v.keys())]
                         ax.set_xticks(arange(len(v)), labels=lbls)
                         ax.tick_params(axis='x', labelrotation=45)
@@ -1187,24 +1312,29 @@ class DialogResult(QDialog):
                 # t-value
                 t = self._map[x, y, z]
                 self._lbcurt.show()
+                # noinspection PyStringFormat
                 self._lbcurt.setText('t-value {:.2f}'.format(t))
                 # z-value
                 df = self._map.acquisition.getDegreesOfFreedom()
+                # noinspection PyTypeChecker
                 z = tToz(t, df)
                 self._lbcurz.setText('z-score {:.2f}'.format(z))
                 # uncorrected p-value
+                # noinspection PyTypeChecker
                 p = tTopvalue(t, df)
                 self._lbcurp.setText('uncorrected p-value {}'.format(self._getFormattedValue(p)))
                 # Bonferroni corrected p-value
                 p = pCorrectedBonferroni(p, self._nb)
                 self._lbcurbcp.setText('Bonferroni corrected p-value {}'.format(self._getFormattedValue(p)))
                 # Gaussian-field corrected p-value
+                # noinspection PyTypeChecker
                 p = tToVoxelCorrectedpvalue(t, df, self._rc[0], self._rc[1], self._rc[2], self._rc[3])
                 self._lbcurgcp.setText('Gaussian-field corrected p-value {}'.format(self._getFormattedValue(p)))
             else:
                 # t-value
                 self._lbcurt.hide()
                 # z-value
+                # noinspection PyStringFormat
                 self._lbcurz.setText('z-score {:.2f}'.format(self._map[x, y, z]))
                 # uncorrected p-value
                 p = zTopvalue(z)
@@ -1269,8 +1399,11 @@ class DialogResult(QDialog):
         if self._map is not None:
             r = modelindex.row()
             spacing = self._map.getSpacing()
+            # noinspection PyUnresolvedReferences
             x = self._model.item(r, 0).data(Qt.UserRole) * spacing[0]
+            # noinspection PyUnresolvedReferences
             y = self._model.item(r, 1).data(Qt.UserRole) * spacing[1]
+            # noinspection PyUnresolvedReferences
             z = self._model.item(r, 2).data(Qt.UserRole) * spacing[2]
             self._sliceView().getAxialView().setCursorWorldPosition(x, y, z, signal=True)
             self._updatePosition()
@@ -1281,19 +1414,36 @@ class DialogResult(QDialog):
         if v.acquisition.isStatisticalMap():
             self._map = v
             if self._map.acquisition.hasContrast():
+                # < Revision 04/02/2026
                 c = array(self._map.acquisition.getContrast()).sum()
                 if c > 0.0: self._map.display.getLUT().setLutToHot()
-                else: self._map.display.getLUT().setLutToWinter()
+                elif c < 0.0: self._map.display.getLUT().setLutToWinter()
+                else: self._map.display.getLUT().setLutToHot()
+                # Revision 04/02/2026 >
             else: self._map.display.getLUT().setLutToHot()
+            # < Revision 05/02/2026
+            self._map.display.setWindowMin(0.0)
+            # Revision 05/02/2026 >
             self._mask = self._map.getNonZeroMask()
             self._nb = self._map.getNumberOfNonZero()
             ac = self._map.acquisition.getAutoCorrelations()
             self._res = ac[0] * ac[1] * ac[2] / self._map.getVoxelVolume()
-            self._rc = reselCount(self._mask, ac[0], ac[1], ac[2], wait)
+            # < Revision 05/02/2026
+            if self._map.acquisition.hasReselCount():
+                self._rc = self._map.acquisition.getReselCount()
+            else:
+                # noinspection PyTypeChecker
+                self._rc = reselCount(self._mask, ac[0], ac[1], ac[2], wait)
+                self._map.acquisition.setReselCount(self._rc)
+                self._map.save()
+            # Revision 05/02/2026 >
             if self._map.acquisition.isICBM152():
                 self.setBrodmannLabel(wait=wait)
                 self.setAnatomyLabel(wait=wait)
                 self.setBackgroundVolume(wait=wait)
+                self._model.horizontalHeaderItem(3).setText('ICBM\nx')
+                self._model.horizontalHeaderItem(4).setText('ICBM\ny')
+                self._model.horizontalHeaderItem(5).setText('ICBM\nz')
             # load design
             path = join(dirname(self._map.getFilename()), '*' + SisypheDesign.geFileExt())
             filenames = glob(path)
@@ -1305,7 +1455,12 @@ class DialogResult(QDialog):
                         design.load(filename, wait)
                         anat = design.getMeanObservations()
                         if anat.getID() == self._map.getID():
-                            self._anat = anat
+                            # < Revision 05/02/2025
+                            # self._anat = anat
+                            if self._anat is None:
+                                self._anat = anat
+                                self._anat.display.setDefaultLut()
+                            # Revision 05/02/2025 >
                             self._design = design
             if self._anat is not None:
                 if not self._map.acquisition.isICBM152():
@@ -1401,6 +1556,10 @@ class DialogResult(QDialog):
                 self._views.setTabVisible(2, True)
                 self._views.setTabVisible(3, True)
                 self._views.setTabVisible(4, True)
+            # < Revision 05/02/2026
+            if self._design is not None:
+                self._views.setTabVisible(3, self._design.isfMRIDesign())
+            # Revision 05/02/2026 >
             wait.hide()
             self._update()
             wait.show()
@@ -1644,8 +1803,32 @@ class DialogResult(QDialog):
                 elif ext == 'json': sheet.saveJSON(filename)
                 elif ext == 'tex': sheet.saveLATEX(filename)
                 elif ext == 'txt': sheet.saveTXT(filename)
-                elif ext == 'xlsx': sheet.saveXLSX(filename)
+                elif ext == 'xlsx':
+                    try: sheet.saveXLSX(filename)
+                    except:
+                        # < Revision 19/02/2026
+                        try:
+                            import openpyxl
+                            messageBox(self,
+                                       'Save table dataset',
+                                       text='Save {} error.'.format(basename(filename)))
+                        except:
+                            if hasattr(sys, '_MEIPASS'):
+                                messageBox(self,
+                                           'XLSX IO',
+                                           'OpenPyXL module is not installed.\n'
+                                           'Please perform a complete reinstallation of the latest version '
+                                           'of PySisyphe, which can be downloaded from '
+                                           'https://github.com/PySisyphe/Sisyphe.')
+                            else:
+                                messageBox(self,
+                                           'XLSX IO',
+                                           'OpenPyXL module is not installed.\n'
+                                           'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                        # Revision 19/02/2026 >
                 elif ext == 'xsheet': sheet.save(filename)
                 else: raise ValueError('{} format is not supported.'.format(ext))
-            except Exception as err:
-               messageBox(self, 'Save table dataset', text='error: {}'.format(err))
+            except:
+                messageBox(self,
+                           'Save table dataset',
+                           text='Save {} error.'.format(basename(filename)))

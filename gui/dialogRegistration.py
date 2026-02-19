@@ -1030,7 +1030,7 @@ class DialogRegistration(QDialog):
         """
         self._wait.close()
         # _movingSelect is not enabled in DialogBatchRegistration instance
-        # The question of doing another registration is not asked in batch mode
+        # The question about registering again is not asked in batch mode
         if self._fixedSelect.isEnabled() and self._movingSelect.isEnabled():
             r = messageBox(self,
                            title=self.windowTitle(),
@@ -1436,6 +1436,9 @@ class DialogEddyCurrentCorrection(DialogRegistration):
 
         self._fixedSelect.setTextLabel('B0 volume')
         self._fixedSelect.filterSameModality(SisypheAcquisition.getMRModalityTag())
+        # < Revision 03/02/2026
+        self._fixedSelect.filterSameSequence(SisypheAcquisition.B0)
+        #Revision 03/02/2026 >
         self._movingSelect.setVisible(False)
         self._movingSelect.setEnabled(False)
         self._applyTo.setVisible(False)
@@ -1497,6 +1500,9 @@ class DialogEddyCurrentCorrection(DialogRegistration):
         filenames = self._batch.getFilenames()
         index = 0
         for filename in filenames:
+            # < Revision 03/02/2026
+            self._reg = 'Transform'
+            # Revision 03/02/2026 >
             self._batch.setSelectionTo(index)
             self._movingSelect.open(filename)
             try: super().execute()

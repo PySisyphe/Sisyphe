@@ -61,7 +61,7 @@ class DialogDicomDataset(QDialog):
 
     QDialog -> DialogDicomDataset
 
-    Last revision: 26/06/2025
+    Last revision: 13/02/2026
     """
 
     # Special method
@@ -77,10 +77,10 @@ class DialogDicomDataset(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('DICOM dataset')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         # < Revision 26/06/2025
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowMinMaxButtonsHint, True)
         # Revision 26/06/2025 >
         screen = QApplication.primaryScreen().geometry()
@@ -121,6 +121,7 @@ class DialogDicomDataset(QDialog):
         self._searchtag.currentIndexChanged.connect(self._searchChanged)
 
         self._private = QCheckBox('Remove private DataElements')
+        # noinspection PyTypeChecker
         self._private.setCheckState(2)
         # noinspection PyUnresolvedReferences
         self._private.stateChanged.connect(self._privateTagChanged)
@@ -140,6 +141,7 @@ class DialogDicomDataset(QDialog):
         widget.setLayout(layout)
 
         self._splitter = QSplitter()
+        # noinspection PyUnresolvedReferences
         self._splitter.setOrientation(Qt.Vertical)
         self._splitter.addWidget(self._files)
         self._splitter.addWidget(widget)
@@ -195,6 +197,7 @@ class DialogDicomDataset(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -259,6 +262,7 @@ class DialogDicomDataset(QDialog):
                 chdir(dirname(filename))
                 with open(filename, mode='w') as csvfile:
                     try:
+                        # noinspection PyTypeChecker
                         csvwriter = writer(csvfile, delimiter=',', quotechar='"', quoting=QUOTE_NONNUMERIC)
                         # First row
                         row = ['filename']
@@ -396,3 +400,10 @@ class DialogDicomDataset(QDialog):
 
     def getDicomSeriesFilesVisibility(self):
         return self._files.isVisible()
+
+    # < Revision 13/02/2026
+    def setFilename(self, filename):
+        if exists(filename):
+            self._files.add(filename)
+            self._initDataset(self._files, filename)
+    # Revision 13/02/2026 >

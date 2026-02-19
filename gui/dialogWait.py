@@ -875,6 +875,7 @@ class DialogWaitRegistration(DialogWait):
 
     _cstage         int
     _clevel         int
+    _nlevel         int
     _citer          int
     _progbystage    list[int], cumulative progress in each stage
     _progbylevel    list[list[int]], number of iterations in each stage and multiresolution level
@@ -913,6 +914,7 @@ class DialogWaitRegistration(DialogWait):
             # if self._nstages == 0: self._nstages = len(v)
             # if len(v) == self._nstages:
             self._multir = v
+            # Revision 04/02/2026 >
             # Reset attributes
             self._clevel = None
             self._cstage = None
@@ -968,6 +970,7 @@ class DialogWaitRegistration(DialogWait):
         if len(verbose) > 0:
             pstage = self._cstage
             plevel = self._clevel
+            nlevels = len(self._multir[0])
             for line in verbose:
                 sub = line[:5]
                 # < Revision 14/11/2024
@@ -978,6 +981,10 @@ class DialogWaitRegistration(DialogWait):
                     # '2DIA' if rigid/affine, '1DIA', 'WDIAG' if displacement Field
                     w = line.split(',')
                     if len(w) > 4:  # line contains convergence value
+                        # < Revision 04/02/2026
+                        try: progressit = int(w[1]) / self._multir[self._cstage][self._clevel]
+                        except: progressit = 0.0
+                        # Revision 04/02/2026 >
                         try: v = float(w[3])
                         except: continue
                         if isnan(v) or isinf(v): continue
@@ -985,12 +992,12 @@ class DialogWaitRegistration(DialogWait):
                             conv = self._conv[self._cstage]
                             try: progress = 1.0 - ((log10(float(w[3])) + conv) / conv)
                             except: continue
+                            # < Revision 04/02/2026
+                            if progressit > progress: progress = progressit
+                            # Revision 04/02/2026 >
                             if progress > 1.0: progress = 1.0
-                        # print(v)
                         progress = int(progress * self._progbylevel[self._cstage, self._clevel])
-                        # print('progress in level {}'.format(progress))
                         if self._clevel > 0: progress += int(self._progbylevel[self._cstage, :self._clevel].sum())
-                        # print('progress in stage {}'.format(progress))
                         if progress > self.getCurrentProgressValue():
                             self.setCurrentProgressValue(progress)
                 # < Revision 14/11/2024
@@ -1001,12 +1008,13 @@ class DialogWaitRegistration(DialogWait):
                     # 'DIAGN' if  rigid/affine, 'XXDIA', 'XDIAG' if displacement Field
                     if self._clevel is None: self._clevel = 0
                     else: self._clevel += 1
-                    nlevels = len(self._multir[self._cstage])
                     if self._clevel > nlevels - 1:
                         self._clevel = nlevels - 1
-                    progress = int(self._progbylevel[self._cstage, self._clevel])
+                    # < Revision 04/02/2026
+                    # progress = int(self._progbylevel[self._cstage, self._clevel])
+                    progress = int(self._progbylevel[self._cstage, :self._clevel].sum())
+                    # Revision 04/02/2026 >
                     self.setCurrentProgressValue(progress)
-                    # print('level #{}'.format(self._clevel))
                 # Current stage increment
                 elif sub == 'Stage':
                     w = line.split(' ')
@@ -1016,16 +1024,20 @@ class DialogWaitRegistration(DialogWait):
                         else: self._cstage += 1
                         if self._cstage > self._nstages - 1:
                             self._cstage = self._nstages - 1
-                        self.setProgressRange(0, self._progbylevel[self._cstage].sum())
+                        # < Revision 04/02/2026
                         self.setCurrentProgressValue(0)
+                        self.setProgressRange(0, self._progbylevel[self._cstage].sum())
+                        # self.setCurrentProgressValue(0)
+                        # Revision 04/02/2026 >
                         self._clevel = None
-                        # print('stage #{}'.format(self._cstage))
+                        nlevels = len(self._multir[self._cstage])
+                        if self._multir[self._cstage][-1] == 1: nlevels -= 1
             # Update information field
             if self._cstage is not None and self._clevel is not None:
                 if self._cstage != pstage or self._clevel != plevel:
                     info = '{} registration\nMultiresolution level {}/{}'.format(self._stages[self._cstage],
                                                                                  self._clevel + 1,
-                                                                                 len(self._multir[self._cstage]))
+                                                                                 nlevels)
                     if not self.getButtonVisibility(): self.buttonVisibilityOn()
                     if not self.getProgressVisibility(): self.progressVisibilityOn()
                     self.setInformationText(info)
