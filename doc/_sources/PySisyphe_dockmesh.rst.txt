@@ -12,12 +12,14 @@ Mesh tab of the dock
 Meshes are displayed only in orthogonal view widget.
 
 .. _mesh-section-mesh-list:
+
 Mesh list
 ---------
 
 Mesh list frame at the top. Left-click to select a mesh element in the list (blue outline in Windows platform, blue background in MasOS platform).
 
 .. _mesh-section-mesh-item:
+
 Mesh item
 ---------
 
@@ -61,6 +63,7 @@ Mesh item widgets:
 	Left-click to remove mesh from list and from orthogonal view widget.
 
 .. _mesh-section-icon-bar:
+
 Icon bar
 --------
 
@@ -117,7 +120,12 @@ Icon bar below mesh list:
 |mesh2roi|
 	Left-click for ROI conversion of the checked mesh(es).
 
+|labels|
+	Left-click to label checked Mesh(es) with labels from an atlas. A dialog box is displayed in which you can select one or more atlases. The results are similar to those described in :ref:`menu-section-mesh-labeling`.
+
+
 .. _mesh-section-mesh-tools:
+
 Mesh tools
 ----------
 
@@ -148,6 +156,7 @@ Mesh tools below icon bar:
 	Left-click to calculate checked mesh(es) geometric features (volume, surface, bounds, center of mass coordinates, major axis vector, mid-axis vector, minor axis vector, sizes in each vector directions) and displays them in a dialog box. Features can be stored in various formats (CSV, JSON, latex TEX, TEXT, Word XLSX, PySisyphe XSHEET). They can be copied to the PySisyphe console as a numpy ndarray variable named 'df'.
 
 .. _mesh-section-mesh-settings:
+
 Mesh settings
 -------------
 
@@ -267,4 +276,6 @@ Settings used by mesh tools.
 .. |differencesym| image:: /GUI/dock/differencesym.png
    :scale: 50 %
 .. |cubefeature| image:: /GUI/dock/cubefeature.png
+   :scale: 50 %
+.. |labels| image:: /GUI/dock/labels.png
    :scale: 50 %

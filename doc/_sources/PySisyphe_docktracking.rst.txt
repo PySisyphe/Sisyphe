@@ -12,6 +12,7 @@ Streamlines/bundle are only displayed in orthogonal view widget.
 This dock contains :ref:`tracking-section-tractogram` at the top and a :ref:`tracking-section-bundle-list` frame below.
 
 .. _tracking-section-tractogram:
+
 Whole tractogram virtual dissection tools
 -----------------------------------------
 
@@ -22,6 +23,7 @@ Whole tractogram virtual dissection tools
    :align: center
    :scale: 50%
 |
+
 |tracking|
 	Left-click to show a dialog box for virtual dissection with inclusion and exlusion ROI(s).
 
@@ -41,6 +43,7 @@ Whole tractogram virtual dissection tools
    :align: center
    :scale: 50%
 |
+
 |tracking-atlas|
 	Left-click to show a dialog box for virtual dissection using atlas bundle templates (see `HCP842 tractography atlas <https://brain.labsolver.org/hcp_trk_atlas.html>`_). This function recognizes white matter bundles using local and global streamline-based registration to an atlas tractogram, and clustering method based on similarity of streamlines with bundles of this atlas (see `Dipy RecoBundles class <https://docs.dipy.org/dev/reference/dipy.segment.html#dipy.segment.bundles.RecoBundles>`_).
 
@@ -59,6 +62,7 @@ Whole tractogram virtual dissection tools
 	- **Refine** check box, two stage algorithm (recognize and refine) if checked, otherwise recognize only.
 
 .. _tracking-section-bundle-list:
+
 Bundle list
 -----------
 
@@ -177,6 +181,7 @@ Left-click to select a bundle element in the list (blue outline in Windows platf
 	- **Copy to console**, copy the table to the PySisyphe console as a numpy ndarray variable named 'df'.
 
 .. _tracking-section-bundle-item:
+
 Bundle item
 -----------
 

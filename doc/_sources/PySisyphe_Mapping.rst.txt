@@ -19,6 +19,7 @@ Mapping menu
 - :ref:`menu-section-dsc`
 
 .. _menu-section-fmri-model:
+
 fMRI model definition
 ---------------------
 
@@ -128,6 +129,7 @@ Left-click **Estimate** button to compute the model estimation. Once this calcul
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-glm-model:
+
 General linear model definition
 -------------------------------
 
@@ -138,6 +140,7 @@ The following statistical models are available:
 - *One sample t-test*, one group of n images,
 - *Two sample t-test*, two groups of n1 and n2 images,
 - *Paired t-test*, ns subjects with two conditions of n(1) and n(2) images,
+- *ANCOVA*, at least one covariate of interest
 - *GLM subjects/conditions*, ns subjects with nc conditions of n(1) ... n(nc) images,
 - *GLM groups/subjects/conditions*, ng groups of ns(1) ... ns(ng) subjects with nc conditions of n(1) ... n(nc) images
 - *GLM groups*, ng groups with n(1) and n(ng) images,
@@ -220,6 +223,7 @@ Left-click **Estimate** button to compute the model estimation. Once this calcul
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-models:
+
 Models
 ------
 
@@ -230,6 +234,7 @@ Select a model item to open it in the :ref:`menu-section-fmri-model` or :ref:`me
 The last submenu **Open model** shows a file selection dialog box to open a PySisyphe statistical model file (.xmodel) in the :ref:`menu-section-fmri-model` or :ref:`menu-section-glm-model` dialog box.
 
 .. _menu-section-contrast:
+
 Contrast
 --------
 
@@ -245,9 +250,10 @@ A **Statistical contrast** dialog box is displayed showing design matrix chart a
 
 Left-click **Estimate** button to compute the contrast estimation. Once this calculation has been completed, it is proposed to save the statistical map. 
 
-Left-click **Close** button to exit dialog box. This menu is used to navigate a statistical
+Left-click **Close** button to exit dialog box.
 
 .. _menu-section-result:
+
 Result
 ------
 
@@ -294,6 +300,7 @@ A **Statistical result** dialog box is displayed. It consists of five areas.
 	- Left-click **Close** button to exit dialog box.
 
 .. _menu-section-latindex:
+
 Laterality index
 ----------------
 
@@ -361,6 +368,7 @@ This dialog box includes four buttons at the bottom: a **Save bitamp** button to
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-conjunction:
+
 Conjunction
 -----------
 
@@ -382,6 +390,7 @@ Left-click **Execute** button to compute the conjunction of statistical maps.
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-t2zmap:
+
 t to z-map conversion
 ---------------------
 
@@ -407,6 +416,7 @@ Left-click **Execute** button to compute z-maps. z-map volume(s) is(are) saved w
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-seriespreproc:
+
 Time series preprocessing
 -------------------------
 
@@ -436,6 +446,7 @@ Left-click **Execute** button to perform preprocessing.
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-seriesseed:
+
 Seed-to-voxel time series correlation
 -------------------------------------
 
@@ -453,6 +464,7 @@ Left-click **Execute** button to perform a time series correlation. A cross-corr
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-seriesica:
+
 Single subject time series ICA
 ------------------------------
 
@@ -471,6 +483,7 @@ Left-click **Execute** button to perform ICA. An ICA multi-component volume is s
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-seriescorr:
+
 Time series correlation matrix
 ------------------------------
 
@@ -490,6 +503,7 @@ The result is displayed in a dialog box with two tabs. The first tab, titled **C
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-dsc:
+
 Dynamic susceptibility contrast
 -------------------------------
 

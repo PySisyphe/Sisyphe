@@ -9,7 +9,7 @@ Functions menu
 - :ref:`menu-section-permute`
 - :ref:`menu-section-neck`
 - :ref:`menu-section-datatype`
-- :ref:`menu-section-attributes`
+- :ref:`menu-section-attrconv`
 - Filters >
 	- :ref:`menu-section-filter-mean`
 	- :ref:`menu-section-filter-median`
@@ -24,6 +24,10 @@ Functions menu
 - :ref:`menu-section-texture`
 - :ref:`menu-section-roitexture`
 - :ref:`menu-section-biasfield`
+- Atlas labeling >
+	- :ref:`menu-section-roi-labeling`
+	- :ref:`menu-section-mesh-labeling`
+	- :ref:`menu-section-tools-labeling`
 - Voxel-by-voxel processing >
 	- :ref:`menu-section-voxel-mean`
 	- :ref:`menu-section-voxel-median`
@@ -38,6 +42,7 @@ Functions menu
 - :ref:`menu-section-plugins`
 
 .. _menu-section-join:
+
 Join single component volume(s)
 -------------------------------
 
@@ -55,6 +60,7 @@ Left-click **OK** button to create the multi-component volume.
 Left-click **Cancel** button to close dialog box without processing.
 
 .. _menu-section-split:
+
 Split multi component volume(s)
 -------------------------------
 
@@ -72,6 +78,7 @@ Left-click **OK** button to create single-component volumes. Single-component vo
 Left-click **Cancel** button button to close dialog box without processing.
 
 .. _menu-section-flip:
+
 Flip axis
 ---------
 
@@ -86,6 +93,7 @@ Left-click **OK** button to flip volumes.
 Left-click **Cancel** button button to close dialog box without processing.
 
 .. _menu-section-permute:
+
 Permute axis
 ------------
 
@@ -100,6 +108,7 @@ Left-click **OK** button to swap axes.
 Left-click **Cancel** button button to close dialog box without processing.
 
 .. _menu-section-neck:
+
 Remove neck slices
 ------------------
 
@@ -114,6 +123,7 @@ Left-click **OK** button to remove neck slices.
 Left-click **Cancel** button button to close dialog box without processing.
 
 .. _menu-section-datatype:
+
 Datatype conversion
 -------------------
 
@@ -127,7 +137,8 @@ Left-click **OK** button to perform the data type conversion.
 
 Left-click **Cancel** button button to close dialog box without processing.
 
-.. _menu-section-attributes:
+.. _menu-section-attrconv:
+
 Attributes conversion
 ---------------------
 
@@ -162,6 +173,7 @@ Left-click **Convert** button to perform attribute conversions.
 Left-click **Close** button button to close dialog box without processing.
 
 .. _menu-section-filter-mean:
+
 Mean filter
 -----------
 
@@ -180,6 +192,7 @@ Left-click **Execute** button to perform mean filtering.
 Left-click **Close** button button to close dialog box without processing.
 
 .. _menu-section-filter-median:
+
 Median filter
 -------------
 
@@ -197,6 +210,7 @@ Left-click **Execute** button to perform median filtering.
 Left-click **Close** button button to close dialog box without processing.
 
 .. _menu-section-filter-gaussian:
+
 Gaussian filter
 ---------------
 
@@ -215,6 +229,7 @@ Left-click **Execute** button to perform gaussian filtering.
 Left-click **Close** button button to close dialog box without processing.
 
 .. _menu-section-filter-gradient:
+
 Gradient magnitude filter
 -------------------------
 
@@ -233,6 +248,7 @@ Left-click **Execute** button to perform gradient magnitude filter.
 Left-click **Close** button button to close dialog box without processing.
 
 .. _menu-section-filter-laplacian:
+
 Laplacian filter
 ----------------
 
@@ -251,6 +267,7 @@ Left-click **Execute** button to perform Laplacian filtering.
 Left-click **Close** button button to close dialog box without processing.
 
 .. _menu-section-filter-anisodiff:
+
 Anisotropic diffusion filter
 ----------------------------
 
@@ -272,7 +289,7 @@ Filter parameters are as follows:
 - **Conductance**, controls the sensitivity of the conductance term in the basic anisotropic diffusion equation. It affects the conductance term in different ways depending on the particular variation on the basic equation. As a general rule, the lower the value, the more strongly the diffusion equation preserves image features (such as high gradients or curvature). A high value for conductance will cause the filter to diffuse image features more readily. Typical values range from 0.5 to 2.0.
 - **Number of iterations**, specifies the number of iterations (time-step updates) that the solver will perform to produce a solution. The appropriate number of iterations is dependent on the application and the image being processed. As a general rule, the more iterations performed, the more diffused the image will become.
 - Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** parameters.
-.
+
 Add PySisyphe volume(s) to be filtered in the :ref:`widgets-section-multi-file` widget.
 
 Left-click **Execute** button to perform Anisotropic diffusion filtering.
@@ -280,6 +297,7 @@ Left-click **Execute** button to perform Anisotropic diffusion filtering.
 Left-click **Close** button button to close dialog box without processing.
 
 .. _menu-section-matching-hist:
+
 Histogram intensity matching
 ----------------------------
 
@@ -305,6 +323,7 @@ Left-click **Execute** button to perform histogram intensity matching.
 Left-click **Close** button button to close dialog box without processing.
 
 .. _menu-section-matching-reg:
+
 Regression intensity matching
 -----------------------------
 
@@ -326,6 +345,7 @@ Left-click **Execute** button to perform regression intensity matching.
 Left-click **Close** button button to close dialog box without processing.
 
 .. _menu-section-norm:
+
 Intensity normalization
 -----------------------
 
@@ -348,6 +368,7 @@ Left-click **Execute** button to perform intensity normalization.
 Left-click **Close** button button to close dialog box without processing.
 
 .. _menu-section-texture:
+
 Texture feature maps
 --------------------
 
@@ -372,6 +393,7 @@ Left-click **Execute** button to process the checked feature maps.
 Left-click **Close** button button to close dialog box without processing.
 
 .. _menu-section-roitexture:
+
 ROI Texture features
 --------------------
 
@@ -396,6 +418,7 @@ Left-click **Execute** button to process the checked features.
 Left-click **Close** button button to close dialog box without processing.
 
 .. _menu-section-biasfield:
+
 Bias field correction
 ---------------------
 
@@ -428,7 +451,71 @@ Left-click **Execute** button to process the bias field correction.
 
 Left-click **Close** button button to close dialog box without processing.
 
+.. _menu-section-roi-labeling:
+
+ROI labeling
+------------
+
+The purpose of this function is to label a ROI with labels from an atlas. The result is shown in a table displaying the proportion of each atlas label in the ROI.
+
+This menu displays the **ROI atlas labeling**.
+
+Add .xvol PySisyphe **reference** volume in the :ref:`widgets-section-single-file` widget. This volume is the one that was used to draw the ROI (i.e. same space/transform ID as ROI). If this volume is an ICBM152 template (i.e. space/transform ID = 'ICBM152'), it is not mandatory to select it, simply click the **Reference ICBM152** checkbox.
+
+Add .xroi ROI volume(s) in the :ref:`widgets-section-multi-file` widget located below the previous one.
+
+Select one or more atlases used to label the ROI(s) by checking them in the list box below.
+
+You can edit a threshold below which proportions are ignored using the **Percent threshold** spinbox (default 1%). The following atlases are available: `AAL <http://www.gin.cnrs.fr/en/tools/aal/ & https://www.oxcns.org/aal3.html>`_ (two versions), `Aicha <https://www.gin.cnrs.fr/en/tools/aicha/>`_, `Anatomy <https://www.fz-juelich.de/SharedDocs/Downloads/INM/INM-7/EN/SPM_Toolbox/Toolbox_3.htm>`_ (two versions), Brainnetome, `Cobra <https://www.cobralab.ca/atlases>`_, `Hammers <http://brain-development.org/brain-atlases/adult-brain-atlases/individual-adult-brain-atlases-new/>`_ (two verions), Harvard-Oxford, `IBSR <http://www.nitrc.org/projects/ibsr>`_, JHU, `Julich <https://search.kg.ebrains.eu/instances/Dataset/2eaa3dc6-a21b-41c1-b703-bf06f82adf25>`_, `LPBA40 <https://www.loni.usc.edu/research/atlases>`_, `MORI <http://wiki.slicer.org/slicerWiki/index.php/Slicer3:Mori-Atlas_labels>`_, Natbrainlab, `neuromorphometrics <http://www.neuromorphometrics.com/2012_MICCAI_Challenge_Data.html>`_ (two versions), Rolls auto, Yeo 7 and 17 nertworks.
+
+Left-click **Execute** button to perform the ROI labeling. A dialog box is displayed, presenting the results in a table containing the proportions of the atlas labels in each ROI. Left-click **Save** button to store the table in various formats (.csv, .json, LaTeX .tex, .txt, Excel .xlsx or PySisyphe .xsheet).
+
+Left-click **Close** button button to close dialog box without labeling.
+
+.. _menu-section-mesh-labeling:
+
+Mesh Labeling
+-------------
+
+The purpose of this function is to label a Mesh with labels from an atlas. The result is shown in a table displaying the proportion of each atlas label in the Mesh.
+
+This menu displays the **Mesh atlas labeling**.
+
+Add .xvol PySisyphe **reference** volume in the :ref:`widgets-section-single-file` widget. This volume is the one that was used to create the Mesh (i.e. same space/transform ID as Mesh). If this volume is an ICBM152 template (i.e. space/transform ID = 'ICBM152'), it is not mandatory to select it, simply click the **Reference ICBM152** checkbox.
+
+Add .xmesh Mesh in the :ref:`widgets-section-multi-file` widget located below the previous one.
+
+Select one or more atlases used to label the Mesh(es) by checking them in the list box below.
+
+You can edit a threshold below which proportions are ignored using the **Percent threshold** spinbox (default 1%). The following atlases are available: `AAL <http://www.gin.cnrs.fr/en/tools/aal/ & https://www.oxcns.org/aal3.html>`_ (two versions), `Aicha <https://www.gin.cnrs.fr/en/tools/aicha/>`_, `Anatomy <https://www.fz-juelich.de/SharedDocs/Downloads/INM/INM-7/EN/SPM_Toolbox/Toolbox_3.htm>`_ (two versions), Brainnetome, `Cobra <https://www.cobralab.ca/atlases>`_, `Hammers <http://brain-development.org/brain-atlases/adult-brain-atlases/individual-adult-brain-atlases-new/>`_ (two verions), Harvard-Oxford, `IBSR <http://www.nitrc.org/projects/ibsr>`_, JHU, `Julich <https://search.kg.ebrains.eu/instances/Dataset/2eaa3dc6-a21b-41c1-b703-bf06f82adf25>`_, `LPBA40 <https://www.loni.usc.edu/research/atlases>`_, `MORI <http://wiki.slicer.org/slicerWiki/index.php/Slicer3:Mori-Atlas_labels>`_, Natbrainlab, `neuromorphometrics <http://www.neuromorphometrics.com/2012_MICCAI_Challenge_Data.html>`_ (two versions), Rolls auto, Yeo 7 and 17 nertworks.
+
+Left-click **Execute** button to perform the Mesh labeling. A dialog box is displayed, presenting the results in a table containing the proportions of the atlas labels in each Mesh. Left-click **Save** button to store the table in various formats (.csv, .json, LaTeX .tex, .txt, Excel .xlsx or PySisyphe .xsheet).
+
+Left-click **Close** button button to close dialog box without labeling.
+
+.. _menu-section-tools-labeling:
+
+Tools labeling
+--------------
+
+The purpose of this function is to locate target/trajectory tools in an atlas. The result is shown in a table that displays the atlas label at each target/trajectory coordinate.
+
+This menu displays the **Tools atlas labeling**.
+
+Add .xvol PySisyphe **reference** volume in the :ref:`widgets-section-single-file` widget. This volume is the one that was used to create the tools (i.e. same space/transform ID as tools). If this volume is an ICBM152 template (i.e. space/transform ID = 'ICBM152'), it is not mandatory to select it, simply click the **Reference ICBM152** checkbox.
+
+Add .xtools Tools collection in the :ref:`widgets-section-multi-file` widget located below the previous one.
+
+Select one or more atlases used to label the tools by checking them in the list box below.
+
+You can edit a threshold below which proportions are ignored using the **Percent threshold** spinbox (default 1%). The following atlases are available: `AAL <http://www.gin.cnrs.fr/en/tools/aal/ & https://www.oxcns.org/aal3.html>`_ (two versions), `Aicha <https://www.gin.cnrs.fr/en/tools/aicha/>`_, `Anatomy <https://www.fz-juelich.de/SharedDocs/Downloads/INM/INM-7/EN/SPM_Toolbox/Toolbox_3.htm>`_ (two versions), Brainnetome, `Cobra <https://www.cobralab.ca/atlases>`_, `Hammers <http://brain-development.org/brain-atlases/adult-brain-atlases/individual-adult-brain-atlases-new/>`_ (two verions), Harvard-Oxford, `IBSR <http://www.nitrc.org/projects/ibsr>`_, JHU, `Julich <https://search.kg.ebrains.eu/instances/Dataset/2eaa3dc6-a21b-41c1-b703-bf06f82adf25>`_, `LPBA40 <https://www.loni.usc.edu/research/atlases>`_, `MORI <http://wiki.slicer.org/slicerWiki/index.php/Slicer3:Mori-Atlas_labels>`_, Natbrainlab, `neuromorphometrics <http://www.neuromorphometrics.com/2012_MICCAI_Challenge_Data.html>`_ (two versions), Rolls auto, Yeo 7 and 17 nertworks.
+
+Left-click **Execute** button to perform the tools labeling. A dialog box is displayed, presenting the results in a table containing the atlas labels at each target/trajectory coordinate. Left-click **Save** button to store the table in various formats (.csv, .json, LaTeX .tex, .txt, Excel .xlsx or PySisyphe .xsheet).
+
+Left-click **Close** button button to close dialog box without labeling.
+
 .. _menu-section-voxel-mean:
+
 Mean volume
 -----------
 
@@ -441,6 +528,7 @@ Left-click **OK** button to calculate the mean volume.
 Left-click **Cancel** button button to close dialog box without processing.
 
 .. _menu-section-voxel-median:
+
 Median volume
 -------------
 
@@ -453,6 +541,7 @@ Left-click **OK** button to calculate the median volume.
 Left-click **Cancel** button button to close dialog box without processing.
 
 .. _menu-section-voxel-std:
+
 Standard deviation volume
 -------------------------
 
@@ -465,6 +554,7 @@ Left-click **OK** button to calculate the standard deviation volume.
 Left-click **Cancel** button button to close dialog box without processing.
 
 .. _menu-section-voxel-min:
+
 Minimum volume
 --------------
 
@@ -477,6 +567,7 @@ Left-click **OK** button to calculate the minimum volume.
 Left-click **Cancel** button button to close dialog box without processing.
 
 .. _menu-section-voxel-max:
+
 Maximum volume
 --------------
 
@@ -489,6 +580,7 @@ Left-click **OK** button to calculate the maximum volume.
 Left-click **Cancel** button button to close dialog box without processing.
 
 .. _menu-section-algebra:
+
 Algebra
 -------
 
@@ -503,6 +595,7 @@ Left-click **Execute** button to calculate the volume.
 Left-click **Close** button button to close dialog box without processing.
 
 .. _menu-section-workflow:
+
 Workflow processing
 -------------------
 
@@ -533,6 +626,7 @@ Left-click **Execute** button to run the workflow.
 Left-click **Close** button button to close dialog box without processing.
 
 .. _menu-section-workflows:
+
 Workflows
 ---------
 
@@ -541,6 +635,7 @@ This menu displays a list of workflows saved in the workflow subfolder of the Py
 Click on a workflow submenu item to open it in the :ref:`menu-section-workflow` dialog box.
 
 .. _menu-section-installplugin:
+
 Install plugin
 --------------
 
@@ -558,12 +653,14 @@ A plugin is a python module:
 - Create a Zip archive of the plugin folder and instal it with the PySisyphe install plugin menu.
 
 .. _menu-section-removeplugin:
+
 Remove plugin
 -------------
 
 This menu opens a dialog box that lets you select the PySisyphe plugin folder you want to remove.
 
 .. _menu-section-plugins:
+
 Plugins
 -------
 

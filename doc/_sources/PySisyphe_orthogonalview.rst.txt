@@ -11,6 +11,7 @@ Orthogonal view widget
 .. image:: /GUI/ortho-view.png
    :align: center
 |
+
 This widget, placed in the central area, displays 2D synchronized orthogonal slices of a reference volume in three cells (axial top-right cell, coronal bottom-left cell, sagittal bottom-right cell), and a synchronized 3D volume renderer in the top-left cell.
 
 Other volume(s) can overlay the reference (popup menu "Display as overlay" of one or more thumbnail volumes). It can display meshes, trajectory/target tools and streamlines (:ref:`Mesh <page-dockmesh>`, :ref:`Target/Trajectory <page-docktarget>`, :ref:`Tracking <page-docktracking>`), but it does not manage ROI (:ref:`ROI <page-dockroi>`, :ref:`ROI Tools <page-dockroitools>`).
@@ -18,6 +19,7 @@ Other volume(s) can overlay the reference (popup menu "Display as overlay" of on
 Left-click to select a grid cell. Some controls can be applied only to a selected cell. This cell is outlined in white.
 
 .. _ortho-section-controls:
+
 Controls
 --------
 
@@ -50,6 +52,7 @@ Common to all cells:
 - Right-click + **CTRL** Key (CMD key MacOs platform) to show a popup menu.
 
 .. _ortho-section-iconbar:
+
 Icon bar
 --------
 
@@ -62,6 +65,7 @@ Orthogonal view widget includes a vertical icon bar to the left:
 	Left-click to select/unselect. Toggle between full-screen and normal display modes. In full-screen mode, the slice view widget is extended to the full screen. Press **F11** or **ESC** key to exit full-screen mode.
 
 .. _ortho-section-crop:
+
 |head|
 	Left-click to display a menu:
 
@@ -77,6 +81,7 @@ Orthogonal view widget includes a vertical icon bar to the left:
 	Left-click to display transfer function widget (see :ref:`ortho-section-transfer-function-widget`).
 
 .. _ortho-section-align:
+
 |view|
 	Left-click to display a menu:
 
@@ -105,6 +110,7 @@ Orthogonal view widget includes a vertical icon bar to the left:
 	Left-click to apply default zoom (**0** shortkey).
 
 .. _ortho-section-action:
+
 |hand|
 	Left-click to display a menu and choose an action mode:
 
@@ -122,6 +128,7 @@ Orthogonal view widget includes a vertical icon bar to the left:
 	- **Cursor opacity**, to edit the sphere opacity (0.0 tansparent, 1.0 opaque).
 
 .. _ortho-section-show:
+
 |show|
 	Left-click to display a menu and set widget visibility.
 
@@ -142,6 +149,7 @@ Orthogonal view widget includes a vertical icon bar to the left:
 	- **Outer mesh isosurface**, automatic outer isosurface visibility in the 3D renderer cell.
 
 .. _ortho-section-info:
+
 |info|
 	Left-click to display a menu and select the type of information displayed, if |show| **information** is checked.
 
@@ -171,6 +179,7 @@ Orthogonal view widget includes a vertical icon bar to the left:
 	Left-click to display a menu and select ruler position: **left**, **right**, **top** or **bottom** border.
 
 .. _ortho-section-ruler:
+
 |ruler|
 	Left-click to display a menu to add an interactive tool.
 
@@ -180,6 +189,7 @@ Orthogonal view widget includes a vertical icon bar to the left:
 	- **Remove all**, remove all tools.
 
 .. _ortho-section-photo:
+
 |photo|
 	Left-click to display a screenshots management menu:
 
@@ -189,6 +199,7 @@ Orthogonal view widget includes a vertical icon bar to the left:
 	- **Send selected view capture to screenshots preview** or shortcut key **SPACE**, take a screenshot of the selected cell and copy it to the screenshot manager.
 
 .. _ortho-section-clipboard:
+
 |clipboard|
 	Left-click to display a menu to take screenshot and copy it to the clipboard.
 
@@ -196,12 +207,14 @@ Orthogonal view widget includes a vertical icon bar to the left:
 	- **Copy selected view capture to clipboard**, take a screenshot of the selected cell and copy it to the clipboard.
 
 .. _ortho-section-transfer-function-widget:
+
 Transfer function widget
 ------------------------
 
 .. image:: /GUI/transfer-function.png
    :align: center
 |
+
 The transfer function is used for texture rendering of the reference volume. The purpose of a transfer function is to associate a color and opacity with each scalar value of the volume.
 
 The transfer widget displays a brown line that is the transfer function. This line is initially drawn between two points, which are displayed as circles at either end. Each point has a color, drawn inside circle, and opacity is represented by the height in the vertical axis of the point's position (0.0 i.e. transparent, if the point is in the widget's lower border; 1.0 i.e. opaque, if the point is in the widget's upper border). The scalar value and the opacity values are displayed above each point.
@@ -223,6 +236,7 @@ The second transfer widget is similar, but works with the gradient magnitude of 
 .. image:: /GUI/transfer-lut.png
    :align: center
 |
+
 The last widget defines the color part of the transfer function. The background of the widget shows the colormap. Initially, only two color points are defined, displayed as triangles on the left and right edges.
 
 Double-click in the free widget area add a new color point. Press left mouse button and drag to move a color point.
@@ -243,6 +257,7 @@ Two buttons are available on the bottom:
 - **Save**, save the transfer functions (scalar, gradient and color)
 
 .. _ortho-section-popup:
+
 Popup menu
 ----------
 

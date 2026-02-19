@@ -1,6 +1,7 @@
 .. image:: ./logo.png
    :align: center
 |
+
 PySisyphe documentation
 =======================
 
@@ -16,6 +17,7 @@ PySisyphe documentation
 - :ref:`Projection view <page-projectionview>`
 - :ref:`Multi-component view <page-multicomponentview>`
 - :ref:`Database manager <page-database>`
+- :ref:`File browser <page-browser>`
 - :ref:`Screenshots manager <page-screenshots>`
 - :ref:`IPython window <page-ipython>`
 - :ref:`Dock ROI <page-dockroi>`

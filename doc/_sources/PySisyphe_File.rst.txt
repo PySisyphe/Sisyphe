@@ -39,6 +39,7 @@ File menu
 - :ref:`menu-section-quit`
 
 .. _menu-section-open:
+
 Open
 ----
 
@@ -51,6 +52,7 @@ You can also:
 - Left-click |open| button in the toolbar.
 
 .. _menu-section-opentemplate:
+
 Open template
 -------------
 
@@ -61,6 +63,7 @@ Left-click on a template volume menu item to open it in the thumbnail bar.
 Left-click the last sub-menu, **Open template folder**, to open the PySisyphe template folder in the File Manager (Windows) or Finder (MacOS).
 
 .. _menu-section-openformat:
+
 Open from format
 ----------------
 
@@ -71,6 +74,7 @@ Each submenu displays a file selection dialog to open a volume in the thumbnail 
 You can also click |open-nii| |open-nrrd| |open-mnc| |open-mgh| |open-vol| |open-vmr| |open-vtk| buttons in the toolbar.
 
 .. _menu-section-recent:
+
 Open recent
 -----------
 
@@ -80,6 +84,7 @@ Left-click on a volume menu item to open it in the thumbnail bar.
 Left-click the last submenu, **Clear**, to clear the list.
 
 .. _menu-section-openuser:
+
 Open user folder
 ----------------
 
@@ -99,6 +104,7 @@ This folder is used to store:
 - "workflow" subfolder, default folder for saving workflow processings (menu **Functions > Workflow processing**). Shortcuts to the workflows in this folder are available in the menu **Functions > Workflow**.
 
 .. _menu-section-save:
+
 Save
 ----
 
@@ -107,6 +113,7 @@ Save the reference volume (thumbnail with blue border) in the thumbnail bar. No 
 You can also click |save| button in the toolbar.
 
 .. _menu-section-saveall:
+
 Save all
 --------
 
@@ -115,12 +122,14 @@ Save all the volumes opened in the thumbnail bar.
 You can also click |saveall| button in the toolbar.
 
 .. _menu-section-saveas:
+
 Save as
 -------
 
 Save the reference volume (thumbnail with blue border) in the thumbnail bar. Displays a file dialog box to edit a new file name and save the reference volume.
 
 .. _menu-section-saveformat:
+
 Save to format
 --------------
 
@@ -129,6 +138,7 @@ Select a submenu to save the reference volume (thumbnail with blue border) in th
 You can also click |save-nii| |save-npy| |save-nrrd| |save-mnc| |save-vtk| buttons in the toolbar.
 
 .. _menu-section-close:
+
 Close
 -----
 
@@ -137,6 +147,7 @@ Close the reference volume (thumbnail with blue border) and remove it from the t
 You can also click |close| button in the toolbar.
 
 .. _menu-section-closeall:
+
 Close all
 ---------
 
@@ -145,6 +156,7 @@ Close all the volumes opened in the thumbnail bar. Viewing widgets in the centra
 You can also click |closeall| button in the toolbar.
 
 .. _menu-section-preferences:
+
 Preferences
 -----------
 
@@ -165,6 +177,7 @@ The Settings sections are as follows:
 	- Bundles: Tracking tab of the dock (:ref:`page-docktracking`).
 	- Templates: default template volume for various modalities/sequences (MR T1/T2/PD/FLAIR, FDG PET; HMPAO SPECT; tissue probability maps i.e. GM, SCGM, WM, CSF, Brainstem, cerebellum; Brain mask).
 	- Database: patient database folders.
+	- Gemini: Google Gemini AI settings (API key: get your API key from Google AI Studio https://aistudio.google.com/api-keys, model name).
 	- Dicom host: Dicom SCP host parameters of the :ref:`menu-section-dcmquery`
 
 - **Filters**
@@ -195,6 +208,7 @@ Left-click **Cancel** button to close dialog without saving.
 Left-click **OK** button to save settings and close dialog.
 
 .. _menu-section-download:
+
 Download manager
 ----------------
 
@@ -231,7 +245,7 @@ Contents:
 
 - **Controls** 
 
-	Control populations for 3D T1 MR, FDG PET (118 subjects), and HMPAO SPECT (33 subjects). These files are saved in the "controls" sub-folder of the PySisyphe user folder ($User/.PySisyphe).
+	Control populations for 3D T1 MR, FDG PET (118 subjects), and HMPAO SPECT (33 subjects). These files are saved in the "controls" sub-folder of the PySisyphe user folder (~/.PySisyphe).
 
 - **Plugins**
 
@@ -242,12 +256,14 @@ Contents:
 	Various volumes for testing PySisyphe. These files are saved in the "samples" subfolder of the PySisyphe user folder ($User/.PySisyphe).
 
 .. _menu-section-update:
+
 Check for update
 ----------------
 
 Check if a new version of PySisyphe is available on the PySisyphe cloud server. If a more recent version is available, you will be prompted to install an update.
 
 .. _menu-section-attributes:
+
 Edit attributes
 ---------------
 
@@ -268,6 +284,7 @@ Left-click **OK** button to close dialog box with attribute changes.
 You can also click |list| button in the toolbar.
 
 .. _menu-section-id:
+
 ID replacement
 --------------
 
@@ -284,6 +301,7 @@ Left-click **Close** button to exit dialog box.
 You can also click |id| button in the toolbar.
 
 .. _menu-section-anonymize:
+
 Anonymize
 ---------
 
@@ -298,6 +316,7 @@ Left-click **OK** button to anonymize volume(s) added in the :ref:`widgets-secti
 You can also click |anonymize| button in the toolbar.
 
 .. _menu-section-editlabels:
+
 Edit volume labels
 ------------------
 
@@ -316,6 +335,7 @@ Left-click **OK** button to apply the edit and close dialog box.
 You can also click |labels| button in the toolbar.
 
 .. _menu-section-roitolabels:
+
 ROIs to label volume
 --------------------
 
@@ -328,6 +348,7 @@ Left-click **OK** button to create the label volume. The label indexes are incre
 Left-click **Cancel** button to close dialog box without processing.
 
 .. _menu-section-volumetolabels:
+
 Volumes to label volume
 -----------------------
 
@@ -340,6 +361,7 @@ Left-click **OK** button to create the label volume. The label value chosen in e
 Left-click **Cancel** button to close dialog box without processing.
 
 .. _menu-section-labelstoroi:
+
 Label volume to ROIs
 --------------------
 
@@ -352,6 +374,7 @@ Left-click **OK** button to create ROI(s). A ROI is generated for each label and
 Left-click **Cancel** button to close dialog box without processing.
 
 .. _menu-section-labelstomask:
+
 Label volume to mask
 --------------------
 
@@ -364,6 +387,7 @@ Left-click **OK** button to create the mask volume. A file dialog box is shown t
 Left-click **Cancel** button to close dialog box without processing.
 
 .. _menu-section-labelsremap:
+
 Remap label volume
 -------------------
 
@@ -376,6 +400,7 @@ Left-click **OK** button to remap the label volume. A file dialog box is shown t
 Left-click **Cancel** button to close dialog box without processing.
 
 .. _menu-section-import:
+
 Import
 ------
 
@@ -390,6 +415,7 @@ Left-click **OK** button to close dialog box.
 You can also click |importnii| |importnrrd| |importmnc| |importvol| |importvtk| buttons in the toolbar.
 
 .. _menu-section-export:
+
 Export
 ------
 
@@ -402,6 +428,7 @@ Left-click **Export** button to perform volume conversion.
 Left-click **OK** button to close dialog box.
 
 .. _menu-section-dcmimport:
+
 Dicom import
 ------------
 
@@ -434,6 +461,7 @@ Left-click **Close** button to exit dialog box.
 You can also click |importdcm| button in the toolbar.
 
 .. _menu-section-dcmrtimport:
+
 Dicom RT import
 ---------------
 
@@ -458,6 +486,7 @@ Left-click **Import** button to convert the checked series/subseries/files.
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-dcmexport:
+
 Dicom export
 ------------
 
@@ -472,6 +501,7 @@ Left-click **Export** button to convert the volumes.
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-dcmquery:
+
 Dicom query/retrieve from Dicom SCP Server
 ------------------------------------------
 
@@ -502,6 +532,7 @@ Left-click **Import** button to download checked series from PACS server.
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-dcmdataset:
+
 Dicom dataset
 -------------
 
@@ -528,6 +559,7 @@ Left-click **Save to dicom** button to save the dicom file.
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-xmldcm:
+
 XML Dicom attributes
 --------------------
 
@@ -548,6 +580,7 @@ Left-click **Save** button to save the checked fields with the format chosen fro
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-editlut:
+
 Edit LUT
 --------
 
@@ -573,6 +606,7 @@ Left-click **Close** button to exit dialog box.
 You can also click |rgb| button in the toolbar.
 
 .. _menu-section-quit:
+
 Quit
 ----
 

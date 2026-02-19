@@ -17,6 +17,7 @@ If the reference volume is in ICBM152 space, it is overlaid on pre-calculated 3D
 Left-click to select the slice in a grid cell. Some controls can be applied only to a selected cell. This cell is outlined in white.
 
 .. _proj-section-controls:
+
 Controls
 --------
 
@@ -29,6 +30,7 @@ Controls
 - Right-click + **CTRL** key (CMD key MacOS platform) or middle-click to display popup menu.
 
 .. _proj-section-iconbar:
+
 Icon bar
 --------
 
@@ -62,6 +64,7 @@ Projection view widget includes a vertical icon bar to the left:
 	Left-click to apply default zoom (**0** shortkey).
 
 .. _proj-section-action:
+
 |hand|
 	Left-click to display a menu and choose an action mode:
 
@@ -72,6 +75,7 @@ Projection view widget includes a vertical icon bar to the left:
 	- **No action**, exit previous action mode.
 
 .. _proj-section-show:
+
 |show|
 	Left-click to display a menu and set widget visibility.
 
@@ -83,6 +87,7 @@ Projection view widget includes a vertical icon bar to the left:
 	- **Hide all**, hide all widgets.
 
 .. _proj-section-info:
+
 |info|
 	Left-click to display a menu and select the type of information displayed, if |show| **information** is checked.
 
@@ -95,6 +100,7 @@ Projection view widget includes a vertical icon bar to the left:
 	Left-click to display a menu and select the colorbar position: **left**, **right**, **top** or **bottom** border.
 
 .. _proj-section-ruler:
+
 |ruler|
 	Left-click to display a menu to add an interactive tool.
 
@@ -104,6 +110,7 @@ Projection view widget includes a vertical icon bar to the left:
 	- **Remove all**, remove all tools.
 
 .. _proj-section-photo:
+
 |photo|
 	Left-click to display a screenshots management menu:
 
@@ -112,6 +119,7 @@ Projection view widget includes a vertical icon bar to the left:
 	- **Send selected view capture to screenshots preview** or shortcut key **SPACE**, take a screenshot of the selected cell and copy it to the screenshot manager.
 
 .. _proj-section-clipboard:
+
 |clipboard|
 	Left-click to display a menu to take screenshot and copy it to the clipboard.
 
@@ -119,6 +127,7 @@ Projection view widget includes a vertical icon bar to the left:
 	- **Copy selected view capture to clipboard**, take a screenshot of the selected cell and copy it to the clipboard.
 
 .. _proj-section-popup:
+
 Popup menu
 ----------
 

@@ -12,12 +12,14 @@ ROI Tools tab of the dock
 - :ref:`tools-section-dialog-statistics`
 
 .. _tools-section-brush-box:
+
 Brush
 -----
 
 .. image:: /GUI/roi-brush.png
    :align: center
 |
+
 **Shape**
 	Select the brush shape for ROI drawing in the view widget.
 
@@ -45,12 +47,14 @@ Brush
 	Redo previous operations. The undo/redo stack is cleared when ROI is saved.
 
 .. _tools-section-slice-box:
+
 Slice tools
 -----------
 
 .. image:: /GUI/roi-slice.png
    :align: center
 |
+
 All tools in this section work in 2D and are applied to the selected slice displayed in the view widget (slice view or synchronized view in the central area), other slices are not affected. Left-click in the view widget to select a slice, the selected slice will be outlined in white. If no slice is selected, these tools will have no effect.
 
 |dilate|
@@ -140,12 +144,14 @@ All tools in this section work in 2D and are applied to the selected slice displ
 	Left-click to translate the selected ROI slice to the right (left translation if axial or coronal slice, posterior translation if sagittal slice).
 
 .. _tools-section-slice-blob-box:
+
 Slice blob tools
 ----------------
 
 .. image:: /GUI/roi-slice-blob.png
    :align: center
 |
+
 All tools in this section work on 2D blobs that are displayed in a slice of the view widget (see `Connected component in wikipedia <https://en.wikipedia.org/wiki/Connected_space#Connected_components>`_). Other blobs in the selected slice and other slices are not affected. First, select a tool button (blue border), then left-click on a blob in the view widget.
 
 |dilate|
@@ -188,12 +194,14 @@ All tools in this section work on 2D blobs that are displayed in a slice of the 
 	- **Confidence connected**, select and left-click on a blob in the view widget to calculate the confidence connected region from the clicked seed pixel (see `SimpleITK ConfidenceConnectedImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html>`_). Parameters used by this algorithm are defined in :ref:`tools-section-brush-settings`.
 
 .. _tools-section-volume-box:
+
 Volume tools
 ------------
 
 .. image:: /GUI/roi-volume.png
    :align: center
 |
+
 All tools in this section work in 3D, in the full volume of the ROI.
 
 |dilate|
@@ -275,12 +283,14 @@ All tools in this section work in 3D, in the full volume of the ROI.
 	Left-click to translate ROI to the right (left translation if axial or coronal slice, posterior translation if sagittal display).
 
 .. _tools-section-volume-blob-box:
+
 Volume blob tools
 -----------------
 
 .. image:: /GUI/roi-volume-blob.png
    :align: center
 |
+
 All tools in this section work in a selected 3D blob (see `Connected component in wikipedia <https://en.wikipedia.org/wiki/Connected_space#Connected_components>`_). Other blobs are not affected. First, select a tool button (blue border), then left-click on a blob in the view widget.
 
 |dilate|
@@ -329,6 +339,7 @@ All tools in this section work in a selected 3D blob (see `Connected component i
 	- **Confidence connected**, select and left-click on a blob in the view widget to calculate the confidence connected region from the clicked seed voxel (see `SimpleITK ConfidenceConnectedImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html>`_). Parameters used by this algorithm are defined in :ref:`tools-section-brush-settings`.
 
 .. _tools-section-brush-settings:
+
 Brush settings
 --------------
 
@@ -360,6 +371,7 @@ Brush settings
 	Number of iterations of the of the cluster confidence tools (see `SimpleITK ConfidenceConnectedImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html>`_).
 
 .. _tools-section-dialog-statistics:
+
 Statistics dialog box
 ---------------------
 
@@ -367,6 +379,7 @@ Statistics dialog box
    :align: center
    :scale: 50%
 |
+
 |statistics| button in the Volume Tools box activates this dialog.
 
 The top of this dialog box is occupied by a tabbed stack widget of three charts:

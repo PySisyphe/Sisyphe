@@ -16,6 +16,7 @@ Diffusion menu
 	- :ref:`menu-section-connectivity`
 
 .. _menu-section-gradients:
+
 Gradients
 ---------
 
@@ -32,6 +33,7 @@ Left-click **Save** button to store the PySisyphe XML files for b-values (.xbval
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-preprocessing:
+
 Preprocessing
 -------------
 
@@ -103,6 +105,7 @@ Left-click **Execute** button to perform preprocessing.
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-diffmodel:
+
 Diffusion model
 ---------------
 
@@ -156,6 +159,7 @@ Left-click **Execute** button to fit the model and calculate the map(s).
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-tractogram:
+
 tractogram generation
 ---------------------
 
@@ -212,6 +216,7 @@ Left-click **Execute** button to calculate the tractogram.
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-roisel:
+
 ROI based streamlines selection
 -------------------------------
 
@@ -236,6 +241,7 @@ Left-click **Execute** button to perform streamline selection.
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-filtersel:
+
 Filter based streamlines selection
 ----------------------------------
 
@@ -257,6 +263,7 @@ Left-click **Execute** button to perform streamline selection.
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-templatesel:
+
 Template based streamlines selection
 ------------------------------------
 
@@ -283,6 +290,7 @@ Left-click **Execute** button to perform streamline selection. Selected streamli
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-density:
+
 Density map
 -----------
 
@@ -295,6 +303,7 @@ Left-click **Execute** button for map processing. The density map volume is save
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-path:
+
 Path length map
 ---------------
 
@@ -309,6 +318,7 @@ Left-click **Execute** button for map processing. The path length map volume is 
 Left-click **Close** button to exit dialog box.
 
 .. _menu-section-connectivity:
+
 Connectivity matrix
 -------------------
 

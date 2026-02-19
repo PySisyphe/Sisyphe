@@ -8,6 +8,7 @@ Widgets
 - :ref:`widgets-section-thresholding`
 
 .. _widgets-section-single-file:
+
 Single file selection
 ---------------------
 
@@ -16,6 +17,7 @@ This widget has an edit box on the left and two or three buttons on the right.
 .. image:: /GUI/file-widget.png
    :align: center
 |
+
 **File name box**
 	This edit box displays the selected file name. A tooltip pops when mouse pointer remains over the text. It shows attributes of the object stored in the selected file.
 
@@ -29,6 +31,7 @@ This widget has an edit box on the left and two or three buttons on the right.
 	Left-click to clear the selected file name field.
 
 .. _widgets-section-multi-file:
+
 Multiple file selection
 -----------------------
 
@@ -48,12 +51,14 @@ This widget has a list box of selected files at the top, and three or four butto
 
 
 .. _widgets-section-thresholding:
+
 Thresholding
 ------------
 
 .. image:: /GUI/threshold-widget.png
    :align: center
 |
+
 This widget has a **view box** on the left, a **threshold selection box** on the right and a **button bar** at the bottom.
 
 **view box**

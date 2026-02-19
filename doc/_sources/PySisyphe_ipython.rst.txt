@@ -6,6 +6,7 @@ IPython console
 .. image:: /GUI/ipython.png
    :align: center
 |
+
 A fully functional IPython console (Jupyter 5.4.0) is available in the "IPython" tab of the central area (see `IPython documentation <https://ipython.readthedocs.io/en/stable/>`_).
 
 Command line on the left (1). Right-click displays a popup menu:
@@ -22,7 +23,6 @@ Right-click a chart image displays another popup menu:
 - **Copy Image**, copy the chart image to the system clipboard.
 - **Save Image As**, save the chart image in png bitmap format.
 
-another
 Modules/Types/Functions imported into the environment are displayed in the list box at top-right (2). A tooltip pops when mouse cursor remains in front of a box element. It displays its docstring.
 
 
@@ -106,10 +106,105 @@ This popup menu with autocomplete suggestions also appears automatically after t
       **-key**, print current api key
 
 **%ls**
-   List directory contents
+   List directory contents.
+
+**%open**
+   Open various file types. The file is opened in a variable "v" whose type relies on the file extension.
+
+   args: **?** or **help** to show supported file extensions.
+
+   Supported files:
+
+      - Volume files:
+
+         - .xvol: PySisyphe volume, SisypheVolume instance
+         - .nii, .hdr, .img, .nia, .nii.gz, .img.gz: Nifti volume, SisypheVolume instance
+         - .nrrd, .nhdr: Nrrd volume, SisypheVolume instance
+         - .mnc, .minc: Minc volume, SisypheVolume instance
+         - .mgh, mgz: FreeSurfer volume, SisypheVolume instance
+         - .vmr: BrainVoyager volume, SisypheVolume instance
+         - .vol: Sisyphe volume, SisypheVolume instance
+         - .vtk, .vti: VTK volume, SisypheVolume instance
+         - .dcm, .dicom, .ima, .nema: DICOM image, PyDicom Dataset instance
+
+      - Volume attributes files
+
+         - .xacpc: PySisyphe AC-PC attributes, SisypheACPC instance
+         - .xacq: PySisyphe acquisition attributes, SisypheAcquisition instance
+         - .xdcm: PySisyphe XML Dicom, XmlDicom instance
+         - .xdisplay: PySisyphe display attributes, SisypheDisplay instance
+         - .xfid: PySisyphe stereotactic frame markers, SisypheFiducialBox instance
+         - .xidentity: PySisyphe identity attributes, SisypheIdentity instance
+
+      - ROI files
+
+         - .xroi: PySisyphe ROI, SisypheROI instance
+         - .roi: Sisyphe ROI, SisypheROI instance
+
+      - LUT files
+
+         - .xlut: PySisyphe LUT, SisypheLut instance
+         - .lut: Sisyphe/MRIcron LUT, SisypheLut instance
+         - .olt: BrainVoyager LUT, SisypheLut instance
+
+      - Geometric transformation files
+
+         - .xtrf: PySisyphe geometric transformation, SisypheTransform instance
+         - .xtrfs: collection of PySisyphe geometric transformations, SisypheTransformCollection instance
+         - .xfm: XFM geometric transformation, SisypheTransform instance
+         - .tfm: TFM geometric transformation, SisypheTransform instance
+         - .trf: BrainVoyager geometric transformation, SisypheTransform instance
+         - .mat: ANTs geometric transformation, SisypheTransform instance
+
+      - Mesh files
+
+         - .xmesh: PySisyphe Mesh, SisypheMesh instance
+         - .obj: OBJ wavefront Mesh, SisypheMesh instance
+         - .stl: STL 3D Systems Mesh, SisypheMesh instance
+         - .vtp: VTK Mesh, SisypheMesh instance
+
+      - Tools files
+
+         - .xtools: collection of PySisyphe tools, ToolWidgetCollection instance
+         - .xline: PySisyphe trajectory tool, LineWidget instance
+         - .xpoint: PySisyphe target tool, HandleWidget instance
+
+      - Tracking files
+
+         - .xtract: PySisyphe Streamlines, SisypheStreamlines instance
+         - .tck: TCK Streamlines, SisypheStreamlines instance
+         - .trk: TRK Streamlines, SisypheStreamlines instance
+         - .trk: TRK Streamlines, SisypheStreamlines instance
+         - .fib: FIB Streamlines, SisypheStreamlines instance
+         - .dpy: Dipy Streamlines, SisypheStreamlines instance
+
+      - Data files
+
+         - .csv: CSV table format, Pandas DataFrame instance
+         - .dta: Stata table format, Pandas DataFrame instance
+         - .npy, .npz: Numpy vector/array format, numpy ndarray instance
+         - .json: JSON format, dict
+         - .sas7bdat: SAS table format, Pandas DataFrame instance
+         - .sav: SPSS table format, Pandas DataFrame instance
+         - .xlsx: Excel table format, Pandas DataFrame instance
+         - .xml: XML format, list[str]
+         - .xsheet: PySisyphe table format, SysipheSheet instance
+
+      - Document files
+
+         - .pdf: PDF format, PyMuPDF document instance
+         - .txt: Text format, list[str]
 
 **%pwd**
    Return the current working directory path.
+
+**%packages**
+   Provide information about the modules installed in the current Python environment.
+
+   args:
+   
+      **?** or **help** 
+      no arg or package names separated by spaces
 
 **%run <filename.py>**
    Run the named file <filename.py> inside IPython as a program.

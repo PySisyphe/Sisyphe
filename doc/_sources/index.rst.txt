@@ -23,6 +23,7 @@ PySisyphe documentation
    ./PySisyphe_projectionview.rst
    ./PySisyphe_multicomponentview.rst
    ./PySisyphe_database.rst
+   ./PySisyphe_browser.rst
    ./PySisyphe_screenshots.rst
    ./PySisyphe_ipython.rst
    ./PySisyphe_dockroi.rst

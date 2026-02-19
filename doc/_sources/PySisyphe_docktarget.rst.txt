@@ -11,6 +11,7 @@ Target/trajectory tools are displayed only in orthogonal view widget.
 This dock shows a Target/trajectory list frame.
 
 .. _target-section-target-list:
+
 Target/Trajectory list
 ----------------------
 
@@ -111,7 +112,11 @@ Left-click to select a target or a trajectory element in the list (blue outline 
 	- **Save dataset**, show a dialog box to save the displayed table (supported formats CSV, JSON, Latex, TEXT, Excel XLSX, Pysisyphe XSHEET).
 	- **Copy to console**, copy the table to the PySisyphe console as a numpy ndarray variable named 'df'.
 
+|labels|
+	Left-click to locate checked target/trajectory tools in an atlas. A dialog box is displayed in which you can select one or more atlases. The results are similar to those described in :ref:`menu-section-tools-labeling`.
+
 .. _target-section-target-item:
+
 Target/Trajectory item
 ----------------------
 
@@ -236,4 +241,6 @@ Target/Trajectory item
 .. |length| image:: /GUI/dock/length.png
    :scale: 50 %
 .. |settings| image:: /GUI/dock/settings.png
+   :scale: 50 %
+.. |labels| image:: /GUI/dock/labels.png
    :scale: 50 %

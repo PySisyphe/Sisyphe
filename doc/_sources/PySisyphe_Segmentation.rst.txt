@@ -19,6 +19,7 @@ Segmentation menu
 	- :ref:`menu-section-wmh`
 
 .. _menu-section-kmclustering:
+
 KMeans clustering
 -----------------
 
@@ -46,6 +47,7 @@ Left-click **Execute** button to perform K-Means clustering.
 Left-click **Cancel** button to close dialog box without clustering.
 
 .. _menu-section-kmsegmentation:
+
 KMeans segmentation
 -------------------
 
@@ -74,6 +76,7 @@ Left-click **Execute** button to perform K-Means segmentation.
 Left-click **Cancel** button to close dialog box without segmentation.
 
 .. _menu-section-skull:
+
 Skull stripping
 ---------------
 
@@ -97,6 +100,7 @@ Left-click **Execute** button to perform skull stripping.
 Left-click **Close** button to exit dialog box without skull stripping.
 
 .. _menu-section-atropos:
+
 Mixture model tissue segmentation
 ---------------------------------
 
@@ -157,6 +161,7 @@ Left-click **Execute** button to perform segmentation.
 Left-click **Cancel** button to close dialog box without segmentation.
 
 .. _menu-section-thickness:
+
 Cortical thickness
 ------------------
 
@@ -183,6 +188,7 @@ Left-click **Execute** button to perform cortical thickness processing. This is 
 Left-click **Cancel** button to close dialog box without processing.
 
 .. _menu-section-regsegmentation:
+
 Registration based segmentation
 -------------------------------
 
@@ -225,6 +231,7 @@ Left-click **Execute** button to perform segmentation.
 Left-click **Cancel** button to close dialog box without segmentation.
 
 .. _menu-section-structs:
+
 Structs
 -------
 
@@ -233,6 +240,7 @@ This menu displays a tree structure of submenus for loading a struct XML file fr
 Select a struct item to open it in the :ref:`menu-section-regsegmentation` dialog box.
 
 .. _menu-section-hipp:
+
 Deep-learning Hippocampus segmentation
 --------------------------------------
 
@@ -250,6 +258,7 @@ Left-click **Execute** button to perform segmentation.
 Left-click **Cancel** button to close dialog box without segmentation.
 
 .. _menu-section-lesion:
+
 Deep-learning Hypo-intensity lesion segmentation
 ------------------------------------------------
 
@@ -267,6 +276,7 @@ Left-click **Execute** button to perform segmentation.
 Left-click **Cancel** button to close dialog box without segmentation.
 
 .. _menu-section-temporal:
+
 Deep-learning Medial temporal segmentation
 ------------------------------------------
 
@@ -288,6 +298,7 @@ Left-click **Execute** button to perform segmentation.
 Left-click **Cancel** button to close dialog box without segmentation.
 
 .. _menu-section-tissue:
+
 Deep-learning Tissue segmenation
 --------------------------------
 
@@ -306,6 +317,7 @@ Left-click **Execute** button to perform segmentation.
 Left-click **Cancel** button to close dialog box without segmentation.
 
 .. _menu-section-tumor:
+
 Deep-learning Tumor clustering
 ------------------------------
 
@@ -326,6 +338,7 @@ Left-click **Execute** button to perform segmentation.
 Left-click **Cancel** button to close dialog box without segmentation.
 
 .. _menu-section-wmh:
+
 Deep-learning White matter hyper-intensities segmentation
 ---------------------------------------------------------
 

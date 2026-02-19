@@ -20,6 +20,7 @@ Registration menu
 - :ref:`menu-section-jacob`
 
 .. _menu-section-stereo:
+
 Stereotactic frame detection
 ----------------------------
 
@@ -46,6 +47,7 @@ Left-click **OK** button to save the stereotactic space information and close th
 Left-click **Cancel** button to close the dialog box without saving the stereotactic space information.
 
 .. _menu-section-acpc:
+
 AC-PC selection
 ---------------
 
@@ -67,6 +69,7 @@ Left-click **OK** button to save AC-PC coordinates and axis rotations. These inf
 Left-click **Cancel** button to the close dialog box without saving AC-PC information.
 
 .. _menu-section-reorient:
+
 Volume reorientation
 --------------------
 
@@ -89,6 +92,7 @@ Left-click **Resample** to resample the volume with the new FOV position and ori
 Left-click **Exit** button to close dialog box.
 
 .. _menu-section-manual:
+
 Manual registration
 -------------------
 
@@ -117,6 +121,7 @@ Left-click **Resample** to resample the moving volume. A file dialog box is disp
 Left-click **Exit** button to close dialog box.
 
 .. _menu-section-frame:
+
 Frame-based registration
 ------------------------
 
@@ -137,6 +142,7 @@ Left-click **Execute** button to perform coregistration. PySisype XML xtrfs file
 Left-click **Cancel** button to close dialog box without coregistration.
 
 .. _menu-section-rigid:
+
 Rigid registration
 ------------------
 
@@ -161,6 +167,7 @@ Toggle **Registration...** button to show/hide corgistration settings:
 - Toggle **Resample** checkbox to resample (or not) the coregistered moving volume. If not, the moving volume is not resampled, but the associated XML xtrfs files are updated (geometric transformation for fixed volume coregistration will be added to the moving xtrfs, and geometric transformation for moving volume coregistration will be added to the fixed xtrfs).
 
 Toggle **Resample...** button to show/hide resampling settings:
+
 - Select the interpolation algorithm (*linear*, *nearest neighbor*, *b-spline*, *gaussian*, *hamming windowed sinc*, *cosine windowed sinc*, *welch windowed sinc*, *lanczos windowed sinc*, *blackman windowed sinc*) used to resample the moving volume.
 - Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the **prefix** and **suffix** parameters.
 
@@ -169,6 +176,7 @@ Left-click **Execute** button to perform coregistration. The moving volume is re
 Left-click **Cancel** button to close dialog box without coregistration.
 
 .. _menu-section-affine:
+
 Affine registration
 -------------------
 
@@ -202,6 +210,7 @@ Left-click **Execute** button to perform coregistration. The moving volume is re
 Left-click **Cancel** button to close dialog box without coregistration.
 
 .. _menu-section-field:
+
 Displacement field registration
 -------------------------------
 
@@ -253,6 +262,7 @@ Left-click **Execute** button to perform coregistration. The moving volume is re
 Left-click **Cancel** button to close dialog box without coregistration.
 
 .. _menu-section-icbm:
+
 ICBM spatial normalization
 --------------------------
 
@@ -307,6 +317,7 @@ Left-click **Execute** button to perform spatial normalization. The moving volum
 Left-click **Cancel** button to close dialog box without coregistration.
 
 .. _menu-section-batch:
+
 Batch registration
 ------------------
 
@@ -353,6 +364,7 @@ Left-click **Execute** button to run batch coregistration.
 Left-click **Cancel** button to close dialog box without coregistration.
 
 .. _menu-section-align:
+
 Time series realignment
 -----------------------
 
@@ -379,6 +391,7 @@ Left-click **Execute** button to run realignment. After processing is complete, 
 Left-click **Cancel** button to close dialog box without realignment.
 
 .. _menu-section-eddy:
+
 Eddy current correction
 -----------------------
 
@@ -412,6 +425,7 @@ Left-click **Execute** button to run eddy current correction.
 Left-click **Cancel** button to close dialog box without processing.
 
 .. _menu-section-resample:
+
 Resample
 --------
 
@@ -443,6 +457,7 @@ Left-click **Execute** button to resample moving volume with the current geometr
 Left-click **Cancel** button to close dialog box without resampling.
 
 .. _menu-section-asym:
+
 Asymmetry displacement field
 ----------------------------
 
@@ -481,6 +496,7 @@ Left-click **Execute** button to run asymmetry analysis.
 Left-click **Cancel** button to close dialog box without processing.
 
 .. _menu-section-jacob:
+
 Displacement field jacobian determinant
 ---------------------------------------
 

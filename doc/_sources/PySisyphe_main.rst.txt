@@ -6,6 +6,7 @@ Main window
 .. image:: /GUI/main.png
    :align: center
 |
+
 The main window has several components, among them:
 
 1. :ref:`Menubar <page-menubar>`
@@ -29,6 +30,7 @@ The main window has several components, among them:
    - :ref:`Projection view <page-projectionview>`,
    - :ref:`Multi-component view <page-multicomponentview>`,
    - :ref:`Database manager <page-database>`,
+   - :ref:`File browser <page-browser>`,
    - :ref:`Screenshots manager <page-screenshots>`,
    - :ref:`IPython console <page-ipython>`.
    

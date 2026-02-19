@@ -10,11 +10,13 @@ Synchronized view widget
 .. image:: /GUI/synchro-view.png
    :align: center
 |
+
 This widget, placed in the central area, displays the same slice of multiple synchronized volumes (reference, and all volumes displayed as overlays in others view widgets) in a grid. This widget can be used to display ROI (:ref:`ROI <page-dockroi>`). However, it does not display mesh, trajectory/target tools and streamlines (:ref:`Mesh <page-dockmesh>`, :ref:`Target/Trajectory <page-docktarget>`, :ref:`Tracking <page-docktracking>`).
 
 Left-click to select the slice in a grid cell. Some controls can be applied only to a selected cell. This cell is outlined in white.
 
 .. _synchro-section-controls:
+
 Controls
 --------
 
@@ -31,6 +33,7 @@ Controls
 - Right-click + **CTRL** Key (CMD key MacOs platform) to show a popup menu.
 
 .. _synchro-section-iconbar:
+
 Icon bar
 --------
 
@@ -64,6 +67,7 @@ Synchronized view widget includes a vertical icon bar to the left:
 	Left-click to apply default zoom (**0** shortkey).
 
 .. _synchro-section-action:
+
 |hand|
 	Left-click to display a menu and choose an action mode:
 
@@ -75,6 +79,7 @@ Synchronized view widget includes a vertical icon bar to the left:
 	- **No action**, exit previous action mode.
 
 .. _synchro-section-show:
+
 |show|
 	Left-click to display a menu and set widget visibility.
 
@@ -88,6 +93,7 @@ Synchronized view widget includes a vertical icon bar to the left:
 	- **Tooltip** (**t** shortkey), tooltip visibility.
 
 .. _synchro-section-info:
+
 |info|
 	Left-click to display a menu and select the type of information displayed, if |show| **information** is checked.
 
@@ -117,6 +123,7 @@ Synchronized view widget includes a vertical icon bar to the left:
 	Left-click to display a menu and select ruler position: **left**, **right**, **top** or **bottom** border.
 
 .. _synchro-section-ruler:
+
 |ruler|
 	Left-click to display a menu to add an interactive tool.
 
@@ -126,6 +133,7 @@ Synchronized view widget includes a vertical icon bar to the left:
 	- **Remove all**, remove all tools.
 
 .. _synchro-section-photo:
+
 |photo|
 	Left-click to display a screenshots management menu:
 
@@ -135,6 +143,7 @@ Synchronized view widget includes a vertical icon bar to the left:
 	- **Send selected view capture to screenshots preview**, take a screenshot of the selected cell and copy it to the screenshot manager.
 
 .. _synchro-section-clipboard:
+
 |clipboard|
 	Left-click to display a menu to take screenshot and copy it to the clipboard.
 
@@ -142,6 +151,7 @@ Synchronized view widget includes a vertical icon bar to the left:
 	- **Copy selected view capture to clipboard**, take a screenshot of the selected cell and copy it to the clipboard.
 
 .. _synchro-section-popup:
+
 Popup menu
 ----------
 

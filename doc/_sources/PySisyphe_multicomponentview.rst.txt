@@ -10,13 +10,15 @@ Multi-component view widget
 .. image:: /GUI/multi-view.png
    :align: center
 |
+
 This widget, placed in the central area, displays in a grid the same slice from adjacent volumes of a time series multi-component reference volume. Other volume(s) can overlay the reference (popup menu **Display as overlay** of one or more thumbnail volumes). It does not display ROI, mesh, trajectory/target tools or streamlines (:ref:`Mesh <page-dockmesh>`, :ref:`Target/Trajectory <page-docktarget>`, :ref:`Tracking <page-docktracking>`).
 
 The lower part of this widget is occupied by a chart (volume index in the time series on x-axis, signal of the displayed slice on y-axis). A yellow frame covers the indices of adjacent volumes displayed in the grid. Two default curves are generated at the beginnning: mean signal of the displayed slice (in blue) and signal of a single voxel at the cursor position (in orange). 
 
 .. _multi-section-controls:
+
 Controls:
---------
+---------
 
 - MouseWheel slices through image,
 - **Up or Left** key to display previous slice,
@@ -31,6 +33,7 @@ Controls:
 - Right-click + **CTRL** Key (CMD key MacOs platform) to show a popup menu.
 
 .. _multi-section-iconbar:
+
 Icon bar
 --------
 
@@ -73,6 +76,7 @@ Multi-component view widget includes a vertical icon bar to the left:
 	Left-click to apply default zoom (**0** shortkey).
 
 .. _multi-section-action:
+
 |hand|
 	Left-click to display a menu and choose an action mode:
 
@@ -84,6 +88,7 @@ Multi-component view widget includes a vertical icon bar to the left:
 	- **No action**, exit action mode.
 
 .. _multi-section-show:
+
 |show|
 	Left-click to display a menu and set widget visibility.
 
@@ -97,6 +102,7 @@ Multi-component view widget includes a vertical icon bar to the left:
 	- **Chart** (**g** shortkey), chart visibility
 
 .. _multi-section-info:
+
 |info|
 	Left-click to display a menu and select the type of information displayed, if |show| **information** is checked.
 
@@ -118,6 +124,7 @@ Multi-component view widget includes a vertical icon bar to the left:
 	Left-click to display a menu and select ruler position: **left**, **right**, **top** or **bottom** border.
 
 .. _multi-section-ruler:
+
 |ruler|
 	Left-click to display a menu to add an interactive tool.
 
@@ -137,6 +144,7 @@ Multi-component view widget includes a vertical icon bar to the left:
 	- **Send chart to screenshot preview**, copy bitmap chart into the screenshot manager.
 
 .. _multi-section-photo:
+
 |photo|
 	Left-click to display a screenshots management menu:
 
@@ -146,6 +154,7 @@ Multi-component view widget includes a vertical icon bar to the left:
 	- **Send selected view capture to screenshots preview** or shortcut key **SPACE**, take a screenshot of the selected cell and copy it to the screenshot manager.
 
 .. _multi-section-clipboard:
+
 |clipboard|
 	Left-click to display a menu to take screenshot and copy it to the clipboard.
 
@@ -153,6 +162,7 @@ Multi-component view widget includes a vertical icon bar to the left:
 	- **Copy selected view capture to clipboard**, take a screenshot of the selected cell and copy it to the clipboard.
 
 .. _multi-section-popup:
+
 Popup menu
 ----------
 

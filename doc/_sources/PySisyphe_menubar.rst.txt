@@ -13,6 +13,7 @@ Menubar
 - :ref:`menu-section-window` (:ref:`page-window`)
 
 .. _menu-section-file:
+
 File
 ----
 
@@ -84,6 +85,7 @@ File
 	- :ref:`Quit... <menu-section-quit>`
 
 .. _menu-section-functions:
+
 Functions
 ---------
 
@@ -128,6 +130,7 @@ Functions
 	- :ref:`Plugins <menu-section-plugins>`
  
 .. _menu-section-registration:
+
 Registration
 ------------
 
@@ -147,6 +150,7 @@ Registration
 	- :ref:`Displacement field jacobian determinant... <menu-section-jacob>`
 
 .. _menu-section-segmentation:
+
 Segmentation
 ------------
 
@@ -167,6 +171,7 @@ Segmentation
 		- :ref:`White matter hyper-intensities segmentation... <menu-section-wmh>`
 
 .. _menu-section-mapping:
+
 Mapping
 -------
 
@@ -196,6 +201,7 @@ Mapping
 	- :ref:`Dynamic suceptibility contrast... <menu-section-dsc>`
 
 .. _menu-section-diffusion:
+
 Diffusion
 ---------
 
@@ -212,6 +218,7 @@ Diffusion
 		- :ref:`Connectivity matrix... <menu-section-connectivity>`
 
 .. _menu-section-views:
+
 Views
 -----
 
@@ -225,6 +232,7 @@ Views
 	- :ref:`IPython <page-ipython>` >
 
 .. _menu-section-window:
+
 Window
 ------
 

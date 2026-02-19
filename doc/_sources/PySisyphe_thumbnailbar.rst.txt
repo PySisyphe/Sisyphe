@@ -19,6 +19,7 @@ Right-click on an empty space in the thumbnail bar to display a popup menu:
 - **Close all volume(s)**, to close all volumes opened in the thumbnail bar.
 
 .. _thumb-section-thumbnail:
+
 Thumbnails
 ----------
 
@@ -26,6 +27,7 @@ Thumbnails
    :align: center
    :scale: 75%
 |
+
 Thumbnail volume has three possible states:
 
 - **No color border**: volume of the current thumbnail is neither displayed as a reference nor as an overlay in the central viewing area (slice view, orthogonal view, synchronized view, projection vien or multi-component view)
@@ -35,6 +37,7 @@ Thumbnail volume has three possible states:
 A tooltip pops when mouse pointer remains over a thumbnail. It shows all the thumbnail's volume attributes.
 
 .. _thumb-section-popup:
+
 Popup menu
 ----------
 
@@ -75,6 +78,7 @@ Left-Click on the lower right of the thumbnail (on the three dots "..."), or rig
 - **Remove neck slices**, Remove the lowest slices of the neck, typically for 3D MR acquired with a sagittal orientation
 
 .. _thumb-section-lut:
+
 LUT widget
 ----------
 
@@ -82,6 +86,7 @@ LUT widget
    :align: center
    :scale: 75%
 |
+
 A Look-Up-Table (LUT) colormap widget is displayed last in the popup menu.
 
 The upper part of the widget shows the extent of the windowing as a yellow frame (1) overlaid on the volume histogram. The left edge of the frame represents the lower threshold, the right edge the upper threshold. Threshold values are written vertically in the center of each edge. The frame can be moved by pressing the left mouse button and dragging. Press the left mouse button and drag to move the left or right border (2, click inner part inside the frame).
@@ -89,6 +94,7 @@ The upper part of the widget shows the extent of the windowing as a yellow frame
 At the bottom of the widget, there are two boxes to the left and right (4, 5). They display and modify the range of volume values, from minimum (left box) to maximum (right box). The combobox in the middle (3) allows you to change the LUT colormap. The order of colors in the colormap can be reversed with the "Reverse" check box.
 
 .. _thumb-section-overlay:
+
 Overlay widget
 --------------
 
