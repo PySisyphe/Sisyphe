@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_projectionview.html">Projection view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_browser.html">File browser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_screenshots.html">Screenshots manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_ipython.html">IPython console</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroi.html">ROI tab of the dock</a></li>
@@ -336,7 +337,7 @@ filename prefix, filename suffix, filename contains a string, registered to a re
 <section id="inheritance">
 <h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
 <p>object -&gt; SelectionFilter</p>
-<p>Last Revision: 04/01/2026</p>
+<p>Last Revision: 13/02/2026</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.SelectionFilter.clearExtensionFilter">
 <span class="sig-name descname"><span class="pre">clearExtensionFilter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.SelectionFilter.clearExtensionFilter" title="Link to this definition"></a></dt>
@@ -1014,7 +1015,7 @@ be allowed.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.FileSelectionWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Sisyphe.widgets.selectFileWidgets.</span></span><span class="sig-name descname"><span class="pre">FileSelectionWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.FileSelectionWidget" title="Link to this definition"></a></dt>
-<dd><p>FileSelectionWidget class</p>
+<dd><p>FileSelectionWid/get class</p>
 <section id="id38">
 <h2>Description<a class="headerlink" href="#id38" title="Link to this heading"></a></h2>
 <p>Widget that manages single file selection.</p>
@@ -1030,7 +1031,7 @@ be allowed.</p>
 <section id="id39">
 <h2>Inheritance<a class="headerlink" href="#id39" title="Link to this heading"></a></h2>
 <p>QWidget, SelectionFilter -&gt; FileSelectionWidget</p>
-<p>Last revision: 30/11/2025</p>
+<p>Last revision: 13/02/2026</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.FileSelectionWidget.alignLabels">
 <span class="sig-name descname"><span class="pre">alignLabels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.FileSelectionWidget.alignLabels" title="Link to this definition"></a></dt>
@@ -1409,10 +1410,10 @@ thumbnail toolbar is provided.</p>
 <section id="id62">
 <h2>Inheritance<a class="headerlink" href="#id62" title="Link to this heading"></a></h2>
 <p>QWidget, SelectionFilter -&gt; FilesSelectionWidget</p>
-<p>Last revision: 04/01/2026</p>
+<p>Last revision: 13//02/2026</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.selectFileWidgets.FilesSelectionWidget.add">
-<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filenames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.FilesSelectionWidget.add" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filenames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait" title="Sisyphe.gui.dialogWait.DialogWait"><span class="pre">DialogWait</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.selectFileWidgets.FilesSelectionWidget.add" title="Link to this definition"></a></dt>
 <dd><p>Open a file dialog to select one or more files/directories and adds them to the list. Applies all configured
 filters and performs checks (component, identity, FOV, size, modality, etc.) before adding each file. Displays
 a progress dialog for multiple file additions.</p>

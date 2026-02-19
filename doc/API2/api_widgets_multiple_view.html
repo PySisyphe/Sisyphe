@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_projectionview.html">Projection view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_browser.html">File browser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_screenshots.html">Screenshots manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_ipython.html">IPython console</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_dockroi.html">ROI tab of the dock</a></li>
@@ -421,7 +422,7 @@ AbstractViewWidget subclasses.</p>
 <h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
 <p>QWidget -&gt; MultiViewWidget</p>
 <p>Creation: 03/04/2022
-Last revision: 20/10/2025</p>
+Last revision: 05/02/2026</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.multiViewWidgets.MultiViewWidget.alignCentersOff">
 <span class="sig-name descname"><span class="pre">alignCentersOff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.multiViewWidgets.MultiViewWidget.alignCentersOff" title="Link to this definition"></a></dt>
@@ -457,7 +458,7 @@ Last revision: 20/10/2025</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.multiViewWidgets.MultiViewWidget.finalize">
 <span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.multiViewWidgets.MultiViewWidget.finalize" title="Link to this definition"></a></dt>
 <dd><p>Method to be called before MultiViewWidget instance destruction.
-It is used to avoid vtk error on windows platform (vtkWin32OpenGLRenderWindow error: ‘wglMakeCurrent failed in
+It is used to avoid vtk error on Windows platform (vtkWin32OpenGLRenderWindow error: ‘wglMakeCurrent failed in
 MakeCurrent()’).</p>
 </dd></dl>
 
@@ -2993,7 +2994,7 @@ interactive 1D signal chart, for exploring datasets like time series.</p>
 <h2>Inheritance<a class="headerlink" href="#id170" title="Link to this heading"></a></h2>
 <p>QWidget -&gt; MultiViewWidget -&gt; GridViewWidget -&gt; MultiComponentViewWidget</p>
 <p>Creation: 10/12/2024
-Last revision: 08/01/2026</p>
+Last revision: 19/02/2026</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.multiComponentViewWidget.MultiComponentViewWidget.addCurrentCurveToChart">
 <span class="sig-name descname"><span class="pre">addCurrentCurveToChart</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.multiComponentViewWidget.MultiComponentViewWidget.addCurrentCurveToChart" title="Link to this definition"></a></dt>
