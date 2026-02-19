@@ -2550,12 +2550,10 @@ class SisypheImage(object):
             step = sl.step
             if step is None: step = 1
             if sl.start is None: start = 0
-            print(start, stop, step)
             sl = list(range(start,stop, step))
         if isinstance(sl, list):
             if self.isIntegerDatatype(): v = int(v)
             img = self.getNumpy()
-            print(img.shape)
             for i in sl:
                 if orient == 0: img[i,:,:] = v
                 elif orient == 1: img[:,i,:] = v

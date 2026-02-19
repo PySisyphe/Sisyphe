@@ -80,7 +80,7 @@ class AbstractXml(object):
         Parameters
         ----------
         filename : str
-            xml file name to load
+            XML file name to load
         """
         super().__init__()
         if exists(filename):
@@ -836,7 +836,7 @@ class XmlStreamlines(AbstractXml):
     Description
     ~~~~~~~~~~~
 
-    Class for accessing the xml fields of the PySisyphe Streamlines (.xtracts).
+    Class for accessing the XML fields of the PySisyphe Streamlines (.xtracts).
 
     Inheritance
     ~~~~~~~~~~~

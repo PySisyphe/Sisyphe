@@ -8,7 +8,6 @@ External packages/modules
 """
 
 from __future__ import annotations
-
 from os.path import exists
 from os.path import splitext
 
@@ -81,12 +80,12 @@ class SisypheSheet(DataFrame):
     @classmethod
     def parseXMLNode(cls, currentnode: minidom.Element) -> SisypheSheet:
         """
-        Create a SisypheSheet instance from xml node.
+        Create a SisypheSheet instance from XML node.
 
         Parameters
         ----------
         currentnode : minidom.Element
-            xml node
+            XML node
 
         Returns
         -------
@@ -129,12 +128,12 @@ class SisypheSheet(DataFrame):
     @classmethod
     def parseXML(cls, doc: minidom.Document) -> SisypheSheet:
         """
-        Create a SisypheSheet instance from xml document.
+        Create a SisypheSheet instance from XML document.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
 
         Returns
         -------
@@ -246,12 +245,12 @@ class SisypheSheet(DataFrame):
     @classmethod
     def loadJSON(cls, filename: str) -> SisypheSheet:
         """
-        Create a SisypheSheet instance from a Json file (.json).
+        Create a SisypheSheet instance from a JSON file (.json).
 
         Parameters
         ----------
         filename : str
-            Json file name (.json)
+            JSON file name (.json)
 
         Returns
         -------
@@ -389,6 +388,7 @@ class SisypheSheet(DataFrame):
             path, ext = splitext(filename)
             if ext.lower() != '.mat': filename = path + '.mat'
             d = self.to_dict()
+            # noinspection PyTypeChecker
             savemat(filename, d)
         else: raise TypeError('parameter type {} is not str'.format(type(filename)))
 

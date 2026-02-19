@@ -6183,7 +6183,7 @@ class ToolWidgetCollection(object):
     object -> ToolWidgetCollection
 
     Creation: 05/04/2022
-    Last revision: 16/01/2026
+    Last revision: 17/02/2026
     """
 
     __slots__ = ['_referenceID', '_filename', '_tools', '_index', '_color', '_scolor',
@@ -6251,6 +6251,29 @@ class ToolWidgetCollection(object):
         else:
             self._referenceID = None
             self._filename = ''
+
+    # < Revision 17/02/2026
+    # add __str__ method
+    def __str__(self) -> str:
+        """
+        Special overloaded method called by the built-in str() python function.
+
+        Returns
+        -------
+        str
+            Conversion of ToolWidgetCollection instance to str
+        """
+        buff = 'Reference ID: {}\n'.format(self._referenceID)
+        buff += 'Purpose: {}\n'.format(self._purpose)
+        if len(self._tools) > 0:
+            for i, tool in enumerate(self._tools):
+                if isinstance(tool, HandleWidget): obj = '\nTool#{}, HandleWidget\n'.format(i+1)
+                elif isinstance(tool, LineWidget): obj = '\nTool#{}, LineWidget\n'.format(i+1)
+                # noinspection PyUnboundLocalVariable
+                buff += obj + str(tool)
+        else: buff += 'Empty container, no tool'
+        return buff
+    # Revision 17/02/2026 >
 
     # Container special methods
 
@@ -6723,12 +6746,13 @@ class ToolWidgetCollection(object):
         bool
             True if file name is defined
         """
-        if self._filename != '':
-            if exists(self._filename):
-                return True
-            else:
-                self._filename = ''
-        return False
+        # < Revision 17/02/2026
+        # if self._filename != '':
+        #     if exists(self._filename): return True
+        #     else: self._filename = ''
+        # return False
+        return self._filename != ''
+        # Revision 17/02/2026 >
 
     def getFilename(self) -> str:
         """

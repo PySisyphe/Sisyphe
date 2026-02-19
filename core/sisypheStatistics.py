@@ -350,6 +350,7 @@ def qFDRToz(q: float, img: SisypheVolume, independent: bool = False) -> float:
     img : Sisyphe.core.sisypheVolume.SisypheVolume
         statistical map
     independent : bool
+        False by default, autocorrelations between voxels
 
     Returns
     -------
@@ -390,7 +391,8 @@ def qFDRTot(q: float, df: int, img: SisypheVolume, independent: bool = False) ->
         degrees of freedom
     img : Sisyphe.core.sisypheVolume.SisypheVolume
         statistical map
-    independent : bool
+    independent : bool (optional)
+        False by default, autocorrelations between voxels
 
     Returns
     -------
@@ -1861,6 +1863,7 @@ def autocorrelationsEstimate(error: ndarray,
             buffz += verrorz.sum()
             nbv += 1
         # Revision 06/06/2025 >
+    if wait is not None: wait.progressVisibilityOff()
     df = getDOF(design)
     f1 = (df - 2) / ((df - 1) * nbv)
     f2 = 4.0 * log(2.0)
@@ -1895,6 +1898,7 @@ def modelEstimate(obs: list[SisypheVolume],
     Parameters
     ----------
     obs : list[sisyphe.core.sisypheVolume.SisypheVolume]
+        observations
     mask : sisyphe.core.sisypheROI.SisypheROI | sisyphe.core.sisypheVolume.SisypheVolume
         analysis mask
     design : numpy.ndarray
@@ -2323,10 +2327,10 @@ class SisypheDesign(object):
     object -> SisypheDesign
 
     Creation: 29/11/2023
-    Last revision: 10/10/2025
+    Last revision: 12/02/2026
     """
-    __slots__ = ['_obs', '_cobs', '_grp', '_sbj', '_cnd', '_design', '_cdesign', '_ancova', '_norm', '_fmri',
-                 '_age', '_beta', '_variance', '_vols', '_mean', '_mask', '_autocorr', '_filename']
+    __slots__ = ['_obs', '_cobs', '_grp', '_sbj', '_cnd', '_design', '_cdesign', '_ancova', '_norm', '_fmri', '_dancova',
+                 '_age', '_beta', '_variance', '_vols', '_mean', '_mask', '_roi1', '_roi2', '_autocorr', '_filename']
 
     # Class constants
 
@@ -2419,11 +2423,14 @@ class SisypheDesign(object):
                      10 ancova roi mean, 11 ancova roi median, 12 ancova roi 75th percentile
     _age        int, age covariate: 0 no, 1 global, 2 by group, 3 by subject, 4 by condition
     _fmri       bool, fMRI model ?
+    _dancova    bool, ANOVA model ?
     _beta       SisypheVolume, beta of the model (defined after estimation)
     _variance   SisypheVolume, pooled variance of the model (defined after estimation)
     _vols       SisypheVolume, observations
     _mean       SisypheVolume, mean volume of observations
     _mask       SisypheVolume, analysis mask
+    _roi1       str, analysis ROI filename
+    _roi2       str, normalization ROI filename   
     _autocorr   tuple[float, float, float], auto-correlations (defined after estimation)
     """
 
@@ -2442,6 +2449,7 @@ class SisypheDesign(object):
         self._norm = 0  # 0 no, 1 proportional scaling, 2 roi, 3 ancova
         self._age = 0  # Age global covariate: 0 No, 1 global, 2 by group, by subject, by condition
         self._fmri = False  # fMRI model ?
+        self._dancova = False  # ANCOVA model ?
         self._beta = None  # SisypheVolume
         self._variance = None  # SisypheVolume, pooled variance volume
         self._vols = None  # SisypheVolume, observations
@@ -2449,6 +2457,8 @@ class SisypheDesign(object):
         self._mask = None  # SisypheVolume, mask of analysis volume
         self._autocorr = None  # (float, float, float)
         self._filename = ''
+        self._roi1 = ''
+        self._roi2 = ''
 
     def __str__(self) -> str:
         """
@@ -2480,6 +2490,10 @@ class SisypheDesign(object):
                'by group',
                'by subject',
                'by condition']
+        # < Revision 12/02/2026
+        if self._roi1 != '': buff += 'Analysis mask: {}'.format(self._roi1)
+        if self._roi2 != '': buff += 'Signal normalization mask: {}'.format(self._roi1)
+        # Revision 12/02/2026 >
         if self._norm < 7: buff += 'Signal normalization: {}\n'.format(ns[self._norm])
         else: buff += 'Signal normalization: {} {}\n'.format(ns[self._norm], cov[self._ancova])
         # < Revision 09/10/2025
@@ -2567,7 +2581,8 @@ class SisypheDesign(object):
                                 # < Revision 05/06/2025
                                 # In fmri design, the boxcar column is the main effect, not the condition column
                                 # self._cdesign.append((name, 1))
-                                if self._fmri: self._cdesign.append((name, 0))
+                                # if self._fmri: self._cdesign.append((name, 0))
+                                if self._fmri or self._dancova: self._cdesign.append((name, 0))
                                 else: self._cdesign.append((name, 1))
                                 # Revision 05/06/2025 >
                 if self._fmri:
@@ -2621,7 +2636,8 @@ class SisypheDesign(object):
                             # < Revision 05/06/2025
                             # In fmri design, the boxcar column is the main effect, not the condition column
                             # self._cdesign.append((name, 1))
-                            if self._fmri: self._cdesign.append((name, 0))
+                            # if self._fmri: self._cdesign.append((name, 0))
+                            if self._fmri or self._dancova: self._cdesign.append((name, 0))
                             else: self._cdesign.append((name, 1))
                             # Revision 05/06/2025 >
                 if self._fmri:
@@ -2660,7 +2676,8 @@ class SisypheDesign(object):
                     # < Revision 05/06/2025
                     # In fmri design, the boxcar column is the main effect, not the condition column
                     # self._cdesign.append((name, 1))
-                    if self._fmri: self._cdesign.append((cnd, 0))
+                    # if self._fmri: self._cdesign.append((cnd, 0))
+                    if self._fmri or self._dancova: self._cdesign.append((cnd, 0))
                     else: self._cdesign.append((cnd, 1))
                     # Revision 05/06/2025 >
                 if self._fmri:
@@ -2688,7 +2705,9 @@ class SisypheDesign(object):
                             column[t:t + c] = ones((c, 1))
                             columns.append(column)
                             t += c
-                            self._cdesign.append((sbj, 1))
+                            # self._cdesign.append((sbj, 1))
+                            if self._dancova: self._cdesign.append((sbj, 0))
+                            else: self._cdesign.append((sbj, 1))
                 # Add group columns to design matrix
                 t = 0
                 for grp in self._grp:
@@ -2712,13 +2731,24 @@ class SisypheDesign(object):
                     column[t:t + c] = ones((c, 1))
                     columns.append(column)
                     t += c
-                    self._cdesign.append((grp, 1))
-            # One sample t-test model
+                    # self._cdesign.append((grp, 1))
+                    if self._dancova: self._cdesign.append((grp, 0))
+                    else: self._cdesign.append((grp, 1))
+            # One sample t-test model or ANCOVA
             elif not self.hasGroup() and not self.hasSubject() and not self.hasCondition():
                 column = ones((nbobs, 1))
                 columns.append(column)
-                self._cdesign.append(('Global', 1))
+                # self._cdesign.append(('Global', 1))
+                if self._dancova: self._cdesign.append(('Global', 0))
+                else: self._cdesign.append(('Global', 1))
+            # Add global factor
+            # < Revision 05/02/2026
+            if not any(all(column_stack(columns) == 1.0, axis=0)):
+                column = ones((nbobs, 1))
+                columns.append(column)
+                self._cdesign.append(('Global', 0))
             self._design = column_stack(columns)
+            # Revision 05/02/2026 >
             # Add fMRI columns (box car and high pass)
             if self._fmri:
                 for cnd in self._cnd:
@@ -2799,13 +2829,13 @@ class SisypheDesign(object):
 
     def getFilename(self) -> str:
         """
-        Get the file name attribute of the current SisypheDesign instance. The file name attribute is used to save
+        Get the filename attribute of the current SisypheDesign instance. The file name attribute is used to save
         the current SisypheDesign instance.
 
         Returns
         -------
         str
-            file name
+            filename
         """
         path, ext = splitext(self._filename)
         self._filename = path + self._FILEEXT
@@ -2837,17 +2867,106 @@ class SisypheDesign(object):
 
     def setFilename(self, filename: str) -> None:
         """
-        Set the file name attribute of the current SisypheDesign instance. The file name attribute is used to save the
+        Set the filename attribute of the current SisypheDesign instance. The file name attribute is used to save the
         current SisypheDesign instance.
 
         Parameters
         ----------
         filename : str
-            file name
+            filename
         """
         path, ext = splitext(filename)
         filename = path + self._FILEEXT
         self._filename = filename
+
+    # < Revision 06/02/2026
+    # add getAnalysisROIFilename method
+    def getAnalysisROIFilename(self) -> str:
+        """
+        Get the analysis ROI filename attribute of the current SisypheDesign instance.
+        This ROI is used as mask for statistical analysis, voxels outside mask are ignored.
+
+        Returns
+        -------
+        str
+            analysis ROI filename
+        """
+        return self._roi1
+    # Revision 06/02/2026 >
+
+    # < Revision 06/02/2026
+    # add setAnalysisROIFilename method
+    def setAnalysisROIFilename(self, filename: str) -> None:
+        """
+        Set the analysis ROI filename attribute of the current SisypheDesign instance.
+        This ROI is used as mask for statistical analysis, voxels outside mask are ignored.
+
+        Parameters
+        ----------
+        filename : str
+            analysis ROI filename
+        """
+        if exists(filename): self._roi1 = filename
+    # Revision 06/02/2026 >
+
+    # < Revision 06/02/2026
+    # add getNormalizationROIFilename method
+    def getNormalizationROIFilename(self) -> str:
+        """
+        Get the normalization ROI filename attribute of the current SisypheDesign instance.
+        This ROI is used as mask for signal normalization, voxels outside mask are ignored.
+
+        Returns
+        -------
+        str
+            normalization ROI filename
+        """
+        return self._roi2
+
+    # < Revision 06/02/2026
+    # add setNormalizationROIFilename method
+    def setNormalizationROIFilename(self, filename: str) -> None:
+        """
+        Set the normalization ROI filename attribute of the current SisypheDesign instance.
+        This ROI is used as mask for signal normalization, voxels outside mask are ignored.
+
+        Parameters
+        ----------
+        filename : str
+            normalization ROI filename
+        """
+        if exists(filename): self._roi2 = filename
+    # Revision 06/02/2026 >
+
+    # < Revision 06/02/2026
+    # add hasAnalysisROIFilename method
+    def hasAnalysisROIFilename(self) -> bool:
+        """
+        Check whether the analysis ROI filename attribute of the current SisypheDesign instance is defined (i.e. not '').
+        This ROI is used as mask for statistical analysis, voxels outside mask are ignored.
+
+        Returns
+        -------
+        bool
+            True if the analysis ROI filename attribute is defined, False otherwise
+        """
+        return self._roi1 != ''
+    # Revision 06/02/2026 >
+
+    # < Revision 06/02/2026
+    # add hasNormalizationROIFilename method
+    def hasNormalizationROIFilename(self) -> bool:
+        """
+        Check whether the normalization ROI filename attribute of the current SisypheDesign instance is defined (i.e. not '').
+        This ROI is used as mask for signal normalization, voxels outside mask are ignored.
+
+        Returns
+        -------
+        bool
+            True if the normalization ROI filename attribute is defined, False otherwise
+        """
+        return self._roi2 != ''
+    # Revision 06/02/2026 >
 
     def setfMRIDesign(self) -> None:
         """
@@ -2855,6 +2974,7 @@ class SisypheDesign(object):
         to process fMRI.
         """
         self._fmri = True
+        if self._dancova: self._dancova = False
 
     def isfMRIDesign(self) -> bool:
         """
@@ -2867,6 +2987,30 @@ class SisypheDesign(object):
         """
         return self._fmri
 
+    # < Revision 06/02/2026
+    # add setANCOVADesign method
+    def setANCOVADesign(self) -> None:
+        """
+        Set the design type of the current SisypheDesign instance to ANOCVA.
+        """
+        self._dancova = True
+        if self._fmri: self._fmri  = False
+    # Revision 06/02/2026 >
+
+    # < Revision 06/02/2026
+    # add isANCOVADesign method
+    def isANCOVADesign(self) -> bool:
+        """
+        Check whether the design type of the current SisypheDesign instance is ANCOVA.
+
+        Returns
+        -------
+        bool
+            True if ANCOVA design
+        """
+        return self._dancova
+    # Revision 06/02/2026 >
+
     def setDictDesign(self, design: dict) -> None:
         """
         Set the observation dictionary of the current SisypheDesign instance.
@@ -2874,8 +3018,9 @@ class SisypheDesign(object):
         Parameters
         ----------
         design : dict
-            Dictionary syntax with 3 levels, key tuple(str = effect name, int = tree level)
-            3 possible levels: 0=first level (group), 1=second level (subject), 2=third level (condition)
+
+            - Dictionary syntax with 3 levels, key tuple(str = effect name, int = tree level)
+            - 3 possible levels: 0=first level (group), 1=second level (subject), 2=third level (condition)
         |
         |   {('Group#1', 0): {
         |       ('Subject#11', 1): {
@@ -3507,10 +3652,10 @@ class SisypheDesign(object):
                 for i in range(len(self._cdesign)):
                     name = self._cdesign[i][0].split()
                     if len(name) > 1 and name[0] == 'boxcar':
-                        # < Revision 05/06/2025
-                        # if  and name[-1] == cond:
-                        if ' '.join(name[1:]) == cond:
-                        # Revision 05/06/2025 >
+                        # < Revision 05/02/2026
+                        # if ' '.join(name[1:]) == cond:
+                        if name[-1] == cond:
+                        # Revision 05/02/2026 >
                             n = int(self._design[:, i].sum())
                             if n == len(boxcar):
                                 v = self._design[:, i]
@@ -3552,9 +3697,10 @@ class SisypheDesign(object):
                 for i in range(len(self._cdesign)):
                     name = self._cdesign[i][0].split()
                     if len(name) > 0 and name[0] != 'boxcar':
-                        # < Revision 05/06/2025
-                        if ' '.join(name) == cond:
-                        # Revision 05/06/2025 >
+                        # < Revision 05/02/2026
+                        # if ' '.join(name) == cond:
+                        if name[-1] == cond:
+                        # Revision 05/02/2026 >
                             n = int(self._design[:, i].sum())
                             if n == len(hpass):
                                 v = self._design[:, i]
@@ -4085,9 +4231,9 @@ class SisypheDesign(object):
 
         Parameters
         ----------
-        mask : Sisyphe.core.SisypheROI.sisypheROI | Sisyphe.core.sisypheVolume.SisypheVolume
+        mask : Sisyphe.core.SisypheROI.sisypheROI | Sisyphe.core.sisypheVolume.SisypheVolume | None
             statistical analysis mask
-        roi : Sisyphe.core.SisypheROI.sisypheROI | Sisyphe.core.sisypheVolume.SisypheVolume
+        roi : Sisyphe.core.SisypheROI.sisypheROI | Sisyphe.core.sisypheVolume.SisypheVolume | None
             mask used for signal normalization
         wait : Sisyphe.gui.dialogWait.DialogWait
             progress dialog
@@ -4134,7 +4280,11 @@ class SisypheDesign(object):
                     mask = self.calcMask(obs)
                 # < Revision 05/06/2025
                 # bugfix if mask is SisypheROI, conversion to SisypheVolume
-                elif isinstance(mask, SisypheROI): mask = SisypheVolume(mask.getSITKImage())
+                elif isinstance(mask, SisypheROI):
+                    self._roi1 = mask.getFilename()
+                    mask = SisypheVolume(mask.getSITKImage())
+                if isinstance(roi, SisypheROI):
+                    self._roi2 = roi.getFilename()
                 # Revision 05/06/2025 >
                 # Signal normalization ANCOVA
                 if self._norm > 0:
@@ -4177,6 +4327,12 @@ class SisypheDesign(object):
                 # set observations multicomponent volume,
                 # scaled if proportional scaling signal normalization
                 vols = SisypheVolumeCollection()
+                # < Revision 05/02/2026
+                if scale is not None:
+                    if wait is not None: wait.setInformationText('Proportional scaling...')
+                else:
+                    if wait is not None: wait.setInformationText('Mean volume processing...')
+                # Revision 05/02/2026 >
                 # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(len(obs)):
@@ -4193,6 +4349,10 @@ class SisypheDesign(object):
                 # set mean volume
                 vols = SisypheVolumeCollection()
                 vols.setList(obs)
+                # < Revision 05/02/2026
+                if scale is not None:
+                    if wait is not None: wait.setInformationText('Mean volume processing...')
+                # Revision 05/02/2026 >
                 self._mean = vols.getMeanVolume()
                 self._mean.copyAttributesFrom(obs[0], display=False)
                 # Revision 24/11/2024 >
@@ -4239,7 +4399,6 @@ class SisypheDesign(object):
             observations multicomponent volume
         """
         return self._vols
-
     # Revision 22/11/2024 >
 
     # < Revision 24/11/2024
@@ -4254,7 +4413,6 @@ class SisypheDesign(object):
             mean volume of observations
         """
         return self._mean
-
     # Revision 24/11/2024 >
 
     def getAutocorrelations(self) -> list[float] | None:
@@ -4287,7 +4445,6 @@ class SisypheDesign(object):
         """
         if self.isEstimated(): return getDOF(self._design)
         else: raise ValueError('Model is not estimated.')
-
     # Revision 18/11/2024 >
 
     def validateContrast(self, contrast: ndarray) -> ndarray:
@@ -4305,6 +4462,7 @@ class SisypheDesign(object):
         ndarray
             contrast vector
         """
+        print(self._cdesign)
         if len(contrast) == len(self._cdesign):
             estimable = array([v[1] for v in self._cdesign])
             effect = dict()
@@ -4345,12 +4503,20 @@ class SisypheDesign(object):
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
             if root.nodeName == self._FILEEXT[1:] and root.getAttribute('version') == '1.0':
-                # Parse fMRI
+                # Parse fMRI design
                 element = doc.getElementsByTagName('fmri')
                 if len(element) > 0 and element[0].hasChildNodes():
                     # noinspection PyUnresolvedReferences
                     self._fmri = element[0].firstChild.data == 'True'
                 else: self._fmri = False
+                # < Revision 06/02/2026
+                # Parse fMRI design
+                element = doc.getElementsByTagName('ancovadesign')
+                if len(element) > 0 and element[0].hasChildNodes():
+                    # noinspection PyUnresolvedReferences
+                    self._dancova = element[0].firstChild.data == 'True'
+                else: self._dancova = False
+                # Revision 06/02/2026 >
                 # Parse signal normalization
                 element = doc.getElementsByTagName('norm')
                 if len(element) > 0 and element[0].hasChildNodes():
@@ -4369,6 +4535,16 @@ class SisypheDesign(object):
                     # noinspection PyUnresolvedReferences
                     self._age = int(element[0].firstChild.data)
                 else: self._age = 0
+                # < Revision 05/02/2026
+                # Parse ROI analysis mask filename
+                element = doc.getElementsByTagName('roi1')
+                if len(element) > 0 and element[0].hasChildNodes():
+                    self._roi1 = element[0].firstChild.data
+                # Parse ROI signal normalization mask filename
+                element = doc.getElementsByTagName('roi2')
+                if len(element) > 0 and element[0].hasChildNodes():
+                    self._roi2 = element[0].firstChild.data
+                # Revision 05/02/2026 >
                 # Parse observations
                 elements = doc.getElementsByTagName('obs')
                 self._obs = dict()
@@ -4497,11 +4673,18 @@ class SisypheDesign(object):
             # bug fix, add forgotten doc.appendChild(root)
             doc.appendChild(root)
             # Revision 29/11/2024 >
-            # fMRI
+            # fMRI design
             item = doc.createElement('fmri')
             txt = doc.createTextNode(str(self._fmri))
             item.appendChild(txt)
             root.appendChild(item)
+            # < Revision 06/02/2026
+            # ANCOVA design
+            item = doc.createElement('ancovadesign')
+            txt = doc.createTextNode(str(self._dancova))
+            item.appendChild(txt)
+            root.appendChild(item)
+            # Revision 06/02/2026 >
             # Signal normalization
             item = doc.createElement('norm')
             txt = doc.createTextNode(str(self._norm))
@@ -4517,6 +4700,18 @@ class SisypheDesign(object):
             txt = doc.createTextNode(str(self._age))
             item.appendChild(txt)
             root.appendChild(item)
+            # < Revision 06/02/2026
+            # ROI mask analysis filename
+            item = doc.createElement('roi1')
+            txt = doc.createTextNode(self._roi1)
+            item.appendChild(txt)
+            root.appendChild(item)
+            # ROI mask normalization filename
+            item = doc.createElement('roi2')
+            txt = doc.createTextNode(self._roi2)
+            item.appendChild(txt)
+            root.appendChild(item)
+            # Revision 06/02/2026 >
             # Observations
             item = doc.createElement('observations')
             root.appendChild(item)

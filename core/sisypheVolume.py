@@ -213,7 +213,7 @@ class SisypheVolume(SisypheImage):
     object -> SisypheImage -> SisypheVolume
 
     Creation: 04/02/2021
-    Last revisions: 31/01/2026
+    Last revisions: 03/02/2026
     """
     __slots__ = ['_ID', '_arrayID', '_filename', '_compression', '_identity', '_acquisition',
                  '_display', '_acpc', '_transforms', '_xdcm', '_slope', '_intercept', '_orientation']
@@ -304,9 +304,9 @@ class SisypheVolume(SisypheImage):
         filename : str
             PySisyphe Volume file name
         attr : str
-            attribute name: ID, size, spacing, FOV, number of componentes, datatype, origin, directions, orientation,
-            modality, sequence, date of scan, stereotactic frame, scalar unit, range, window, slope, intercept,
-            lastname, firstname, gender, date of birthday
+            attribute keys: id, size, spacing, fov, components, datatype, origin, directions, orientation, modality,
+            sequence, dateofscan, frame, unit, range, window, slope, intercept, lastname, firstname, gender,
+            dateofbirthday
 
         Returns
         -------
@@ -359,9 +359,9 @@ class SisypheVolume(SisypheImage):
         Returns
         -------
         dict
-            attribute keys: ID, size, spacing, FOV, number of componentes, datatype, origin, directions, orientation,
-            modality, sequence, date of scan, stereotactic frame, scalar unit, range, window, slope, intercept,
-            lastname, firstname, gender, date of birthday
+            attribute keys: id, size, spacing, fov, components, datatype, origin, directions, orientation, modality,
+            sequence, dateofscan, frame, unit, range, window, slope, intercept, lastname, firstname, gender,
+            dateofbirthday
         """
         from Sisyphe.core.sisypheXml import XmlVolume
         v = XmlVolume(filename)
@@ -1267,6 +1267,7 @@ class SisypheVolume(SisypheImage):
             window min (default None, get window min from display attribute).
         wmax : int | None (optional)
             window max (default None, get window max from display attribute).
+
         Returns
         -------
         pilImage
@@ -1313,8 +1314,7 @@ class SisypheVolume(SisypheImage):
 
         There are two ID types:
 
-        - ID is a space ID, it is not unique, all volumes sharing a common space have the same ID. This attribute is
-        used as key in the Sisyphe.core.sisypheTransform.SisypheTransforms instances
+        - ID is a space ID, it is not unique, all volumes sharing a common space have the same ID. This attribute is used as key in the Sisyphe.core.sisypheTransform.SisypheTransforms instances
         - Array ID, unique, calculated from scalar values (md5 algorithm). This cannot be edited.
 
         Parameters
@@ -1599,13 +1599,15 @@ class SisypheVolume(SisypheImage):
             cast volume
         """
         img, slope, inter = super().cast(datatype)
-        # noinspection PyTypeChecker
+        # < Revision 04/02/2026
         img = SisypheVolume(img)
+        img._calcArrayID()
         self.copyAttributesTo(img)
         img._slope = slope
         img._intercept = inter
         img._updateRange()
-        img._calcArrayID()
+        # img._calcArrayID()
+        # Revision 04/02/2026 >
         return img
 
     def copyPropertiesTo(self,
@@ -3422,10 +3424,10 @@ class SisypheVolume(SisypheImage):
         ----------
         p : list[float] | tuple[float, float, float]
             World coordinates
-        mni : bool
+        mni : bool (optional)
 
             - if False (default), returns the coordinates without taking into account the origin (i.e., origin x=0.0, y=0.0, z=0.0 to left, posterior, inferior corner)
-            - if True (default), returns the coordinates relative to MNI origin (i.e.origin x=98.0, y=134.0, z=72.0)
+            - if True, returns the coordinates relative to MNI origin (i.e.origin x=98.0, y=134.0, z=72.0)
 
         Returns
         -------
@@ -3447,7 +3449,7 @@ class SisypheVolume(SisypheImage):
         else: return picbm
         # Revision 31/01/2026 >
 
-    def getWorldfromICBM(self, p: vectorFloat3) -> vectorFloat3 | None:
+    def getWorldfromICBM(self, p: vectorFloat3, mni: bool = False) -> vectorFloat3 | None:
         """
         Convert ICBM coordinates to world coordinates Returns None if the transforms attribute of the current
         SisypheVolume instance does not contain the 'ICBM152' ID.
@@ -3456,14 +3458,30 @@ class SisypheVolume(SisypheImage):
         ----------
         p : list[float] | tuple[float, float, float]
             ICBM coordinates
+        mni : bool (optional)
+
+            - if False (default), coordinates are not relative to MNI origin (i.e., origin x=0.0, y=0.0, z=0.0 to left, posterior, inferior corner)
+            - if True, coordinates are relative to MNI origin (i.e.origin x=98.0, y=134.0, z=72.0)
 
         Returns
         -------
         tuple[float, float, float] | None
             world coordinates
         """
-        if self.hasICBMTransform(): return self._transforms['ICBM'].applyInverseToPoint(p)
-        else: return None
+        # < Revision 17/02/2026
+        # if self.hasICBMTransform(): return self._transforms['ICBM'].applyInverseToPoint(p)
+        # else: return None
+        icbmid = SisypheAcquisition.getTemplatesList()[0]
+        if self.hasICBMTransform(): pworld = self._transforms[icbmid].applyInverseToPoint(p)
+        else:
+            if self._acquisition.isICBM152(): pworld = p
+            else: return None
+        if mni:
+            pworld[0] += 98.0,
+            pworld[1] += 134.0,
+            pworld[2] += 72.0
+        return pworld
+        # Revision 17/02/2026 >
 
     def hasLEKSELLTransform(self) -> bool:
         """
@@ -3673,6 +3691,7 @@ class SisypheVolume(SisypheImage):
         Parameters
         ----------
         filename : str
+            filename
         index : int
             slice index
         zoom : float

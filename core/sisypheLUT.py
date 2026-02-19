@@ -1267,12 +1267,12 @@ class SisypheLut(object):
 
     def loadFromXML(self, filename: str) -> None:
         """
-        Load current SisypheLut instance attributes from xml file (.xlut).
+        Load current SisypheLut instance attributes from XML file (.xlut).
 
         Parameters
         ----------
         filename : str
-            xml file name (.xlut)
+            XML file name (.xlut)
         """
         filename = abspath(filename)
         path, ext = splitext(filename)
@@ -2661,12 +2661,12 @@ class SisypheColorTransfer(object):
 
     def saveToXML(self, filename: str) -> None:
         """
-        Save current SisypheColorTransfer instance attributes to xml file (.xtfer).
+        Save current SisypheColorTransfer instance attributes to XML file (.xtfer).
 
         Parameters
         ----------
         filename : str
-            xml file name (.xtfer)
+            XML file name (.xtfer)
         """
         path, ext = splitext(filename)
         if ext.lower() != SisypheColorTransfer._FILEEXT:
@@ -2728,12 +2728,12 @@ class SisypheColorTransfer(object):
 
     def loadFromXML(self, filename: str) -> None:
         """
-        Load current SisypheColorTransfer instance attributes from xml file (.xtfer).
+        Load current SisypheColorTransfer instance attributes from XML file (.xtfer).
 
         Parameters
         ----------
         filename : str
-            xml file name (.xtfer)
+            XML file name (.xtfer)
         """
         path, ext = splitext(filename)
         if exists(filename) and ext.lower() != SisypheColorTransfer._FILEEXT:

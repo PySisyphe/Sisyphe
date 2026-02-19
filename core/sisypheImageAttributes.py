@@ -884,10 +884,10 @@ class SisypheAcquisition(object):
     object -> SisypheIdentity
 
     Creation: 16/03/2021
-    Last revision: 27/01/2026
+    Last revision: 05/02/2026
     """
     __slots__ = ['_modality', '_sequence', '_type', '_dateofscan', '_frame', '_unit', '_labels',
-                 '_df', '_autocorrx', '_autocorry', '_autocorrz', '_contrast', '_parent']
+                 '_df', '_autocorrx', '_autocorry', '_autocorrz', '_rc', '_contrast', '_parent']
 
     # Class constants
 
@@ -1322,6 +1322,7 @@ class SisypheAcquisition(object):
     _autocorrx      float, spatial autocorrelations, x-axis (mm)
     _autocorry      float, spatial autocorrelations, y-axis (mm)
     _autocorrz      float, spatial autocorrelations, z-axis (mm)
+    _rc             list[float], resel count
     _contrast       list[float]
     _parent         parent instance 
     """
@@ -1359,6 +1360,9 @@ class SisypheAcquisition(object):
         self._autocorrx = 0.0
         self._autocorry = 0.0
         self._autocorrz = 0.0
+        # < Revision 05/02/2026
+        self._rc = (0.0, 0.0, 0.0, 0.0)
+        # Revision 05/02/2026 >
         # < Revision 22/11/2024
         # add contrast attribute
         self._contrast = list()
@@ -1388,7 +1392,19 @@ class SisypheAcquisition(object):
                                                                               self._autocorrx,
                                                                               self._autocorry,
                                                                               self._autocorrz)
-
+            # < Revision 05/02/2026
+            if self.hasContrast():
+                txt += '\tContrast: {}\n'.format(self._contrast)
+            if self.hasReselCount():
+                txt += '\tResel count: ({:.1f}, {:.1f}, {:.1f}, {:.1f})\n'.format(self._rc[0],
+                                                                                  self._rc[1],
+                                                                                  self._rc[2],
+                                                                                  self._rc[3])
+            # Revision 05/02/2026 >
+            # < Revision 12/02/2026
+            if len(self._labels) > 0:
+                txt += self.labelsToStr()
+            # Revision 12/02/2026 >
         return txt
 
     def __repr__(self) -> str:
@@ -1739,6 +1755,21 @@ class SisypheAcquisition(object):
         self._labels = dict()
     # Revision 14/10/2025 >
 
+    # < Revision 12/02/2026
+    def labelsToStr(self) -> str:
+        """
+        Generate a string of labels.
+
+        Returns
+        -------
+        str
+        """
+        buff = 'Labels:\n'
+        for k in self._labels:
+            buff += '\t{}:  {}\n'.format(k, self._labels[k])
+        return buff
+    # Revision 12/02/2026 >
+
     def loadLabels(self) -> None:
         """
         Load label table from XML file (.xlabels), image modality must be label.
@@ -1857,18 +1888,23 @@ class SisypheAcquisition(object):
 
     # < Revision 22/11/2024
     # add setContrast method
-    def setContrast(self, c: ndarray | list[float]) -> None:
+    def setContrast(self, c: ndarray | list[float] | tuple[float, float]) -> None:
         """
         Set contrast attribute of the current SisypheAcquisition instance. This attribute is only defined for
         statistical maps.
 
         Parameters
         ----------
-        c : ndarray | list[float]
+        c : ndarray | list[float] | tuple[float, float]
             contrast used to calculate statistical map
         """
-        if isinstance(c, ndarray): c = list(c)
-        self._contrast = c
+        # < Revision 05/02/2026
+        # if isinstance(c, ndarray): c = list(c)
+        # self._contrast = c
+        if isinstance(c, (ndarray, list)): c = tuple(c)[:2]
+        if isinstance(c, tuple): self._contrast = c
+        else: raise TypeError('invalid parameter type {}, must be ndarray, list or tuple'.format(type(c)))
+        # Revision 05/02/2026
     # Revision 22/11/2024 >
 
     # < Revision 22/11/2024
@@ -1884,6 +1920,82 @@ class SisypheAcquisition(object):
         """
         return len(self._contrast) > 0
     # Revision 22/11/2024 >
+
+    # < Revision 05/02/2026
+    # add getReselCount method
+    def getReselCount(self) -> tuple[float, float, float, float]:
+        """
+        Get resel count attribute of the current SisypheAcquisition instance. This attribute is only defined for
+        statistical maps.
+
+        resel count 0 = Euler characteristic of the statistical map (i.e. gaussian field)
+        resel count 1 = resel diameter
+        resel count 2 = resel surface area
+        resel count 3 = resel volume
+
+        reference:
+        A unified statistical approach for determining significant signals in images of cerebral activation
+        KJ Worsley, S Marrett, P Neelin, AC Vandal, KJ Friston, AC Evans. Hum Brain Mapp. 1996;4(1):58-73.
+        doi: 10.1002/(SICI)1097-0193(1996)4:1<58::AID-HBM4>3.0.CO;2-O.
+
+        Returns
+        -------
+        tuple[float, float, float, float]
+            resel count
+        """
+        return self._rc
+    # Revision 05/02/2026 >
+
+    # < Revision 05/02/2026
+    # add setReselCount method
+    def setReselCount(self, c: ndarray | list[float] | tuple[float, float, float, float]) -> None:
+        """
+        Set resel count attribute of the current SisypheAcquisition instance. This attribute is only defined for
+        statistical maps.
+
+        resel count 0 = Euler characteristic of the statistical map (i.e. gaussian field)
+        resel count 1 = resel diameter
+        resel count 2 = resel surface area
+        resel count 3 = resel volume
+
+        reference:
+        A unified statistical approach for determining significant signals in images of cerebral activation
+        KJ Worsley, S Marrett, P Neelin, AC Vandal, KJ Friston, AC Evans. Hum Brain Mapp. 1996;4(1):58-73.
+        doi: 10.1002/(SICI)1097-0193(1996)4:1<58::AID-HBM4>3.0.CO;2-O.
+
+        Parameters
+        ----------
+        c : ndarray | list[float] | tuple[float, float, float, float]
+            resel count
+        """
+        if isinstance(c, (ndarray, list)): c = tuple(c)[:4]
+        if isinstance(c, tuple): self._rc = c
+        else: raise TypeError('invalid parameter type {}, must be ndarray, list or tuple'.format(type(c)))
+    # Revision 05/02/2026 >
+
+    # < Revision 05/02/2026
+    # add hasReselCount method
+    def hasReselCount(self) -> bool:
+        """
+        Check that resel count attribute is not empty, only defined for statistical map.
+
+        resel count 0 = Euler characteristic of the statistical map (i.e. gaussian field)
+        resel count 1 = resel diameter
+        resel count 2 = resel surface area
+        resel count 3 = resel volume
+
+        reference:
+        A unified statistical approach for determining significant signals in images of cerebral activation
+        KJ Worsley, S Marrett, P Neelin, AC Vandal, KJ Friston, AC Evans. Hum Brain Mapp. 1996;4(1):58-73.
+        doi: 10.1002/(SICI)1097-0193(1996)4:1<58::AID-HBM4>3.0.CO;2-O.
+
+        Returns
+        -------
+        bool
+            True if contrast attribute is not empty
+        """
+        return self._rc != (0.0, 0.0, 0.0, 0.0)
+    # Revision 05/02/2026 >
 
     def setSequenceToTMap(self) -> None:
         """
@@ -3353,6 +3465,10 @@ class SisypheAcquisition(object):
             self._autocorrx = buff._autocorrx
             self._autocorry = buff._autocorry
             self._autocorrz = buff._autocorrz
+            # < Revision 05/02/2026
+            self._contrast = buff._contrast
+            self._rc = buff._rc
+            # Revision 05/02/2026 >
         else: raise TypeError('parameter type {} is not {} or SisypheVolume.'.format(type(buff), self.__class__.__name__))
 
     def copy(self) -> SisypheAcquisition:
@@ -3377,6 +3493,10 @@ class SisypheAcquisition(object):
         buff._autocorrx = self._autocorrx
         buff._autocorry = self._autocorry
         buff._autocorrz = self._autocorrz
+        # < Revision 05/02/2026
+        buff._contrast = self._contrast
+        buff._rc = self._rc
+        # Revision 05/02/2026 >
         return buff
         # Revision 06/11/2024 >
 
@@ -3666,6 +3786,16 @@ class SisypheAcquisition(object):
                     txt = doc.createTextNode(buff)
                     node.appendChild(txt)
                 # Revision 22/11/2024 >
+                # < Revision 05/02/2025
+                if self.hasReselCount():
+                    if isinstance(self._rc, tuple):
+                        if len(self._rc) == 4:
+                            node = doc.createElement('reselcount')
+                            attr.appendChild(node)
+                            buff = ' '.join([str(i) for i in self._rc])
+                            txt = doc.createTextNode(buff)
+                            node.appendChild(txt)
+                # Revision 05/02/2025 >
             else: raise TypeError('parameter functype is not xml.dom.minidom.Element.')
         else: raise TypeError('parameter functype is not xml.dom.minidom.Document.')
 
@@ -3715,6 +3845,14 @@ class SisypheAcquisition(object):
                         buff = [float(i) for i in buff]
                         self.setContrast(buff)
                     # Revision 22/11/2024 >
+                elif node.nodeName == 'reselcount':
+                    # < Revision 05/02/2026
+                    if node.firstChild:
+                        buff = node.firstChild.data
+                        buff = buff.split(' ')
+                        buff = [float(i) for i in buff]
+                        self.setReselCount(buff)
+                    # Revision 05/02/2026 >
         else: raise TypeError('parameter functype is not xml.dom.minidom.Document.')
 
     def saveToXML(self, filename: str) -> None:

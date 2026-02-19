@@ -1120,6 +1120,7 @@ class SisypheTractCollection(object):
             suffix = parts[-1]
             if suffix.isdigit():
                 suffix = int(suffix) + 1
+                # noinspection PyTypeChecker
                 parts[-1] = str(suffix)
             else: parts.append('1')
             name = '#'.join(parts)

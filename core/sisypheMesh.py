@@ -146,7 +146,7 @@ class SisypheMesh(object):
     object -> SisypheMesh
 
     Creation: 22/03/2023
-    Last revision: 25/01/2026
+    Last revision: 16/02/2026
     """
     __slots__ = ['_name', '_filename', '_referenceID', '_polydata', '_mapper', '_actor']
     _counter: int = 0
@@ -632,7 +632,10 @@ class SisypheMesh(object):
         Set default file name attribute of the current SisypheMesh instance. This file name is used by save() method.
         Default file name = name attribute + mesh file extension ('.xmesh')
          """
+        # < Revision 16/02/2026
+        # if self._name != '': self.setDefaultName()
         if self._name == '': self.setDefaultName()
+        # Revision 16/02/2026 >
         self._filename = join(getcwd(), '{}{}'.format(self._name, self._FILEEXT))
     # Revision 21/02/2025 >
 
@@ -2513,12 +2516,16 @@ class SisypheMesh(object):
             if QApplication.instance() is not None: QApplication.processEvents()
             img = SisypheVolume(mask)
             self.createIsosurface(img, 50, fill, decimate, clean, smooth, niter, factor, algo, largest)
-            self._name = roi.getName()
             c = roi.getColor()
+            self._name = roi.getName()
             self.setColor(c[0], c[1], c[2])
             self.setReferenceID(roi.getReferenceID())
             self.setDefaultFilename()
-            if roi.hasFilename(): self.setDirname(roi.getDirname())
+            if roi.hasFilename():
+                # < Revision 16/02/2026
+                # self.setDirname(roi.getDirname())
+                self.saveAs(roi.getFilename())
+                # Revision 16/02/2026 >
         else: raise TypeError('parameter type {} is not SisypheROI.'.format(type(roi)))
 
     # Processing methods
@@ -3157,14 +3164,21 @@ class SisypheMesh(object):
 
     # Image conversion methods
 
-    def convertToVTKImage(self, refimg: SisypheVolume | None, tol: float = 0.0) -> vtkImageData:
+    def convertToVTKImage(self,
+                          refimg: SisypheVolume | str | None,
+                          tol: float = 0.0) -> vtkImageData:
         """
         Binary discretization of the current SisypheMesh instance mesh.
 
         Parameters
         ----------
-        refimg : Sisyphe.core.sisypheVolume.SisypheVolume | None
+        refimg : Sisyphe.core.sisypheVolume.SisypheVolume | str | None
             reference volume, mesh is discretized in this reference space
+
+                - SisypheVolume, size and spacing attributes
+                - None or 'default', size = (256, 256, 256), spacing = (1.0, 1.0, 1.0)
+                - 'icbm', size = (197, 233, 189), spacing = (1.0, 1.0, 1.0)
+
         tol : float
             The tolerance for including a voxel inside the mask. This is in fractions of a voxel, and must be between
             0.0 and 1.0 (default 0.0, no tolerance, all the voxel volume must be inside mesh to become part of the mask)
@@ -3175,18 +3189,25 @@ class SisypheMesh(object):
             binary volume
         """
         if self._polydata is not None:
-            if refimg is None:
-                spacing = (1.0, 1.0, 1.0)
-                origin = (0.0, 0.0, 0.0)
-                size = (256, 256, 256)
-            elif isinstance(refimg, SisypheVolume):
+            # < Revision 16/02/2026
+            # if refimg is None:
+            if isinstance(refimg, SisypheVolume):
                 spacing = refimg.getSpacing()
                 # < Revision 23/03/2025
                 # origin = refimg.getOrigin()
                 origin = (0.0, 0.0, 0.0)
                 # Revision 23/03/2025 >
                 size = refimg.getSize()
+            elif refimg is None or refimg == 'default':
+                spacing = (1.0, 1.0, 1.0)
+                origin = (0.0, 0.0, 0.0)
+                size = (256, 256, 256)
+            elif refimg == 'icbm':
+                spacing = (1.0, 1.0, 1.0)
+                origin = (0.0, 0.0, 0.0)
+                size = (197, 233, 189)
             else: raise TypeError('image parameter type {} is not SisypheVolume.'.format(type(refimg)))
+            # Revision 16/02/2026 >
             # vtkPolyData to vtkImageStencil
             stencil = vtkPolyDataToImageStencil()
             stencil.SetTolerance(tol)
@@ -3208,7 +3229,7 @@ class SisypheMesh(object):
         else: raise AttributeError('Polydata is None.')
 
     def convertToSisypheROI(self,
-                            refimg: SisypheVolume | None,
+                            refimg: SisypheVolume | str | None,
                             tol: float = 0.0) -> SisypheROI:
         """
         Binary discretization of the current SisypheMesh instance mesh.
@@ -3217,6 +3238,11 @@ class SisypheMesh(object):
         ----------
         refimg : Sisyphe.core.sisypheVolume.SisypheVolume | None
             reference volume, mesh is discretized in this reference space
+
+                - SisypheVolume, size and spacing attributes
+                - None or 'default', size = (256, 256, 256), spacing = (1.0, 1.0, 1.0)
+                - 'icbm', size = (197, 233, 189), spacing = (1.0, 1.0, 1.0)
+
         tol : float
             The tolerance for including a voxel inside the mask. This is in fractions of a voxel, and must be between
             0.0 and 1.0 (default 0.0, no tolerance, all the voxel volume must be inside mesh to become part of the mask)
@@ -3227,7 +3253,10 @@ class SisypheMesh(object):
             ROI
         """
         if self._polydata is not None:
-            if refimg is None or isinstance(refimg, SisypheVolume):
+            # < Revision 14/02/2026
+            # if refimg is None or isinstance(refimg, SisypheVolume):
+            if refimg is None or isinstance(refimg, (SisypheVolume, str)):
+            # Revision 14/02/2026 >
                 img = self.convertToVTKImage(refimg, tol)
                 roi = SisypheROI()
                 roi.copyFromVTKImage(img)
@@ -3236,14 +3265,18 @@ class SisypheMesh(object):
                 roi.setColor(rgb=self.getColor())
                 roi.setReferenceID(self.getReferenceID())
                 roi.setDefaultFilename()
-                if self.hasFilename(): roi.setDirname(self.getDirname())
+                if self.hasFilename():
+                    # < Revision 16/02/2026
+                    # roi.setDirname(self.getDirname())
+                    roi.setFilename(self.getFilename())
+                    # Revision 16/02/2026 >
                 elif refimg is not None: roi.setDirname(refimg.getDirname())
                 return roi
             else: raise TypeError('image parameter type {} is not SisypheVolume.'.format(type(refimg)))
         else: raise AttributeError('Polydata attribute is None.')
 
     def convertToSisypheVolume(self,
-                               refimg: SisypheVolume,
+                               refimg: SisypheVolume | str | None,
                                tol: float = 0.0) -> SisypheVolume:
         """
         Binary discretization of the current SisypheMesh instance mesh.
@@ -3252,6 +3285,11 @@ class SisypheMesh(object):
         ----------
         refimg : Sisyphe.core.sisypheVolume.SisypheVolume
             reference volume, mesh is discretized in this reference space
+
+                - SisypheVolume, size and spacing attributes
+                - None or 'default', size = (256, 256, 256), spacing = (1.0, 1.0, 1.0)
+                - 'icbm', size = (197, 233, 189), spacing = (1.0, 1.0, 1.0)
+
         tol : float
             The tolerance for including a voxel inside the mask. This is in fractions of a voxel, and must be between
             0.0 and 1.0 (default 0.0, no tolerance, all the voxel volume must be inside mesh to become part of the mask)
@@ -3262,10 +3300,20 @@ class SisypheMesh(object):
             binary volume
         """
         if self._polydata is not None:
-            if refimg is None or isinstance(refimg, SisypheVolume):
+            # < Revision 14/02/2026
+            # if refimg is None or isinstance(refimg, SisypheVolume):
+            if refimg is None or isinstance(refimg, (SisypheVolume, str)):
+            # Revision 14/02/2026 >
                 img = self.convertToVTKImage(refimg, tol)
                 vol = SisypheVolume()
                 vol.copyFromVTKImage(img)
+                # < Revision 14/02/2026
+                if refimg == 'icbm': vol.setOrigin((98.0, 134.0, 72.0))
+                # Revision 14/02/2026 >
+                # < Revision 16/02/2026
+                if self.hasFilename():
+                    vol.setFilename(self.getFilename())
+                # Revision 16/02/2026 >
                 return vol
             else: raise TypeError('image parameter type {} is not SisypheVolume.'.format(type(refimg)))
         else: raise AttributeError('Polydata attribute is None.')
