@@ -2292,7 +2292,7 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
     QWidget -> IconBarWidget -> IconBarOrthogonalRegistrationViewWidget -> IconBarOrthogonalRegistrationViewWidget2
 
     Creation: 17/04/2022
-    Last revision: 10/10/2025
+    Last revision: 02/02/2026
     """
 
     # Special method
@@ -2430,19 +2430,22 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         layout.addLayout(layout1)
         layout.addLayout(layout2)
 
-        # < Revision 22/05/2025
+        # < Revision 02/02/2026
         # black background of button bar
         self._frame = QFrame(self)
-        if platform == 'win32':
-            self._frame.setObjectName('TrfBar')
-            self._frame.setStyleSheet('QFrame#TrfBar { background-color: #000000; border-color: #000000; } '
-                                      'QToolTip#TrfBar { color: #000000; background-color: #FFFFE0; border: 0px; font-size: 8pt; }')
-        else:
-            self._frame.setAutoFillBackground(True)
-            # noinspection PyUnresolvedReferences
-            self._frame.palette().setColor(QPalette.Window, Qt.black)
+        # if platform == 'win32':
+        #     self._frame.setObjectName('TrfBar')
+        #     self._frame.setStyleSheet('QFrame#TrfBar { background-color: #000000; border-color: #000000; } '
+        #                               'QToolTip#TrfBar { color: #000000; background-color: #FFFFE0; border: 0px; font-size: 8pt; }')
+        self._frame.setObjectName('TrfBar')
+        self._frame.setStyleSheet('QFrame#TrfBar { background-color: #000000; border-color: #000000; } '
+                                  'QToolTip#TrfBar { color: #000000; background-color: #FFFFE0; border: 0px; font-size: 8pt; }')
+        # else:
+        #     self._frame.setAutoFillBackground(True)
+        #     # noinspection PyUnresolvedReferences
+        #    self._frame.palette().setColor(QPalette.Window, Qt.black)
         self._frame.setLayout(layout)
-        # Revision 22/05/2025 >
+        # Revision 02/02/2026 >
 
         for view in self.getViewWidget().getSliceViewWidgets():
             view.TranslationsChanged.connect(lambda d1, d2: self._updateTooltips())

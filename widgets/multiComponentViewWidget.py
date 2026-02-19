@@ -12,6 +12,8 @@ External packages/modules
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+import sys
+
 from os import getcwd
 from os import chdir
 from os import remove
@@ -105,7 +107,7 @@ class MultiComponentViewWidget(MultiViewWidget):
     QWidget -> MultiViewWidget -> GridViewWidget -> MultiComponentViewWidget
 
     Creation: 10/12/2024
-    Last revision: 08/01/2026
+    Last revision: 19/02/2026
     """
 
     # Special method
@@ -141,10 +143,14 @@ class MultiComponentViewWidget(MultiViewWidget):
         self._axe: Axes | None = None
         self._canvas = FigureCanvas(self._fig)
         self._canvas.mpl_connect('pick_event', self._chartClicked)
-        # < Revision 08/01/2026
+        # < Revision 02/02/2026
         # self._layout.addWidget(self._canvas, 3, 0, 1, 3)
-        self._layout.addWidget(self._canvas, 3, 0, 2, 3)
-        # Revision 08/01/2026 >
+        self._layout.addWidget(self._canvas, 3, 0, 1, 3)
+        self._layout.setRowStretch(0, 2)
+        self._layout.setRowStretch(1, 2)
+        self._layout.setRowStretch(2, 2)
+        self._layout.setRowStretch(3, 3)
+        # Revision 02/02/2026 >
 
     """
     Private attributes
@@ -649,8 +655,8 @@ class MultiComponentViewWidget(MultiViewWidget):
 
     def saveCurveDataset(self) -> None:
         """
-        Open a file dialog to save the data of all curves currently plotted on the chart to a file.
-        Supported formats include CSV, JSON, Latex, text, Excel XLSX, and PySisyphe Sheet (*.xsheet).
+        Open a file dialog to save the data of all curves currently plotted on the chart to a file. Supported formats
+        include CSV, JSON, Latex, text, Excel XLSX, and PySisyphe Sheet (*.xsheet).
         """
         if self._multi is not None:
             filename = self._multi.getFilename()
@@ -683,7 +689,27 @@ class MultiComponentViewWidget(MultiViewWidget):
                         elif ext == 'json': sheet.saveJSON(filename)
                         elif ext == 'tex': sheet.saveLATEX(filename)
                         elif ext == 'txt': sheet.saveTXT(filename)
-                        elif ext == 'xlsx': sheet.saveXLSX(filename)
+                        elif ext == 'xlsx':
+                            try: sheet.saveXLSX(filename)
+                            except:
+                                # < Revision 19/02/2026
+                                try:
+                                    import openpyxl
+                                    messageBox(self, 'Save chart dataset', text='Open xlsx error.')
+                                except:
+                                    if hasattr(sys, '_MEIPASS'):
+                                        messageBox(self,
+                                                   'XLSX IO',
+                                                   'OpenPyXL module is not installed.\n'
+                                                   'Please perform a complete reinstallation of the latest version '
+                                                   'of PySisyphe, which can be downloaded from '
+                                                   'https://github.com/PySisyphe/Sisyphe.')
+                                    else:
+                                        messageBox(self,
+                                                   'XLSX IO',
+                                                   'OpenPyXL module is not installed.\n'
+                                                   'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                                # Revision 19/02/2026 >
                         elif ext == 'xsheet': sheet.save(filename)
                         else: raise ValueError('{} format is not supported.'.format(ext))
                     except Exception as err:

@@ -9,6 +9,7 @@ from sys import platform
 
 from os import getcwd
 from os import chdir
+from os import remove
 
 from os.path import join
 from os.path import exists
@@ -85,6 +86,7 @@ from Sisyphe.gui.dialogFileSelection import DialogFileSelection
 from Sisyphe.gui.dialogDiffusionBundle import DialogStreamlinesROISelection
 from Sisyphe.gui.dialogDiffusionBundle import DialogStreamlinesFiltering
 from Sisyphe.gui.dialogDiffusionBundle import DialogStreamlinesClustering
+from Sisyphe.gui.dialogAtlasLabeling import DialogAtlasLabeling
 from Sisyphe.gui.dialogWait import DialogWait
 
 __all__ = ['ItemAttributesWidget',
@@ -451,7 +453,7 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
 
     QFrame -> ItemAttributesWidget -> ItemROIAttributesWidget
 
-    Last revision: 19/03/2025
+    Last revision: 16/02/2026
     """
 
     # Special method
@@ -635,7 +637,12 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
             wait.setInformationText('Save {}'.format(self._item.getName()))
         QApplication.processEvents()
         try:
-            if self._item.hasFilename(): self._item.setDefaultFilename()
+            # < Revision 16/02/2026
+            # if self._item.hasFilename(): self._item.setDefaultFilename()
+            if not self._item.hasFilename():
+                self._item.setFilename(join(self._views.getVolume().getDirname(),
+                                            self._item.getName() + self._item.getFileExt()))
+            # Revision 16/02/2026 >
             self._item.save()
             if self._logger is not None: self._logger.info('Save ROI {}'.format(self._item.getFilename()))
             if self.hasViewCollection(): self._views.clearUndo()
@@ -2827,7 +2834,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListROIAttributesWidget
 
-    Last revision: 29/01/2026
+    Last revision: 14/02/2026
     """
 
     # Special method
@@ -2844,6 +2851,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._mesh = IconPushButton('roi2mesh.png', size=ListAttributesWidget._VSIZE)
         self._dist = IconPushButton('map.png', size=ListAttributesWidget._VSIZE)
         self._features = IconPushButton('texture.png', size=ListAttributesWidget._VSIZE)
+        # < Revision 14/02/2026
+        self._labeling = IconPushButton('labels.png', size=ListAttributesWidget._VSIZE)
+        # Revision 14/02/2026 >
 
         # < Revision 17/11/2025
         self._visibility = VisibilityLabel()
@@ -2863,6 +2873,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
         # Revision 25/11/2025 >
         # noinspection PyUnresolvedReferences
         self._features.clicked.connect(self.features)
+        # < Revision 14/02/2026
+        self._labeling.clicked.connect(self.labeling)
+        # Revision 14/02/2026 >
         # < Revision 17/11/2025
         # noinspection PyUnresolvedReferences
         self._visibility.visibilityChanged.connect(self.visibility)
@@ -2874,6 +2887,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._mesh.setToolTip('Conversion of checked ROI(s) to mesh(es)')
         self._dist.setToolTip('Distance map processing from checked ROI(s)')
         self._features.setToolTip('Checked ROI(s) feature processing')
+        # < Revision 14/02/2026
+        self._labeling.setToolTip('Checked ROI(s) atlas labeling')
+        # Revision 14/02/2026 >
         # < Revision 17/11/2025
         self._visibility.setToolTip('Show/hide all ROI(s)')
         # Revision 17/11/2025 >
@@ -2883,6 +2899,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._btlayout2.insertWidget(3, self._mesh)
         self._btlayout2.insertWidget(3, self._dist)
         self._btlayout2.insertWidget(3, self._duplicate)
+        # < Revision 14/02/2026
+        self._btlayout2.insertWidget(6, self._labeling)
+        # Revision 14/02/2026 >
         self._btlayout2.insertWidget(6, self._features)
         # < Revision 13/11/2025
         self._btlayout2.insertWidget(1, self._visibility)
@@ -3010,6 +3029,10 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._dist.setFixedSize(size, size)
         self._features.setIconSize(QSize(size - 8, size - 8))
         self._features.setFixedSize(size, size)
+        # < Revision 14/02/2026
+        self._labeling.setIconSize(QSize(size - 8, size - 8))
+        self._labeling.setFixedSize(size, size)
+        # Revision 14/02/2026 >
         # < Revision 13/11/2025
         self._visibility.setFixedSize(size, size)
         # Revision 13/11/2025
@@ -3584,6 +3607,30 @@ class ListROIAttributesWidget(ListAttributesWidget):
         else: messageBox(self, 'ROI(s) texture features', 'No ROI checked.')
     # Revision 05/08/2025 >
 
+    # < Revision 14/02/2026
+    def labeling(self):
+        if self.isEnabled():
+            if self.hasViewCollection():
+                rois = self.getCheckedROI()
+                if rois is not None and len(rois) > 0:
+                    dialog = DialogAtlasLabeling('ROI')
+                    if platform == 'win32':
+                        import pywinstyles
+                        cl = self._list.palette().base().color()
+                        c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                        pywinstyles.change_header_color(dialog, c)
+                    ref = self._views.getVolume()
+                    dialog.setReference(ref.getFilename(), hide=True)
+                    for roi in rois:
+                        if not roi.hasFilename():
+                            filename = abspath(join(ref.getDirname(), roi.getName() + roi.getFileExt()))
+                            roi.setFilename(filename)
+                        if not exists(roi.getFilename()): roi.save()
+                        dialog.addROI(roi.getFilename(), hide=True)
+                    dialog.exec()
+                else: messageBox(self, 'ROI(s) atlas labeling', 'No ROI checked.')
+    # Revision 14/02/2026 >
+
     # < Revision 17/11/2025
     # add visibility method
     def visibility(self):
@@ -3665,7 +3712,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListMeshAttributesWidget
 
-    Last revision: 29/11/2025
+    Last revision: 14/02/2026
     """
 
     # Special method
@@ -3685,6 +3732,9 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._overlay = IconPushButton('overlay.png', size=ListAttributesWidget._VSIZE)
         self._export = IconPushButton('export.png', size=ListAttributesWidget._VSIZE)
         self._2roi = IconPushButton('mesh2roi.png', size=ListAttributesWidget._VSIZE)
+        # < Revision 14/02/2026
+        self._labeling = IconPushButton('labels.png', size=ListAttributesWidget._VSIZE)
+        # Revision 14/02/2026 >
 
         # < Revision 17/11/2025
         self._visibility = VisibilityLabel()
@@ -3704,6 +3754,9 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._overlay.clicked.connect(self._overlayMenu)
         # noinspection PyUnresolvedReferences
         self._2roi.clicked.connect(self.toRoi)
+        # < Revision 14/02/2026
+        self._labeling.clicked.connect(self.labeling)
+        # Revision 14/02/2026 >
         # < Revision 17/11/2025
         # noinspection PyUnresolvedReferences
         self._visibility.visibilityChanged.connect(self.visibility)
@@ -3719,6 +3772,9 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._overlay.setToolTip('Paint checked mesh(es) with overlay')
         self._export.setToolTip('Export checked mesh(es)')
         self._2roi.setToolTip('Conversion of checked mesh(es) to ROI(s)')
+        # < Revision 14/02/2026
+        self._labeling.setToolTip('Checked mesh(es) atlas labeling')
+        # Revision 14/02/2026 >
         # < Revision 17/11/2025
         self._visibility.setToolTip('Show/hide all mesh(es)')
         # Revision 17/11/2025 >
@@ -3729,6 +3785,9 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._btlayout1.insertWidget(2, self._cube)
         self._btlayout1.insertWidget(2, self._sphere)
         self._btlayout1.insertWidget(2, self._out)
+        # < Revision 14/02/2026
+        self._btlayout2.insertWidget(3, self._labeling)
+        # Revision 14/02/2026 >
         self._btlayout2.insertWidget(3, self._2roi)
         self._btlayout2.insertWidget(3, self._roi)
         self._btlayout2.insertWidget(3, self._iso)
@@ -3998,6 +4057,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._export.setFixedSize(size, size)
         self._2roi.setIconSize(QSize(size - 8, size - 8))
         self._2roi.setFixedSize(size, size)
+        # < Revision 14/02/2026
+        self._labeling.setIconSize(QSize(size - 8, size - 8))
+        self._labeling.setFixedSize(size, size)
+        # Revision 14/02/2026 >
         # < Revision 13/11/2025
         self._visibility.setFixedSize(size, size)
         # Revision 13/11/2025
@@ -4933,6 +4996,29 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                 if mainwindow is not None:
                     mainwindow.setStatusBarMessage('Mesh(es) converted to ROI(s).')
 
+    # < Revision 14/02/2026
+    def labeling(self):
+        if self.isEnabled():
+            if self.hasViewCollection():
+                meshes = self.getCheckedMesh()
+                if meshes is not None and len(meshes) > 0:
+                    dialog = DialogAtlasLabeling('Mesh')
+                    if platform == 'win32':
+                        import pywinstyles
+                        cl = self._list.palette().base().color()
+                        c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                        pywinstyles.change_header_color(dialog, c)
+                    ref = self._views.getVolume()
+                    dialog.setReference(ref.getFilename(), hide=True)
+                    for mesh in meshes:
+                        if not mesh.hasFilename():
+                            mesh.setFilename(join(ref.getDirname(), mesh.getName() + mesh.getFileExt()))
+                            mesh.save()
+                        dialog.addMesh(mesh.getFilename(), hide=True)
+                    dialog.exec()
+                else: messageBox(self, 'Mesh(es) atlas labeling', 'No mesh checked.')
+    # Revision 14/02/2026 >
+
     # < Revision 17/11/2025
     # add visibility method
     def visibility(self):
@@ -5009,7 +5095,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListToolAttributesWidget
 
-    Last revision: 27/01/2026
+    Last revision: 17/02/2026
     """
 
     # Special method
@@ -5036,6 +5122,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._lock = LockLabel()
         self._properties = IconPushButton('settings.png', size=ListAttributesWidget._VSIZE)
         # Revision 13/11/2025 >
+        # < Revision 14/02/2026
+        self._labeling = IconPushButton('labels.png', size=ListAttributesWidget._VSIZE)
+        # Revision 14/02/2026 >
 
         # noinspection PyUnresolvedReferences
         self._target.clicked.connect(self.newHandle)
@@ -5049,6 +5138,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._features.clicked.connect(self.features)
         # noinspection PyUnresolvedReferences
         self._features2.clicked.connect(self.features2)
+        # < Revision 14/02/2026
+        self._labeling.clicked.connect(self.labeling)
+        # Revision 14/02/2026 >
         # < Revision 13/11/2025
         # noinspection PyUnresolvedReferences
         self._visibility.visibilityChanged.connect(self.visibility)
@@ -5064,6 +5156,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._duplicate.setToolTip('Duplicate selected tool')
         self._features.setToolTip('Tool features')
         self._features2.setToolTip('Tool and mesh relationships')
+        # < Revision 14/02/2026
+        self._labeling.setToolTip('Checked tool(s) atlas labeling')
+        # Revision 14/02/2026 >
         # < Revision 13/11/2025
         self._visibility.setToolTip('Show/hide all tools')
         self._lock.setToolTip('Lock/unlock all tools')
@@ -5071,6 +5166,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
         # Revision 13/11/2025 >
 
         self._new.setVisible(False)
+        # < Revision 14/02/2026
+        self._btlayout1.insertWidget(6, self._labeling)
+        # Revision 14/02/2026 >
         self._btlayout1.insertWidget(5, self._remove)
         self._btlayout1.insertWidget(2, self._trajectory)
         self._btlayout1.insertWidget(2, self._target)
@@ -5172,6 +5270,10 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._features.setFixedSize(size, size)
         self._features2.setIconSize(QSize(size - 8, size - 8))
         self._features2.setFixedSize(size, size)
+        # < Revision 14/02/2026
+        self._labeling.setIconSize(QSize(size - 8, size - 8))
+        self._labeling.setFixedSize(size, size)
+        # Revision 14/02/2026 >
         # < Revision 13/11/2025
         self._visibility.setFixedSize(size, size)
         self._lock.setFixedSize(size, size)
@@ -5980,6 +6082,35 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     messageBox(self,
                                'Compute tool and mesh distances...',
                                'No target or trajectory.')
+
+    # < Revision 14/02/2026
+    def labeling(self):
+        if self.isEnabled():
+            if self.hasViewCollection():
+                tools = self.getCheckedTool()
+                if tools is not None and len(tools) > 0:
+                    dialog = DialogAtlasLabeling('Tools')
+                    if platform == 'win32':
+                        import pywinstyles
+                        cl = self._list.palette().base().color()
+                        c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                        pywinstyles.change_header_color(dialog, c)
+                    ref = self._views.getVolume()
+                    dialog.setReference(ref.getFilename(), hide=True)
+                    collection = ToolWidgetCollection()
+                    for tool in tools:
+                        collection.append(tool)
+                    collection.setFilenameFromVolume(ref)
+                    # < Revision 17/02/2026
+                    collection.setReferenceID(ref.getID())
+                    # Revision 17/02/2026 >
+                    collection.save()
+                    dialog.addTool(collection.getFilename(), hide=True)
+                    dialog.exec()
+                    remove(collection.getFilename())
+                else: messageBox(self, 'Tool(s) atlas labeling', 'No tool checked.')
+
+    # Revision 14/02/2026 >
 
     # < Revision 13/11/2025
     # add visibility method

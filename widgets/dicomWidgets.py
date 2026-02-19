@@ -11,6 +11,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from typing import Any
 
+import sys
+
 from os import getcwd
 from os import chdir
 
@@ -593,10 +595,8 @@ class DicomHeaderTreeViewWidget(QTreeView):
             self.expandAll()
 
     def _setSectionVisibility(self, section=0, v=True):
-        if v:
-            self.header().showSection(section)
-        else:
-            self.header().hideSection(section)
+        if v: self.header().showSection(section)
+        else: self.header().hideSection(section)
 
     # Public methods
 
@@ -1572,7 +1572,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
 
     QTreeView -> XmlDicomTreeViewWidget
 
-    Last revision: 20/10/2025
+    Last revision: 19/02/2026
     """
 
     # Special method
@@ -1741,7 +1741,26 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 QApplication.processEvents()
             if filename:
                 chdir(dirname(filename))
-                self._dcm.saveDataElementValuesToExcel(skeys, filename)
+                try: self._dcm.saveDataElementValuesToExcel(skeys, filename)
+                except:
+                    # < Revision 19/02/2026
+                    try:
+                        import openpyxl
+                        messageBox(self, title='Save Excel file', text='{} saving error.'.format(basename(filename)))
+                    except:
+                        if hasattr(sys, '_MEIPASS'):
+                            messageBox(self,
+                                       'XLSX IO',
+                                       'OpenPyXL module is not installed.\n'
+                                       'Please perform a complete reinstallation of the latest version '
+                                       'of PySisyphe, which can be downloaded from '
+                                       'https://github.com/PySisyphe/Sisyphe.')
+                        else:
+                            messageBox(self,
+                                       'XLSX IO',
+                                       'OpenPyXL module is not installed.\n'
+                                       'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                    # Revision 19/02/2026 >
 
     def saveCheckedDataElementsToLATEX(self, filename: str = '') -> None:
         n = self.topLevelItemCount()

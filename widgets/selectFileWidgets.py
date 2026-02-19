@@ -62,6 +62,9 @@ from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheROI import SisypheROI
 from Sisyphe.core.sisypheMesh import SisypheMesh
 from Sisyphe.core.sisypheTracts import SisypheStreamlines
+from Sisyphe.core.sisypheTools import HandleWidget
+from Sisyphe.core.sisypheTools import LineWidget
+from Sisyphe.core.sisypheTools import ToolWidgetCollection
 from Sisyphe.core.sisypheXml import XmlVolume
 from Sisyphe.core.sisypheDicom import XmlDicom
 from Sisyphe.gui.dialogWait import DialogWait
@@ -114,7 +117,7 @@ class SelectionFilter(object):
 
     object -> SelectionFilter
 
-    Last Revision: 04/01/2026
+    Last Revision: 13/02/2026
     """
 
     # Class methods
@@ -178,6 +181,9 @@ class SelectionFilter(object):
         self._refxroi = False
         self._refxmesh = False
         self._refxtracts = False
+        # < Revision 13/02/2026
+        self._refxtools = False
+        # Revision 13/02/2026 >
         self._refID = None
         self._refSpaceID = None
         self._refRange = None
@@ -219,6 +225,7 @@ class SelectionFilter(object):
     _refxroi        bool, reference xroi file extension
     _refxmesh       bool, reference xmesh file extension
     _refxtracts     bool, reference xtracts file extension
+    _refxtools      bool, reference xtools file extension
     _refidentity    SisypheIdentity, reference identity
     _refFOV         tuple[float, float, float], reference FOV
     _refSize        tuple[int, int, int], reference matrix size
@@ -364,6 +371,9 @@ class SelectionFilter(object):
         self._refxroi = False
         self._refxmesh = False
         self._refxtracts = False
+        # < Revision 13/02/2026
+        self._refxtools = False
+        # Revision 13/02/2026 >
         self._refidentity = None
         self._refRange = None
         self._refFOV = None
@@ -434,6 +444,11 @@ class SelectionFilter(object):
             elif ext == SisypheROI.getFileExt(): self._refxroi = True
             elif ext == SisypheMesh.getFileExt(): self._refxmesh = True
             elif ext == SisypheStreamlines.getFileExt(): self._refxtracts = True
+            # < Revision 13/02/2026
+            elif ext in (HandleWidget.getFileExt(),
+                         LineWidget.getFileExt(),
+                         ToolWidgetCollection.getFileExt()): self._refxtools = True
+            # Revision 13/02/2026 >
             # self.setFiltersToDefault(False)
             # < Revision 06/02/2025
             # self._refExt.append(ext)
@@ -494,6 +509,11 @@ class SelectionFilter(object):
         # self.setFiltersToDefault(True)
         self.filterExtension(SisypheStreamlines.getFileExt())
         # self._refxtracts = True
+
+    # < Revision 13/02/2026
+    def filterSisypheTools(self) -> None:
+        self.filterExtension(ToolWidgetCollection.getFileExt())
+    # Revision 13/02/2026 >
 
     def filterNifti(self) -> None:
         """
@@ -994,6 +1014,11 @@ class SelectionFilter(object):
         self._refdicom = False
         self._refxvol = False
         self._refxroi = False
+        # < Revision 13/02/2026
+        self._refxmesh = False
+        self._refxtracts = False
+        self._refxtools = False
+        # Revision 13/02/2026 >
         self._refID = None
         self._refSpaceID = None
         self._refRange = None
@@ -1023,7 +1048,7 @@ class SelectionFilter(object):
 
 class FileSelectionWidget(QWidget, SelectionFilter):
     """
-    FileSelectionWidget class
+    FileSelectionWid/get class
 
     Description
     ~~~~~~~~~~~
@@ -1043,7 +1068,7 @@ class FileSelectionWidget(QWidget, SelectionFilter):
 
     QWidget, SelectionFilter -> FileSelectionWidget
 
-    Last revision: 30/11/2025
+    Last revision: 13/02/2026
     """
 
     # Custom Qt Signal
@@ -2027,9 +2052,90 @@ class FileSelectionWidget(QWidget, SelectionFilter):
                     if signal:
                         # noinspection PyUnresolvedReferences
                         self.FieldChanged.emit(self, filename)
+            # Tools, HandleWidget, LineWidget, ToolCollectionWidget
+            # < Revision 13/02/2026
+            elif self._refxtools:
+                if not param or paramext not in (HandleWidget.getFileExt(),
+                                                 LineWidget.getFileExt(),
+                                                 ToolWidgetCollection.getFileExt()):
+                    filt = ';;'.join([HandleWidget.getFilterExt(),
+                                      LineWidget.getFilterExt(),
+                                      ToolWidgetCollection.getFilterExt()])
+                    filename = QFileDialog.getOpenFileName(self, 'Select PySisyphe tools', folder, filt)
+                    QApplication.processEvents()
+                    self.activateWindow()
+                    filename = filename[0]
+                if filename:
+                    filename = abspath(filename)
+                    chdir(dirname(filename))
+                    ext = splitext(filename)[1]
+                    try:
+                        if ext == HandleWidget.getFileExt():
+                            tool = HandleWidget('')
+                            tool.load(filename)
+                        elif ext == LineWidget.getFileExt():
+                            tool = LineWidget('')
+                            tool.load(filename)
+                        elif ext == ToolWidgetCollection.getFileExt():
+                            tool = ToolWidgetCollection()
+                            tool.load(filename)
+                        else: return None
+                    except:
+                        messageBox(self,
+                                   'PySisyphe tools file selector',
+                                   text='{} is not a valid Sisyphe tools file.'.format(basename(filename)))
+                        return None
+                    # ID verification
+                    if self._refSpaceID:
+                        if isinstance(tool, ToolWidgetCollection):
+                            if tool.getReferenceID() != self._refSpaceID:
+                                messageBox(self,
+                                           'PySisyphe tools file selector',
+                                           text='{} tools ID is not allowed.'.format(basename(filename)))
+                                return None
+                    # Prefix verification
+                    if self._refprefix:
+                        bname = splitext(basename(filename))[0]
+                        bname = bname.lower()
+                        if not bname[:len(self._refprefix)] == self._refprefix:
+                            messageBox(self,
+                                       'PySisyphe tools file selector',
+                                       text='{} does not have {} prefix.'.format(basename(filename),
+                                                                                 self._refprefix))
+                            return None
+                    # Suffix verification
+                    if self._refsuffix:
+                        bname = splitext(basename(filename))[0]
+                        bname = bname.lower()
+                        if not bname[-len(self._refsuffix):] == self._refsuffix:
+                            messageBox(self,
+                                       'PySisyphe tools file selector',
+                                       text='{} does not have {} suffix.'.format(basename(filename),
+                                                                                 self._refsuffix))
+                            return None
+                    # Filename contains verification
+                    if self._refcontains:
+                        bname = splitext(basename(filename))[0]
+                        bname = bname.lower()
+                        if bname.find(self._refcontains) > -1:
+                            messageBox(self,
+                                       'PySisyphe tools file selector',
+                                       text='{} does not contains {} string.'.format(basename(filename),
+                                                                                     self._refcontains))
+                            return None
+                    self._path, self._name = split(filename)
+                    self._field.setText(self._name)
+                    self._field.setToolTip(str(tool))
+                    if signal:
+                        # noinspection PyUnresolvedReferences
+                        self.FieldChanged.emit(self, filename)
+            # Revision 13/02/2026 >
             # DICOM
             elif self._refdicom:
-                if not param or paramext not in getDicomExt().append(''):
+                # < Revision 13/02/2026
+                # if not param or paramext not in getDicomExt().append(''):
+                if not param or paramext not in getDicomExt():
+                # Revision 13/02/2026 >
                     filt = 'DICOM (*.dcm *.dicom *.ima *.nema *)'
                     # < Revision 30/11/2025
                     # filename = QFileDialog.getOpenFileName(self, 'Select DICOM file', getcwd(), filt)
@@ -2263,7 +2369,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
 
     QWidget, SelectionFilter -> FilesSelectionWidget
 
-    Last revision: 04/01/2026
+    Last revision: 13//02/2026
     """
 
     # Custom Qt Signals
@@ -3041,7 +3147,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             filenames: str | list[str] = '',
             label: str = '',
             signal: bool = True,
-            wait: DialogWait | None = None):
+            wait: DialogWait | None = None) -> None:
         """
         Open a file dialog to select one or more files/directories and adds them to the list. Applies all configured
         filters and performs checks (component, identity, FOV, size, modality, etc.) before adding each file. Displays
@@ -3684,7 +3790,11 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             elif self._refxmesh:
                 if not param or paramext != SisypheMesh.getFileExt():
                     filt = SisypheMesh.getFilterExt()
-                    filenames = QFileDialog.getOpenFileName(self, 'Select PySisyphe mesh', getcwd(), filt)
+                    # < Revision 17/02/2026
+                    # filenames = QFileDialog.getOpenFileName(self, 'Select PySisyphe mesh', getcwd(), filt)
+                    filenames = QFileDialog.getOpenFileNames(self, 'Select {}PySisyphe mesh'.format(label),
+                                                             getcwd(), filt)
+                    # Revision 17/02/2026 >
                     QApplication.processEvents()
                     self.activateWindow()
                     filenames = filenames[0]
@@ -3803,7 +3913,11 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             elif self._refxtracts:
                 if not param or paramext != SisypheStreamlines.getFileExt():
                     filt = SisypheStreamlines.getFilterExt()
-                    filenames = QFileDialog.getOpenFileName(self, 'Select PySisyphe streamlines', getcwd(), filt)
+                    # < Revision 17/02/2026
+                    # filenames = QFileDialog.getOpenFileName(self, 'Select PySisyphe streamlines', getcwd(), filt)
+                    filenames = QFileDialog.getOpenFileNames(self, 'Select {}PySisyphe streamlines'.format(label),
+                                                             getcwd(), filt)
+                    # Revision 17/02/2026 >
                     QApplication.processEvents()
                     self.activateWindow()
                     filenames = filenames[0]
@@ -3992,9 +4106,154 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                             self._add.setEnabled(False)
                             break
                     if dtag: wait.close()
+            # Tools, HandleWidget, LineWidget, ToolCollectionWidget
+            # < Revision 13/02/2026
+            elif self._refxtools:
+                if not param or paramext not in (HandleWidget.getFileExt(),
+                                                 LineWidget.getFileExt(),
+                                                 ToolWidgetCollection.getFileExt()):
+                    filt = ';;'.join([HandleWidget.getFilterExt(),
+                                      LineWidget.getFilterExt(),
+                                      ToolWidgetCollection.getFilterExt()])
+                    # < Revision 17/02/2026
+                    # filenames = QFileDialog.getOpenFileName(self, 'Select PySisyphe tools', getcwd(), filt)
+                    filenames = QFileDialog.getOpenFileNames(self, 'Select {}PySisyphe tools'.format(label),
+                                                             getcwd(), filt)
+                    # Revision 17/02/2026 >
+                    QApplication.processEvents()
+                    self.activateWindow()
+                    filenames = filenames[0]
+                if len(filenames) > 0 and self._list.count() < self._refCount:
+                    chdir(dirname(filenames[0]))
+                    if wait is None:
+                        wait = DialogWait(progress=True,
+                                          progressmin=0,
+                                          progressmax=len(filenames),
+                                          cancel=True)
+                    if len(filenames) > 1:
+                        wait.setInformationText('Add PySisyphe tools...')
+                        wait.open()
+                    for filename in filenames:
+                        filename = abspath(filename)
+                        wait.incCurrentProgressValue()
+                        wait.setInformationText('Add {}...'.format(basename(filename)))
+                        ext = splitext(filename)[1]
+                        try:
+                            if ext == HandleWidget.getFileExt():
+                                tool = HandleWidget('')
+                                tool.load(filename)
+                            elif ext == LineWidget.getFileExt():
+                                tool = LineWidget('')
+                                tool.load(filename)
+                            elif ext == ToolWidgetCollection.getFileExt():
+                                tool = ToolWidgetCollection()
+                                tool.load(filename)
+                            else:
+                                if self._stop: break
+                                else: continue
+                        except:
+                            wait.hide()
+                            messageBox(self,
+                                       'PySisyphe tools file selector',
+                                       text='{} is not a valid Sisyphe tools file.'.format(basename(filename)))
+                            if self._stop: break
+                            else:
+                                wait.show()
+                                continue
+                        # ID verification
+                        if self._refSpaceID:
+                            if isinstance(tool, ToolWidgetCollection):
+                                if tool.getReferenceID() != self._refSpaceID:
+                                    wait.hide()
+                                    messageBox(self,
+                                               'PySisyphe tools file selector',
+                                               text='{} tools ID is not allowed.'.format(basename(filename)))
+                                    if self._stop: break
+                                    else:
+                                        wait.show()
+                                        continue
+                        # Prefix verification
+                        if self._refprefix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[:len(self._refprefix)] == self._refprefix:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe tools file selector',
+                                           text='{} does not have {} prefix.'.format(basename(filename),
+                                                                                     self._refprefix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Suffix verification
+                        if self._refsuffix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[-len(self._refsuffix):] == self._refsuffix:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe tools file selector',
+                                           text='{} does not have {} suffix.'.format(basename(filename),
+                                                                                     self._refsuffix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Filename contains verification
+                        if self._refcontains:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if bname.find(self._refcontains) > -1:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe tools file selector',
+                                           text='{} does not contains {} string.'.format(basename(filename),
+                                                                                         self._refcontains))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Item already in list ?
+                        path, name = split(filename)
+                        item = QListWidgetItem(name)
+                        item.setData(256, filename)
+                        if self._checkbox:
+                            # noinspection PyUnresolvedReferences
+                            item.setCheckState(Qt.Checked)
+                        if self.containsItem(item):
+                            wait.hide()
+                            messageBox(self,
+                                       'PySisyphe tools file selector',
+                                       text='{} is already in the list.'.format(item.text()))
+                            wait.show()
+                        # Add item
+                        else:
+                            self._list.addItem(item)
+                            idx = self._list.row(item)
+                            item.setToolTip('PySisyphe tools index {}\n{}'.format(idx, str(tool)))
+                            if signal:
+                                # noinspection PyUnresolvedReferences
+                                self.FieldChanged.emit(self, filename)
+                                # noinspection PyUnresolvedReferences
+                                self.FilesSelectionChanged.emit(self)
+                        if self._list.count() == self._refCount:
+                            wait.hide()
+                            messageBox(self,
+                                       'PySisyphe tools file selector',
+                                       text='Maximum number of files is reached ({}).\n'
+                                            'Remove file from the list if you want to\n'
+                                            'add a new one.'.format(self._refCount))
+                            self._add.setEnabled(False)
+                            break
+                    if dtag: wait.close()
+            # Revision 13/02/2026 >
             # DICOM
             elif self._refdicom:
-                if not param or paramext not in getDicomExt().append(''):
+                # < Revision 13/02/2026
+                #if not param or paramext not in getDicomExt().append(''):
+                if not param or paramext not in getDicomExt():
+                # Revision 13/02/2026 >
                     filt = 'DICOM (*.dcm *.dicom *.ima *.nema *)'
                     filenames = QFileDialog.getOpenFileNames(self, 'Select DICOM file(s)', getcwd(), filt)
                     QApplication.processEvents()

@@ -1162,13 +1162,9 @@ class LabeledSlider(QWidget):
         self._slider.setStyleSheet('background-color: transparent;')
         # Revision 28/03/2025 >
         self._slider.setMinimumWidth(50)
-        # noinspection PyUnresolvedReferences
         self._slider.valueChanged.connect(self._valueChanged)
-        # noinspection PyUnresolvedReferences
         self._slider.sliderMoved.connect(self._sliderMoved)
-        # noinspection PyUnresolvedReferences
         self._slider.sliderReleased.connect(self._sliderReleased)
-        # noinspection PyUnresolvedReferences
         self._slider.sliderPressed.connect(self._sliderPressed)
         self._slider.setMinimum(0)
         self._slider.setMaximum(100)
@@ -1188,6 +1184,9 @@ class LabeledSlider(QWidget):
         lyout.addWidget(self._slider)
 
         self.setLayout(lyout)
+
+    def __call__(self, *args, **kwargs) -> QSlider:
+        return self._slider
 
     # Private methods
 
@@ -1272,6 +1271,11 @@ class LabeledSlider(QWidget):
 
     def value(self) -> int:
         return self._slider.value()
+
+    # Qt event
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        self._slider.triggerAction(QSlider.SliderAction.SliderSingleStepAdd)
 
 
 class LabeledComboBox(QWidget):

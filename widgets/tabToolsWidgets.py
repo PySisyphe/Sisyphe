@@ -26,6 +26,7 @@ from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QMenu
+from PyQt5.QtWidgets import QSlider
 from PyQt5.QtWidgets import QGroupBox
 from PyQt5.QtWidgets import QButtonGroup
 from PyQt5.QtWidgets import QHBoxLayout
@@ -440,7 +441,7 @@ class TabROIToolsWidget(TabWidget):
 
     QWidget -> TabROIToolsWidget
 
-    Last revision: 28/01/2026
+    Last revision: 15/02/2026
     """
 
     # Special method
@@ -532,11 +533,16 @@ class TabROIToolsWidget(TabWidget):
         self._brushsize = LabeledSlider(Qt.Horizontal, title='Radius', fontsize=12)
         self._brushsize.setRange(1, 20)
         self._brushsize.setValue(10)
-        # noinspection PyUnresolvedReferences
+        # < Revision 15/02/2026
+        self._brushsize().setSingleStep(1)
+        self._brushsize().setPageStep(1)
+        self._brushsize().setTracking(True)
+        # Revision 15/02/2026 >
         self._brushsize.valueChanged.connect(self._brushSizeChanged)
-        # noinspection PyUnresolvedReferences
         self._brushsize.sliderMoved.connect(self._brushSizeMoved)
-        # noinspection PyUnresolvedReferences
+        # < Revision  15/02/2026
+        self._brushsize.sliderPressed.connect(self._brushSizePressed)
+        # Revision  15/02/2026 >
         self._brushsize.sliderReleased.connect(self._brushSizeReleased)
         self._brushsize.setToolTip('Brush radius (voxel unit)')
 
@@ -1353,6 +1359,11 @@ class TabROIToolsWidget(TabWidget):
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.setBrushVisibilityOn()
+
+    # < Revision 15/02/2026
+    def _brushSizePressed(self):
+        self._brushsize().triggerAction(QSlider.SliderAction.SliderSingleStepAdd)
+    # Revision 15/02/2026 >
 
     def _brushSizeReleased(self):
         if self._draw is not None and self.hasViewCollection():

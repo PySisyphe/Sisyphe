@@ -75,7 +75,7 @@ class DatabaseWidget(QWidget):
 
     QWidget -> DatabaseWidget
 
-    Last revision: 28/05/2025
+    Last revision: 18/02/2026
     """
 
     # Class methods
@@ -218,6 +218,7 @@ class DatabaseWidget(QWidget):
         self._patients.setSelectionMode(QAbstractItemView.SingleSelection)
         # noinspection PyUnresolvedReferences
         self._patients.itemSelectionChanged.connect(self._updateFileWidget)
+        # noinspection PyUnresolvedReferences
         self._patients.setContextMenuPolicy(Qt.CustomContextMenu)
         # noinspection PyUnresolvedReferences
         self._patients.customContextMenuRequested.connect(self._popupItemPatient)
@@ -233,6 +234,7 @@ class DatabaseWidget(QWidget):
         self._files.setAlternatingRowColors(True)
         self._files.invisibleRootItem()
         self._files.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        # noinspection PyUnresolvedReferences
         self._files.setContextMenuPolicy(Qt.CustomContextMenu)
         # noinspection PyUnresolvedReferences
         self._files.customContextMenuRequested.connect(self._popupItemFile)
@@ -240,6 +242,7 @@ class DatabaseWidget(QWidget):
         self._files.itemDoubleClicked.connect(self._doubleClicked)
 
         splitter = QSplitter()
+        # noinspection PyUnresolvedReferences
         splitter.setOrientation(Qt.Horizontal)
         splitter.addWidget(self._patients)
         splitter.addWidget(self._files)
@@ -297,10 +300,11 @@ class DatabaseWidget(QWidget):
         # Popup menu
 
         self._popuppatients = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popuppatients.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popuppatients.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popuppatients.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action = dict()
         self._action['newpat'] = QAction('New patient...', self)
@@ -313,23 +317,44 @@ class DatabaseWidget(QWidget):
         self._action['delpat'].triggered.connect(self._removePatient)
 
         self._popupfiles = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupfiles.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popupfiles.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popupfiles.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['open'] = QAction('Open volume', self)
         self._action['edit'] = QAction('Edit volume attributes...', self)
         self._action['delvol'] = QAction('Remove volume(s)', self)
+        # < Revision 13/02/2026
+        self._action['console'] = QAction('Copy to console', self)
+        self._action['acpc'] = QAction('AC-PC selection...', self)
+        self._action['frame'] = QAction('Frame detection...', self)
+        self._action['reorient'] = QAction('Reorient...', self)
+        # Revision 13/02/2026 >
         self._popupfiles.addAction(self._action['open'])
-        self._popupfiles.addAction(self._action['edit'])
         self._popupfiles.addAction(self._action['delvol'])
+        # < Revision 13/02/2026
+        self._popupfiles.addSeparator()
+        self._popupfiles.addAction(self._action['edit'])
+        self._popupfiles.addAction(self._action['console'])
+        self._popupfiles.addSeparator()
+        self._popupfiles.addAction(self._action['acpc'])
+        self._popupfiles.addAction(self._action['frame'])
+        self._popupfiles.addAction(self._action['reorient'])
+        # Revision 13/02/2026 >
         # noinspection PyUnresolvedReferences
         self._action['open'].triggered.connect(self._open)
         # noinspection PyUnresolvedReferences
         self._action['edit'].triggered.connect(lambda dummy: self._edit())
         # noinspection PyUnresolvedReferences
         self._action['delvol'].triggered.connect(self._removeFiles)
+        # < Revision 13/02/2026
+        self._action['console'].triggered.connect(self._console)
+        self._action['acpc'].triggered.connect(self._acpc)
+        self._action['frame'].triggered.connect(self._frame)
+        self._action['reorient'].triggered.connect(self._reorient)
+        # Revision 13/02/2026 >
 
         self._action['addvol'] = QAction('Add volume...', self)
         self._action['backup'] = QAction('Backup...', self)
@@ -339,10 +364,11 @@ class DatabaseWidget(QWidget):
         self._action['backup'].triggered.connect(self._backup)
 
         self._popup = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._popup.addAction(self._action['newpat'])
         self._popup.addAction(self._action['delpat'])
@@ -423,7 +449,7 @@ class DatabaseWidget(QWidget):
         else: first = self._fltfirstname.text()
         if not self._checkdate.isChecked(): dob = ''
         else:
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             dob = self._fltdob.date().toString(Qt.ISODate)
         patients = self._db.searchPatients(last, first, dob)
         self._patients.clear()
@@ -478,14 +504,17 @@ class DatabaseWidget(QWidget):
                         elif v < mb: v = '{:.2f} KB'.format(v / 1024)
                         else: v = '{:.2f} MB'.format(v / mb)
                         item.setText(2, v)
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(2, Qt.AlignCenter)
                         # last modified
                         v = strftime('%Y-%m-%d %H:%M:%S', strptime(ctime(getmtime(filename))))
                         item.setText(3, v)
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(3, Qt.AlignCenter)
                         # creation
                         v = strftime('%Y-%m-%d %H:%M:%S', strptime(ctime(getctime(filename))))
                         item.setText(4, v)
+                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(4, Qt.AlignCenter)
                         self._files.addTopLevelItem(item)
                         ID[volID] = self._files.indexFromItem(item)
@@ -559,6 +588,71 @@ class DatabaseWidget(QWidget):
                         pywinstyles.change_header_color(dialog, c)
                     dialog.exec()
         else: raise TypeError('parameter type {} is not QTreeWidgetItem.'.format(type(item)))
+
+    def _console(self) -> None:
+        if self.hasMainWindow():
+            item = self._files.selectedItems()
+            if len(item) > 0: item = item[0]
+            else:
+                messageBox(self, 'Database', 'No volume selected.')
+                return
+            filename = self._getFilenameFromItem(item)
+            if exists(filename):
+                ext = splitext(filename)[1]
+                if ext == '.xvol':
+                    v = SisypheVolume()
+                    v.load(filename)
+                    console = self._mainwindow.getConsole()
+                    console.pushVariables({'v': v})
+                    console.update()
+                    messageBox(self, 'Copy volume to console',
+                               text='Copy {} to console as "v".'.format(basename(filename)),
+                               icon=QMessageBox.Information)
+
+    def _acpc(self) -> None:
+        if self.hasMainWindow():
+            item = self._files.selectedItems()
+            if len(item) > 0: item = item[0]
+            else:
+                messageBox(self, 'Database', 'No volume selected.')
+                return
+            filename = self._getFilenameFromItem(item)
+            if exists(filename):
+                ext = splitext(filename)[1]
+                if ext == '.xvol':
+                    v = SisypheVolume()
+                    v.load(filename)
+                    self._mainwindow.acpcSelection(v)
+
+    def _frame(self) -> None:
+        if self.hasMainWindow():
+            item = self._files.selectedItems()
+            if len(item) > 0: item = item[0]
+            else:
+                messageBox(self, 'Database', 'No volume selected.')
+                return
+            filename = self._getFilenameFromItem(item)
+            if exists(filename):
+                ext = splitext(filename)[1]
+                if ext == '.xvol':
+                    v = SisypheVolume()
+                    v.load(filename)
+                    self._mainwindow.frameDetection(v)
+
+    def _reorient(self) -> None:
+        if self.hasMainWindow():
+            item = self._files.selectedItems()
+            if len(item) > 0: item = item[0]
+            else:
+                messageBox(self, 'Database', 'No volume selected.')
+                return
+            filename = self._getFilenameFromItem(item)
+            if exists(filename):
+                ext = splitext(filename)[1]
+                if ext == '.xvol':
+                    v = SisypheVolume()
+                    v.load(filename)
+                    self._mainwindow.reorient(v)
 
     def _removeFiles(self):
         items = self._files.selectedItems()
@@ -675,6 +769,18 @@ class DatabaseWidget(QWidget):
             finally: progress.close()
 
     # Public
+
+    # < Revision 18/02/2026
+    # add isEmpty method
+    def isEmpty(self):
+        return self._patients.topLevelItemCount() == 0
+    # Revision 18/02/2026 >
+
+    # < Revision 18/02/2026
+    # add getPatientCount method
+    def getPatientCount(self):
+        return self._patients.topLevelItemCount()
+    # Revision 18/02/2026 >
 
     def getPopup(self):
         return self._popup

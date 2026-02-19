@@ -11,12 +11,16 @@ External packages/modules
     - vtk, visualization engine/3D rendering, https://vtk.org/
 """
 
+import sys
 from sys import platform
 
 from os.path import join
 from os.path import exists
 from os.path import abspath
 from os.path import dirname
+from os.path import splitext
+# noinspection PyUnusedImports
+from os.path import basename
 
 from pathlib import Path
 
@@ -32,12 +36,6 @@ import json
 from ants.core.ants_image import ANTsImage
 # from Sisyphe.lib.ants.ants_image import ANTsImage
 # Revision 19/02/2025 >
-
-# < Revision 14/12/2025
-# from google import genai
-try: from google import genai
-except: pass
-# Revision 14/12/2025 >
 
 from numpy import array
 from numpy import ndarray
@@ -70,9 +68,12 @@ import darkdetect
 from qtconsole.inprocess import QtInProcessKernelManager
 from qtconsole.rich_jupyter_widget import RichJupyterWidget
 
+from Sisyphe.core.sisypheROI import SisypheROI
 from Sisyphe.core.sisypheSettings import SisypheSettings
 from Sisyphe.core.sisypheLUT import SisypheLut
 from Sisyphe.core.sisypheVolume import SisypheVolume
+from Sisyphe.core.sisypheDownload import getPackageMetadata
+from Sisyphe.core.sisypheImageIO import isDicom
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.gui.dialogFromXml import DialogFromXml
 from Sisyphe.gui.dialogWait import DialogWait
@@ -101,7 +102,7 @@ class RichJupyterWidget2(RichJupyterWidget):
         self._aimodel = settings.getFieldValue('Gemini', 'Model')
         if self._aimodel is None or self._aimodel == '':
             self._aimodel = 'gemini-2.5-flash'
-        self._client: genai.Client | None = None
+        self._client = None
         self._update = None
     # Revision 09/12/2025 >
 
@@ -135,201 +136,593 @@ class RichJupyterWidget2(RichJupyterWidget):
             r = True
         return r
 
+    # < Revision 08/02/2026
+    def _gemini(self):
+        # history
+        history = self.input_buffer
+        history = history.rstrip()
+        if history and (not self._history or self._history[-1] != history):
+            self._history.append(history)
+        # noinspection PyAttributeOutsideInit
+        self._history_index = len(self._history)
+        # parse args
+        nb = self._previous_prompt_obj.number + 1
+        buff = self.input_buffer.split(' \'')
+        buff2 = list()
+        for i in range(len(buff)):
+            sbuff = buff[i].split('\'')
+            if len(sbuff) == 1:
+                sbuff2 = sbuff[0].split(' ')
+                for j in range(len(sbuff2)):
+                    buff2.append(sbuff2[j])
+            else:
+                buff2.append(sbuff[0])
+                sbuff2 = sbuff[1].split(' ')
+                for j in range(len(sbuff2)):
+                    buff2.append(sbuff2[j])
+        buff = array(buff2[1:])
+        buff = buff[buff != '']
+        if self._aikey is not None and self._aikey != '':
+            # < Revision 08/02/2026
+            try: from google import genai
+            except:
+                if hasattr(sys, '_MEIPASS'):
+                    self._append_plain_text('\ngoogle-genai module is not installed.\n'
+                                            'Please perform a complete reinstallation of the latest version '
+                                            'of PySisyphe, which can be downloaded from '
+                                            'https://github.com/PySisyphe/Sisyphe.')
+                else:
+                    self._append_plain_text('\ngoogle-genai module is not installed.\n'
+                                            'Please install it using "pip install google-genai==1.55.0" from your venv console.')
+                self._show_interpreter_prompt(nb)
+                return
+            # Revision 08/02/2026 >
+            tag = True
+            jsontag = False
+            content = list()
+            config = None
+            if self._client is None:
+                # < Revision 14/12/2025
+                try:
+                    self._client = genai.Client(api_key=self._aikey)
+                except:
+                    self._append_plain_text('\ngoogle module error.')
+                    self._show_interpreter_prompt(nb)
+                    return
+                # Revision 14/12/2025 >
+            g = self.kernel_manager.kernel.shell.user_ns
+            # help arg
+            if '?' in buff or '-help' in buff:
+                self._append_plain_text('\n%gemini args:\n'
+                                        '  -p prompt, str\n'
+                                        '  -i image input, PIL.Image\n'
+                                        '  -pdf input, str or pathlib.Path\n'
+                                        '  -json, reply format json\n'
+                                        '  -model, print ai model\n'
+                                        '  -key, print api key\n',
+                                        before_prompt=False)
+                self._show_interpreter_prompt(nb)
+                return
+            # model arg
+            if '-model' in buff:
+                tag = False
+                self._append_plain_text('\n%gemini model: {}'.format(self._aimodel))
+            # key arg
+            if '-key' in buff:
+                tag = False
+                if self._aikey in (None, ''):
+                    self._append_plain_text('\n%gemini api key: no api key')
+                else:
+                    self._append_plain_text('\n%gemini api key: {}'.format(self._aikey))
+            # json flag arg
+            if '-json' in buff:
+                jsontag = True
+                config = genai.types.GenerateContentConfig(response_mime_type='application/json')
+            # segmentation flag arg
+            # if '-seg' in buff:
+            #     config = genai.types.GenerateContentConfig(response_mime_type='application/json',
+            #                                                thinking_config=genai.types.ThinkingConfig(thinking_budget=0))
+            # prompt arg
+            if '-p' in buff:
+                i = argwhere(buff == '-p')[0][0]
+                if i < len(buff) - 1 and buff[i + 1] != '-':
+                    buffp = buff[i + 1]
+                    # noinspection PyUnresolvedReferences
+                    if len(buffp.split(' ')) > 1:
+                        content.append(buffp[1:-1])
+                    else:
+                        if buffp in g.keys():
+                            v = g[buffp]
+                            if isinstance(v, str):
+                                content.append(v)
+                            else:
+                                self._append_plain_text('\n%gemini prompt error:\n'
+                                                        '{} type is not str.'.format(buffp),
+                                                        before_prompt=False)
+                                self._show_interpreter_prompt(nb)
+                                return
+                        else:
+                            self._append_plain_text('\n%gemini prompt error:\n'
+                                                    '{} not exists.'.format(buffp),
+                                                    before_prompt=False)
+                            self._show_interpreter_prompt(nb)
+                            return
+                else:
+                    self._append_plain_text('\n%gemini prompt error:\n'
+                                            'no prompt specified.',
+                                            before_prompt=False)
+                    self._show_interpreter_prompt(nb)
+                    return
+            else:
+                if tag:
+                    self._append_plain_text('\n%gemini prompt error:\n'
+                                            'no prompt specified.',
+                                            before_prompt=False)
+                self._show_interpreter_prompt(nb)
+                return
+            # image arg
+            if '-i' in buff:
+                i = argwhere(buff == '-i')[0][0]
+                if i < len(buff) - 1 and buff[i + 1] != '-':
+                    buffp = buff[i + 1]
+                    if buffp in g.keys():
+                        v = g[buffp]
+                        if isinstance(v, pilImage):
+                            content.append(v)
+                        else:
+                            self._append_plain_text('\n%gemini image error:\n'
+                                                    '{} is not a Pillow image.'.format(buffp),
+                                                    before_prompt=False)
+                            self._show_interpreter_prompt(nb)
+                            return
+                    else:
+                        self._append_plain_text('\n%gemini error:\n'
+                                                '{} not exists.'.format(buffp),
+                                                before_prompt=False)
+                        self._show_interpreter_prompt(nb)
+                        return
+                else:
+                    self._append_plain_text('\n%gemini error:\n'
+                                            'no image specified.',
+                                            before_prompt=False)
+                    self._show_interpreter_prompt(nb)
+                    return
+            # pdf arg
+            if '-pdf' in buff:
+                i = argwhere(buff == '-i')[0][0]
+                if i < len(buff) - 1 and buff[i + 1] != '-':
+                    v = None
+                    buffp = buff[i + 1]
+                    # noinspection PyTypeChecker
+                    if exists(buffp):
+                        # noinspection PyTypeChecker
+                        v = Path(buffp)
+                    if buffp in g.keys():
+                        v = g[buffp]
+                        if isinstance(v, str):
+                            if exists(v): v = Path(v)
+                    if isinstance(v, Path):
+                        if v.exists():
+                            content.append(genai.types.Part.from_bytes(data=v.read_bytes(),
+                                                                       mime_type='application/pdf'))
+                        else:
+                            self._append_plain_text('\n%gemini error:\n'
+                                                    'no such file {}.'.format(v),
+                                                    before_prompt=False)
+                            self._show_interpreter_prompt(nb)
+                            return
+                    else:
+                        self._append_plain_text('\n%gemini error:\n'
+                                                'invalid pdf {}.'.format(v),
+                                                before_prompt=False)
+                        self._show_interpreter_prompt(nb)
+                        return
+            # execute request
+            wait = DialogWait()
+            wait.open()
+            wait.setInformationText('Waiting for gemini reponse...')
+            try:
+                r = self._client.models.generate_content(model=self._aimodel,
+                                                         contents=content,
+                                                         config=config)
+                r = r.text
+                if isinstance(r, str):
+                    self.kernel_manager.kernel.shell.push({'r': r})
+                    if jsontag:
+                        self.execute('import json', hidden=True)
+                        self.execute('r = json.loads(r)', hidden=True)
+                        r = json.loads(r)
+                    self._append_plain_text('\n{}'.format(r))
+                    if self._update is not None: self._update()
+            except:
+                self._append_plain_text('\n%gemini client error:\n{}'.format(traceback.format_exc()),
+                                        before_prompt=False)
+            finally:
+                wait.close()
+        else:
+            self._append_plain_text('\n%gemini API key error:\n'
+                                    'No API key.\nGo to PySisyphe settings (General/Gemini) to edit your API Key.\n'
+                                    'Get your API key from Google AI Studio https://aistudio.google.com/api-keys',
+                                    before_prompt=False)
+        self._show_interpreter_prompt(nb)
+    # Revision 08/02/2026 >
+
+    # < Revision 08/02/2026
+    def _packages(self):
+        # history
+        history = self.input_buffer
+        history = history.rstrip()
+        if history and (not self._history or self._history[-1] != history):
+            self._history.append(history)
+        # noinspection PyAttributeOutsideInit
+        self._history_index = len(self._history)
+        # parse args
+        nb = self._previous_prompt_obj.number + 1
+        buff = self.input_buffer.split(' ')
+        if len(buff) > 1: buff = buff[1:]
+        else: buff = None
+        # help arg
+        if '?' in buff or '-help' in buff:
+            self._append_plain_text('\n%packages args:\n'
+                                    '  no arg or package names separated by spaces',
+                                    before_prompt=False)
+            self._show_interpreter_prompt(nb)
+            return
+        # execute command
+        wait = DialogWait()
+        wait.open()
+        try: r = getPackageMetadata(packages=buff, wait=wait)
+        except:
+            self._show_interpreter_prompt(nb)
+            return
+        wait.close()
+        self.kernel_manager.kernel.shell.push({'r': r})
+        self._append_plain_text('\n{}'.format(r))
+        if self._update is not None: self._update()
+        self._show_interpreter_prompt(nb)
+    # Revision 08/02/2026 >
+
+    # < Revision 08/02/2026
+    def _open(self):
+        # history
+        history = self.input_buffer
+        history = history.rstrip()
+        if history and (not self._history or self._history[-1] != history):
+            self._history.append(history)
+        # noinspection PyAttributeOutsideInit
+        self._history_index = len(self._history)
+        # parse args
+        nb = self._previous_prompt_obj.number + 1
+        buff = self.input_buffer.split(' ')
+        if len(buff) > 1: buff = buff[1]
+        else:
+            self._append_plain_text('\nfilename argument is missing.')
+            self._show_interpreter_prompt(nb)
+            return
+        # help arg
+        if '?' in buff or '-help' in buff:
+            self._append_plain_text('\n%open args: filename\n'
+                                    'Supported extensions are:\n'
+                                    '  .xvol: PySisyphe volume\n'
+                                    '  .nii, .hdr, .img, .nia, .nii.gz, .img.gz: Nifti volume\n'
+                                    '  .nrrd, .nhdr: Nrrd volume\n'
+                                    '  .mnc, .minc: Minc volume\n'
+                                    '  .mgh, mgz: FreeSurfer volume\n'
+                                    '  .vol: Sisyphe volume\n'
+                                    '  .vmr: BrainVoyager volume\n'
+                                    '  .vtk, .vti: VTK volume\n'
+                                    '  .xroi: PySisyphe ROI\n'
+                                    '  .roi: Sisyphe ROI\n'
+                                    '  .xlut: PySisyphe LUT\n'
+                                    '  .lut: Sisyphe/MRIcron LUT\n'
+                                    '  .olt: BrainVoyager LUT\n'
+                                    '  .xfid: PySisyphe stereotactic frame markers\n'
+                                    '  .xtrf: PySisyphe geometric transformation\n'
+                                    '  .xtrfs: collection of PySisyphe geometric transformations\n'
+                                    '  .xfm: XFM geometric transformation\n'
+                                    '  .tfm: TFM geometric transformation\n'
+                                    '  .trf: BrainVoyager geometric transformation\n'
+                                    '  .mat: ANTs geometric transformation\n'
+                                    '  .xmesh: PySisyphe Mesh\n'
+                                    '  .obj: OBJ wavefront Mesh\n'
+                                    '  .stl: STL 3D Systems Mesh\n'
+                                    '  .vtp: VTK Mesh\n'
+                                    '  .xtools: collection of PySisyphe tools\n'
+                                    '  .xline: PySisyphe trajectory tool\n'
+                                    '  .xpoint: PySisyphe target tool\n'
+                                    '  .xtract: PySisyphe Streamlines\n'
+                                    '  .tck: TCK Streamlines\n'
+                                    '  .trk: TRK Streamlines\n'
+                                    '  .trk: TRK Streamlines\n'
+                                    '  .fib: FIB Streamlines\n'
+                                    '  .dpy: Dipy Streamlines\n'
+                                    '  .xidentity: PySisyphe identity attributes\n'
+                                    '  .xacq: PySisyphe acquisition attributes\n'
+                                    '  .xdisplay: PySisyphe display attributes\n'
+                                    '  .xacpc: PySisyphe AC-PC attributes\n'
+                                    '  .xdcm: PySisyphe XML Dicom\n'
+                                    '  .dcm, .dicom, .ima, .nema: DICOM image\n'
+                                    '  .json: JSON format\n'
+                                    '  .npy, .npz: Numpy vector/array format\n'
+                                    '  .csv: CSV table format\n'
+                                    '  .xlsx: Excel table format\n'
+                                    '  .xsheet: PySisyphe table format\n'
+                                    '  .sav: SPSS table format\n'
+                                    '  .dta: Stata table format\n'
+                                    '  .sas7bdat: SAS table format\n'
+                                    '  .pdf: PDF format\n'
+                                    '  .xml: XML format\n'
+                                    '  .txt: Text format\n',
+                                    before_prompt=False)
+            self._show_interpreter_prompt(nb)
+            return
+        # execute command
+        if exists(buff):
+            ext = splitext(buff)[1].lower()
+            wait = DialogWait()
+            wait.open()
+            wait.setInformationText('Open {}...'.format(buff))
+            import pydicom as pd
+            try:
+                if ext == '.xvol':
+                    r = SisypheVolume()
+                    r.load(buff)
+                elif ext in ('.nii', '.hdr', '.img', '.nia', '.nii.gz', '.img.gz'):
+                    r = SisypheVolume()
+                    r.loadFromNIFTI(buff)
+                elif ext in ('.nrrd', '.nhdr'):
+                    r = SisypheVolume()
+                    r.loadFromNRRD(buff)
+                elif ext in ('.mnc', '.minc'):
+                    r = SisypheVolume()
+                    r.loadFromMINC(buff)
+                elif ext in ('.mgh', '.mgz'):
+                    r = SisypheVolume()
+                    r.loadFromFreeSurferMGH(buff)
+                elif ext == '.vol':
+                    r = SisypheVolume()
+                    r.loadFromSisyphe(buff)
+                elif ext == '.vmr':
+                    r = SisypheVolume()
+                    r.loadFromBrainVoyagerVMR(buff)
+                elif ext in ('.vtk', '.vti'):
+                    r = SisypheVolume()
+                    r.loadFromVTK(buff)
+                elif ext == '.xroi':
+                    r = SisypheROI()
+                    r.load(buff)
+                elif ext == '.roi':
+                    r = SisypheROI()
+                    r.loadFromSisyphe(buff)
+                elif ext == '.lut':
+                    r = SisypheLut()
+                    r.load(buff)
+                elif ext == '.xlut':
+                    r = SisypheLut()
+                    r.loadFromXML(buff)
+                elif ext == '.olt':
+                    r = SisypheLut()
+                    r.loadFromOlt(buff)
+                elif ext == '.xfid':
+                    from Sisyphe.core.sisypheFiducialBox import SisypheFiducialBox
+                    r = SisypheFiducialBox()
+                    r.loadFromXML(buff)
+                elif ext == '.xtrf':
+                    from Sisyphe.core.sisypheTransform import SisypheTransform
+                    r = SisypheTransform()
+                    r.load(buff)
+                elif ext == '.xtrfs':
+                    from Sisyphe.core.sisypheTransform import SisypheTransformCollection
+                    r = SisypheTransformCollection()
+                    r.load(buff)
+                elif ext == '.xfm':
+                    from Sisyphe.core.sisypheTransform import SisypheTransform
+                    r = SisypheTransform()
+                    r.loadFromXfmTransform(buff)
+                elif ext == '.tfm':
+                    from Sisyphe.core.sisypheTransform import SisypheTransform
+                    r = SisypheTransform()
+                    r.loadFromTfmTransform(buff)
+                elif ext == '.trf':
+                    from Sisyphe.core.sisypheTransform import SisypheTransform
+                    r = SisypheTransform()
+                    r.loadFromBrainVoyagerTransform(buff)
+                elif ext == '.mat':
+                    from Sisyphe.core.sisypheTransform import SisypheTransform
+                    r = SisypheTransform()
+                    try: r.loadFromANTSTransform(buff)
+                    except:
+                        from scipy.io import loadmat
+                        # noinspection PyUnusedLocal
+                        r = loadmat(buff)
+                elif ext == '.xmesh':
+                    from Sisyphe.core.sisypheMesh import SisypheMesh
+                    r = SisypheMesh()
+                    r.load(buff)
+                elif ext == '.obj':
+                    from Sisyphe.core.sisypheMesh import SisypheMesh
+                    r = SisypheMesh()
+                    r.loadFromOBJ(buff)
+                elif ext == '.stl':
+                    from Sisyphe.core.sisypheMesh import SisypheMesh
+                    r = SisypheMesh()
+                    r.loadFromSTL(buff)
+                elif ext == '.vtp':
+                    from Sisyphe.core.sisypheMesh import SisypheMesh
+                    r = SisypheMesh()
+                    r.loadFromXMLVTK(buff)
+                elif ext == '.xtools':
+                    from Sisyphe.core.sisypheTools import ToolWidgetCollection
+                    r = ToolWidgetCollection()
+                    r.load(buff)
+                elif ext == '.xline':
+                    from Sisyphe.core.sisypheTools import LineWidget
+                    r = LineWidget('line')
+                    r.load(buff)
+                elif ext == '.xpoint':
+                    from Sisyphe.core.sisypheTools import HandleWidget
+                    r = HandleWidget('point')
+                    r.load(buff)
+                elif ext == '.xtract':
+                    from Sisyphe.core.sisypheTracts import SisypheStreamlines
+                    r = SisypheStreamlines()
+                    r.load(buff)
+                elif ext == '.tck':
+                    from Sisyphe.core.sisypheTracts import SisypheStreamlines
+                    r = SisypheStreamlines()
+                    r.loadFromTck(buff)
+                elif ext == '.trk':
+                    from Sisyphe.core.sisypheTracts import SisypheStreamlines
+                    r = SisypheStreamlines()
+                    r.loadFromTrk(buff)
+                elif ext == '.fib':
+                    from Sisyphe.core.sisypheTracts import SisypheStreamlines
+                    r = SisypheStreamlines()
+                    r.loadFromFib(buff)
+                elif ext == '.dpy':
+                    from Sisyphe.core.sisypheTracts import SisypheStreamlines
+                    r = SisypheStreamlines()
+                    r.loadFromDpy(buff)
+                elif ext == '.xidentity':
+                    from Sisyphe.core.sisypheImageAttributes import SisypheIdentity
+                    r = SisypheIdentity()
+                    r.loadFromXML(buff)
+                elif ext == '.xacq':
+                    from Sisyphe.core.sisypheImageAttributes import SisypheAcquisition
+                    r = SisypheAcquisition()
+                    r.loadFromXML(buff)
+                elif ext == '.xdisplay':
+                    from Sisyphe.core.sisypheImageAttributes import SisypheDisplay
+                    r = SisypheDisplay()
+                    r.loadFromXML(buff)
+                elif ext == '.xacpc':
+                    from Sisyphe.core.sisypheImageAttributes import SisypheACPC
+                    r = SisypheACPC()
+                    r.loadFromXML(buff)
+                elif ext == '.xdcm':
+                    from Sisyphe.core.sisypheDicom import XmlDicom
+                    r = XmlDicom()
+                    r.loadXmlDicomFilename(buff)
+                elif ext in ('.dcm', '.dicom', '.ima', '.nema'):
+                    # noinspection PyUnusedLocal
+                    r = pd.dcmread(buff)
+                elif ext == '.json':
+                    # noinspection PyUnusedLocal
+                    r = json.loads(buff)
+                elif ext in ('.npy', '.npz'):
+                    import numpy as np
+                    # noinspection PyUnusedLocal
+                    r = np.load(buff)
+                elif ext == '.csv':
+                    import pandas as pd
+                    # noinspection PyUnusedLocal
+                    r = pd.read_csv(buff)
+                elif ext == '.xlsx':
+                    import pandas as pd
+                    # noinspection PyUnusedLocal
+                    try: r = pd.read_excel(buff)
+                    except:
+                        # < Revision 19/02/2026
+                        try:
+                            wait.close()
+                            import openpyxl
+                        except:
+                            if hasattr(sys, '_MEIPASS'):
+                                messageBox(self,
+                                           'XLSX IO',
+                                           'OpenPyXL module is not installed.\n'
+                                           'Please perform a complete reinstallation of the latest version '
+                                           'of PySisyphe, which can be downloaded from '
+                                           'https://github.com/PySisyphe/Sisyphe.')
+                            else:
+                                messageBox(self,
+                                           'XLSX IO',
+                                           'OpenPyXL module is not installed.\n'
+                                           'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                        self._append_plain_text('\nOpen {} error.'.format(basename(buff)),
+                                                before_prompt=False)
+                        self._show_interpreter_prompt(nb)
+                        return
+                        # Revision 19/02/2026 >
+                elif ext == '.xsheet':
+                    from Sisyphe.core.sisypheSheet import SisypheSheet
+                    r = SisypheSheet()
+                    r.load(buff)
+                elif ext == '.sav':   # SPSS format
+                    import pandas as pd
+                    # noinspection PyUnusedLocal
+                    r = pd.read_spss(buff)
+                elif ext == '.dta':  # Stata format
+                    import pandas as pd
+                    # noinspection PyUnusedLocal
+                    r = pd.read_stata(buff)
+                elif ext == '.sas7bdat':  # SAS format
+                    import pandas as pd
+                    # noinspection PyUnusedLocal
+                    r = pd.read_sas(buff)
+                elif ext == '.pdf':
+                    try: import pymupdf
+                    except:
+                        # < Revision 19/02/2026
+                        if hasattr(sys, '_MEIPASS'):
+                            messageBox(self,
+                                       'PDF IO',
+                                       'PyMuPDF module is not installed.\n'
+                                       'Please perform a complete reinstallation of the latest version '
+                                       'of PySisyphe, which can be downloaded from '
+                                       'https://github.com/PySisyphe/Sisyphe.')
+                        else:
+                            messageBox(self,
+                                       'PDF IO',
+                                       'PyMuPDF module is not installed.\n'
+                                       'Please install it using "pip install PyMuPDF==1.26.7" from your venv console.')
+                        self._append_plain_text('\nOpen {} error.'.format(basename(buff)),
+                                                before_prompt=False)
+                        self._show_interpreter_prompt(nb)
+                        return
+                        # Revision 19/02/2026 >
+                    # noinspection PyUnusedLocal
+                    r = pymupdf.open(buff)
+                elif ext in ('.xml', '.txt'):
+                    with open(buff, 'r') as f:
+                        # noinspection PyUnusedLocal
+                        r = f.readlines()
+                elif isDicom(buff):
+                    # noinspection PyUnusedLocal
+                    r = pd.dcmread(buff)
+                else:
+                    wait.close()
+                    self._append_plain_text('\n{} file extension is not supported.'.format(ext),
+                                            before_prompt=False)
+                    self._show_interpreter_prompt(nb)
+                    return
+                self.kernel_manager.kernel.shell.push({'v': r})
+                self._append_plain_text('\n{} file is loaded into v variable.'.format(buff))
+                if self._update is not None: self._update()
+                self._show_interpreter_prompt(nb)
+            except:
+                self._append_plain_text('\nIO error, unable to load {}.'.format(buff))
+                self._show_interpreter_prompt(nb)
+            wait.close()
+        else:
+            self._append_plain_text('\nno such file {}.'.format(buff))
+            self._show_interpreter_prompt(nb)
+            return
+        # Revision 08/02/2026 >
+
     # < Revision 09/12/2025
     # override execute method
     # noinspection PyProtectedMember
     def execute(self, source=None, hidden=False, interactive=False):
         if source is None:
             if self.input_buffer[:7] == '%gemini':
-                # history
-                history = self.input_buffer
-                history = history.rstrip()
-                if history and (not self._history or self._history[-1] != history):
-                    self._history.append(history)
-                # noinspection PyAttributeOutsideInit
-                self._history_index = len(self._history)
-                # parse args
-                nb = self._previous_prompt_obj.number + 1
-                buff = self.input_buffer.split(' \'')
-                buff2 = list()
-                for i in range(len(buff)):
-                    sbuff = buff[i].split('\'')
-                    if len(sbuff) == 1:
-                        sbuff2 = sbuff[0].split(' ')
-                        for j in range(len(sbuff2)):
-                            buff2.append(sbuff2[j])
-                    else:
-                        buff2.append(sbuff[0])
-                        sbuff2 = sbuff[1].split(' ')
-                        for j in range(len(sbuff2)):
-                            buff2.append(sbuff2[j])
-                buff = array(buff2[1:])
-                buff = buff[buff != '']
-                if self._aikey is not None:
-                    tag = True
-                    jsontag = False
-                    content = list()
-                    config = None
-                    if self._client is None:
-                        # < Revision 14/12/2025
-                        try: self._client = genai.Client(api_key=self._aikey)
-                        except:
-                            self._append_plain_text('\ngoogle module is not installed.\n'
-                                                    'Please perform a complete reinstallation of the latest version '
-                                                    'of PySisyphe, which can be downloaded from '
-                                                    'https://mega.nz/folder/hKEBzRTR#MUodQFh4N8LeukE2hbkzNA.')
-                            self._show_interpreter_prompt(nb)
-                            return
-                        # Revision 14/12/2025 >
-                    g = self.kernel_manager.kernel.shell.user_ns
-                    # help arg
-                    if '?' in buff or '-help' in buff:
-                        self._append_plain_text('\n%gemini args:\n'
-                                                '  -p prompt, str\n'
-                                                '  -i image input, PIL.Image\n'
-                                                '  -pdf input, str or pathlib.Path\n'
-                                                '  -json, reply format json\n'
-                                                '  -model, print ai model\n'
-                                                '  -key, print api key\n',
-                                                before_prompt=False)
-                        self._show_interpreter_prompt(nb)
-                        return
-                    # model arg
-                    if '-model' in buff:
-                        tag = False
-                        self._append_plain_text('\n%gemini model: {}'.format(self._aimodel))
-                    # key arg
-                    if '-key' in buff:
-                        tag = False
-                        if self._aikey in (None, ''): self._append_plain_text('\n%gemini api key: no api key')
-                        else: self._append_plain_text('\n%gemini api key: {}'.format(self._aikey))
-                    # json flag arg
-                    if '-json' in buff:
-                        jsontag = True
-                        config = genai.types.GenerateContentConfig(response_mime_type='application/json')
-                    # segmentation flag arg
-                    # if '-seg' in buff:
-                    #     config = genai.types.GenerateContentConfig(response_mime_type='application/json',
-                    #                                                thinking_config=genai.types.ThinkingConfig(thinking_budget=0))
-                    # prompt arg
-                    if '-p' in buff:
-                        i = argwhere(buff == '-p')[0][0]
-                        if i < len(buff) - 1 and buff[i + 1] != '-':
-                            buffp = buff[i + 1]
-                            # noinspection PyUnresolvedReferences
-                            if len(buffp.split(' ')) > 1: content.append(buffp[1:-1])
-                            else:
-                                if buffp in g.keys():
-                                    v = g[buffp]
-                                    if isinstance(v, str): content.append(v)
-                                    else:
-                                        self._append_plain_text('\n%gemini prompt error:\n'
-                                                                '{} type is not str.'.format(buffp),
-                                                                before_prompt=False)
-                                        self._show_interpreter_prompt(nb)
-                                        return
-                                else:
-                                    self._append_plain_text('\n%gemini prompt error:\n'
-                                                            '{} not exists.'.format(buffp),
-                                                            before_prompt=False)
-                                    self._show_interpreter_prompt(nb)
-                                    return
-                        else:
-                            self._append_plain_text('\n%gemini prompt error:\n'
-                                                    'no prompt specified.',
-                                                    before_prompt=False)
-                            self._show_interpreter_prompt(nb)
-                            return
-                    else:
-                        if tag:
-                            self._append_plain_text('\n%gemini prompt error:\n'
-                                                    'no prompt specified.',
-                                                    before_prompt=False)
-                        self._show_interpreter_prompt(nb)
-                        return
-                    # image arg
-                    if '-i' in buff:
-                        i = argwhere(buff == '-i')[0][0]
-                        if i < len(buff) - 1 and buff[i + 1] != '-':
-                            buffp = buff[i + 1]
-                            if buffp in g.keys():
-                                v = g[buffp]
-                                if isinstance(v, pilImage): content.append(v)
-                                else:
-                                    self._append_plain_text('\n%gemini image error:\n'
-                                                            '{} is not a Pillow image.'.format(buffp),
-                                                            before_prompt=False)
-                                    self._show_interpreter_prompt(nb)
-                                    return
-                            else:
-                                self._append_plain_text('\n%gemini error:\n'
-                                                        '{} not exists.'.format(buffp),
-                                                        before_prompt=False)
-                                self._show_interpreter_prompt(nb)
-                                return
-                        else:
-                            self._append_plain_text('\n%gemini error:\n'
-                                                    'no image specified.',
-                                                    before_prompt=False)
-                            self._show_interpreter_prompt(nb)
-                            return
-                    # pdf arg
-                    if '-pdf' in buff:
-                        i = argwhere(buff == '-i')[0][0]
-                        if i < len(buff) - 1 and buff[i + 1] != '-':
-                            v = None
-                            buffp = buff[i + 1]
-                            # noinspection PyTypeChecker
-                            if exists(buffp):
-                                # noinspection PyTypeChecker
-                                v = Path(buffp)
-                            if buffp in g.keys():
-                                v = g[buffp]
-                                if isinstance(v, str):
-                                    if exists(v): v = Path(v)
-                            if isinstance(v, Path):
-                                if v.exists():
-                                    content.append(genai.types.Part.from_bytes(data=v.read_bytes(),
-                                                                               mime_type='application/pdf'))
-                                else:
-                                    self._append_plain_text('\n%gemini error:\n'
-                                                            'no such file {}.'.format(v),
-                                                            before_prompt=False)
-                                    self._show_interpreter_prompt(nb)
-                                    return
-                            else:
-                                self._append_plain_text('\n%gemini error:\n'
-                                                        'invalid pdf {}.'.format(v),
-                                                        before_prompt=False)
-                                self._show_interpreter_prompt(nb)
-                                return
-                    # execute request
-                    wait = DialogWait()
-                    wait.open()
-                    wait.setInformationText('Waiting for gemini reponse...')
-                    try:
-                        r = self._client.models.generate_content(model=self._aimodel,
-                                                                 contents=content,
-                                                                 config=config)
-                        r = r.text
-                        if isinstance(r, str):
-                            self.kernel_manager.kernel.shell.push('r')
-                            if jsontag:
-                                self.execute('import json', hidden=True)
-                                self.execute('r = json.loads(r)', hidden=True)
-                                r = json.loads(r)
-                            self._append_plain_text('\n{}'.format(r))
-                            if self._update is not None: self._update()
-                    except:
-                        self._append_plain_text('\n%gemini client error:\n{}'.format(traceback.format_exc()),
-                                                before_prompt=False)
-                    finally:
-                        wait.close()
-                else:
-                    self._append_plain_text('\n%gemini API key error:\n'
-                                            'No API key is declared.',
-                                            before_prompt=False)
-                self._show_interpreter_prompt(nb)
+                self._gemini()
+                return
+            elif self.input_buffer[:9] == '%packages':
+                self._packages()
+                return
+            elif self.input_buffer[:5] == '%open':
+                self._open()
                 return
         super().execute(source, hidden, interactive)
     # Revision 09/12/2025 >
@@ -347,7 +740,7 @@ class ConsoleWidget(QWidget):
 
     QWidget -> ConsoleWidget
 
-    Last revision: 01/12/2025
+    Last revision: 19/02/2026
     """
 
     @classmethod

@@ -8,6 +8,8 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+import sys
+
 from os import getcwd
 from os import chdir
 from os import remove
@@ -115,6 +117,8 @@ class SheetWidget(QWidget):
     ~~~~~~~~~~~
 
     QWidget -> SheetWidget
+
+    Last revision: 19/02/2026
     """
 
     # Custom Qt Signal
@@ -195,6 +199,7 @@ class SheetWidget(QWidget):
             hlabels.insert(0, '')
             self._tree.setHeaderLabels(hlabels)
             for j in range(self._tree.headerItem().columnCount()):
+                # noinspection PyUnresolvedReferences
                 self._tree.headerItem().setTextAlignment(j, Qt.AlignCenter)
             self._tree.header().setStretchLastSection(False)
             # noinspection PyTypeChecker
@@ -202,13 +207,19 @@ class SheetWidget(QWidget):
             for row in self._sheet.index:
                 item = QTreeWidgetItem(self._tree)
                 item.setText(0, str(row))
+                # noinspection PyUnresolvedReferences
                 item.setTextAlignment(0, Qt.AlignCenter)
                 values = list(self._sheet.loc[row])
                 for j in range(len(values)):
                     item.setText(j+1, floatToStr(values[j]))
+                    # noinspection PyUnresolvedReferences
                     item.setTextAlignment(j+1, Qt.AlignCenter)
-                if self.isEditable(): item.setFlags(item.flags() | Qt.ItemIsEditable)
-                else: item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                if self.isEditable():
+                    # noinspection PyUnresolvedReferences
+                    item.setFlags(item.flags() | Qt.ItemIsEditable)
+                else:
+                    # noinspection PyUnresolvedReferences
+                    item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                 self._tree.addTopLevelItem(item)
             self._delegate.setSheet(self._sheet)
             self._delegate.setDecimals(self._decimals)
@@ -310,7 +321,26 @@ class SheetWidget(QWidget):
                 elif ext == '.csv': self._sheet = self._sheet.loadCSV(filename)
                 elif ext == '.json': self._sheet = self._sheet.loadJSON(filename)
                 elif ext == '.txt': self._sheet = self._sheet.loadTXT(filename)
-                elif ext == '.xlsx': self._sheet = self._sheet.loadXLSX(filename)
+                elif ext == '.xlsx':
+                    try: self._sheet = self._sheet.loadXLSX(filename)
+                    except:
+                        # < Revision 19/02/2026
+                        try: import openpyxl
+                        except:
+                            if hasattr(sys, '_MEIPASS'):
+                                messageBox(self,
+                                           'XLSX IO',
+                                           'OpenPyXL module is not installed.\n'
+                                           'Please perform a complete reinstallation of the latest version '
+                                           'of PySisyphe, which can be downloaded from '
+                                           'https://github.com/PySisyphe/Sisyphe.')
+                            else:
+                                messageBox(self,
+                                           'XLSX IO',
+                                           'OpenPyXL module is not installed.\n'
+                                           'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                        return
+                        # Revision 19/02/2026 >
                 self._initTreeWidget()
 
     def save(self, filename=''):
@@ -332,7 +362,25 @@ class SheetWidget(QWidget):
                 elif ext == '.mat': self._sheet.saveMATFILE(filename)
                 elif ext == '.tex': self._sheet.saveLATEX(filename)
                 elif ext == '.txt': self._sheet.saveTXT(filename)
-                elif ext == '.xlsx': self._sheet.saveXLSX(filename)
+                elif ext == '.xlsx':
+                    try: self._sheet.saveXLSX(filename)
+                    except:
+                        # < Revision 19/02/2026
+                        try: import openpyxl
+                        except:
+                            if hasattr(sys, '_MEIPASS'):
+                                messageBox(self,
+                                           'XLSX IO',
+                                           'OpenPyXL module is not installed.\n'
+                                           'Please perform a complete reinstallation of the latest version '
+                                           'of PySisyphe, which can be downloaded from '
+                                           'https://github.com/PySisyphe/Sisyphe.')
+                            else:
+                                messageBox(self,
+                                           'XLSX IO',
+                                           'OpenPyXL module is not installed.\n'
+                                           'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
+                        # Revision 19/02/2026 >
 
     def setButtonsVisibility(self, v):
         if isinstance(v, bool):
@@ -370,21 +418,43 @@ class SheetWidget(QWidget):
 
     def getChart(self, axes, col=None, subplots=False, bins=10, chart='line'):
         if col is None:
-            if chart == 'line': return self._sheet.plot.line(ax=axes, subplots=subplots)
-            elif chart == 'bar': return self._sheet.plot.bar(ax=axes, subplots=subplots)
-            elif chart == 'hbar': return self._sheet.plot.barh(ax=axes, subplots=subplots)
-            elif chart == 'hist': return self._sheet.plot.hist(ax=axes, bins=bins, subplots=subplots)
-            elif chart == 'box': return self._sheet.plot.box(ax=axes,)
-            elif chart == 'density': return self._sheet.plot.density(ax=axes, subplots=subplots)
+            if chart == 'line':
+                # noinspection PyTypeChecker
+                return self._sheet.plot.line(ax=axes, subplots=subplots)
+            elif chart == 'bar':
+                # noinspection PyTypeChecker
+                return self._sheet.plot.bar(ax=axes, subplots=subplots)
+            elif chart == 'hbar':
+                # noinspection PyTypeChecker
+                return self._sheet.plot.barh(ax=axes, subplots=subplots)
+            elif chart == 'hist':
+                # noinspection PyTypeChecker
+                return self._sheet.plot.hist(ax=axes, bins=bins, subplots=subplots)
+            elif chart == 'box':
+                return self._sheet.plot.box(ax=axes,)
+            elif chart == 'density':
+                # noinspection PyTypeChecker
+                return self._sheet.plot.density(ax=axes, subplots=subplots)
             else: raise ValueError('incorrect chart parameter {}.'.format(chart))
         elif isinstance(col, str):
             c = self._sheet[col]
-            if chart == 'line': return c.plot.line(ax=axes, subplots=subplots)
-            elif chart == 'bar': return c.plot.bar(ax=axes, subplots=subplots)
-            elif chart == 'hbar': return c.plot.barh(ax=axes, subplots=subplots)
-            elif chart == 'hist': return c.plot.hist(ax=axes, bins=bins, subplots=subplots)
-            elif chart == 'box': return c.plot.box(ax=axes)
-            elif chart == 'density': return c.plot.density(ax=axes, subplots=subplots)
+            if chart == 'line':
+                # noinspection PyTypeChecker
+                return c.plot.line(ax=axes, subplots=subplots)
+            elif chart == 'bar':
+                # noinspection PyTypeChecker
+                return c.plot.bar(ax=axes, subplots=subplots)
+            elif chart == 'hbar':
+                # noinspection PyTypeChecker
+                return c.plot.barh(ax=axes, subplots=subplots)
+            elif chart == 'hist':
+                # noinspection PyTypeChecker
+                return c.plot.hist(ax=axes, bins=bins, subplots=subplots)
+            elif chart == 'box':
+                return c.plot.box(ax=axes)
+            elif chart == 'density':
+                # noinspection PyTypeChecker
+                return c.plot.density(ax=axes, subplots=subplots)
             else: raise ValueError('incorrect chart parameter {}.'.format(chart))
         else: raise TypeError('parameter type {} i not str'.format(type(col)))
 
@@ -436,6 +506,7 @@ class SheetStatisticsWidget(QWidget):
         self._tab.addTab(self._sheet, self._sheet.getTitle())
         self._tab.addTab(self._stats, self._stats.getTitle())
         self._splitter = QSplitter()
+        # noinspection PyUnresolvedReferences
         self._splitter.setOrientation(Qt.Vertical)
         self._splitter.addWidget(self._tab)
         self._layout.addWidget(self._splitter)
@@ -455,6 +526,7 @@ class SheetStatisticsWidget(QWidget):
     def setSheet(self, sheet):
         if isinstance(sheet, SisypheSheet):
             self._sheet.setSheet(sheet)
+            # noinspection PyCallingNonCallable
             self._stats.setSheet(sheet.getStatistics())
 
     def clearSheet(self):
@@ -491,10 +563,11 @@ class SheetChartWidget(SheetStatisticsWidget):
         btlayout = self._sheet.getButtonsLayout()
         self._chart = QPushButton('Draw chart')
         self._chartmenu = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._chartmenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._chartmenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._chartmenu.setAttribute(Qt.WA_TranslucentBackground, True)
         # noinspection PyUnresolvedReferences
         self._chartmenu.triggered.connect(self._drawChart)

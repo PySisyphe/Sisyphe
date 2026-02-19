@@ -114,7 +114,7 @@ class MultiViewWidget(QWidget):
     QWidget -> MultiViewWidget
 
     Creation: 03/04/2022
-    Last revision: 20/10/2025
+    Last revision: 05/02/2026
     """
 
     # Special methods
@@ -226,7 +226,7 @@ class MultiViewWidget(QWidget):
                 if k[0] > r or k[1] > c: self._views[k].hide()
                 else: self._views[k].show()
 
-    # Private synchronisation event method
+    # Private synchronization event method
 
     def _synchroniseSelection(self, obj: QWidget) -> None:
         """
@@ -244,7 +244,7 @@ class MultiViewWidget(QWidget):
     def finalize(self) -> None:
         """
         Method to be called before MultiViewWidget instance destruction.
-        It is used to avoid vtk error on windows platform (vtkWin32OpenGLRenderWindow error: 'wglMakeCurrent failed in
+        It is used to avoid vtk error on Windows platform (vtkWin32OpenGLRenderWindow error: 'wglMakeCurrent failed in
         MakeCurrent()').
         """
         for w in self._views.values():
@@ -303,7 +303,7 @@ class MultiViewWidget(QWidget):
             action['expand'].triggered.connect(lambda: self.expandViewWidget(widget))
             widget.getPopup().insertAction(action['synchronisation'], action['expand'])
             action['synchronisation'].setVisible(False)
-            # synchronise selection
+            # synchronize selection
             widget.Selected.connect(self._synchroniseSelection)
             # addBundle view to layout
             widget.setParent(self)
@@ -1097,6 +1097,13 @@ class MultiViewWidget(QWidget):
         if self.isNotEmpty():
             for w in self._views.values():
                 w.setFontProperties(s)
+
+    # < Revision 05/02/2026
+    def setOverlayColorBar(self, index: int = 0):
+        if self.isNotEmpty():
+            for w in self._views.values():
+                w.setOverlayColorbar(index)
+    # Revision 05/02/2026 >
 
     # Capture methods
 
@@ -2535,7 +2542,7 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
             if isinstance(w, SliceTrajectoryViewWidget):
                 w.popupAlignmentDisabled()
 
-    # Public synchronisation event methods
+    # Public synchronization event methods
 
     def synchroniseCameraChanged(self, obj: QWidget):
         """
@@ -2700,10 +2707,11 @@ class GridViewWidget(MultiViewWidget):
             # noinspection PyUnresolvedReferences
             popup = w.getPopup()
             menuNumberOfVisibleViews = QMenu('Number of views', popup)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             menuNumberOfVisibleViews.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyTypeChecker
+            # noinspection PyUnresolvedReferences
             menuNumberOfVisibleViews.setWindowFlag(Qt.FramelessWindowHint, True)
+            # noinspection PyUnresolvedReferences
             menuNumberOfVisibleViews.setAttribute(Qt.WA_TranslucentBackground, True)
             menuNumberOfVisibleViews.addAction(action['11'])
             menuNumberOfVisibleViews.addAction(action['12'])

@@ -63,7 +63,7 @@ class ToolBarThumbnail(QToolBar):
     QToolBar -> ToolBarThumbnail
 
     Creation: 02/11/2022
-    Last revision: 31/01/2026
+    Last revision: 17/02/2026
     """
 
     # Special method
@@ -414,14 +414,17 @@ class ToolBarThumbnail(QToolBar):
                     wait = DialogWait()
                     wait.open()
                     wait.setProgressRange(0, n)
+                    # < Revision 17/02/2026
+                    wait.setCurrentProgressValue(0)
+                    # Revision 17/02/2026 >
                     wait.setProgressTextVisibility(True)
                     wait.setProgressVisibility(progress)
                     wait.setButtonVisibility(cancel)
                     for filename in filenames:
                         filename = abspath(filename)
                         if not wait.isVisible(): wait.show()
-                        wait.setInformationText('Open {}...'.format(basename(filename)))
                         wait.incCurrentProgressValue()
+                        wait.setInformationText('Open {}...'.format(basename(filename)))
                         vol = SisypheVolume()
                         try:
                             vol.load(filename)
