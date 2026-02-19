@@ -49,7 +49,7 @@
 		<Norm label="Signal normalization" vartype="lstr">No</Norm>
 		<Ancova label="ANCOVA normalization" vartype="lstr">No</Ancova>
 		<Roi1 label="ROI signal normalization" vartype="roi"/>
-		<Mask label="Mask" vartype="lstr">Auto|Auto and ROI</Mask>
+		<Mask label="Mask" vartype="lstr">Auto|ROI</Mask>
 		<Roi2 label="Mask ROI" vartype="roi"/>
 		<Age label="Age covariate" vartype="lstr">No</Age>
 	</StatisticalModel>
