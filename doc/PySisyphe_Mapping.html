@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_browser.html">File browser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
@@ -249,6 +250,7 @@ beta, vector of regressor weight values, one value for each factor (effects/cova
 <li><p><em>One sample t-test</em>, one group of n images,</p></li>
 <li><p><em>Two sample t-test</em>, two groups of n1 and n2 images,</p></li>
 <li><p><em>Paired t-test</em>, ns subjects with two conditions of n(1) and n(2) images,</p></li>
+<li><p><em>ANCOVA</em>, at least one covariate of interest</p></li>
 <li><p><em>GLM subjects/conditions</em>, ns subjects with nc conditions of n(1) … n(nc) images,</p></li>
 <li><p><em>GLM groups/subjects/conditions</em>, ng groups of ns(1) … ns(ng) subjects with nc conditions of n(1) … n(nc) images</p></li>
 <li><p><em>GLM groups</em>, ng groups with n(1) and n(ng) images,</p></li>
@@ -346,7 +348,7 @@ beta, vector of regressor weight values, one value for each factor (effects/cova
 <li><p>Define the contrast as weight values for each design matrix column associated with the selected factor. The sum of the weights must be equal to +1.0, 0.0 (If there is more than one weight), or -1.0.</p></li>
 </ul>
 <p>Left-click <strong>Estimate</strong> button to compute the contrast estimation. Once this calculation has been completed, it is proposed to save the statistical map.</p>
-<p>Left-click <strong>Close</strong> button to exit dialog box. This menu is used to navigate a statistical</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
 </section>
 <section id="result">
 <span id="menu-section-result"></span><h2>Result<a class="headerlink" href="#result" title="Link to this heading"></a></h2>

@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_browser.html">File browser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">IPython console</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#most-popular-commands">Most popular commands</a></li>
@@ -129,8 +130,7 @@
 <li><p><strong>Copy Image</strong>, copy the chart image to the system clipboard.</p></li>
 <li><p><strong>Save Image As</strong>, save the chart image in png bitmap format.</p></li>
 </ul>
-<p>another
-Modules/Types/Functions imported into the environment are displayed in the list box at top-right (2). A tooltip pops when mouse cursor remains in front of a box element. It displays its docstring.</p>
+<p>Modules/Types/Functions imported into the environment are displayed in the list box at top-right (2). A tooltip pops when mouse cursor remains in front of a box element. It displays its docstring.</p>
 <p>Variables are displayed in the list box at bottom-right (3). A tooltip pops when mouse cursor remains in front of a variable. It displays its value converted to string.</p>
 <ul class="simple">
 <li><p>Double-click on a SisypheVolume, sitkImage (see <a class="reference external" href="https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1Image.html">SimpleITK Image class</a>), ANTsImage (see <a class="reference external" href="https://antspy.readthedocs.io/en/latest/core.html">ANTs Image class</a>), vtkImageData (see <a class="reference external" href="https://vtk.org/doc/nightly/html/classvtkImageData.html">VTK Image class</a>) or ndarray variable (see <a class="reference external" href="https://antspy.readthedocs.io/en/latest/core.html">Numpy ndarray class</a>) opens it in the thumbnail bar.</p></li>
@@ -205,9 +205,134 @@ Modules/Types/Functions imported into the environment are displayed in the list 
 <strong>-key</strong>, print current api key</p>
 </div></blockquote>
 </dd>
-<dt><strong>%ls</strong></dt><dd><p>List directory contents</p>
+<dt><strong>%ls</strong></dt><dd><p>List directory contents.</p>
+</dd>
+<dt><strong>%open</strong></dt><dd><p>Open various file types. The file is opened in a variable “v” whose type relies on the file extension.</p>
+<p>args: <strong>?</strong> or <strong>help</strong> to show supported file extensions.</p>
+<p>Supported files:</p>
+<blockquote>
+<div><ul>
+<li><p>Volume files:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>.xvol: PySisyphe volume, SisypheVolume instance</p></li>
+<li><p>.nii, .hdr, .img, .nia, .nii.gz, .img.gz: Nifti volume, SisypheVolume instance</p></li>
+<li><p>.nrrd, .nhdr: Nrrd volume, SisypheVolume instance</p></li>
+<li><p>.mnc, .minc: Minc volume, SisypheVolume instance</p></li>
+<li><p>.mgh, mgz: FreeSurfer volume, SisypheVolume instance</p></li>
+<li><p>.vmr: BrainVoyager volume, SisypheVolume instance</p></li>
+<li><p>.vol: Sisyphe volume, SisypheVolume instance</p></li>
+<li><p>.vtk, .vti: VTK volume, SisypheVolume instance</p></li>
+<li><p>.dcm, .dicom, .ima, .nema: DICOM image, PyDicom Dataset instance</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Volume attributes files</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>.xacpc: PySisyphe AC-PC attributes, SisypheACPC instance</p></li>
+<li><p>.xacq: PySisyphe acquisition attributes, SisypheAcquisition instance</p></li>
+<li><p>.xdcm: PySisyphe XML Dicom, XmlDicom instance</p></li>
+<li><p>.xdisplay: PySisyphe display attributes, SisypheDisplay instance</p></li>
+<li><p>.xfid: PySisyphe stereotactic frame markers, SisypheFiducialBox instance</p></li>
+<li><p>.xidentity: PySisyphe identity attributes, SisypheIdentity instance</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>ROI files</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>.xroi: PySisyphe ROI, SisypheROI instance</p></li>
+<li><p>.roi: Sisyphe ROI, SisypheROI instance</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>LUT files</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>.xlut: PySisyphe LUT, SisypheLut instance</p></li>
+<li><p>.lut: Sisyphe/MRIcron LUT, SisypheLut instance</p></li>
+<li><p>.olt: BrainVoyager LUT, SisypheLut instance</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Geometric transformation files</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>.xtrf: PySisyphe geometric transformation, SisypheTransform instance</p></li>
+<li><p>.xtrfs: collection of PySisyphe geometric transformations, SisypheTransformCollection instance</p></li>
+<li><p>.xfm: XFM geometric transformation, SisypheTransform instance</p></li>
+<li><p>.tfm: TFM geometric transformation, SisypheTransform instance</p></li>
+<li><p>.trf: BrainVoyager geometric transformation, SisypheTransform instance</p></li>
+<li><p>.mat: ANTs geometric transformation, SisypheTransform instance</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Mesh files</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>.xmesh: PySisyphe Mesh, SisypheMesh instance</p></li>
+<li><p>.obj: OBJ wavefront Mesh, SisypheMesh instance</p></li>
+<li><p>.stl: STL 3D Systems Mesh, SisypheMesh instance</p></li>
+<li><p>.vtp: VTK Mesh, SisypheMesh instance</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Tools files</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>.xtools: collection of PySisyphe tools, ToolWidgetCollection instance</p></li>
+<li><p>.xline: PySisyphe trajectory tool, LineWidget instance</p></li>
+<li><p>.xpoint: PySisyphe target tool, HandleWidget instance</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Tracking files</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>.xtract: PySisyphe Streamlines, SisypheStreamlines instance</p></li>
+<li><p>.tck: TCK Streamlines, SisypheStreamlines instance</p></li>
+<li><p>.trk: TRK Streamlines, SisypheStreamlines instance</p></li>
+<li><p>.trk: TRK Streamlines, SisypheStreamlines instance</p></li>
+<li><p>.fib: FIB Streamlines, SisypheStreamlines instance</p></li>
+<li><p>.dpy: Dipy Streamlines, SisypheStreamlines instance</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Data files</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>.csv: CSV table format, Pandas DataFrame instance</p></li>
+<li><p>.dta: Stata table format, Pandas DataFrame instance</p></li>
+<li><p>.npy, .npz: Numpy vector/array format, numpy ndarray instance</p></li>
+<li><p>.json: JSON format, dict</p></li>
+<li><p>.sas7bdat: SAS table format, Pandas DataFrame instance</p></li>
+<li><p>.sav: SPSS table format, Pandas DataFrame instance</p></li>
+<li><p>.xlsx: Excel table format, Pandas DataFrame instance</p></li>
+<li><p>.xml: XML format, list[str]</p></li>
+<li><p>.xsheet: PySisyphe table format, SysipheSheet instance</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Document files</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>.pdf: PDF format, PyMuPDF document instance</p></li>
+<li><p>.txt: Text format, list[str]</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
 </dd>
 <dt><strong>%pwd</strong></dt><dd><p>Return the current working directory path.</p>
+</dd>
+<dt><strong>%packages</strong></dt><dd><p>Provide information about the modules installed in the current Python environment.</p>
+<p>args:</p>
+<blockquote>
+<div><p><strong>?</strong> or <strong>help</strong>
+no arg or package names separated by spaces</p>
+</div></blockquote>
 </dd>
 <dt><strong>%run &lt;filename.py&gt;</strong></dt><dd><p>Run the named file &lt;filename.py&gt; inside IPython as a program.</p>
 </dd>

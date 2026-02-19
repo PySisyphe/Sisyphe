@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_browser.html">File browser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
@@ -239,9 +240,11 @@ Use the files selection widget below to select the <strong>Moving</strong> PySis
 <li><p>Toggle <strong>Check registration</strong> checkbox to display a dialog box, similar to <a class="reference internal" href="#menu-section-manual"><span class="std std-ref">Manual registration</span></a>, to visually assess the quality of the coregistration.</p></li>
 <li><p>Toggle <strong>Resample</strong> checkbox to resample (or not) the coregistered moving volume. If not, the moving volume is not resampled, but the associated XML xtrfs files are updated (geometric transformation for fixed volume coregistration will be added to the moving xtrfs, and geometric transformation for moving volume coregistration will be added to the fixed xtrfs).</p></li>
 </ul>
-<p>Toggle <strong>Resample…</strong> button to show/hide resampling settings:
-- Select the interpolation algorithm (<em>linear</em>, <em>nearest neighbor</em>, <em>b-spline</em>, <em>gaussian</em>, <em>hamming windowed sinc</em>, <em>cosine windowed sinc</em>, <em>welch windowed sinc</em>, <em>lanczos windowed sinc</em>, <em>blackman windowed sinc</em>) used to resample the moving volume.
-- Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p>
+<p>Toggle <strong>Resample…</strong> button to show/hide resampling settings:</p>
+<ul class="simple">
+<li><p>Select the interpolation algorithm (<em>linear</em>, <em>nearest neighbor</em>, <em>b-spline</em>, <em>gaussian</em>, <em>hamming windowed sinc</em>, <em>cosine windowed sinc</em>, <em>welch windowed sinc</em>, <em>lanczos windowed sinc</em>, <em>blackman windowed sinc</em>) used to resample the moving volume.</p></li>
+<li><p>Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
 <p>Left-click <strong>Execute</strong> button to perform coregistration. The moving volume is resampled if the <strong>Resample</strong> checkbox is checked. PySisype XML xtrfs files associated with fixed and moving volumes are updated to store geometric transformations (geometric transformation for fixed volume coregistration will be added to the moving xtrfs, and geometric transformation for moving volume coregistration will be added to the fixed xtrfs).</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without coregistration.</p>
 </section>

@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_browser.html">File browser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
@@ -88,6 +89,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#texture-feature-maps">Texture feature maps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#roi-texture-features">ROI Texture features</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bias-field-correction">Bias field correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#roi-labeling">ROI labeling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mesh-labeling">Mesh Labeling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools-labeling">Tools labeling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mean-volume">Mean volume</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#median-volume">Median volume</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#standard-deviation-volume">Standard deviation volume</a></li>
@@ -146,7 +150,7 @@
 <li><p><a class="reference internal" href="#menu-section-permute"><span class="std std-ref">Permute axis</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-neck"><span class="std std-ref">Remove neck slices</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-datatype"><span class="std std-ref">Datatype conversion</span></a></p></li>
-<li><p><a class="reference internal" href="#menu-section-attributes"><span class="std std-ref">Attributes conversion</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-attrconv"><span class="std std-ref">Attributes conversion</span></a></p></li>
 <li><dl class="simple">
 <dt>Filters &gt;</dt><dd><ul>
 <li><p><a class="reference internal" href="#menu-section-filter-mean"><span class="std std-ref">Mean filter</span></a></p></li>
@@ -171,6 +175,15 @@
 <li><p><a class="reference internal" href="#menu-section-texture"><span class="std std-ref">Texture feature maps</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-roitexture"><span class="std std-ref">ROI Texture features</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-biasfield"><span class="std std-ref">Bias field correction</span></a></p></li>
+<li><dl class="simple">
+<dt>Atlas labeling &gt;</dt><dd><ul>
+<li><p><a class="reference internal" href="#menu-section-roi-labeling"><span class="std std-ref">ROI labeling</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-mesh-labeling"><span class="std std-ref">Mesh Labeling</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-tools-labeling"><span class="std std-ref">Tools labeling</span></a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
 <li><dl class="simple">
 <dt>Voxel-by-voxel processing &gt;</dt><dd><ul>
 <li><p><a class="reference internal" href="#menu-section-voxel-mean"><span class="std std-ref">Mean volume</span></a></p></li>
@@ -246,7 +259,7 @@
 <p>Left-click <strong>Cancel</strong> button button to close dialog box without processing.</p>
 </section>
 <section id="attributes-conversion">
-<span id="menu-section-attributes"></span><h2>Attributes conversion<a class="headerlink" href="#attributes-conversion" title="Link to this heading"></a></h2>
+<span id="menu-section-attrconv"></span><h2>Attributes conversion<a class="headerlink" href="#attributes-conversion" title="Link to this heading"></a></h2>
 <p>This menu displays the <strong>Attributes conversion</strong> dialog box, which is used to modify common attributes of one or more PySisyphe volumes.</p>
 <p>Select the new data type using the <strong>Datatype</strong> combo box.</p>
 <p>Seven check boxes are provided to modify volume attributes:</p>
@@ -363,8 +376,7 @@
 <li><p><strong>Number of iterations</strong>, specifies the number of iterations (time-step updates) that the solver will perform to produce a solution. The appropriate number of iterations is dependent on the application and the image being processed. As a general rule, the more iterations performed, the more diffused the image will become.</p></li>
 <li><p>Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
 </ul>
-<p>.
-Add PySisyphe volume(s) to be filtered in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Add PySisyphe volume(s) to be filtered in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
 <p>Left-click <strong>Execute</strong> button to perform Anisotropic diffusion filtering.</p>
 <p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
 </section>
@@ -479,6 +491,39 @@ Add PySisyphe volume(s) to be filtered in the <a class="reference internal" href
 </ul>
 <p>Left-click <strong>Execute</strong> button to process the bias field correction.</p>
 <p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="roi-labeling">
+<span id="menu-section-roi-labeling"></span><h2>ROI labeling<a class="headerlink" href="#roi-labeling" title="Link to this heading"></a></h2>
+<p>The purpose of this function is to label a ROI with labels from an atlas. The result is shown in a table displaying the proportion of each atlas label in the ROI.</p>
+<p>This menu displays the <strong>ROI atlas labeling</strong>.</p>
+<p>Add .xvol PySisyphe <strong>reference</strong> volume in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget. This volume is the one that was used to draw the ROI (i.e. same space/transform ID as ROI). If this volume is an ICBM152 template (i.e. space/transform ID = ‘ICBM152’), it is not mandatory to select it, simply click the <strong>Reference ICBM152</strong> checkbox.</p>
+<p>Add .xroi ROI volume(s) in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget located below the previous one.</p>
+<p>Select one or more atlases used to label the ROI(s) by checking them in the list box below.</p>
+<p>You can edit a threshold below which proportions are ignored using the <strong>Percent threshold</strong> spinbox (default 1%). The following atlases are available: <a class="reference external" href="http://www.gin.cnrs.fr/en/tools/aal/&amp;https://www.oxcns.org/aal3.html">AAL</a> (two versions), <a class="reference external" href="https://www.gin.cnrs.fr/en/tools/aicha/">Aicha</a>, <a class="reference external" href="https://www.fz-juelich.de/SharedDocs/Downloads/INM/INM-7/EN/SPM_Toolbox/Toolbox_3.htm">Anatomy</a> (two versions), Brainnetome, <a class="reference external" href="https://www.cobralab.ca/atlases">Cobra</a>, <a class="reference external" href="http://brain-development.org/brain-atlases/adult-brain-atlases/individual-adult-brain-atlases-new/">Hammers</a> (two verions), Harvard-Oxford, <a class="reference external" href="http://www.nitrc.org/projects/ibsr">IBSR</a>, JHU, <a class="reference external" href="https://search.kg.ebrains.eu/instances/Dataset/2eaa3dc6-a21b-41c1-b703-bf06f82adf25">Julich</a>, <a class="reference external" href="https://www.loni.usc.edu/research/atlases">LPBA40</a>, <a class="reference external" href="http://wiki.slicer.org/slicerWiki/index.php/Slicer3:Mori-Atlas_labels">MORI</a>, Natbrainlab, <a class="reference external" href="http://www.neuromorphometrics.com/2012_MICCAI_Challenge_Data.html">neuromorphometrics</a> (two versions), Rolls auto, Yeo 7 and 17 nertworks.</p>
+<p>Left-click <strong>Execute</strong> button to perform the ROI labeling. A dialog box is displayed, presenting the results in a table containing the proportions of the atlas labels in each ROI. Left-click <strong>Save</strong> button to store the table in various formats (.csv, .json, LaTeX .tex, .txt, Excel .xlsx or PySisyphe .xsheet).</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without labeling.</p>
+</section>
+<section id="mesh-labeling">
+<span id="menu-section-mesh-labeling"></span><h2>Mesh Labeling<a class="headerlink" href="#mesh-labeling" title="Link to this heading"></a></h2>
+<p>The purpose of this function is to label a Mesh with labels from an atlas. The result is shown in a table displaying the proportion of each atlas label in the Mesh.</p>
+<p>This menu displays the <strong>Mesh atlas labeling</strong>.</p>
+<p>Add .xvol PySisyphe <strong>reference</strong> volume in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget. This volume is the one that was used to create the Mesh (i.e. same space/transform ID as Mesh). If this volume is an ICBM152 template (i.e. space/transform ID = ‘ICBM152’), it is not mandatory to select it, simply click the <strong>Reference ICBM152</strong> checkbox.</p>
+<p>Add .xmesh Mesh in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget located below the previous one.</p>
+<p>Select one or more atlases used to label the Mesh(es) by checking them in the list box below.</p>
+<p>You can edit a threshold below which proportions are ignored using the <strong>Percent threshold</strong> spinbox (default 1%). The following atlases are available: <a class="reference external" href="http://www.gin.cnrs.fr/en/tools/aal/&amp;https://www.oxcns.org/aal3.html">AAL</a> (two versions), <a class="reference external" href="https://www.gin.cnrs.fr/en/tools/aicha/">Aicha</a>, <a class="reference external" href="https://www.fz-juelich.de/SharedDocs/Downloads/INM/INM-7/EN/SPM_Toolbox/Toolbox_3.htm">Anatomy</a> (two versions), Brainnetome, <a class="reference external" href="https://www.cobralab.ca/atlases">Cobra</a>, <a class="reference external" href="http://brain-development.org/brain-atlases/adult-brain-atlases/individual-adult-brain-atlases-new/">Hammers</a> (two verions), Harvard-Oxford, <a class="reference external" href="http://www.nitrc.org/projects/ibsr">IBSR</a>, JHU, <a class="reference external" href="https://search.kg.ebrains.eu/instances/Dataset/2eaa3dc6-a21b-41c1-b703-bf06f82adf25">Julich</a>, <a class="reference external" href="https://www.loni.usc.edu/research/atlases">LPBA40</a>, <a class="reference external" href="http://wiki.slicer.org/slicerWiki/index.php/Slicer3:Mori-Atlas_labels">MORI</a>, Natbrainlab, <a class="reference external" href="http://www.neuromorphometrics.com/2012_MICCAI_Challenge_Data.html">neuromorphometrics</a> (two versions), Rolls auto, Yeo 7 and 17 nertworks.</p>
+<p>Left-click <strong>Execute</strong> button to perform the Mesh labeling. A dialog box is displayed, presenting the results in a table containing the proportions of the atlas labels in each Mesh. Left-click <strong>Save</strong> button to store the table in various formats (.csv, .json, LaTeX .tex, .txt, Excel .xlsx or PySisyphe .xsheet).</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without labeling.</p>
+</section>
+<section id="tools-labeling">
+<span id="menu-section-tools-labeling"></span><h2>Tools labeling<a class="headerlink" href="#tools-labeling" title="Link to this heading"></a></h2>
+<p>The purpose of this function is to locate target/trajectory tools in an atlas. The result is shown in a table that displays the atlas label at each target/trajectory coordinate.</p>
+<p>This menu displays the <strong>Tools atlas labeling</strong>.</p>
+<p>Add .xvol PySisyphe <strong>reference</strong> volume in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget. This volume is the one that was used to create the tools (i.e. same space/transform ID as tools). If this volume is an ICBM152 template (i.e. space/transform ID = ‘ICBM152’), it is not mandatory to select it, simply click the <strong>Reference ICBM152</strong> checkbox.</p>
+<p>Add .xtools Tools collection in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget located below the previous one.</p>
+<p>Select one or more atlases used to label the tools by checking them in the list box below.</p>
+<p>You can edit a threshold below which proportions are ignored using the <strong>Percent threshold</strong> spinbox (default 1%). The following atlases are available: <a class="reference external" href="http://www.gin.cnrs.fr/en/tools/aal/&amp;https://www.oxcns.org/aal3.html">AAL</a> (two versions), <a class="reference external" href="https://www.gin.cnrs.fr/en/tools/aicha/">Aicha</a>, <a class="reference external" href="https://www.fz-juelich.de/SharedDocs/Downloads/INM/INM-7/EN/SPM_Toolbox/Toolbox_3.htm">Anatomy</a> (two versions), Brainnetome, <a class="reference external" href="https://www.cobralab.ca/atlases">Cobra</a>, <a class="reference external" href="http://brain-development.org/brain-atlases/adult-brain-atlases/individual-adult-brain-atlases-new/">Hammers</a> (two verions), Harvard-Oxford, <a class="reference external" href="http://www.nitrc.org/projects/ibsr">IBSR</a>, JHU, <a class="reference external" href="https://search.kg.ebrains.eu/instances/Dataset/2eaa3dc6-a21b-41c1-b703-bf06f82adf25">Julich</a>, <a class="reference external" href="https://www.loni.usc.edu/research/atlases">LPBA40</a>, <a class="reference external" href="http://wiki.slicer.org/slicerWiki/index.php/Slicer3:Mori-Atlas_labels">MORI</a>, Natbrainlab, <a class="reference external" href="http://www.neuromorphometrics.com/2012_MICCAI_Challenge_Data.html">neuromorphometrics</a> (two versions), Rolls auto, Yeo 7 and 17 nertworks.</p>
+<p>Left-click <strong>Execute</strong> button to perform the tools labeling. A dialog box is displayed, presenting the results in a table containing the atlas labels at each target/trajectory coordinate. Left-click <strong>Save</strong> button to store the table in various formats (.csv, .json, LaTeX .tex, .txt, Excel .xlsx or PySisyphe .xsheet).</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without labeling.</p>
 </section>
 <section id="mean-volume">
 <span id="menu-section-voxel-mean"></span><h2>Mean volume<a class="headerlink" href="#mean-volume" title="Link to this heading"></a></h2>

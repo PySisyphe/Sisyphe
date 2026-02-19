@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_browser.html">File browser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
@@ -157,7 +158,7 @@
 <li><p><a class="reference internal" href="#menu-section-preferences"><span class="std std-ref">Preferences</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-download"><span class="std std-ref">Download manager</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-update"><span class="std std-ref">Check for update</span></a></p></li>
-<li><p><a class="reference internal" href="PySisyphe_Functions.html#menu-section-attributes"><span class="std std-ref">Attributes conversion</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-attributes"><span class="std std-ref">Edit attributes</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-id"><span class="std std-ref">ID replacement</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-anonymize"><span class="std std-ref">Anonymize</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-editlabels"><span class="std std-ref">Edit volume labels</span></a></p></li>
@@ -275,6 +276,7 @@ Left-click on a volume menu item to open it in the thumbnail bar.</p>
 <li><p>Bundles: Tracking tab of the dock (<a class="reference internal" href="PySisyphe_docktracking.html#page-docktracking"><span class="std std-ref">Tracking tab of the dock</span></a>).</p></li>
 <li><p>Templates: default template volume for various modalities/sequences (MR T1/T2/PD/FLAIR, FDG PET; HMPAO SPECT; tissue probability maps i.e. GM, SCGM, WM, CSF, Brainstem, cerebellum; Brain mask).</p></li>
 <li><p>Database: patient database folders.</p></li>
+<li><p>Gemini: Google Gemini AI settings (API key: get your API key from Google AI Studio <a class="reference external" href="https://aistudio.google.com/api-keys">https://aistudio.google.com/api-keys</a>, model name).</p></li>
 <li><p>Dicom host: Dicom SCP host parameters of the <a class="reference internal" href="#menu-section-dcmquery"><span class="std std-ref">Dicom query/retrieve from Dicom SCP Server</span></a></p></li>
 </ul>
 </div></blockquote>
@@ -344,7 +346,7 @@ Left-click on a volume menu item to open it in the thumbnail bar.</p>
 </li>
 <li><p><strong>Controls</strong></p>
 <blockquote>
-<div><p>Control populations for 3D T1 MR, FDG PET (118 subjects), and HMPAO SPECT (33 subjects). These files are saved in the “controls” sub-folder of the PySisyphe user folder ($User/.PySisyphe).</p>
+<div><p>Control populations for 3D T1 MR, FDG PET (118 subjects), and HMPAO SPECT (33 subjects). These files are saved in the “controls” sub-folder of the PySisyphe user folder (~/.PySisyphe).</p>
 </div></blockquote>
 </li>
 <li><p><strong>Plugins</strong></p>
