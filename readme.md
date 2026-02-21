@@ -74,6 +74,25 @@ Direct link to binary archives:
 - Windows binary [PySisyphe 0.80.14 python 3.12 build 20-02-2026](https://mega.nz/file/RS13CDKT#Ej5PN3KMBG5aOm_ra3tzTs3oYLXlbCoanEcE5jnR5yo)
 - MacOS 11+ intel binary [PySisyphe 0.80.14 python 3.10 build 20-02-2026](https://mega.nz/file/UCd0jbTT#xUlVYy2yJnzHsJiTcyBMuKs2L4M_DWowH3uUOIgmsNw)
 
-Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. **We recommend copying it to the user directory**. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time.
+Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. **We recommend copying it to the user directory**. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time. Subsequent starts take less than 30 seconds.
 
 **PySisyphe may trigger false alerts from antivirus software, particularly on the Windows platform (e.g., Avast One). If this happens, be sure to add PySisyphe.exe to the list of trusted software.**
+
+The PySisyphe graphical user interface has been optimized for dark mode, so we recommend using this mode for the best user experience.
+
+Enabling dark mode on the Windows 11 platform:
+
+	- click the **Start button**,
+	- select **Settings** (or press Windows + I),
+	- click **Personalization** in the left menu,
+	- select **Colors**,
+	- in the **Choose your mode** line, select the **Dark** option to enable Windows 11 dark mode.
+
+Enabling dark mode on the MacOS platform:
+
+	- click the **Apple menu** in the top-left corner of your screen,
+	- select **System Settings**,
+	- click **Appearance** in the sidebar,
+	- choose **Dark**.
+
+Additional content, such as templates, atlases, samples, and various modality scans from volunteer groups, can be retrieved directly from the download manager integrated into the PySisyphe interface. To access the download manager, select **File > Download Manager**.
