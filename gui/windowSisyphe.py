@@ -182,61 +182,13 @@ class WindowSisyphe(QMainWindow):
 
     @classmethod
     def getUserDirectory(cls) -> str:
-        userdir = join(expanduser('~'), '.PySisyphe')
+        userdir = abspath(join(expanduser('~'), '.PySisyphe'))
         # < Revision 15/10/2025
-        tagfile = join(cls.getMainDirectory(), 'tag')
+        tagfile = abspath(join(cls.getMainDirectory(), 'tag'))
         if not exists(userdir): initPySisypheUserPath()
         # < Revision 19/01/2026
-        # elif exists(tagfile):
         elif exists(tagfile):
             setUserSettingsToDefault()
-            """
-            # Update the functions.xml and settings.xml files when running a new installation for the first time
-            copy(join(cls.getMainDirectory(), 'settings', 'functions.xml'), userdir)
-            copy(join(cls.getMainDirectory(), 'settings', 'settings.xml'), userdir)
-            # < Revision 11/10/2025
-            # Apply DPI scale factor to some settings
-            f = getDPIScaleFactor()
-            settings = SisypheSettings()
-            # < Revision 19/10/2025
-            if platform == 'darwin':
-                settings.setFieldValue('GUI', 'FontSize', 14)
-            # Revision 19/10/2025 >
-            if f > 1.0:
-                # GUI settings
-                v = settings.getFieldValue('GUI', 'ToolbarSize')
-                v = int(f * v)
-                if v % 2 != 0: v -= 1
-                if v < 16: v = 16
-                if v > 64: v = 64
-                settings.setFieldValue('GUI', 'ToolbarSize', v)
-                v = settings.getFieldValue('GUI', 'ThumbnailSize')
-                v = int(f * v)
-                if v % 2 != 0: v -= 1
-                if v < 64: v = 64
-                if v > 256: v = 256
-                settings.setFieldValue('GUI', 'ThumbnailSize', v)
-                v = settings.getFieldValue('GUI', 'IconSize')
-                v = int(f * v)
-                if v % 2 != 0: v -= 1
-                if v < 24: v = 24
-                if v > 64: v = 64
-                settings.setFieldValue('GUI', 'IconSize', v)
-                v = settings.getFieldValue('GUI', 'ZoomFactor')
-                v = f * v
-                if v > 1.0: v = 1.0
-                settings.setFieldValue('GUI', 'ZoomFactor', v)
-                # Viewport settings
-                settings.setFieldValue('Viewport', 'FontSizeScale', f)
-                v = settings.getFieldValue('Viewport', 'IconSize')
-                v = int(f * v)
-                if v % 2 != 0: v -= 1
-                if v < 24: v = 24
-                if v > 64: v = 64
-                settings.setFieldValue('Viewport', 'IconSize', v)
-            settings.save()
-            # Revision 19/10/2025 >
-            """
             remove(tagfile)
         # Revision 19/01/2026 >
         # Revision 15/10/2025 >
@@ -292,7 +244,8 @@ class WindowSisyphe(QMainWindow):
 
         # < Revision 15/10/2025
         # Test if the PySisyphe user folder exists and, if not, create it.
-        self.getUserDirectory()
+        userdir = self.getUserDirectory()
+        if exists(userdir): chdir(userdir)
         # Revision 15/10/2025 >
 
         if splash is not None:
@@ -622,11 +575,6 @@ class WindowSisyphe(QMainWindow):
         if self._database.isEmpty():
             self._tabview.setCurrentIndex(6)
         # Revision 18/02/2026 >
-
-        # Revision 18/02/2026 >
-        # < Revision 11/01/2026
-        chdir(self.getUserDirectory())
-        # Revision 11/01/2026
 
     # Private methods
 
