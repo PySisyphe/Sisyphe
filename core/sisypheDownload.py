@@ -16,6 +16,7 @@ from os.path import isdir
 from os.path import join
 from os.path import exists
 from os.path import dirname
+from os.path import abspath
 from os.path import split
 from os.path import splitext
 from os.path import getmtime
@@ -533,7 +534,7 @@ def updatePySisyphe(wait: DialogWait | None = None) -> None:
                     # < Revision 19/01/2026
                     if wait is not None:
                         wait.setInformationText('Reset PySisyphe settings to default...')
-                    userdir = join(expanduser('~'), '.PySisyphe')
+                    userdir = abspath(join(expanduser('~'), '.PySisyphe'))
                     if not exists(userdir):
                         initPySisypheUserPath()
                         if logger is not None:

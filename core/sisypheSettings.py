@@ -22,8 +22,6 @@ from os.path import isfile
 from os.path import commonpath
 from os.path import relpath
 
-from glob import glob
-
 from datetime import date
 from datetime import datetime
 
@@ -61,6 +59,8 @@ Class hierarchy
     - object -> SisypheSettings -> SisypheFunctionsSettings
                                 -> SisypheDialogsSettings
                                 -> SisypheTooltips
+                                
+    Last revision 20/02/2026
 """
 
 def getUsername() -> str:
@@ -102,50 +102,45 @@ def getUserPySisyphePath() -> str:
     str
         user PySisyphe path of the current session
     """
-    path = join(getUserPath(), '.PySisyphe')
+    path = abspath(join(getUserPath(), '.PySisyphe'))
     if not exists(path): initPySisypheUserPath()
     return path
 
 
 def initPySisypheUserPath() -> None:
     """
-    Creates user PySisyphe directory. Creates database, models and segmentation subdirectories. Copy default XML files
-    (settings.xml and functions.xml) to PySisyphe user directory.
+    Creates user PySisyphe directory. Creates controls, database, models, prompts, segmentation and workflows subdirectories.
+    Copy default XML files (settings.xml and functions.xml) to PySisyphe user directory.
     """
-    path = join(getUserPath(), '.PySisyphe')
+    # < Revision 20/02/2026
+    # ~/.Pysisyphe directory
+    path = abspath(join(getUserPath(), '.PySisyphe'))
     if not exists(path): mkdir(path)
     # Controls directory
-    # < Revision 30/10/2024
-    # add controls directory
-    path2 = join(path, 'controls')
+    path2 = abspath(join(path, 'controls'))
     if not exists(path2): mkdir(path2)
-    # Revision 30/10/2024 >
     # Database directory
-    database = join(path, 'database')
-    if not exists(path2): mkdir(database)
+    database = abspath(join(path, 'database'))
+    if not exists(database): mkdir(database)
     # Models directory
-    path2 = join(path, 'models')
+    path2 = abspath(join(path, 'models'))
     if not exists(path2): mkdir(path2)
-    xmls = glob(join(path2, '*.xml'))
-    if len(xmls) > 0:
-        for xml in xmls: copy(xml, path2)
     # Segmentation directory
-    path2 = join(path, 'segmentation')
+    path2 = abspath(join(path, 'segmentation'))
     if not exists(path2): mkdir(path2)
-    xmls = glob(join(path2, '*.xml'))
-    # < Revision 10/12/2025
     # Prompts directory
-    path2 = join(path, 'prompts')
+    path2 = abspath(join(path, 'prompts'))
     if not exists(path2): mkdir(path2)
-    # Revision 10/12/2025 >
-    if len(xmls) > 0:
-        for xml in xmls: copy(xml, path2)
+    # Workflows directory
+    path2 = abspath(join(path, 'workflows'))
+    if not exists(path2): mkdir(path2)
+    # Revision 20/02/2026 >
     # Root
-    import Sisyphe.settings
-    path2 = dirname(abspath(Sisyphe.settings.__file__))
-    file = join(path, 'settings.xml')
+    file = abspath(join(path, 'settings.xml'))
     if not exists(file):
-        default = join(path2, 'settings.xml')
+        import Sisyphe.settings
+        path2 = dirname(abspath(Sisyphe.settings.__file__))
+        default = abspath(join(path2, 'settings.xml'))
         copy(default, path)
         # < Revision 11/10/2025
         # Apply DPI scale factor to some settings
@@ -178,7 +173,7 @@ def initPySisypheUserPath() -> None:
             if v > 1.0: v = 1.0
             settings.setFieldValue('GUI', 'ZoomFactor', v)
             if sys.platform == 'darwin':
-                settings.setFieldValue('Viewport', 'FontSize', 14)
+                settings.setFieldValue('GUI', 'FontSize', 14)
             # Viewport settings
             settings.setFieldValue('Viewport', 'FontSizeScale', f)
             v = settings.getFieldValue('Viewport', 'IconSize')
@@ -188,16 +183,12 @@ def initPySisypheUserPath() -> None:
             if v > 64: v = 64
             settings.setFieldValue('Viewport', 'IconSize', v)
         # Revision 11/10/2025 >
-        # < Revision 11/01/2026
-        if sys.platform == 'darwin':
-            settings.setFieldValue('GUI', 'FontSize', 12)
-        # Revision 11/01/2026 >
         # < Revision 04/12/2025
         settings.setFieldValue('Database', 'CurrentPath', database)
         settings.setFieldValue('Database', 'DefaultPath', database)
         settings.save()
         # Revision 04/12/2025 >
-    file = join(path, 'functions.xml')
+    file = abspath(join(path, 'functions.xml'))
     if not exists(file):
         default = join(path2, 'functions.xml')
         copy(default, path)
@@ -207,10 +198,13 @@ def setUserSettingsToDefault() -> None:
     """
     Copy default XML files (settings.xml and functions.xml) to PySisyphe user directory.
     """
-    upath = getUserPySisyphePath()
+    upath = abspath(join(getUserPath(), '.PySisyphe'))
+    if not exists(upath):
+        initPySisypheUserPath()
+        return
     import Sisyphe.settings
     dpath = dirname(abspath(Sisyphe.settings.__file__))
-    file = join(dpath, 'settings.xml')
+    file = abspath(join(dpath, 'settings.xml'))
     copy(file, upath)
     # < Revision 11/10/2025
     # Apply DPI scale factor to some settings
@@ -242,6 +236,8 @@ def setUserSettingsToDefault() -> None:
         v = f * v
         if v > 1.0: v = 1.0
         settings.setFieldValue('GUI', 'ZoomFactor', v)
+        if sys.platform == 'darwin':
+            settings.setFieldValue('GUI', 'FontSize', 14)
         # Viewport settings
         settings.setFieldValue('Viewport', 'FontSizeScale', f)
         v = settings.getFieldValue('Viewport', 'IconSize')
@@ -250,18 +246,15 @@ def setUserSettingsToDefault() -> None:
         if v < 24: v = 24
         if v > 64: v = 64
         settings.setFieldValue('Viewport', 'IconSize', v)
-    # < Revision 11/01/2026
-    if sys.platform == 'darwin':
-        settings.setFieldValue('GUI', 'FontSize', 12)
-    # Revision 11/01/2026 >
     # Revision 11/10/2025 >
     # < Revision 04/12/2025
-    database = join(getUserPySisyphePath(), 'database')
+    database = abspath(join(getUserPySisyphePath(), 'database'))
+    if not exists(database): mkdir(database)
     settings.setFieldValue('Database', 'CurrentPath', database)
     settings.setFieldValue('Database', 'DefaultPath', database)
     settings.save()
     # Revision 04/12/2025 >
-    file = join(dpath, 'functions.xml')
+    file = abspath(join(dpath, 'functions.xml'))
     copy(file, upath)
 
 # < Revision 11/10/2025
@@ -377,6 +370,8 @@ class SisypheSettings(object):
                 v = f * v
                 if v > 1.0: v = 1.0
                 settings.setFieldValue('GUI', 'ZoomFactor', v)
+                if sys.platform == 'darwin':
+                    settings.setFieldValue('GUI', 'FontSize', 14)
                 # Viewport settings
                 settings.setFieldValue('Viewport', 'FontSizeScale', f)
                 v = settings.getFieldValue('Viewport', 'IconSize')
