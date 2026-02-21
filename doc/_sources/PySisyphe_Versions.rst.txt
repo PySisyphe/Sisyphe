@@ -3080,7 +3080,7 @@ version 0.78.08, build 01/02/2026
 
 .. _build20-02-2026:
 
-version 0.80.14, build 20/02/2026
+version 0.80.15, build 20/02/2026
 ---------------------------------
 
 - **new html documentation**
@@ -3126,6 +3126,11 @@ version 0.80.14, build 20/02/2026
 - **update main PySisyphe.py**
 
 	- exception handling for registry manipulations on the Windows platform, to avoid exceptions for sessions without administrator rights
+	- fix crash on first run after installation
+	
+		- logging code calls initPySisypheUserPath() -> getDPIScaleFactor() which raises an exception because QApplication is called before application creation
+		- moving the logging code after creating the application
+	
 	- replace splash.close() by splash.hide()
 	- rebuild frozen version (pyinstaller) 
 
@@ -3173,6 +3178,10 @@ version 0.80.14, build 20/02/2026
 	- widgets.basicWidgets
 	- widgets.databaseWidget
 	- widgets.toolBarThumbnail
+
+- **update PySisyphe.py**
+
+	
 
 - **new functions**
 
