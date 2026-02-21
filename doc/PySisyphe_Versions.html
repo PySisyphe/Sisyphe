@@ -93,7 +93,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-25-04-build-20-01-2026">version 0.25.04, build 20/01/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-76-22-build-29-01-2026">version 0.76.22, build 29/01/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-78-08-build-01-02-2026">version 0.78.08, build 01/02/2026</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-0-80-14-build-20-02-2026">version 0.80.14, build 20/02/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-80-15-build-20-02-2026">version 0.80.15, build 20/02/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -139,7 +139,7 @@
 <li><p><a class="reference internal" href="#build20-01-2026"><span class="std std-ref">version 0.25.04, build 20/01/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build29-01-2026"><span class="std std-ref">version 0.76.22, build 29/01/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build01-02-2026"><span class="std std-ref">version 0.78.08, build 01/02/2026</span></a></p></li>
-<li><p><a class="reference internal" href="#build20-02-2026"><span class="std std-ref">version 0.80.14, build 20/02/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build20-02-2026"><span class="std std-ref">version 0.80.15, build 20/02/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -5051,8 +5051,8 @@
 </li>
 </ul>
 </section>
-<section id="version-0-80-14-build-20-02-2026">
-<span id="build20-02-2026"></span><h2>version 0.80.14, build 20/02/2026<a class="headerlink" href="#version-0-80-14-build-20-02-2026" title="Link to this heading"></a></h2>
+<section id="version-0-80-15-build-20-02-2026">
+<span id="build20-02-2026"></span><h2>version 0.80.15, build 20/02/2026<a class="headerlink" href="#version-0-80-15-build-20-02-2026" title="Link to this heading"></a></h2>
 <ul>
 <li><p><strong>new html documentation</strong></p>
 <blockquote>
@@ -5115,8 +5115,16 @@
 </li>
 <li><p><strong>update main PySisyphe.py</strong></p>
 <blockquote>
-<div><ul class="simple">
+<div><ul>
 <li><p>exception handling for registry manipulations on the Windows platform, to avoid exceptions for sessions without administrator rights</p></li>
+<li><p>fix crash on first run after installation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>logging code calls initPySisypheUserPath() -&gt; getDPIScaleFactor() which raises an exception because QApplication is called before application creation</p></li>
+<li><p>moving the logging code after creating the application</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>replace splash.close() by splash.hide()</p></li>
 <li><p>rebuild frozen version (pyinstaller)</p></li>
 </ul>
@@ -5173,6 +5181,7 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p><strong>update PySisyphe.py</strong></p></li>
 <li><p><strong>new functions</strong></p>
 <blockquote>
 <div><ul>

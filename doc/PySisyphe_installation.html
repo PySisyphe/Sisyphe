@@ -120,15 +120,35 @@
 <span id="install-section-from-binary"></span><h2>From binary installer<a class="headerlink" href="#from-binary-installer" title="Link to this heading"></a></h2>
 <p>Download the binary installer for MS Windows or MacOS Intel platforms from <a class="reference external" href="https://github.com/PySisyphe/Sisyphe">https://github.com/PySisyphe/Sisyphe</a>.
 There is no version for the Linux platform, as some of the modules required to run PySisyphe are not yet available on this operating system.</p>
-<p>Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. We recommend copying it to the user directory. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time.</p>
+<p>Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. We recommend copying it to the user directory. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time. Subsequent starts take less than 30 seconds.</p>
 <p><strong>PySisyphe may trigger false alerts from antivirus software, particularly on the Windows platform (e.g., Avast One). If this happens, be sure to add PySisyphe.exe to the list of trusted software.</strong></p>
-<p>Additional content (templates, atlases, samples, various modality scans from volunteer groups…) can be retrieved directly from the download manager integrated into the PySisyphe interface (menu <strong>File &gt; Download manager…</strong>).</p>
+<p>The PySisyphe graphical user interface has been optimized for dark mode, so we recommend using this mode for the best user experience.</p>
+<p>Enabling dark mode on the Windows 11 platform:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>click the <strong>Start button</strong>,</p></li>
+<li><p>select <strong>Settings</strong> (or press Windows + I),</p></li>
+<li><p>click <strong>Personalization</strong> in the left menu,</p></li>
+<li><p>select <strong>Colors</strong>,</p></li>
+<li><p>in the <strong>Choose your mode</strong> line, select the <strong>Dark</strong> option to enable Windows 11 dark mode.</p></li>
+</ul>
+</div></blockquote>
+<p>Enabling dark mode on the MacOS platform:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>click the <strong>Apple menu</strong> in the top-left corner of your screen,</p></li>
+<li><p>select <strong>System Settings</strong>,</p></li>
+<li><p>click <strong>Appearance</strong> in the sidebar,</p></li>
+<li><p>choose <strong>Dark</strong>.</p></li>
+</ul>
+</div></blockquote>
+<p>Additional content, such as templates, atlases, samples, and various modality scans from volunteer groups, can be retrieved directly from the download manager integrated into the PySisyphe interface. To access the download manager, select <strong>File &gt; Download Manager</strong>.</p>
 </section>
 <section id="from-source">
 <span id="install-section-from-source"></span><h2>From source<a class="headerlink" href="#from-source" title="Link to this heading"></a></h2>
 <p>If you plan to develop plugins, you will need to install PySisyphe from source.</p>
-<p>PySisyphe runs on Python version 3.10, download the last release with binary installer (3.10.11, release date: April 5, 2023) at <a class="reference external" href="https://www.python.org/downloads/release/python-31011/">https://www.python.org/downloads/release/python-31011/</a>, and install it.</p>
-<p>We recommend working with the PyCharm IDE development environment (JetBrains Distributions s.r.o., Czech Republic), download community edition at <a class="reference external" href="https://www.jetbrains.com/fr-fr/pycharm/">https://www.jetbrains.com/fr-fr/pycharm/</a>, and install it. Run PyCharm IDE and create a new project (menu File -&gt; New project) with venv interpreter type and previously installed Python 3.10.11 version.</p>
+<p>PySisyphe runs on Python version 3.10 or 3.12, download the last release with binary installer (3.10.11, release date: April 5, 2023 or 3.12.10 release date: April 8, 2025) at <a class="reference external" href="https://www.python.org/downloads/release/python-31011/">https://www.python.org/downloads/release/python-31011/</a> or <a class="reference external" href="https://www.python.org/downloads/release/python-31210/">https://www.python.org/downloads/release/python-31210/</a>, and install it.</p>
+<p>We recommend working with the PyCharm IDE development environment (JetBrains Distributions s.r.o., Czech Republic), download community edition at <a class="reference external" href="https://www.jetbrains.com/fr-fr/pycharm/">https://www.jetbrains.com/fr-fr/pycharm/</a>, and install it. Run PyCharm IDE and create a new project (menu File -&gt; New project) with venv interpreter type and previously installed Python 3.10.11 or 3.12.10 version.</p>
 <ol class="arabic simple">
 <li><p>Download PySisyphe source at <a class="reference external" href="https://github.com/PySisyphe/Sisyphe">https://github.com/PySisyphe/Sisyphe</a> (“&lt;&gt; Code” button, and select Download ZIP).</p></li>
 <li><p>Unzip “Sisyphe-main.zip” archive.</p></li>
@@ -137,6 +157,7 @@ There is no version for the Linux platform, as some of the modules required to r
 <li><p>Open the Pycharm terminal (ALT-F12), the current folder is by default the root of the project folder (a requirements.txt exists in this folder).</p></li>
 <li><p>To install the python modules needed to work with PySisyphe, type at the command line: pip install -r requirements.txt</p></li>
 </ol>
+<p>Reinstall numpy package, if necessary, to force version 1.26.4: pip install numpy==1.26.4</p>
 <p>At this stage, all external and PySisyphe modules are installed for your own development.
 PySisyphe core (Sisyphe.core.&lt;module name&gt;) and widget (Sisyphe.widgets.&lt;module name&gt;) modules can be imported with:</p>
 <ul class="simple">
