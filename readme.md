@@ -95,4 +95,4 @@ Enabling dark mode on the MacOS platform:
 	- click Appearance in the sidebar,
 	- choose Dark.
 
-Additional content, such as templates, atlases, samples, and various modality scans from volunteer groups, can be retrieved directly from the download manager integrated into the PySisyphe interface. To access the download manager, select **File > Download Manager**.
+Additional content, such as templates, atlases, samples, plugins, and various modality scans from volunteer groups, can be retrieved directly from the download manager integrated into the PySisyphe interface. To access the download manager, select **File > Download Manager**.
