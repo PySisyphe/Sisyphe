@@ -45,6 +45,7 @@ from os.path import join
 from os.path import splitext
 from os.path import dirname
 from os.path import expanduser
+from os.path import abspath
 
 import traceback
 
@@ -287,21 +288,6 @@ if __name__ == "__main__":
         if ext != SisypheVolume.getFileExt(): filename = None
 
     """
-    Logging
-    PySisyphe.log file in .PySisyphe user directory
-    """
-    import logging
-    userdir = join(expanduser('~'), '.PySisyphe')
-    if not exists(userdir): initPySisypheUserPath()
-    filelog = join(userdir, 'PySisyphe.log')
-    logging.basicConfig(filename=filelog,
-                        encoding='utf-8',
-                        filemode='w',
-                        level=logging.INFO,
-                        format='%(asctime)s - %(name)s - %(levelname)s\n%(message)s')
-    logger = logging.getLogger(__name__)
-
-    """
     Create application
     """
     from Sisyphe.gui.windowSisyphe import WindowSisyphe
@@ -365,6 +351,21 @@ if __name__ == "__main__":
         PALETTE = app.palette()
         # Qt bug fix, lost macOS style when button height > 30px
         app.setStyleSheet('QPushButton { max-height: 30px; }')
+
+    """
+    Logging
+    PySisyphe.log file in ~/.PySisyphe
+    """
+    import logging
+    userdir = abspath(join(expanduser('~'), '.PySisyphe'))
+    if not exists(userdir): initPySisypheUserPath()
+    filelog = join(userdir, 'PySisyphe.log')
+    logging.basicConfig(filename=filelog,
+                        encoding='utf-8',
+                        filemode='w',
+                        level=logging.INFO,
+                        format='%(asctime)s - %(name)s - %(levelname)s\n%(message)s')
+    logger = logging.getLogger(__name__)
 
     """
     Set up main window
