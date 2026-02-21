@@ -172,8 +172,6 @@ def initPySisypheUserPath() -> None:
             v = f * v
             if v > 1.0: v = 1.0
             settings.setFieldValue('GUI', 'ZoomFactor', v)
-            if sys.platform == 'darwin':
-                settings.setFieldValue('GUI', 'FontSize', 14)
             # Viewport settings
             settings.setFieldValue('Viewport', 'FontSizeScale', f)
             v = settings.getFieldValue('Viewport', 'IconSize')
@@ -182,6 +180,9 @@ def initPySisypheUserPath() -> None:
             if v < 24: v = 24
             if v > 64: v = 64
             settings.setFieldValue('Viewport', 'IconSize', v)
+        v = round(10 / f)
+        if v < 12: v = 12
+        settings.setFieldValue('GUI', 'FontSize', v)
         # Revision 11/10/2025 >
         # < Revision 04/12/2025
         settings.setFieldValue('Database', 'CurrentPath', database)
@@ -236,8 +237,6 @@ def setUserSettingsToDefault() -> None:
         v = f * v
         if v > 1.0: v = 1.0
         settings.setFieldValue('GUI', 'ZoomFactor', v)
-        if sys.platform == 'darwin':
-            settings.setFieldValue('GUI', 'FontSize', 14)
         # Viewport settings
         settings.setFieldValue('Viewport', 'FontSizeScale', f)
         v = settings.getFieldValue('Viewport', 'IconSize')
@@ -246,6 +245,9 @@ def setUserSettingsToDefault() -> None:
         if v < 24: v = 24
         if v > 64: v = 64
         settings.setFieldValue('Viewport', 'IconSize', v)
+    v = round(10 / f)
+    if v < 12: v = 12
+    settings.setFieldValue('GUI', 'FontSize', v)
     # Revision 11/10/2025 >
     # < Revision 04/12/2025
     database = abspath(join(getUserPySisyphePath(), 'database'))
