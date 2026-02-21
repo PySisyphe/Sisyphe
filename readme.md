@@ -82,17 +82,17 @@ The PySisyphe graphical user interface has been optimized for dark mode, so we r
 
 Enabling dark mode on the Windows 11 platform:
 
-	- click the **Start button**,
-	- select **Settings** (or press Windows + I),
-	- click **Personalization** in the left menu,
-	- select **Colors**,
-	- in the **Choose your mode** line, select the **Dark** option to enable Windows 11 dark mode.
+	- click the Start button,
+	- select Settings (or press Windows + I),
+	- click Personalization in the left menu,
+	- select Colors,
+	- in the Choose your mode line, select the Dark option to enable Windows 11 dark mode.
 
 Enabling dark mode on the MacOS platform:
 
-	- click the **Apple menu** in the top-left corner of your screen,
-	- select **System Settings**,
-	- click **Appearance** in the sidebar,
-	- choose **Dark**.
+	- click the Apple menu in the top-left corner of your screen,
+	- select System Settings,
+	- click Appearance in the sidebar,
+	- choose Dark.
 
 Additional content, such as templates, atlases, samples, and various modality scans from volunteer groups, can be retrieved directly from the download manager integrated into the PySisyphe interface. To access the download manager, select **File > Download Manager**.
