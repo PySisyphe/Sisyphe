@@ -78,6 +78,16 @@ Unzip the downloaded archive into the directory of your choice. The PySisyphe fo
 
 **PySisyphe may trigger false alerts from antivirus software, particularly on the Windows platform (e.g., Avast One). If this happens, be sure to add PySisyphe.exe to the list of trusted software.**
 
+On the Windows 11 platform, the terminal (i.e. the console) remains visible in the taskbar. If you would prefer it to be hidden, simply change the default terminal application.
+
+	- click the Start button,
+	- open Windows Terminal application,
+	- click the dropdown arrow (▾) in the tab bar,
+	- select Settings,
+	- under Startup, locate Default terminal application,
+	- set it to Windows Console Host,
+	- save changes.
+
 The PySisyphe graphical user interface has been optimized for dark mode, so we recommend using this mode for the best user experience.
 
 Enabling dark mode on the Windows 11 platform:
