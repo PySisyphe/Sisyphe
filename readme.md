@@ -78,7 +78,7 @@ Unzip the downloaded archive into the directory of your choice. The PySisyphe fo
 
 **PySisyphe may trigger false alerts from antivirus software, particularly on the Windows platform (e.g., Avast One). If this happens, be sure to add PySisyphe.exe to the list of trusted software.**
 
-On the Windows 11 platform, the terminal (i.e. the console) remains visible in the taskbar. If you would prefer it to be hidden, simply change the default terminal application.
+On the Windows 11 platform, the terminal (i.e. console) remains visible in the taskbar. If you would prefer it to be hidden, simply change the default terminal application.
 
 	- click the Start button,
 	- open Windows Terminal application,
