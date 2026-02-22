@@ -22,7 +22,7 @@ Common tools of viewing widgets: look-up table management, overlay(s) management
 
 ROI tools: various 2D/3D brushes, cut/copy/paste, flip, translations in any direction, interpolating empty slices, automatic or interactive hole filling, mathematical morphology operators, set operators (union/intersection/difference/symmetric difference), thresholding, region-growing segmentation, confidence connected segmentation, active contour (snake) segmentation. Most of these tools can be applied to 2D slices, whole 3D volume or to blob(s) derived from connected component labeling. Any ROI processing can be cancelled with unlimited number of undo/redo.
 
-The interface also includes a patient database manager, a screenshots manager and a fully functional IPython console.
+The interface also includes a patient database manager, a file manager, a screenshots manager and a fully functional IPython console.
 
 List of available post-processings:
 
