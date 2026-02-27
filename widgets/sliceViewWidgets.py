@@ -31,6 +31,8 @@ from math import radians
 
 from numpy import ones
 from numpy import zeros
+from numpy import array
+from numpy import argmax
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
@@ -51,9 +53,11 @@ from vtk import vtkActor2D
 from vtk import vtkFollower
 from vtk import vtkCubeSource
 from vtk import vtkLineSource
+from vtk import vtkPolyLineSource
 from vtk import vtkRegularPolygonSource
 from vtk import vtkAppendPolyData
 from vtk import vtkPolyDataMapper
+from vtk import vtkPolyDataMapper2D
 from vtk import vtkImageSlice
 from vtk import vtkImageStack
 from vtk import vtkImageSliceMapper
@@ -63,6 +67,7 @@ from vtk import vtkImageMapToColors
 from vtk import vtkWindowToImageFilter
 from vtk import vtkContourFilter
 from vtk import vtkPolyData
+from vtk import vtkPoints
 from vtk import vtkPlane
 from vtk import vtkPlaneCutter
 from vtk import vtkMaskPoints
@@ -99,6 +104,7 @@ from Sisyphe.gui.dialogWait import DialogWait
 if TYPE_CHECKING:
     from vtk import vtkObject
     from PyQt5.QtGui import QShowEvent
+    from Sisyphe.processing.segmentation import SegmentAnything
 
 """
 Class hierarchy
@@ -6544,9 +6550,19 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         self._slicerois = None                  # vtkImageSlice, inactive roi
         self._circle = None                     # vtkRegularPolygonSource, brush circle polydata
         self._brush = None                      # vtkActor, circle brush representation
+        # < Revision 25/02/2026
+        self._bbox = None                       # vtkPolyLineSource, bounding box selection polydata
+        self._selectbox = None                  # vtkActor2D, bounding box representation
+        # Revision 25/02/2026 >
         self._brushFlag0 = None
+        # < Revision 26/02/2026
+        self._sam: SegmentAnything | None = None
+        # Revision 26/02/2026 >
 
         self._initBrushActor()
+        # < Revision 25/02/2026
+        self._initBoundingBoxActor()
+        # Revision 25/02/2026 >
 
         """
             Init window popup menu
@@ -6623,6 +6639,8 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             ->  Threshold disk brush (self._action['thresholdbrush'])
             ->  Solid sphere brush (self._action['brushflag3'])
             ->  Threshold sphere brush' (self._action['thresholdbrush3'])
+            ->  Draw solid rectangle (self._action['recflagt'])
+            ->  Segment anything (self._action['samflag'])
             ->  Automatic hole filling (self._action['fillholesflag'])
                 ---
             ->  2D functions (self._2d)
@@ -6743,6 +6761,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         self._action['fillholesflag'].setCheckable(True)
         self._action['fillholesflag'].triggered.connect(
             lambda: self.setFillHolesFlag(self._action['fillholesflag'].isChecked()))
+        # < Revision 26/02/2026
+        self._action['rectflag'] = QAction('Draw solid rectangle', self)
+        self._action['rectflag'].setCheckable(True)
+        self._action['rectflag'].triggered.connect(
+            lambda: self.setDrawRectangleFlag(self._action['samflag'].isChecked()))
+        self._action['samflag'] = QAction('Segment anything', self)
+        self._action['samflag'].setCheckable(True)
+        self._action['samflag'].triggered.connect(
+            lambda: self.setSamFlag(self._action['samflag'].isChecked()))
+        # Revision 26/02/2026 >
         # 2D ROI actions
         self._action['2derode'] = QAction('Erode', self)
         self._action['2derode'].triggered.connect(self.sliceErode)
@@ -6983,6 +7011,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         self._roitools.addAction(self._action['thresholdbrush'])
         self._roitools.addAction(self._action['brushflag3'])
         self._roitools.addAction(self._action['thresholdbrush3'])
+        # < Revision 26/02/2026
+        self._roitools.addAction(self._action['rectflag'])
+        self._roitools.addAction(self._action['samflag'])
+        # Revision 26/02/2026 >
         self._roitools.addAction(self._action['fillholesflag'])
         self._roitools.addSeparator()
         self._roitools.addMenu(self._2d)
@@ -7018,13 +7050,41 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
     _activesliceroi vtkImageSlice, active roi
     _slicerois      vtkImageSlice, inactive rois
     _draw           SisypheROIDraw
+    _sam            SegmentAnything
     _circle         vtkRegularPolygonSource, brush circle source
     _brush          vtkActor, circle brush representation
+    _bbox           vtkPolyLineSource, bounding box selection source
+    _selectbox      vtkActor, bounding box representation
     _brushFlag      bool, brush flag (active/inactive) for mouse event
     _fsettings      SisypheSettings
     """
 
     # Private methods
+
+    # < Revision 26/02/2026
+    def _initBoundingBoxActor(self) -> None:
+        """
+        Initializes the vtkActor used to represent the bounding box of selection.
+        Sets up its geometry, mapper, and visual properties.
+        """
+        self._bbox = vtkPolyLineSource()
+        pts = vtkPoints()
+        pts.InsertNextPoint(0, 1, 0)
+        pts.InsertNextPoint(0, 0, 0)
+        pts.InsertNextPoint(1, 0, 0)
+        pts.InsertNextPoint(1, 1, 0)
+        pts.InsertNextPoint(0, 1, 0)
+        self._bbox.SetPoints(pts)
+        mapper = vtkPolyDataMapper2D()
+        mapper.SetInputConnection(self._bbox.GetOutputPort())
+        mapper.ScalarVisibilityOff()
+        self._selectbox = vtkActor2D()
+        self._selectbox.SetMapper(mapper)
+        self._selectbox.GetProperty().SetLineWidth(self._lwidth)
+        self._selectbox.GetProperty().SetColor(1.0, 1.0, 1.0)
+        self._selectbox.SetVisibility(False)
+        self._renderer.AddActor(self._selectbox)
+    # Revision 26/02/2026 >
 
     def _initBrushActor(self) -> None:
         """
@@ -7174,13 +7234,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             name of the flag to be set as active. If empty, all flags are deactivated.
         """
         if isinstance(flag, str):
+            # < Revision 26/02/2026
+            # add 'rectflag' & 'samflag' actions
             flags = ['brushflag', 'thresholdbrush', 'brushflag3', 'thresholdbrush3', '2dblobdilate',
                      '2dbloberode', '2dblobopen', '2dblobclose', '2dblobcopy', '2dblobcut', '2dblobpaste',
                      '2dblobremove', '2dblobkeep', '2dblobthreshold', '2dfill', '2drgrowing', '2dblobrgrowing',
                      '2drconfidence', '2dblobrconfidence', '3dblobdilate', '3dbloberode', '3dblobopen', '3dblobclose',
                      '3dblobcopy', '3dblobcut', '3dblobpaste', '3dblobremove', '3dblobkeep', '3dblobexpand',
                      '3dblobshrink', '3dblobthreshold', '3dfill', '3drgrowing', '3dblobrgrowing', '3drconfidence',
-                     '3dblobrconfidence', 'activecontour']
+                     '3dblobrconfidence', 'activecontour', 'rectflag', 'samflag']
+            # Revision 26/02/2026 >
             if flag in flags:
                 for f in flags:
                     self._action[f].setChecked(f == flag)
@@ -8129,6 +8192,80 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         """
         return self._action['brushflag3'].isChecked() or \
                self._action['thresholdbrush3'].isChecked()
+
+    # < Revision 26/02/2026
+    # add setDrawRectangleFlag method
+    def setDrawRectangleFlag(self, f: bool, signal: bool = True) -> None:
+        """
+        Activate or deactivate rectangle drawing tool.
+
+        Parameters
+        ----------
+        f : bool
+            True to activate rectangle drawing tool, False to deactivate.
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
+        if isinstance(f, bool):
+            if self.hasROI() and self.getROIVisibility() and f:
+                self._updateExclusiveFlags('rectflag')
+            else: self._updateExclusiveFlags()
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ROIFlagChanged.emit(self, 'setDrawRectangleFlag', f)
+        else: raise TypeError('parameter type {} is not bool.'.format(type(f)))
+    # Revision 26/02/2026 >
+
+    # < Revision 26/02/2026
+    # add getDrawRectangleFlag method
+    def getDrawRectangleFlag(self) -> bool:
+        """
+        Get the state of the rectangle drawing tool.
+
+        Returns
+        -------
+        bool
+            True if rectangle drawing tool is active, False otherwise.
+        """
+        return self._action['rectflag'].isChecked()
+    # Revision 26/02/2026 >
+
+    # < Revision 26/02/2026
+    # add setSamFlag method
+    def setSamFlag(self, f: bool, signal: bool = True) -> None:
+        """
+        Activate or deactivate segment anything tool.
+
+        Parameters
+        ----------
+        f : bool
+            True to activate segment anything tool, False to deactivate.
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
+        if isinstance(f, bool):
+            if self.hasROI() and self.getROIVisibility() and f:
+                self._updateExclusiveFlags('samflag')
+            else: self._updateExclusiveFlags()
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ROIFlagChanged.emit(self, 'setSamFlag', f)
+        else: raise TypeError('parameter type {} is not bool.'.format(type(f)))
+    # Revision 26/02/2026 >
+
+    # < Revision 26/02/2026
+    # add getSamFlag method
+    def getSamFlag(self) -> bool:
+        """
+        Get the state of the segment anything tool.
+
+        Returns
+        -------
+        bool
+            True if segment anything tool is active, False otherwise.
+        """
+        return self._action['samflag'].isChecked()
+    # Revision 26/02/2026 >
 
     def setFillHolesFlag(self, f: bool, signal: bool = True) -> None:
         """
@@ -9500,6 +9637,109 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
 
+    def sliceDrawSelection(self) -> None:
+        """
+        Draw mouse selection area on the current slice of the active ROI.
+        """
+        if self._selectbox.GetVisibility():
+            pts = list()
+            for i in range(self._bbox.GetPoints().GetNumberOfPoints()-1):
+                p = self._bbox.GetPoints().GetPoint(i)
+                p = list(self._getWorldFromDisplay(p[0], p[1]))
+                f = self._renderer.GetActiveCamera().GetFocalPoint()
+                d = 2 - self._orient
+                p[d] = f[d]
+                pts.append(array(self._getWorldToMatrixCoordinate(p)))
+                if i == 0: pmin = pts[0]
+                else:
+                    # noinspection PyUnboundLocalVariable
+                    if all(pmin > pts[-1]): pmin = pts[-1]
+            i = argmax(abs(pts[1] - pts[0]))
+            h = pts[1][i] - pts[0][i]
+            i = argmax(abs(pts[3] - pts[0]))
+            w = pts[3][i] - pts[0][i]
+            pmin = pmin.astype(int)
+            self._draw.drawRectangle(pmin.tolist(), [w, h], self._orient)
+            self._roimapper.GetInput().Modified()
+            self._renderwindow.Render()
+            # noinspection PyUnresolvedReferences
+            self.ROIModified.emit(self)
+
+    def setSamModel(self, model: SegmentAnything) -> None:
+        """
+        Set the SegmentAnything pre-trained model attribute.
+
+        Parameters
+        ----------
+        model : SegmentAnything
+            Segment Anything (MedSAM) pre-trained model
+        """
+        self._sam = model
+
+    def getSamModel(self) -> SegmentAnything:
+        """
+        Get the SegmentAnything pre-trained model attribute.
+
+        Returns
+        -------
+        SegmentAnything
+            Segment Anything (MedSAM) pre-trained model
+        """
+        return self._sam
+
+    def sliceSam(self) -> None:
+        """
+        Segment the current slice of the active ROI with the SegmentAnything pre-trained model in the mouse selection area.
+        """
+        if self._sam:
+            if self._selectbox.GetVisibility():
+                wait = DialogWait()
+                wait.open()
+                wait.setInformationText('Segment anything processing...')
+                try:
+                    # bounding box
+                    pts = list()
+                    for i in range(self._bbox.GetPoints().GetNumberOfPoints() - 1):
+                        p = self._bbox.GetPoints().GetPoint(i)
+                        p = list(self._getWorldFromDisplay(p[0], p[1]))
+                        f = self._renderer.GetActiveCamera().GetFocalPoint()
+                        d = 2 - self._orient
+                        p[d] = f[d]
+                        pts.append(array(self._getWorldToMatrixCoordinate(p)))
+                        if i == 0:
+                            pmin = pts[0]
+                            pmax = pts[0]
+                        else:
+                            # noinspection PyUnboundLocalVariable
+                            if all(pts[-1] <= pmin): pmin = pts[-1]
+                            # noinspection PyUnboundLocalVariable
+                            if all(pts[-1] >= pmax): pmax = pts[-1]
+                    pmin = pmin.astype(int).tolist()
+                    pmax = pmax.astype(int).tolist()
+                    # noinspection PyUnboundLocalVariable
+                    if self._orient == 0: bbox = [pmin[0], pmin[1], pmax[0], pmax[1]]
+                    elif self._orient == 1: bbox = [pmin[0], pmin[2], pmax[0], pmax[2]]
+                    else: bbox = [pmin[1], pmin[2], pmax[1], pmax[2]]
+                    # Segment anything
+                    self._sam.setROI(self._draw.getROI())
+                    self._sam.setSlice(self.getVolume(), self.getSliceIndex(), self._orient)
+                    self._sam.segment(bbox)
+                    self._draw.appendSliceToLIFO(self.getSliceIndex(), self._orient)
+                    self._roimapper.GetInput().Modified()
+                    self._renderwindow.Render()
+                    # noinspection PyUnresolvedReferences
+                    self.ROIModified.emit(self)
+                except:
+                    wait.hide()
+                    messageBox(self,
+                               title='Segment anything',
+                               text='Segment anything error.')
+                wait.close()
+        else:
+            messageBox(self,
+                       title='Segment anything' ,
+                       text='No segment anything model.')
+
     # 3D ROI functions
 
     def roiDilate(self) -> None:
@@ -9659,41 +9899,61 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         evt_name : str
             name of the event.
         """
-        if self.hasROI() and self.getROIVisibility() and self.getBrushFlag() > 0:
+        if self.hasROI() and self.getROIVisibility():
             interactorstyle = self._window.GetInteractorStyle()
-            k = self._interactor.GetKeySym()
-            if k in ('Control_L', 'Shift_L', 'Alt_L') or self.getZoomFlag()\
-                    or self.getMoveFlag() or self.getLevelFlag():
-                if self._brushFlag0 is None:
-                    self._brushFlag0 = self.getBrushFlag()
-                    self._brush.SetVisibility(False)
-                super()._onMouseMoveEvent(obj, evt_name)
-            else:
-                self._brush.SetVisibility(True)
-                if not self._timer.isActive(): self._timer.start()
-                last = interactorstyle.GetLastPos()
-                p = list(self._getWorldFromDisplay(last[0], last[1]))
-                f = self._renderer.GetActiveCamera().GetFocalPoint()
-                d = 2 - self._orient
-                if self._orient == 1: p[d] = f[d] + 1.0
-                else: p[d] = f[d] - 1.0
-                self._brush.SetPosition(p)
-                if interactorstyle.GetButton() != 0:
-                    p[d] = f[d]
-                    p = self._getWorldToMatrixCoordinate(p)
-                    if self._window.GetInteractorStyle().GetButton() == 1:
-                        self._draw.brush(p[0], p[1], p[2], self._orient)
-                    elif self._window.GetInteractorStyle().GetButton() == 3:
-                        self._draw.erase(p[0], p[1], p[2], self._orient)
-                    self._roimapper.GetInput().Modified()
-                    # < Revision 14/11/2025
-                    # self.ROIModified.emit(self)
-                    # no synchronization to speed up 2D brush control
-                    if self.getBrushFlag() not in (1, 2):
-                        # noinspection PyUnresolvedReferences
-                        self.ROIModified.emit(self)
-                    # Revision 14/11/2025 >
-                self._renderwindow.Render()
+            # < Revision 26/02/2026
+            if self.getDrawRectangleFlag() or self.getSamFlag():
+                if interactorstyle.GetButton() == 1:
+                    pts = self._bbox.GetPoints()
+                    first = pts.GetPoint(0)[:2]
+                    last = interactorstyle.GetLastPos()
+                    w = last[0] - first[0]
+                    h = last[1] - first[1]
+                    pts.SetPoint(0, first[0], first[1], 0)
+                    pts.SetPoint(1, first[0], first[1]+h, 0)
+                    pts.SetPoint(2, first[0]+w, first[1]+h, 0)
+                    pts.SetPoint(3, first[0]+w, first[1], 0)
+                    pts.SetPoint(4, first[0], first[1], 0)
+                    pts.Modified()
+                    self._bbox.Modified()
+                    self._selectbox.SetVisibility(True)
+                    self._renderwindow.Render()
+                return
+            # Revision 26/02/2026 >
+            elif self.getBrushFlag() > 0:
+                k = self._interactor.GetKeySym()
+                if k in ('Control_L', 'Shift_L', 'Alt_L') or self.getZoomFlag() \
+                        or self.getMoveFlag() or self.getLevelFlag():
+                    if self._brushFlag0 is None:
+                        self._brushFlag0 = self.getBrushFlag()
+                        self._brush.SetVisibility(False)
+                    super()._onMouseMoveEvent(obj, evt_name)
+                else:
+                    self._brush.SetVisibility(True)
+                    if not self._timer.isActive(): self._timer.start()
+                    last = interactorstyle.GetLastPos()
+                    p = list(self._getWorldFromDisplay(last[0], last[1]))
+                    f = self._renderer.GetActiveCamera().GetFocalPoint()
+                    d = 2 - self._orient
+                    if self._orient == 1: p[d] = f[d] + 1.0
+                    else: p[d] = f[d] - 1.0
+                    self._brush.SetPosition(p)
+                    if interactorstyle.GetButton() != 0:
+                        p[d] = f[d]
+                        p = self._getWorldToMatrixCoordinate(p)
+                        if self._window.GetInteractorStyle().GetButton() == 1:
+                            self._draw.brush(p[0], p[1], p[2], self._orient)
+                        elif self._window.GetInteractorStyle().GetButton() == 3:
+                            self._draw.erase(p[0], p[1], p[2], self._orient)
+                        self._roimapper.GetInput().Modified()
+                        # < Revision 14/11/2025
+                        # self.ROIModified.emit(self)
+                        # no synchronization to speed up 2D brush control
+                        if self.getBrushFlag() not in (1, 2):
+                            # noinspection PyUnresolvedReferences
+                            self.ROIModified.emit(self)
+                        # Revision 14/11/2025 >
+                    self._renderwindow.Render()
         else: super()._onMouseMoveEvent(obj, evt_name)
 
     def _onLeftPressEvent(self, obj: vtkObject, evt_name: str) -> None:
@@ -9719,6 +9979,23 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     self._brush.SetVisibility(False)
                 super()._onLeftPressEvent(obj, evt_name)
             # Revision 20/03/2025 >
+            # < Revision 26/02/2026
+            elif self.getDrawRectangleFlag() or self.getSamFlag():
+                last = self._window.GetInteractorStyle().GetLastPos()
+                pts = self._bbox.GetPoints()
+                pts.SetPoint(0, last[0], last[1], 0)
+                pts.SetPoint(1, last[0], last[1]-1, 0)
+                pts.SetPoint(2, last[0]+1, last[1]-1, 0)
+                pts.SetPoint(3, last[0]+1, last[1], 0)
+                pts.SetPoint(4, last[0], last[1], 0)
+                pts.Modified()
+                self._bbox.Modified()
+                if self._activeroi is not None:
+                    self._selectbox.GetProperty().SetColor(self._rois[self._activeroi].getColor())
+                self._selectbox.SetVisibility(True)
+                self._renderwindow.Render()
+                return
+            # Revision 26/02/2026 >
             else:
                 if not self.isSelected(): self.select()
                 p = self._getClickedMatrixCoordinate()
@@ -9946,20 +10223,31 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         if self._brushFlag0 is not None:
             self._brush.SetVisibility(self._brushFlag0 > 0)
             self._brushFlag0 = None
-        elif self.hasROI() and self.getROIVisibility() and self.getBrushFlag() > 0:
-            if self._action['fillholesflag'].isChecked():
-                index = self.getSliceIndex()
-                self._draw.fillHolesSlice(index, self._orient, False)
-                if self.getUndo(): self._draw.appendSliceToLIFO(index, self._orient)
-                self._roimapper.GetInput().Modified()
-                self._renderwindow.Render()
-                # noinspection PyUnresolvedReferences
-                self.ROIModified.emit(self)
-            elif self.getUndo():
-                if self.get2DBrushFlag():
+        elif self.hasROI() and self.getROIVisibility():
+            # < Revision 26/02/2026
+            if self.getDrawRectangleFlag():
+                self.sliceDrawSelection()
+                self._selectbox.SetVisibility(False)
+                return
+            elif self.getSamFlag():
+                self.sliceSam()
+                self._selectbox.SetVisibility(False)
+                return
+            # Revision 26/02/2026 >
+            elif self.getBrushFlag() > 0:
+                if self._action['fillholesflag'].isChecked():
                     index = self.getSliceIndex()
-                    self._draw.appendSliceToLIFO(index, self._orient)
-                else: self._draw.appendVolumeToLIFO()
+                    self._draw.fillHolesSlice(index, self._orient, False)
+                    if self.getUndo(): self._draw.appendSliceToLIFO(index, self._orient)
+                    self._roimapper.GetInput().Modified()
+                    self._renderwindow.Render()
+                    # noinspection PyUnresolvedReferences
+                    self.ROIModified.emit(self)
+                elif self.getUndo():
+                    if self.get2DBrushFlag():
+                        index = self.getSliceIndex()
+                        self._draw.appendSliceToLIFO(index, self._orient)
+                    else: self._draw.appendVolumeToLIFO()
         super()._onLeftReleaseEvent(obj, evt_name)
 
     def _onMiddlePressEvent(self, obj: vtkObject, evt_name: str) -> None:

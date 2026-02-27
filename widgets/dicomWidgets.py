@@ -31,6 +31,8 @@ from numpy import int32
 from numpy import uint16
 from numpy import uint32
 from numpy import iinfo
+from numpy import array
+from numpy import argmax
 
 from pydicom.tag import Tag
 from pydicom.tag import BaseTag
@@ -870,7 +872,7 @@ class DicomFilesTreeWidget(QTreeWidget):
 
     QTreeWidget -> DicomFilesTreeWidget
 
-    Last revision: 26/01/2026
+    Last revision: 24/02/2026
     """
 
     # Special method
@@ -1146,6 +1148,9 @@ class DicomFilesTreeWidget(QTreeWidget):
                         # noinspection PyUnresolvedReferences
                         acqitem.setCheckState(0, Qt.Checked)
                         item.addChild(acqitem)
+                        # < Revision 24/02/2026
+                        self._dict[series]['acq'][acq[j]]['files'] = self._verifySliceOrder(self._dict[series]['acq'][acq[j]]['files'])
+                        # Revision 24/02/2026 >
                         for k in range(n):
                             institem = QTreeWidgetItem(acqitem)
                             filename = self._dict[series]['acq'][acq[j]]['files'][k]
@@ -1169,6 +1174,22 @@ class DicomFilesTreeWidget(QTreeWidget):
             messageBox(self,
                        'DICOM file parsing...',
                        text='DICOM file parsing error.')
+
+    # < Revision 24/02/2026
+    @staticmethod
+    def _verifySliceOrder(filenames: list[str]) -> list[str]:
+        try:
+            # Extract ImagePositionPatient
+            dsfirst = read_file(filenames[0], stop_before_pixels=True, specific_tags=[Tag(0x0020, 0x0032)])
+            dslast = read_file(filenames[-1], stop_before_pixels=True, specific_tags=[Tag(0x0020, 0x0032)])
+            pfirst = dsfirst[0x0020, 0x0032].value
+            plast = dslast[0x0020, 0x0032].value
+            i = argmax(abs(array(plast) - array(pfirst)))
+            if pfirst[i] > plast[i]:
+                filenames = filenames[::-1]
+        except: pass
+        return filenames
+    # Revision 24/02/2026 >
 
     # Public methods
 

@@ -63,6 +63,9 @@ if TYPE_CHECKING:
     from Sisyphe.core.sisypheMesh import SisypheMesh
     from Sisyphe.core.sisypheROI import SisypheROICollection
     from Sisyphe.core.sisypheROI import SisypheROIDraw
+    # < Revision 26/02/2026
+    from Sisyphe.processing.segmentation import SegmentAnything
+    # Revision 26/02/2026 >
 
 """
 Class hierarchy
@@ -2599,7 +2602,7 @@ class GridViewWidget(MultiViewWidget):
     QWidget -> MultiViewWidget -> GridViewWidget
 
     Creation: 03/04/2022
-    Last revision: 17/11/2025
+    Last revision: 26/02/2026
     """
 
     # Special method
@@ -2837,6 +2840,49 @@ class GridViewWidget(MultiViewWidget):
             True if a volume is displayed False otherwise.
         """
         return self[0, 0].hasVolume()
+
+    # < Revision 26/02/2026
+    # add setSamModel method
+    def setSamModel(self, model: SegmentAnything) -> None:
+        """
+        Set the SegmentAnything pre-trained model attribute.
+
+        Parameters
+        ----------
+        model : SegmentAnything
+            Segment Anything (MedSAM) pre-trained model
+        """
+        for i in range(0, 9):
+            self[i // 3, i % 3].setSamModel(model)
+    # Revision 26/02/2026 >
+
+    # < Revision 26/02/2026
+    # add getSamModel method
+    def getSamModel(self) -> SegmentAnything:
+        """
+        Get the SegmentAnything pre-trained model attribute.
+
+        Returns
+        -------
+        SegmentAnything
+            Segment Anything (MedSAM) pre-trained model
+        """
+        return self[0, 0].getSamModel()
+    # Revision 26/02/2026 >
+
+    # < Revision 26/02/2026
+    # add hasSamModel method
+    def hasSamModel(self) -> bool:
+        """
+        Check if the SegmentAnything pre-trained model attribute is defined.
+
+        Returns
+        -------
+        bool
+            True if the SegmentAnything pre-trained model attribute is defined False otherwise.
+        """
+        return self[0, 0].getSamModel() is not None
+    # Revision 26/02/2026 >
 
     def setNumberOfVisibleViews(self, r: int, c: int) -> None:
         """

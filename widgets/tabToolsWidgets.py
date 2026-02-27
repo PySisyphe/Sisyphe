@@ -441,7 +441,7 @@ class TabROIToolsWidget(TabWidget):
 
     QWidget -> TabROIToolsWidget
 
-    Last revision: 15/02/2026
+    Last revision: 26/02/2026
     """
 
     # Special method
@@ -766,6 +766,10 @@ class TabROIToolsWidget(TabWidget):
     def _initBrushGroupBox(self):
         self._btn['dummy'] = IconPushButton(size=TabWidget._VSIZE)
         self._btn['brush'] = IconPushButton('brush.png', size=TabWidget._VSIZE)
+        # < Revision 26/02/2026
+        self._btn['area'] = IconPushButton('select2.png', size=TabWidget._VSIZE)
+        self._btn['sam'] = IconPushButton('sam.png', size=TabWidget._VSIZE)
+        # Revision 26/02/2026 >
         self._btn['threshold'] = IconPushButton('threshold.png', size=TabWidget._VSIZE)
         self._btn['interpolate'] = IconPushButton('layer.png', size=TabWidget._VSIZE)
         self._btn['undo'] = IconPushButton('undo.png', size=TabWidget._VSIZE)
@@ -773,16 +777,33 @@ class TabROIToolsWidget(TabWidget):
 
         self._btngroup.addButton(self._btn['dummy'])
         self._btngroup.addButton(self._btn['brush'])
+        # < Revision 26/02/2026
+        self._btngroup.addButton(self._btn['area'])
+        self._btngroup.addButton(self._btn['sam'])
+        # Revision 26/02/2026 >
         self._btn['dummy'].setCheckable(True)
         self._btn['brush'].setCheckable(True)
+        # < Revision 26/02/2026
+        self._btn['area'].setCheckable(True)
+        self._btn['sam'].setCheckable(True)
+        # Revision 26/02/2026 >
 
         self._btn['brush'].setToolTip('Brush')
+        # < Revision 26/02/2026
+        self._btn['area'].setToolTip('Fill the mouse selection area')
+        self._btn['sam'].setToolTip('Automatic segmentation of the mouse selection area\n'
+                                    'using pre-trained Segment Anything model (MedSAM).')
+        # Revision 26/02/2026 >
         self._btn['threshold'].setToolTip('Set voxel value threshold for all thresholding tools')
         self._btn['interpolate'].setToolTip('Interpolation between first\nand last displayed slice')
         self._btn['undo'].setToolTip('Undo')
         self._btn['redo'].setToolTip('Redo')
 
         self._btn['brush'].clicked.connect(self.brush)
+        # < Revision 26/02/2026
+        self._btn['area'].clicked.connect(self.area)
+        self._btn['sam'].clicked.connect(self.sam)
+        # Revision 26/02/2026 >
         self._btn['interpolate'].pressed.connect(self.interpolate)
         self._btn['undo'].pressed.connect(self.undo)
         self._btn['redo'].pressed.connect(self.redo)
@@ -802,6 +823,10 @@ class TabROIToolsWidget(TabWidget):
         lyout.setSpacing(5)
         lyout.addStretch()
         lyout.addWidget(self._btn['brush'])
+        # < Revision 26/02/2026
+        lyout.addWidget(self._btn['area'])
+        lyout.addWidget(self._btn['sam'])
+        # Revision 26/02/2026 >
         lyout.addWidget(self._btn['threshold'])
         lyout.addSpacing(10)
         lyout.addWidget(self._btn['interpolate'])
@@ -1638,6 +1663,28 @@ class TabROIToolsWidget(TabWidget):
             else:
                 self._views.setBrushROIFlag(self._brushtype.currentIndex())
                 if self._logger is not None: self._logger.info('ROI tools - Brush tool selected')
+
+    # < Revision 26/02/2026
+    def area(self):
+        if self._views.getDrawRectangleFlag():
+            self._btn['dummy'].setChecked(True)
+            self._views.setNoROIFlag()
+            if self._logger is not None: self._logger.info('ROI tools - Draw rectangle tool unselected')
+        else:
+            self._views.setDrawRectangleFlag(True)
+            if self._logger is not None: self._logger.info('ROI tools - Draw rectangle tool selected')
+    # Revision 26/02/2026 >
+
+    # < Revision 26/02/2026
+    def sam(self):
+        if self._views.getSamFlag():
+            self._btn['dummy'].setChecked(True)
+            self._views.setNoROIFlag()
+            if self._logger is not None: self._logger.info('ROI tools - Segment anything tool unselected')
+        else:
+            self._views.setSamFlag(True)
+            if self._logger is not None: self._logger.info('ROI tools - Segment anything tool selected')
+    # Revision 26/02/2026 >
 
     def interpolate(self):
         if self.hasViewCollection() and self.hasCollection():

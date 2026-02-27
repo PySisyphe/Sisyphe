@@ -396,8 +396,11 @@ class LutWidget(QWidget):
         # Init QLayout
 
         hlyout = QHBoxLayout()
+        # noinspection PyUnresolvedReferences
         hlyout.addWidget(self._editmin, alignment=Qt.AlignLeft)
+        # noinspection PyUnresolvedReferences
         hlyout.addWidget(self._combo, alignment=Qt.AlignHCenter)
+        # noinspection PyUnresolvedReferences
         hlyout.addWidget(self._editmax, alignment=Qt.AlignRight)
         vlyout = QVBoxLayout(self)
         vlyout.addWidget(self._canvas)
@@ -405,13 +408,16 @@ class LutWidget(QWidget):
         vlyout.addWidget(self._reverse)
         vlyout.setSpacing(0)
         vlyout.setContentsMargins(5, 5, 5, 5)
+        # noinspection PyUnresolvedReferences
         vlyout.setAlignment(self._reverse, Qt.AlignHCenter)
+        # noinspection PyUnresolvedReferences
         vlyout.setAlignment(self._canvas, Qt.AlignHCenter)
         self.setLayout(vlyout)
 
         self.setToolTip('Drag vertical dotted line with mouse to move it,\n'
                         'and modify image windowing settings.')
 
+        # noinspection PyUnresolvedReferences
         self._canvas.setFocusPolicy(Qt.ClickFocus)
         self._canvas.setFocus()
         self._cursor = QCursor()
@@ -615,9 +621,13 @@ class LutWidget(QWidget):
             # replace QLineEdit by QDoubleSpinBox
             # self._editmin.setValidator(QDoubleValidator(finfo(datatype).min, finfo(datatype).max, self._decimals))
             # self._editmax.setValidator(QDoubleValidator(finfo(datatype).min, finfo(datatype).max, self._decimals))
+            # noinspection PyTypeChecker
             self._editmin.setMinimum(finfo(datatype).min)
+            # noinspection PyTypeChecker
             self._editmin.setMaximum(finfo(datatype).max)
+            # noinspection PyTypeChecker
             self._editmax.setMinimum(finfo(datatype).min)
+            # noinspection PyTypeChecker
             self._editmax.setMaximum(finfo(datatype).max)
             self._editmin.setDecimals(self._decimals)
             self._editmax.setDecimals(self._decimals)
@@ -639,7 +649,9 @@ class LutWidget(QWidget):
         self._editmin.blockSignals(False)
         self._editmax.blockSignals(False)
         # Revision 23/07/2024 >
+        # noinspection PyUnresolvedReferences
         self._editmin.setAlignment(Qt.AlignHCenter)
+        # noinspection PyUnresolvedReferences
         self._editmax.setAlignment(Qt.AlignHCenter)
 
     def _get_span_left(self) -> float:
@@ -738,6 +750,7 @@ class LutWidget(QWidget):
                     self._on_move_left_span_flag = True
                     self._on_move_right_span_flag = False
                     self._on_move_span_flag = False
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.SplitHCursor)
                     self._canvas.setCursor(self._cursor)
                 # Drag right line
@@ -745,6 +758,7 @@ class LutWidget(QWidget):
                     self._on_move_right_span_flag = True
                     self._on_move_left_span_flag = False
                     self._on_move_span_flag = False
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.SplitHCursor)
                     self._canvas.setCursor(self._cursor)
                 # Drag rectangle
@@ -752,6 +766,7 @@ class LutWidget(QWidget):
                     self._on_move_span_flag = True
                     self._on_move_left_span_flag = False
                     self._on_move_right_span_flag = False
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.ClosedHandCursor)
                     self._canvas.setCursor(self._cursor)
                 self._xpos = float(event.xdata)
@@ -810,17 +825,21 @@ class LutWidget(QWidget):
                 xleft = self._get_span_left()
                 xright = self._get_span_right()
                 if 0 < event.xdata - xleft < tol:
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.SplitHCursor)
                     self._canvas.setCursor(self._cursor)
                 # Drag right line
                 elif 0 < xright - event.xdata < tol:
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.SplitHCursor)
                     self._canvas.setCursor(self._cursor)
                 # Drag rectangle
                 elif xleft < event.xdata < xright:
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.OpenHandCursor)
                     self._canvas.setCursor(self._cursor)
                 else:
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.ArrowCursor)
                     self._canvas.setCursor(self._cursor)
 
@@ -829,6 +848,7 @@ class LutWidget(QWidget):
         """
         Handles mouse release to end the drag operation.
         """
+        # noinspection PyUnresolvedReferences
         self._cursor.setShape(Qt.ArrowCursor)
         self._canvas.setCursor(self._cursor)
         self._on_move_span_flag = False
@@ -1379,10 +1399,11 @@ class LutEditWidget(QWidget):
         # Init popup menu
 
         self._popup = QMenu(self)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action_new = QAction('Add new point', self)
         self._action_remove = QAction('Remove point', self)
@@ -1427,6 +1448,7 @@ class LutEditWidget(QWidget):
         self.setToolTip('Right click on background or markers to display popup menu,\n'
                         'Double click on background to add a new marker,\n'
                         'Drag a marker with mouse to move it.')
+        # noinspection PyUnresolvedReferences
         self._canvas.setFocusPolicy(Qt.ClickFocus)
         self._canvas.setFocus()
         self._cursor = QCursor()
@@ -1596,6 +1618,7 @@ class LutEditWidget(QWidget):
                     if self._selected == 0 or self._selected == len(self._xlist) - 1:
                         self._selected = None
                     else:
+                        # noinspection PyUnresolvedReferences
                         self._cursor.setShape(Qt.ClosedHandCursor)
                         self._canvas.setCursor(self._cursor)
         else:
@@ -1624,6 +1647,7 @@ class LutEditWidget(QWidget):
         """
         if self._selected is not None and event.xdata is not None:
             self._xlist[self._selected] = int(event.xdata)
+            # noinspection PyUnresolvedReferences
             self._cursor.setShape(Qt.ArrowCursor)
             self._canvas.setCursor(self._cursor)
             self._draw()
@@ -2211,10 +2235,11 @@ class AlphaTransferWidget(QWidget):
         # Init popup menu
 
         self._popup = QMenu(self)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action_new = QAction('Add new point', self)
         self._action_remove = QAction('Remove point', self)
@@ -2243,6 +2268,7 @@ class AlphaTransferWidget(QWidget):
         vlyout.addWidget(self._canvas)
         vlyout.setSpacing(0)
         vlyout.setContentsMargins(5, 5, 5, 5)
+        # noinspection PyUnresolvedReferences
         vlyout.setAlignment(self._canvas, Qt.AlignHCenter)
         self.setLayout(vlyout)
 
@@ -2255,6 +2281,7 @@ class AlphaTransferWidget(QWidget):
         if functype == 'alpha': txt = 'Scalar opacity transfer function\n\n' + txt
         else: txt = 'Gradient opacity transfer function\n\n' + txt
         self.setToolTip(txt)
+        # noinspection PyUnresolvedReferences
         self._canvas.setFocusPolicy(Qt.ClickFocus)
         self._canvas.setFocus()
         self._cursor = QCursor()
@@ -2608,6 +2635,7 @@ class AlphaTransferWidget(QWidget):
                     self._popup.popup(QPoint(x, y))
             elif event.button == MouseButton.LEFT:
                 if self._selected is not None:
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.ClosedHandCursor)
                     self._canvas.setCursor(self._cursor)
 
@@ -2657,6 +2685,7 @@ class AlphaTransferWidget(QWidget):
         Finalizes a drag operation, updating the transfer function and view.
         """
         if self._selected is not None and event.xdata is not None:
+            # noinspection PyUnresolvedReferences
             self._cursor.setShape(Qt.ArrowCursor)
             self._canvas.setCursor(self._cursor)
             self._updateTransfer()
@@ -2879,12 +2908,16 @@ class TransferWidget(QWidget):
         vlyout.addWidget(self._color)
         vlyout.addLayout(lyout)
 
+        # noinspection PyUnresolvedReferences
         vlyout.setAlignment(self._labelalpha, Qt.AlignHCenter)
+        # noinspection PyUnresolvedReferences
         vlyout.setAlignment(self._labelgrad, Qt.AlignHCenter)
+        # noinspection PyUnresolvedReferences
         vlyout.setAlignment(self._color, Qt.AlignHCenter)
 
         vlyout.setSpacing(0)
         vlyout.setContentsMargins(5, 5, 5, 5)
+        # noinspection PyUnresolvedReferences
         vlyout.setSizeConstraint(QVBoxLayout.SetFixedSize)
         self.setLayout(vlyout)
 

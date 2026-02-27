@@ -1068,7 +1068,7 @@ class FileSelectionWidget(QWidget, SelectionFilter):
 
     QWidget, SelectionFilter -> FileSelectionWidget
 
-    Last revision: 13/02/2026
+    Last revision: 24/02/2026
     """
 
     # Custom Qt Signal
@@ -2058,9 +2058,11 @@ class FileSelectionWidget(QWidget, SelectionFilter):
                 if not param or paramext not in (HandleWidget.getFileExt(),
                                                  LineWidget.getFileExt(),
                                                  ToolWidgetCollection.getFileExt()):
-                    filt = ';;'.join([HandleWidget.getFilterExt(),
-                                      LineWidget.getFilterExt(),
-                                      ToolWidgetCollection.getFilterExt()])
+                    # < Revision 24/02/2026
+                    filt = ';;'.join([ToolWidgetCollection.getFilterExt(),
+                                      HandleWidget.getFilterExt(),
+                                      LineWidget.getFilterExt()])
+                    # Revision 24/02/2026 >
                     filename = QFileDialog.getOpenFileName(self, 'Select PySisyphe tools', folder, filt)
                     QApplication.processEvents()
                     self.activateWindow()
@@ -2369,7 +2371,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
 
     QWidget, SelectionFilter -> FilesSelectionWidget
 
-    Last revision: 13//02/2026
+    Last revision: 24/02/2026
     """
 
     # Custom Qt Signals
@@ -4112,9 +4114,11 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 if not param or paramext not in (HandleWidget.getFileExt(),
                                                  LineWidget.getFileExt(),
                                                  ToolWidgetCollection.getFileExt()):
-                    filt = ';;'.join([HandleWidget.getFilterExt(),
-                                      LineWidget.getFilterExt(),
-                                      ToolWidgetCollection.getFilterExt()])
+                    # < Revision 20/02/2026
+                    filt = ';;'.join([ToolWidgetCollection.getFilterExt(),
+                                      HandleWidget.getFilterExt(),
+                                      LineWidget.getFilterExt()])
+                    # Revision 20/02/2026 >
                     # < Revision 17/02/2026
                     # filenames = QFileDialog.getOpenFileName(self, 'Select PySisyphe tools', getcwd(), filt)
                     filenames = QFileDialog.getOpenFileNames(self, 'Select {}PySisyphe tools'.format(label),

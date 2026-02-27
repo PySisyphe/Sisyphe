@@ -131,7 +131,7 @@ class AbstractViewWidget(QFrame):
     QWidget -> AbstractViewWidget
 
     Creation: 20/03/2022
-    Last Revision: 27/01/2026
+    Last Revision: 26/02/2026
     """
 
     _DEFAULTZOOM = 128.0  # Default zoom (vtk parallel scale) = conventional FOV of head imaging / 2
@@ -1135,14 +1135,18 @@ class AbstractViewWidget(QFrame):
             else: return p
         else: raise AttributeError('Volume attribute is None.')
 
-    def _getWorldToMatrixCoordinate(self, p: list[float] | tuple[float, float, float]) -> list[int]:
+    def _getWorldToMatrixCoordinate(self,
+                                    p: list[float] | tuple[float, float, float],
+                                    rounded: bool = True) -> list[int]:
         """
-        Convert world coordinates to matrix (voxel) coordinates.
+        Convert world coordinates to voxel coordinate.
 
         Parameters
         ----------
         p : list[float] or tuple[float, float, float]
             world coordinates (x, y, z).
+        rounded : bool
+            rounded coordinate if True, truncated coordinate otherwise
 
         Returns
         -------
@@ -1150,12 +1154,30 @@ class AbstractViewWidget(QFrame):
             matrix coordinates (i, j, k).
         """
         if self._volume is not None:
-            s = self._volume.getSpacing()
-            r = list()
-            r.append(int(round(p[0] / s[0])))
-            r.append(int(round(p[1] / s[1])))
-            r.append(int(round(p[2] / s[2])))
-            return r
+            sz = self._volume.getSize()
+            sp = self._volume.getSpacing()
+            # < Revision 26/02/2026
+            # r = list()
+            # r.append(int(round(p[0] / s[0])))
+            # r.append(int(round(p[1] / s[1])))
+            # r.append(int(round(p[2] / s[2])))
+            # return r
+            if rounded:
+                x = int(round(p[0] / sp[0]))
+                y = int(round(p[1] / sp[1]))
+                z = int(round(p[2] / sp[2]))
+            else:
+                x = int(p[0] / sp[0])
+                y = int(p[1] / sp[1])
+                z = int(p[2] / sp[2])
+            if x < 0: x = 0
+            if y < 0: y = 0
+            if z < 0: z = 0
+            if x >= sz[0]: x = sz[0] - 1
+            if y >= sz[1]: y = sz[1] - 1
+            if z >= sz[2]: z = sz[2] - 1
+            # Revision 26/02/2026 >
+            return [x, y, z]
         else: raise AttributeError('Volume attribute is None.')
 
     def _getWorldFromDisplay(self, x: float, y: float) -> tuple[float, float, float]:

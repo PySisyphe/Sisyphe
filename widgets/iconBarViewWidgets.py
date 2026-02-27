@@ -68,6 +68,9 @@ if TYPE_CHECKING:
     from Sisyphe.core.sisypheMesh import SisypheMeshCollection
     from Sisyphe.core.sisypheTracts import SisypheTractCollection
     from Sisyphe.core.sisypheTools import ToolWidgetCollection
+    # < Revision 26/02/2026
+    from Sisyphe.processing.segmentation import SegmentAnything
+    # Revision 26/02/2026 >
     from PyQt5.QtGui import QDragEnterEvent
     from PyQt5.QtGui import QDropEvent
     from PyQt5.QtCore import QTimerEvent
@@ -3358,7 +3361,7 @@ class IconBarViewWidgetCollection(QObject):
     QObject -> IconBarViewWidgetCollection
 
     Creation: 17/04/2022
-    Last Revision: 10/10/2025
+    Last Revision: 26/02/2026
     """
 
     __slots__ = ['_widgets', '_index']
@@ -4190,6 +4193,73 @@ class IconBarViewWidgetCollection(QObject):
                             else: sliceview.setSolidBrushFlag(False, signal=True)
                             # Revision 20/03/2025 >
 
+    # < Revision 26/02/2026
+    def setDrawRectangleFlag(self, f: bool) -> None:
+        """
+        Set the flag for draw rectangle tool in ROIs in suitable widgets.
+
+        Parameters
+        ----------
+        f : bool
+            True to enable draw rectangle tool, False to disable it.
+        """
+        if self.count() > 0:
+            if isinstance(f, bool):
+                for widget in self:
+                    if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                        sliceview = widget().getFirstSliceViewWidget()
+                        if sliceview is not None: sliceview.setDrawRectangleFlag(f, signal=True)
+            else: raise TypeError('parameter type {} is not bool.'.format(type(f)))
+    # Revision 26/02/2026 >
+
+    # < Revision 26/02/2026
+    def setSamFlag(self, f: bool) -> None:
+        """
+        Set the flag for Segment anything (SAM) tool in ROIs in suitable widgets.
+
+        Parameters
+        ----------
+        f : bool
+            True to enable Segment anything (SAM) tool, False to disable it.
+        """
+        if self.count() > 0:
+            if isinstance(f, bool):
+                for widget in self:
+                    if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                        sliceview = widget().getFirstSliceViewWidget()
+                        if sliceview is not None: sliceview.setSamFlag(f, signal=True)
+            else: raise TypeError('parameter type {} is not bool.'.format(type(f)))
+    # Revision 26/02/2026 >
+
+    # < Revision 26/02/2026
+    # add setSamModel method
+    def setSamModel(self, model: SegmentAnything) -> None:
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    widget().setSamModel(model)
+    # Revision 26/02/2026 >
+
+    # < Revision 26/02/2026
+    # add getSamModel method
+    def getSamModel(self) -> SegmentAnything | None:
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    return widget().getSamModel()
+        return None
+    # Revision 26/02/2026 >
+
+    # < Revision 26/02/2026
+    # add hasSamModel method
+    def hasSamModel(self) -> bool:
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    return widget().hasSamModel()
+        return False
+    # Revision 26/02/2026 >
+
     def setFillHolesROIFlag(self, f: bool) -> None:
         """
         Set the flag for filling holes in ROIs in suitable widgets.
@@ -4599,9 +4669,37 @@ class IconBarViewWidgetCollection(QObject):
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.setActiveContourFlagOn(signal=True)
 
+    # < Revision 26/02/2026
+    def getDrawRectangleFlag(self) -> bool | None:
+        """
+        Get the current state of the draw rectangle tool flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.getDrawRectangleFlag()
+        return None
+    # Revision 26/02/2026 >
+
+    # < Revision 26/02/2026
+    def getSamFlag(self) -> bool | None:
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.getSamFlag()
+        return None
+    # Revision 26/02/2026 >
+
     def getFillHolesROIFlag(self) -> bool | None:
         """
-        Get the current state of the hole filling flag in suitable widgets.
+        Get the current state of the SAM tool flag in suitable widgets.
 
         Returns
         -------
