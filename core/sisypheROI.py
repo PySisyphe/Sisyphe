@@ -5069,7 +5069,7 @@ class SisypheROIDraw(object):
         i : int
             z-axis index of the slice
         pile : int
-            0 addBundle to LIFO undo stack, 1 addBundle to LIFO redo stack
+            0 add slice to LIFO undo stack, 1 add slice to LIFO redo stack
         """
         if 0 <= i < self._roi.getSize()[2]:
             buff = sparse.csr_matrix(self._roi.getNumpy()[i, :, :].copy().flatten())
@@ -5087,7 +5087,7 @@ class SisypheROIDraw(object):
         i : int
             y-axis index of the slice
         pile : int
-            0 addBundle to LIFO undo stack, 1 addBundle to LIFO redo stack
+            0 add slice to LIFO undo stack, 1 add slice to LIFO redo stack
         """
         if 0 <= i < self._roi.getSize()[1]:
             buff = sparse.csr_matrix(self._roi.getNumpy()[:, i, :].copy().flatten())
@@ -5105,7 +5105,7 @@ class SisypheROIDraw(object):
         i : int
             x-axis index of the slice
         pile : int
-            0 addBundle to LIFO undo stack, 1 addBundle to LIFO redo stack
+            0 add slice to LIFO undo stack, 1 add slice to LIFO redo stack
         """
         if 0 <= i < self._roi.getSize()[0]:
             buff = sparse.csr_matrix(self._roi.getNumpy()[:, :, i].copy().flatten())
@@ -5125,7 +5125,7 @@ class SisypheROIDraw(object):
         dim : int
             slice axis code, 0 z-axis, 1 y-axis, 2 x-axis
         pile : int
-            0 addBundle to LIFO undo stack, 1 addBundle to LIFO redo stack
+            0 add slice to LIFO undo stack, 1 add slice to LIFO redo stack
         """
         if self._undo:
             if dim == 0: self.appendZSliceToLIFO(i, pile)
@@ -5140,7 +5140,7 @@ class SisypheROIDraw(object):
         Parameters
         ----------
         pile : int
-            0 addBundle to LIFO undo stack, 1 addBundle to LIFO redo stack
+            0 add volume to LIFO undo stack, 1 add volume to LIFO redo stack
         """
         if self._undo and self.hasROI():
             buff = sparse.csr_matrix(self._roi.getNumpy().copy().flatten())

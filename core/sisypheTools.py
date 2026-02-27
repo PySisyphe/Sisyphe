@@ -1533,6 +1533,7 @@ class BoxWidget(vtkBorderWidget, NamedWidget):
         self.ResizableOn()
         self.ManagesCursorOn()
 
+
 class TextWidget(vtkTextWidget, NamedWidget):
     """
     Description
