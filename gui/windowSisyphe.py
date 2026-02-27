@@ -250,7 +250,7 @@ class WindowSisyphe(QMainWindow):
 
         if splash is not None:
             # < Revision 10/02/2026
-            splash.getProgressBar().setRange(0, 18)
+            splash.getProgressBar().setRange(0, 19)
             # Revision 10/02/2026 >
             splash.setMessage('Main window initialization...')
             splash.setProgressBarVisibility(True)
@@ -521,6 +521,16 @@ class WindowSisyphe(QMainWindow):
         self._tabview.insertTab(6, self._browser, 'File browser')
         # Revision 10/02/2026 >
 
+        # < Revision 26/02/2026
+        if splash is not None:
+            splash.getProgressBar().setValue(18)
+            splash.setMessage('Segment anything pre-trained model initialization...')
+            from Sisyphe.processing.segmentation import SegmentAnything
+            self._sam = SegmentAnything()
+            self._sliceview().setSamModel(self._sam)
+            self._synchroview().setSamModel(self._sam)
+        # Revision 26/02/2026 >
+
         # Status bar
 
         self._status = self.statusBar()
@@ -546,7 +556,7 @@ class WindowSisyphe(QMainWindow):
 
         if splash is not None:
             # < Revision 10/02/2026
-            splash.getProgressBar().setValue(18)
+            splash.getProgressBar().setValue(19)
             # Revision 10/02/2026 >
             splash.setMessage('Settings dialog initialization...')
         self._dialogSettings = DialogSettings()
@@ -2015,8 +2025,7 @@ class WindowSisyphe(QMainWindow):
         if exists(path):
             m = ['Sisyphe', 'plugins', mod, mod]
             name = '.'.join(m)
-            try:
-                mod = importlib.import_module(name)
+            try: mod = importlib.import_module(name)
             except:
                 messageBox(self,
                            'Plugin...',
