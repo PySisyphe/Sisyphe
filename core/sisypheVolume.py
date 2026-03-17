@@ -4547,7 +4547,7 @@ class SisypheVolumeCollection(object):
     object -> SisypheVolumeCollection
 
     Creation: 04/02/2021
-    Last revision: 06/06/2025
+    Last revision: 12/03/2026
     """
 
     __slots__ = ['_volumes', '_index', '_homogeneous']
@@ -5548,7 +5548,11 @@ class SisypheVolumeCollection(object):
                     for i in range(1, self.count()):
                         v = (self[i].getSITKImage() > threshold) * i
                         r = r + v
-                r = sitkCast(r, getLibraryDataType('uint8', 'sitk'))
+                # < Revision 12/03/2026
+                # r = sitkCast(r, getLibraryDataType('uint8', 'sitk'))
+                if self.count() > 255: r = sitkCast(r, getLibraryDataType('uint16', 'sitk'))
+                else: r = sitkCast(r, getLibraryDataType('uint8', 'sitk'))
+                # Revision 12/03/2026 >
                 rvol = SisypheVolume(image=r)
                 rvol.copyAttributesFrom(self[0], acquisition=False, display=False, slope=False)
                 rvol.acquisition.setModalityToLB()

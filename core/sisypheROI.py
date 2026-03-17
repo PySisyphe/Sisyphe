@@ -239,7 +239,7 @@ class SisypheROI(SisypheBinaryImage):
     object -> SisypheImage -> SisypheBinaryImage -> SisypheROI
 
     Creation: 08/09/2022
-    Last revision: 25/01/2026
+    Last revision: 06/03/2026
     """
 
     __slots__ = ['_filename', '_referenceID', '_compression', '_name', '_color', '_alpha', '_visibility', '_lut']
@@ -1788,7 +1788,13 @@ class SisypheROI(SisypheBinaryImage):
 
     # Draw methods
 
-    def drawLine(self, p0: vectorInt3, p1: vectorInt3, orient: int = 0) -> None:
+    # < Revision 06/03/2026
+    # add v paramter
+    def drawLine(self,
+                 p0: vectorInt3,
+                 p1: vectorInt3,
+                 orient: int = 0,
+                 v: int = 1) -> None:
         """
         Draw a line in the ROI image of the current SisypheROI instance. Line is drawn in a single slice (points p0
         and p1 must be within the same slice)
@@ -1799,27 +1805,39 @@ class SisypheROI(SisypheBinaryImage):
             x, y, z first point coordinates
         p1 : tuple[int, int, int] | list[int]
             x, y, z second point coordinates
-        orient : int
-            slice orientation (0 axial, 1 coronal, 2 sagittal)
+        orient : int (optional)
+            slice orientation (0 axial default, 1 coronal, 2 sagittal)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         img = self.getNumpy()
         if orient == 0:
             slc = img[p0[2], :, :]
             r, c = line(p0[1], p0[0], p1[1], p1[0])
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[p0[2], :, :] = slc
         elif orient == 1:
             slc = img[:, p0[1], :]
             r, c = line(p0[2], p0[0], p1[2], p1[0])
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[:, p0[1], :] = slc
         else:
             slc = img[:, :, p0[0]]
             r, c = line(p0[2], p0[1], p1[2], p1[1])
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[:, :, p0[0]] = slc
+    # Revision 06/03/2026 >
 
-    def drawDisk(self, p: vectorInt3, radius: int, orient: int = 0) -> None:
+    # < Revision 06/03/2026
+    # add v paramter
+    def drawDisk(self,
+                 p: vectorInt3,
+                 radius: int,
+                 orient: int = 0,
+                 v: int = 1) -> None:
         """
         Draw a disk in the ROI image of the current SisypheROI instance.
 
@@ -1829,27 +1847,40 @@ class SisypheROI(SisypheBinaryImage):
             x, y, z center point coordinates
         radius : int
             disk radius (in voxels)
-        orient : int
-            slice orientation (0 axial, 1 coronal, 2 sagittal)
+        orient : int (optional)
+            slice orientation (0 axial default, 1 coronal, 2 sagittal)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         img = self.getNumpy()
         if orient == 0:
             slc = img[p[2], :, :]
             r, c = disk(center=(p[1], p[0]), radius=radius)
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[p[2], :, :] = slc
         elif orient == 1:
             slc = img[:, p[1], :]
             r, c = disk(center=(p[2], p[0]), radius=radius)
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[:, p[1], :] = slc
         else:
             slc = img[:, :, p[0]]
             r, c = disk(center=(p[2], p[1]), radius=radius)
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[:, :, p[0]] = slc
+    # Revision 06/03/2026 >
 
-    def drawEllipse(self, p: vectorInt3, radius: vectorInt2, rot: float = 0.0, orient: int = 0) -> None:
+    # < Revision 06/03/2026
+    # add v paramter
+    def drawEllipse(self,
+                    p: vectorInt3,
+                    radius: vectorInt2,
+                    rot: float = 0.0,
+                    orient: int = 0,
+                    v: int = 1) -> None:
         """
         Draw an ellipse in the ROI image of the current SisypheROI instance.
 
@@ -1861,27 +1892,39 @@ class SisypheROI(SisypheBinaryImage):
             radius in x and y axes (in voxels)
         rot : float
             set the ellipse rotation in radians (between -pi and pi, default 0.0)
-        orient : int
-            slice orientation (0 axial, 1 coronal, 2 sagittal)
+        orient : int (optional)
+            slice orientation (0 axial default, 1 coronal, 2 sagittal)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         img = self.getNumpy()
         if orient == 0:
             slc = img[p[2], :, :]
             r, c = ellipse(p[1], p[0], radius[1], radius[0], rotation=rot)
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[p[2], :, :] = slc
         elif orient == 1:
             slc = img[:, p[1], :]
             r, c = ellipse(p[2], p[0], radius[1], radius[0], rotation=rot)
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[:, p[1], :] = slc
         else:
             slc = img[:, :, p[0]]
             r, c = ellipse(p[2], p[1], radius[1], radius[0], rotation=rot)
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[:, :, p[0]] = slc
+    # Revision 06/03/2026 >
 
-    def drawSquare(self, p: vectorInt3, extent: int, orient: int = 0) -> None:
+    # < Revision 06/03/2026
+    # add v paramter
+    def drawSquare(self,
+                   p: vectorInt3,
+                   extent: int,
+                   orient: int = 0,
+                   v: int = 1) -> None:
         """
         Draw a square in the ROI image of the current SisypheROI instance.
 
@@ -1891,28 +1934,40 @@ class SisypheROI(SisypheBinaryImage):
             x, y, z origin coordinates
         extent : int
             length of square sides (in voxels)
-        orient : int
-            slice orientation (0 axial, 1 coronal, 2 sagittal)
+        orient : int (optional)
+            slice orientation (0 axial default, 1 coronal, 2 sagittal)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         extent = (extent, ) * 2
         img = self.getNumpy()
         if orient == 0:
             slc = img[p[2], :, :]
             r, c = rectangle(start=(p[1], p[0]), extent=extent)
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[p[2], :, :] = slc
         elif orient == 1:
             slc = img[:, p[1], :]
             r, c = rectangle(start=(p[2], p[0]), extent=extent)
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[:, p[1], :] = slc
         else:
             slc = img[:, :, p[0]]
             r, c = rectangle(start=(p[2], p[1]), extent=extent)
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[:, :, p[0]] = slc
+    # Revision 06/03/2026 >
 
-    def drawRectangle(self, p: vectorInt3, extent: vectorInt2, orient: int = 0) -> None:
+    # < Revision 06/03/2026
+    # add v paramter
+    def drawRectangle(self,
+                      p: vectorInt3,
+                      extent: vectorInt2,
+                      orient: int = 0,
+                      v: int = 1) -> None:
         """
         Draw a rectangle in the ROI image of the current SisypheROI instance.
 
@@ -1922,8 +1977,10 @@ class SisypheROI(SisypheBinaryImage):
             x, y, z origin coordinates
         extent : tuple[int, int] | list[int]
             width and height (in voxels)
-        orient : int
-            slice orientation (0 axial, 1 coronal, 2 sagittal)
+        orient : int (optional)
+            slice orientation (0 axial default, 1 coronal, 2 sagittal)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         # < Revision 08/01/2026
         # extent = extent[:,:,-1]
@@ -1933,20 +1990,29 @@ class SisypheROI(SisypheBinaryImage):
         if orient == 0:
             slc = img[p[2], :, :]
             r, c = rectangle(start=(p[1], p[0]), extent=extent)
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[p[2], :, :] = slc
         elif orient == 1:
             slc = img[:, p[1], :]
             r, c = rectangle(start=(p[2], p[0]), extent=extent)
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[:, p[1], :] = slc
         else:
             slc = img[:, :, p[0]]
             r, c = rectangle(start=(p[2], p[1]), extent=extent)
-            slc[r, c] = 1
+            # slc[r, c] = 1
+            slc[r, c] = v
             img[:, :, p[0]] = slc
+    # Revision 06/03/2026 >
 
-    def drawPolygon(self, p: list[list[int]], orient: int = 0) -> None:
+    # < Revision 06/03/2026
+    # add v paramter
+    def drawPolygon(self,
+                    p: list[list[int]],
+                    orient: int = 0,
+                    v: int = 1) -> None:
         """
         Draw a polygon in the ROI image of the current SisypheROI instance. Polygon is drawn in a single slice (all
         points must be within the same slice).
@@ -1958,8 +2024,10 @@ class SisypheROI(SisypheBinaryImage):
                 - first list[int],  x coordinates of points
                 - second list[int], y coordinates of points
                 - third list[int],  z coordinates of points
-        orient : int
-            slice orientation (0 axial, 1 coronal, 2 sagittal)
+        orient : int (optional)
+            slice orientation (0 axial default, 1 coronal, 2 sagittal)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         px = p[0]
         py = p[1]
@@ -1975,12 +2043,19 @@ class SisypheROI(SisypheBinaryImage):
         else:
             slc = img[:, :, px]
             r, c = polygon(p[:, 2], p[:, 1])
-        slc[r, c] = 1
+        # slc[r, c] = 1
+        slc[r, c] = v
         if orient == 0: img[pz, :, :] = slc
         elif orient == 1: img[:, py, :] = slc
         else:  img[:, :, px] = slc
+    # Revision 06/03/2026 >
 
-    def drawCube(self, p: vectorInt3, extent: int) -> None:
+    # < Revision 06/03/2026
+    # add v paramter
+    def drawCube(self,
+                 p: vectorInt3,
+                 extent: int,
+                 v: int = 1) -> None:
         """
         Draw a cube in the ROI image of the current SisypheROI instance.
 
@@ -1990,13 +2065,22 @@ class SisypheROI(SisypheBinaryImage):
             x, y, z origin coordinates
         extent : int
             length of cube sides (in voxels)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         extent = (extent,) * 3
         img = self.getNumpy()
         z, y, x = rectangle(start=(p[2], p[1], p[0]), extent=extent)
-        img[z, y, x] = 1
+        # img[z, y, x] = 1
+        img[z, y, x] = v
+    # Revision 06/03/2026 >
 
-    def drawParallelepiped(self, p: vectorInt3, extent: vectorInt3) -> None:
+    # < Revision 06/03/2026
+    # add v paramter
+    def drawParallelepiped(self,
+                           p: vectorInt3,
+                           extent: vectorInt3,
+                           v: int = 1) -> None:
         """
         Draw a parallelepiped in the ROI image of the current SisypheROI instance.
 
@@ -2006,10 +2090,14 @@ class SisypheROI(SisypheBinaryImage):
             x, y, z origin coordinates
         extent : tuple[int, int, int] | list[int]
             width, height and depth (in voxels)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         img = self.getNumpy()
         z, y, x = rectangle(start=(p[2], p[1], p[0]), extent=(extent[2], extent[1], extent[0]))
-        img[z, y, x] = 1
+        # img[z, y, x] = 1
+        img[z, y, x] = v
+    # Revision 06/03/2026 >
 
     def drawSphere(self, p: vectorInt3, radius: int) -> None:
         """
@@ -2060,6 +2148,7 @@ class SisypheROI(SisypheBinaryImage):
             self.getNumpy()[z:z2, y:y2, x:x2] = bitwise_or(back, sph)
 
     # < Revision 04/01/2026
+    # add drawFilledPolygon method
     def drawFilledPolygon(self,
                           p: list[vectorInt2 | vectorInt3],
                           orient: int = 0,
@@ -2074,7 +2163,7 @@ class SisypheROI(SisypheBinaryImage):
 
             - first int,  x coordinates of points
             - second int, y coordinates of points
-            - third int,  z coordinates of points (optional)
+            - third int,  z coordinates of points
         orient : int
             slice orientation (0 axial, 1 coronal, 2 sagittal)
         sindex: int
@@ -2646,7 +2735,7 @@ class SisypheROICollection(object):
     object -> SisypheROICollection
 
     Creation: 08/09/2022
-    Last revision: 23/05/2024
+    Last revision: 12/03/2026
     """
 
     __slots__ = ['_rois', '_index', '_referenceID']
@@ -3213,11 +3302,16 @@ class SisypheROICollection(object):
         if not self.isEmpty():
             self.sort()
             roi = self[0].getSITKImage()
-            # noinspection PyUnresolvedReferences
-            i: cython.int
-            for i in range(1, self.count()):
-                roi = roi + self[i].getSITKImage() * i
-            roi = sitkCast(roi, getLibraryDataType('uint8', 'sitk'))
+            if self.count() > 1:
+                # noinspection PyUnresolvedReferences
+                i: cython.int
+                for i in range(1, self.count()):
+                    roi = roi + self[i].getSITKImage() * i
+            # < Revision 12/03/2026
+            # roi = sitkCast(roi, getLibraryDataType('uint8', 'sitk'))
+            if self.count() > 255: roi = sitkCast(roi, getLibraryDataType('uint16', 'sitk'))
+            else: roi = sitkCast(roi, getLibraryDataType('uint8', 'sitk'))
+            # Revision 12/03/2026 >
             rvol = SisypheVolume()
             rvol.setSITKImage(roi)
             rvol.acquisition.setModalityToLB()
@@ -3248,7 +3342,10 @@ class SisypheROICollection(object):
                 img = v.getSITKImage()
                 # noinspection PyUnresolvedReferences
                 i: cython.int
-                for i in range(1, 256):
+                # < Revsion 12/03/2026
+                # for i in range(1, 256):
+                vmax = int(v.getMax())
+                for i in range(1, vmax):
                     # noinspection PyTypeChecker
                     r: sitkImage = (img == i)
                     if sitkGetArrayViewFromImage(r).sum() > 0:
@@ -3259,6 +3356,7 @@ class SisypheROICollection(object):
                         roi.setReferenceID(v.getID())
                         roi.setFilename(join(v.getDirname(), name + roi.getFileExt()))
                         self.append(roi)
+                # Revsion 12/03/2026 >
             else: raise ValueError('SisypheVolume {} parameter is not label.'.format(v.getBasename()))
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(v)))
 
@@ -3987,13 +4085,13 @@ class SisypheROIDraw(object):
     object -> SisypheROIDraw
 
     Creation: 08/09/2022
-    Last revision: 04/01/2026
+    Last revision: 17/03/2026
     """
 
     __slots__ = {'_volume', '_gradient', '_mask', '_brush', '_vbrush', '_roi', '_undo', '_undolifo', '_redolifo',
-                 '_radius', '_morphradius', '_thickness', '_brushtype', '_struct', '_thresholdmin', '_thresholdmax',
-                 '_ccsigma', '_cciter', '_acradius', '_acrms', '_acsigma', '_accurv', '_acadvec', '_acpropag',
-                 '_aciter', '_acalgo', '_acthresholds', '_acfactor', '_clipboard'}
+                 '_radius', '_morphradius', '_thickness', '_brushtype', '_dtrmajorblob', '_dtrfillholes', '_struct',
+                 '_thresholdmin', '_thresholdmax', '_ccsigma', '_cciter', '_acradius', '_acrms', '_acsigma', '_accurv',
+                 '_acadvec', '_acpropag', '_aciter', '_acalgo', '_acthresholds', '_acfactor', '_clipboard'}
 
     # Class constants
 
@@ -4054,6 +4152,10 @@ class SisypheROIDraw(object):
         self._acalgo: str = 'geodesic'
         # noinspection PyUnresolvedReferences
         self._acfactor: cython.double = 2.0
+        # < Revision 17/03/2026
+        self._dtrmajorblob: bool = False
+        self._dtrfillholes: bool = False
+        # Revision 17/03/2026 >
         self._acthresholds: tuple[float, float] | None = None
         self._clipboard = None
         self._calcBrush()
@@ -4089,6 +4191,8 @@ class SisypheROIDraw(object):
     _acalgo         str, active contour algorithm ('geodesic', 'shape', 'threshold')
     _acfactor       float, factor used to process thresholds in seed region (mean +/- factor * sigma)
     _acthresholds   tuple[float, float] | None, active contour thresholds inf. and sup.
+    _dtrmajorblob   bool, attribute used by the drawThresholdedRectangle method to keep only the major blob
+    -dtrfillholes   bool, attribute used by the drawThresholdedRectangle method to fill holes
     _clipboard      sitkImage
     """
 
@@ -4443,6 +4547,58 @@ class SisypheROIDraw(object):
             structuring element radius in voxels
         """
         return self._morphradius
+
+    # < Revision 17/03/2026
+    # add setDrawThresholdedRectangleMajorBlob method
+    def setDrawThresholdedRectangleMajorBlob(self, v: bool = True):
+        """
+        Set the flag attribute used by the drawThresholdedRectangle method to keep only the major blob in the threshold mask.
+
+        Parameters
+        ----------
+        v : bool
+        """
+        self._dtrmajorblob = v
+    # Revision 17/03/2026 >
+
+    # < Revision 17/03/2026
+    # add getDrawThresholdedRectangleMajorBlob method
+    def getDrawThresholdedRectangleMajorBlob(self) -> bool:
+        """
+        Get the flag attribute used by the drawThresholdedRectangle method to keep only the major blob in the threshold mask.
+
+        Returns
+        -------
+        bool
+        """
+        return self._dtrmajorblob
+    # Revision 17/03/2026 >
+
+    # < Revision 17/03/2026
+    # add setDrawThresholdedRectangleFillHoles method
+    def setDrawThresholdedRectangleFillHoles(self, v: bool = True):
+        """
+        Set the flag attribute used by the drawThresholdedRectangle method to fill holes in the threshold mask.
+
+        Parameters
+        ----------
+        v : bool
+        """
+        self._dtrfillholes = v
+    # Revision 17/03/2026 >
+
+    # < Revision 17/03/2026
+    # add getDrawThresholdedRectangleFillHoles method
+    def getDrawThresholdedRectangleFillHoles(self, v: bool = True):
+        """
+        Get the flag attribute used by the drawThresholdedRectangle method to fill holes in the threshold mask.
+
+        Returns
+        -------
+        bool
+        """
+        self._dtrfillholes = v
+    # Revision 17/03/2026 >
 
     def getThickness(self) -> float:
         """
@@ -8460,7 +8616,13 @@ class SisypheROIDraw(object):
 
     # < Revision 20/10/2024
     # add drawLine method, not yet tested
-    def drawLine(self, p0: vectorInt3, p1: vectorInt3, orient: int = 0) -> None:
+    # < Revision 06/03/2026
+    # add v parameter, scalar value to draw
+    def drawLine(self,
+                 p0: vectorInt3,
+                 p1: vectorInt3,
+                 orient: int = 0,
+                 v: int = 1) -> None:
         """
         Draw a line in the current SisypheROI image attribute. Line is drawn in a single slice (p0 and p1 must be
         within the same slice)
@@ -8471,20 +8633,30 @@ class SisypheROIDraw(object):
             x, y, z first point coordinates
         p1 : tuple[int, int, int] | list[int]
             x, y, z second point coordinates
-        orient : int
-            slice orientation (0 axial, 1 coronal, 2 sagittal)
+        orient : int (optional)
+            slice orientation (0 axial default, 1 coronal, 2 sagittal)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         if self.hasROI():
-            self._roi.drawLine(p0, p1, orient)
+            # self._roi.drawLine(p0, p1, orient)
+            self._roi.drawLine(p0, p1, orient, v)
             if orient == 0: sindex = p0[2]
             elif orient == 1: sindex = p0[1]
             else: sindex = p0[0]
             if self._undo: self.appendSliceToLIFO(sindex, orient)
+    # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
     # < Revision 20/10/2024
     # add drawDisk method, not yet tested
-    def drawDisk(self, p: vectorInt3, radius: int, orient: int = 0) -> None:
+    # < Revision 06/03/2026
+    # add v parameter, scalar value to draw
+    def drawDisk(self,
+                 p: vectorInt3,
+                 radius: int,
+                 orient: int = 0,
+                 v: int = 1) -> None:
         """
         Draw a disk in the current SisypheROI image attribute.
 
@@ -8494,20 +8666,31 @@ class SisypheROIDraw(object):
             x, y, z center point coordinates
         radius : int
             disk radius (in voxels)
-        orient : int
-            slice orientation (0 axial, 1 coronal, 2 sagittal)
+        orient : int (optional)
+            slice orientation (0 axial default, 1 coronal, 2 sagittal)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         if self.hasROI():
-            self._roi.drawDisk(p, radius, orient)
+            # self._roi.drawDisk(p, radius, orient)
+            self._roi.drawDisk(p, radius, orient, v)
             if orient == 0: sindex = p[2]
             elif orient == 1: sindex = p[1]
             else: sindex = p[0]
             if self._undo: self.appendSliceToLIFO(sindex, orient)
+    # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
     # < Revision 20/10/2024
     # add drawEllipse method, not yet tested
-    def drawEllipse(self, p: vectorInt3, radius: vectorInt2, rot: float = 0.0, orient: int = 0) -> None:
+    # < Revision 06/03/2026
+    # add v parameter, scalar value to draw
+    def drawEllipse(self,
+                    p: vectorInt3,
+                    radius: vectorInt2,
+                    rot: float = 0.0,
+                    orient: int = 0,
+                    v: int = 1) -> None:
         """
         Draw an ellipse in the current SisypheROI image attribute.
 
@@ -8519,20 +8702,30 @@ class SisypheROIDraw(object):
             radius in x and y axes (in voxels)
         rot : float
             set the ellipse rotation in radians (between -pi and pi, default 0.0)
-        orient : int
-            slice orientation (0 axial, 1 coronal, 2 sagittal)
+        orient : int (optional)
+            slice orientation (0 axial default, 1 coronal, 2 sagittal)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         if self.hasROI():
-            self._roi.drawEllipse(p, radius, rot, orient)
+            # self._roi.drawEllipse(p, radius, rot, orient)
+            self._roi.drawEllipse(p, radius, rot, orient, v)
             if orient == 0: sindex = p[2]
             elif orient == 1: sindex = p[1]
             else: sindex = p[0]
             if self._undo: self.appendSliceToLIFO(sindex, orient)
+    # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
     # < Revision 20/10/2024
     # add drawSquare method, not yet tested
-    def drawSquare(self, p: vectorInt3, extent: int, orient: int = 0) -> None:
+    # < Revision 06/03/2026
+    # add v parameter, scalar value to draw
+    def drawSquare(self,
+                   p: vectorInt3,
+                   extent: int,
+                   orient: int = 0,
+                   v: int = 1) -> None:
         """
         Draw a square in the current SisypheROI image attribute.
 
@@ -8542,20 +8735,30 @@ class SisypheROIDraw(object):
             x, y, z origin coordinates
         extent : int
             length of square sides (in voxels)
-        orient : int
-            slice orientation (0 axial, 1 coronal, 2 sagittal)
+        orient : int (optional)
+            slice orientation (0 axial default, 1 coronal, 2 sagittal)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         if self.hasROI():
-            self._roi.drawSquare(p, extent, orient)
+            # self._roi.drawSquare(p, extent, orient)
+            self._roi.drawSquare(p, extent, orient, v)
             if orient == 0: sindex = p[2]
             elif orient == 1: sindex = p[1]
             else: sindex = p[0]
             if self._undo: self.appendSliceToLIFO(sindex, orient)
+    # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
     # < Revision 20/10/2024
-    # add drawRectangle method, not yet tested
-    def drawRectangle(self, p: vectorInt3, extent: vectorInt2, orient: int = 0) -> None:
+    # add drawRectangle method
+    # < Revision 06/03/2026
+    # add v parameter, scalar value to draw
+    def drawRectangle(self,
+                      p: vectorInt3,
+                      extent: vectorInt2,
+                      orient: int = 0,
+                      v: int = 1) -> None:
         """
         Draw a rectangle in the current SisypheROI image attribute.
 
@@ -8565,20 +8768,124 @@ class SisypheROIDraw(object):
             x, y, z origin coordinates
         extent : tuple[int, int] | list[int]
             width and height (in voxels)
-        orient : int
-            slice orientation (0 axial, 1 coronal, 2 sagittal)
+        orient : int (optional)
+            slice orientation (0 axial default, 1 coronal, 2 sagittal)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         if self.hasROI():
-            self._roi.drawRectangle(p, extent, orient)
+            # self._roi.drawRectangle(p, extent, orient)
+            self._roi.drawRectangle(p, extent, orient, v)
             if orient == 0: sindex = p[2]
             elif orient == 1: sindex = p[1]
             else: sindex = p[0]
             if self._undo: self.appendSliceToLIFO(sindex, orient)
+    # Revision 06/03/2026 >
     # Revision 20/10/2024 >
+
+    # < Revision 08/03/2026
+    # add drawThresholdedRectangle
+    def drawThresholdedRectangle(self,
+                                 p: vectorInt3,
+                                 extent: vectorInt2,
+                                 orient: int = 0,
+                                 majorblob: bool | None = None,
+                                 fillholes: bool | None = None) -> None:
+        """
+        Draw a mask by thresholding within the boundaries of a rectangle in the current SisypheROI image attribute.
+        The mask is calculated using the volume, thresholdmin and thresholdmax attributes of the current SisypheROIDraw instance.
+
+        Parameters
+        ----------
+        p : tuple[int, int, int] | list[int]
+            x, y, z rectangle origin coordinates
+        extent : tuple[int, int] | list[int]
+            rectangle width and height (in voxels)
+        orient : int (optional)
+            slice orientation (0 axial default, 1 coronal, 2 sagittal)
+        majorblob : bool | None (optional)
+            keep only major blob (connected component) of the threshold mask if True. If None (default), the self._dtrmajorblob attribute is used.
+        fillholes : bool | None (optional)
+            fill holes of the threshold mask if True. If None (default), the self._dtrfillholes attribute is used.
+        """
+        if self.hasROI() and self.hasVolume():
+            extent = extent[::-1]
+            if majorblob is None: majorblob = self._dtrmajorblob
+            if fillholes is None: fillholes = self._dtrfillholes
+            #  axial
+            if orient == 0:
+                sindex = p[2]
+                roi = self._roi.getNumpy()[sindex, :, :]
+                img = self._volume.getNumpy()[sindex, :, :]
+                mask = where((img >= float(self._thresholdmin)) &
+                             (img <= float(self._thresholdmax)), 1, 0)
+                r, c = rectangle(start=(p[1], p[0]), extent=extent)
+                if majorblob or fillholes:
+                    buff = zeros(shape=mask.shape, dtype='uint8')
+                    buff[r, c] = mask[r, c]
+                    img = sitkGetImageFromArray(buff)
+                    if majorblob:
+                        cc = sitkConnectedComponent(img)
+                        cc = sitkRelabelComponent(cc, sortByObjectSize=True)
+                        img = (cc == 1)
+                    if fillholes:
+                        img = sitkBinaryFillHole(img)
+                    mask = sitkGetArrayFromImage(img)
+                roi[r, c] = mask[r, c] | roi[r, c]
+                self._roi.getNumpy()[sindex, :, :] = roi
+            # coronal
+            elif orient == 1:
+                sindex = p[1]
+                roi = self._roi.getNumpy()[:, sindex, :]
+                img = self._volume.getNumpy()[:, sindex, :]
+                mask = where((img >= float(self._thresholdmin)) &
+                             (img <= float(self._thresholdmax)), 1, 0)
+                r, c = rectangle(start=(p[2], p[0]), extent=extent)
+                if majorblob or fillholes:
+                    buff = zeros(shape=mask.shape, dtype='uint8')
+                    buff[r, c] = mask[r, c]
+                    img = sitkGetImageFromArray(buff)
+                    if majorblob:
+                        cc = sitkConnectedComponent(img)
+                        cc = sitkRelabelComponent(cc, sortByObjectSize=True)
+                        img = (cc == 1)
+                    if fillholes:
+                        img = sitkBinaryFillHole(img)
+                    mask = sitkGetArrayFromImage(img)
+                roi[r, c] = mask[r, c] | roi[r, c]
+                self._roi.getNumpy()[:, sindex, :] = roi
+            # sagittal
+            else:
+                sindex = p[0]
+                roi = self._roi.getNumpy()[:, :, sindex]
+                img = self._volume.getNumpy()[:, :, sindex]
+                mask = where((img >= float(self._thresholdmin)) &
+                             (img <= float(self._thresholdmax)), 1, 0)
+                r, c = rectangle(start=(p[2], p[1]), extent=extent)
+                if majorblob or fillholes:
+                    buff = zeros(shape=mask.shape, dtype='uint8')
+                    buff[r, c] = mask[r, c]
+                    img = sitkGetImageFromArray(buff)
+                    if majorblob:
+                        cc = sitkConnectedComponent(img)
+                        cc = sitkRelabelComponent(cc, sortByObjectSize=True)
+                        img = (cc == 1)
+                    if fillholes:
+                        img = sitkBinaryFillHole(img)
+                    mask = sitkGetArrayFromImage(img)
+                roi[r, c] = mask[r, c] | roi[r, c]
+                self._roi.getNumpy()[:, :, sindex] = roi
+            if self._undo: self.appendSliceToLIFO(sindex, orient)
+    # Revision 08/03/2026 >
 
     # < Revision 20/10/2024
     # add drawPolygon method, not yet tested
-    def drawPolygon(self, p: list[list[int]], orient: int = 0) -> None:
+    # < Revision 06/03/2026
+    # add v parameter, scalar value to draw
+    def drawPolygon(self,
+                    p: list[list[int]],
+                    orient: int = 0,
+                    v: int = 1) -> None:
         """
         Draw a polygon in the current SisypheROI image attribute.
         Polygon is drawn in a single slice (all points must be within the same slice).
@@ -8590,20 +8897,29 @@ class SisypheROIDraw(object):
             - first list[int],  x coordinates of points
             - second list[int], y coordinates of points
             - third list[int],  z coordinates of points
-        orient : int
-            slice orientation (0 axial, 1 coronal, 2 sagittal)
+        orient : int (optional)
+            slice orientation (0 axial default, 1 coronal, 2 sagittal)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         if self.hasROI():
-            self._roi.drawPolygon(p, orient)
+            # self._roi.drawPolygon(p, orient)
+            self._roi.drawPolygon(p, orient, v)
             if orient == 0: sindex = p[0][2]
             elif orient == 1: sindex = p[0][1]
             else: sindex = p[0][0]
             if self._undo: self.appendSliceToLIFO(sindex, orient)
+    # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
     # < Revision 20/10/2024
     # add drawCube method, not yet tested
-    def drawCube(self, p: vectorInt3, extent: int) -> None:
+    # < Revision 06/03/2026
+    # add v parameter, scalar value to draw
+    def drawCube(self,
+                 p: vectorInt3,
+                 extent: int,
+                 v: int = 1) -> None:
         """
         Draw a cube in the current SisypheROI image attribute.
 
@@ -8613,15 +8929,24 @@ class SisypheROIDraw(object):
             x, y, z origin coordinates
         extent : int
             length of cube sides (in voxels)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         if self.hasROI():
-            self._roi.drawCube(p, extent)
+            # self._roi.drawCube(p, extent)
+            self._roi.drawCube(p, extent, v)
             if self._undo: self.appendVolumeToLIFO()
+    # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
     # < Revision 20/10/2024
     # add drawParallelepiped method, not yet tested
-    def drawParallelepiped(self, p: vectorInt3, extent: vectorInt3) -> None:
+    # < Revision 06/03/2026
+    # add v parameter, scalar value to draw
+    def drawParallelepiped(self,
+                           p: vectorInt3,
+                           extent: vectorInt3,
+                           v: int = 1) -> None:
         """
         Draw a parallelepiped in the current SisypheROI image attribute.
 
@@ -8631,10 +8956,14 @@ class SisypheROIDraw(object):
             x, y, z origin coordinates
         extent : tuple[int, int, int] | list[int]
             width, height and depth (in voxels)
+        v : int (optional)
+            scalar value to draw (default 1)
         """
         if self.hasROI():
-            self._roi.drawParallelepiped(p, extent)
+            # self._roi.drawParallelepiped(p, extent)
+            self._roi.drawParallelepiped(p, extent, v)
             if self._undo: self.appendVolumeToLIFO()
+    # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
     # < Revision 20/10/2024

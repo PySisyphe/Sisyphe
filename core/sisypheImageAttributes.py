@@ -884,7 +884,7 @@ class SisypheAcquisition(object):
     object -> SisypheIdentity
 
     Creation: 16/03/2021
-    Last revision: 05/02/2026
+    Last revision: 13/03/2026
     """
     __slots__ = ['_modality', '_sequence', '_type', '_dateofscan', '_frame', '_unit', '_labels',
                  '_df', '_autocorrx', '_autocorry', '_autocorrz', '_rc', '_contrast', '_parent']
@@ -1639,13 +1639,16 @@ class SisypheAcquisition(object):
         if self._parent is not None:
             from Sisyphe.core.sisypheVolume import SisypheVolume
             if isinstance(self._parent, SisypheVolume):
-                if self._parent.isUInt8Datatype():
+                # < Revision 12/03/2026
+                # if self._parent.isUInt8Datatype():
+                if self._parent.isUInt8Datatype() or self._parent.isUInt16Datatype():
                     self._modality = SisypheAcquisition._MODALITYTOCODE['LB']
                     self._sequence = self.LABELS
                     self.setNoUnit()
                     self.loadLabels()
                 else: raise TypeError('Image datatype {} is incompatible '
                                       'with LB modality, must be uint8.'.format(self._parent.getDatatype()))
+                # Revision 12/03/2026 >
 
     def setModalityToTP(self) -> None:
         """
@@ -1659,7 +1662,6 @@ class SisypheAcquisition(object):
         """
         self._modality = SisypheAcquisition._MODALITYTOCODE['PJ']
 
-    # noinspection PyTypeChecker
     def getLabel(self, index: float | int) -> str:
         """
         Get label name from index value, only defined for label modality.
@@ -1677,10 +1679,14 @@ class SisypheAcquisition(object):
         if self.isLB():
             if isinstance(index, float): index = int(index)
             if isinstance(index, int):
-                if 0 <= index < 256:
-                    if index in self._labels: return self._labels[index]
-                    else: return ''
-                else: raise ValueError('index parameter {} is out of range [1..256].'.format(index))
+                # < Revision 13/03/2026
+                # if 0 <= index < 256:
+                #     if index in self._labels: return self._labels[index]
+                #     else: return ''
+                # else: raise ValueError('index parameter {} is out of range [1..256].'.format(index))
+                if index in self._labels: return self._labels[index]
+                else: return ''
+                # Revision 13/03/2026 >
             else: raise TypeError('parameter type {} is not int.'.format(type(index)))
         else: raise ValueError('modality {} is not LB.'.format(self.getModality(True)))
 
@@ -1696,10 +1702,11 @@ class SisypheAcquisition(object):
             label name
         """
         if self.isLB():
+            if isinstance(index, float): index = int(index)
             if isinstance(index, int):
                 if isinstance(value, str):
-                    if 0 <= index < 256: self._labels[index] = value
-                    else: raise KeyError('index parameter {} is out of range [1..256].'.format(index))
+                    if 0 <= index < 1024: self._labels[index] = value
+                    else: raise KeyError('index parameter {} is out of range [1..1024].'.format(index))
                 else: raise TypeError('value parameter type {} is not str.'.format(type(index)))
             else: raise TypeError('index parameter type {} is not int.'.format(type(index)))
         else: raise ValueError('modality {} is not LB.'.format(self.getModality(True)))
@@ -1732,7 +1739,7 @@ class SisypheAcquisition(object):
     # add setLabels method
     def setLabels(self, v: SisypheAcquisition | SisypheVolume | dict[int, str]) -> None:
         """
-        Set label name for an index value, image modality must be of the label type.
+        Set label table, only defined for label modality.
 
         Parameters
         ----------
@@ -1756,6 +1763,7 @@ class SisypheAcquisition(object):
     # Revision 14/10/2025 >
 
     # < Revision 12/02/2026
+    # add labelsToStr method
     def labelsToStr(self) -> str:
         """
         Generate a string of labels.
@@ -1769,6 +1777,48 @@ class SisypheAcquisition(object):
             buff += '\t{}:  {}\n'.format(k, self._labels[k])
         return buff
     # Revision 12/02/2026 >
+
+    # < Revision 12/03/2026
+    # add getLabelCount method
+    def getLabelCount(self) -> int:
+        """
+        Get the number of labels, only defined for label modality.
+
+        Returns
+        -------
+        int
+            number of labels
+        """
+        return len(self._labels)
+    # Revision 12/03/2026 >
+
+    # < Revision 12/03/2026
+    # add getMinLabelIndex method
+    def getMinLabelIndex(self) -> int:
+        """
+        Get the minimum index value of the labels, only defined for label modality.
+
+        Returns
+        -------
+        int
+            minimum index value
+        """
+        return min(self._labels)
+    # Revision 12/03/2026 >
+
+    # < Revision 12/03/2026
+    # add getMaxLabelIndex method
+    def getMaxLabelIndex(self) -> int:
+        """
+        Get the maximum index value of the labels, only defined for label modality.
+
+        Returns
+        -------
+        int
+            maximum index value
+        """
+        return max(self._labels)
+    # Revision 12/03/2026 >
 
     def loadLabels(self) -> None:
         """
@@ -1798,13 +1848,21 @@ class SisypheAcquisition(object):
             root = doc.createElement(self.getLabelsFileExt()[1:])
             root.setAttribute('version', '1.0')
             doc.appendChild(root)
-            for i in range(256):
-                if i in self._labels:
-                    node = doc.createElement('label')
-                    node.setAttribute('value', str(i))
-                    root.appendChild(node)
-                    txt = doc.createTextNode(self._labels[i])
-                    node.appendChild(txt)
+            # < Revision 12/03/2026
+            # for i in range(256):
+            #     if i in self._labels:
+            #         node = doc.createElement('label')
+            #         node.setAttribute('value', str(i))
+            #         root.appendChild(node)
+            #         txt = doc.createTextNode(self._labels[i])
+            #         node.appendChild(txt)
+            for k in self._labels:
+                node = doc.createElement('label')
+                node.setAttribute('value', str(k))
+                root.appendChild(node)
+                txt = doc.createTextNode(self._labels[k])
+                node.appendChild(txt)
+            # Revision 12/03/2026 >
             path, ext = splitext(self._parent.getFilename())
             filename = path + self.getLabelsFileExt()
             buffxml = doc.toprettyxml()
