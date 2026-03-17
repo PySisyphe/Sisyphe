@@ -26,8 +26,9 @@ __email__ = 'pysisyphe@gmail.com'
 # __version__ = "0.25.04" # 20-01-2026
 # __version__ = "0.76.26" # 30-01-2026
 # __version__ = "0.78.08" # 01-02-2026
-__version__ = "0.80.15" # 20-02-2026
-__build__ = '20260220'
+# __version__ = "0.80.15" # 20-02-2026
+__version__ = "0.81.22" # 10-03-2026
+__build__ = '20260320'
 
 _V = b'70797369737970686540676d61696c2e636f6d'
 
@@ -35,22 +36,22 @@ _V = b'70797369737970686540676d61696c2e636f6d'
 Functions
 ~~~~~~~~~
 
-- getMajorVersion
-- getMinorVersion
-- getPatchVersion
-- getVersion
-- getVersionAsList
-- getVersionAsDict
-- getVersionAsTuple
-- getBuildDate
-- getBuildDateAsStr
-- isOlderThan
-- isNewerThan
-- isCurrentVersion
-- getVersionFromHost
-- isUpToDateVersion
-- getVersionHistoryFromHost
-- getUrlsToUpdate
+    - getMajorVersion
+    - getMinorVersion
+    - getPatchVersion
+    - getVersion
+    - getVersionAsList
+    - getVersionAsDict
+    - getVersionAsTuple
+    - getBuildDate
+    - getBuildDateAsStr
+    - isOlderThan
+    - isNewerThan
+    - isCurrentVersion
+    - getVersionFromHost
+    - isUpToDateVersion
+    - getVersionHistoryFromHost
+    - getUrlsToUpdate
        
 Creation: 04/11/2023
 Last revision: 27/01/2026

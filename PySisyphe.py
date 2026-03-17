@@ -81,7 +81,7 @@ from Sisyphe.gui.dialogSplash import DialogSplash
 """
 PySisyphe main
 
-Last revision: 27/01/2026
+Last revision: 16/03/2026
 """
 
 BACKGROUND: QColor | None = None
@@ -91,19 +91,19 @@ PALETTE: QPalette | None = None
 functions
 ~~~~~~~~~
 
-- getPalette
-- getBackgroundAsQColor
-- getBackgroundAsStr
-- getForegroundAsQColor
-- getForegroundAsStr
-- updateWindowTitleBarColor
-- qtMessageHandler
-- globalExceptionHandler
+    - getPalette
+    - getBackgroundAsQColor
+    - getBackgroundAsStr
+    - getForegroundAsQColor
+    - getForegroundAsStr
+    - updateWindowTitleBarColor
+    - qtMessageHandler
+    - globalExceptionHandler
 
 Class
 ~~~~~
 
-- QApplicationEventHandler
+    - QApplicationEventHandler
 """
 
 def getPalette() -> QPalette:
@@ -144,6 +144,9 @@ def globalExceptionHandler(tp, value, tb):
         if w.objectName() == 'DialogWaitWindow':
             w.close()
     # Revision 13/07/2025 >
+    # < Revision 16/03/2026
+    if tp.__name__ == 'UserAbortException': return
+    # Revision 16/03/2026 >
     messageBox(None,
                'PySisyphe uncaught exception',
                '{}\nSee PySisyphe.log for traceback details.'.format(str(value)))
