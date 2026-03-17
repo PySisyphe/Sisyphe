@@ -220,6 +220,7 @@ def biasFieldCorrection(img: SisypheVolume,
     if not stop:
         bimg = filtr.GetLogBiasFieldAsImage(refimg)
         if shrink > 1: simg = refimg / sitkExp(bimg)
+        # noinspection PyUnboundLocalVariable
         simg = sitkCast(simg, pid)
 
         if isinstance(img, sitkImage):

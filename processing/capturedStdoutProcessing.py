@@ -14,14 +14,29 @@ from os import close
 
 from os.path import exists
 from os.path import join
+from os.path import dirname
 from os.path import basename
 from os.path import splitext
+from os.path import abspath
 
 from multiprocessing import Process
 
 from numpy import array
+from numpy import diag
+from numpy import copy
+from numpy import pad
+from numpy import roll
+
+from pandas import read_csv
+
+import torch
+
+from nibabel import Nifti1Image
+from nibabel.processing import conform
 
 from ants.core import write_transform
+
+from Sisyphe.lib.openmap.utils.load_model import load_model
 
 __all__ = ['CaptureStdout',
            'CapturePythonStdout',
@@ -37,6 +52,7 @@ __all__ = ['CaptureStdout',
            'ProcessDeepWhiteMatterHyperIntensitiesSegmentation',
            'ProcessDeepTOFVesselSegmentation',
            'ProcessDeepTissueSegmentation',
+           'ProcessDeepAtlasParcellation',
            'ProcessDiffusionPreprocessing',
            'ProcessDiffusionModel',
            'ProcessDiffusionTracking']
@@ -65,6 +81,7 @@ Class hierarchy
               -> ProcessDeepWhiteMatterHyperIntensitiesSegmentation
               -> ProcessDeepTOFVesselSegmentation
               -> ProcessDeepTissueSegmentation
+              -> ProcessDeepAtlasParcellation
               -> ProcessDiffusionPreprocessing
               -> ProcessDiffusionModel
               -> ProcessDiffusionTracking
@@ -106,6 +123,15 @@ class CaptureStdout:
             try: sys.stdout.fileno()
             except: lowlevel = True
         self._lowlevel = lowlevel
+
+    """
+    Private attributes
+
+    _filename               str, stdout filename
+    _original_stdout_fd     sys.stdout, original sys.stdout
+    _new_stdout_file        file, stdout file
+    _lowlevel               bool
+    """
 
     def __enter__(self):
         """
@@ -171,6 +197,14 @@ class CapturePythonStdout:
         self._filename = filename
         self._original_sys_stdout = sys.stdout
         self._new_stdout_file = None
+
+    """
+    Private attributes
+
+    _filename               str, stdout filename
+    _original_sys_stdout    sys.stdout, original sys.stdout
+    _new_stdout_file        file, stdout file
+    """
 
     def __enter__(self):
         self._new_stdout_file = open(self._filename, 'w')
@@ -244,9 +278,9 @@ class ProcessRegistration(Process):
     """
     Private attributes
 
-    _fixed      numpy.ndarray
-    _moving     numpy.ndarray
-    _mask       numpy.ndarray
+    _fixed      numpy.ndarray, fixed volume
+    _moving     numpy.ndarray, moving volume
+    _mask       numpy.ndarray, coregistration mask
     _fspacing   tuple[float, float, float], fixed volume spacing
     _mspacing   tuple[float, float, float], moving volume spacing
     _regtype    str
@@ -359,8 +393,9 @@ class ProcessRealignment(Process):
     """
     Private attributes
 
-    _vols       numpy.ndarray
-    _mask       numpy.ndarray
+    _vols       numpy.ndarray, volumes to realign
+    _mask       numpy.ndarray, coregistration mask
+    _spacing   tuple[float, float, float], volume spacing
     _metric     str, 'CC', 'mattes' or 'meansquares'
     _sampling   float
     _progress   Value
@@ -427,6 +462,12 @@ class ProcessAtropos(Process):
     """
     Private attributes
 
+    _volume     numpy.ndarray, T1 volume
+    _mask       numpy.ndarray
+    _spacing    tuple[float, float, float], volume spacing
+    _mrf        str, atropos parameter
+    _conv       str, atropos parameter
+    _weight     float, atropos parameter
     _stdout     str, c++ stdout redirected to _stdout file
     _result     Queue
     """
@@ -487,6 +528,13 @@ class ProcessCorticalThickness(Process):
     """
     Private attributes
 
+    _seg        numpy.ndarray, tissue label volume
+    _gm         numpy.ndarray, gray matter volume
+    _wm         numpy.ndarray, white matter volume
+    _spacing    tuple[float, float, float], voxel spacing
+    _iters      int, number of iterations
+    _grdstep    float, kelly_kapowski parameter
+    _grdsmooth  float, kelly_kapowski parameter
     _stdout     str, c++ stdout redirected to _stdout file
     _result     Queue
     """
@@ -543,6 +591,14 @@ class ProcessDeepTumorSegmentation(Process):
     """
     Private attributes
 
+    _flair      numpy.ndarray, FLAIR volume
+    _t1         numpy.ndarray, T1 volume
+    _t1ce       numpy.ndarray, CE T1 volume
+    _t2         numpy.ndarray, T2 volume
+    _cache      ANTSpyNET cache directory
+    _spacing    tuple[float, float, float], voxel spacing
+    _stdout     str, stdout redirected to _stdout file
+    _result     Queue
     """
 
     def __init__(self, flair, t1, t1ce, t2, cache, stdout, queue):
@@ -606,6 +662,11 @@ class ProcessDeepHippocampusSegmentation(Process):
     """
     Private attributes
 
+    _t1         numpy.ndarray, T1 volume
+    _cache      ANTSpyNET cache directory
+    _spacing    tuple[float, float, float], voxel spacing
+    _stdout     str, stdout redirected to _stdout file
+    _result     Queue
     """
 
     def __init__(self, t1, cache, stdout, queue):
@@ -654,6 +715,13 @@ class ProcessDeepMedialTemporalSegmentation(Process):
     """
     Private attributes
 
+    _t1         numpy.ndarray, T1 volume
+    _t2         numpy.ndarray, T2 volume
+    _model      str, model name
+    _cache      ANTSpyNET cache directory
+    _spacing    tuple[float, float, float], voxel spacing
+    _stdout     str, stdout redirected to _stdout file
+    _result     Queue
     """
 
     def __init__(self, t1, t2, model, cache, stdout, queue):
@@ -720,6 +788,11 @@ class ProcessDeepLesionSegmentation(Process):
     """
     Private attributes
 
+    _t1         numpy.ndarray, T1 volume
+    _cache      ANTSpyNET cache directory
+    _spacing    tuple[float, float, float], voxel spacing
+    _stdout     str, stdout redirected to _stdout file
+    _result     Queue
     """
 
     def __init__(self, t1, cache, stdout, queue):
@@ -768,6 +841,13 @@ class ProcessDeepWhiteMatterHyperIntensitiesSegmentation(Process):
     """
     Private attributes
 
+    _flair      numpy.ndarray, FLAIR volume
+    _t1         numpy.ndarray, T1 volume
+    _model      str, model name
+    _cache      ANTSpyNET cache directory
+    _spacing    tuple[float, float, float], voxel spacing
+    _stdout     str, stdout redirected to _stdout file
+    _result     Queue
     """
 
     def __init__(self, flair, t1, mask, model, cache, stdout, queue):
@@ -839,6 +919,11 @@ class ProcessDeepTOFVesselSegmentation(Process):
     """
     Private attributes
 
+    _tof        numpy.ndarray, TOF volume
+    _cache      ANTSpyNET cache directory
+    _spacing    tuple[float, float, float], voxel spacing
+    _stdout     str, stdout redirected to _stdout file
+    _result     Queue
     """
 
     def __init__(self, tof, cache, stdout, queue):
@@ -887,7 +972,12 @@ class ProcessDeepTissueSegmentation(Process):
 
     """
     Private attributes
-
+    
+    _t1         numpy.ndarray, T1 volume
+    _cache      ANTSpyNET cache directory
+    _spacing    tuple[float, float, float], voxel spacing
+    _stdout     str, stdout redirected to _stdout file
+    _result     Queue
     """
 
     def __init__(self, t1, cache, stdout, queue):
@@ -923,6 +1013,137 @@ class ProcessDeepTissueSegmentation(Process):
         self._result.put(r2)
 
 
+class ProcessDeepAtlasParcellation(Process):
+    """
+    ProcessDeepAtlasParcellation
+
+    Description
+    ~~~~~~~~~~~
+
+    Multiprocessing Process class for deep learning atlas parcellation using OpenMAP-T1 model.
+
+    Reference:
+    OpenMAP-T1: A Rapid Deep-Learning Approach to Parcellate 280 Anatomical Regions to Cover the Whole Brain.
+    Nishimaki K, Onda K, Ikuta K, Chotiyanonta J, Uchida Y, Mori S, Iyatomi H, Oishi K,Alzheimer's Disease Neuroimaging
+    Initiative; Australian Imaging Biomarkers and Lifestyle Flagship Study of Ageing. Hum Brain Mapp. 2024 Nov;45(16):e70063.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    Process -> ProcessDeepAtlasParcellation
+
+    Creation: 12/03/2026
+    """
+    # Special method
+
+    """
+    Private attributes
+
+    _t1         numpy.ndarray, T1 volume
+    _spacing    tuple[float, float, float], voxel spacing
+    _mng        dict[str]
+    _result     Queue
+    """
+
+    def __init__(self, t1, parcellation, mng, queue):
+        Process.__init__(self)
+        self._t1 = t1.getNumpy(defaultshape=False)
+        self._spacing = t1.getSpacing()
+        self._parcellation = parcellation
+        self._mng = mng
+        self._result = queue
+
+    # Public methods
+
+    def run(self):
+        r2 = dict()
+        # load model
+        self._mng['msg'] = 'Load OpenMAP-T1 model...'
+        if torch.cuda.is_available(): device = torch.device("cuda")
+        elif torch.backends.mps.is_available(): device = torch.device("mps")
+        else: device = torch.device("cpu")
+        import Sisyphe
+        path = join(dirname(abspath(Sisyphe.lib.openmap.__file__)), 'model')
+        cnet, ssnet, pnet, hnet = load_model(path, device)
+        odata = Nifti1Image(self._t1, affine=diag(list(self._spacing) + [1.0]))
+        # preprocessing
+        self._mng['msg'] = 'Preprocessing...'
+        data = conform(odata,
+                       out_shape=(256, 256, 256),
+                       voxel_size=(1.0, 1.0, 1.0),
+                       order=1)
+        # cropping
+        self._mng['msg'] = 'Cropping...'
+        from Sisyphe.lib.openmap.utils.cropping import cropping
+        # noinspection PyTypeChecker
+        cropped, shift = cropping(None,'', odata, data, cnet, device, self._mng)
+        # stripping
+        self._mng['msg'] = 'Stripping...'
+        from Sisyphe.lib.openmap.utils.stripping import stripping
+        # noinspection PyTypeChecker
+        stripped = stripping(None, '', cropped, odata, data, ssnet, shift, device, self._mng)
+        if self._parcellation:
+            # parcellation
+            self._mng['msg'] = 'Parcellation...'
+            from Sisyphe.lib.openmap.utils.parcellation import parcellation
+            # noinspection PyTypeChecker
+            parcellated = parcellation(stripped, pnet, device, self._mng)
+            # hemisphere mask/labels
+            self._mng['msg'] = 'Hemisphere separation...'
+            from Sisyphe.lib.openmap.utils.hemisphere import hemisphere
+            # noinspection PyTypeChecker
+            separated = hemisphere(stripped, hnet, device, self._mng)
+            # postprocessing
+            self._mng['msg'] = 'Postprocessing...'
+            from Sisyphe.lib.openmap.utils.postprocessing import postprocessing
+            output = postprocessing(parcellated, separated, shift, device)
+            # noinspection PyUnresolvedReferences,PyTypeChecker
+            odata = Nifti1Image(output.astype('uint16'), affine=data.affine)
+            # noinspection PyUnresolvedReferences
+            odata = conform(odata,
+                            out_shape=self._t1.shape,
+                            voxel_size=self._spacing,
+                            order=0)
+            path = join(dirname(abspath(Sisyphe.lib.openmap.__file__)), 'level')
+            df = read_csv(join(path, "Level_ROI_No.csv"))
+            # Labels
+            self._mng['msg'] = 'Label volumes processing...'
+            # noinspection PyUnresolvedReferences
+            r2[280] = odata.get_fdata()
+            nblbl = [8, 20, 58, 144, 280]
+            for i in range(1, 5):
+                level = 'Type1_Level{}'.format(i)
+                mapping = dict(zip(df['Type1_Level5'], df[level]))
+                # noinspection PyUnresolvedReferences
+                label = copy(odata.get_fdata())
+                for old, new in mapping.items():
+                    label[label == old] = new
+                r2[nblbl[i - 1]] = label
+        # noinspection PyTypeChecker
+        cropped = pad(cropped, [(16, 16), (16, 16), (16, 16)], "constant", constant_values=0)
+        cropped = roll(cropped, (-shift[0], -shift[1], -shift[2]), axis=(0, 1, 2))
+        # noinspection PyUnresolvedReferences,PyTypeChecker
+        cdata = Nifti1Image(cropped.astype('uint16'), affine=data.affine)
+        cdata = conform(cdata,
+                        out_shape=self._t1.shape,
+                        voxel_size=self._spacing,
+                        order=1)
+        # noinspection PyUnresolvedReferences
+        r2[0] = cdata.get_fdata()
+        # noinspection PyTypeChecker
+        stripped = pad(stripped, [(16, 16), (16, 16), (16, 16)], "constant", constant_values=0)
+        stripped = roll(stripped, (-shift[0], -shift[1], -shift[2]), axis=(0, 1, 2))
+        # noinspection PyUnresolvedReferences,PyTypeChecker
+        cdata = Nifti1Image(stripped.astype('uint16'), affine=data.affine)
+        cdata = conform(cdata,
+                        out_shape=self._t1.shape,
+                        voxel_size=self._spacing,
+                        order=1)
+        # noinspection PyUnresolvedReferences
+        r2[1] = cdata.get_fdata()
+        self._result.put(r2)
+
+
 class ProcessDiffusionPreprocessing(Process):
     """
     ProcessDiffusionPreprocessing
@@ -942,6 +1163,15 @@ class ProcessDiffusionPreprocessing(Process):
     """
     Private attributes
 
+    _fbval      str, bval filename
+    _fbvec      str, bvec filename
+    _brainseg   dict[str, int | str], brain mask parameters
+    _gibbs      dict[str, int], gibbs correction parameters
+    _denoise    dict[str, int | str], denoise parameters
+    _prefix     str, prefix for output files
+    _suffix     str, suffix for output files
+    _mng        dict[str]
+    _result     Queue
     """
 
     def __init__(self, bval, bvec, bseg, gibbs, denoise, prefix, suffix, mng, queue):
@@ -1033,6 +1263,19 @@ class ProcessDiffusionModel(Process):
     """
     Private attributes
 
+    _fbval      str, bval filename
+    _fbvec      str, bvec filename
+    _model      str, model name
+    _method     str, fit algorithm name
+    _order      int, spherical harmonic order
+    _maps       dict[str], diffusion maps to calculate
+    _corr       bool, gradient reorientation ? (LPS+ to RAS+)
+    _save       bool, save diffusion model ?
+    _algo       str, mask processing parameter
+    _niter      int, mask processing parameter
+    _size       int, mask processing parameter
+    _mng        dict[str]
+    _result     Queue
     """
 
     def __init__(self, bval, bvec, model, method, order, maps, corr, algo, niter, size, save, mng, queue):
@@ -1261,6 +1504,20 @@ class ProcessDiffusionTracking(Process):
     """
     Private attributes
 
+    _model          SisypheDiffusionModel
+    _seedcount      int, seed count per voxel
+    _stepsize       float, streamline step size in mm
+    _maxangle       int, max angle between streamline directions
+    _npeaks         int, max number of odf peaks
+    _peakthreshold  float, odf peaks greater than relative_peak_threshold * m where m is the largest peak
+    _minangle       float, if two odf peaks are too close i.e. separation angle below this threshold, only the larger of the two is returned
+    _minlength      float, min streamline length in mm
+    _alg            str, tracking algorithm, i.e. 'Deterministic' or 'probabilistic'
+    _method         str, tracking method name 
+    _seed           dict[str], seed method parameters
+    _stopping       dict[str], stopping method parameters
+    _mng            dict[str]
+    _result         Queue
     """
 
     def __init__(self, model, seedcount, stepsize, maxangle, npeaks, peakthreshold,
@@ -1328,6 +1585,7 @@ class ProcessDiffusionTracking(Process):
             rois = SisypheROICollection()
             self._mng['msg'] = 'Load seed ROI(s)...'
             rois.load(filenames)
+            # noinspection PyTypeChecker
             if rois[0].hasSameSize(model.getDWI().shape[:3]): track.setSeedsFromRoi(rois.union())
             else:
                 self._result.put('Invalid ROI size {}.'.format(rois[0].getSize()))
@@ -1344,6 +1602,7 @@ class ProcessDiffusionTracking(Process):
             roi = SisypheROI()
             self._mng['msg'] = 'Load stopping ROI...'
             roi.load(filename)
+            # noinspection PyTypeChecker
             if roi.hasSameSize(model.getDWI().shape[:3]): track.setStoppingCriterionToROI(roi)
             else:
                 self._result.put('Invalid ROI size {}.'.format(roi.getSize()))
@@ -1361,6 +1620,7 @@ class ProcessDiffusionTracking(Process):
             if not gm.acquisition.isCerebroSpinalFluidMap():
                 self._result.put('{} sequence is not gray matter map.'.format(basename(filename)))
                 self.terminate()
+            # noinspection PyTypeChecker
             if not gm.hasSameSize(model.getDWI().shape[:3]):
                 self._result.put('Invalid gray matter map size {}.'.format(gm.getSize()))
                 self.terminate()
@@ -1375,6 +1635,7 @@ class ProcessDiffusionTracking(Process):
             if not wm.acquisition.isWhiteMatterMap():
                 self._result.put('{} sequence is not white matter map.'.format(basename(filename)))
                 self.terminate()
+            # noinspection PyTypeChecker
             if not wm.hasSameSize(model.getDWI().shape[:3]):
                 self._result.put('Invalid white matter map size {}.'.format(gm.getSize()))
                 self.terminate()
@@ -1389,6 +1650,7 @@ class ProcessDiffusionTracking(Process):
             if not csf.acquisition.isCerebroSpinalFluidMap():
                 self._result.put('{} sequence is not cerebro-spinal fluid map.'.format(basename(filename)))
                 self.terminate()
+            # noinspection PyTypeChecker
             if not csf.hasSameSize(model.getDWI().shape[:3]):
                 self._result.put('Invalid cerebro-spinal fluid map size {}.'.format(gm.getSize()))
                 self.terminate()
