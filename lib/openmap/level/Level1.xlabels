@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<xlabels version="1.0">
+	<label value="1">Telencephalon hemisphere left</label>
+	<label value="2">Telencephalon hemisphere right</label>
+	<label value="3">Diencephalon left</label>
+	<label value="4">Diencephalon right</label>
+	<label value="5">Mesencephalon</label>
+	<label value="6">Metencephalon</label>
+	<label value="7">Myelencephalon</label>
+	<label value="8">Cerebro-spinal fluid</label>
+</xlabels>

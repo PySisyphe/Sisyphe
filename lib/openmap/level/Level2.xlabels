@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<xlabels version="1.0">
+	<label value="1">Cerebral cortex left</label>
+	<label value="2">Cerebral cortex right</label>
+	<label value="3">Cerebral nuclei left</label>
+	<label value="4">Cerebral nuclei right</label>
+	<label value="5">Thalamus left</label>
+	<label value="6">Thalamus right</label>
+	<label value="7">Basal forebrain left</label>
+	<label value="8">Basal forebrain right</label>
+	<label value="9">Mesencephalon left</label>
+	<label value="10">Mesencephalon right</label>
+	<label value="11">Metencephalon right</label>
+	<label value="12">Metencephalon left</label>
+	<label value="13">Myelencephalon left</label>
+	<label value="14">Myelencephalon right</label>
+	<label value="15">White matter left</label>
+	<label value="16">White matter right</label>
+	<label value="17">Ventricle</label>
+	<label value="18">Sulcus left</label>
+	<label value="19">Sulcus right</label>
+	<label value="20">External capsule</label>
+</xlabels>
