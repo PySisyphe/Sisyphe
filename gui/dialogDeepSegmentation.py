@@ -15,8 +15,11 @@ from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepLesionSegment
 from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepWhiteMatterHyperIntensitiesSegmentation
 from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepTOFVesselSegmentation
 from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepTissueSegmentation
+from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepAtlasParcellation
+from Sisyphe.processing.simpleItkFilters import biasFieldCorrection
 
 from multiprocessing import Queue
+from multiprocessing import Manager
 
 from sys import platform
 
@@ -27,6 +30,9 @@ from os.path import exists
 from os.path import basename
 from os.path import dirname
 from os.path import abspath
+from os.path import splitext
+
+from shutil import copy
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
@@ -50,7 +56,8 @@ _all__ = ['DialogDeepTumorSegmentation',
           'DialogDeepLesionSegmentation',
           'DialogDeepWhiteMatterHyperIntensitiesSegmentation',
           'DialogDeepTOFVesselSegmentation',
-          'DialogDeepTissueSegmentation']
+          'DialogDeepTissueSegmentation',
+          'DialogDeepAtlasParcellation']
 
 """
 Class hierarchy
@@ -62,6 +69,8 @@ Class hierarchy
               -> DialogDeepLesionSegmentation
               -> DialogDeepWhiteMatterHyperIntensitiesSegmentation
               -> DialogDeepTOFVesselSegmentation
+              -> DialogDeepTissueSegmentation
+              -> DialogDeepAtlasParcellation
 """
 
 
@@ -1752,6 +1761,298 @@ class DialogDeepTissueSegmentation(QDialog):
             r = messageBox(self,
                            self.windowTitle(),
                            'Would you like to do\nmore tissue segmentation ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
+            if r == QMessageBox.Yes: self._volumeSelect.clear()
+            else: self.accept()
+
+
+class DialogDeepAtlasParcellation(QDialog):
+    """
+    DialogDeepAtlasParcellation
+
+    Description
+    ~~~~~~~~~~~
+
+    GUI dialog for deep learning atlas parcellation using OPenMAP-T1 model.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> DialogDeepAtlasParcellation
+
+    Creation: 12/03/2026
+    Last revision:
+    """
+
+    # Special method
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # Init window
+
+        self.setWindowTitle('OpenMAP-T1 atlas parcellation')
+        # noinspection PyUnresolvedReferences
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # Init QLayout
+
+        self._layout = QVBoxLayout()
+        self._layout.setContentsMargins(5, 5, 5, 0)
+        self._layout.setSpacing(0)
+        self.setLayout(self._layout)
+
+        # Init widgets
+
+        self._volumeSelect = FilesSelectionWidget(parent=self)
+        self._volumeSelect.filterSisypheVolume()
+        self._volumeSelect.filterSameSequence(SisypheAcquisition.T1)
+        self._volumeSelect.setCurrentVolumeButtonVisibility(True)
+        self._volumeSelect.setTextLabel('T1')
+        self._volumeSelect.setMinimumWidth(500)
+        self._volumeSelect.setVisible(True)
+        self._layout.addWidget(self._volumeSelect)
+
+        self._settings = FunctionSettingsWidget('OpenMAPSegmentation', parent=self)
+        # self._settings.setSettingsButtonFunctionText()
+        self._settings.setSettingsButtonText('Atlas parcellation')
+        self._settings.settingsVisibilityOn()
+        self._layout.addWidget(self._settings)
+
+        # Init default dialog buttons
+
+        layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
+        layout.setDirection(QHBoxLayout.RightToLeft)
+        cancel = QPushButton('Cancel')
+        # cancel.setFixedWidth(100)
+        self._execute = QPushButton('Execute')
+        # self._execute.setFixedWidth(100)
+        self._execute.setToolTip('Execute segmentation')
+        self._execute.setAutoDefault(True)
+        self._execute.setDefault(True)
+        layout.addWidget(self._execute)
+        layout.addWidget(cancel)
+        layout.addStretch()
+
+        self._layout.addLayout(layout)
+
+        # Qt Signals
+
+        # noinspection PyUnresolvedReferences
+        cancel.clicked.connect(self.reject)
+        # noinspection PyUnresolvedReferences
+        self._execute.clicked.connect(self.execute)
+
+        # < Revision 20/05/2025
+        self.adjustSize()
+        # imposing dialog width -> set minimum width to a child widget of the main layout
+        screen = QApplication.primaryScreen().geometry()
+        self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
+        # dialog resize off
+        # noinspection PyUnresolvedReferences
+        self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
+        # Revision 20/05/2025 >
+        self.setModal(True)
+
+    # Private method
+
+    # noinspection PyUnusedLocal
+    def _center(self, widget):
+        self.adjustSize()
+        self.move(self.screen().availableGeometry().center() - self.rect().center())
+        QApplication.processEvents()
+
+    # Public method
+
+    def getSelectionWidget(self):
+        return self._volumeSelect
+
+    def execute(self):
+        if not self._volumeSelect.isEmpty():
+            filenames = self._volumeSelect.getFilenames()
+            if len(filenames) > 0:
+                for index, filename in enumerate(filenames):
+                    wait = DialogWaitRegistration()
+                    wait.open()
+                    self._volumeSelect.clearSelection()
+                    self._volumeSelect.setSelectionTo(index)
+                    if exists(filename):
+                        wait.setInformationText('Load {}...'.format(basename(filename)))
+                        t1 = SisypheVolume()
+                        t1.load(filename)
+                        wait.progressVisibilityOff()
+                        """
+                        Bias field correction
+                        """
+                        if self._settings.getParameterValue('Bias'):
+                            wait.setInformationText('Bias field correction...')
+                            t1 = biasFieldCorrection(t1, shrink=4, wait=wait)[0]
+                            wait.progressVisibilityOff()
+                            if wait.getStopped():
+                                wait.close()
+                                return
+                        """
+                        Segmentation
+                        """
+                        # noinspection PyUnusedLocal
+                        r = None
+                        wait.setInformationText('OpenMAP-T1 atlas parcellation initialization...')
+                        wait.setButtonVisibility(True)
+                        with Manager() as manager:
+                            mng = manager.dict()
+                            queue = Queue()
+                            try:
+                                extractor = ProcessDeepAtlasParcellation(t1, True, mng, queue)
+                                extractor.start()
+                                while extractor.is_alive():
+                                    # noinspection PyTypeChecker
+                                    wait.messageFromDictProxyManager(mng)
+                                    if not queue.empty():
+                                        # noinspection PyUnusedLocal
+                                        r = queue.get()
+                                        if extractor.is_alive(): extractor.terminate()
+                                    if wait.getStopped(): extractor.terminate()
+                            except Exception as err:
+                                if extractor.is_alive(): extractor.terminate()
+                        # noinspection PyUnreachableCode
+                        if wait.getStopped():
+                            wait.close()
+                            return
+                        if not wait.getStopped() and r is None:
+                            wait.close()
+                            messageBox(self,
+                                       title=self.windowTitle(),
+                                       text='{} OpenMAP-T1 atlas parcellation error: '
+                                            '{}\n{}.'.format(t1.getBasename(), type(err), str(err)))
+                            return
+                        """
+                        Save
+                        """
+                        wait.setButtonVisibility(False)
+                        if r is not None:
+                            prefix = self._settings.getParameterValue('Prefix')
+                            suffix = self._settings.getParameterValue('Suffix')
+                            import Sisyphe.lib.openmap
+                            root = join(dirname(abspath(Sisyphe.lib.openmap.__file__)), 'level')
+                            # save cropped
+                            pre = self._settings.getParameterValue('PrefixCrop')
+                            suf = self._settings.getParameterValue('SuffixCrop')
+                            v = SisypheVolume()
+                            v.copyFromNumpyArray(r[0], spacing=t1.getSpacing(), defaultshape=False)
+                            v.copyAttributesFrom(t1, display=False, slope=False)
+                            v.setFilename(t1.getFilename())
+                            v.setFilenamePrefix(pre)
+                            v.setFilenameSuffix(suf)
+                            wait.setInformationText('Save {}...'.format(v.getBasename()))
+                            v.save()
+                            # save stripped
+                            pre = self._settings.getParameterValue('PrefixStrip')
+                            suf = self._settings.getParameterValue('SuffixStrip')
+                            v = SisypheVolume()
+                            v.copyFromNumpyArray(r[1], spacing=t1.getSpacing(), defaultshape=False)
+                            v.copyAttributesFrom(t1, display=False, slope=False)
+                            v.setFilename(t1.getFilename())
+                            v.setFilenamePrefix(pre)
+                            v.setFilenameSuffix(suf)
+                            wait.setInformationText('Save {}...'.format(v.getBasename()))
+                            v.save()
+                            # save 8 labels
+                            if self._settings.getParameterValue('Save8'):
+                                pre = prefix.replace('*', '8')
+                                suf = suffix.replace('*', '8')
+                                v = SisypheVolume()
+                                v.copyFromNumpyArray(r[8], spacing=t1.getSpacing(), defaultshape=False)
+                                v.copyAttributesFrom(t1, display=False, slope=False)
+                                v.acquisition.setSequenceToLabels()
+                                v.setFilename(t1.getFilename())
+                                v.setFilenamePrefix(pre)
+                                v.setFilenameSuffix(suf)
+                                wait.setInformationText('Save {}...'.format(v.getBasename()))
+                                v.save()
+                                src = join(root, 'level1.xlabels')
+                                if exists(filename):
+                                    dst = splitext(v.getFilename())[0] + '.xlabels'
+                                    copy(src, dst)
+                            # save 20 labels
+                            if self._settings.getParameterValue('Save20'):
+                                pre = prefix.replace('*', '20')
+                                suf = suffix.replace('*', '20')
+                                v = SisypheVolume()
+                                v.copyFromNumpyArray(r[20], spacing=t1.getSpacing(), defaultshape=False)
+                                v.copyAttributesFrom(t1, display=False, slope=False)
+                                v.acquisition.setSequenceToLabels()
+                                v.setFilename(t1.getFilename())
+                                v.setFilenamePrefix(pre)
+                                v.setFilenameSuffix(suf)
+                                wait.setInformationText('Save {}...'.format(v.getBasename()))
+                                v.save()
+                                src = join(root, 'level2.xlabels')
+                                if exists(filename):
+                                    dst = splitext(v.getFilename())[0] + '.xlabels'
+                                    copy(src, dst)
+                            # save 58 labels
+                            if self._settings.getParameterValue('Save58'):
+                                pre = prefix.replace('*', '58')
+                                suf = suffix.replace('*', '58')
+                                v = SisypheVolume()
+                                v.copyFromNumpyArray(r[58], spacing=t1.getSpacing(), defaultshape=False)
+                                v.copyAttributesFrom(t1, display=False, slope=False)
+                                v.acquisition.setSequenceToLabels()
+                                v.setFilename(t1.getFilename())
+                                v.setFilenamePrefix(pre)
+                                v.setFilenameSuffix(suf)
+                                wait.setInformationText('Save {}...'.format(v.getBasename()))
+                                v.save()
+                                src = join(root, 'level3.xlabels')
+                                if exists(filename):
+                                    dst = splitext(v.getFilename())[0] + '.xlabels'
+                                    copy(src, dst)
+                            # save 144 labels
+                            if self._settings.getParameterValue('Save144'):
+                                pre = prefix.replace('*', '144')
+                                suf = suffix.replace('*', '144')
+                                v = SisypheVolume()
+                                v.copyFromNumpyArray(r[144], spacing=t1.getSpacing(), defaultshape=False)
+                                v.copyAttributesFrom(t1, display=False, slope=False)
+                                v.acquisition.setSequenceToLabels()
+                                v.setFilename(t1.getFilename())
+                                v.setFilenamePrefix(pre)
+                                v.setFilenameSuffix(suf)
+                                wait.setInformationText('Save {}...'.format(v.getBasename()))
+                                v.save()
+                                src = join(root, 'level4.xlabels')
+                                if exists(filename):
+                                    dst = splitext(v.getFilename())[0] + '.xlabels'
+                                    copy(src, dst)
+                            # save 280 labels
+                            if self._settings.getParameterValue('Save280'):
+                                pre = prefix.replace('*', '280')
+                                suf = suffix.replace('*', '280')
+                                v = SisypheVolume()
+                                v.copyFromNumpyArray(r[280], spacing=t1.getSpacing(), defaultshape=False)
+                                v.copyAttributesFrom(t1, display=False, slope=False)
+                                v.acquisition.setSequenceToLabels()
+                                v.setFilename(t1.getFilename())
+                                v.setFilenamePrefix(pre)
+                                v.setFilenameSuffix(suf)
+                                wait.setInformationText('Save {}...'.format(v.getBasename()))
+                                v.save()
+                                src = join(root, 'level5.xlabels')
+                                if exists(filename):
+                                    dst = splitext(v.getFilename())[0] + '.xlabels'
+                                    copy(src, dst)
+                    wait.close()
+            """
+            Exit
+            """
+            r = messageBox(self,
+                           self.windowTitle(),
+                           'Would you like to do\nmore atlas parcellation ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)

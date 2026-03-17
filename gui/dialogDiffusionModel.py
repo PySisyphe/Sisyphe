@@ -75,7 +75,7 @@ class DialogDiffusionModel(QDialog):
         # Init window
 
         self.setWindowTitle('Diffusion model')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -156,6 +156,7 @@ class DialogDiffusionModel(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         exitb = QPushButton('Close')
         exitb.setAutoDefault(True)
@@ -187,6 +188,7 @@ class DialogDiffusionModel(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._bvals.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 17/06/2025 >
         self.setModal(True)
@@ -547,6 +549,7 @@ class DialogDiffusionModel(QDialog):
                                                 method, order, maps, corr, algo, niter, size,True, mng, queue)
                 process.start()
                 while process.is_alive():
+                    # noinspection PyTypeChecker
                     wait.messageFromDictProxyManager(mng)
                     if not queue.empty():
                         # noinspection PyUnusedLocal

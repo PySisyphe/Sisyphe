@@ -701,6 +701,7 @@ class DialogWait(QDialog):
             if mng['max'] is not None:
                 if mng['max'] > 0:
                     self.setProgressRange(0, mng['max'])
+                    self.setCurrentProgressValue(0)
                     if not self.getProgressVisibility(): self.progressVisibilityOn()
                     mng['max'] = None
                 else:

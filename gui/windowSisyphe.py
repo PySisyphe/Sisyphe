@@ -134,7 +134,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 19/02/2026
+    Last revision: 12/03/2026
     """
 
     # Class constants
@@ -1186,6 +1186,7 @@ class WindowSisyphe(QMainWindow):
                 Structs
                 ---
                 Deep learning segmentation
+                    Atlas parcellation
                     Hippocampus segmentation
                     Medial temporal segmentation
                     Tumor segmentation
@@ -1247,6 +1248,9 @@ class WindowSisyphe(QMainWindow):
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
         # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
+        # < Revision 12/03/2026
+        self._action['Atlas'] = submenu.addAction('Atlas parcellation...')
+        # Revision 12/03/2026 >
         self._action['hipp'] = submenu.addAction('Hippocampus segmentation...')
         self._action['lesion'] = submenu.addAction('Hypo-intensity lesion segmentation...')
         self._action['temporal'] = submenu.addAction('Medial temporal clustering...')
@@ -1270,6 +1274,9 @@ class WindowSisyphe(QMainWindow):
         self._action['wmh'].triggered.connect(self.wmhSegmentation)
         # self._action['tof'].triggered.connect(self.vesselSegmentation)
         self._action['tissue'].triggered.connect(self.tissueSegmentation)
+        # < Revision 12/03/2026
+        self._action['Atlas'].triggered.connect(self.atlasParcellation)
+        # Revision 12/03/2026 >
 
     def _initMapMenu(self) -> None:
         """
@@ -3218,8 +3225,11 @@ class WindowSisyphe(QMainWindow):
     def saveNifti(self) -> None:
         vol = self._thumbnail.getSelectedVolume()
         if vol is not None:
-            filename = QFileDialog.getSaveFileName(self, 'Save Nifti', vol.getFilename(),
+            # < Revision 12/03/2026
+            filename = splitext(vol.getFilename())[0] + '.nii'
+            filename = QFileDialog.getSaveFileName(self, 'Save Nifti', filename,
                                                    filter='Nifti (*.nii)')[0]
+            # Revision 12/03/2026 >
             QApplication.processEvents()
             if filename:
                 chdir(dirname(filename))
@@ -3235,8 +3245,11 @@ class WindowSisyphe(QMainWindow):
     def saveMinc(self) -> None:
         vol = self._thumbnail.getSelectedVolume()
         if vol is not None:
-            filename = QFileDialog.getSaveFileName(self, 'Save Minc', vol.getFilename(),
+            # < Revision 12/03/2026
+            filename = splitext(vol.getFilename())[0] + '.mnc'
+            filename = QFileDialog.getSaveFileName(self, 'Save Minc', filename,
                                                    filter='Minc (*.mnc)')[0]
+            # Revision 12/03/2026 >
             QApplication.processEvents()
             if filename:
                 chdir(dirname(filename))
@@ -3252,8 +3265,11 @@ class WindowSisyphe(QMainWindow):
     def saveNrrd(self) -> None:
         vol = self._thumbnail.getSelectedVolume()
         if vol is not None:
-            filename = QFileDialog.getSaveFileName(self, 'Save Nrrd', vol.getFilename(),
+            # < Revision 12/03/2026
+            filename = splitext(vol.getFilename())[0] + '.nrrd'
+            filename = QFileDialog.getSaveFileName(self, 'Save Nrrd', filename,
                                                    filter='Nrrd (*.nrrd)')[0]
+            # Revision 12/03/2026 >
             QApplication.processEvents()
             if filename:
                 chdir(dirname(filename))
@@ -3269,8 +3285,11 @@ class WindowSisyphe(QMainWindow):
     def saveVtk(self) -> None:
         vol = self._thumbnail.getSelectedVolume()
         if vol is not None:
-            filename = QFileDialog.getSaveFileName(self, 'Save VTK', vol.getFilename(),
+            # < Revision 12/03/2026
+            filename = splitext(vol.getFilename())[0] + '.vti'
+            filename = QFileDialog.getSaveFileName(self, 'Save VTK', filename,
                                                    filter='VTK (*.vti)')[0]
+            # Revision 12/03/2026 >
             QApplication.processEvents()
             if filename:
                 chdir(dirname(filename))
@@ -3286,8 +3305,11 @@ class WindowSisyphe(QMainWindow):
     def saveNumpy(self) -> None:
         vol = self._thumbnail.getSelectedVolume()
         if vol is not None:
-            filename = QFileDialog.getSaveFileName(self, 'Save Numpy', vol.getFilename(),
+            # < Revision 12/03/2026
+            filename = splitext(vol.getFilename())[0] + '.npy'
+            filename = QFileDialog.getSaveFileName(self, 'Save Numpy', filename,
                                                    filter='Numpy (*.npy)')[0]
+            # Revision 12/03/2026 >
             QApplication.processEvents()
             if filename:
                 chdir(dirname(filename))
@@ -3683,18 +3705,24 @@ class WindowSisyphe(QMainWindow):
                 v = SisypheVolume()
                 v.load(filename)
         if v is not None and isinstance(v, SisypheVolume):
-            from Sisyphe.gui.dialogEditLabels import DialogEditLabels
-            self._dialog = DialogEditLabels()
-            if platform == 'win32':
-                try: __main__.updateWindowTitleBarColor(self._dialog)
-                except: pass
-            self._dialog.setVolume(v)
-            try:
-                if self._logger is not None: self._logger.info('gui.dialogFileSelection.DialogFileSelection - Edit labels')
-                self._dialog.exec()
-            except Exception as err:
-                messageBox(self, 'Edit labels dialog error', '{}\n{}'.format(type(err), str(err)))
-                if self._logger is not None: self._logger.error(traceback.format_exc())
+            if v.isUInt8Datatype() or v.isUInt16Datatype():
+                from Sisyphe.gui.dialogEditLabels import DialogEditLabels
+                self._dialog = DialogEditLabels()
+                if platform == 'win32':
+                    try: __main__.updateWindowTitleBarColor(self._dialog)
+                    except: pass
+                self._dialog.setVolume(v)
+                try:
+                    if self._logger is not None: self._logger.info('gui.dialogFileSelection.DialogFileSelection - Edit labels')
+                    self._dialog.exec()
+                except Exception as err:
+                    messageBox(self, 'Edit labels dialog error', '{}\n{}'.format(type(err), str(err)))
+                    if self._logger is not None: self._logger.error(traceback.format_exc())
+            else:
+                messageBox(self,
+                           'Edit labels',
+                           '{} {} datatype is invalid for label volume.'
+                           'Cast to uint8 or uint16 to get a valid label volume.'.format(v.getBasename(), v.getDatatype()))
 
     def volToLabel(self) -> None:
         from Sisyphe.gui.dialogLabel import DialogVOLtoLabel
@@ -5840,6 +5868,25 @@ class WindowSisyphe(QMainWindow):
         except Exception as err:
             messageBox(self, 'Deep learning tissue segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
+
+    # < Revision 12/03/2026
+    def atlasParcellation(self) -> None:
+        from Sisyphe.gui.dialogDeepSegmentation import DialogDeepAtlasParcellation
+        self._dialog = DialogDeepAtlasParcellation()
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        w = self._dialog.getSelectionWidget()
+        w.setToolbarThumbnail(self._thumbnail)
+        try:
+            # < Revision 12/10/2025
+           #  self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-parcellation')
+            # Revision 12/10/2025 >
+            if self._logger is not None: self._logger.info(
+                'Dialog exec [gui.dialogDeepSegmentation.DialogDeepAtlasParcellation]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'Deep learning atlas parcellation dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 12/03/2026 >
 
     # Map processing methods called from main menu
 

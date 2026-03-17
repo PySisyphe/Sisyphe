@@ -53,7 +53,7 @@ class DialogEditLabels(QDialog):
 
     QWidget -> QDialog -> DialogEditLabels
 
-    Last revision: 14/10/2025
+    Last revision: 13/03/2026
     """
 
     # Special method
@@ -68,7 +68,7 @@ class DialogEditLabels(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Edit labels')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.5))
@@ -104,14 +104,17 @@ class DialogEditLabels(QDialog):
         self._tree = QTreeWidget()
         self._tree.setSelectionMode(QTreeWidget.SingleSelection)
         self._tree.setHeaderLabels(['Values', 'Labels'])
-        for i in range(256):
-            item = QTreeWidgetItem(self._tree)
-            item.setText(0, str(i))
-            item.setTextAlignment(0, Qt.AlignCenter)
-            self._tree.addTopLevelItem(item)
-            edit = QLineEdit()
-            self._tree.setItemWidget(item, 1, edit)
-        self._tree.topLevelItem(0).setSelected(True)
+        # < Revision 13/03/2026
+        # for i in range(256):
+        #     item = QTreeWidgetItem(self._tree)
+        #     item.setText(0, str(i))
+        #     # noinspection PyUnresolvedReferences
+        #     item.setTextAlignment(0, Qt.AlignCenter)
+        #     self._tree.addTopLevelItem(item)
+        #     edit = QLineEdit()
+        #     self._tree.setItemWidget(item, 1, edit)
+        # self._tree.topLevelItem(0).setSelected(True)
+        # Revision 13/03/2026 >
         # noinspection PyUnresolvedReferences
         self._tree.itemSelectionChanged.connect(self._selectionChanged)
         # < Revision 14/10/2025
@@ -166,6 +169,7 @@ class DialogEditLabels(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)
@@ -187,23 +191,49 @@ class DialogEditLabels(QDialog):
 
     # Private method
 
+    # < Revision 13/03/2026
+    # add _initTreeLabels method
+    def _initTreeLabels(self):
+        if self._volume is not None:
+            self._tree.setEnabled(False)
+            self._tree.clear()
+            labelmax = int(self._volume.getMax()) + 1
+            if labelmax > 1024: labelmax = 1024
+            for i in range(labelmax):
+                item = QTreeWidgetItem(self._tree)
+                item.setText(0, str(i))
+                # noinspection PyUnresolvedReferences
+                item.setTextAlignment(0, Qt.AlignCenter)
+                self._tree.addTopLevelItem(item)
+                edit = QLineEdit()
+                self._tree.setItemWidget(item, 1, edit)
+            self._tree.topLevelItem(0).setSelected(True)
+            self._tree.setEnabled(True)
+    # Revision 13/03/2026 >
+
     def _saveLabels(self):
         if self._volume is not None:
             acq = self._volume.getAcquisition()
             acq.getLabels().clear()
-            for i in range(256):
+            # < Revision 13/03/2026
+            labelmax = int(self._volume.getMax()) + 1
+            if labelmax > 1024: labelmax = 1024
+            # for i in range(256):
+            for i in range(labelmax):
                 item = self._tree.topLevelItem(i)
                 edit = self._tree.itemWidget(item, 1)
                 if edit.text() != '': acq.setLabel(i, edit.text())
+            # Revision 13/03/2026 >
             acq.saveLabels()
             self.accept()
 
     def _selectionChanged(self):
-        item = self._tree.selectedItems()
-        if item is not None: item = item[0]
-        n = int(item.text(0))
-        self._view().getDrawInstance().extractingValue(n, mask=False, replace=True)
-        self._view().updateRender()
+        if self._tree.isEnabled():
+            item = self._tree.selectedItems()
+            if item is not None: item = item[0]
+            n = int(item.text(0))
+            self._view().getDrawInstance().extractingValue(n, mask=False, replace=True)
+            self._view().updateRender()
 
     # < Revision 15/10/2025
     # add moveTo method
@@ -213,15 +243,23 @@ class DialogEditLabels(QDialog):
             item = item[0]
             v = self._view.getVolume()
             index = self._tree.indexFromItem(item, 0).row()
-            if 0 <= index < 256:
+            # < Revision 13/03/2026
+            labelmax = int(self._volume.getMax()) + 1
+            if labelmax > 1024: labelmax = 1024
+            # if 0 <= index < 256:
+            if 0 <= index < labelmax:
                 roi = v.labelToROI(index)
                 x, y, z = roi.getCentroid()
                 self._view().setCursorWorldPosition(x, y, z)
+            # Revision 13/03/2026 >
     # Revision 15/10/2025 >
 
     def _load(self):
         if self._volume is not None:
-            filename = QFileDialog.getOpenFileName(self, 'Load labels from text file...', getcwd(), filter='text file (*.txt)')[0]
+            filename = QFileDialog.getOpenFileName(self,
+                                                   'Load labels from text file...',
+                                                   getcwd(),
+                                                   filter='text file (*.txt)')[0]
             if filename and exists(filename):
                 filename = abspath(filename)
                 chdir(dirname(filename))
@@ -232,6 +270,9 @@ class DialogEditLabels(QDialog):
                     idxlbl = self._labelpos.value()
                     sep = self._sep.getEditText()
                     if sep == '': sep = ' '
+                    # < Revision 13/03/2026
+                    labelmax = int(self._volume.getMax()) + 1
+                    if labelmax > 1024: labelmax = 1024
                     for line in lines:
                         r = line.split(sep)
                         # < Revision 08/11/2024
@@ -241,10 +282,12 @@ class DialogEditLabels(QDialog):
                                 # Revision 08/11/2024 >
                                 idx = int(r[idxint])
                                 lbl = str(r[idxlbl])
-                                if 0 <= idx < 256:
+                                # 0 <= idx < 256
+                                if 0 <= idx < labelmax:
                                     item = self._tree.topLevelItem(idx)
                                     edit = self._tree.itemWidget(item, 1)
                                     edit.setText(lbl)
+                    # Revision 13/03/2026 >
                 except: messageBox(self,
                                    'Load labels from text file',
                                    'text read error.')
@@ -258,19 +301,29 @@ class DialogEditLabels(QDialog):
                 chdir(dirname(filename))
                 sep = self._sep.getEditText()
                 with open(filename, 'w') as f:
-                    for i in range(256):
+                    # < Revision 13/03/2026
+                    labelmax = int(self._volume.getMax()) + 1
+                    if labelmax > 1024: labelmax = 1024
+                    # for i in range(256):
+                    for i in range(labelmax):
                         item = self._tree.topLevelItem(i)
                         edit = self._tree.itemWidget(item, 1)
                         txt = edit.text()
                         if txt != '':
                             line = '{}{}{}\n'.format(i, sep, txt)
                             f.write(line)
+                    # Revision 13/03/2026 >
 
     def _clear(self):
-        for i in range(256):
+        # < Revision 13/03/2026
+        labelmax = int(self._volume.getMax()) + 1
+        if labelmax > 1024: labelmax = 1024
+        # for i in range(256):
+        for i in range(labelmax):
             item = self._tree.topLevelItem(i)
             edit = self._tree.itemWidget(item, 1)
             edit.setText('')
+        # Revision 13/03/2026 >
 
     # Public method
 
@@ -281,14 +334,21 @@ class DialogEditLabels(QDialog):
             self._view().newROI()
             self._view().setInfoVisibilityOn()
             self._view().setInfoValueVisibilityOn()
-            self._selectionChanged()
             labels = self._volume.getAcquisition().getLabels()
+            # < Revision 13/03/2026
+            self._initTreeLabels()
             if labels is not None and len(labels) > 0:
-                for i in range(256):
-                    if i in labels:
-                        item = self._tree.topLevelItem(i)
-                        edit = self._tree.itemWidget(item, 1)
-                        edit.setText(labels[i])
+                for k in labels:
+                    item = self._tree.topLevelItem(k)
+                    edit = self._tree.itemWidget(item, 1)
+                    edit.setText(labels[k])
+                # for i in range(256):
+                #     if i in labels:
+                #         item = self._tree.topLevelItem(i)
+                #         edit = self._tree.itemWidget(item, 1)
+                #         edit.setText(labels[i])
+            # Revision 13/03/2026 >
+            self._selectionChanged()
 
     def getVolume(self):
         return self._volume

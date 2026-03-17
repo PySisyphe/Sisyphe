@@ -9,7 +9,9 @@ External packages/modules
 """
 
 from Sisyphe.processing.capturedStdoutProcessing import ProcessSkullStrip
+from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepAtlasParcellation
 from multiprocessing import Queue
+from multiprocessing import Manager
 
 from os.path import join
 from os.path import abspath
@@ -50,7 +52,7 @@ class DialogSkullStripping(AbstractDialogFunction):
 
     QDialog -> AbstractDialogFunction -> DialogSkullStripping
 
-    Last revision: 06/11/2025
+    Last revision: 16/03/2026
     """
 
     # Class method
@@ -81,7 +83,7 @@ class DialogSkullStripping(AbstractDialogFunction):
 
     def _dataChanged(self):
         data = self._settings.getParameterValue('TrainingData')[0]
-        if data == 'T1':
+        if data[:2] == 'T1':
             if not self._files.isEmpty(): self._files.clearall()
             self._files.filterSameSequence(SisypheAcquisition.T1)
             if data == 'T1 FreeSurfer': self._modality = 't1nobrainer'
@@ -117,9 +119,27 @@ class DialogSkullStripping(AbstractDialogFunction):
         model = self._settings.getParameterValue('Model')[0][0]
         if model == 'D':
             self._settings.setParameterVisibility('TrainingData', False)
-            self._settings.getParameterWidget('TrainingData').setCurrentText('T1 ANTs')
-        else:
+            self._settings.getParameterWidget('TrainingData').setCurrentText('T1')
+            # < Revision 16/03/2026
+            self._settings.setParameterVisibility('ProbMask', True)
+            self._settings.setParameterVisibility('ProbPrefix', True)
+            self._settings.setParameterVisibility('ProbSuffix', True)
+            # Revision 16/03/2026 >
+        elif model == 'A':
             self._settings.setParameterVisibility('TrainingData', True)
+            # < Revision 16/03/2026
+            self._settings.setParameterVisibility('ProbMask', True)
+            self._settings.setParameterVisibility('ProbPrefix', True)
+            self._settings.setParameterVisibility('ProbSuffix', True)
+            # Revision 16/03/2026 >
+        # < Revision 16/03/2026
+        elif model == 'O':
+            self._settings.setParameterVisibility('TrainingData', False)
+            self._settings.getParameterWidget('TrainingData').setCurrentText('T1')
+            self._settings.setParameterVisibility('ProbMask', False)
+            self._settings.setParameterVisibility('ProbPrefix', False)
+            self._settings.setParameterVisibility('ProbSuffix', False)
+        # Revision 16/03/2026 >
         if not self._files.isEmpty(): self._files.clearall()
 
     # Public method
@@ -172,11 +192,74 @@ class DialogSkullStripping(AbstractDialogFunction):
                 if wait.getStopped(): extractor.terminate()
             wait.setButtonVisibility(False)
         # DeepBrain U-net
-        else:
+        elif model[0] == 'D':
             wait.setInformationText('{} DeepBrain U-net Skull stripping...'.format(basename(filename)))
             # shape x, y, z after transpose
             try: rimg = self._extractor.run(img.getNumpy()).T
             except: pass
+        # OpenMAP
+        # < Revision 16/03/2026
+        elif model[0] == 'O':
+            wait.setInformationText('{} OpenMAP Skull stripping...'.format(basename(filename)))
+            wait.setButtonVisibility(True)
+            with Manager() as manager:
+                mng = manager.dict()
+                queue = Queue()
+                try:
+                    extractor = ProcessDeepAtlasParcellation(img, False, mng, queue)
+                    extractor.start()
+                    while extractor.is_alive():
+                        # noinspection PyTypeChecker
+                        wait.messageFromDictProxyManager(mng)
+                        if not queue.empty():
+                            # noinspection PyUnusedLocal
+                            r = queue.get()
+                            if extractor.is_alive(): extractor.terminate()
+                        if wait.getStopped(): extractor.terminate()
+                except Exception as err:
+                    if extractor.is_alive(): extractor.terminate()
+                # noinspection PyUnreachableCode
+                if wait.getStopped():
+                    wait.close()
+                    return
+                if not wait.getStopped() and r is None:
+                    wait.close()
+                    messageBox(self,
+                               title=self.windowTitle(),
+                               text='{} OpenMAP skull striping error: '
+                                    '{}\n{}.'.format(img.getBasename(), type(err), str(err)))
+                    return
+            wait.setButtonVisibility(False)
+            if r is not None:
+                v = SisypheVolume()
+                v.copyFromNumpyArray(r[1], spacing=img.getSpacing(), defaultshape=False)
+                v.copyAttributesFrom(img, display=False, slope=False)
+                v.setFilename(img.getFilename())
+                v.setFilenamePrefix(prefix)
+                v.setFilenameSuffix(prefix)
+                wait.setInformationText('Save {}...'.format(v.getBasename()))
+                v.save()
+                mask = r[1] > 0
+                mask = mask.astype(uint8)
+                if savemask:
+                    v = SisypheVolume()
+                    v.copyFromNumpyArray(mask, spacing=img.getSpacing(), defaultshape=False)
+                    v.copyAttributesFrom(img, display=False, slope=False)
+                    v.setFilename(img.getFilename())
+                    v.setFilenamePrefix(maskprefix)
+                    v.setFilenameSuffix(masksuffix)
+                    wait.setInformationText('Save {}...'.format(v.getBasename()))
+                    v.save()
+                if roimask:
+                    roi = SisypheROI()
+                    roi.copyFromNumpyArray(mask, spacing=img.getSpacing(), defaultshape=False)
+                    roi.setName('Cerebrum')
+                    roi.setReferenceID(img)
+                    filename2 = addPrefixSuffixToFilename(img.getFilename(), maskprefix, masksuffix)
+                    roi.saveAs(filename2)
+            wait.close()
+            return
+        # Revision 16/03/2026 >
         if rimg is not None:
             mask = rimg > 0.5
             mask = mask.astype(uint8)
