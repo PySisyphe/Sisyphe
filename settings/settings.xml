@@ -104,6 +104,7 @@
 	<ROI>
 		<MaxCount varmax="50" varmin="10" vartype="int">10</MaxCount>
 		<FillHoles vartype="bool">False</FillHoles>
+		<MajorBlob vartype="bool">False</MajorBlob>
 		<StructSize label="Structuring element size" varmax="50" varmin="1" vartype="int">1</StructSize>
 		<StructShape label="Structuring element shape" vartype="lstr">Ball|Box|Cross|Annulus</StructShape>
 		<MoveStep label="Move step (px)" varmax="20" varmin="1" vartype="int">1</MoveStep>

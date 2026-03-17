@@ -83,7 +83,7 @@
 	</IntensityNormalizationImageFilter>
 	<BiasFieldCorrectionImageFilter>
 		<UseMask vartype="bool">True</UseMask>
-		<ShrinkFactor varmax="4" varmin="1" vartype="int">1</ShrinkFactor>
+		<ShrinkFactor varmax="5" varmin="1" vartype="int">4</ShrinkFactor>
 		<SplineOrder varmax="10" varmin="1" vartype="int">3</SplineOrder>
 		<NumberOfHistogramBins varmax="512" varmin="32" vartype="int">200</NumberOfHistogramBins>
 		<NumberOfFittingLevels varmax="10" varmin="1" vartype="int">4</NumberOfFittingLevels>
@@ -98,8 +98,8 @@
 		<BiasFieldSuffix label="Bias field map suffix" vartype="str"/>
 	</BiasFieldCorrectionImageFilter>
 	<SkullStripping>
-		<Model label="Pre-trained U-net model" vartype="lstr">ANTs U-net|DeepBrain U-net</Model>
-		<TrainingData label="Training modality" vartype="lstr">T1|T2|T2*|FLAIR|EPI|FA|TOF</TrainingData>
+		<Model label="Pre-trained U-net model" vartype="lstr">ANTs U-net|DeepBrain U-net|OpenMAP</Model>
+		<TrainingData label="Training modality" vartype="lstr">T1|T1 FreeSurfer|T1 ANTs/FreeSurfer|T2|T2*|FLAIR|EPI|FA|TOF</TrainingData>
 		<Mask label="Save brain mask" vartype="bool">True</Mask>
 		<ROIMask label="Save brain mask as ROI" vartype="bool">True</ROIMask>
 		<MaskPrefix label="Brain mask prefix" vartype="str">mask</MaskPrefix>
@@ -222,6 +222,20 @@
 		<Prefix label="Label segmentation prefix" vartype="str">tissue_labels</Prefix>
 		<Suffix label="Label segmentation suffix" vartype="str"/>
 	</UnetTissueSegmentation>
+	<OpenMAPSegmentation>
+		<Bias label="Bias field correction" vartype="bool">True</Bias>
+		<Save8 label="Save 8 labels volume" vartype="bool">True</Save8>
+		<Save20 label="Save 20 labels volume" vartype="bool">True</Save20>
+		<Save58 label="Save 58 labels volume" vartype="bool">True</Save58>
+		<Save144 label="Save 144 labels volume" vartype="bool">True</Save144>
+		<Save280 label="Save 280 labels volume" vartype="bool">True</Save280>
+		<Prefix label="Label segmentation prefix" vartype="str">*labels</Prefix>
+		<Suffix label="Label segmentation suffix" vartype="str"/>
+		<PrefixCrop label="Cropped volume prefix" vartype="str">crop</PrefixCrop>
+		<SuffixCrop label="Cropped volume suffix" vartype="str"/>
+		<PrefixStrip label="Stripped volume prefix" vartype="str">strip</PrefixStrip>
+		<SuffixStrip label="Stripped volume suffix" vartype="str"/>
+	</OpenMAPSegmentation>
 	<Registration>
 		<FixedMask label="Fixed volume mask" vartype="bool">True</FixedMask>
 		<Estimation vartype="lstr">FOV center alignment|Center of mass alignment|No estimation</Estimation>
