@@ -3361,7 +3361,7 @@ class IconBarViewWidgetCollection(QObject):
     QObject -> IconBarViewWidgetCollection
 
     Creation: 17/04/2022
-    Last Revision: 26/02/2026
+    Last Revision: 10/03/2026
     """
 
     __slots__ = ['_widgets', '_index']
@@ -4212,6 +4212,25 @@ class IconBarViewWidgetCollection(QObject):
             else: raise TypeError('parameter type {} is not bool.'.format(type(f)))
     # Revision 26/02/2026 >
 
+    # < Revision 10/03/2026
+    def setDrawThresholdRectangleFlag(self, f: bool) -> None:
+        """
+        Set the flag for draw by thresholding within rectangle boundaries in ROIs in suitable widgets.
+
+        Parameters
+        ----------
+        f : bool
+            True to enable draw tool by thresholding within rectangle, False to disable it.
+        """
+        if self.count() > 0:
+            if isinstance(f, bool):
+                for widget in self:
+                    if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                        sliceview = widget().getFirstSliceViewWidget()
+                        if sliceview is not None: sliceview.setDrawThresholdRectangleFlag(f, signal=True)
+            else: raise TypeError('parameter type {} is not bool.'.format(type(f)))
+    # Revision 10/03/2026 >
+
     # < Revision 26/02/2026
     def setSamFlag(self, f: bool) -> None:
         """
@@ -4686,6 +4705,24 @@ class IconBarViewWidgetCollection(QObject):
                     if sliceview is not None: return sliceview.getDrawRectangleFlag()
         return None
     # Revision 26/02/2026 >
+
+    # < Revision 10/03/2026
+    def getDrawThresholdRectangleFlag(self) -> bool | None:
+        """
+        Get the current state of the draw tool by thresholding within rectangle boundaries flag in suitable widgets.
+
+        Returns
+        -------
+        bool | None
+            state of the flag, or None if not applicable.
+        """
+        if self.count() > 0:
+            for widget in self:
+                if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    sliceview = widget().getFirstSliceViewWidget()
+                    if sliceview is not None: return sliceview.getDrawThresholdRectangleFlag()
+        return None
+    # Revision 10/03/2026 >
 
     # < Revision 26/02/2026
     def getSamFlag(self) -> bool | None:

@@ -131,7 +131,7 @@ class AbstractViewWidget(QFrame):
     QWidget -> AbstractViewWidget
 
     Creation: 20/03/2022
-    Last Revision: 26/02/2026
+    Last Revision: 05/03/2026
     """
 
     _DEFAULTZOOM = 128.0  # Default zoom (vtk parallel scale) = conventional FOV of head imaging / 2
@@ -221,6 +221,10 @@ class AbstractViewWidget(QFrame):
         style.AddObserver('LeftButtonReleaseEvent', self._onLeftReleaseEvent)
         # noinspection PyTypeChecker
         style.AddObserver('RightButtonPressEvent', self._onRightPressEvent)
+        # < Revision 05/03/2026
+        # noinspection PyTypeChecker
+        style.AddObserver('RightButtonReleaseEvent', self._onRightReleaseEvent)
+        # Revision 05/03/2026 >
         # noinspection PyTypeChecker
         style.AddObserver('MiddleButtonPressEvent', self._onMiddlePressEvent)
         # noinspection PyTypeChecker
@@ -5236,6 +5240,22 @@ class AbstractViewWidget(QFrame):
             The name of the event (LeftButtonReleaseEvent).
         """
         pass
+
+    # < Revision 05/03/2026
+    # add _onRightReleaseEvent method
+    def _onRightReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Abstract callback for right mouse button release VTK events. To be implemented by subclasses.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            The VTK object that triggered the event.
+        evt_name : str
+            The name of the event (RightButtonReleaseEvent).
+        """
+        pass
+    # Revision 05/03/2026 >
 
     def _onMiddlePressEvent(self, obj: vtkObject, evt_name: str) -> None:
         """

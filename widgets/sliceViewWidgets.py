@@ -3445,7 +3445,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget
 
     Creation: 07/04/2022
-    Last revision: 20/10/2025
+    Last revision: 10/03/2026
     """
 
     # Custom Qt signals
@@ -3495,6 +3495,9 @@ class SliceOverlayViewWidget(SliceViewWidget):
         self._rotations0 = None
         self._translations0 = None
         self._moveOverlayFlag = 0
+        # < Revision 10/03/2026
+        self._colorbarOverlayFlag = True
+        # Revision 10/03/2026 >
         self._isoindex: int = -1
 
         # isolines and isolabels actors
@@ -3615,22 +3618,23 @@ class SliceOverlayViewWidget(SliceViewWidget):
     """
     Private attributes (Non-GUI)
 
-    _ovl                SisypheVolumeCollection
-    _ovlslices          list[vtkImageSlice]
-    _cutplane           vtkPlane
-    _meshcutter         vtkPlaneCutter
-    _meshes             SisypheMeshCollection
-    _meshslices         dict[str, vtkImageSlice], key = mesh name
-    _isocutter          vtkPlaneCutter
-    _isolines           vtkActor, isolines
-    _isolabels          vtkActor2D, label value of isolines
-    _isoindex           int, isolines of which volume (-1 no isoline, 0 reference volume, >0 overlay volume)
-    _ovlvalue           SisypheVolume, overlay for which voxel value is displayed
-    _ovlvaluetrf        SisypheTransform, applied to overlay for which voxel value is displayed
-    _aligncenters       bool, align centers of reference volume and overlays
-    _moveOverlayFlag    int
-    _isovalues          list[float]
-    _isoindex           int | None, None hide iso, int show iso (0 volume, > overlay volume index)
+    _ovl                    SisypheVolumeCollection
+    _ovlslices              list[vtkImageSlice]
+    _cutplane               vtkPlane
+    _meshcutter             vtkPlaneCutter
+    _meshes                 SisypheMeshCollection
+    _meshslices             dict[str, vtkImageSlice], key = mesh name
+    _isocutter              vtkPlaneCutter
+    _isolines               vtkActor, isolines
+    _isolabels              vtkActor2D, label value of isolines
+    _isoindex               int, isolines of which volume (-1 no isoline, 0 reference volume, >0 overlay volume)
+    _ovlvalue               SisypheVolume, overlay for which voxel value is displayed
+    _ovlvaluetrf            SisypheTransform, applied to overlay for which voxel value is displayed
+    _aligncenters           bool, align centers of reference volume and overlays
+    _moveOverlayFlag        int, flag to allow overlay movement
+    _colorbarOverlayFlag    bool, flag to allow the display of the overlay color bar
+    _isovalues              list[float]
+    _isoindex               int | None, None hide iso, int show iso (0 volume, > overlay volume index)
     """
 
     # Private method
@@ -3894,6 +3898,15 @@ class SliceOverlayViewWidget(SliceViewWidget):
             triggered QAction.
         """
         self.setInfoOverlayValueVisibility(action.text())
+        # < Revision 06/03/2026
+        if self._colorbarOverlayFlag:
+            if len(self._group_menuOverlayVoxel.actions()) > 1:
+                if action.text() == 'No': self.setVolumeColorbar()
+                else:
+                    for i, item in enumerate(self._group_menuOverlayVoxel.actions()):
+                        if item.text() == action.text():
+                            self.setOverlayColorbar(i - 1)
+        # Revision 06/03/2026 >
 
     def _updateTooltip(self) -> None:
         """
@@ -4617,7 +4630,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
         """
         return self._group_menuOverlayVoxel.checkedAction().text()
 
-    def setOverlayColorbar(self, index: int = 0) -> None:
+    def setOverlayColorbar(self, index: int = 0, signal: bool = True) -> None:
         """
         Set the colorbar to display the lookup table of a specific overlay.
 
@@ -4625,26 +4638,42 @@ class SliceOverlayViewWidget(SliceViewWidget):
         ----------
         index : int (optional)
             index of the overlay whose colorbar should be displayed (default 0).
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
         """
-        # < Revision 05/09/2024
-        n = self.getOverlayCount()
-        if index < 0: index = n + index
-        # Revision 05/09/2024 >
-        if n > 0 and 0 <= index < n:
-            ovl = self._ovl[index]
-            self._colorbar.SetLookupTable(ovl.display.getVTKLUT())
-            if ovl.isIntegerDatatype(): self._colorbar.SetLabelFormat('%5.0f')
-            else: self._colorbar.SetLabelFormat('%5.2f')
-        else: raise IndexError('index parameter value {} is out of range.'.format(index))
+        if self.hasVolume():
+            # < Revision 05/09/2024
+            n = self.getOverlayCount()
+            if index < 0: index = n + index
+            # Revision 05/09/2024 >
+            if n > 0 and 0 <= index < n:
+                ovl = self._ovl[index]
+                self._colorbar.SetLookupTable(ovl.display.getVTKLUT())
+                if ovl.isIntegerDatatype(): self._colorbar.SetLabelFormat('%5.0f')
+                else: self._colorbar.SetLabelFormat('%5.2f')
+                # < Revision 06/03/2026
+                self._renderwindow.Render()
+                if signal: self.ViewMethodCalled.emit(self, 'setOverlayColorbar', index)
+                # Revision 06/03/2026 >
+            else: raise IndexError('index parameter value {} is out of range.'.format(index))
 
-    def setVolumeColorbar(self) -> None:
+    def setVolumeColorbar(self, signal: bool = True) -> None:
         """
         Set the colorbar to display the lookup table of the main reference volume.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewMethodCalled signal for synchronization (default True).
         """
         if self.hasVolume():
             self._colorbar.SetLookupTable(self._volume.display.getVTKLUT())
             if self._volume.isIntegerDatatype(): self._colorbar.SetLabelFormat('%5.0f')
             else: self._colorbar.SetLabelFormat('%5.2f')
+            # < Revision 06/03/2026
+            self._renderwindow.Render()
+            if signal: self.ViewMethodCalled.emit(self, 'setVolumeColorbar', None)
+            # Revision 06/03/2026 >
 
     def setTransform(self, trf: SisypheTransform, index: int = 0) -> None:
         """
@@ -4894,23 +4923,6 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 return radians(rx), radians(ry), radians(rz)
         else: raise IndexError('index parameter value {} is out of range.'.format(index))
 
-    def setMoveOverlayFlag(self, signal: bool = True) -> None:
-        """
-        Activate the 'Move overlay' interaction mode.
-        In this mode, overlay volume can be moved or rotated with mouse.
-
-        Parameters
-        ----------
-        signal : bool (optional)
-            If True, emits the ViewOverlayMethodCalled signal for synchronization (default True).
-        """
-        if self.hasOverlay():
-            self._action['moveoverlayflag'].setChecked(True)
-            if signal:
-                # noinspection PyUnresolvedReferences
-                self.ViewOverlayMethodCalled.emit(self, 'setMoveOverlayFlag', None, None)
-        else: raise AttributeError('No overlay')
-
     def setMoveOverlayToTranslate(self, signal: bool = True) -> None:
         """
         Set the 'Move overlay' mode to allow translation of overlays.
@@ -4955,6 +4967,23 @@ class SliceOverlayViewWidget(SliceViewWidget):
         """
         self.setNoActionFlag(signal)
 
+    def setMoveOverlayFlag(self, signal: bool = True) -> None:
+        """
+        Activate the 'Move overlay' interaction mode.
+        In this mode, overlay volume can be moved or rotated with mouse.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            If True, emits the ViewOverlayMethodCalled signal for synchronization (default True).
+        """
+        if self.hasOverlay():
+            self._action['moveoverlayflag'].setChecked(True)
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ViewOverlayMethodCalled.emit(self, 'setMoveOverlayFlag', None, None)
+        else: raise AttributeError('No overlay')
+
     def getMoveOverlayFlag(self) -> bool:
         """
         Check if the 'Move overlay' interaction mode is currently active.
@@ -4966,6 +4995,45 @@ class SliceOverlayViewWidget(SliceViewWidget):
             True if 'Move overlay' is active, False otherwise.
         """
         return self._action['moveoverlayflag'].isChecked()
+
+    # < Revision 10/03/2026
+    # add setOverlayColorbarAvailability method
+    def setOverlayColorbarAvailability(self, v: bool = True, signal: bool = True):
+        """
+        Choose whether the overlay color bar can be displayed in place of the volume color bar.
+        if True, the colorbar is updated when the _menuOverlayVoxelTriggered method is called.
+        However, the colorbar change is forced by the direct call to the setOverlayColorbar method, even if
+        OverlayColorbarAvailability is False.
+
+        Parameters
+        ----------
+        v : bool
+            True if overlay colorbar can be displayed.
+        signal : bool (optional)
+            If True, emits the ViewOverlayMethodCalled signal for synchronization (default True).
+        """
+        self._colorbarOverlayFlag = v
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.ViewOverlayMethodCalled.emit(self, 'setOverlayColorbarAvailability', v, None)
+    # Revision 10/03/2026 >
+
+    # < Revision 10/03/2026
+    # add getOverlayColorbarAvailability method
+    def getOverlayColorbarAvailability(self) -> bool:
+        """
+        Check if the overlay colorbar can be displayed in place of the volume colorbar.
+        if True, the colorbar is updated when the _menuOverlayVoxelTriggered method is called.
+        However, the colorbar change is forced by the direct call to the setOverlayColorbar method, even if
+        OverlayColorbarAvailability is False.
+
+        Returns
+        -------
+        bool
+            True if overlay colorbar can be displayed.
+        """
+        return self._colorbarOverlayFlag
+    # Revision 10/03/2026 >
 
     # Public mesh methods
 
@@ -6495,7 +6563,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> SliceROIViewWidget
 
     Creation: 12/04/2022
-    Last revision: 14/11/2025
+    Last revision: 10/03/2026
     """
 
     # Custom Qt signals
@@ -6765,7 +6833,13 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         self._action['rectflag'] = QAction('Draw solid rectangle', self)
         self._action['rectflag'].setCheckable(True)
         self._action['rectflag'].triggered.connect(
-            lambda: self.setDrawRectangleFlag(self._action['samflag'].isChecked()))
+            lambda: self.setDrawRectangleFlag(self._action['rectflag'].isChecked()))
+        # < Revision 10/03/2026
+        self._action['thresholdrectflag'] = QAction('Draw by thresholding within rectangle boundaries', self)
+        self._action['thresholdrectflag'].setCheckable(True)
+        self._action['thresholdrectflag'].triggered.connect(
+            lambda: self.setDrawRectangleFlag(self._action['rectflag'].isChecked()))
+        # Revision 10/03/2026 >
         self._action['samflag'] = QAction('Segment anything', self)
         self._action['samflag'].setCheckable(True)
         self._action['samflag'].triggered.connect(
@@ -7013,6 +7087,9 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         self._roitools.addAction(self._action['thresholdbrush3'])
         # < Revision 26/02/2026
         self._roitools.addAction(self._action['rectflag'])
+        # < Revision 10/03/2026
+        self._roitools.addAction(self._action['thresholdrectflag'])
+        # Revision 10/03/2026 >
         self._roitools.addAction(self._action['samflag'])
         # Revision 26/02/2026 >
         self._roitools.addAction(self._action['fillholesflag'])
@@ -7242,7 +7319,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                      '2drconfidence', '2dblobrconfidence', '3dblobdilate', '3dbloberode', '3dblobopen', '3dblobclose',
                      '3dblobcopy', '3dblobcut', '3dblobpaste', '3dblobremove', '3dblobkeep', '3dblobexpand',
                      '3dblobshrink', '3dblobthreshold', '3dfill', '3drgrowing', '3dblobrgrowing', '3drconfidence',
-                     '3dblobrconfidence', 'activecontour', 'rectflag', 'samflag']
+                     '3dblobrconfidence', 'activecontour', 'rectflag', 'thresholdrectflag', 'samflag']
             # Revision 26/02/2026 >
             if flag in flags:
                 for f in flags:
@@ -8202,7 +8279,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         Parameters
         ----------
         f : bool
-            True to activate rectangle drawing tool, False to deactivate.
+            True to activate drawing tool, False to deactivate.
         signal : bool (optional)
             If True, emits the ROIFlagChanged signal (default True).
         """
@@ -8225,10 +8302,47 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         Returns
         -------
         bool
-            True if rectangle drawing tool is active, False otherwise.
+            True if drawing tool is active, False otherwise.
         """
         return self._action['rectflag'].isChecked()
     # Revision 26/02/2026 >
+
+    # < Revision 10/03/2026
+    # add setDrawRectangleFlag method
+    def setDrawThresholdRectangleFlag(self, f: bool, signal: bool = True) -> None:
+        """
+        Activate or deactivate drawing tool by thresholding within rectangle boundaries.
+
+        Parameters
+        ----------
+        f : bool
+            True to activate drawing tool, False to deactivate.
+        signal : bool (optional)
+            If True, emits the ROIFlagChanged signal (default True).
+        """
+        if isinstance(f, bool):
+            if self.hasROI() and self.getROIVisibility() and f:
+                self._updateExclusiveFlags('thresholdrectflag')
+            else: self._updateExclusiveFlags()
+            if signal:
+                # noinspection PyUnresolvedReferences
+                self.ROIFlagChanged.emit(self, 'setDrawThresholdRectangleFlag', f)
+        else: raise TypeError('parameter type {} is not bool.'.format(type(f)))
+    # Revision 10/03/2026 >
+
+    # < Revision 10/03/2026
+    # add getDrawRectangleFlag method
+    def getDrawThresholdRectangleFlag(self) -> bool:
+        """
+        Get the state of the drawing tool by thresholding within rectangle boundaries.
+
+        Returns
+        -------
+        bool
+            True if drawing tool is active, False otherwise.
+        """
+        return self._action['thresholdrectflag'].isChecked()
+    # Revision 10/03/2026 >
 
     # < Revision 26/02/2026
     # add setSamFlag method
@@ -9659,11 +9773,48 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             i = argmax(abs(pts[3] - pts[0]))
             w = pts[3][i] - pts[0][i]
             pmin = pmin.astype(int)
-            self._draw.drawRectangle(pmin.tolist(), [w, h], self._orient)
+            # < Revision 10/03/2026
+            # self._draw.drawRectangle(pmin.tolist(), [w, h], self._orient)
+            if self._action['rectflag'].isChecked():
+                self._draw.drawRectangle(pmin.tolist(), [w, h], self._orient)
+            elif self._action['thresholdrectflag'].isChecked():
+                self._draw.drawThresholdedRectangle(pmin.tolist(), [w, h], self._orient)
+            # Revision 10/03/2026 >
             self._roimapper.GetInput().Modified()
             self._renderwindow.Render()
             # noinspection PyUnresolvedReferences
             self.ROIModified.emit(self)
+
+    # < Revision 05/03/2026
+    # add sliceEraseSelection method
+    def sliceEraseSelection(self) -> None:
+        """
+        Erase mouse selection area on the current slice of the active ROI.
+        """
+        if self._selectbox.GetVisibility():
+            pts = list()
+            for i in range(self._bbox.GetPoints().GetNumberOfPoints()-1):
+                p = self._bbox.GetPoints().GetPoint(i)
+                p = list(self._getWorldFromDisplay(p[0], p[1]))
+                f = self._renderer.GetActiveCamera().GetFocalPoint()
+                d = 2 - self._orient
+                p[d] = f[d]
+                pts.append(array(self._getWorldToMatrixCoordinate(p)))
+                if i == 0: pmin = pts[0]
+                else:
+                    # noinspection PyUnboundLocalVariable
+                    if all(pmin > pts[-1]): pmin = pts[-1]
+            i = argmax(abs(pts[1] - pts[0]))
+            h = pts[1][i] - pts[0][i]
+            i = argmax(abs(pts[3] - pts[0]))
+            w = pts[3][i] - pts[0][i]
+            pmin = pmin.astype(int)
+            self._draw.drawRectangle(pmin.tolist(), [w, h], self._orient, 0)
+            self._roimapper.GetInput().Modified()
+            self._renderwindow.Render()
+            # noinspection PyUnresolvedReferences
+            self.ROIModified.emit(self)
+    # Revision 05/03/2026 >
 
     def setSamModel(self, model: SegmentAnything) -> None:
         """
@@ -9890,6 +10041,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         """
         Handles mouse move VTK events for ROI drawing.
         Updates brush position and performs drawing/erasing if a mouse button is pressed.
+        Updates selection rectangle if a mouse button is pressed.
         Currently, this method calls the superclass's implementation.
 
         Parameters
@@ -9902,8 +10054,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         if self.hasROI() and self.getROIVisibility():
             interactorstyle = self._window.GetInteractorStyle()
             # < Revision 26/02/2026
-            if self.getDrawRectangleFlag() or self.getSamFlag():
-                if interactorstyle.GetButton() == 1:
+            if self.getDrawRectangleFlag() or self.getDrawThresholdRectangleFlag() or self.getSamFlag():
+                # < Revision 05/03/2026
+                # if interactorstyle.GetButton() == 1:
+                if interactorstyle.GetButton() in (1, 3):
                     pts = self._bbox.GetPoints()
                     first = pts.GetPoint(0)[:2]
                     last = interactorstyle.GetLastPos()
@@ -9918,6 +10072,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     self._bbox.Modified()
                     self._selectbox.SetVisibility(True)
                     self._renderwindow.Render()
+                # Revision 05/03/2026 >
                 return
             # Revision 26/02/2026 >
             elif self.getBrushFlag() > 0:
@@ -9980,7 +10135,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 super()._onLeftPressEvent(obj, evt_name)
             # Revision 20/03/2025 >
             # < Revision 26/02/2026
-            elif self.getDrawRectangleFlag() or self.getSamFlag():
+            elif self.getDrawRectangleFlag() or self.getDrawThresholdRectangleFlag() or self.getSamFlag():
                 last = self._window.GetInteractorStyle().GetLastPos()
                 pts = self._bbox.GetPoints()
                 pts.SetPoint(0, last[0], last[1], 0)
@@ -10211,6 +10366,8 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         """
         Handles left mouse release VTK events, finalizing brush strokes.
         Triggers hole filling and adds the operation to the undo stack if enabled.
+        Triggers drawing filled rectangle in selection.
+        Triggers segment anything in selection.
         Currently, this method calls the superclass's implementation.
 
         Parameters
@@ -10225,13 +10382,15 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             self._brushFlag0 = None
         elif self.hasROI() and self.getROIVisibility():
             # < Revision 26/02/2026
-            if self.getDrawRectangleFlag():
+            if self.getDrawRectangleFlag() or self.getDrawThresholdRectangleFlag():
                 self.sliceDrawSelection()
                 self._selectbox.SetVisibility(False)
+                self._renderwindow.Render()
                 return
             elif self.getSamFlag():
                 self.sliceSam()
                 self._selectbox.SetVisibility(False)
+                self._renderwindow.Render()
                 return
             # Revision 26/02/2026 >
             elif self.getBrushFlag() > 0:
@@ -10279,24 +10438,62 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             name of the event.
         """
         interactorstyle = self._window.GetInteractorStyle()
-        if self.hasROI() and self.getROIVisibility() and self.getBrushFlag() > 0:
+        if self.hasROI() and self.getROIVisibility():
             last = interactorstyle.GetLastPos()
-            p = list(self._getWorldFromDisplay(last[0], last[1]))
-            f = self._renderer.GetActiveCamera().GetFocalPoint()
-            d = 2 - self._orient
-            p[d] = f[d]
-            p = self._getWorldToMatrixCoordinate(p)
-            self._draw.erase(p[0], p[1], p[2], self._orient)
-            self._roimapper.GetInput().Modified()
-            self._renderwindow.Render()
-            # noinspection PyUnresolvedReferences
-            self.ROIModified.emit(self)
+            if self.getBrushFlag() > 0:
+                p = list(self._getWorldFromDisplay(last[0], last[1]))
+                f = self._renderer.GetActiveCamera().GetFocalPoint()
+                d = 2 - self._orient
+                p[d] = f[d]
+                p = self._getWorldToMatrixCoordinate(p)
+                self._draw.erase(p[0], p[1], p[2], self._orient)
+                self._roimapper.GetInput().Modified()
+                self._renderwindow.Render()
+                # noinspection PyUnresolvedReferences
+                self.ROIModified.emit(self)
+            # < Revision 06/03/2026
+            elif self.getDrawRectangleFlag() or self.getDrawThresholdRectangleFlag() or self.getSamFlag():
+                pts = self._bbox.GetPoints()
+                pts.SetPoint(0, last[0], last[1], 0)
+                pts.SetPoint(1, last[0], last[1]-1, 0)
+                pts.SetPoint(2, last[0]+1, last[1]-1, 0)
+                pts.SetPoint(3, last[0]+1, last[1], 0)
+                pts.SetPoint(4, last[0], last[1], 0)
+                pts.Modified()
+                self._bbox.Modified()
+                if self._activeroi is not None:
+                    self._selectbox.GetProperty().SetColor(self._rois[self._activeroi].getColor())
+                self._selectbox.SetVisibility(True)
+                self._renderwindow.Render()
+            # Revision 06/03/2026 >
         else:
             self._brush.SetVisibility(False)
             self._renderwindow.Render()
             super()._onRightPressEvent(obj, evt_name)
             self._interactor.RightButtonReleaseEvent()
             self._interactor.KeyReleaseEvent()
+
+    # < Revision 05/03/2026
+    # add _onRightReleaseEvent method
+    def _onRightReleaseEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles right mouse release VTK events, finalizing brush strokes.
+        Triggers erasing in selection.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event.
+        """
+        if self.hasROI() and self.getROIVisibility():
+            if self.getDrawRectangleFlag() or self.getDrawThresholdRectangleFlag():
+                self.sliceEraseSelection()
+                self._selectbox.SetVisibility(False)
+                self._renderwindow.Render()
+    # Revision 05/03/2026 >
 
     def _onKeyPressEvent(self,  obj: vtkObject, evt_name: str) -> None:
         """

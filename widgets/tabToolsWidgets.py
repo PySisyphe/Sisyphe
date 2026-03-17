@@ -441,7 +441,7 @@ class TabROIToolsWidget(TabWidget):
 
     QWidget -> TabROIToolsWidget
 
-    Last revision: 26/02/2026
+    Last revision: 10/03/2026
     """
 
     # Special method
@@ -459,7 +459,8 @@ class TabROIToolsWidget(TabWidget):
     _btngroup           QButtonGroup, group of mutual exclusive buttons
     _brushtype          LabeledComboBox
     _brushsize          LabeledSlider
-    _fill               QCheckBox, autofill holes
+    _fill               QCheckBox, autofill holes (brush & area tools)
+    _major              QCheckBox, keep only major blob (area tool)
     _structsize         LabeledSlider, structuring element size
     _structtype         LabeledComboBox, structuring element shape
     _move               LabeledSpinBox, ROI displacement, in voxels, after move tools clicking
@@ -554,15 +555,31 @@ class TabROIToolsWidget(TabWidget):
         self._settings.settingsVisibilityOff()
         self._settings.setParameterVisibility('MaxCount', False)
         self._fill = self._settings.getParameterWidget('FillHoles')
+        self._fill.setToolTip('Fill holes after drawing with brush or selection area tool')
+        # < Revision 17/03/2026
+        self._major = self._settings.getParameterWidget('MajorBlob')
+        self._major.setToolTip('Keep only major blob after drawing with selection area tool')
+        # Revision 17/03/2026 >
         self._structsize = self._settings.getParameterWidget('StructSize')
+        self._structsize.setToolTip('Structuring element size used by morphological tools')
         self._structtype = self._settings.getParameterWidget('StructShape')
+        self._structtype.setToolTip('Structuring element shape used by morphological tools')
         self._move = self._settings.getParameterWidget('MoveStep')
+        self._move.setToolTip('ROI displacement, in voxels, after move tools clicking')
         self._extent = self._settings.getParameterWidget('BlobExtent')
+        self._extent.setToolTip('Blob extent threshold in pixels/voxels used by blob selection tool (keep/remove)')
         self._thick = self._settings.getParameterWidget('Thickness')
+        self._thick.setToolTip('Expansion or shrinkage in mm applied by Expand/shrink tools')
         self._algo = self._settings.getParameterWidget('Algo')
+        self._algo.setToolTip('Algorithm used for automatic object/background segmentation')
         self._confidence = self._settings.getParameterWidget('Confidence')
+        self._confidence.setToolTip('Sigma value used by the cluster confidence tools')
         self._iters = self._settings.getParameterWidget('ConfidenceIter')
+        self._iters.setToolTip('Number of iterations of the of the cluster confidence tools')
         self._fill.stateChanged.connect(self._brushFillChanged)
+        # < Revision 17/03/2026
+        self._major.stateChanged.connect(self._majorBlobChanged)
+        # Revision 17/03/2026 >
         self._structsize.valueChanged.connect(self._structSizeChanged)
         self._structtype.currentIndexChanged.connect(self._structTypeChanged)
         self._move.valueChanged.connect(self._moveChanged)
@@ -598,6 +615,9 @@ class TabROIToolsWidget(TabWidget):
         self._initVolumeBlobGroupBox()
 
         self._brushFillChanged(None)
+        # < Revision 17/03/2026
+        self._majorBlobChanged(None)
+        # Revision 17/03/2026 >
         self._structSizeChanged(None)
         self._structTypeChanged(None)
         self._moveChanged(None)
@@ -788,9 +808,9 @@ class TabROIToolsWidget(TabWidget):
         self._btn['sam'].setCheckable(True)
         # Revision 26/02/2026 >
 
-        self._btn['brush'].setToolTip('Brush')
+        self._btn['brush'].setToolTip('Brush tool')
         # < Revision 26/02/2026
-        self._btn['area'].setToolTip('Fill the mouse selection area')
+        self._btn['area'].setToolTip('Selection area drawing tool')
         self._btn['sam'].setToolTip('Automatic segmentation of the mouse selection area\n'
                                     'using pre-trained Segment Anything model (MedSAM).')
         # Revision 26/02/2026 >
@@ -1401,12 +1421,33 @@ class TabROIToolsWidget(TabWidget):
     def _brushTypeChanged(self, v):
         if self._draw is not None and self.hasViewCollection():
             self._draw.setBrushType(self._brushtype.currentIndex())
+            # < Revision 10/03/2026
+            if self._btn['area'].isChecked():
+                if self._brushtype.currentIndex() in (0, 2):
+                    self._views.setDrawRectangleFlag(True)
+                    if self._logger is not None: self._logger.info('ROI tools - Draw rectangle tool selected')
+                elif self._brushtype.currentIndex() in (1, 3):
+                    self._views.setDrawThresholdRectangleFlag(True)
+                    if self._logger is not None: self._logger.info(
+                        'ROI tools - Draw tool by thresholding within rectangle boundaries selected')
+            # Revision 10/03/2026 >
             self._brushtype.setToolTip('Brush shape and behavior\n' + self._brushtype.currentText())
 
     # noinspection PyUnusedLocal
     def _brushFillChanged(self, v):
         if self._draw is not None and self.hasViewCollection():
             self._views.setFillHolesROIFlag(self._fill.isChecked())
+            # < Revision 17/03/2026
+            self._draw.setDrawThresholdedRectangleFillHoles(self._fill.isChecked())
+            # Revision 17/03/2026 >
+
+    # < Revision 17/03/2026
+    # add _majorBlobChanged method
+    # noinspection PyUnusedLocal
+    def _majorBlobChanged(self, v):
+        if self._draw is not None and self.hasViewCollection():
+            self._draw.setDrawThresholdedRectangleMajorBlob(self._major.isChecked())
+    # Revision 17/03/2026 >
 
     # noinspection PyUnusedLocal
     def _structSizeChanged(self, v):
@@ -1666,13 +1707,21 @@ class TabROIToolsWidget(TabWidget):
 
     # < Revision 26/02/2026
     def area(self):
-        if self._views.getDrawRectangleFlag():
+        if self._views.getDrawRectangleFlag() or self._views.getDrawThresholdRectangleFlag():
             self._btn['dummy'].setChecked(True)
             self._views.setNoROIFlag()
             if self._logger is not None: self._logger.info('ROI tools - Draw rectangle tool unselected')
         else:
-            self._views.setDrawRectangleFlag(True)
-            if self._logger is not None: self._logger.info('ROI tools - Draw rectangle tool selected')
+            # < Revision 10/03/2026
+            # self._views.setDrawRectangleFlag(True)
+            # if self._logger is not None: self._logger.info('ROI tools - Draw rectangle tool selected')
+            if self._brushtype.currentIndex() in (0, 2):
+                self._views.setDrawRectangleFlag(True)
+                if self._logger is not None: self._logger.info('ROI tools - Draw rectangle tool selected')
+            elif self._brushtype.currentIndex() in (1, 3):
+                self._views.setDrawThresholdRectangleFlag(True)
+                if self._logger is not None: self._logger.info('ROI tools - Draw tool by thresholding within rectangle boundaries selected')
+            # Revision 10/03/2026 >
     # Revision 26/02/2026 >
 
     # < Revision 26/02/2026

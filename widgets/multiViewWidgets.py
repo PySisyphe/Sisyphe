@@ -1105,7 +1105,7 @@ class MultiViewWidget(QWidget):
     def setOverlayColorBar(self, index: int = 0):
         if self.isNotEmpty():
             for w in self._views.values():
-                w.setOverlayColorbar(index)
+                w.setOverlayColorbar(index, signal=False)
     # Revision 05/02/2026 >
 
     # Capture methods
@@ -3296,7 +3296,7 @@ class SynchronisedGridViewWidget(GridViewWidget):
     QWidget -> MultiViewWidget -> GridViewWidget -> SynchronisedGridViewWidget
 
     Creation: 03/04/2022
-    Last revision: 20/10/2025
+    Last revision: 10/03/2026
     """
 
     # Special method
@@ -3328,6 +3328,9 @@ class SynchronisedGridViewWidget(GridViewWidget):
         for i in range(9):
             # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
+            # < Revision 10/03/2026
+            w.setOverlayColorbarAvailability(False, signal=False)
+            # Revision 10/03/2026 >
             # noinspection PyUnresolvedReferences
             action = w.getAction()
             action['expand'].setVisible(True)
@@ -3374,7 +3377,7 @@ class SynchronisedGridViewWidget(GridViewWidget):
                         view = self[r, c]
                         if n <= nbv:
                             view.setVisible(True)
-                            if n > 0: view.setOverlayColorbar(n - 1)
+                            if n > 0: view.setOverlayColorbar(n - 1, signal=False)
                             view.setOverlayVisibility(i, i == n - 1, signal=False)
                         elif n > nbv: view.setVisible(False)
         # Revision 27/05/2025 >
