@@ -69,7 +69,7 @@ Download
 
 [Download source](https://mega.nz/folder/G18X2IRQ#BRpA7_fcyHBIK66aZNyntA)
 
-[Download folder](https://mega.nz/folder/hKEBzRTR#MUodQFh4N8LeukE2hbkzNA)
+[Download folder](https://mega.nz/folder/Kt8hzbSa#AUkLH1WH0zoawYolT8Ep0w)
 
 Direct link to binary archives:
 - Windows binary [PySisyphe 0.81.22 python 3.10 build 20-03-2026](https://mega.nz/file/eo0mjSxS#2YvGRfw7r9dHCy4i-o1IBcLLQT5i5PBSWnpjiany9PE)
