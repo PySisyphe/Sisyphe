@@ -64,10 +64,10 @@ PySisyphe is plug-in extensible and provides a fully documented API that gives a
 
 [PySisyphe NITRC website](https://www.nitrc.org/projects/pysisyphe/)
 
-[Download source](https://mega.nz/file/9elkyAJa#8SeDS71rC6xBOvRT0JNX3lajWkpcTJPsLZRU_YsY2Io)
+Download
+========
 
-Download Binary archive
-=======================
+[Download source](https://mega.nz/file/yl9TVBgT#K5td7grWCeL4i6iZWoyB8mY7Gu07jntzgRV02Na78zU)
 
 [Download folder](https://mega.nz/folder/hKEBzRTR#MUodQFh4N8LeukE2hbkzNA)
 
