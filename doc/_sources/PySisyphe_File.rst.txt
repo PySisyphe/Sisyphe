@@ -224,20 +224,23 @@ Contents:
 
 - **Templates**, various template volumes
 
+	- Allen, https://community.brain-map.org/t/allen-human-reference-atlas-3d-2020-new/405
 	- Atropos, https://mindboggle.info/data.html
-	- Distal, https://www.lead-dbs.org/helpsupport/knowledge-base/atlasesresources/atlases-2/
 	- Arterial, https://www.nitrc.org/projects/arterialatlas/
 	- Atag, https://www.nitrc.org/projects/atag
 	- Brainnav, https://www.nitrc.org/projects/brainstemnavig
 	- Bundles HCP, https://brain.labsolver.org/hcp_template.html
 	- Bundles IIT, https://www.nitrc.org/projects/iit/
 	- Bundles LC2TEC, https://www.nitrc.org/projects/brainstem_atlas/
+	- Colin27, https://meca-brain.org/software/marsatlas-colin27/
 	- Desikan, https://www.sciencedirect.com/science/article/abs/pii/S1053811906000437?via%3Dihub
 	- Destrieux, https://www.sciencedirect.com/science/article/abs/pii/S1053811910008542?via%3Dihub
+	- Distal, https://www.lead-dbs.org/helpsupport/knowledge-base/atlasesresources/atlases-2/
+	- HoliAtlas, https://arxiv.org/html/2501.16879v1
 	- HR, https://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009
 	- LPBA40, https://www.loni.usc.edu/research/atlas_downloads
 	- PD25, https://nist.mni.mcgill.ca/multi-contrast-pd25-atlas/
-	- Subcortical (functional Yeo et al. https://pubmed.ncbi.nlm.nih.gov/22832566/, hippocampus, hypothalamus, thalamus)
+	- ICBM152 Subcortical 
 	- ICBM452, https://www.loni.usc.edu/research/atlas_downloads
 	- NAC, https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html
 	- SPL, https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html
@@ -253,7 +256,7 @@ Contents:
 
 - **Samples**
 
-	Various volumes for testing PySisyphe. These files are saved in the "samples" subfolder of the PySisyphe user folder ($User/.PySisyphe).
+	Various volumes for testing PySisyphe. These files are saved in the "samples" subfolder of the PySisyphe user folder (~/.PySisyphe).
 
 .. _menu-section-update:
 

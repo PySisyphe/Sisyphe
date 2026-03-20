@@ -18,6 +18,7 @@ Version history
 - :ref:`build29-01-2026`
 - :ref:`build01-02-2026`
 - :ref:`build20-02-2026`
+- :ref:`build20-03-2026`
 
 .. _version-increment-rules:
 
@@ -31,18 +32,20 @@ Version increment rules
 - **minor version increment**
 
 	- new python interpreter version (+50 minor version increments)
+	- new external package
+	- external package upgrade
 	- new module
-	- new external module
-	- external module upgrade
 	- 25 patch version increments
 
 - **patch version increment**
 
+	- new html page
 	- update html documentation
 	- new file
 	- file update
 	- new function
-	- module update
+	- new class
+	- class update
 
 .. _build26-07-2025:
 
@@ -75,11 +78,11 @@ version 0.12.9, build 05/08/2025
 	
 		- add DicomHost section
 
-- **new external module**
+- **new external package**
 
 	- pynetdicom 3.0.4
 
-- **upgraded external module**
+- **upgraded external package**
 
 	- pydicom, upgrade 2.3.1 to 3.0.1
 	
@@ -858,7 +861,7 @@ version 0.20.16, build 01/11/2025
 	- /API2/api_widgets_settings.rst
 	- /API2/api_widgets_single_view.rst
 	- /API2/index.rst
-	- version-histrory.rst update
+	- version-histrory.rst
 	- rebuild sphinx documentation
 
 - **updated html documentation**
@@ -1000,7 +1003,7 @@ version 0.21.08, build 18/11/2025
 	- /API/api_volume.rst
 	- /API2/api_widgets_select_file.rst
 	- /API2/api_widgets_settings.rst
-	- version-histrory.rst update
+	- version-histrory.rst
 	- rebuild sphinx documentation
 
 - **updated files**
@@ -1266,7 +1269,7 @@ version 0.22.11, build 05/12/2025
 	- PySisyphe_docktarget.rst
 	- PySisyphe_docktracking.rst
 	- PySisyphe_thumbnailbar.rst
-	- version-histrory.rst update
+	- version-histrory.rst
 	- rebuild sphinx documentation
 
 - **updated files**
@@ -1791,7 +1794,7 @@ version 0.24.14, build 12/01/2026
 	- PySisyphe_Segmentation.rst
 	- PySisyphe_dockroitools.rst
 	- PySisyphe_Mapping.rst
-	- version-histrory.rst update
+	- version-histrory.rst
 	- rebuild sphinx documentation
 
 - **updated files**
@@ -1809,7 +1812,7 @@ version 0.24.14, build 12/01/2026
 
 		- datatype conversion, from float32 to uint8
 
-- **new external module** 
+- **new external packages** 
 
 	- google-genai
 	- esayocr
@@ -2320,7 +2323,7 @@ version 0.25.04, build 20/01/2026
 
 	- API/api_tools.rst
 	- API/api_fiducial.rst
-	- version-histrory.rst update
+	- version-histrory.rst
 	- rebuild sphinx documentation
 
 - **updated file**
@@ -2538,7 +2541,7 @@ version 0.76.22, build 29/01/2026
 	- from 3.10 to 3.12
 	- rebuild frozen version (pyinstaller)
 
-- **upgraded modules**
+- **upgraded packages**
 
 	- itk, from 5.4.3 to 5.4.5
 	- vtk, from 9.4.2 to 9.5.2
@@ -2569,7 +2572,7 @@ version 0.76.22, build 29/01/2026
 	- version-histrory.rst update
 	- rebuild sphinx documentation
 
-- **update plugins**
+- **updated plugins**
 
 	- SEEG
 	- REPORT
@@ -2861,7 +2864,7 @@ version 0.78.08, build 01/02/2026
 
 - **updated html documentation**
 	
-	- version-histrory.rst update
+	- version-histrory.rst
 	- PySisyphe_Segmentation.rst
 	- PySisyphe_sliceview.rst
 	- PySisyphe_orthogonalview.rst
@@ -3089,7 +3092,7 @@ version 0.80.15, build 20/02/2026
 
 - **updated html documentation**
 	
-	- version-histrory.rst update
+	- version-histrory.rst
 	- PySisyphe_main.rst
 	- PySisyphe_ipython.rst
 	- PySisyphe_Registration.rst
@@ -3117,7 +3120,7 @@ version 0.80.15, build 20/02/2026
 	- /settings/functions.xml
 	- /settings/dialogs.xml
 
-- **new external module**
+- **new external package**
 
 	- openpyxl
 
@@ -3178,10 +3181,6 @@ version 0.80.15, build 20/02/2026
 	- widgets.basicWidgets
 	- widgets.databaseWidget
 	- widgets.toolBarThumbnail
-
-- **update PySisyphe.py**
-
-	
 
 - **new functions**
 
@@ -3888,3 +3887,503 @@ version 0.80.15, build 20/02/2026
 	- widgets.toolBarThumbnail.ToolBarThumbnail
 
 		- bug fix, line 417, add wait.setCurrentProgressValue(0)
+
+.. _build20-03-2026:
+
+version 0.81.22, build 20/03/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- version-histrory.rst
+	- PySisyphe_dockroitools.rst
+	- PySisyphe_File.rst
+	- PySisyphe_Segmentation.rst
+	- rebuild sphinx documentation
+
+- **new files**
+
+	- /gui/darkroi/select2.png
+	- /gui/lightroi/select2.png
+	- /gui/darkroi/sam.png
+	- /gui/lightroi/sam.png
+	- /lib/sam/model/medsam_vit_b.pth
+	- /templates/ICBM152/LABELLING/icbm152_yale.xlabels
+
+- **updated files**
+
+	- /gui/doc/ipyhton.txt
+	- /settings/functions.xml
+	- /settings/settings.xml
+
+- **new external module**
+
+	- sam (Segment Anything Pre-trained Model MedSAM), added as PySisyphe module Sisyphe.lib.sam
+	- openmap (OpenMAP-T1 Pre-trained Model, multiple anatomical structure parcellation), added as PySisyphe module Sisyphe.lib.openmap
+
+- **update main PySisyphe.py**
+
+	- update globalExceptionHandler() function
+
+		- avoid displaying the global exception handler dialog box for the UserAbortException
+
+	- rebuild frozen version (pyinstaller) 
+
+- **updated module**
+
+	- core.sisypheROI
+
+		- update cython compilation
+
+	- core.sisypheVolume
+	- core.sisypheROI
+	- core.sisypheImageAttributes
+	- processing.segmentation
+	- processing.capturedStdoutProcessing
+	- gui.windowSisyphe
+	- gui.dialogDeepSegmentation
+	- gui.dialogSkullStripping
+	- gui.dialogEditLabels
+	- widgets.selectFileWidgets
+	- widgets.dicomWidgets
+	- widgets.abstractViewWidgets
+	- widgets.sliceViewWidgets
+	- widgets.multiViewWidgets
+	- widgets.iconBarViewWidgets
+	- widgets.tabToolsWidgets
+
+- **new classes**
+
+	- gui.dialogDeepSegmentation.DialogDeepAtlasSegmentation
+
+		- class to perform deep learning multiple anatomical structure parcellation (OpenMAP-T1)
+
+	- processing.capturedStdoutProcessing.ProcessDeepAtlasSegmentation
+
+		- class to perform deep learning multiple anatomical structure parcellation (OpenMAP-T1)
+
+	- processing.segmentation.SegmentAnything
+
+		- class to perform segmentation with Segment Anything Pre-trained Model (MedSAM)
+
+- **updated classes**
+
+	- core.sisypheVolume.SisypheVolumeCollection
+
+		- update toLabelVolume() method
+
+	- core.sisypheROI.SisypheROI
+
+		- update drawLine() method
+		- update drawDisk() method
+		- update drawEllipse() method
+		- update drawSquare() method
+		- update drawRectangle() method
+		- update drawPolygon() method
+		- update drawCube() method
+		- update drawPrallelepiped() method
+
+	- core.sisypheROI.SisypheROIDraw
+
+		- update __init__() method
+		- update drawLine() method
+		- update drawDisk() method
+		- update drawEllipse() method
+		- update drawSquare() method
+		- update drawRectangle() method
+		- update drawPolygon() method
+		- update drawCube() method
+		- update drawPrallelepiped() method
+		- new drawThresholdedRectangle() method
+		- new setDrawThresholdedRectangleMajorBlob() method
+		- new getDrawThresholdedRectangleMajorBlob() method
+		- new setDrawThresholdedRectangleFillHoles() method
+		- new getDrawThresholdedRectangleFillHoles() method
+
+	- core.sisypheROI.SisypheROICollection
+
+		- update toLabelVolume() method
+		- update fromLabelVolume() method
+
+	- core.sisypheImageAttributes.SisypheAcquisition
+
+		- new getLabelCount() method
+		- new getMinLabelIndex() method
+		- new getMaxLabelIndex() method
+		- update setLabel()
+		- update getLabel()
+		- update saveLabels() method
+		- update setModalityToLB() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- new atlasSegmentation() method
+		- update __init__() method
+		- update _initSegmentationMenu() method
+		- update savesaveNifti() method
+		- update saveMinc() method
+		- update saveNrrd() method
+		- update saveVtk() method
+		- update saveNumpy() method
+
+	- gui.DialogSkullStripping.dialogSkullStripping
+
+		- update _modelChanged() method
+		- update function() method
+
+	- gui.dialogEditLabels.DialogEditLabels
+
+		- new _initTreeLabels() method
+		- update __init__() method
+		- update _saveLabels() method
+		- update _moveTo() method
+		- update _load() method
+		- update _save() method
+		- update _clear() method
+		- update setVolume() method
+
+	- widgets.selectFileWidgets.FileSelectionWidget
+
+		- update open() method
+
+	- widgets.selectFileWidgets.FilesSelectionWidget
+
+		- update add() method
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget
+
+		- new _verifySliceOrder() method
+		- update _dictToWidget() method
+
+	- widgets.abstractViewWidgets.AbstractViewWidget
+
+		- new _onRightReleaseEvent() method
+		- update _getWorldToMatrixCoordinate() method
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget
+
+		- update __init__() method
+		- update _menuOverlayVoxelTriggered() method
+		- update setOverlayColorBar() method
+		- update setVolumeColorBar() method
+		- new setOverlayColorbarAvailability() method
+		- new getOverlayColorbarAvailability() method
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget
+
+		- new _initBoundingBoxActor() method
+		- new setDrawRectangleFlag() method
+		- new getDrawRectangleFlag() method
+		- new setDrawThresholdRectangleFlag() method
+		- new getDrawThresholdRectangleFlag() method
+		- new setSamFlag() method
+		- new getSamFlag() method
+		- new sliceDrawSelection() method
+		- new sliceEraseSelection() method
+		- new sliceSam() method
+		- new setSamModel() method
+		- new getSamModel() method
+		- new _onRightReleaseEvent() method
+		- update __init__() method
+		- update _updateExclusiveFlags() method
+		- update _onLeftPressEvent() method
+		- update _onMouseMoveEvent() method
+		- update _onLeftReleaseEvent() method
+		- update _onRightPressEvent() method
+
+	- widgets.multiViewWidgets.GridViewWidget
+
+		- new setSamModel() method
+		- new getSamModel() method
+		- new hasSamModel() method
+
+	- widgets.multiViewWidgets.SynchronisedGridViewWidget
+
+		- update __init__() method
+
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection
+
+		- new setDrawRectangleFlag() method
+		- new getDrawRectangleFlag() method
+		- new setDrawThresholdRectangleFlag() method
+		- new getDrawThresholdRectangleFlag() method
+		- new setSamFlag() method
+		- new getSamFlag() method
+		- new setSamModel() method
+		- new getSamModel() method
+		- new hasSamModel() method
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+
+		- new area() method
+		- new sam() method
+		- update _initBrushGroupBox() method
+		- update _brushTypeChanged() method
+
+- **new methods**
+
+	- core.sisypheImageAttributes.SisypheAcquisition.getLabelCount()
+
+		- get number of labels
+
+	- core.sisypheImageAttributes.SisypheAcquisition.getMinLabelIndex()
+
+		- get minimum label index
+
+	- core.sisypheImageAttributes.SisypheAcquisition.getMaxLabelIndex()
+
+		- get maximum label index
+
+
+	- core.sisypheROI.SisypheROIDraw.setDrawThresholdedRectangleMajorBlob()
+	- core.sisypheROI.SisypheROIDraw.getDrawThresholdedRectangleMajorBlob()
+
+		- set/get self._dtrmajorblob attribute, used by the drawThresholdedRectangle method to keep only the major blob
+
+	- core.sisypheROI.SisypheROIDraw.setDrawThresholdedRectangleFillHoles()
+	- core.sisypheROI.SisypheROIDraw.getDrawThresholdedRectangleFillHoles()
+
+		- set/get self._dtrfillholes attribute, used by the drawThresholdedRectangle method to fill holes
+
+	- core.sisypheROI.SisypheROIDraw.drawThresholdedRectangle()
+
+		- draw a mask by thresholding within the boundaries of a rectangle
+
+	- gui.windowSisyphe.WindowSisyphe.atlasSegmentation()
+
+		- dialog to perform deep learning multiple anatomical structure parcellation (OpenMAP-T1)
+
+	- gui.dialogEditLabels.DialogEditLabels._initTreeLabels()
+
+		- self._tree initialization (QTreeWidget for label editing)
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget._verifySliceOrder()
+
+		- verify slice order based on ImagePositionPatient dicom field, reverse order if necessary
+
+	- widgets.abstractViewWidget._onRightReleaseEvent()
+
+		- mouse right buttom release event management
+	
+	- widgets.sliceViewWidgets._onRightReleaseEvent()
+
+		- mouse right buttom release event management
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget.setOverlayColorbarAvailability()
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget.getOverlayColorbarAvailability()
+
+		- choose whether the overlay color bar can be displayed in place of the volume color bar
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget._initBoundingBoxActor()
+
+		- init self._selectbox actor
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.setDrawRectangleFlag()
+	- widgets.sliceViewWidgets.SliceROIViewWidget.getDrawRectangleFlag()
+
+		- get/set activation flag of draw rectangle tool
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.setThresholdDrawRectangleFlag()
+	- widgets.sliceViewWidgets.SliceROIViewWidget.getThresholdDrawRectangleFlag()
+
+		- get/set activation flag of draw tool by thresholding within rectangle boundaries
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.setSamFlag()
+	- widgets.sliceViewWidgets.SliceROIViewWidget.getSamFlag()
+
+		- get/set activation flag of segment anything tool
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.sliceDrawSelection()
+
+		- draw mouse selection area on the current slice of the active ROI
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.sliceEraseSelection()
+
+		- erase mouse selection area on the current slice of the active ROI
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.sliceSam()
+
+		- segment the current slice of the active ROI with the SegmentAnything pre-trained model in the mouse selection area
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.setSamModel()
+	- widgets.sliceViewWidgets.SliceROIViewWidget.getSamModel()
+		
+		- set/get self._sam SegmentAnything attribute
+
+	- widgets.multiViewWidgets.GridViewWidget.setSamModel()
+	- widgets.multiViewWidgets.GridViewWidget.getSamModel()
+	- widgets.multiViewWidgets.GridViewWidget.hasSamModel()
+
+		- set/get/has segment anything pre-trained model attribute
+
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.setDrawRectangleFlag()
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.getDrawRectangleFlag()
+
+		- get/set activation flag of draw rectangle tool
+
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.setDrawThresholdRectangleFlag()
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.getDrawThresholdRectangleFlag()
+
+		- get/set activation flag of draw tool by thresholding within rectangle boundaries
+
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.setSamFlag()
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.getSamFlag()
+
+		- get/set activation flag of segment anything tool
+
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.setSamModel()
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.getSamModel()
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.hasSamModel()
+
+		- set/get/has segment anything pre-trained model attribute
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget.area()
+
+		- method called by draw rectangle tool activation
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget.sam()
+
+		- method called by segment anything tool activation
+
+- **updated methods**
+
+	- core.sisypheVolume.SisypheVolumeCollection.toLabelVolume()
+
+		- label volume datatype extended to uint16
+
+	- core.sisypheROI.SisypheROI.drawLine()
+	- core.sisypheROI.SisypheROI.drawDisk()
+	- core.sisypheROI.SisypheROI.drawEllipse()
+	- core.sisypheROI.SisypheROI.drawSquare()
+	- core.sisypheROI.SisypheROI.drawRectangle()
+	- core.sisypheROI.SisypheROI.drawPolygon()
+	- core.sisypheROI.SisypheROI.drawCube()
+	- core.sisypheROI.SisypheROI.drawPrallelepiped()
+
+		- add v parameter, scalar value to draw (default 1)
+
+	- core.sisypheROI.SisypheROIDraw.__init__()
+
+		- add self._dtrmajorblob attribute, used by the drawThresholdedRectangle method to keep only the major blob
+		- add self._dtrfillholes attribute, used by the drawThresholdedRectangle method to fill holes
+
+	- core.sisypheROI.SisypheROIDraw.drawLine()
+	- core.sisypheROI.SisypheROIDraw.drawDisk()
+	- core.sisypheROI.SisypheROIDraw.drawEllipse()
+	- core.sisypheROI.SisypheROIDraw.drawSquare()
+	- core.sisypheROI.SisypheROIDraw.drawRectangle()
+	- core.sisypheROI.SisypheROIDraw.drawPolygon()
+	- core.sisypheROI.SisypheROIDraw.drawCube()
+	- core.sisypheROI.SisypheROIDraw.drawPrallelepiped()
+
+		- add v parameter, scalar value to draw (default 1)
+
+	- core.sisypheROI.SisypheROICollection.toLabelVolume()
+
+		- label volume datatype extended to uint16
+
+	- core.sisypheROI.SisypheROICollection.fromLabelVolume()
+
+		- extend to more than 256 labels, replace 256 with max value
+
+	- core.sisypheImageAttributes.SisypheAcquisition.saveLabels()
+
+		- save more than 256 labels
+
+	- core.sisypheImageAttributes.SisypheAcquisition.setLabel()
+	- core.sisypheImageAttributes.SisypheAcquisition.getLabel()
+
+		- use more than 256 labels
+
+	- core.sisypheImageAttributes.SisypheAcquisition.setModalityToLB()
+
+		- allowed data type extended to uint16
+
+	- gui.windowSisyphe.WindowSisyphe.__init__()
+
+		- add self._sam attribute, Segment Anything Pre-trained Model (MedSAM)
+
+	- gui.windowSisyphe.WindowSisyphe._initSegmentationMenu()
+	
+		- add "Atlas segmentation..." menu
+
+	- gui.windowSisyphe.WindowSisyphe.savesaveNifti()
+	- gui.windowSisyphe.WindowSisyphe.saveMinc()
+	- gui.windowSisyphe.WindowSisyphe.saveNrrd()
+	- gui.windowSisyphe.WindowSisyphe.saveVtk()
+	- gui.windowSisyphe.WindowSisyphe.saveNumpy()
+
+		- Remove .xvol from the default file name
+
+	- gui.DialogSkullStripping.dialogSkullStripping._modelChanged()
+	- gui.DialogSkullStripping.dialogSkullStripping.function()
+
+		- add OpenMAP model management
+
+	- gui.dialogEditLabels.DialogEditLabels.__init__()
+	- gui.dialogEditLabels.DialogEditLabels._saveLabels()
+	- gui.dialogEditLabels.DialogEditLabels._moveTo()
+	- gui.dialogEditLabels.DialogEditLabels._load()
+	- gui.dialogEditLabels.DialogEditLabels._save()
+	- gui.dialogEditLabels.DialogEditLabels._clear()
+	- gui.dialogEditLabels.DialogEditLabels.setVolume()
+
+		- remove self._tree (QTreeWidget for label editing) initialization from constructor
+		- manage more than 256 labels for uint16 label volume
+
+	- widgets.selectFileWidgets.FileSelectionWidget.open()
+	- widgets.selectFileWidgets.FilesSelectionWidget.add()
+
+		- change filter order of QFileDialog.getOpenFileNames (.xtools, xpoint, .xline)
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget._dictToWidget()
+
+		- call _verifySliceOrder() method before adding series filenames in the widget
+
+	- widgets.abstractViewWidgets.AbstractViewWidget._getWorldToMatrixCoordinate()
+
+		- add rounded boolean parameter
+		- out-of-range coordinate test
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget.__init__()
+
+		- add self._colorbarOverlayFlag, to choose whether the overlay color bar can be displayed in place of the volume color bar
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget._menuOverlayVoxelTriggered()
+
+		- display overlay colorbar
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget.setOverlayColorBar()
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget.setVolumeColorBar()
+
+		- add signal parameter for synchronization
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.__init__()
+	
+		- add self._bbox attribute, vtkPolyLineSource, bounding box selection polydata
+		- add self._selectbox attribute, vtkActor2D, bounding box representation
+		- add self._action['rectflag'] action
+		- add self._action['samflag'] action
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget._updateExclusiveFlags()
+
+		- self._action['rectflag'], self._action['thresholdrectflag'] & self._action['samflag'] action management
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget._onLeftPressEvent()
+	- widgets.sliceViewWidgets.SliceROIViewWidget._onRightPressEvent()
+	- widgets.sliceViewWidgets.SliceROIViewWidget._onMouseMoveEvent()
+	- widgets.sliceViewWidgets.SliceROIViewWidget._onLeftReleaseEvent()
+
+		- manage the mouse area selection, which is used for the actions self.action['rectFlag'], self._action['thresholdrectflag'] and self.action['samFlag']
+
+	- widgets.multiViewWidgets.SynchronisedGridViewWidget.__init__()
+
+		- add line, w.setOverlayColorbarAvailability(False, signal=False), the colorbar cannot be changed
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget._initBrushGroupBox()
+
+		- add self._btn['area'] & self._btn['sam'] button
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget._brushTypeChanged()
+
+		- update DrawRectangleFlag & DrawThresholdRectangleFlag

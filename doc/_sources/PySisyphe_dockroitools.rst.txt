@@ -32,7 +32,21 @@ Brush
 	Radius in pixels/voxels of the disc/ball-shaped brush.
 
 |brush|
-	The drawing mode in the view widget is activated when this button is selected (blue border). In this mode, the mouse cursor in the view widget is displayed as a circle with the radius of the brush and the color of the current ROI. Left-click to draw at the current mouse position, right-click to erase.
+	The brush mode is activated by selecting this button (a blue border) with a left click. To deselect the button, click it again. The mouse cursor in the view widget is displayed as a circle with the radius of the brush and the color of the current ROI. Left-click to draw at the current mouse position, right-click to erase.
+
+|select2|
+	The drawing mode in the mouse selection area is activated by selecting this button (blue border) with a left click. To deselect the button, click it again. The behavior depends on the brush **Shape** (see above). For options beginning with "Full" ("Full disc" or "Full ball"), a filled rectangle is drawn in the selection area. For options beginning with "Thresholded", upper and lower thresholds are applied to the selection area. These thresholds are set using the |threshold| button (see below). The **Fill holes** and **Major blob** options are available in the :ref:`tools-section-brush-settings`.
+
+	Press and hold the left mouse button while moving the mouse within the view widget. This will display a selection area framed by the color of the current ROI. This area is drawn when the left mouse button is released.
+
+	Press and hold the right mouse button while moving the mouse within the view widget. This will display a selection area framed by the color of the current ROI. This area is erased when the right mouse button is released.
+
+|sam|
+	The automatic segmentation in the mouse selection area is activated by selecting this button (blue border) with a left click. To deselect the button, click it again. Press and hold the left mouse button while moving the mouse within the view widget. This will display a selection area framed by the color of the current ROI. The segmentation is performed in the selection area when the left mouse button is released.
+
+	This tool is based on the **Segment Anything Model** (SAM), which is provided by Meta AI (https://github.com/facebookresearch/segment-anything). SAM is a promptable segmentation method that requires bounding boxes to specify the segmentation targets. PySisyphe uses a specialized model that was specifically trained for general medical image segmentation tasks (https://github.com/bowang-lab/MedSAM). This model was developed using a large-scale medical image dataset with 1,570,263 image-mask pairs, covering ten imaging modalities and over thirty cancer types.
+
+	`Reference <https://pmc.ncbi.nlm.nih.gov/articles/PMC10803759/>`_: Segment anything in medical images. Ma J., He Y., Li F., Han L., You C., Wang B. Nat Commun. 2024 Jan 22;15(1):654.
 
 |threshold|
 	Shows a threshold widget (see :ref:`widgets <page-widgets>`) to define upper and lower thresholds used by various tools (threshold brushes, thresholding, region growing, active contour threshold variant).
@@ -344,7 +358,10 @@ Brush settings
 --------------
 
 **Fill holes**
-	If checked, holes are automatically filled during drawing.
+	If this option is checked, holes are automatically filled after drawing with brush |brush| and selection area |select2| tools.
+
+**Major blob**
+	If this option is checked, only the major blob is kept after drawing with the selection area tool |select2|.
 
 **Structuring element size**
 	Size of the structuring element in pixels/voxels used by morphological operations (dilate/erode/opening/closing).
@@ -492,4 +509,8 @@ Finally, there is a button bar at the bottom:
 .. |statistics| image:: /GUI/dock/statistics.png
    :scale: 50 %
 .. |gemini| image:: /GUI/dock/gemini.png
+   :scale: 50 %
+.. |select2| image:: /GUI/dock/select2.png
+   :scale: 50 %
+.. |sam| image:: /GUI/dock/sam.png
    :scale: 50 %

@@ -118,7 +118,7 @@ Slice view widget includes a vertical icon bar to the left:
 	- **ICBM coordinate**, MNI space coordinates at mouse position (if spatial normalization has been performed for the current volume).
 	- **Leksell coordinate**, Leksell space coordinates at mouse position (if fiducial markers of a Leksell stereotaxic frame are detected).
 	- **Voxel value at mouse position**, scalar value of voxel at mouse position.
-	- **Voxel overlay value at mouse position**, overlay scalar value of voxel at mouse position.
+	- **Voxel overlay value at mouse position**, overlay scalar value of voxel at mouse position. The current color bar becomes that of the selected overlay.
 	- **Orientation marker shape**, Cube with **L**-**R**-**S**-**I**-**A**-**P** labels on its faces, 3D brain, 3D head, 3D bust, 3D body or 3D axes.
 
 |iso|

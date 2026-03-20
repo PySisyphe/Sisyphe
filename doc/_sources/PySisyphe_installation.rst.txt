@@ -8,15 +8,25 @@ Installation
 
 .. _install-section-from-binary:
 
-From binary installer
----------------------
+From binary archive
+-------------------
 
-Download the binary installer for MS Windows or MacOS Intel platforms from https://github.com/PySisyphe/Sisyphe.
+Download the binary zip archive for MS Windows or MacOS Intel platforms from https://github.com/PySisyphe/Sisyphe.
 There is no version for the Linux platform, as some of the modules required to run PySisyphe are not yet available on this operating system.
 
 Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. We recommend copying it to the user directory. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time. Subsequent starts take less than 30 seconds.
 
 **PySisyphe may trigger false alerts from antivirus software, particularly on the Windows platform (e.g., Avast One). If this happens, be sure to add PySisyphe.exe to the list of trusted software.**
+
+On the Windows 11 platform, the terminal (i.e. the console) remains visible in the taskbar. If you would prefer it to be hidden, simply change the default terminal application.
+
+	- click the **Start button**,
+	- open **Windows Terminal** application,
+	- click the dropdown arrow (▾) in the tab bar,
+	- select **Settings**,
+	- under **Startup**, locate **Default terminal application**,
+	- set it to **Windows Console Host**,
+	- **save** changes.
 
 The PySisyphe graphical user interface has been optimized for dark mode, so we recommend using this mode for the best user experience.
 
@@ -48,9 +58,9 @@ PySisyphe runs on Python version 3.10 or 3.12, download the last release with bi
 
 We recommend working with the PyCharm IDE development environment (JetBrains Distributions s.r.o., Czech Republic), download community edition at https://www.jetbrains.com/fr-fr/pycharm/, and install it. Run PyCharm IDE and create a new project (menu File -> New project) with venv interpreter type and previously installed Python 3.10.11 or 3.12.10 version.
 
-1. Download PySisyphe source at https://github.com/PySisyphe/Sisyphe ("<> Code" button, and select Download ZIP).
-2. Unzip "Sisyphe-main.zip" archive.
-3. Rename "Sisyphe-main" folder to "Sisyphe".
+1. Download `PySisyphe source <https://mega.nz/folder/G18X2IRQ#BRpA7_fcyHBIK66aZNyntA>`_.
+2. Unzip archive.
+3. Rename folder to "Sisyphe".
 4. Copy "Sisyphe" folder in the PyCharm project folder.
 5. Open the Pycharm terminal (ALT-F12), the current folder is by default the root of the project folder (a requirements.txt exists in this folder).
 6. To install the python modules needed to work with PySisyphe, type at the command line: pip install -r requirements.txt

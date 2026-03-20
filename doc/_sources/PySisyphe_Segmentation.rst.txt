@@ -11,6 +11,7 @@ Segmentation menu
 - :ref:`menu-section-regsegmentation`
 - :ref:`menu-section-structs`
 - Deep learning segmentation >
+	- :ref:`menu-section-parcellation`
 	- :ref:`menu-section-hipp`
 	- :ref:`menu-section-lesion`
 	- :ref:`menu-section-temporal`
@@ -86,12 +87,12 @@ Use the :ref:`widgets-section-multi-file` widget at the top to select PySisyphe 
 
 The parameters are as follows:
 
-- Select the pre-trained model: *ANTs U-net* or *DeepBrain U-net*.
-- Select the training modality: *T1*, *T2*, *T2star*, *FLAIR*, *EPI*, *FA* or *TOF*.
+- Select the pre-trained model: *ANTs U-net*, *DeepBrain U-net* or *OpenMAP*. The latest model *OpenMAP* is the most effective, but it takes significantly longer to process.
+- Select the training modality: *T1*, *T1 FreeSurfer*, *T1 ANTs/FreeSurfer*, *T2*, *T2star*, *FLAIR*, *EPI*, *FA* or *TOF*. This menu is only available for the *ANT U-Net* model. The training modality for the other two models is always *T1*.
 - Check **Save brain mask** to save the binary mask of the brain (without skull).
 - Check **Save brain mask as ROI** to save the binary mask of the brain as a PySisyphe ROI (.xroi).
 - Mask ROI is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Brain mask prefix** and **Brain mask suffix** parameters.
-- Check **Save brain probability** to save the probability mask of the brain (without skull).
+- Check **Save brain probability** to save the probability mask of the brain (without skull). This menu is only available for the *ANTs U-net*, *DeepBrain U-net* models.
 - Mask probability volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Brain probability prefix** and **Brain probability suffix** parameters.
 - Skull stripped volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Skull stripped prefix** and **Skull Stripped suffix** parameters.
 
@@ -238,6 +239,33 @@ Structs
 This menu displays a tree structure of submenus for loading a struct XML file from the PySisyphe template subfolders or the "segmentation" subfolder within the PySisyphe user folder ($User/.PySisyphe).
 
 Select a struct item to open it in the :ref:`menu-section-regsegmentation` dialog box.
+
+.. _menu-section-parcellation:
+
+Deep-learning Atlas parcellation
+--------------------------------
+
+This menu is designed to perform MR T1 parcellation into the 280 anatomical structures of the `JHU MNI atlas <https://github.com/OishiLab/JHU-MNI-Eve-atlas/blob/main/README.md>`_. PySisyphe uses the `OpenMapT1 <https://github.com/OishiLab/OpenMAP-T1/tree/main>`_ implementation.
+
+`OpenMapT1 <https://github.com/OishiLab/OpenMAP-T1/tree/main>`_ integrates several convolutional neural network models across six stages: preprocessing, cropping (centers and crops image around the brain), skull stripping, parcellation, hemisphere segmentation, and final merging. This process involves standardizing MRI images, isolating the brain tissue, and parcellating it into 280 anatomical structures that cover the whole brain, including detailed gray and white matter structures, while simplifying the parcellation processes and incorporating robust training to handle various scan types and conditions.
+
+.. admonition:: Reference
+
+	`Article <https://onlinelibrary.wiley.com/doi/full/10.1002/hbm.70063>`_: OpenMAP-T1: A Rapid Deep-Learning Approach to Parcellate 280 Anatomical Regions to Cover the Whole Brain. Nishimaki K, Onda K, Ikuta K, Chotiyanonta J, Uchida Y, Mori S, Iyatomi H, Oishi K,Alzheimer's Disease Neuroimaging Initiative; Australian Imaging Biomarkers and Lifestyle Flagship Study of Ageing. Hum Brain Mapp. 2024 Nov;45(16):e70063.
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select **T1** PySisyphe volume(s) to be processed.
+
+Toggle **Atlas parcellation...** button to show/hide parameters.
+
+- Check **Bias field correction** to peform a bias field correction of the T1 before the parcellation processing.
+- Choose the type(s) of parcellation map(s) to save by checking **Save x labels volume** boxes. There are five increasing levels of parcellation available: 8, 20, 58, 144 and 280 labels.
+- Label volumes are saved with the original T1 file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters. The '*' char in the prefix/suffix is replaced by the number of labels of the current map.
+- The cropped volume is saved with the original T1 file name, which is prefixed and/or suffixed by the strings edited in the **Cropped volume prefix** and **Cropped volume suffix** parameters.
+- The skull stripped volume is saved with the original T1 file name, which is prefixed and/or suffixed by the strings edited in the **Stripped volume prefix** and **Stripped volume suffix** parameters.
+
+Left-click **Execute** button to perform parcellation.
+
+Left-click **Cancel** button to close dialog box without parcellation.
 
 .. _menu-section-hipp:
 
