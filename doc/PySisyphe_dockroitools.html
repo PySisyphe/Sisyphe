@@ -132,7 +132,7 @@
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<dl class="simple">
+<dl>
 <dt><strong>Shape</strong></dt><dd><p>Select the brush shape for ROI drawing in the view widget.</p>
 <ul class="simple">
 <li><p>“Full disc” for drawing with a 2D full disc-shaped brush.</p></li>
@@ -143,7 +143,15 @@
 </dd>
 <dt><strong>Radius</strong></dt><dd><p>Radius in pixels/voxels of the disc/ball-shaped brush.</p>
 </dd>
-<dt><a class="reference internal" href="_images/brush.png"><img alt="brush" src="_images/brush.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>The drawing mode in the view widget is activated when this button is selected (blue border). In this mode, the mouse cursor in the view widget is displayed as a circle with the radius of the brush and the color of the current ROI. Left-click to draw at the current mouse position, right-click to erase.</p>
+<dt><a class="reference internal" href="_images/brush.png"><img alt="brush" src="_images/brush.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>The brush mode is activated by selecting this button (a blue border) with a left click. To deselect the button, click it again. The mouse cursor in the view widget is displayed as a circle with the radius of the brush and the color of the current ROI. Left-click to draw at the current mouse position, right-click to erase.</p>
+</dd>
+<dt><a class="reference internal" href="_images/select2.png"><img alt="select2" src="_images/select2.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>The drawing mode in the mouse selection area is activated by selecting this button (blue border) with a left click. To deselect the button, click it again. The behavior depends on the brush <strong>Shape</strong> (see above). For options beginning with “Full” (“Full disc” or “Full ball”), a filled rectangle is drawn in the selection area. For options beginning with “Thresholded”, upper and lower thresholds are applied to the selection area. These thresholds are set using the <a class="reference internal" href="_images/threshold.png"><img alt="threshold" src="_images/threshold.png" style="width: 32.0px; height: 32.0px;" /></a> button (see below). The <strong>Fill holes</strong> and <strong>Major blob</strong> options are available in the <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
+<p>Press and hold the left mouse button while moving the mouse within the view widget. This will display a selection area framed by the color of the current ROI. This area is drawn when the left mouse button is released.</p>
+<p>Press and hold the right mouse button while moving the mouse within the view widget. This will display a selection area framed by the color of the current ROI. This area is erased when the right mouse button is released.</p>
+</dd>
+<dt><a class="reference internal" href="_images/sam.png"><img alt="sam" src="_images/sam.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>The automatic segmentation in the mouse selection area is activated by selecting this button (blue border) with a left click. To deselect the button, click it again. Press and hold the left mouse button while moving the mouse within the view widget. This will display a selection area framed by the color of the current ROI. The segmentation is performed in the selection area when the left mouse button is released.</p>
+<p>This tool is based on the <strong>Segment Anything Model</strong> (SAM), which is provided by Meta AI (<a class="reference external" href="https://github.com/facebookresearch/segment-anything">https://github.com/facebookresearch/segment-anything</a>). SAM is a promptable segmentation method that requires bounding boxes to specify the segmentation targets. PySisyphe uses a specialized model that was specifically trained for general medical image segmentation tasks (<a class="reference external" href="https://github.com/bowang-lab/MedSAM">https://github.com/bowang-lab/MedSAM</a>). This model was developed using a large-scale medical image dataset with 1,570,263 image-mask pairs, covering ten imaging modalities and over thirty cancer types.</p>
+<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10803759/">Reference</a>: Segment anything in medical images. Ma J., He Y., Li F., Han L., You C., Wang B. Nat Commun. 2024 Jan 22;15(1):654.</p>
 </dd>
 <dt><a class="reference internal" href="_images/threshold.png"><img alt="threshold" src="_images/threshold.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Shows a threshold widget (see <a class="reference internal" href="PySisyphe_widgets.html#page-widgets"><span class="std std-ref">widgets</span></a>) to define upper and lower thresholds used by various tools (threshold brushes, thresholding, region growing, active contour threshold variant).</p>
 </dd>
@@ -384,7 +392,9 @@
 <section id="brush-settings">
 <span id="tools-section-brush-settings"></span><h2>Brush settings<a class="headerlink" href="#brush-settings" title="Link to this heading"></a></h2>
 <dl class="simple">
-<dt><strong>Fill holes</strong></dt><dd><p>If checked, holes are automatically filled during drawing.</p>
+<dt><strong>Fill holes</strong></dt><dd><p>If this option is checked, holes are automatically filled after drawing with brush <a class="reference internal" href="_images/brush.png"><img alt="brush" src="_images/brush.png" style="width: 32.0px; height: 32.0px;" /></a> and selection area <a class="reference internal" href="_images/select2.png"><img alt="select2" src="_images/select2.png" style="width: 32.0px; height: 32.0px;" /></a> tools.</p>
+</dd>
+<dt><strong>Major blob</strong></dt><dd><p>If this option is checked, only the major blob is kept after drawing with the selection area tool <a class="reference internal" href="_images/select2.png"><img alt="select2" src="_images/select2.png" style="width: 32.0px; height: 32.0px;" /></a>.</p>
 </dd>
 <dt><strong>Structuring element size</strong></dt><dd><p>Size of the structuring element in pixels/voxels used by morphological operations (dilate/erode/opening/closing).</p>
 </dd>

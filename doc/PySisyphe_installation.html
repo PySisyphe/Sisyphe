@@ -48,7 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#from-binary-installer">From binary installer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#from-binary-archive">From binary archive</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#from-source">From source</a></li>
 </ul>
 </li>
@@ -113,15 +113,27 @@
   <section id="installation">
 <span id="page-installation"></span><h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
 <ul class="simple">
-<li><p><a class="reference internal" href="#install-section-from-binary"><span class="std std-ref">From binary installer</span></a></p></li>
+<li><p><a class="reference internal" href="#install-section-from-binary"><span class="std std-ref">From binary archive</span></a></p></li>
 <li><p><a class="reference internal" href="#install-section-from-source"><span class="std std-ref">From source</span></a></p></li>
 </ul>
-<section id="from-binary-installer">
-<span id="install-section-from-binary"></span><h2>From binary installer<a class="headerlink" href="#from-binary-installer" title="Link to this heading"></a></h2>
-<p>Download the binary installer for MS Windows or MacOS Intel platforms from <a class="reference external" href="https://github.com/PySisyphe/Sisyphe">https://github.com/PySisyphe/Sisyphe</a>.
+<section id="from-binary-archive">
+<span id="install-section-from-binary"></span><h2>From binary archive<a class="headerlink" href="#from-binary-archive" title="Link to this heading"></a></h2>
+<p>Download the binary zip archive for MS Windows or MacOS Intel platforms from <a class="reference external" href="https://github.com/PySisyphe/Sisyphe">https://github.com/PySisyphe/Sisyphe</a>.
 There is no version for the Linux platform, as some of the modules required to run PySisyphe are not yet available on this operating system.</p>
 <p>Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. We recommend copying it to the user directory. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time. Subsequent starts take less than 30 seconds.</p>
 <p><strong>PySisyphe may trigger false alerts from antivirus software, particularly on the Windows platform (e.g., Avast One). If this happens, be sure to add PySisyphe.exe to the list of trusted software.</strong></p>
+<p>On the Windows 11 platform, the terminal (i.e. the console) remains visible in the taskbar. If you would prefer it to be hidden, simply change the default terminal application.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>click the <strong>Start button</strong>,</p></li>
+<li><p>open <strong>Windows Terminal</strong> application,</p></li>
+<li><p>click the dropdown arrow (▾) in the tab bar,</p></li>
+<li><p>select <strong>Settings</strong>,</p></li>
+<li><p>under <strong>Startup</strong>, locate <strong>Default terminal application</strong>,</p></li>
+<li><p>set it to <strong>Windows Console Host</strong>,</p></li>
+<li><p><strong>save</strong> changes.</p></li>
+</ul>
+</div></blockquote>
 <p>The PySisyphe graphical user interface has been optimized for dark mode, so we recommend using this mode for the best user experience.</p>
 <p>Enabling dark mode on the Windows 11 platform:</p>
 <blockquote>
@@ -150,9 +162,9 @@ There is no version for the Linux platform, as some of the modules required to r
 <p>PySisyphe runs on Python version 3.10 or 3.12, download the last release with binary installer (3.10.11, release date: April 5, 2023 or 3.12.10 release date: April 8, 2025) at <a class="reference external" href="https://www.python.org/downloads/release/python-31011/">https://www.python.org/downloads/release/python-31011/</a> or <a class="reference external" href="https://www.python.org/downloads/release/python-31210/">https://www.python.org/downloads/release/python-31210/</a>, and install it.</p>
 <p>We recommend working with the PyCharm IDE development environment (JetBrains Distributions s.r.o., Czech Republic), download community edition at <a class="reference external" href="https://www.jetbrains.com/fr-fr/pycharm/">https://www.jetbrains.com/fr-fr/pycharm/</a>, and install it. Run PyCharm IDE and create a new project (menu File -&gt; New project) with venv interpreter type and previously installed Python 3.10.11 or 3.12.10 version.</p>
 <ol class="arabic simple">
-<li><p>Download PySisyphe source at <a class="reference external" href="https://github.com/PySisyphe/Sisyphe">https://github.com/PySisyphe/Sisyphe</a> (“&lt;&gt; Code” button, and select Download ZIP).</p></li>
-<li><p>Unzip “Sisyphe-main.zip” archive.</p></li>
-<li><p>Rename “Sisyphe-main” folder to “Sisyphe”.</p></li>
+<li><p>Download <a class="reference external" href="https://mega.nz/folder/G18X2IRQ#BRpA7_fcyHBIK66aZNyntA">PySisyphe source</a>.</p></li>
+<li><p>Unzip archive.</p></li>
+<li><p>Rename folder to “Sisyphe”.</p></li>
 <li><p>Copy “Sisyphe” folder in the PyCharm project folder.</p></li>
 <li><p>Open the Pycharm terminal (ALT-F12), the current folder is by default the root of the project folder (a requirements.txt exists in this folder).</p></li>
 <li><p>To install the python modules needed to work with PySisyphe, type at the command line: pip install -r requirements.txt</p></li>

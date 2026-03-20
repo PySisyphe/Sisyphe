@@ -79,6 +79,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#cortical-thickness">Cortical thickness</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#registration-based-segmentation">Registration based segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#structs">Structs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deep-learning-atlas-parcellation">Deep-learning Atlas parcellation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-hippocampus-segmentation">Deep-learning Hippocampus segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-hypo-intensity-lesion-segmentation">Deep-learning Hypo-intensity lesion segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-medial-temporal-segmentation">Deep-learning Medial temporal segmentation</a></li>
@@ -133,6 +134,7 @@
 <li><p><a class="reference internal" href="#menu-section-structs"><span class="std std-ref">Structs</span></a></p></li>
 <li><dl class="simple">
 <dt>Deep learning segmentation &gt;</dt><dd><ul>
+<li><p><a class="reference internal" href="#menu-section-parcellation"><span class="std std-ref">Deep-learning Atlas parcellation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-hipp"><span class="std std-ref">Deep-learning Hippocampus segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-lesion"><span class="std std-ref">Deep-learning Hypo-intensity lesion segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-temporal"><span class="std std-ref">Deep-learning Medial temporal segmentation</span></a></p></li>
@@ -189,12 +191,12 @@
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select PySisyphe <strong>Volume(s)</strong>.</p>
 <p>The parameters are as follows:</p>
 <ul class="simple">
-<li><p>Select the pre-trained model: <em>ANTs U-net</em> or <em>DeepBrain U-net</em>.</p></li>
-<li><p>Select the training modality: <em>T1</em>, <em>T2</em>, <em>T2star</em>, <em>FLAIR</em>, <em>EPI</em>, <em>FA</em> or <em>TOF</em>.</p></li>
+<li><p>Select the pre-trained model: <em>ANTs U-net</em>, <em>DeepBrain U-net</em> or <em>OpenMAP</em>. The latest model <em>OpenMAP</em> is the most effective, but it takes significantly longer to process.</p></li>
+<li><p>Select the training modality: <em>T1</em>, <em>T1 FreeSurfer</em>, <em>T1 ANTs/FreeSurfer</em>, <em>T2</em>, <em>T2star</em>, <em>FLAIR</em>, <em>EPI</em>, <em>FA</em> or <em>TOF</em>. This menu is only available for the <em>ANT U-Net</em> model. The training modality for the other two models is always <em>T1</em>.</p></li>
 <li><p>Check <strong>Save brain mask</strong> to save the binary mask of the brain (without skull).</p></li>
 <li><p>Check <strong>Save brain mask as ROI</strong> to save the binary mask of the brain as a PySisyphe ROI (.xroi).</p></li>
 <li><p>Mask ROI is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Brain mask prefix</strong> and <strong>Brain mask suffix</strong> parameters.</p></li>
-<li><p>Check <strong>Save brain probability</strong> to save the probability mask of the brain (without skull).</p></li>
+<li><p>Check <strong>Save brain probability</strong> to save the probability mask of the brain (without skull). This menu is only available for the <em>ANTs U-net</em>, <em>DeepBrain U-net</em> models.</p></li>
 <li><p>Mask probability volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Brain probability prefix</strong> and <strong>Brain probability suffix</strong> parameters.</p></li>
 <li><p>Skull stripped volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Skull stripped prefix</strong> and <strong>Skull Stripped suffix</strong> parameters.</p></li>
 </ul>
@@ -320,6 +322,26 @@
 <span id="menu-section-structs"></span><h2>Structs<a class="headerlink" href="#structs" title="Link to this heading"></a></h2>
 <p>This menu displays a tree structure of submenus for loading a struct XML file from the PySisyphe template subfolders or the “segmentation” subfolder within the PySisyphe user folder ($User/.PySisyphe).</p>
 <p>Select a struct item to open it in the <a class="reference internal" href="#menu-section-regsegmentation"><span class="std std-ref">Registration based segmentation</span></a> dialog box.</p>
+</section>
+<section id="deep-learning-atlas-parcellation">
+<span id="menu-section-parcellation"></span><h2>Deep-learning Atlas parcellation<a class="headerlink" href="#deep-learning-atlas-parcellation" title="Link to this heading"></a></h2>
+<p>This menu is designed to perform MR T1 parcellation into the 280 anatomical structures of the <a class="reference external" href="https://github.com/OishiLab/JHU-MNI-Eve-atlas/blob/main/README.md">JHU MNI atlas</a>. PySisyphe uses the <a class="reference external" href="https://github.com/OishiLab/OpenMAP-T1/tree/main">OpenMapT1</a> implementation.</p>
+<p><a class="reference external" href="https://github.com/OishiLab/OpenMAP-T1/tree/main">OpenMapT1</a> integrates several convolutional neural network models across six stages: preprocessing, cropping (centers and crops image around the brain), skull stripping, parcellation, hemisphere segmentation, and final merging. This process involves standardizing MRI images, isolating the brain tissue, and parcellating it into 280 anatomical structures that cover the whole brain, including detailed gray and white matter structures, while simplifying the parcellation processes and incorporating robust training to handle various scan types and conditions.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://onlinelibrary.wiley.com/doi/full/10.1002/hbm.70063">Article</a>: OpenMAP-T1: A Rapid Deep-Learning Approach to Parcellate 280 Anatomical Regions to Cover the Whole Brain. Nishimaki K, Onda K, Ikuta K, Chotiyanonta J, Uchida Y, Mori S, Iyatomi H, Oishi K,Alzheimer’s Disease Neuroimaging Initiative; Australian Imaging Biomarkers and Lifestyle Flagship Study of Ageing. Hum Brain Mapp. 2024 Nov;45(16):e70063.</p>
+</div>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>T1</strong> PySisyphe volume(s) to be processed.</p>
+<p>Toggle <strong>Atlas parcellation…</strong> button to show/hide parameters.</p>
+<ul class="simple">
+<li><p>Check <strong>Bias field correction</strong> to peform a bias field correction of the T1 before the parcellation processing.</p></li>
+<li><p>Choose the type(s) of parcellation map(s) to save by checking <strong>Save x labels volume</strong> boxes. There are five increasing levels of parcellation available: 8, 20, 58, 144 and 280 labels.</p></li>
+<li><p>Label volumes are saved with the original T1 file name, which is prefixed and/or suffixed by the strings edited in the <strong>Prefix</strong> and <strong>Suffix</strong> parameters. The ‘*’ char in the prefix/suffix is replaced by the number of labels of the current map.</p></li>
+<li><p>The cropped volume is saved with the original T1 file name, which is prefixed and/or suffixed by the strings edited in the <strong>Cropped volume prefix</strong> and <strong>Cropped volume suffix</strong> parameters.</p></li>
+<li><p>The skull stripped volume is saved with the original T1 file name, which is prefixed and/or suffixed by the strings edited in the <strong>Stripped volume prefix</strong> and <strong>Stripped volume suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform parcellation.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without parcellation.</p>
 </section>
 <section id="deep-learning-hippocampus-segmentation">
 <span id="menu-section-hipp"></span><h2>Deep-learning Hippocampus segmentation<a class="headerlink" href="#deep-learning-hippocampus-segmentation" title="Link to this heading"></a></h2>
