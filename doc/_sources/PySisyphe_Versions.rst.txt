@@ -19,6 +19,7 @@ Version history
 - :ref:`build01-02-2026`
 - :ref:`build20-02-2026`
 - :ref:`build20-03-2026`
+- :ref:`build20-04-2026`
 
 .. _version-increment-rules:
 
@@ -3897,7 +3898,7 @@ version 0.81.22, build 20/03/2026
 	
 	- version-histrory.rst
 	- PySisyphe_dockroitools.rst
-	- PySisyphe_File.rst
+	- PySisyphe_Diffusion.rst
 	- PySisyphe_Segmentation.rst
 	- rebuild sphinx documentation
 
@@ -3916,7 +3917,7 @@ version 0.81.22, build 20/03/2026
 	- /settings/functions.xml
 	- /settings/settings.xml
 
-- **new external module**
+- **new external modules**
 
 	- sam (Segment Anything Pre-trained Model MedSAM), added as PySisyphe module Sisyphe.lib.sam
 	- openmap (OpenMAP-T1 Pre-trained Model, multiple anatomical structure parcellation), added as PySisyphe module Sisyphe.lib.openmap
@@ -4387,3 +4388,755 @@ version 0.81.22, build 20/03/2026
 	- widgets.tabToolsWidgets.TabROIToolsWidget._brushTypeChanged()
 
 		- update DrawRectangleFlag & DrawThresholdRectangleFlag
+
+.. _build20-04-2026:
+
+version 0.87.08, build 20/04/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- version-histrory.rst
+	- PySisyphe_browser.rst
+	- PySisyphe_Diffusion.rst
+	- PySisyphe_File.rst
+	- PySisyphe_Mapping.rst
+	- PySisyphe_Functions.rst
+	- PySisyphe_Segmentation.rst
+	- PySisyphe_menubar.rst
+
+- **updated files**
+
+	- /settings/functions.xml
+	- /settings/tooltips.xml
+	- requirements.txt
+
+- **upgraded packages**
+
+	- dipy, migrate from 1.11.0 to 1.12.0, PySisyphe dependencies
+
+		- core.sisypheTools
+		- core.sisypheImage
+		- core.sisypheTracts
+		- gui.dialogDiffusionPreprocessing
+		- lib.dipy.localpca
+		- lib.dipy.non_local_means
+		- lib.dipy.streamline
+		- processing.dipyFunctions
+
+	- matplotlib, migrate from 3.6.3 to 3.10.8, PySisyphe dependencies
+
+		- core.sisypheLUT
+		- core.sisypheVolume
+		- gui.dialogStatContrast
+		- gui.dialogStatResult
+		- gui.dialogGenericResults
+		- gui.dialogPerfusion
+		- gui.dialogROIStatistics
+		- gui.dialogSeriesRealignment
+		- gui.dialogSplash
+		- gui.dialogWait
+		- gui.windowSisyphe
+		- widgets.LUTWidgets
+		- widgets.abstractViewWidget
+		- widgets.fileBrowserWidget
+		- widgets.imageWidgets
+		- widgets.multiComponentViewWidget
+		- widgets.sheetWidget
+		- widgets.thresholdWidget
+
+- **new external modules**
+
+	- MyRelax, https://github.com/fragrussu/MyRelax, added as PySisyphe module Sisyphe.lib.myrelax
+	- TGVQSM, https://www.neuroimaging.at/pages/qsm.php, added as PySisyphe module Sisyphe.lib.tgvqsm
+
+- **new modules**
+
+	- processing.qMRFunctions
+	- gui.dialogQuantitativeMR
+
+- **updated modules**
+
+	- core.sisypheLUT
+	- core.sisypheTracts
+	- core.sisypheImageAttributes
+	- core.sisypheStatistics
+	- core.sisypheDicom
+	- core.sisypheVolume
+	- core.sisypheImage
+	- core.sisypheTransform
+	- core.sisypheROI
+
+		- update cython compilation
+
+	- core.sisypheSettings
+	- gui.dialogVolumeAttributes
+	- gui.dialogStatResult
+	- gui.dialogGenericResults
+	- gui.dialogPerfusion
+	- gui.dialogROIStatistics
+	- gui.dialogPerfusion
+	- gui.dialogDiffusionModel
+	- gui.dialogStatContrast
+	- gui.dialogFunction
+	- gui.dialogSkullStripping
+	- gui.dialogImport
+	- gui.dialogResample
+	- gui.dialogDatatype
+	- gui.dialogDiffusionModel
+	- gui.dialogWait
+	- gui.dialogEditLabels
+	- gui.dialogSettings
+	- gui.windowSisyphe
+	- processing.dscFunctions
+	- processing.capturedStdoutProcessing
+	- widgets.LUTWidgets
+	- widgets.imageWidgets
+	- widgets.multiComponentViewWidget
+	- widgets.sheetWidget
+	- widgets.thresholdWidget
+	- widgets.selectFileWidgets
+	- widgets.dicomWidgets
+	- widgets.attributesWidgets
+	- widgets.functionsSettingsWidget
+
+- **new functions**
+
+	- processing.dscFunctions.cbfAslMap()
+
+		- CBF processing from Arterial Spin Labeling (ASL) series
+
+	- processing.qMRFunctions.B0DblEchoMap()
+
+		- B0 main static magnetic field map (in Hz) processing using the phase difference between two echoes
+
+	- processing.qMRFunctions.B1DblTRMap()
+
+		- B1 radiofrequency (RF) coil map processing from two-pulse spoiled gradient echo with short and long TR (actual flip angle imaging)
+
+	- processing.qMRFunctions.B1GEDblAngleMap()
+
+		- B1 radiofrequency (RF) coil map processing from two gradient echo images using the double angle method
+
+	- processing.qMRFunctions.B1SEDblAngleMap()
+
+		- B1 radiofrequency (RF) coil map processing from two spin echo images using the double angle method
+
+	- processing.qMRFunctions.T1MultiTRMap()
+
+		- voxel-wise mono-exponential T1 fitting on spin echo volumes at variable TR (VTR)
+
+	- processing.qMRFunctions.T1MultiAngleMap()
+
+		- voxel-wise mono-exponential T1 fitting for a variable flip angle (VFA) volumes
+
+	- processing.qMRFunctions.T2MonoExpMap()
+
+		- voxel-wise mono-exponential T2/T2* fitting on volumes at variable echo times
+
+	- processing.qMRFunctions.T2BiExpMap()
+
+		- voxel-wise bi-exponential T2/T2* fitting on volumes at variable echo times
+
+	- processing.qMRFunctions.T2primeMap()
+
+		- T2' processing from quantitative T2 and T2* maps
+
+	- processing.qMRFunctions.MTRMap()
+
+		- magnetization Transfer Ratio (MTR) from MT "on" and MT "off" acquisitions
+
+	- processing.qMRFunctions.QSMMap()
+
+		- quantitative susceptibility mapping (QSM) processing using total generalized variation (TGV-QSM).
+
+	- processing.qMRFunctions.phaseRescaling()
+
+		- phase MR image rescaling to (-pi, +pi)
+
+- **new classes**
+
+	- core.sisypheTracts.SisypheFreeWaterDTIModel
+
+		- class to manage free water diffusion tensor imaging model
+
+	- core.sisypheTracts.SisypheRumbaModel
+
+		- class to manage Robust and Unbiased Model-BAsed Spherical Deconvolution (RUMBA) model
+
+	- gui.dialogPerfusion.DialogASLPerfusion
+
+		- dialog for ASL processing
+
+	- gui.dialogQuantitativeMR.DialogB0Map
+
+		- dialog for B0 map processing
+
+	- gui.dialogQuantitativeMR.DialogB1Map
+
+		- dialog for B1 map processing
+
+	- gui.dialogQuantitativeMR.DialogT1Map
+
+		- dialog for T1 map processing
+
+	- gui.dialogQuantitativeMR.DialogT2Map
+
+		- dialog for T2/T2* map processing
+
+	- gui.dialogQuantitativeMR.DialogMTRMap
+
+		- dialog for Magnetization Transfer Ratio (MTR) map processing
+
+	- gui.dialogQuantitativeMR.DialogQSMMap
+
+		- dialog for map Quantitative Susceptibility (QSM) processing
+
+	- gui.dialogDiffusionModel.DialogALPS
+
+		- dialog for diffusion tensor image analysis along the perivascular space (DTI‑ALPS)
+
+	- widget.selectFileWidgets.FilesSelectionWithParametersWidget
+
+		- widget that manages files selection with associated parameters
+
+- **updated classes**
+
+	- core.sisypheLUT.SisypheLUT
+	
+		- update SisypheLut.setInternalLut() method
+
+	- core.sisypheTracts.SisypheDTIModel
+
+		- new getLinearity() method
+		- new getPlanarity() method
+		- new getSphericity() method
+		- new getIsotropic() method
+		- new getDeviatropic() method
+		- new getTensor() method
+		- new getEigenValues() method
+		- new getEigenVectors() method
+		- new getMajorEigenVector() method
+
+	- core.sisypheTracts.SisypheDKIModel
+
+		- new getLinearity() method
+		- new getPlanarity() method
+		- new getSphericity() method
+
+	- core.sisypheTracts.SisypheSHCSAModel
+
+		- update getModel() method
+		- update computeFitting() method
+
+	- core.sisypheTracts.SisypheSHCSDModel
+
+		- update getModel() method
+		- update computeFitting() method
+
+	- core.sisypheImageAttributes.SisypheAcquisition
+
+		- update getLBSequences() method
+		- new setSequenceToB0Map() method
+		- new setSequenceToB1Map() method
+		- new setSequenceToT1Map() method
+		- new setSequenceToT2Map() method
+		- new setSequenceToT2primeMap() method
+		- new setSequenceToMTRMap() method
+		- new setSequenceToQSMMap() method
+		- new setSequenceToMagnitude() method
+		- new setSequenceToPhase() method
+		- new isB0Map() method
+		- new isB1Map() method
+		- new isT1Map() method
+		- new isT2Map() method
+		- new isMTRMap() method
+		- new isQSMMap() method
+		- new isMagnitude() method
+		- new isPhase() method
+		- new setUnitToHz() method
+		- new setUnitToMillisecond() method
+
+	- core.sisypheStatistics.SisypheDesign
+
+		- update addHRFBoxCarModelToCondition() method
+		- update addHighPassToCondition() method
+
+	- core.sisypheDicom.DicomToXmlDicom
+
+		- update execute() method
+
+	- core.sisypheVolume.SisypheVolumeCollection
+
+		- update remove() method
+
+	- core.sisypheImage.SisypheImage
+
+		- update loadFromNIFTI() method
+
+	- core.sisypheTransform.SisypheApplyTransform
+
+		- update resampleMoving() method
+
+	- core.sisypheROI.SisypheROICollection
+
+		- update toLabelVolume() method
+
+	- core.sisypheSettings.SisypheSettings
+
+		- update getFieldValue() method
+		- update setFieldValue() method
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes
+
+		- update  _setSequencesFromModality() method
+
+	- gui.dialogStatResult.DialogResult
+
+		- update _updateBetaChart() method
+		- update _updateTimeSeriesChart() method
+		- update _updateRegressionChart() method
+
+	- gui.dialogGenericResults.DialogGenericResults
+
+		- update chartBarFromTreeWidgetColumn() method
+		- update chartPlotFromTreeWidgetColumn() method
+		- update chartBoxplotFromTreeWidgetColumn() method
+		- update chartPieFromTreeWidgetColumn() method
+
+	- gui.dialogPerfusion.DialogArterialInputFunction
+
+		- update _cursorPositionChanged() method
+		- update _addVoxel() method
+		- update _removeVoxel() method
+		- update _clear() method
+		- update setVolume() method
+
+	- gui.dialogPerfusion.DialogPerfusion
+	- gui.dialogPerfusion.DialogPerfusion2
+
+		- update function() method
+
+	- gui.dialogROIStatistics.DialogROIStatistics
+
+		- update _checkStateChanged() method
+		- update _binsChanged() method method
+		- update ._displayLineAt() method
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel
+
+		- update __init__() method
+		- update _modelChanged() method
+		- update multiExecute() method
+
+	- gui.dialogStatContrast.DialogContrast
+
+		- update __init__() method
+
+	- gui.dialogFunction.AbstractDialogFunction
+
+		- update execute() method
+
+	- gui.dialogFunction.DialogRemoveNeckSlices
+	- gui.dialogFunction.DialogGaussianFilter
+	- gui.dialogFunction.DialogMeanFilter
+	- gui.dialogFunction.DialogMedianFilter
+	- gui.dialogFunction.DialogAnisotropicDiffusionFilter
+	- gui.dialogFunction.DialogGradientFilter
+	- gui.dialogFunction.DialogLaplacianFilter
+	- gui.dialogFunction.DialogBiasFieldCorrectionFilter
+	- gui.dialogFunction.DialogHistogramIntensityMatching
+	- gui.dialogFunction.DialogRegressionIntensityMatching
+	- gui.dialogFunction.DialogIntensityNormalization
+
+		- update __init__() method
+
+	- gui.dialogSkullStripping.DialogSkullStripping
+
+		- update __init__() method
+		- update execute() method
+
+	- gui.dialogImport.DialogImport
+
+		- update convert() method
+
+	- gui.dialogResample.DialogResample
+
+		- update __init__() method
+		- update _updateMoving() method
+		- update execute() method
+
+	- gui.dialogDatatype.DialogEditID
+
+		- update __init__() method
+		- update _refChanged() method
+		- update execute() method
+
+	- gui.dialogEditLabels.DialogEditLabels
+
+		- update setVolume() method
+
+	- gui.dialogWait.DialogWait
+
+		- update messageFromDictProxyManager() method
+
+	- gui.dialogSettings.DialogSettings
+
+		- update _initSettings() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update _initMapMenu() method
+		- upadte _initDiffusionMenu() method
+		- update _openModel() method
+		- new mapB0() method
+		- new mapB1() method
+		- new mapT1() method
+		- new mapT2() method
+		- new mapT2p() method
+		- new mapQSM() method
+		- new mapMTR() method
+		- new mapASL() method
+		- new diffusionALPS() method
+
+	- processing.capturedStdoutProcessing.ProcessDiffusionModel
+
+		- update run() method
+
+	- widgets.LUTWidgets.LutWidget
+
+		- update _get_span_left() method
+		- update _get_span_right() method
+		- update _set_span_left() method
+		- update _set_span_right() method
+		- update _draw() method
+		- update _onMouseMoveEvent() method
+
+	- widgets.LUTWidgets.AlphaTransferWidget
+
+		- update __init__() method
+		- update _updateLines() method
+		- update setTransfer() method
+		- update _onMouseMoveEvent() method
+		- update _onMenuClear() method
+
+	- widgets.LUTWidgets.ComboBoxLut
+
+		- update _addInternalLut() method
+		- update getCurrentAsMatplotlibColormap() method
+		- update _addInternalLut() method
+
+	- widgets.LUTWidgets.PopupMenuLut
+
+		- update getCurrentAsMatplotlibColormap() method
+
+	- widgets.imageWidgets.ImagePreviewWidget
+
+		- update __init__() method
+		- update setDefaultLut() method
+		- update setLut() method
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget
+
+		- update updateSpan() method
+
+	- widgets.sheetWidget.SheetChartWidget
+
+		- update _drawChart() method
+		- update properties() method
+
+	- widgets.thresholdWidget.ThresholdViewWidget
+
+		- update __init__() method
+		- update _get_span_left() method
+		- update _get_span_right() method
+		- update _set_span_left() method
+		- update _set_span_right() method
+		- update addCurrentCurveToChart() method
+		- update _cursorPositionChanged() method
+		- update cleanChart() method
+		- update _onMouseMoveEvent() method
+
+	- widgets.selectFileWidgets.FilesSelectionWidget
+
+		- new fileCountWarningOn() method
+		- new fileCountWarningOff() method
+		- new setFileCountWarning() method
+		- new getFileCountWarning() method
+		- update copySelectionFrom() method
+		- update copySelectionTo() method
+		- update add() method
+
+	- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget
+
+		- update __init__() method
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget
+
+		- update _pathToDict() method
+
+	- widgets.attributesWidgets.ListROIAttributesWidget
+
+		- update __init__() method
+		- new saveLabelSisyphe() method
+
+	- widgets.functionsSettingsWidget.SettingsWidget
+
+		- update _initSettingsLayout() method
+
+- **new methods**
+
+	- core.sisypheTracts.SisypheDTIModel.getLinearity()
+	- core.sisypheTracts.SisypheDTIModel.getPlanarity()
+	- core.sisypheTracts.SisypheDTIModel.getSphericity()
+
+		- get linearity, planarity and sphericity diffusion maps
+
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToB0Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToB1Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToT1Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToT2Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToT2primeMap()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToMTRMap()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToQSMMap()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToMagnitude()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToPhase()
+	- core.sisypheImageAttributes.SisypheAcquisition.isB0Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.isB1Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.isT1Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.isT2Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.isT2primeMap()
+	- core.sisypheImageAttributes.SisypheAcquisition.isMTRMap()
+	- core.sisypheImageAttributes.SisypheAcquisition.isQSMMap()
+	- core.sisypheImageAttributes.SisypheAcquisition.isMagnitude()
+	- core.sisypheImageAttributes.SisypheAcquisition.isPhase()
+
+		- add B0 map, B1 map, T1 map, T2 map, T2' map, MTR map, QSM map, phase & magnitude sequences
+
+	- core.sisypheImageAttributes.SisypheAcquisition.setUnitToHz()
+	- core.sisypheImageAttributes.SisypheAcquisition.setUnitToMillisecond()
+
+		- add msec and Hz units
+
+	- gui.windowSisyphe.WindowSisyphe.mapB0()
+	- gui.windowSisyphe.WindowSisyphe.mapB1()
+	- gui.windowSisyphe.WindowSisyphe.mapT1()
+	- gui.windowSisyphe.WindowSisyphe.mapT2()
+	- gui.windowSisyphe.WindowSisyphe.mapT2p()
+	- gui.windowSisyphe.WindowSisyphe.mapQSM()
+	- gui.windowSisyphe.WindowSisyphe.mapMTR()
+	- gui.windowSisyphe.WindowSisyphe.asl()
+	- gui.windowSisyphe.WindowSisyphe.diffusionALPS()
+
+		- add processing of B0, B1, T1, T2, T2', QSM, MTR, ASL maps and DTI-ALPS
+
+	- widgets.selectFileWidgets.FilesSelectionWidget.fileCountWarningOn()
+	- widgets.selectFileWidgets.FilesSelectionWidget.fileCountWarningOff()
+	- widgets.selectFileWidgets.FilesSelectionWidget.setFileCountWarning()
+	- widgets.selectFileWidgets.FilesSelectionWidget.getFileCountWarning()
+
+		- management of self._countWarning attribute
+		- self._countWarning is used as a flag to display or not a warning when the maximum number of files is reached
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveLabelSisyphe()
+
+		- save the checked ROI to label xvol
+
+- **updated methods**
+
+	- core.sisypheTracts.SisypheSHCSAModel.getModel()
+	- core.sisypheTracts.SisypheSHCSAModel.computeFitting()
+	- core.sisypheTracts.SisypheSHCSDModel.getModel()
+	- core.sisypheTracts.SisypheSHCSDModel.computeFitting()
+
+		- replace sh_order parameter name by sh_order_max
+		- new parameter name since dipy v1.9
+		- required for dipy migration from version 1.11.0 to 1.12.0
+
+	- core.sisypheImageAttributes.SisypheAcquisition.getLBSequences()
+
+		- bug fix, return replace tuple(cls._LBSEQUENCE) by return cls._LBSEQUENCE,
+
+	- core.sisypheStatistics.SisypheDesign.addHRFBoxCarModelToCondition()
+
+		- bug fix, line 3659, name variable splitting/joining
+
+	- core.sisypheStatistics.SisypheDesign.addHighPassToCondition()
+
+		- bug fix, line 3709, name variable splitting/joining
+
+	- core.sisypheDicom.DicomToXmlDicom.execute()
+
+		- pydicom bug: some DataElements have empty keywords
+		- work around the pydicom bug, detect empty keyword and create it from DataElement.name
+		- work around the pydicom bug, replace keyword by tag to extract DataElement from DataSet
+
+	- core.sisypheVolume.SisypheVolumeCollection.remove()
+
+		- bug fix for int value type, line 4930, replace self.pop(self.index(value)) by self.pop(value)
+
+	- core.sisypheImage.SisypheImage.loadFromNIFTI()
+
+		- bug fix, add support for vector images of all data types
+
+	- core.sisypheTransform.SisypheApplyTransform.resampleMoving()
+
+		- bug fix, origin update of the moving volume
+
+	- core.sisypheROI.SisypheROICollection.toLabelVolume()
+
+		- bug fix, replace roi = roi + self[i].getSITKImage() * i by roi = roi + self[i].getSITKImage() * (i + 1)
+
+	- core.sisypheSettings.SisypheSettings.getFieldValue()
+	- core.sisypheSettings.SisypheSettings.setFieldValue()
+
+		- lines 914 & 1007, add elif path == '~': base = abspath(expanduser('~'))
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes._setSequencesFromModality()
+
+		- add LB modality management
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel.__init__()
+	- gui.dialogDiffusionModel.DialogDiffusionModel._modelChanged()
+	- gui.dialogDiffusionModel.DialogDiffusionModel.save()
+
+		- add free water DTI and RUMBA models management
+		- add linearity, planarity and sphericity maps (DTI, FWDTI and DKI models)
+
+	- gui.windowSisyphe.WindowSisyphe._initMapMenu()
+
+		- new 'B0 map...' menu
+		- new 'B1 map...' menu
+		- new 'T1 map...' menu
+		- new 'T2/T2* map...' menu
+		- new 'T2prinme map...' menu
+		- new 'MTR map...' menu
+		- new 'QSM map...' menu
+		- new 'QSM map...' menu
+		- new 'ASL perfusion...' menu
+
+	- gui.windowSisyphe.WindowSisyphe._initDiffusionMenu()
+
+		- new 'Diffusion analysis along perivascular space...' menu
+
+	- gui.windowSisyphe.WindowSisyphe._openModel()
+
+		- bug fix, line 2024, replace basename(filename)[0] by splitext(basename(filename))[0]
+
+	- gui.dialogStatContrast.DialogContrast.__init__()
+
+		- bug fix, line 206, replace self._cfactors.addItem('Main factor') by self._cfactors.addItem('Main')
+
+	- gui.dialogFunction.AbstractDialogFunction.execute()
+
+		- add a messageBox to perform additional processing
+		- add self._files.setSelectionTo(i)
+
+	- gui.dialogFunction.DialogRemoveNeckSlices.__init__()
+	- gui.dialogFunction.DialogGaussianFilter.__init__()
+	- gui.dialogFunction.DialogMeanFilter.__init__()
+	- gui.dialogFunction.DialogMedianFilter.__init__()
+	- gui.dialogFunction.DialogAnisotropicDiffusionFilter.__init__()
+	- gui.dialogFunction.DialogGradientFilter.__init__()
+	- gui.dialogFunction.DialogLaplacianFilter.__init__()
+	- gui.dialogFunction.DialogBiasFieldCorrectionFilter.__init__()
+	- gui.dialogFunction.DialogHistogramIntensityMatching.__init__()
+	- gui.dialogFunction.DialogRegressionIntensityMatching.__init__()
+	- gui.dialogFunction.DialogIntensityNormalization.__init__()
+	- gui.dialogSkullStripping.DialogSkullStripping.__init__()
+
+		- add setWindowTitle()
+
+	- gui.dialogPerfusion.DialogPerfusion.function()
+	- gui.dialogPerfusion.DialogPerfusion2.function()
+
+		- remove the messageBox to perform additional processing
+
+	- gui.dialogSkullStripping.DialogSkullStripping.execute()
+
+		- add a messageBox to perform additional processing
+		- add self._files.setSelectionTo(i)
+
+	- gui.dialogImport.DialogImport.convert()
+
+		- hide dialog and dialogWait if exception
+
+	- gui.dialogResample.DialogResample. __init__()
+
+		- add self._apply FilesSelectionWidget attribute
+
+	- gui.dialogResample.DialogResample._updateMoving()
+	- gui.dialogResample.DialogResample.execute()
+
+		- self._apply FilesSelectionWidget management
+		- resample additional moving volumes
+
+	- gui.dialogDatatype.DialogEditID.__init__()
+
+		- add self._origin attribute (volume origin)
+
+	- gui.dialogDatatype.DialogEditID._refChanged()
+	- gui.dialogDatatype.DialogEditID.execute()
+
+		- self._origin management
+		- copy reference volume origin
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel.__init__()
+
+		- add self._FWDTI and self._RUMBA attributes
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel._modelChanged()
+	
+		- add management of FWDTI and RUMBA models
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel.multiExecute()
+
+		- save support for linearity, planarity, sphericity, ifree water fraction, 
+		- save support for csf fraction, gray matter fraction, white matter fraction
+		- save support tensor, eigen values, eigen vectors, tensor major direction
+
+	- gui.dialogWait.DialogWait.messageFromDictProxyManager()
+
+		- add 'acc' key
+
+	- gui.dialogEditLabels.DialogEditLabels.setVolume()
+
+		- bug fix if number of labels > max value in image array
+
+	- gui.dialogSettings.DialogSettings._initSettings()
+
+		- add sections
+
+	- processing.capturedStdoutProcessing.ProcessDiffusionModel.run()
+
+		- add FWDTI model processing & free water fraction map
+		- add RUMBA model processing & cerebro-spinal fluid fraction, gray matter fraction, white matter fraction, isotropic fraction maps
+		- add linearity, planarity, sphericity, tensor, tensor major direction maps for DTI
+		- add linearity, planarity, sphericity FWDTI & DKI models
+
+	- widgets.selectFileWidgets.FilesSelectionWidget.copySelectionFrom()
+	- widgets.selectFileWidgets.FilesSelectionWidget.copySelectionTo()
+
+		- bug fix, replace widget by widget._list
+
+	- widgets.selectFileWidgets.FilesSelectionWidget.add()
+
+		- self._countWarning attribute is used as a flag to display or not a warning when the maximum number of files is reached
+
+	- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.__init__()
+
+		- add params paramter, if false, multiple widgets are FileSelectionWidget or FilesSelectionWithParametersWidget, otherwise.
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget._pathToDict()
+
+		- bug fix, support for mosaics with dimensions other than 8 x 8
+		- line 1023, replace mosaic = ((v // 8) + 1) * 8 by mosaic = (int(sqrt(v)) + 1) ** 2
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.__init__()
+
+		- add self._action['lbl'] action, save the checked ROI to label xvol
+
+	- widgets.functionsSettingsWidget.SettingsWidget._initSettingsLayout()
+
+		- add attribute 'component' for 'vol' node, to define single or multicomponent xvol selection
+		- bug fix, line 755, replace data = abspath(join(base, data)) by if base != '': data = abspath(join(base, data))

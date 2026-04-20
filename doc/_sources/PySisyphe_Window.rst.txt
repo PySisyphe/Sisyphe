@@ -155,10 +155,10 @@ This menu displays the :ref:`Database manager <page-database>` tab in the centra
 
 .. _menu-section-browser:
 
-File manager
+File browser
 ------------
 
-This menu displays the :ref:`File manager <page-browser>` tab in the central area of the main PySisyphe window (F7 shortcut key).
+This menu displays the :ref:`File browser <page-browser>` tab in the central area of the main PySisyphe window (F7 shortcut key).
 
 .. _menu-section-screenshots:
 

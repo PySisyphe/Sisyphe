@@ -114,6 +114,12 @@ Functions
 	- :ref:`Texture feature maps... <menu-section-texture>`
 	- :ref:`ROI texture features... <menu-section-roitexture>`
 	- :ref:`Bias field correction... <menu-section-biasfield>`
+	- Atlas labeling >
+
+		- :ref:`ROI(s) atlas labeling... <menu-section-roi-labeling>`
+		- :ref:`Mesh(es) atlas labeling... <menu-section-mesh-labeling>`
+		- :ref:`Tool(s) atlas labeling... <menu-section-tools-labeling>`
+
 	- Voxel-by-voxel processing >
  
 		- :ref:`Mean volume... <menu-section-voxel-mean>`
@@ -161,8 +167,9 @@ Segmentation
 	- :ref:`Cortical thickness... <menu-section-thickness>`
 	- :ref:`Registration based segmentation... <menu-section-regsegmentation>`
 	- :ref:`Structs <menu-section-structs>`
-	- Depp learning segmentation >
+	- Deep learning segmentation >
 
+		- :ref:`Atlas parcellation... <menu-section-parcellation>`
 		- :ref:`Hippocampus segmentation... <menu-section-hipp>`
 		- :ref:`Hypo-intensity lesion segmentation... <menu-section-lesion>`
 		- :ref:`Medial temporal clustering... <menu-section-temporal>`
@@ -183,6 +190,7 @@ Mapping
 		- :ref:`One sample t-test... <menu-section-glm-model>`
 		- :ref:`Two sample t-test... <menu-section-glm-model>`
 		- :ref:`Paired t-test... <menu-section-glm-model>`
+		- :ref:`ANCOVA... <menu-section-glm-model>`
 		- :ref:`GLM subjects/conditions... <menu-section-glm-model>`
 		- :ref:`GLM groups/subjects/conditions... <menu-section-glm-model>`
 		- :ref:`GLM groups... <menu-section-glm-model>`
@@ -198,6 +206,17 @@ Mapping
 	- :ref:`Seed-to-voxel time series correlation... <menu-section-seriesseed>`
 	- :ref:`Single-subject time series ICA... <menu-section-seriesseed>`
 	- :ref:`Time series correlation matrix... <menu-section-seriescorr>`
+	- Quantitative MR maps >
+
+		- :ref:`B0 map... <menu-section-b0map>`
+		- :ref:`B1 map... <menu-section-b1map>`
+		- :ref:`T1 map... <menu-section-t1map>`
+		- :ref:`T2 map... <menu-section-t2map>`
+		- :ref:`T2' map... <menu-section-t2pmap>`
+		- :ref:`MTR map... <menu-section-mtrmap>`
+		- :ref:`QSM map... <menu-section-qsmmap>`
+
+	- :ref:`ASL perfusion... <menu-section-asl>`
 	- :ref:`Dynamic suceptibility contrast... <menu-section-dsc>`
 
 .. _menu-section-diffusion:
@@ -208,6 +227,8 @@ Diffusion
 	- :ref:`Gradients... <menu-section-gradients>`
 	- :ref:`Preprocessing... <menu-section-preprocessing>`
 	- :ref:`Diffusion model... <menu-section-diffmodel>`
+	- :ref:`Diffusion analysis along perivascular space... <menu-section-diffalps>`
+	- :ref:`Tractogram generation... <menu-section-tractogram>`
 	- Bundle >
  
 		- :ref:`ROI based streamlines selection... <menu-section-roisel>`
@@ -252,5 +273,6 @@ Window
 	- :ref:`Projection view <menu-section-projectionview>`
 	- :ref:`Multi-component view <menu-section-multiview>`
 	- :ref:`Database <menu-section-database>`
+	- :ref:`File browser <menu-section-browser>`
 	- :ref:`Screenshots <menu-section-screenshots>`
 	- :ref:`IPython <menu-section-ipython>`

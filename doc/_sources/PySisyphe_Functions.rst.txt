@@ -152,16 +152,16 @@ Seven check boxes are provided to modify volume attributes:
 - **Set modality** to choose one of the following modalities *MR*, *CT*, *PT* (PET), *NM* (SPECT), *LB* (Label), *TP* (template), *PJ* (2D projection), *OT* (other modality, secondary processed image)
 - **Set sequence** to choose on of the following sequence:
 
-	- OT modality: *p-map*, *t-map*, *z-map*, *GM*, *SCGM*, *CGM*, *WM*, *CSF*, *Brainstem*, *Cerebellum*, *Cortical thickness*, *CBF*, *CBV*, *MTT*, *TTP*, *Dose*, *FA*, *ADC*, *Bias field*, *Distance map*, *Median*, *Mean*, *Min*, *Max*, *Std*, *Algebra*, *Mask*, *Struct*, *Displacement field*, *Jacobian*, *Labels*.
-	- MR modality: *T1*, *T2*, *T2star*, *PD*, *FLAIR*, *CE T1*, *CE T2*, *CE FLAIR*, *CE TOF*, *EPI*, *B0*, *DWI*, *PWI*, *ASL*, *SWI*, *TOF*
+	- OT modality: *p-map*, *t-map*, *z-map*, *GM*, *SCGM*, *CGM*, *WM*, *CSF*, *Brainstem*, *Cerebellum*, *Cortical thickness*, *CBF*, *CBV*, *MTT*, *TTP*, *Dose*, *FA*, *ADC*, *Bias field*, *Distance map*, *Median*, *Mean*, *Min*, *Max*, *Std*, *Algebra*, *Mask*, *Struct*, *Displacement field*, *Jacobian*, *Labels*, *B0 MAP*, *B1 MAP*, *T1 MAP*, *T2 MAP*, *T2star MAP*, *T2' map*, *MTR MAP*, *QSM MAP*.
+	- MR modality: *T1*, *T2*, *T2star*, *PD*, *FLAIR*, *CE T1*, *CE T2*, *CE FLAIR*, *CE TOF*, *EPI*, *B0*, *DWI*, *PWI*, *ASL*, *SWI*, *TOF*, *MAGNITUDE*, *PHASE*
 	- CT modality: *CT*, *CE CT*
-	- PT modality: *FDG*
+	- PT modality: *FDG*, *FDOPA*
 	- NM modality: *HMPAO*, *ECD*, *FPCIT*
 	- LB modality: *LABELS*
 	- TP modality: all sequences
 	- PJ modality: None
 
-- **Set unit** to choose the scalar values unit: *None* (No unit), *%*, *ratio*, *s*, *mm*, *count*, *Bq*, *Bq/ml*, *SUV*, *mm2/s*.
+- **Set unit** to choose the scalar values unit: *None* (No unit), *%*, *ratio*, *s*, *ms*, *Hz*, *mm*, *count*, *Bq*, *Bq/ml*, *SUV*, *mm2/s*.
 - **Set frame** to choose stereotactic frame: *no frame* or *Leksell frame*.
 - **Set origin to default** to set origin to [0,0,0]. The coordinate origin is based on the RAS+ convention and is set at the most left, posterior, inferior point in the field of view.
 - **Set directions to default** to set axis order to x-axis (left to right), y-axis (posterior to anterior), z-axis (caudal to cranial) i.e. [[1,0,0],[0,1,0],[0,0,1]] with RAS+ convention.

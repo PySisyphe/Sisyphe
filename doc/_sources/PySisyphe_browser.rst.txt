@@ -65,7 +65,7 @@ Several buttons are provided in the table preview:
 	- **Save**, save the current table in various formats (.csv, .json, .html, numpy array .npy, Excel .xlsx).
 	- **Save selected**, save the selected column in numpy array format (.npy).
 	- **Table to console**, copy the current table to the :ref:`page-ipython` as variable "df".
-	- **Copy collumn to console**, copy the selected column to the :ref:`page-ipython` as variable "vcol#x" (x as column number).
+	- **Copy column to console**, copy the selected column to the :ref:`page-ipython` as variable "vcol#x" (x as column number).
 
 Several buttons are provided in the **image preview**:
 
