@@ -884,7 +884,7 @@ class SisypheAcquisition(object):
     object -> SisypheIdentity
 
     Creation: 16/03/2021
-    Last revision: 13/03/2026
+    Last revision: 19/03/2026
     """
     __slots__ = ['_modality', '_sequence', '_type', '_dateofscan', '_frame', '_unit', '_labels',
                  '_df', '_autocorrx', '_autocorry', '_autocorrz', '_rc', '_contrast', '_parent']
@@ -904,11 +904,13 @@ class SisypheAcquisition(object):
     CBF, CBV, MTT, TTP, DOSE, THICK = 'CBF', 'CBV', 'MTT', 'TTP', 'DOSE', 'CORTICAL THICKNESS'
     FA, ADC, DENSITY, BIAS, DIST = 'FA', 'ADC', 'DENSITY', 'BIAS FIELD', 'DISTANCE MAP'
     MEDIAN, MEAN, MIN, MAX, STD, ALGEBRA = 'MEDIAN', 'MEAN', 'MIN', 'MAX', 'STD', 'ALGEBRA'
-    MASK, FMASK, STRUCT, FIELD, JAC, LABELS, = 'MASK', 'FILLED MASK', 'STRUCT', 'DISPLACEMENT FIELD', 'JACOBIAN', 'LABELS'
+    MASK, FMASK, STRUCT, FIELD, JAC, LABELS = 'MASK', 'FILLED MASK', 'STRUCT', 'DISPLACEMENT FIELD', 'JACOBIAN', 'LABELS'
+    B0MAP, B1MAP, T1MAP, T2MAP, T2PMAP, MTR, QSM = 'B0 MAP', 'B1 MAP', 'T1 MAP', 'T2 MAP', 'T2\' MAP', 'MTR', 'QSM'
     T1, T2, T2S, PD, FLAIR, CET1, CET2, CETOF = 'T1', 'T2', 'T2*', 'PD', 'FLAIR', 'CE T1', 'CE T2', 'CE TOF',
     CEFLAIR, EPI, B0, DWI, PWI, ASL, SWI, TOF = 'CE FLAIR', 'EPI', 'B0', 'DWI', 'PWI', 'ASL', 'SWI', 'TOF'
+    PHSE, MGNT = 'PHASE', 'MAGNITUDE'
     NOFRAME, LEKSELL = 'NO FRAME', 'LEKSELL'
-    NOUNIT, PERC, RATIO, SEC, MM = 'None', '%', 'ratio', 's', 'mm'
+    NOUNIT, PERC, RATIO, SEC, MSEC, HZ, MM = 'None', '%', 'ratio', 's', 'ms', 'Hz', 'mm'
     COUNT, BQ, BQML, SUV, MM2S, HU, GY = 'Count', 'Bq', 'Bq/ml', 'SUV', 'mm2/s', 'HU', 'Gy'
     TVAL, ZSCORE, PVAL, CCVAL = 't-value', 'z-score', 'p-value', 'cc'
 
@@ -929,9 +931,10 @@ class SisypheAcquisition(object):
     _CODETOMODALITY = {0: 'OT', 1: 'MR', 2: 'CT', 3: 'PT', 4: 'NM', 5: 'LB', 6: 'TP', 7: 'PJ'}
     _OTSEQUENCE = (UK, PMAP, TMAP, ZMAP, GM, SCGM, WM, CSF, BSTEM, CRBL, THICK, CBF, CBV,
                    MTT, TTP, DOSE, FA, ADC, DENSITY, BIAS, DIST, MEDIAN, MEAN, MIN, MAX,
-                   STD, ALGEBRA, MASK, FMASK, STRUCT, FIELD, JAC, LABELS)
+                   STD, ALGEBRA, MASK, FMASK, STRUCT, FIELD, JAC, LABELS, B0MAP, B1MAP,
+                   T1MAP, T2MAP, T2PMAP, MTR, QSM)
     _MRSEQUENCE = (UK, T1, T2, T2S, PD, FLAIR, CET1, CET2, CEFLAIR, CETOF, EPI,
-                   B0, DWI, PWI, ASL, SWI, TOF)
+                   B0, DWI, PWI, ASL, SWI, TOF, PHSE, MGNT)
     _CTSEQUENCE = (UK, CT, CECT, BONECT)
     _PTSEQUENCE = (UK, FDG, FDOPA)
     _NMSEQUENCE = (UK, HMPAO, ECD, FPCIT)
@@ -940,7 +943,7 @@ class SisypheAcquisition(object):
     _LBSEQUENCE = LABELS
     _TYPE = ('2D', '3D')
     _FRAME = (UK, NOFRAME, LEKSELL)
-    _UNIT = (NOUNIT, PERC, RATIO, SEC, MM, COUNT, BQ, BQML, SUV, MM2S, HU, GY, TVAL, ZSCORE, PVAL, CCVAL)
+    _UNIT = (NOUNIT, PERC, RATIO, SEC, MSEC, HZ, MM, COUNT, BQ, BQML, SUV, MM2S, HU, GY, TVAL, ZSCORE, PVAL, CCVAL)
     _TEMPLATES = ('ICBM152', 'ICBM452', 'ATROPOS', 'SRI24')
     _FILEEXT = '.xacq'
     _LABELSEXT = '.xlabels'
@@ -1197,7 +1200,10 @@ class SisypheAcquisition(object):
         tuple[str, ...]
             tuple of label sequence names
         """
-        return tuple(cls._LBSEQUENCE)
+        # < Revision 19/03/2026
+        # return tuple(cls._LBSEQUENCE)
+        return cls._LBSEQUENCE,
+        # Revision 19/03/2026 >
 
     @classmethod
     def getPJSequences(cls) -> tuple[str, ...]:
@@ -2282,6 +2288,62 @@ class SisypheAcquisition(object):
         self._sequence = self.MASK
         self.setNoUnit()
 
+    def setSequenceToB0Map(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to B0 map.
+        """
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
+        self._sequence = self.B0MAP
+        self.setUnitToHz()
+
+    def setSequenceToB1Map(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to B1 map.
+        """
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
+        self._sequence = self.B1MAP
+        self.setNoUnit()
+
+    def setSequenceToT1Map(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to T1 map.
+        """
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
+        self._sequence = self.T1MAP
+        self.setUnitToMillisecond()
+
+    def setSequenceToT2Map(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to T2 map.
+        """
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
+        self._sequence = self.T2MAP
+        self.setUnitToMillisecond()
+
+    def setSequenceToT2primeMap(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to T2' map.
+        """
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
+        self._sequence = self.T2PMAP
+        self.setUnitToMillisecond()
+
+    def setSequenceToMTRMap(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to MTR map.
+        """
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
+        self._sequence = self.MTR
+        self.setUnitToPercent()
+
+    def setSequenceToQSMMap(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to QSM map.
+        """
+        if not (self.isOT() or self.isTP()): self.setModalityToOT()
+        self._sequence = self.QSM
+        self.setNoUnit()
+
     def setSequenceToFilledMask(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to filled mask.
@@ -2440,6 +2502,22 @@ class SisypheAcquisition(object):
         """
         if not (self.isMR() or self.isTP()): self.setModalityToMR()
         self._sequence = self.TOF
+        self.setNoUnit()
+
+    def setSequenceToMagnitude(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to time of magnitude.
+        """
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
+        self._sequence = self.MGNT
+        self.setNoUnit()
+
+    def setSequenceToPhase(self) -> None:
+        """
+        Set sequence attribute of the current SisypheAcquisition instance to phase.
+        """
+        if not (self.isMR() or self.isTP()): self.setModalityToMR()
+        self._sequence = self.PHSE
         self.setNoUnit()
 
     def setSequenceToContrastEnhancedCT(self) -> None:
@@ -2826,6 +2904,83 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.MASK
 
+    def isB0Map(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a B0 map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a B0 map
+        """
+        return self._sequence == self.B0MAP
+
+    def isB1Map(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a B1 map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a B1 map
+        """
+        return self._sequence == self.B1MAP
+
+    def isT1Map(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a T1 map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a T1 map
+        """
+        return self._sequence == self.T1MAP
+
+    def isT2Map(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a T2 map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a T2 map
+        """
+        return self._sequence == self.T2MAP
+
+    def isT2primeMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a T2' map.
+
+        Returns
+        -------
+        bool
+            True if sequence is a T2' map
+        """
+        return self._sequence == self.T2PMAP
+
+    def isMTRMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is an MTR map.
+
+        Returns
+        -------
+        bool
+            True if sequence is an MTR map
+        """
+        return self._sequence == self.MTR
+
+    def isQSMMap(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is a QSM map.
+
+        Returns
+        -------
+        bool
+            True if sequence is an QSM map
+        """
+        return self._sequence == self.QSM
+
     def isFilledMask(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a filled mask.
@@ -3035,6 +3190,28 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.TOF
 
+    def isMagnitude(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is magnitude.
+
+        Returns
+        -------
+        bool
+            True if sequence is magnitude
+        """
+        return self._sequence == self.MGNT
+
+    def isPhase(self) -> bool:
+        """
+        Check whether the current SisypheAcquisition instance sequence attribute is phase.
+
+        Returns
+        -------
+        bool
+            True if sequence is phase
+        """
+        return self._sequence == self.PHSE
+
     def isContrastEnhancedCT(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a contrast enhanced CT-scan.
@@ -3163,6 +3340,18 @@ class SisypheAcquisition(object):
         Set the unit attribute of the current SisypheAcquisition instance to second.
         """
         self._unit = self.SEC
+
+    def setUnitToMillisecond(self) -> None:
+        """
+        Set the unit attribute of the current SisypheAcquisition instance to millisecond.
+        """
+        self._unit = self.MSEC
+
+    def setUnitToHz(self):
+        """
+        Set the unit attribute of the current SisypheAcquisition instance to Hz.
+        """
+        self._unit = self.HZ
 
     def setUnitToMillimeter(self) -> None:
         """

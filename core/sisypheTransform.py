@@ -2414,7 +2414,7 @@ class SisypheApplyTransform(object):
     object -> SisypheApplyTransform
 
     Creation: 05/10/2021
-    Last revision: 29/01/2025
+    Last revision: 11/04/2026
     """
     __slots__ = ['_moving', '_roi', '_mesh', '_sl', '_transform', '_resample']
 
@@ -3129,13 +3129,16 @@ class SisypheApplyTransform(object):
                     # Revision 11/02/2025 >
                 # 4. Restore moving volume origin
                 self._moving.setOrigin(origin)
+                # 5. copy moving volume identity, acquisition, display, slope to resampled volume
+                resampled.copyPropertiesFrom(self._moving, acpc=False)
                 # < Revision 05/09/2024
+                # < Revision 11/04/2026
+                # moved after resampled.copyPropertiesFrom
                 if not self._moving.isDefaultOrigin():
                     if self._transform.isAffine():
                         resampled.setOrigin(self._transform.applyToPoint(self._moving.getOrigin()))
+                # Revision 11/04/2026 >
                 # Revision 05/09/2024 >
-                # 5. copy moving volume identity, acquisition, display, slope to resampled volume
-                resampled.copyPropertiesFrom(self._moving, acpc=False)
                 # if moving is a template, resampled is no longer a template, set its modality to OT
                 if self._moving.acquisition.isTP():
                     resampled.acquisition.setModalityToOT()

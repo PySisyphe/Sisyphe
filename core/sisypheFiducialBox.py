@@ -37,6 +37,7 @@ from PyQt5.QtCore import pyqtSignal
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheTransform import SisypheTransform
 
+
 __all__ = ['LeksellProcessings',
            'SisypheFiducialBox']
 

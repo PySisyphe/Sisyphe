@@ -2735,7 +2735,7 @@ class SisypheROICollection(object):
     object -> SisypheROICollection
 
     Creation: 08/09/2022
-    Last revision: 12/03/2026
+    Last revision: 14/04/2026
     """
 
     __slots__ = ['_rois', '_index', '_referenceID']
@@ -3306,7 +3306,10 @@ class SisypheROICollection(object):
                 # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(1, self.count()):
-                    roi = roi + self[i].getSITKImage() * i
+                    # < Revision 14/04/2026
+                    # roi = roi + self[i].getSITKImage() * i
+                    roi = roi + self[i].getSITKImage() * (i + 1)
+                    # Revision 14/04/2026 >
             # < Revision 12/03/2026
             # roi = sitkCast(roi, getLibraryDataType('uint8', 'sitk'))
             if self.count() > 255: roi = sitkCast(roi, getLibraryDataType('uint16', 'sitk'))

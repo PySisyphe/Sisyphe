@@ -4547,7 +4547,7 @@ class SisypheVolumeCollection(object):
     object -> SisypheVolumeCollection
 
     Creation: 04/02/2021
-    Last revision: 12/03/2026
+    Last revision: 02/04/2026
     """
 
     __slots__ = ['_volumes', '_index', '_homogeneous']
@@ -4926,8 +4926,11 @@ class SisypheVolumeCollection(object):
         if isinstance(value, SisypheVolume):
             self._volumes.remove(value)
         # value is SisypheVolume arrayID str or int
-        elif isinstance(value, (str, int)):
-            self.pop(self.index(value))
+        elif isinstance(value, (int, str)):
+            # < Revision 02/04/2026
+            # self.pop(self.index(value))
+            self.pop(value)
+            # Revision 02/04/2026 >
         else: raise TypeError('parameter type {} is not int, str or SisypheVolume.'.format(type(value)))
         if self.isEmpty(): self._homogeneous = False
 

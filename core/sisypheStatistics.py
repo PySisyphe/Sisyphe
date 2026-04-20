@@ -2327,7 +2327,7 @@ class SisypheDesign(object):
     object -> SisypheDesign
 
     Creation: 29/11/2023
-    Last revision: 12/02/2026
+    Last revision: 01/04/2026
     """
     __slots__ = ['_obs', '_cobs', '_grp', '_sbj', '_cnd', '_design', '_cdesign', '_ancova', '_norm', '_fmri', '_dancova',
                  '_age', '_beta', '_variance', '_vols', '_mean', '_mask', '_roi1', '_roi2', '_autocorr', '_filename']
@@ -3654,7 +3654,12 @@ class SisypheDesign(object):
                     if len(name) > 1 and name[0] == 'boxcar':
                         # < Revision 05/02/2026
                         # if ' '.join(name[1:]) == cond:
-                        if name[-1] == cond:
+                        # < Revision 01/04/2026
+                        # if name[-1] == cond:
+                        if len(name) == 2: name2 = name[1]
+                        else: name2 = ' '.join(name[1:])
+                        if name2 == cond:
+                        # Revision 01/04/2026 >
                         # Revision 05/02/2026 >
                             n = int(self._design[:, i].sum())
                             if n == len(boxcar):
@@ -3699,7 +3704,12 @@ class SisypheDesign(object):
                     if len(name) > 0 and name[0] != 'boxcar':
                         # < Revision 05/02/2026
                         # if ' '.join(name) == cond:
-                        if name[-1] == cond:
+                        # < Revision 01/04/2026
+                        # if name[-1] == cond:
+                        if len(name) == 1: name2 = name[0]
+                        else: name2 = ' '.join(name)
+                        if name2 == cond:
+                        # Revision 01/04/2026 >
                         # Revision 05/02/2026 >
                             n = int(self._design[:, i].sum())
                             if n == len(hpass):
@@ -4462,7 +4472,6 @@ class SisypheDesign(object):
         ndarray
             contrast vector
         """
-        print(self._cdesign)
         if len(contrast) == len(self._cdesign):
             estimable = array([v[1] for v in self._cdesign])
             effect = dict()

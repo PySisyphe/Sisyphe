@@ -301,7 +301,7 @@ class SisypheImage(object):
     object -> SisypheImage
 
     Creation: 12/01/2021
-    Last revision: 27/01/2026
+    Last revision: 10/04/2026
     """
     __slots__ = ['_sitk_image', '_itk_image', '_vtk_image', '_numpy_array', '_attr']
 
@@ -5600,8 +5600,32 @@ class SisypheImage(object):
         elif d == 4 and s[3] > 1:
             # noinspection PyUnresolvedReferences
             i: cython.int
-            for i in range(s[3]):
-                imgs.append(img[:, :, :, i])
+            # < Revision 10/04/2026
+            # SimpleITK filters & cast does not support sitkVectorFloat32 type
+            # cast to float64 using numpy ndarray
+            if img.GetPixelID() != sitkVectorFloat64:
+                origin = img.GetOrigin()[:3]
+                d = img.GetDirection()
+                direction = d[:3] + d[4:7] + d[8:11]
+                spacing = img.GetSpacing()
+                buff = sitkGetArrayFromImage(img)
+                buff = buff.astype('float64')
+                for i in range(s[3]):
+                    buff2 = buff[i, :, :, :]
+                    img2 = sitkGetImageFromArray(buff2)
+                    img2.SetOrigin(origin)
+                    img2.SetDirection(direction)
+                    img2.SetSpacing(spacing)
+                    imgs.append(img2)
+            else:
+                for i in range(s[3]):
+                    # < Revision 10/04/2026
+                    # imgs.append(img[:, :, :, i])
+                    f = sitkVectorIndexSelectionCastImageFilter()
+                    f.SetIndex(i)
+                    imgs.append(f.Execute(img))
+                    # Revision 10/04/2026 >
+            # Revision 10/04/2026 >
         # Reorientation of each sitk single component image
         # noinspection PyUnresolvedReferences
         i: cython.int

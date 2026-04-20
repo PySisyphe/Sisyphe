@@ -33,6 +33,8 @@ from math import sqrt
 from math import cos
 from math import radians
 
+from numpy import nan_to_num
+
 # noinspection PyProtectedMember
 from multiprocessing.managers import DictProxy
 
@@ -104,6 +106,12 @@ from dipy.core.gradients import reorient_bvecs
 from dipy.direction import peaks_from_model
 from dipy.reconst.dti import TensorModel
 from dipy.reconst.dti import TensorFit
+# < Revision 23/03/2026
+from dipy.reconst.fwdti import FreeWaterTensorModel
+from dipy.reconst.fwdti import FreeWaterTensorFit
+from dipy.reconst.rumba import RumbaSDModel
+from dipy.reconst.rumba import RumbaFit
+# Revision 23/03/2026 >
 from dipy.reconst.dti import isotropic
 from dipy.reconst.dti import deviatoric
 from dipy.reconst.dki import DiffusionKurtosisModel
@@ -196,12 +204,16 @@ __all__ = ['SisypheTract',
            'SisypheStreamlines',
            'SisypheDiffusionModel',
            'SisypheDTIModel',
+           'SisypheFreeWaterDTIModel',
            'SisypheDKIModel',
+           'SisypheRumbaModel',
            'SisypheSHCSAModel',
            'SisypheSHCSDModel',
            'SisypheDSIModel',
            'SisypheDSIDModel',
            'SisypheTracking']
+
+
 
 """
 Class hierarchy
@@ -214,7 +226,9 @@ Class hierarchy
              -> SisypheStreamlines
              -> SisypheDiffusionModel
              -> SisypheDiffusionModel -> SisypheDTIModel
+             -> SisypheDiffusionModel -> SisypheDTIModel -> SisypheFreeWaterDTIModel
              -> SisypheDiffusionModel -> SisypheDKIModel
+             -> SisypheDiffusionModel -> SisypheRumbaModel
              -> SisypheDiffusionModel -> SisypheSHCSAModel
              -> SisypheDiffusionModel -> SisypheSHCSDModel
              -> SisypheDiffusionModel -> SisypheDSIModel
@@ -7926,8 +7940,8 @@ class SisypheDiffusionModel(object):
     # Class constants
 
     _FILEEXT = '.xdmodel'
-    _DTI, _DKI, _SHCSA, _SHCSD, _DSI, _DSID = 'DTI', 'DKI', 'SHCSA', 'SHCSD', 'DSI', 'DSID'
-    _MODELS = (_DTI, _DKI, _SHCSA, _SHCSD, _DSI, _DSID)
+    _DTI, _FWDTI, _DKI, _RUMBA, _SHCSA, _SHCSD, _DSI, _DSID = 'DTI', 'FWDTI', 'DKI', 'RUMBA', 'SHCSA', 'SHCSD', 'DSI', 'DSID'
+    _MODELS = (_DTI, _FWDTI, _DKI, _RUMBA, _SHCSA, _SHCSD, _DSI, _DSID)
 
     # Class methods
 
@@ -8012,7 +8026,9 @@ class SisypheDiffusionModel(object):
         if mt in cls._MODELS:
             # noinspection PyInconsistentReturns
             if mt == cls._DTI: return SisypheDTIModel.openModel(filename, fit, binary, wait)
+            elif mt == cls._FWDTI: return SisypheFreeWaterDTIModel.openModel(filename, fit, binary, wait)
             elif mt == cls._DKI: return SisypheDKIModel.openModel(filename, fit, binary, wait)
+            elif mt == cls._RUMBA: return SisypheRumbaModel.openModel(filename, fit, binary, wait)
             elif mt == cls._SHCSA: return SisypheSHCSAModel.openModel(filename, fit, binary, wait)
             elif mt == cls._SHCSD: return SisypheSHCSDModel.openModel(filename, fit, binary, wait)
             elif mt == cls._DSI: return SisypheDSIModel.openModel(filename, fit, binary, wait)
@@ -8895,7 +8911,7 @@ class SisypheDTIModel(SisypheDiffusionModel):
     object -> SisypheDiffusionModel -> SisypheDTIModel
 
     Creation: 27/10/2023
-    Last revision: 09/07/2025
+    Last revision: 09/04/2026
     """
 
     __slots__ = ['_algfit']
@@ -8962,7 +8978,8 @@ class SisypheDTIModel(SisypheDiffusionModel):
         Parameters
         ----------
         algfit : str
-            fitting algorithm:
+            fitting algorithms:
+
                 - 'WLS' weighted least squares
                 - 'OLS' ordinary least squares
                 - 'NLLS' non-linear least squares
@@ -9200,70 +9217,236 @@ class SisypheDTIModel(SisypheDiffusionModel):
             return r
         else: raise AttributeError('Model attribute is None.')
 
-    def getIsotropic(self) -> ndarray:
+    # < Revision 09/04/2026
+    # def getIsotropic(self) -> ndarray:
+    def getIsotropic(self) -> SisypheVolume:
         """
-        Calculate Isotropic Diffusivity.
+        Calculate Isotropic Diffusivity (i.e. isotropic part of the tensor).
 
         Returns
         -------
-        numpy.ndarray
-            isotropic Diffusivity
+        SisypheVolume
+            isotropic diffusivity
         """
         if self._fmodel is not None:
-            return isotropic(self._fmodel.quadratic_form)
+            v = isotropic(self._fmodel.quadratic_form)
+            shape = list(v.shape[:3]) + [9]
+            v = v.reshape(shape)
+            r = SisypheVolume()
+            r.copyFromNumpyArray(v,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('ISOTROPIC')
+            r.setID(self.getReferenceID())
+            return r
         else: raise AttributeError('Model attribute is None.')
+    # Revision 09/04/2026 >
 
-    def getDeviatropic(self) -> ndarray:
+    # < Revision 09/04/2026
+    # getDeviatoric(self) -> ndarray:
+    def getDeviatoric(self) -> SisypheVolume:
         """
-        Calculate Deviatropic Diffusivity.
+        Calculate Deviatoric Diffusivity (i.e. anisotropic part of the tensor).
 
         Returns
         -------
-        numpy.ndarray
-            deviatropic Diffusivity
+        SisypheVolume
+            deviatropic diffusivity
         """
         if self._fmodel is not None:
-            return deviatoric(self._fmodel.quadratic_form)
+            v = deviatoric(self._fmodel.quadratic_form)
+            shape = list(v.shape[:3]) + [9]
+            v = v.reshape(shape)
+            r = SisypheVolume()
+            r.copyFromNumpyArray(v,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('DEVIATROPIC')
+            r.setID(self.getReferenceID())
+            return r
         else: raise AttributeError('Model attribute is None.')
+    # Revision 09/04/2026 >
 
-    def getTensor(self) -> ndarray:
+    # < Revision 09/04/2026
+    # def getTensor(self) -> ndarray:
+    def getTensor(self) -> SisypheVolume:
         """
         Get tensors.
 
         Returns
         -------
-        numpy.ndarray
+        SisypheVolume
             tensors
         """
         if self._fmodel is not None:
-            return self._fmodel.quadratic_form
+            v = self._fmodel.quadratic_form
+            shape = list(v.shape[:3]) + [9]
+            v = v.reshape(shape)
+            r = SisypheVolume()
+            r.copyFromNumpyArray(v,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('TENSOR')
+            r.setID(self.getReferenceID())
+            return r
         else: raise AttributeError('Model attribute is None.')
+    # Revision 09/04/2026 >
 
-    def getEigenValues(self) -> ndarray:
+    # < Revision 09/04/2026
+    # def getEigenValues(self) -> ndarray:
+    def getEigenValues(self) -> SisypheVolume:
         """
         Get tensor eigen values.
 
         Returns
         -------
-        numpy.ndarray
+        SisypheVolume
             eigen values
         """
         if self._fmodel is not None:
-            return self._fmodel.evals
+            v = self._fmodel.evals
+            shape = list(v.shape[:3]) + [3]
+            v = v.reshape(shape)
+            r = SisypheVolume()
+            r.copyFromNumpyArray(v,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('EIGVALUES')
+            r.setID(self.getReferenceID())
+            return r
         else: raise AttributeError('Model attribute is None.')
+    # Revision 09/04/2026 >
 
-    def getEigenVectors(self) -> ndarray:
+    # < Revision 09/04/2026
+    # def getEigenVectors(self) -> ndarray:
+    def getEigenVectors(self) -> SisypheVolume:
         """
         Get tensor eigen vectors.
 
         Returns
         -------
-        numpy.ndarray
+        SisypheVolume
             eigen vectors
         """
         if self._fmodel is not None:
-            return self._fmodel.evecs
+            v = self._fmodel.evecs
+            shape = list(v.shape[:3]) + [9]
+            v = v.reshape(shape)
+            r = SisypheVolume()
+            r.copyFromNumpyArray(v,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('EIGVECTORS')
+            r.setID(self.getReferenceID())
+            return r
         else: raise AttributeError('Model attribute is None.')
+    # Revision 09/04/2026 >
+
+    # < Revision 09/04/2026
+    # add getMajorEigenVector method
+    def getMajorEigenVector(self) -> SisypheVolume:
+        """
+        Get tensor major eigen vectors.
+
+        Returns
+        -------
+        SisypheVolume
+            major eigen vectors
+        """
+        if self._fmodel is not None:
+            v = self._fmodel.directions
+            shape = list(v.shape[:3]) + [3]
+            v = v.reshape(shape)
+            r = SisypheVolume()
+            r.copyFromNumpyArray(v,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('PRINCIPAL')
+            r.setID(self.getReferenceID())
+            return r
+        else: raise AttributeError('Model attribute is None.')
+    # Revision 09/04/2026 >
+
+    # < Revision 22/03/2026
+    # add getLinearity method
+    def getLinearity(self) -> SisypheVolume:
+        """
+        Calculate linearity map of the diffusion tensor.
+
+        Returns
+        -------
+        SisypheVolume
+            Linearity map
+        """
+        if self._fmodel is not None:
+            v = self._fmodel.linearity
+            v = nan_to_num(v, nan=0.0, posinf=0.0, neginf=0.0)
+            r = SisypheVolume()
+            r.copyFromNumpyArray(v,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('LINEARITY')
+            r.setID(self.getReferenceID())
+            return r
+        else: raise AttributeError('Model attribute is None.')
+    # Revision 22/03/2026 >
+
+    # < Revision 22/03/2026
+    # add getPlanarity method
+    def getPlanarity(self) -> ndarray:
+        """
+        Calculate planarity map of the diffusion tensor.
+
+        Returns
+        -------
+        numpy.ndarray
+            Planarity map
+        """
+        if self._fmodel is not None:
+            v = self._fmodel.planarity
+            v = nan_to_num(v, nan=0.0, posinf=0.0, neginf=0.0)
+            r = SisypheVolume()
+            r.copyFromNumpyArray(v,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('PLANARITY')
+            r.setID(self.getReferenceID())
+            return r
+        else: raise AttributeError('Model attribute is None.')
+    # Revision 22/03/2026 >
+
+    # < Revision 22/03/2026
+    # add getSphericity method
+    def getSphericity(self) -> ndarray:
+        """
+        Calculate sphericity map of the diffusion tensor.
+
+        Returns
+        -------
+        numpy.ndarray
+            Sphericity map
+        """
+        if self._fmodel is not None:
+            v = self._fmodel.sphericity
+            v = nan_to_num(v, nan=0.0, posinf=0.0, neginf=0.0)
+            r = SisypheVolume()
+            r.copyFromNumpyArray(v,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('SPHERICITY')
+            r.setID(self.getReferenceID())
+            return r
+        else: raise AttributeError('Model attribute is None.')
+    # Revision 22/03/2026 >
 
     # Public IO methods
 
@@ -9322,6 +9505,175 @@ class SisypheDTIModel(SisypheDiffusionModel):
                 node = node.nextSibling
             return attr
         else: raise IOError('XML file format is not supported.')
+
+
+class SisypheFreeWaterDTIModel(SisypheDTIModel):
+    """
+    Description
+    ~~~~~~~~~~~
+
+    Class to manage free water diffusion tensor imaging model.
+
+    Methods to calculate diffusion derived maps (mean diffusivity, fractional anisotropy...).
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    object -> SisypheDiffusionModel -> SisypheDTIModel -> SisypheFreeWaterDTIModel
+
+    Creation: 22/03/2026
+    """
+
+    # Class constants
+
+    _NLS, _WLS = 'NLS', 'WLS'
+    _ALG = (_WLS, _NLS)
+
+    # Class method
+
+    @classmethod
+    def openModel(cls,
+                  filename: str,
+                  fit: bool = False,
+                  binary: bool = True,
+                  wait: DialogWait | DictProxy | None = None) -> SisypheFreeWaterDTIModel:
+        """
+        Create a SisypheFreeWaterDTIModel instance from a PySisyphe Diffusion model (.xdmodel) file.
+
+        Parameters
+        ----------
+        filename : str
+            Diffusion model file name
+        fit : bool
+            compute model fitting (default False)
+        binary : bool
+            - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
+            - if False, only XML part is loaded
+        wait : DialogWait | multiprocessing.managers.DictProxy | None
+            optional progress dialog or multiprocessing shared dict (DictProxy)
+
+        Returns
+        -------
+        SisypheFreeWaterDTIModel
+            loaded Free Water DTI model
+        """
+        filename = splitext(filename)[0] + cls._FILEEXT
+        if exists(filename):
+            r = SisypheFreeWaterDTIModel()
+            r.loadModel(filename, binary, wait)
+            if fit and binary:
+                if wait is not None:
+                    if isinstance(wait, DialogWait): wait.setInformationText('Free Water DTI model fitting...')
+                    elif isinstance(wait, DictProxy): wait['msg'] = 'Free Water DTI model fitting...'
+                r.computeFitting()
+            return r
+        else: raise IOError('No such file {}.'.format(basename(filename)))
+
+    # Special method
+
+    """
+    Private attribute
+
+    _algfit     str
+    _model      dipy.reconst.fwdti.FreeWaterTensorModel
+    _fmodel     dipy.reconst.fwdti.FreeWaterTensorFit
+    """
+
+    def __init__(self, algfit: str = 'NLS') -> None:
+        """
+        SisypheFreeWaterDTIModel instance constructor.
+
+        Parameters
+        ----------
+        algfit : str
+            fitting algorithms:
+
+                - 'WLS' weighted least squares
+                - 'NLS' non-linear least squares
+        """
+        SisypheDiffusionModel.__init__(self)
+
+        if algfit in self._ALG: self._algfit = algfit
+        else: self._algfit = 'NLS'
+
+        self._model: FreeWaterTensorModel | None = None
+        self._fmodel: FreeWaterTensorFit | None = None
+
+    def __str__(self) -> str:
+        """
+        Special overloaded method called by the built-in str() python function.
+
+        Returns
+        -------
+        str
+            conversion of SisypheDTIModel instance to str
+         """
+        buff = 'Free Water Diffusion Tensor Imaging (FW-DTI) model\n'
+        buff += 'Fitting algorithm: {}\n'.format(self._algfit)
+        buff += SisypheDiffusionModel.__str__(self)
+        return buff
+
+    def __repr__(self) -> str:
+        """
+        Special overloaded method called by the built-in repr() python function.
+
+        Returns
+        -------
+        str
+            SisypheDTIModel instance representation
+        """
+        return 'SisypheFreeWaterDTIModel instance at <{}>\n'.format(str(id(self))) + self.__str__()
+
+    # Public methods
+
+    def getFreeWaterFraction(self) -> SisypheVolume:
+        """
+        Calculate free water diffusion volume fraction map.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            free water diffusion volume fraction map
+        """
+        if self._fmodel is not None:
+            r = SisypheVolume()
+            """
+            r.copyFromNumpyArray(self._fmodel.f,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            """
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('FW DIFFUSIVITY')
+            r.setID(self.getReferenceID())
+            return r
+        else: raise AttributeError('Model attribute is None.')
+
+    # Public IO methods
+
+    def createXML(self, doc: minidom.Document) -> None:
+        """
+        Write the current SisypheFreeWaterDTIModel instance attributes to XML instance. This method is called by save() method,
+        it is not recommended for use.
+
+        Parameters
+        ----------
+        doc : minidom.Document
+            XML document
+        """
+        if isinstance(doc, minidom.Document):
+            root = doc.documentElement
+            # Model type
+            node = doc.createElement('model')
+            root.appendChild(node)
+            txt = doc.createTextNode(self._FWDTI)
+            node.appendChild(txt)
+            # Fitting algorithm
+            node = doc.createElement('fitalgo')
+            root.appendChild(node)
+            txt = doc.createTextNode(self._algfit)
+            node.appendChild(txt)
+            # Common attributes
+            super().createXML(doc)
 
 
 class SisypheDKIModel(SisypheDiffusionModel):
@@ -9395,8 +9747,8 @@ class SisypheDKIModel(SisypheDiffusionModel):
     Private attribute
 
     _algfit     str
-    _model     dipy.reconst.dki.DiffusionKurtosisModel
-    _fmodel    dipy.reconst.dki.DiffusionKurtosisFit
+    _model      dipy.reconst.dki.DiffusionKurtosisModel
+    _fmodel     dipy.reconst.dki.DiffusionKurtosisFit
     """
 
     def __init__(self, algfit: str = 'WLS') -> None:
@@ -9644,6 +9996,72 @@ class SisypheDKIModel(SisypheDiffusionModel):
             return r
         else: raise AttributeError('Model attribute is None.')
 
+    # < Revision 22/03/2026
+    def getLinearity(self) -> SisypheVolume:
+        """
+        Calculate linearity map of the diffusion tensor.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            Linearity map
+        """
+        if self._fmodel is not None:
+            r = SisypheVolume()
+            r.copyFromNumpyArray(self._fmodel.linearity,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('LINEARITY')
+            r.setID(self.getReferenceID())
+            return r
+        else: raise AttributeError('Model attribute is None.')
+    # Revision 22/03/2026 >
+
+    # < Revision 22/03/2026
+    def getPlanarity(self) -> SisypheVolume:
+        """
+        Calculate planarity map of the diffusion tensor.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            Planarity map
+        """
+        if self._fmodel is not None:
+            r = SisypheVolume()
+            r.copyFromNumpyArray(self._fmodel.planarity,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('PLANARITY')
+            r.setID(self.getReferenceID())
+            return r
+        else: raise AttributeError('Model attribute is None.')
+    # Revision 22/03/2026 >
+
+    # < Revision 22/03/2026
+    def getSphericity(self) -> SisypheVolume:
+        """
+        Calculate sphericity map of the diffusion tensor.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            Sphericity map
+        """
+        if self._fmodel is not None:
+            r = SisypheVolume()
+            r.copyFromNumpyArray(self._fmodel.sphericity,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('PLANARITY')
+            r.setID(self.getReferenceID())
+            return r
+        else: raise AttributeError('Model attribute is None.')
+    # Revision 22/03/2026 >
+
     # Public IO methods
 
     def createXML(self, doc: minidom.Document) -> None:
@@ -9703,6 +10121,334 @@ class SisypheDKIModel(SisypheDiffusionModel):
         else: raise IOError('XML file format is not supported.')
 
 
+class SisypheRumbaModel(SisypheDiffusionModel):
+    """
+    Description
+    ~~~~~~~~~~~
+
+    Class to manage Robust and Unbiased Model-BAsed Spherical Deconvolution (RUMBA) model.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    object -> SisypheDiffusionModel -> SisypheRumbaModel
+
+    Creation: 23/03/2026
+    """
+
+    __slots__ = ['_algfit']
+
+    # Class constants
+
+    _SMF, _SOS = 'SMF', 'SOS'
+    _ALG = (_SMF, _SOS)
+
+    # Class method
+
+    @classmethod
+    def openModel(cls,
+                  filename: str,
+                  fit: bool = False,
+                  binary: bool = True,
+                  wait: DialogWait | DictProxy | None = None) -> SisypheRumbaModel:
+        """
+        Create a SisypheRumbaModel instance from a PySisyphe Diffusion model (.xdmodel) file.
+
+        Parameters
+        ----------
+        filename : str
+            Diffusion model file name
+        fit : bool
+            compute model fitting (default False)
+        binary : bool
+            - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
+            - if False, only XML part is loaded
+        wait : DialogWait | multiprocessing.managers.DictProxy | None
+            optional progress dialog or multiprocessing shared dict (DictProxy)
+
+        Returns
+        -------
+        SisypheDKIModel
+            loaded RUMBA model
+        """
+        filename = splitext(filename)[0] + cls._FILEEXT
+        if exists(filename):
+            r = SisypheRumbaModel()
+            r.loadModel(filename, binary, wait)
+            if fit and binary:
+                if wait is not None:
+                    if isinstance(wait, DialogWait): wait.setInformationText('RUMBA model fitting...')
+                    elif isinstance(wait, DictProxy): wait['msg'] = 'RUMBA model fitting...'
+                r.computeFitting()
+            return r
+        else: raise IOError('No such file {}.'.format(basename(filename)))
+
+    # Special method
+
+    """
+    Private attribute
+
+    _algfit     str
+    _model      dipy.reconst.rumba.RumbaSDModel
+    _fmodel     dipy.reconst.rumba.RumbaFit
+    """
+
+    def __init__(self, algfit: str = 'SMF') -> None:
+        """
+        SisypheRumbaModel instance constructor.
+
+        Parameters
+        ----------
+        algfit : str
+            fitting algorithm:
+                - 'SMF' spatial matched filter
+                - 'SOS' sum-of-squares
+        """
+        super().__init__()
+
+        if algfit in self._ALG: self._algfit = algfit
+        else: self._algfit = 'smf'
+
+        self._model: RumbaSDModel | None = None
+        self._fmodel: RumbaFit | None = None
+
+    def __str__(self) -> str:
+        """
+        Special overloaded method called by the built-in str() python function.
+
+        Returns
+        -------
+        str
+            conversion of SisypheRumbaModel instance to str
+         """
+        buff = 'Robust and Unbiased Model-BAsed Spherical Deconvolution (RUMBA) model\n'
+        buff += 'Fitting algorithm: {}\n'.format(self._algfit.upper())
+        buff += super().__str__()
+        return buff
+
+    def __repr__(self) -> str:
+        """
+        Special overloaded method called by the built-in repr() python function.
+
+        Returns
+        -------
+        str
+            SisypheRumbaModel instance representation
+        """
+        return 'SisypheRumbaModel instance at <{}>\n'.format(str(id(self))) + self.__str__()
+
+    # Public methods
+
+    def setFitAlgorithm(self, algfit: str = 'SMF') -> None:
+        """
+        Set the fitting algorithm attribute of the current SisypheRumbaModel instance.
+
+        Parameters
+        ----------
+        algfit : str
+            fitting algorithm:
+                - 'SMF' spatial matched filter
+                - 'SOS' sum-of-squares
+        """
+        if algfit in self._ALG: self._algfit = algfit.lower()
+        else: ValueError('invalid parameter value {}.'.format(algfit))
+
+    def getFitAlgorithm(self) -> str:
+        """
+        Get the fitting algorithm attribute of the current SisypheRumbaModel instance.
+
+        Returns
+        -------
+        str
+            fitting algorithm:
+                - 'SMF' spatial matched filter
+                - 'SOS' sum-of-squares
+        """
+        return self._algfit.upper()
+
+    def getModel(self):
+        """
+        Get the model attribute of the current SisypheRumbaModel instance.
+
+        Returns
+        -------
+        dipy.reconst.rumba.RumbaSDModel
+            dipy RUMBA model
+        """
+        if self.hasGradients():
+            if self._model is None:
+                self._model = RumbaSDModel(self._gtable, recon_type=self._algfit)
+        return super().getModel()
+
+    def computeFitting(self, algfit: str = '', wait: DialogWait | None = None) -> None:
+        """
+        Estimate the diffusion model of the current SisypheRumbaModel instance.
+
+        Parameters
+        ----------
+        algfit : str
+            fitting algorithm:
+                - 'SMF' spatial matched filter
+                - 'SOS' sum-of-squares
+                - if is empty, uses fitting algorithm attribute
+        wait: Sisyphe.gui.dialogWait.DialogWait | None
+            progress bar dialog (optional)
+        """
+        if self.hasGradients() and self.hasDWI():
+            if self._fmodel is None:
+                if wait is not None:
+                    wait.setInformationText('RUMBA model fitting...')
+                if algfit == '' or algfit not in self._ALG: algfit = self._algfit.lower()
+                else: self._algfit = algfit.lower()
+                self._model = RumbaSDModel(gtab=self._gtable, recon_type=algfit)
+                # noinspection PyTypeChecker
+                self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
+
+    def getCerebroSpinalFluidFraction(self) -> SisypheVolume:
+        """
+        Calculate CSF fraction map.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            CSF fraction map
+        """
+        if self._fmodel is not None:
+            r = SisypheVolume()
+            r.copyFromNumpyArray(self._fmodel.f_csf,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('CSF FRACTION')
+            r.setID(self.getReferenceID())
+            return r
+        else:
+            raise AttributeError('Model attribute is None.')
+
+    def getWhiteMatterFraction(self) -> SisypheVolume:
+        """
+        Calculate white matter fraction map.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            White matter fraction map
+        """
+        if self._fmodel is not None:
+            r = SisypheVolume()
+            r.copyFromNumpyArray(self._fmodel.f_wm,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('WM FRACTION')
+            r.setID(self.getReferenceID())
+            return r
+        else:
+            raise AttributeError('Model attribute is None.')
+
+    def getGrayMatterFraction(self) -> SisypheVolume:
+        """
+        Calculate gray matter fraction map.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            Gray matter fraction map
+        """
+        if self._fmodel is not None:
+            r = SisypheVolume()
+            r.copyFromNumpyArray(self._fmodel.f_gm,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('GM FRACTION')
+            r.setID(self.getReferenceID())
+            return r
+        else:
+            raise AttributeError('Model attribute is None.')
+
+    def getIsotropicFraction(self) -> SisypheVolume:
+        """
+        Calculate isotropic fraction map.
+        Equivalent to sum of GM and CSF fractions.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            Isotropic fraction map
+        """
+        if self._fmodel is not None:
+            r = SisypheVolume()
+            r.copyFromNumpyArray(self._fmodel.f_iso,
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('ISOTROPIC FRACTION')
+            r.setID(self.getReferenceID())
+            return r
+        else:
+            raise AttributeError('Model attribute is None.')
+
+    # Public IO methods
+
+    def createXML(self, doc: minidom.Document) -> None:
+        """
+        Write the current SisypheRumbaModel instance attributes to XML instance. This method is called by save() method,
+        it is not recommended for use.
+
+        Parameters
+        ----------
+        doc : minidom.Document
+            XML document
+        """
+        if isinstance(doc, minidom.Document):
+            root = doc.documentElement
+            # Model type
+            node = doc.createElement('model')
+            root.appendChild(node)
+            txt = doc.createTextNode(self._RUMBA)
+            node.appendChild(txt)
+            # Fitting algorithm
+            node = doc.createElement('fitalgo')
+            root.appendChild(node)
+            txt = doc.createTextNode(self._algfit.upper())
+            node.appendChild(txt)
+            # Common attributes
+            super().createXML(doc)
+
+    def parseXML(self, doc: minidom.Document) -> dict:
+        """
+        Read the current SisypheDKIModel instance attributes from XML instance. This method is called by load() method,
+        it is not recommended for use.
+
+        Parameters
+        ----------
+        doc : minidom.Document
+            XML document
+
+        Returns
+        -------
+        dict
+            keys(str), values:
+                - 'model', str, 'RUMBA'
+                - 'dtype', str, diffusion weighted images datatype
+                - 'shape', list[int, int, int], diffusion weighted images shape (image size in each dimension)
+        """
+        root = doc.documentElement
+        if root.nodeName == self._FILEEXT[1:] and root.getAttribute('version') <= '1.0':
+            attr = super().parseXML(doc)
+            node = root.firstChild
+            while node:
+                # Model type
+                if node.nodeName == 'model': attr['model'] = node.firstChild.data
+                # Fitting algorithm
+                if node.nodeName == 'fitalgo': self._algfit = node.firstChild.data
+                if self._algfit: self._algfit.lower()
+                node = node.nextSibling
+            return attr
+        else: raise IOError('XML file format is not supported.')
+
+
 class SisypheSHCSAModel(SisypheDiffusionModel):
     """
     Description
@@ -9716,7 +10462,7 @@ class SisypheSHCSAModel(SisypheDiffusionModel):
     object -> SisypheDiffusionModel -> SisypheSHCSAModel
 
     Creation: 29/10/2023
-    Last revision: 09/07/2025
+    Last revision: 22/03/2026
     """
 
     __slots__ = ['_order']
@@ -9845,7 +10591,11 @@ class SisypheSHCSAModel(SisypheDiffusionModel):
         """
         if self.hasGradients():
             if self._model is None:
-                self._model = CsaOdfModel(self._gtable, sh_order=self._order)
+                # < Revision 22/03/2026
+                # self._model = CsaOdfModel(gtab=self._gtable, sh_order=order)
+                # new parameter name since dipy v1.9 sh_order -> sh_order_max
+                self._model = CsaOdfModel(self._gtable, sh_order_max=self._order)
+                # Revision 22/03/2026 >
         return super().getModel()
 
     def computeFitting(self, order: int = 6, wait: DialogWait | None = None) -> None:
@@ -9865,7 +10615,11 @@ class SisypheSHCSAModel(SisypheDiffusionModel):
                     wait.setInformationText('SHCSA model fitting...')
                 if order == 0: order = self._order
                 else: self._order = order
-                self._model = CsaOdfModel(gtab=self._gtable, sh_order=order)
+                # < Revision 22/03/2026
+                # self._model = CsaOdfModel(gtab=self._gtable, sh_order=order)
+                # new parameter name since dipy v1.9 sh_order -> sh_order_max
+                self._model = CsaOdfModel(gtab=self._gtable, sh_order_max=order)
+                # Revision 22/03/2026 >
                 self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
 
     def getGFA(self) -> SisypheVolume:
@@ -9961,7 +10715,7 @@ class SisypheSHCSDModel(SisypheDiffusionModel):
     object -> SisypheDiffusionModel -> SisypheSHCSDModel
 
     Creation: 29/10/2023
-    Last revision: 09/07/2025
+    Last revision: 22/03/2026
     """
 
     __slots__ = ['_order']
@@ -10091,7 +10845,11 @@ class SisypheSHCSDModel(SisypheDiffusionModel):
         if self.hasGradients():
             if self._model is None:
                 response, ratio = auto_response_ssst(self._gtable, self._dwi, roi_radii=10, fa_thr=0.7)
-                self._model = ConstrainedSphericalDeconvModel(self._gtable, response, sh_order=self._order)
+                # < Revision 22/03/2026
+                # self._model = ConstrainedSphericalDeconvModel(gtab=self._gtable, response=response, sh_order=order)
+                # new parameter name since dipy v1.9 sh_order -> sh_order_max
+                self._model = ConstrainedSphericalDeconvModel(self._gtable, response, sh_order_max=self._order)
+                # Revision 22/03/2026 >
         return super().getModel()
 
     def computeFitting(self, order: int = 0, wait: DialogWait | None = None) -> None:
@@ -10112,9 +10870,11 @@ class SisypheSHCSDModel(SisypheDiffusionModel):
                 if order == 0: order = self._order
                 else: self._order = order
                 response, ratio = auto_response_ssst(gtab=self._gtable, data=self._dwi, roi_radii=10, fa_thr=0.7)
+                # < Revision 22/03/2026
                 # self._model = ConstrainedSphericalDeconvModel(gtab=self._gtable, response=response, sh_order=order)
                 # new parameter name since dipy v1.9 sh_order -> sh_order_max
                 self._model = ConstrainedSphericalDeconvModel(gtab=self._gtable, response=response, sh_order_max=order)
+                # Revision 22/03/2026 >
                 self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
 
     def getGFA(self) -> SisypheVolume:

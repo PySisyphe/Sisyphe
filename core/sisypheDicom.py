@@ -693,7 +693,7 @@ class DicomToXmlDicom(object):
     object -> DicomToXmlDicom
 
     Creation: 08/09/2022
-    Last Revision: 27/03/2025
+    Last Revision: 01/04/2026
     """
     __slots__ = ['_uid', '_filenames', '_xmldirectory', '_xmlfilename']
 
@@ -935,7 +935,12 @@ class DicomToXmlDicom(object):
             if len(self._filenames) == 1:
                 for de in ds0:
                     if de.VR != 'SQ':
-                        node = doc.createElement(de.keyword)
+                        # < Revision 01/04/2026
+                        # node = doc.createElement(de.keyword)
+                        keyword = de.keyword
+                        if keyword == '': keyword = de.name.replace(' ', '')
+                        node = doc.createElement(keyword)
+                        # Revision 01/04/2026 >
                         vr = doc.createAttribute('VR')
                         vr.value = de.VR
                         vm = doc.createAttribute('VM')
@@ -991,11 +996,23 @@ class DicomToXmlDicom(object):
                 ds1.remove_private_tags()
                 for de in ds0:
                     if de.VR != 'SQ':
-                        if de.value != ds1[de.keyword].value:
+                        # < Revision 01/04/2026
+                        # if de.value != ds1[de.keyword].value:
+                        if de.value != ds1[de.tag].value:
+                        # Revision 01/04/2026 >
                             multi.append(de)
-                            node = doc.createElement('Node{}'.format(de.keyword))
-                            for dec in (ds0[de.keyword], ds1[de.keyword]):
-                                child = doc.createElement(de.keyword)
+                            # < Revision 01/04/2026
+                            # node = doc.createElement('Node{}'.format(de.keyword))
+                            keyword = de.keyword
+                            if keyword == '': keyword = de.name.replace(' ', '')
+                            node = doc.createElement('Node{}'.format(keyword))
+                            # for dec in (ds0[de.keyword], ds1[de.keyword]):
+                            for dec in (ds0[de.tag], ds1[de.tag]):
+                            # Revision 01/04/2026 >
+                                # < Revision 01/04/2026
+                                # child = doc.createElement(de.keyword)
+                                child = doc.createElement(keyword)
+                                # Revision 01/04/2026 >
                                 vr = doc.createAttribute('VR')
                                 vr.value = de.VR
                                 vm = doc.createAttribute('VM')
@@ -1053,7 +1070,12 @@ class DicomToXmlDicom(object):
                                 child.appendChild(txt)
                             root.appendChild(node)
                         else:
-                            node = doc.createElement(de.keyword)
+                            # < Revision 01/04/2026
+                            # node = doc.createElement(de.keyword)
+                            keyword = de.keyword
+                            if keyword == '': keyword = de.name.replace(' ', '')
+                            node = doc.createElement(keyword)
+                            # Revision 01/04/2026 >
                             vr = doc.createAttribute('VR')
                             vr.value = de.VR
                             vm = doc.createAttribute('VM')
@@ -1115,10 +1137,19 @@ class DicomToXmlDicom(object):
                         ds = dcmread(filename, stop_before_pixels=True)
                         if QApplication.instance() is not None: QApplication.processEvents()
                         for de in multi:
-                            node = doc.getElementsByTagName('Node{}'.format(de.keyword))
+                            # < Revision 01/04/2026
+                            # node = doc.getElementsByTagName('Node{}'.format(de.keyword))
+                            keyword = de.keyword
+                            if keyword == '': keyword = de.name.replace(' ', '')
+                            node = doc.getElementsByTagName('Node{}'.format(keyword))
+                            # Revision 01/04/2026 >
                             if node:
-                                dec = ds[de.keyword]
-                                child = doc.createElement(de.keyword)
+                                # < Revision 01/04/2026
+                                # dec = ds[de.keyword]
+                                # child = doc.createElement(de.keyword)
+                                dec = ds[de.tag]
+                                child = doc.createElement(keyword)
+                                # Revision 01/04/2026 >
                                 vr = doc.createAttribute('VR')
                                 vr.value = de.VR
                                 vm = doc.createAttribute('VM')

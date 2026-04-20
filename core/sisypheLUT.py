@@ -33,7 +33,11 @@ from numpy import array
 if 'matplotlib' not in sys.modules:
     import matplotlib
     matplotlib.use('Qt5Agg')
-from matplotlib.cm import get_cmap
+# < Revision 23/03/2026
+# migrate from matplotlib 3.6.3 to 3.10.8
+# from matplotlib.cm import get_cmap
+from matplotlib import colormaps
+# Revision 23/03/2026 >
 from matplotlib.colors import ListedColormap
 from matplotlib.colors import LinearSegmentedColormap
 
@@ -687,7 +691,11 @@ class SisypheLut(object):
             if name == 'gray':
                 self.setDefaultLut()
             elif name in self._COLORMAPS:
-                cmap = get_cmap(name, 256)
+                # < Revision 23/03/2026
+                # migrate from matplotlib 3.6.3 to 3.10.8
+                # cmap = get_cmap(name, 256)
+                cmap = colormaps[name].resampled(256)
+                # Revision 23/03/2026 >
                 self._name = name
                 self._typeLUT = self._LUTTOCODE['internal']
                 for i in range(0, 256):

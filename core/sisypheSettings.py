@@ -21,6 +21,7 @@ from os.path import exists
 from os.path import isfile
 from os.path import commonpath
 from os.path import relpath
+from os.path import expanduser
 
 from datetime import date
 from datetime import datetime
@@ -295,7 +296,7 @@ class SisypheSettings(object):
     object -> SisypheSettings
 
     Creation: 08/09/2022
-    Last revisions: 04/12/2025
+    Last revisions: 15/04/2026
     """
     __slots__ = ['_doc', '_filename']
 
@@ -908,10 +909,14 @@ class SisypheSettings(object):
                     if node.hasAttribute('path'):
                         path = node.getAttribute('path')
                         import Sisyphe
+                        # < Revision 15/04/2026
                         if path == '': base = ''
                         elif path == '.': base = abspath(dirname(Sisyphe.__file__))
+                        elif path == '~': base = abspath(expanduser('~'))
                         else: base = abspath(join(dirname(Sisyphe.__file__), path))
-                        return abspath(join(base, data))
+                        if base != '': return abspath(join(base, data))
+                        else: return data
+                        # Revision 15/04/2026 >
                     else: return data
                 # Revision 30/11/2025 >
                 # Revision 23/12/2024 >
@@ -999,8 +1004,11 @@ class SisypheSettings(object):
                     path = node.getAttribute('path')
                     import Sisyphe
                     if path != '':
+                        # < Revision 15/04/2026
                         if path == '.': path = abspath(dirname(Sisyphe.__file__))
+                        elif path == '~': path = abspath(expanduser('~'))
                         else: path = abspath(join(dirname(Sisyphe.__file__), path))
+                        # Revision 15/04/2026 >
                         data = abspath(v)
                         prefix = commonpath([path, data])
                         if prefix == data: v = relpath(data, prefix)

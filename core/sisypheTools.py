@@ -94,7 +94,7 @@ Class hierarchy
              -> (vtk.vtkTextWidget, NamedWidget) -> TextWidget
              -> (vtk.vtkHandleWidget, NamedWidget) -> HandleWidget
              -> (vtk.vtkLineWidget2, NamedWidget) -> LineWidget
-             > ToolWidgetCollection
+             -> ToolWidgetCollection
 """
 
 vectorFloat2 = list[float] | tuple[float, float]
