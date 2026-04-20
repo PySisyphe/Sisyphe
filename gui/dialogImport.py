@@ -174,9 +174,13 @@ class DialogImport(QDialog):
                                 savename = join(self._savedir.getPath(), basename(savename))
                             vol.save(savename)
                         except:
+                            self.hide()
+                            progress.hide()
                             messageBox(self,
                                        title='{} import'.format(self._ioformat),
                                        text='{} IO error.'.format(self._ioformat))
+                            self.show()
+                            progress.show()
                             continue
                         progress.incCurrentProgressValue()
                         if progress.getStopped(): break

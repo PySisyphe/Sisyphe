@@ -84,6 +84,7 @@ from Sisyphe.core.sisypheSettings import initPySisypheUserPath
 from Sisyphe.core.sisypheSettings import setUserSettingsToDefault
 from Sisyphe.core.sisypheSettings import SisypheSettings
 from Sisyphe.core.sisypheStatistics import SisypheDesign
+
 from Sisyphe.core.sisypheFiducialBox import SisypheFiducialBox
 from Sisyphe.gui.dialogFileSelection import DialogFileSelection
 from Sisyphe.gui.dialogFileSelection import DialogFilesSelection
@@ -109,10 +110,10 @@ from Sisyphe.widgets.iconBarViewWidgets import IconBarSynchronisedGridViewWidget
 from Sisyphe.widgets.multiComponentViewWidget import IconBarMultiComponentViewWidget
 from Sisyphe.widgets.projectionViewWidget import IconBarMultiProjectionViewWidget
 
+
 # noinspection PyCompatibility
 import __main__
 from PyQt5.QtWidgets import QApplication
-
 
 """
 Class hierarchy
@@ -134,7 +135,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 12/03/2026
+    Last revision: 24/03/2026
     """
 
     # Class constants
@@ -627,6 +628,74 @@ class WindowSisyphe(QMainWindow):
         self._initWindowMenu()
 
     def _initFileMenu(self) -> None:
+        """
+            File menu
+                Open
+                Open template >
+                Open from format
+                    Open Nifti
+                    Open Nrrd
+                    Open Minc
+                    Open FreeSurfer MGH
+                    Open Sisyphe (*.vol)
+                    Open BrainVoyager VMR
+                    Open VTK
+                Recent files >
+                Open user folder
+                --
+                Save
+                Save reference volume
+                Save all
+                Save As
+                Save to format
+                    Save Nifti
+                    Save Numpy
+                    Save Nrrd
+                    Save Minc
+                    Save VTK
+                Close
+                Close all
+                --
+                Preferences
+                --
+                Download manager
+                Check for update
+                --
+                Edit Attributes
+                ID replacement
+                Anonymize
+                --
+                Edit volume labels
+                ROIs to label volume
+                Volumes to label volume
+                Label volume to ROIs
+                Label volume to mask
+                Remap label volume
+                --
+                Import
+                    Import Nifti
+                    Import Minc
+                    Import Nrrd
+                    Import Vt
+                    Import Sisyphe (*.vol)
+                Export
+                    Export Nifti
+                    Export Minc
+                    Export Nrrd
+                    Export Vtk
+                    Export Numpy
+                DICOM
+                    DICOM Import
+                    DICOM RT Import
+                    DICOM Export
+                    DICOM Query/Retrieve from DICOM SCP Server
+                    --
+                    DICOM Dataset
+                    XML DICOM Attributes
+                --
+                Edit LUT
+                Quit
+        """
         self._menu['file'] = self._menubar.addMenu('File')
         # noinspection PyUnresolvedReferences
         self._menu['file'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
@@ -689,7 +758,7 @@ class WindowSisyphe(QMainWindow):
         self._action['opennrrd'] = submenu.addAction(icopennrrd, 'Open Nrrd...')
         self._action['openmnc'] = submenu.addAction(icopenmnc, 'Open Minc...')
         self._action['openmgh'] = submenu.addAction(icopenmgh, 'Open FreeSurfer MGH...')
-        self._action['openvol'] = submenu.addAction(icopenvol, 'Open Sisyphe...')
+        self._action['openvol'] = submenu.addAction(icopenvol, 'Open Sisyphe (*.vol)...')
         self._action['openvmr'] = submenu.addAction(icopenvmr, 'Open BrainVoyager VMR...')
         self._action['openvtk'] = submenu.addAction(icopenvtk, 'Open VTK...')
 
@@ -789,7 +858,7 @@ class WindowSisyphe(QMainWindow):
         # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['dcmds'] = submenu.addAction('DICOM Dataset...')
-        self._action['xdcm'] = submenu.addAction('Xml DICOM Attributes...')
+        self._action['xdcm'] = submenu.addAction('XML DICOM Attributes...')
 
         self._menu['file'].addSeparator()
         self._action['lutedit'] = self._menu['file'].addAction(iclut, 'Edit LUT...')
@@ -868,7 +937,7 @@ class WindowSisyphe(QMainWindow):
                 Split multi component volume(s)
                 --
                 Flip axis
-                Axis order
+                Permute axis
                 Remove neck slices
                 Datatype conversion
                 Attributes conversion
@@ -878,7 +947,6 @@ class WindowSisyphe(QMainWindow):
                     Mean
                     Gaussian
                     Anisotropic diffusion
-                    Non-local means
                     Gradient magnitude
                     Laplacian
                 Intensity processing
@@ -886,6 +954,7 @@ class WindowSisyphe(QMainWindow):
                     Regression intensity matching
                     Intensity normalization
                 Texture features
+                ROI texture features
                 Bias field correction
                 --
                 Atlas labeling
@@ -1288,6 +1357,7 @@ class WindowSisyphe(QMainWindow):
                     ---
                     One sample t-test
                     Two sample t-test
+                    Paired t-test
                     ANCOVA
                     ----
                     GLM images conditions
@@ -1308,8 +1378,17 @@ class WindowSisyphe(QMainWindow):
                 Seed-to-voxel time series correlation
                 Single-subject time series ICA
                 Time series correlation matrix
-                # Multi-subject time series ICA
                 ---
+                Quantitative MR maps
+                    B0 map
+                    B1 map
+                    T1 map
+                    T2 map
+                    T2' map
+                    MTR map
+                    QSM map
+                ---
+                ASL perfusion
                 Dynamic susceptibility contrast MR perfusion
         """
         # Actions
@@ -1352,7 +1431,6 @@ class WindowSisyphe(QMainWindow):
         self._menu['model'].setAttribute(Qt.WA_TranslucentBackground, True)
         self._menu['model'].aboutToShow.connect(self._updateModelsMenu)
         self._menu['model'].triggered.connect(self._openModel)
-
         self._action['contrast'] = self._menu['statmap'].addAction('Contrast...')
         self._action['result'] = self._menu['statmap'].addAction('Result...')
         # < Revision 14/10/2025
@@ -1366,7 +1444,27 @@ class WindowSisyphe(QMainWindow):
         self._action['fastica'] = self._menu['statmap'].addAction('Single-subject time series ICA...')
         self._action['matcorr'] = self._menu['statmap'].addAction('Time series correlation matrix...')
         # self._action['groupica'] = self._menu['statmap'].addAction('Multi-subject time series ICA...')
+        # < Revision 24/03/2026
         self._menu['statmap'].addSeparator()
+        # noinspection PyUnresolvedReferences
+        submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
+        submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
+        submenu.setAttribute(Qt.WA_TranslucentBackground, True)
+        submenu = self._menu['statmap'].addMenu('Quantitative MR maps')
+        self._action['b0'] = submenu.addAction('B0 map...')
+        self._action['b1'] = submenu.addAction('B1 map...')
+        self._action['t1'] = submenu.addAction('T1 map...')
+        self._action['t2'] = submenu.addAction('T2/T2* map...')
+        self._action['t2p'] = submenu.addAction('T2\' map...')
+        self._action['mtr'] = submenu.addAction('MTR map...')
+        self._action['qsm'] = submenu.addAction('QSM map...')
+        # Revision 24/03/2026 >
+        self._menu['statmap'].addSeparator()
+        # < Revision 24/03/2026
+        self._action['asl'] = self._menu['statmap'].addAction('ASL perfusion...')
+        # Revision 24/03/2026 >
         self._action['pwi'] = self._menu['statmap'].addAction('Dynamic susceptibility contrast...')
 
         # Connect
@@ -1394,6 +1492,16 @@ class WindowSisyphe(QMainWindow):
         self._action['matcorr'].triggered.connect(self.matrixCorrelation)
         self._action['fastica'].triggered.connect(self.fastICA)
         # self._action['groupica'].triggered.connect(self.groupICA)
+        # < Revision 24/03/2026
+        self._action['b0'].triggered.connect(self.mapB0)
+        self._action['b1'].triggered.connect(self.mapB1)
+        self._action['t1'].triggered.connect(self.mapT1)
+        self._action['t2'].triggered.connect(self.mapT2)
+        self._action['t2p'].triggered.connect(self.mapT2p)
+        self._action['qsm'].triggered.connect(self.mapQSM)
+        self._action['mtr'].triggered.connect(self.mapMTR)
+        self._action['asl'].triggered.connect(self.asl)
+        # Revision 24/03/2026 >
         self._action['pwi'].triggered.connect(self.perfusion)
 
     def _initDiffusionMenu(self) -> None:
@@ -1402,6 +1510,7 @@ class WindowSisyphe(QMainWindow):
                 Gradients...
                 Preprocessing...
                 Diffusion model...
+                Diffusion analysis along perivascular space...
                 Tractogram generation...
                 Bundle
                     ROI based streamlines selection...
@@ -1428,6 +1537,9 @@ class WindowSisyphe(QMainWindow):
         self._action['grad'] = self._menu['diffusion'].addAction('Gradients...')
         self._action['prepoc'] = self._menu['diffusion'].addAction('Preprocessing...')
         self._action['fit'] = self._menu['diffusion'].addAction('Diffusion model...')
+        # < Revision 13/04/2026
+        self._action['alps'] = self._menu['diffusion'].addAction('Diffusion analysis along perivascular space...')
+        # Revision 13/04/2026 >
         self._action['tracto'] = self._menu['diffusion'].addAction('Tractogram generation...')
         submenu = self._menu['diffusion'].addMenu('Bundle')
         self._action['roisel'] = submenu.addAction('ROI based streamlines selection...')
@@ -1443,6 +1555,9 @@ class WindowSisyphe(QMainWindow):
         self._action['grad'].triggered.connect(lambda _: self.diffusionGradients())
         self._action['prepoc'].triggered.connect(lambda _: self.diffusionPreprocessing())
         self._action['fit'].triggered.connect(lambda _: self.diffusionModel())
+        # < Revision 13/04/2026
+        self._action['alps'].triggered.connect(lambda _: self.diffusionALPS())
+        # Revision 13/04/2026 >
         self._action['tracto'].triggered.connect(lambda _: self.diffusionTractogram())
         self._action['roisel'].triggered.connect(lambda _: self.diffusionBundleROISelection())
         self._action['filtsel'].triggered.connect(lambda _: self.diffusionBundleFilterSelection())
@@ -1981,7 +2096,10 @@ class WindowSisyphe(QMainWindow):
         if filename and exists(filename):
             filename = abspath(filename)
             chdir(dirname(filename))
-            title = '{} model'.format(basename(filename)[0])
+            # < Revision 31/03/2026
+            # title = '{} model'.format(basename(filename)[0])
+            title = '{} model'.format(splitext(basename(filename))[0])
+            # Revision 31/03/2026 >
             design = SisypheDesign()
             design.load(filename)
             from Sisyphe.gui.dialogStatModel import DialogModel
@@ -5542,7 +5660,9 @@ class WindowSisyphe(QMainWindow):
         self._dialog = DialogResample()
         # Revision 16/04/2025 >
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
-        self._dialog.getMovingSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        w = self._dialog.getMovingSelectionWidget()
+        w[0].setToolbarThumbnail(self._thumbnail)
+        w[1].setToolbarThumbnail(self._thumbnail)
         try:
             # < Revision 12/10/2025
             self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-resample')
@@ -5877,9 +5997,9 @@ class WindowSisyphe(QMainWindow):
         w = self._dialog.getSelectionWidget()
         w.setToolbarThumbnail(self._thumbnail)
         try:
-            # < Revision 12/10/2025
-           #  self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-parcellation')
-            # Revision 12/10/2025 >
+            # < Revision 18/03/2026
+            self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-parcellation')
+            # Revision 18/03/2026 >
             if self._logger is not None: self._logger.info(
                 'Dialog exec [gui.dialogDeepSegmentation.DialogDeepAtlasParcellation]')
             self._dialog.exec()
@@ -6248,6 +6368,127 @@ class WindowSisyphe(QMainWindow):
             messageBox(self, 'Multi-subject time series ICA dialog error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
+    def mapB0(self) -> None:
+        from Sisyphe.gui.dialogQuantitativeMR import DialogB0Mapping
+        self._dialog = DialogB0Mapping()
+        fselect = self._dialog.getFileSelectionWidget()
+        fselect[0].setToolbarThumbnail(self._thumbnail)
+        fselect[1].setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        try:
+            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-b0map')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogQuantitativeMR.DialogB0Mapping]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'B0 mapping dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+
+    def mapB1(self) -> None:
+        from Sisyphe.gui.dialogQuantitativeMR import DialogB1Mapping
+        self._dialog = DialogB1Mapping()
+        fselect = self._dialog.getFileSelectionWidget()
+        fselect[0].setToolbarThumbnail(self._thumbnail)
+        fselect[1].setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        try:
+            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-b1map')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogQuantitativeMR.DialogB1Mapping]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'B1 mapping dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+
+    def mapT1(self) -> None:
+        from Sisyphe.gui.dialogQuantitativeMR import DialogT1Mapping
+        self._dialog = DialogT1Mapping()
+        fselect = self._dialog.getFileSelectionWidget()
+        fselect[0].setToolbarThumbnail(self._thumbnail)
+        fselect[1].setToolbarThumbnail(self._thumbnail)
+        fselect[2].setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        try:
+            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-t1map')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogQuantitativeMR.DialogT1Mapping]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'T1 mapping dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+
+    def mapT2(self) -> None:
+        from Sisyphe.gui.dialogQuantitativeMR import DialogT2Mapping
+        self._dialog = DialogT2Mapping()
+        fselect = self._dialog.getFileSelectionWidget()
+        fselect[0].setToolbarThumbnail(self._thumbnail)
+        fselect[1].setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        try:
+            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-t2map')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogQuantitativeMR.DialogT2Mapping]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'T2 mapping dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+
+    def mapT2p(self) -> None:
+        from Sisyphe.gui.dialogQuantitativeMR import DialogT2pMapping
+        self._dialog = DialogT2pMapping()
+        fselect = self._dialog.getFileSelectionWidget()
+        fselect[0].setToolbarThumbnail(self._thumbnail)
+        fselect[1].setToolbarThumbnail(self._thumbnail)
+        fselect[2].setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        try:
+            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-t2pmap')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogQuantitativeMR.DialogT2pMapping]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'T2\' mapping dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+
+    def mapQSM(self) -> None:
+        from Sisyphe.gui.dialogQuantitativeMR import DialogQSMMapping
+        self._dialog = DialogQSMMapping()
+        fselect = self._dialog.getFileSelectionWidget()
+        fselect[0].setToolbarThumbnail(self._thumbnail)
+        fselect[1].setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        try:
+            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-qsmmap')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogQuantitativeMR.DialogQSMMapping]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'QSM mapping dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+
+    def mapMTR(self) -> None:
+        from Sisyphe.gui.dialogQuantitativeMR import DialogMTRMapping
+        self._dialog = DialogMTRMapping()
+        fselect = self._dialog.getFileSelectionWidget()
+        fselect[0].setToolbarThumbnail(self._thumbnail)
+        fselect[1].setToolbarThumbnail(self._thumbnail)
+        fselect[2].setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        try:
+            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-mtrmap')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogQuantitativeMR.DialogMTRMapping]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'MTR mapping dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+
+    def asl(self) -> None:
+        from Sisyphe.gui.dialogPerfusion import DialogASL
+        self._dialog = DialogASL()
+        self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        try:
+            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-asl')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogPerfusion.DialogASL]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'ASL dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+
     def perfusion(self) -> None:
         # < Revision 08/01/2026
         # from Sisyphe.gui.dialogPerfusion import DialogPerfusion
@@ -6329,6 +6570,24 @@ class WindowSisyphe(QMainWindow):
         except Exception as err:
             messageBox(self, 'Diffusion model dialog error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
+
+    # < Revision 13/04/2026
+    def diffusionALPS(self) -> None:
+        from Sisyphe.gui.dialogDiffusionModel import DialogALPS
+        self._dialog =  DialogALPS()
+        fselect = self._dialog.getFileSelectionWidget()
+        fselect[0].setToolbarThumbnail(self._thumbnail)
+        fselect[1].setToolbarThumbnail(self._thumbnail)
+        fselect[2].setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        try:
+            # self._tabHelp.setPage('PySisyphe_Diffusion.html', 'menu-section-diffalps')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionModel.DialogALPS]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'Diffusion ALPS dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 13/04/2026 >
 
     def diffusionBundleROISelection(self) -> None:
         from Sisyphe.gui.dialogDiffusionBundle import DialogBundleROISelection

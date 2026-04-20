@@ -51,6 +51,7 @@ from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import LabeledComboBox
 from Sisyphe.widgets.basicWidgets import MenuPushButton
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
+from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
 from Sisyphe.widgets.functionsSettingsWidget import FunctionSettingsWidget
 from Sisyphe.gui.dialogWait import DialogWait
 
@@ -77,6 +78,8 @@ class DialogResample(QDialog):
     ~~~~~~~~~~~
 
     QDialog -> DialogResample
+
+    Last revision: 10/04/2026
     """
 
     # Special method
@@ -120,7 +123,17 @@ class DialogResample(QDialog):
         self._moving.filterSisypheVolume()
         self._moving.setCurrentVolumeButtonVisibility(True)
         self._moving.FieldChanged.connect(self._updateMoving)
+        self._moving.FieldCleared.connect(self._updateMoving)
         self._layout.addWidget(self._moving)
+
+        # < Revision 10/04/2026
+        self._apply = FilesSelectionWidget()
+        self._apply.setTextLabel('Additional moving volume(s)')
+        self._apply.filterSisypheVolume()
+        self._apply.setCurrentVolumeButtonVisibility(True)
+        self._apply.setEnabled(False)
+        self._layout.addWidget(self._apply)
+        # Revision 10/04/2026 >
 
         self._selftrf = QRadioButton('Self geometric transform')
         self._selftrf.setChecked(True)
@@ -478,6 +491,16 @@ class DialogResample(QDialog):
                     # add self._list.blockSignals(False)
                     self._list.blockSignals(False)
                     # Revision 03/09/2024 >
+                    # < Revision 10/04/2026
+                    self._apply.clearall()
+                    self._apply.setEnabled(True)
+                    self._apply.filterSameFOV(v.getFieldOfView(1))
+                    # Revision 10/04/2026 >
+        else:
+            # < Revision 10/04/2026
+            self._apply.clearall()
+            self._apply.setEnabled(False)
+            # Revision 10/04/2026 >
         v = not self._moving.isEmpty()
         self._list.setEnabled(v)
         self._fixed.setEnabled(v)
@@ -819,7 +842,7 @@ class DialogResample(QDialog):
     # Public method
 
     def getMovingSelectionWidget(self):
-        return self._moving
+        return [self._moving, self._apply]
 
     def getMoving(self):
         if not self._moving.isEmpty():
@@ -849,22 +872,33 @@ class DialogResample(QDialog):
             dialog = self._settings.getParameterValue('Dialog')
             prefix = self._settings.getParameterValue('Prefix')
             suffix = self._settings.getParameterValue('Suffix')
-            v = self.getMoving()
-            if v is not None:
-                f.setMoving(v)
-                f.setTransform(trf)
-                wait = DialogWait(title='Resample')
-                wait.open()
-                wait.setInformationText('Resample {} ...'.format(self._moving.getBasename()))
-                try:
-                    f.execute(fixed=None, save=True, dialog=dialog, prefix=prefix, suffix=suffix, wait=wait)
-                except Exception as err:
-                    messageBox(self, title=self.windowTitle(), text='{}'.format(err))
-                wait.close()
-            """
-            
-                Exit
-            
+            wait = DialogWait(title='Resample')
+            wait.open()
+            if self._apply.filenamesCount() > 0:
+                filenames = self._apply.getFilenames()
+                filenames.append(self._moving.getFilename())
+                wait.setProgressRange(0, self._apply.filenamesCount() + 1)
+                wait.setCurrentProgressValue(0)
+                wait.progressVisibilityOn()
+            else: filenames = [self._moving.getFilename()]
+            for filename in filenames:
+                if exists(filename):
+                    v = SisypheVolume()
+                    v.load(filename)
+                    f.setMoving(v)
+                    f.setTransform(trf)
+                    wait.setInformationText('Resample {} ...'.format(v.getBasename()))
+                    try: f.execute(fixed=None, save=True, dialog=dialog, prefix=prefix, suffix=suffix, wait=None)
+                    except Exception:
+                        wait.hide()
+                        messageBox(self,
+                                   title=self.windowTitle(),
+                                   text='{} resampling failed.'.format(v.getBasename()))
+                        wait.show()
+                    wait.incCurrentProgressValue()
+            wait.close()
+            """       
+            Exit  
             """
             r = messageBox(self,
                            title=self.windowTitle(),

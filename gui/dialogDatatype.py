@@ -320,7 +320,7 @@ class DialogEditID(QDialog):
 
     QDialog -> DialogEditID
 
-    Last revision: 19/02/2026
+    Last revision: 10/04/2026
     """
 
     # Special method
@@ -338,7 +338,9 @@ class DialogEditID(QDialog):
         # attributes
 
         self._refid: str | None = None
-
+        # < Revision 10/04/2026
+        self._origin: list[int] | None = None
+        # Revision 10/04/2026 >
         # Init QLayout
 
         self._layout = QVBoxLayout()
@@ -400,6 +402,9 @@ class DialogEditID(QDialog):
             attr = SisypheVolume.getVolumeAttributes(filename)
             if exists(filename):
                 self._refid = attr['id']
+                # < Revision 10/04/2026
+                self._origin = attr['origin']
+                # Revision 10/04/2026 >
                 # noinspection PyTypeChecker
                 self._files.filterSameSize(tuple(attr['size']))
                 # noinspection PyTypeChecker
@@ -407,6 +412,9 @@ class DialogEditID(QDialog):
                 self._files.setEnabled(True)
         else:
             self._refid = None
+            # < Revision 10/04/2026
+            self._origin = None
+            # Revision 10/04/2026 >
             self._execute.setEnabled(False)
             self._files.setEnabled(False)
 
@@ -444,11 +452,17 @@ class DialogEditID(QDialog):
                         v = SisypheVolume()
                         v.load(filename)
                         v.setID(self._refid)
+                        # < Revision 10/04/2026
+                        v.setOrigin(self._origin)
+                        # Revision 10/04/2026 >
                         v.save()
                     elif ext == SisypheROI.getFileExt():
                         v = SisypheROI()
                         v.load(filename)
                         v.setReferenceID(self._refid)
+                        # < Revision 10/04/2026
+                        v.setOrigin(self._origin)
+                        # Revision 10/04/2026 >
                         v.save()
                     elif ext == SisypheMesh.getFileExt():
                         v = SisypheMesh()

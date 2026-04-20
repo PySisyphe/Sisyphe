@@ -4,20 +4,20 @@ External packages/modules
 
     - Numpy, scientific computing, https://numpy.org/
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
+    - scikit-image, image processing, https://scikit-image.org/
 """
 
 from sys import platform
 
 from os.path import exists
-from os.path import join
-from os.path import dirname
 from os.path import basename
 from os.path import splitext
 
 from multiprocessing import Queue
 from multiprocessing import Manager
 
-from numpy import array
+from numpy import zeros
+from numpy import median
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
@@ -27,29 +27,32 @@ from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
+from skimage.morphology import isotropic_dilation
+
 from Sisyphe.core.sisypheDicom import loadBVal
 from Sisyphe.core.sisypheDicom import loadBVec
-from Sisyphe.core.sisypheTracts import SisypheDTIModel
-from Sisyphe.core.sisypheTracts import SisypheDKIModel
-from Sisyphe.core.sisypheTracts import SisypheSHCSAModel
-from Sisyphe.core.sisypheTracts import SisypheSHCSDModel
-from Sisyphe.core.sisypheTracts import SisypheDSIModel
-from Sisyphe.core.sisypheTracts import SisypheDSIDModel
 from Sisyphe.core.sisypheVolume import SisypheVolume
-from Sisyphe.core.sisypheVolume import SisypheVolumeCollection
+from Sisyphe.core.sisypheConstants import addPrefixToFilename
+from Sisyphe.core.sisypheImageAttributes import SisypheAcquisition
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
+from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
+from Sisyphe.widgets.selectFileWidgets import SynchronizedFilesSelectionWidget
 from Sisyphe.widgets.functionsSettingsWidget import FunctionSettingsWidget
 from Sisyphe.processing.capturedStdoutProcessing import ProcessDiffusionModel
+from Sisyphe.gui.dialogRegistration import DialogRegistration
+from Sisyphe.gui.dialogGenericResults import DialogGenericResults
 from Sisyphe.gui.dialogWait import DialogWait
 
-__all__ = ['DialogDiffusionModel']
+__all__ = ['DialogDiffusionModel',
+           'DialogALPS']
 
 """
 Class hierarchy
 ~~~~~~~~~~~~~~~
 
     - QDialog -> DialogDiffusionModel
+    - QDialog -> DialogALPS
 """
 
 class DialogDiffusionModel(QDialog):
@@ -64,7 +67,7 @@ class DialogDiffusionModel(QDialog):
 
     QDialog -> DialogDiffusionModel
 
-    Last revision: 11/07/2025
+    Last revision: 14/04/2026
     """
 
     # Special method
@@ -111,6 +114,10 @@ class DialogDiffusionModel(QDialog):
         self._DKI = FunctionSettingsWidget('DKIModel')
         self._SHCSA = FunctionSettingsWidget('SHCSAModel')
         self._SHCSD = FunctionSettingsWidget('SHCSDModel')
+        # < Revision 24/03/2026
+        self._FWDTI = FunctionSettingsWidget('FWDTIModel')
+        self._RUMBA = FunctionSettingsWidget('RUMBAModel')
+        # Revision 24/03/2026 >
         # < Revision 21/06/2025
         # self._DSI = FunctionSettingsWidget('DSI Model')
         # self._DSID = FunctionSettingsWidget('DSID Model')
@@ -123,18 +130,30 @@ class DialogDiffusionModel(QDialog):
         self._SHCSD.setSettingsButtonText('SHCSD Model')
         self._DSI.setSettingsButtonText('DSI Model')
         self._DSID.setSettingsButtonText('DSID Model')
+        # < Revision 24/03/2026
+        self._FWDTI.setSettingsButtonText('FW DTI Model')
+        self._RUMBA.setSettingsButtonText('RUMBA Model')
+        # Revision 24/03/2026 >
         self._DTI.settingsVisibilityOn()
         self._DKI.settingsVisibilityOn()
         self._SHCSA.settingsVisibilityOn()
         self._SHCSD.settingsVisibilityOn()
         self._DSI.settingsVisibilityOn()
         self._DSID.settingsVisibilityOn()
+        # < Revision 24/03/2026
+        self._FWDTI.settingsVisibilityOn()
+        self._RUMBA.settingsVisibilityOn()
+        # Revision 24/03/2026 >
         self._DTI.hideIOButtons()
         self._DKI.hideIOButtons()
         self._SHCSA.hideIOButtons()
         self._SHCSD.hideIOButtons()
         self._DSI.hideIOButtons()
         self._DSID.hideIOButtons()
+        # < Revision 24/03/2026
+        self._FWDTI.hideIOButtons()
+        self._RUMBA.hideIOButtons()
+        # Revision 24/03/2026 >
         self._modelChanged()
         self._DTI.VisibilityToggled.connect(self._center)
         self._DKI.VisibilityToggled.connect(self._center)
@@ -142,14 +161,22 @@ class DialogDiffusionModel(QDialog):
         self._SHCSD.VisibilityToggled.connect(self._center)
         self._DSI.VisibilityToggled.connect(self._center)
         self._DSID.VisibilityToggled.connect(self._center)
+        # < Revision 24/03/2026
+        self._FWDTI.VisibilityToggled.connect(self._center)
+        self._RUMBA.VisibilityToggled.connect(self._center)
+        # Revision 24/03/2026 >
 
+        # < Revision 24/03/2026
         self._layout.addWidget(self._bvals)
         self._layout.addWidget(self._bvecs)
         self._layout.addWidget(self._model)
         self._layout.addWidget(self._DTI)
+        self._layout.addWidget(self._FWDTI)
         self._layout.addWidget(self._DKI)
+        self._layout.addWidget(self._RUMBA)
         self._layout.addWidget(self._SHCSA)
         self._layout.addWidget(self._SHCSD)
+        # Revision 24/03/2026 >
 
         # Init default dialog buttons
 
@@ -294,208 +321,13 @@ class DialogDiffusionModel(QDialog):
         self._DKI.setVisible(self._combo.currentText() == 'DKI')
         self._SHCSA.setVisible(self._combo.currentText() == 'SHCSA')
         self._SHCSD.setVisible(self._combo.currentText() == 'SHCSD')
+        # < Revision 24/03/2026
+        self._FWDTI.setVisible(self._combo.currentText() == 'FWDTI')
+        self._RUMBA.setVisible(self._combo.currentText() == 'RUMBA')
+        # Revision 24/03/2026 >
         self._center(None)
 
     # Public method
-
-    def save(self):
-        if not (self._bvals.isEmpty() or self._bvecs.isEmpty()):
-            wait = DialogWait()
-            wait.open()
-            wait.setInformationText('Model definition...')
-            wait.progressVisibilityOff()
-            filename = splitext(self._bvals.getFilename())[0] + SisypheDTIModel.getFileExt()
-            fa = ga = gfa = md = tr = ad = rd = False
-            if self._combo.currentText() == 'DTI':
-                wait.setInformationText('DTI Model definition...')
-                model = SisypheDTIModel()
-                method = self._DTI.getParameterValue('Method')[0]
-                model.setFitAlgorithm(method)
-                fa = self._DTI.getParameterValue('FA')
-                ga = self._DTI.getParameterValue('GA')
-                md = self._DTI.getParameterValue('MD')
-                tr = self._DTI.getParameterValue('Trace')
-                ad = self._DTI.getParameterValue('AD')
-                rd = self._DTI.getParameterValue('RD')
-                tag = fa or ga or md or tr or ad or rd
-                ndmin = 6
-            elif self._combo.currentText() == 'DKI':
-                wait.setInformationText('DKI Model definition...')
-                model = SisypheDKIModel()
-                method = self._DKI.getParameterValue('Method')[0]
-                model.setFitAlgorithm(method)
-                fa = self._DKI.getParameterValue('FA')
-                ga = self._DKI.getParameterValue('GA')
-                md = self._DKI.getParameterValue('MD')
-                tr = self._DKI.getParameterValue('Trace')
-                ad = self._DKI.getParameterValue('AD')
-                rd = self._DKI.getParameterValue('RD')
-                tag = fa or ga or md or tr or ad or rd
-                ndmin = 15
-            elif self._combo.currentText() == 'SHCSA':
-                wait.setInformationText('SHCSA Model definition...')
-                model = SisypheSHCSAModel()
-                order = self._SHCSA.getParameterValue('Order')
-                model.setOrder(order)
-                gfa = self._SHCSA.getParameterValue('GFA')
-                tag = gfa
-                ndmin = 100
-            elif self._combo.currentText() == 'SHCSD':
-                wait.setInformationText('SHCSD Model definition...')
-                model = SisypheSHCSDModel()
-                order = self._SHCSD.getParameterValue('Order')
-                model.setOrder(order)
-                gfa = self._SHCSD.getParameterValue('GFA')
-                tag = gfa
-                ndmin = 20
-            elif self._combo.currentText() == 'DSI':
-                wait.setInformationText('DSI Model definition...')
-                gfa = self._DSI.getParameterValue('GFA')
-                model = SisypheDSIModel()
-                tag = gfa
-                ndmin = 100
-            elif self._combo.currentText() == 'DSID':
-                wait.setInformationText('DSID Model definition...')
-                gfa = self._DSID.getParameterValue('GFA')
-                model = SisypheDSIDModel()
-                tag = gfa
-                ndmin = 100
-            else: raise ValueError('Invalid model name ({}).'.format(self._combo.currentText()))
-            # Load bvecs and bvals
-            wait.setInformationText('Load gradient B values...')
-            bvals = loadBVal(self._bvals.getFilename(), format='xml')
-            dwinames = list(bvals.keys())
-            bvals = array(list(bvals.values()))
-            wait.setInformationText('Load gradient directions...')
-            bvecs = loadBVec(self._bvecs.getFilename(), format='xml', numpy=True)
-            # < Revision 08/04/2025
-            # LPS+ to RAS+ orientation conversion
-            conv = self._model.getParameterValue('Orientation')
-            if conv is None: conv = False
-            model.setGradients(bvals, bvecs, lpstoras=conv)
-            # Revision 08/04/2025 >
-            # < Revision 04/04/2025
-            # verification of consistency between model and acquisition (DWI count)
-            nd = len(bvals)
-            nb0 = 0  # B0 count
-            for i in range(nd):
-                if bvals[i] == 0: nb0 += 1
-            nd -= nb0  # DWI count
-            # Acqusition validation
-            if nd < ndmin:
-                wait.close()
-                messageBox(self, self.windowTitle(), 'Number of DWI images is not consistent '
-                                                     'with the {} model.'.format(self._combo.currentText()))
-                return
-            # Revision 04/04/2025 >
-            # Load dwi volumes
-            vols = SisypheVolumeCollection()
-            wait.setInformationText('Load diffusion weighted volumes...')
-            wait.setProgressRange(0, len(dwinames)-1)
-            wait.progressVisibilityOn()
-            for dwiname in dwinames:
-                # < Revision 03/07/2025
-                dwiname= join(dirname(filename), dwiname)
-                # Revision 03/07/2025 >
-                if exists(dwiname):
-                    wait.setInformationText('Load {}...'.format(basename(dwiname)))
-                    wait.incCurrentProgressValue()
-                    vol = SisypheVolume()
-                    # noinspection PyTypeChecker
-                    vol.load(dwiname)
-                    vols.append(vol)
-                else:
-                    wait.close()
-                    messageBox(self, self.windowTitle(), 'No such file {}'.format(dwiname))
-                    return
-            model.setDWI(vols)
-            # Mask processing
-            wait.setInformationText('Mask processing...')
-            wait.progressVisibilityOff()
-            QApplication.processEvents()
-            algo = self._model.getParameterValue('Algo')[0]
-            niter = self._model.getParameterValue('Iter')
-            size = self._model.getParameterValue('Size')
-            model.calcMask(algo, niter, size)
-            # Model fitting
-            filename = splitext(filename)[0] + model.getFileExt()
-            wait.setInformationText('Model fitting...')
-            try: model.computeFitting()
-            except Exception as err:
-                messageBox(self, self.windowTitle(), '{}'.format(err))
-            # Save model
-            if self._model.getParameterValue('Save'):
-                wait.setInformationText('Save model...')
-                QApplication.processEvents()
-                model.saveModel(filename, wait)
-            # Save maps
-            if tag:
-                # Revision 04/04/2025 >
-                if fa:
-                    wait.setInformationText('Save Fractional anisotropy map...')
-                    v = model.getFA()
-                    v.setFilename(filename)
-                    v.setFilenameSuffix('FA')
-                    v.acquisition.setSequenceToFractionalAnisotropyMap()
-                    v.setID(model.getReferenceID())
-                    v.save()
-                if ga:
-                    wait.setInformationText('Save Geodesic anisotropy map...')
-                    v = model.getGA()
-                    v.setFilename(filename)
-                    v.setFilenameSuffix('GA')
-                    v.acquisition.setModalityToOT()
-                    v.acquisition.setSequence('GA')
-                    v.setID(model.getReferenceID())
-                    v.save()
-                if gfa:
-                    wait.setInformationText('Save Generalized fractional anisotropy map...')
-                    v = model.getGFA()
-                    v.setFilename(filename)
-                    v.setFilenameSuffix('GFA')
-                    v.acquisition.setModalityToOT()
-                    v.acquisition.setSequence('GFA')
-                    v.setID(model.getReferenceID())
-                    v.save()
-                if md:
-                    wait.setInformationText('Save Mean diffusivity map...')
-                    v = model.getMD()
-                    v.setFilename(filename)
-                    v.setFilenameSuffix('MD')
-                    v.acquisition.setModalityToOT()
-                    v.acquisition.setSequence('MD')
-                    v.setID(model.getReferenceID())
-                    v.save()
-                if tr:
-                    wait.setInformationText('Save Trace map...')
-                    v = model.getTrace()
-                    v.setFilename(filename)
-                    v.setFilenameSuffix('TR')
-                    v.acquisition.setSequenceToApparentDiffusionMap()
-                    v.setID(model.getReferenceID())
-                    v.save()
-                if ad:
-                    wait.setInformationText('Save Axial diffusivity map...')
-                    v = model.getAxialDiffusivity()
-                    v.setFilename(filename)
-                    v.setFilenameSuffix('AD')
-                    v.acquisition.setModalityToOT()
-                    v.acquisition.setSequence('AD')
-                    v.setID(model.getReferenceID())
-                    v.save()
-                if rd:
-                    wait.setInformationText('Save Radial diffusivity map...')
-                    v = model.getRadialDiffusivity()
-                    v.setFilename(filename)
-                    v.setFilenameSuffix('RD')
-                    v.acquisition.setModalityToOT()
-                    v.acquisition.setSequence('RD')
-                    v.setID(model.getReferenceID())
-                    v.save()
-            wait.close()
-            self._bvals.clear(signal=False)
-            self._bvecs.clear(signal=False)
-            self._save.setEnabled(False)
 
     def multiExecute(self):
         wait = DialogWait()
@@ -514,6 +346,30 @@ class DialogDiffusionModel(QDialog):
             maps['tr'] = self._DTI.getParameterValue('Trace')
             maps['ad'] = self._DTI.getParameterValue('AD')
             maps['rd'] = self._DTI.getParameterValue('RD')
+            # < Revision 23/03/2026
+            maps['li'] = self._DTI.getParameterValue('Linearity')
+            maps['pl'] = self._DTI.getParameterValue('Planarity')
+            maps['sp'] = self._DTI.getParameterValue('Sphericity')
+            maps['ts'] = self._DTI.getParameterValue('Tensor')
+            maps['ts2'] = self._DTI.getParameterValue('Tensor2')
+            maps['mj'] = self._DTI.getParameterValue('Major')
+            maps['evl'] = self._DTI.getParameterValue('Eval')
+            maps['evc'] = self._DTI.getParameterValue('Evec')
+            # Revision 23/03/2026 >
+        # < Revision 23/03/2026
+        elif self._combo.currentText() == 'FWDTI':
+            method = self._FWDTI.getParameterValue('Method')[0]
+            maps['fa'] = self._FWDTI.getParameterValue('FA')
+            maps['ga'] = self._FWDTI.getParameterValue('GA')
+            maps['md'] = self._FWDTI.getParameterValue('MD')
+            maps['tr'] = self._FWDTI.getParameterValue('Trace')
+            maps['ad'] = self._FWDTI.getParameterValue('AD')
+            maps['rd'] = self._FWDTI.getParameterValue('RD')
+            maps['li'] = self._FWDTI.getParameterValue('Linearity')
+            maps['pl'] = self._FWDTI.getParameterValue('Planarity')
+            maps['sp'] = self._FWDTI.getParameterValue('Sphericity')
+            maps['fw'] = self._FWDTI.getParameterValue('FW')
+        # Revision 23/03/2026 >
         elif self._combo.currentText() == 'DKI':
             method = self._DKI.getParameterValue('Method')[0]
             maps['fa'] = self._DKI.getParameterValue('FA')
@@ -522,6 +378,19 @@ class DialogDiffusionModel(QDialog):
             maps['tr'] = self._DKI.getParameterValue('Trace')
             maps['ad'] = self._DKI.getParameterValue('AD')
             maps['rd'] = self._DKI.getParameterValue('RD')
+            # < Revision 23/03/2026
+            maps['li'] = self._DTI.getParameterValue('Linearity')
+            maps['pl'] = self._DTI.getParameterValue('Planarity')
+            maps['sp'] = self._DTI.getParameterValue('Sphericity')
+            # Revision 23/03/2026 >
+        # < Revision 23/03/2026
+        elif self._combo.currentText() == 'RUMBA':
+            method = self._RUMBA.getParameterValue('Method')[0]
+            maps['fcsf'] = self._RUMBA.getParameterValue('FCSF')
+            maps['fgm'] = self._RUMBA.getParameterValue('FGM')
+            maps['fwm'] = self._RUMBA.getParameterValue('FWM')
+            maps['fiso'] = self._RUMBA.getParameterValue('FISO')
+        # Revision 23/03/2026 >
         elif self._combo.currentText() == 'SHCSA':
             order = self._SHCSA.getParameterValue('Order')
             maps['gfa'] = self._SHCSA.getParameterValue('GFA')
@@ -587,3 +456,312 @@ class DialogDiffusionModel(QDialog):
     def showEvent(self, a0):
         super().showEvent(a0)
         self.move(self.screen().availableGeometry().center() - self.rect().center())
+
+
+class DialogALPS(QDialog):
+    """
+    Description
+    ~~~~~~~~~~~
+
+    GUI dialog window for diffusion tensor image analysis along the perivascular space (DTI‑ALPS).
+
+    ALPS-index express the influence of the water diffusion along the perivascular space which will reflect activity of
+    the glymphatic system in the individual cases. When the ratio is close to 1, it means that the influence of the
+    water diffusion along the perivascular space is minimal (i.e. impaired glymphatic system), and a larger ratio will
+    represent larger water diffusivity along the perivascular space.
+
+    Reference:
+    Evaluation of glymphatic system activity with the diffusion MR technique: diffusion tensor image analysis along the
+    perivascular space (DTI-ALPS) in Alzheimer's disease cases. T. Taoka, Y. Masutani, H. Kawai, T. Nakane, K. Matsuoka,
+    F. Yasuno, T. Kishimoto, S. Naganawa. Jpn J Radiol 2017 Apr;35(4):172-178.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> DialogALPS
+
+    Creation: 13/04/2026
+    """
+
+    # Special method
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # Init window
+
+        self.setWindowTitle('Diffusion analysis along perivascular space')
+        # noinspection PyUnresolvedReferences
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # Init QLayout
+
+        self._layout = QVBoxLayout()
+        self._layout.setContentsMargins(5, 5, 5, 0)
+        self._layout.setSpacing(0)
+        self.setLayout(self._layout)
+
+        # Init widgets
+
+        self._files = FilesSelectionWidget()
+        self._files.filterSisypheVolume()
+        self._files.filterMultiComponent()
+        self._files.filterSameSequence('TENSOR')
+        self._files.setTextLabel('Multicomponent tensor volume(s)')
+        self._files.FieldChanged.connect(self._updateFiles)
+        self._files.FieldCleared.connect(self._updateFiles)
+
+        self._template = SynchronizedFilesSelectionWidget(single=('Multicomponent tensor volume reference',
+                                                                  'Label volume of reference proj./assoc. areas'),
+                                                          multiple=None,
+                                                          parent=self)
+        self._template.setSisypheVolumeFilters({'single': [True, True]})
+        flt = {'single': [SisypheAcquisition.getOTModalityTag(),
+                          SisypheAcquisition.getLBModalityTag()]}
+        self._template.setModalityFilters(flt)
+        flt = {'single': ['TENSOR',
+                          SisypheAcquisition.LABELS]}
+        self._template.setSequenceFilters(flt)
+        self._tensor = self._template.getSelectionWidget('Multicomponent tensor volume reference')
+        self._tensor.filterMultiComponent()
+        self._tensor.FieldChanged.connect(self._updateFiles)
+        self._tensor.FieldCleared.connect(self._updateFiles)
+        self._lbl = self._template.getSelectionWidget('Label volume of reference proj./assoc. areas')
+        self._lbl.FieldChanged.connect(self._updateFiles)
+        self._lbl.FieldCleared.connect(self._updateFiles)
+        self._tensor.alignLabels(self._lbl)
+
+        self._settings = FunctionSettingsWidget('DiffusionALPS')
+        self._settings.setSettingsButtonText('Diffusion ALPS')
+        self._settings.setParameterVisibility('RefTensor', False)
+        self._settings.setParameterVisibility('RefLabels', False)
+        self._settings.settingsVisibilityOn()
+
+        self._layout.addWidget(self._files)
+        self._layout.addWidget(self._template)
+        self._layout.addWidget(self._settings)
+
+        # Init default dialog buttons
+
+        layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
+        layout.setDirection(QHBoxLayout.RightToLeft)
+        exitb = QPushButton('Close')
+        exitb.setAutoDefault(True)
+        exitb.setDefault(True)
+        exitb.setFixedWidth(100)
+        self._exec = QPushButton('Execute')
+        self._exec.setFixedWidth(100)
+        self._exec.setToolTip('DTI-ALPS index processing')
+        self._exec.setEnabled(False)
+        layout.addWidget(exitb)
+        layout.addWidget(self._exec)
+        layout.addStretch()
+
+        self._layout.addLayout(layout)
+
+        reftensor = self._settings.getParameterValue('RefTensor')
+        if exists(reftensor): self._tensor.open(reftensor)
+        reflabels = self._settings.getParameterValue('RefLabels')
+        if exists(reflabels): self._lbl.open(reflabels)
+
+        # Qt Signals
+
+        # noinspection PyUnresolvedReferences
+        exitb.clicked.connect(self.accept)
+        # < Revision 11/07/2025
+        # noinspection PyUnresolvedReferences
+        # self._save.clicked.connect(self.save)
+        self._exec.clicked.connect(self.execute)
+        # Revision 11/07/2025 >
+
+        # < Revision 17/06/2025
+        self.adjustSize()
+        # imposing dialog width -> set minimum width to a child widget of the main layout
+        screen = QApplication.primaryScreen().geometry()
+        self._files.setMinimumWidth(int(screen.width() * 0.33))
+        # dialog resize off
+        # noinspection PyUnresolvedReferences
+        self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
+        # Revision 17/06/2025 >
+        self.setModal(True)
+
+    # Private methods
+
+    def _updateFiles(self):
+        v = self._files.filenamesCount() > 0 and not self._tensor.isEmpty() and not self._lbl.isEmpty()
+        self._exec.setEnabled(v)
+        # if not self._tensor.isEmpty():
+        #     self._settings.setParameterValue('RefTensor', self._tensor.getFilename())
+        # if not self._lbl.isEmpty():
+        #     self._settings.setParameterValue('RefLabels', self._lbl.getFilename())
+
+    # Public method
+
+    def getFileSelectionWidget(self):
+        return [self._files,
+                self._tensor,
+                self._lbl]
+
+    def execute(self):
+        n = self._files.filenamesCount() > 0
+        if n > 0:
+            wait = DialogWait()
+            wait.open()
+            wait.setInformationText('Open reference tensor {}...'.format(basename(self._tensor.getFilename())))
+            v = SisypheVolume()
+            v.load(self._tensor.getFilename())
+            template = v.copyComponent(8)  # ZZ
+            template.setFilename(v.getFilename())
+            template.setFilenameSuffix('ZZ', sep=' ')
+            template.copyAttributesFrom(v, display=False)
+            template.acquisition.setSequence('TENSOR ZZ')
+            if not exists(template.getFilename()): template.save()
+            wait.setInformationText('Open reference area labels {}...'.format(basename(self._lbl.getFilename())))
+            areas = SisypheVolume()
+            areas.load(self._lbl.getFilename())
+            # Area dilatation
+            radius = self._settings.getParameterValue('Dilatation')
+            if radius > 0:
+                lbls = zeros(shape=areas.getNumpy().shape, dtype='uint8')
+                for i in range(1, 5):
+                    buff = areas.getNumpy() == i
+                    buff = isotropic_dilation(buff, radius)
+                    buff = (buff * i).astype('uint8')
+                    lbls += buff
+                dareas = SisypheVolume()
+                dareas.copyFromNumpyArray(lbls,
+                                          spacing=areas.getSpacing(),
+                                          origin=areas.getOrigin(),
+                                          direction=areas.getDirections())
+                dareas.copyAttributesFrom(areas)
+                dareas.setFilename(areas.getFilename())
+            else: dareas = areas
+            lbls = dareas.getNumpy()
+            dareas.setFilenamePrefix('ALPS')
+            results = dict()
+            hdr = ['filenames',
+                   'ALPS-Mean\nLeft',
+                   'ALPS-Mean\nRight',
+                   'ALPS-Median\nLeft',
+                   'ALPS-Median\nRight',
+                   'ALPS-Max\nLeft',
+                   'ALPS-Max\nRight']
+            for h in hdr: results[h] = list()
+            filenames = [v.getFilename()] + self._files.getFilenames()
+            wait.setProgressRange(0, n + 1)
+            wait.setCurrentProgressValue(0)
+            wait.progressVisibilityOn()
+            for i, filename in enumerate(filenames):
+                self._files.setSelectionTo(i)
+                wait.incCurrentProgressValue()
+                if exists(filename):
+                    if i == 0: results['filenames'].append('Reference')
+                    else: results['filenames'].append(basename(filename))
+                    v = SisypheVolume()
+                    v.load(filename)
+                    vxx = v.copyComponent(0)
+                    vxx.setFilename(v.getFilename())
+                    vxx.setFilenameSuffix('XX', sep=' ')
+                    vxx.copyAttributesFrom(v, display=False)
+                    vxx.acquisition.setSequence('TENSOR XX')
+                    if i > 0 and not exists(vxx.getFilename()): vxx.save()
+                    vyy = v.copyComponent(4)
+                    vyy.setFilename(v.getFilename())
+                    vyy.setFilenameSuffix('YY', sep=' ')
+                    vyy.copyAttributesFrom(v, display=False)
+                    vyy.acquisition.setSequence('TENSOR YY')
+                    if i > 0 and not exists(vyy.getFilename()): vyy.save()
+                    vzz = v.copyComponent(8)
+                    vzz.setFilename(v.getFilename())
+                    vzz.setFilenameSuffix('ZZ', sep=' ')
+                    vzz.copyAttributesFrom(v, display=False)
+                    vzz.acquisition.setSequence('TENSOR ZZ')
+                    if i > 0 and not exists(vzz.getFilename()): vzz.save()
+                    if i > 0:
+                        """
+                        Registration to reference
+                        """
+                        fxx = addPrefixToFilename(vxx.getFilename(), 'ALPS')
+                        fyy = addPrefixToFilename(vyy.getFilename(), 'ALPS')
+                        fzz = addPrefixToFilename(vzz.getFilename(), 'ALPS')
+                        if not exists(fxx) or not exists(fyy) or not exists(fzz):
+                            wait.hide()
+                            dialog = DialogRegistration(transform='Transform')
+                            dialog.setFixed(template)
+                            dialog.setMoving(vzz)
+                            dialog.setFilesToApply([vxx.getFilename(), vyy.getFilename()])
+                            params = dialog.getParametersDict()
+                            params['registration']['CheckRegistration'] = False
+                            params['registration']['Transform'] = self._settings.getParameterValue('Transform')[0]
+                            params['resample']['Prefix'] = 'ALPS'
+                            dialog.setParametersFromDict(params)
+                            dialog.getMovingSelectionWidget().setEnabled(False)
+                            dialog.getFixedSelectionWidget().setEnabled(False)
+                            dialog.execute()
+                            wait.show()
+                        wait.setInformationText('Open tensor {}...'.format(basename(filename)))
+                        vxx.load(fxx)
+                        vyy.load(fyy)
+                        vzz.load(fzz)
+                        dareas.setDirname(v.getDirname())
+                        dareas.save()
+                    """
+                    ALPS index processing
+                    ALPS-index = mean(Dxx(PArea), Dxx(AArea)) / mean(Dyy(PArea), Dzz(AArea))
+                    PArea: projection area
+                    AArea: association area
+                    Dxx: Tensor XX
+                    Dyy: Tensor YY
+                    Dzz: Tensor ZZ
+                    
+                    label 1: Left Association Area
+	                label 2: Right Association Area
+	                label 3: Left Projection Area
+	                label 4: Right Projection Area
+                    """
+                    wait.setInformationText('{} DTI-ALPS processing...'.format(basename(filename)))
+                    xx = vxx.getNumpy()
+                    yy = vyy.getNumpy()
+                    zz = vzz.getNumpy()
+                    xxa = xx[lbls == 1]
+                    xxp = xx[lbls == 3]
+                    yyp = yy[lbls == 3]
+                    zza = zz[lbls == 1]
+                    results['ALPS-Mean\nLeft'].append(((xxp.mean() + xxa.mean()) / 2) / ((yyp.mean() + zza.mean()) / 2))
+                    results['ALPS-Median\nLeft'].append(((median(xxp) + median(xxa)) / 2) / ((median(yyp) + median(zza)) / 2))
+                    results['ALPS-Max\nLeft'].append(((xxp.max() + xxa.max()) / 2) / ((yyp.max() + zza.max()) / 2))
+                    xxa = xx[lbls == 2]
+                    xxp = xx[lbls == 4]
+                    yyp = yy[lbls == 4]
+                    zza = zz[lbls == 2]
+                    results['ALPS-Mean\nRight'].append(((xxp.mean() + xxa.mean()) / 2) / ((yyp.mean() + zza.mean()) / 2))
+                    results['ALPS-Median\nRight'].append(((median(xxp) + median(xxa)) / 2) / ((median(yyp) + median(zza)) / 2))
+                    results['ALPS-Max\nRight'].append(((xxp.max() + xxa.max()) / 2) / ((yyp.max() + zza.max()) / 2))
+            wait.close()
+            if len(results) > 0:
+                dialog = DialogGenericResults()
+                if platform == 'win32':
+                    import pywinstyles
+                    cl = self._files.palette().base().color()
+                    c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                    pywinstyles.change_header_color(dialog, c)
+                dialog.newTab('Diffusion ALPS Index', capture=False, clipbrd=False, scrshot=False, dataset=True)
+                dialog.setTreeWidgetDict(0, results, d=2)
+                screen = QApplication.primaryScreen().geometry()
+                dialog.setMinimumWidth(int(screen.width() * 0.40))
+                dialog.exec()
+            """
+            Exit
+            """
+            r = messageBox(self,
+                           self.windowTitle(),
+                           'Would you like to process\nadditional DTI-ALPS ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
+            if r == QMessageBox.Yes:
+                self._files.clearAll()
+            else: self.accept()

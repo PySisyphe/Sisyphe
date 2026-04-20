@@ -48,6 +48,8 @@ class DialogVolumeAttributes(QDialog):
     ~~~~~~~~~~~
 
     QWidget -> QDialog -> DialogVolumeAttributes
+
+    Last revision: 19/03/2026
     """
 
     # Special method
@@ -571,6 +573,11 @@ class DialogVolumeAttributes(QDialog):
         # NM
         elif self._modality.currentIndex() == 4:
             items = SisypheAcquisition.getNMSequences()
+        # < Revision 19/03/2026
+        # LB
+        elif self._modality.currentIndex() == 5:
+            items = SisypheAcquisition.getLBSequences()
+        # Revision 19/03/2026 >
         # TP
         elif self._modality.currentIndex() == 6:
             items = list(SisypheAcquisition.getOTSequences())

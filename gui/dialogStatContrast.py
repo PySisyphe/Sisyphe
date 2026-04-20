@@ -203,7 +203,10 @@ class DialogContrast(QDialog):
                 if 'Main' in self._factors: self._factors['Main'].append(i)
                 else:
                     self._factors['Main'] = [i]
-                    self._cfactors.addItem('Main factor')
+                    # < Revision 30/03/2026
+                    # self._cfactors.addItem('Main factor')
+                    self._cfactors.addItem('Main')
+                    # Revision 30/03/2026 >
                 # w.setVisible(True)
             else:
                 name = cdesign[i][0].split(' ')[0]

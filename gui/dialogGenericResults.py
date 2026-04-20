@@ -1239,7 +1239,12 @@ class DialogGenericResults(QDialog):
                             rects = ax.bar(list(vd.keys()), values)
                             ax.bar_label(rects, padding=3)
                     else: raise ValueError('')
-                    self._plotlist[index].draw()
+                    # < Revision 23/03/2026
+                    # migrate from matplotlib 3.6.3 to 3.10.8
+                    # self._plotlist[index].draw()
+                    self._plotlist[index].draw_idle()
+                    # faster & non-blocking GUI
+                    # Revision 23/03/2026 >
                 else: raise ValueError('col parameter value {} is out of range.'.format(col))
             else: raise ValueError('index parameter value {} is out of range.'.format(index))
         else: raise TypeError('index parameter type {} is not int.'.format(type(index)))
@@ -1290,7 +1295,12 @@ class DialogGenericResults(QDialog):
                     if unit != '': ylabel += ' ({})'.format(unit)
                     ax.set_ylabel(ylabel)
                     ax.legend()
-                    self._plotlist[index].draw()
+                    # < Revision 23/03/2026
+                    # migrate from matplotlib 3.6.3 to 3.10.8
+                    # self._plotlist[index].draw()
+                    self._plotlist[index].draw_idle()
+                    # faster & non-blocking GUI
+                    # Revision 23/03/2026 >
                 else: raise ValueError('col parameter value {} is out of range.'.format(col))
             else: raise ValueError('index parameter value {} is out of range.'.format(index))
         else: raise TypeError('index parameter type {} is not int.'.format(type(index)))
@@ -1342,7 +1352,12 @@ class DialogGenericResults(QDialog):
                             lb.append(tree.headerItem().text(col) + '#{}'.format(i))
                         ax.boxplot(values, labels=lb)
                     else: raise ValueError('')
-                    self._plotlist[index].draw()
+                    # < Revision 23/03/2026
+                    # migrate from matplotlib 3.6.3 to 3.10.8
+                    # self._plotlist[index].draw()
+                    self._plotlist[index].draw_idle()
+                    # faster & non-blocking GUI
+                    # Revision 23/03/2026 >
                 else: raise ValueError('col parameter value {} is out of range.'.format(col))
             else: raise ValueError('index parameter value {} is out of range.'.format(index))
         else: raise TypeError('index parameter type {} is not int.'.format(type(index)))
@@ -1399,7 +1414,12 @@ class DialogGenericResults(QDialog):
                             values = [j[i] for j in vd.values()]
                             ax.pie(values, labels=lb, autopct=lambda pct: func(pct, values))
                     else: raise ValueError('')
-                    self._plotlist[index].draw()
+                    # < Revision 23/03/2026
+                    # migrate from matplotlib 3.6.3 to 3.10.8
+                    # self._plotlist[index].draw()
+                    self._plotlist[index].draw_idle()
+                    # faster & non-blocking GUI
+                    # Revision 23/03/2026 >
                 else: raise ValueError('col parameter value {} is out of range.'.format(col))
             else: raise ValueError('index parameter value {} is out of range.'.format(index))
         else: raise TypeError('index parameter type {} is not int.'.format(type(index)))

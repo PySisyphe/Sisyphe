@@ -26,6 +26,8 @@ from numpy import array
 
 from multiprocessing import Lock
 
+from time import time
+
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
@@ -91,7 +93,7 @@ class DialogWait(QDialog):
 
     QWidget - > QDialog -> DialogWait
 
-    Last revision: 17/07/2025
+    Last revision: 04/04/2026
     """
 
     # Class method
@@ -678,16 +680,26 @@ class DialogWait(QDialog):
         else:
             raise TypeError('parameter type {} is not int.'.format(type(v)))
 
-    def messageFromDictProxyManager(self, mng: dict[str, str | int | None]) -> None:
+    def messageFromDictProxyManager(self, mng: dict[str, str | int | list | None]) -> None:
         """
         Updates the dialog's state based on a dictionary from a proxy manager.
         Handles updates for information text, progress bar range, and current value.
         Processes pending GUI events.
 
+        Message keys:
+
+            - 'msg': str, display information in the progress dialog.
+            - 'amsg': str, display additional information in the progress dialog.
+            - 'max': int, set the maximum value of the progress bar.
+            - 'min': int, set the minimum value of the progress bar.
+            - 'value': int, set the current value of the progress bar.
+            - 'inc': int, increment to the current value of the progress bar.
+            - 'acc': Manager.list, set the current value of the progress bar based on the cumulative sum of a list.
+
         Parameters
         ----------
-        mng : dict[str, str | int | None]
-            A dictionary containing update commands (e.g., 'msg', 'amsg', 'max', 'value', 'inc').
+        mng : dict[str, str | int | list | None]
+            A dictionary containing update commands (e.g., 'msg', 'amsg', 'max', 'value', 'inc', 'acc').
         """
         if 'msg' in mng:
             if mng['msg'] is not None:
@@ -717,6 +729,19 @@ class DialogWait(QDialog):
                 self.incCurrentProgressValue()
                 mng['inc'] = None
         # Revision 11/07/2025 >
+        # < Revision 04/04/2025
+        if 'acc' in mng:
+            if mng['acc'] is not None:
+                v = sum(mng['acc'])
+                self.setCurrentProgressValue(v)
+                if 'start' in mng:
+                    if v / self.getProgressMaximum() > 0.1:
+                        start = mng['start']
+                        r = self.getProgressMaximum() - v
+                        r = ((time() - start) / v) * r
+                        if r <= 60.0: self.addInformationText('Estimated time remaining {} sec.'.format(int(r)))
+                        else: self.addInformationText('Estimated time remaining {} min.'.format(int(r / 60)))
+        # Revision 04/04/2025 >
         QApplication.processEvents()
 
     # noinspection PyUnusedLocal

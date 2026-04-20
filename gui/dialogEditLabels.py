@@ -53,7 +53,7 @@ class DialogEditLabels(QDialog):
 
     QWidget -> QDialog -> DialogEditLabels
 
-    Last revision: 13/03/2026
+    Last revision: 14/04/2026
     """
 
     # Special method
@@ -339,9 +339,16 @@ class DialogEditLabels(QDialog):
             self._initTreeLabels()
             if labels is not None and len(labels) > 0:
                 for k in labels:
-                    item = self._tree.topLevelItem(k)
-                    edit = self._tree.itemWidget(item, 1)
-                    edit.setText(labels[k])
+                    # < Revision 14/04/2026
+                    # item = self._tree.topLevelItem(k)
+                    # edit = self._tree.itemWidget(item, 1)
+                    # edit.setText(labels[k])
+                    if k < self._tree.topLevelItemCount():
+                        item = self._tree.topLevelItem(k)
+                        edit = self._tree.itemWidget(item, 1)
+                        edit.setText(labels[k])
+                    else: break
+                    # Revision 14/04/2026 >
                 # for i in range(256):
                 #     if i in labels:
                 #         item = self._tree.topLevelItem(i)

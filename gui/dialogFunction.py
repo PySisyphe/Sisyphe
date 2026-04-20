@@ -22,6 +22,7 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
@@ -93,7 +94,7 @@ class AbstractDialogFunction(QDialog):
     QDialog -> AbstractDialogFunction
 
     Creation: 10/10/2023
-    Last revision: 13/02/2025
+    Last revision: 02/04/2026
     """
 
     @classmethod
@@ -159,7 +160,7 @@ class AbstractDialogFunction(QDialog):
         # noinspection PyUnresolvedReferences
         self._ok.clicked.connect(self.accept)
         # noinspection PyUnresolvedReferences
-        self._execute.clicked.connect(self.execute)
+        self._execute.clicked.connect(lambda _: self.execute())
 
     """
     Private attributes
@@ -180,22 +181,41 @@ class AbstractDialogFunction(QDialog):
     def function(self, filename, wait):
         raise NotImplemented
 
-    def execute(self):
+    def execute(self, messagebox: bool = True):
         if self.getNumberOfFilenames() > 0:
             wait = DialogWait(title=self._funcname, cancel=True)
             wait.open()
-            for filename in self.getFilenames():
+            for i, filename in enumerate(self.getFilenames()):
+                # < Revision 02/04/2026
+                self._files.clearSelection()
+                self._files.setSelectionTo(i)
+                # Revision 02/04/2026 >
                 try:
                     self.function(filename, wait)
                     if wait.getStopped(): break
-                except Exception as err:
+                except Exception:
                     if not wait.getStopped():
                         messageBox(self,
                                    title=self._funcname,
-                                   text='{} error: {}\n{}.'.format(basename(filename), type(err), str(err)))
+                                   text='{} failed.'.format(self.windowTitle()))
                         break
-            wait.close()
-            self._files.clearall()
+            # < Revision 01/04/2026
+            # wait.close()
+            # self._files.clearall()
+            """
+            Exit  
+            """
+            if messagebox:
+                wait.close()
+                r = messageBox(self,
+                               self.windowTitle(),
+                               'Would you like to perform\nadditional {} ?'.format(self.windowTitle().lower()),
+                               icon=QMessageBox.Question,
+                               buttons=QMessageBox.Yes | QMessageBox.No,
+                               default=QMessageBox.No)
+                if r == QMessageBox.Yes: self._files.clearall()
+                else: self.accept()
+            # Revision 01/04/2026 >
 
     def getFunctionName(self):
         return self._funcname
@@ -253,13 +273,16 @@ class DialogRemoveNeckSlices(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogRemoveNeckSlices
 
     Creation: 10/10/2023
-    Last Revision: 10/10/2023
+    Last Revision: 01/04/2026
     """
 
     # Special method
 
     def __init__(self, parent=None):
         super().__init__('RemoveNeckSlices', parent)
+        # < Revision 01/04/2026
+        self.setWindowTitle('Neck slices removing')
+        # Revision 01/04/2026 >
         self._settings.settingsVisibilityOn()
 
     # Public method
@@ -296,13 +319,16 @@ class DialogGaussianFilter(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogGaussianFilterFunction
 
     Creation: 10/10/2023
-    Last revision: 10/10/2023
+    Last revision: 01/04/2026
     """
 
     # Special method
     
     def __init__(self, parent=None):
         super().__init__('GaussianImageFilter', parent)
+        # < Revision 01/04/2026
+        self.setWindowTitle('Gaussian filtering')
+        # Revision 01/04/2026 >
         self._settings.settingsVisibilityOn()
 
     # Public method
@@ -343,13 +369,16 @@ class DialogMeanFilter(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogMeanFilter
 
     Creation: 10/10/2023
-    Last revision: 10/10/2023
+    Last revision: 01/04/2026
     """
 
     # Special method
 
     def __init__(self, parent=None):
         super().__init__('MeanImageFilter', parent)
+        # < Revision 01/04/2026
+        self.setWindowTitle('Mean filtering')
+        # Revision 01/04/2026 >
         self._settings.settingsVisibilityOn()
 
     # Public method
@@ -389,13 +418,16 @@ class DialogMedianFilter(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogMedianFilter
 
     Creation: 10/10/2023
-    Last revision: 10/10/2023
+    Last revision: 01/04/2026
     """
 
     # Special method
 
     def __init__(self, parent=None):
         super().__init__('MedianImageFilter', parent)
+        # < Revision 01/04/2026
+        self.setWindowTitle('Median filtering')
+        # Revision 01/04/2026 >
         self._settings.settingsVisibilityOn()
 
     # Public method
@@ -436,13 +468,16 @@ class DialogAnisotropicDiffusionFilter(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogAnisotropicDiffusionFilter
 
     Creation: 10/10/2023
-    Last revision: 10/10/2023
+    Last revision: 01/04/2026
     """
 
     # Special method
 
     def __init__(self, parent=None):
         super().__init__('AnisotropicDiffusionImageFilter', parent)
+        # < Revision 01/04/2026
+        self.setWindowTitle('Anisotropic diffusion filtering')
+        # Revision 01/04/2026 >
         self._settings.settingsVisibilityOn()
         self._algorithmChanged()
 
@@ -529,13 +564,16 @@ class DialogGradientFilter(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogGradientFilter
 
     Creation: 10/10/2023
-    Last revision: 10/10/2023
+    Last revision: 01/04/2026
     """
 
     # Special method
 
     def __init__(self, parent=None):
         super().__init__('GradientMagnitudeImageFilter', parent)
+        # < Revision 01/04/2026
+        self.setWindowTitle('Gradient filter processing')
+        # Revision 01/04/2026 >
         self._settings.settingsVisibilityOn()
 
     # Public method
@@ -577,13 +615,16 @@ class DialogLaplacianFilter(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogLaplacianFilter
 
     Creation: 10/10/2023
-    Last revision: 10/10/2023
+    Last revision: 01/04/2026
     """
 
     # Special method
 
     def __init__(self, parent=None):
         super().__init__('LaplacianImageFilter', parent)
+        # < Revision 01/04/2026
+        self.setWindowTitle('Laplacian filter processing')
+        # Revision 01/04/2026 >
         self._settings.settingsVisibilityOn()
 
     # Public method
@@ -624,13 +665,16 @@ class DialogBiasFieldCorrectionFilter(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogBiasFieldCorrectionFilter
 
     Creation: 10/10/2023
-    Last revision: 10/10/2023
+    Last revision: 01/04/2026
     """
 
     # Special method
 
     def __init__(self, parent=None):
         super().__init__('BiasFieldCorrectionImageFilter', parent)
+        # < Revision 01/04/2026
+        self.setWindowTitle('Bias field correction')
+        # Revision 01/04/2026 >
         self.resize(QSize(600, 800))
         self._settings.settingsVisibilityOn()
 
@@ -689,7 +733,7 @@ class DialogHistogramIntensityMatching(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogHistogramMatching
 
     Creation: 10/10/2023
-    Last revision: 15/10/2025
+    Last revision: 01/04/2026
     """
 
     # Special method
@@ -703,6 +747,9 @@ class DialogHistogramIntensityMatching(AbstractDialogFunction):
 
     def __init__(self, parent=None):
         super().__init__('HistogramIntensityMatchingImageFilter', parent)
+        # < Revision 01/04/2026
+        self.setWindowTitle('Histogram intensity matching')
+        # Revision 01/04/2026 >
         self._settings.settingsVisibilityOn()
 
         files = self.getFilesSelectionWidget()
@@ -777,10 +824,10 @@ class DialogHistogramIntensityMatching(AbstractDialogFunction):
                 color='green', label='Normalized image', stacked=True)
         ax.legend()
 
-    def execute(self):
+    def execute(self, dummy: bool = True):
         if not self._reference.isEmpty():
             self._results.clear()
-            super().execute()
+            super().execute(False)
             if self._results.getTabCount() > 0:
                 self._results.exec()
 
@@ -806,7 +853,7 @@ class DialogRegressionIntensityMatching(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogRegressionIntensityMatching
 
     Creation: 23/10/2024
-    Last revision: 05/12/2025
+    Last revision: 01/04/2026
     """
 
     # Special method
@@ -819,6 +866,9 @@ class DialogRegressionIntensityMatching(AbstractDialogFunction):
 
     def __init__(self, parent=None):
         super().__init__('RegressionIntensityMatchingImageFilter', parent)
+        # < Revision 01/04/2026
+        self.setWindowTitle('Regression intensity matching')
+        # Revision 01/04/2026 >
         self._settings.settingsVisibilityOn()
 
         files = self.getFilesSelectionWidget()
@@ -883,7 +933,7 @@ class DialogRegressionIntensityMatching(AbstractDialogFunction):
         wait.setInformationText('Save {}'.format(rimg.getBasename()))
         rimg.save()
 
-    def execute(self):
+    def execute(self, dummy: bool = True):
         if not self._reference.isEmpty():
             super().execute()
 
@@ -910,7 +960,7 @@ class DialogIntensityNormalization(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogIntensityNormalization
 
     Creation: 27/10/2024
-    Last revision: 27/10/2024
+    Last revision: 01/04/2026
     """
 
     # Special method
@@ -923,6 +973,9 @@ class DialogIntensityNormalization(AbstractDialogFunction):
 
     def __init__(self, parent=None):
         super().__init__('IntensityNormalizationImageFilter', parent)
+        # < Revision 01/04/2026
+        self.setWindowTitle('Intensity normalization')
+        # Revision 01/04/2026 >
         self._settings.settingsVisibilityOn()
 
     # Public methods
@@ -949,7 +1002,7 @@ class DialogIntensityNormalization(AbstractDialogFunction):
         wait.setInformationText('Save {}'.format(rimg.getBasename()))
         rimg.save()
 
-    def execute(self):
+    def execute(self, dummy: bool = True):
         files = self.getFilesSelectionWidget()
         if not files.isEmpty():
             super().execute()

@@ -21,6 +21,8 @@ from os.path import basename
 from numpy import uint8
 from numpy import dtype
 
+from PyQt5.QtWidgets import QMessageBox
+
 from Sisyphe.core.sisypheROI import SisypheROI
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheImageAttributes import SisypheAcquisition
@@ -52,7 +54,7 @@ class DialogSkullStripping(AbstractDialogFunction):
 
     QDialog -> AbstractDialogFunction -> DialogSkullStripping
 
-    Last revision: 18/03/2026
+    Last revision: 01/04/2026
     """
 
     # Class method
@@ -67,6 +69,9 @@ class DialogSkullStripping(AbstractDialogFunction):
 
     def __init__(self, parent=None):
         super().__init__('SkullStripping', parent)
+        # < Revision 01/04/2026
+        self.setWindowTitle('Skull Stripping')
+        # Revision 01/04/2026 >
         self._settings.settingsVisibilityOn()
 
         self._modality = 't1'
@@ -144,7 +149,7 @@ class DialogSkullStripping(AbstractDialogFunction):
 
     # Public method
 
-    def execute(self):
+    def execute(self, messagebox: bool = True):
         if self.getNumberOfFilenames() > 0:
             wait = DialogWait(title=self._funcname)
             wait.open()
@@ -153,16 +158,34 @@ class DialogSkullStripping(AbstractDialogFunction):
                 wait.setInformationText('TensorFlow initialization...')
                 from Sisyphe.lib.db.extractor import Extractor
                 self._extractor = Extractor()
-            for filename in self.getFilenames():
+            for i, filename in enumerate(self.getFilenames()):
+                # < Revision 02/04/2026
+                self._files.clearSelection()
+                self._files.setSelectionTo(i)
+                # Revision 02/04/2026 >
                 try: self.function(filename, wait)
-                except Exception as err:
+                except Exception:
                     messageBox(self,
                                title=self._funcname,
-                               text='{} error in skull stripping: '
-                                    '{}\n{}.'.format(basename(filename), type(err), str(err)))
+                               text='Skull stripping failed.')
                     break
-            wait.close()
-            self._files.clearall()
+            # < Revision 01/04/2026
+            # wait.close()
+            # self._files.clearall()
+            """
+            Exit  
+            """
+            if messagebox:
+                wait.close()
+                r = messageBox(self,
+                               self.windowTitle(),
+                               'Would you like to perform\nadditional {} ?'.format(self.windowTitle().lower()),
+                               icon=QMessageBox.Question,
+                               buttons=QMessageBox.Yes | QMessageBox.No,
+                               default=QMessageBox.No)
+                if r == QMessageBox.Yes: self._files.clearall()
+                else: self.accept()
+            # Revision 01/04/2026 >
 
     def function(self, filename, wait):
         rimg = None

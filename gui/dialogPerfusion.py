@@ -45,7 +45,6 @@ from PyQt5.QtWidgets import QSplitter
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QApplication
 
@@ -59,6 +58,8 @@ from Sisyphe.core.sisypheImageAttributes import SisypheAcquisition
 from Sisyphe.processing.dscFunctions import getArterialInputVoxels
 from Sisyphe.processing.dscFunctions import dscMaps
 from Sisyphe.processing.dscFunctions import dscMaps2
+from Sisyphe.processing.dscFunctions import cbfASLMap
+from Sisyphe.processing.simpleItkFilters import gaussianFilter
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.iconBarViewWidgets import IconBarSliceViewWidget
 from Sisyphe.widgets.screenshotsGridWidget import ScreenshotsGridWidget
@@ -66,7 +67,8 @@ from Sisyphe.gui.dialogFunction import AbstractDialogFunction
 
 __all__ = ['DialogPerfusion',
            'DialogPerfusion2',
-           'DialogArterialInputFunction']
+           'DialogArterialInputFunction',
+           'DialogASL']
 
 """
 Class hierarchy
@@ -74,7 +76,9 @@ Class hierarchy
 
     - QDialog -> AbstractDialogFunction -> DialogPerfusion
               -> DialogArterialInputFunction
+              -> DialogASL
 """
+
 
 class DialogPerfusion(AbstractDialogFunction):
     """
@@ -91,7 +95,7 @@ class DialogPerfusion(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogPerfusion
 
     Creation: 23/12/2024
-    Last revision: 19/02/2026
+    Last revision: 01/04/2026
     """
 
     # Special method
@@ -253,18 +257,20 @@ class DialogPerfusion(AbstractDialogFunction):
             for k in r:
                 wait.setInformationText('Save {}...'.format(r[k].getBasename()))
                 r[k].save()
-            """
-            Exit  
-            """
-            wait.close()
-            r = messageBox(self,
-                           self.windowTitle(),
-                           'Would you like to do\nmore DSC-MR perfusion analysis ?',
-                           icon=QMessageBox.Question,
-                           buttons=QMessageBox.Yes | QMessageBox.No,
-                           default=QMessageBox.No)
-            if r == QMessageBox.Yes: self._files.clear()
-            else: self.accept()
+            # < Revision 01/04/2026
+            # """
+            # Exit
+            # """
+            # wait.close()
+            # r = messageBox(self,
+            #                self.windowTitle(),
+            #                'Would you like to do\nmore DSC-MR perfusion analysis ?',
+            #                icon=QMessageBox.Question,
+            #                buttons=QMessageBox.Yes | QMessageBox.No,
+            #                default=QMessageBox.No)
+            # if r == QMessageBox.Yes: self._files.clear()
+            # else: self.accept()
+            # Revision 01/04/2026 >
 
 
 class DialogPerfusion2(AbstractDialogFunction):
@@ -282,7 +288,7 @@ class DialogPerfusion2(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogPerfusion2
 
     Creation: 08/01/2025
-    Last revision: 16/01/2026
+    Last revision: 01/04/2026
     """
 
     # Special method
@@ -439,18 +445,20 @@ class DialogPerfusion2(AbstractDialogFunction):
             for k in r:
                 wait.setInformationText('Save {}...'.format(r[k].getBasename()))
                 r[k].save()
-            """
-            Exit  
-            """
-            wait.close()
-            r = messageBox(self,
-                           self.windowTitle(),
-                           'Would you like to do\nmore DSC-MR perfusion analysis ?',
-                           icon=QMessageBox.Question,
-                           buttons=QMessageBox.Yes | QMessageBox.No,
-                           default=QMessageBox.No)
-            if r == QMessageBox.Yes: self._files.clear()
-            else: self.accept()
+            # < Revision 01/04/2026
+            # """
+            # Exit
+            # """
+            # wait.close()
+            # r = messageBox(self,
+            #                self.windowTitle(),
+            #                'Would you like to do\nmore DSC-MR perfusion analysis ?',
+            #                icon=QMessageBox.Question,
+            #                buttons=QMessageBox.Yes | QMessageBox.No,
+            #                default=QMessageBox.No)
+            # if r == QMessageBox.Yes: self._files.clear()
+            # else: self.accept()
+            # Revision 01/04/2026 >
 
 
 class DialogArterialInputFunction(QDialog):
@@ -649,7 +657,12 @@ class DialogArterialInputFunction(QDialog):
                 self._lines['cursor'], = self._axe.plot(xdata, ydata, 'o-',
                                                         color='g', linewidth=3.0, label='cursor')
             self._axe.legend(handles=[self._lines['mean'], self._lines['aif'], self._lines['cursor']])
-            self._canvas.draw()
+            # < Revision 23/03/2026
+            # migrate from matplotlib 3.6.3 to 3.10.8
+            # self._canvas.draw()
+            self._canvas.draw_idle()
+            # faster & non-blocking GUI
+            # Revision 23/03/2026 >
 
     def _addVoxel(self):
         p = self._view().getCursorArrayPosition()
@@ -669,7 +682,12 @@ class DialogArterialInputFunction(QDialog):
         # noinspection PyTypeChecker
         self._lines['aif'].set_ydata(curve)
         self._lines['aif'].set_visible(True)
-        self._canvas.draw()
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._canvas.draw()
+        self._canvas.draw_idle()
+        # faster & non-blocking GUI
+        # Revision 23/03/2026 >
 
     def _removeVoxel(self):
         p = self._view().getCursorArrayPosition()
@@ -686,7 +704,12 @@ class DialogArterialInputFunction(QDialog):
             # noinspection PyTypeChecker
             self._lines['aif'].set_ydata(curve)
         else: self._lines['aif'].set_visible(False)
-        self._canvas.draw()
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._canvas.draw()
+        self._canvas.draw_idle()
+        # faster & non-blocking GUI
+        # Revision 23/03/2026 >
 
     def _clear(self):
         # clear aif roi
@@ -699,7 +722,12 @@ class DialogArterialInputFunction(QDialog):
                 del self._lines[k]
         # hide aif curve
         self._lines['aif'].set_visible(False)
-        self._canvas.draw()
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._canvas.draw()
+        self._canvas.draw_idle()
+        # faster & non-blocking GUI
+        # Revision 23/03/2026 >
 
     # Public methods
 
@@ -753,7 +781,12 @@ class DialogArterialInputFunction(QDialog):
                     # self._lines[key].set_visible(ci == c[0])
                     self._lines[key].set_visible(True)
                 self._axe.legend(handles=[self._lines['mean'], self._lines['aif'], self._lines['cursor']])
-                self._canvas.draw()
+                # < Revision 23/03/2026
+                # migrate from matplotlib 3.6.3 to 3.10.8
+                # self._canvas.draw()
+                self._canvas.draw_idle()
+                # faster & non-blocking GUI
+                # Revision 23/03/2026 >
             else: raise ValueError('Single-component volume.')
         else: raise ValueError('Not PWI sequence ({}).'.format(self._volume.acquisition.getSequence()))
 
@@ -876,3 +909,154 @@ class DialogArterialInputFunction(QDialog):
         if platform == 'win32':
             self._view.finalize()
         # Revision 10/03/2025 >
+
+
+class DialogASL(AbstractDialogFunction):
+    """
+    DialogASL class
+
+    Description
+    ~~~~~~~~~~~
+
+    Dialog to perform CBF processing from Arterial Spin Labeling (ASL) series.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> DialogASL
+
+    Creation: 01/04/2026
+    """
+
+    # Special method
+
+    def __init__(self, parent=None):
+        super().__init__('ASL', parent)
+        self._settings.settingsVisibilityOn()
+
+        # Init window
+
+        self.setWindowTitle('ASL perfusion analysis')
+        # PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        self._files.filterMultiComponent()
+        self._files.filterSameSequence(SisypheAcquisition.ASL)
+        self._files.setTextLabel('ASL multi-component volume(s)')
+        self._settings.setButtonsVisibility(False)
+        self._settings.getParameterWidget('DCM').hideRemoveButton()
+        self._settings.getParameterWidget('DCM').FieldChanged.connect(self._getFromDicom)
+
+        # < Revision 14/06/2025
+        self.adjustSize()
+        # imposing dialog width -> set minimum width to a child widget of the main layout
+        screen = QApplication.primaryScreen().geometry()
+        self._files.setMinimumWidth(int(screen.width() * 0.33))
+        # dialog resize off
+        # noinspection PyUnresolvedReferences
+        self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
+        # Revision 14/06/2025 >
+        self.setModal(True)
+
+    # Private method
+
+    def _getFromDicom(self):
+        widget = self._settings.getParameterWidget('DCM')
+        if widget is not None:
+            filename = widget.getFilename()
+            if exists(filename):
+                ext = splitext(filename)[1]
+                dcmext = getDicomExt()
+                dcmext.append('')
+                if ext in dcmext:
+                    try:
+                        ds = read_file(filename, stop_before_pixels=True)
+                    except:
+                        messageBox(self, 'Dicom read', 'Invalid dicom file.')
+                        return
+                    if 'EchoTime' in ds:
+                        te = float(ds['EchoTime'].value)
+                        widget = self._settings.getParameterWidget('TE')
+                        if widget is not None: widget.setValue(te)
+                    if 'RepetitionTime' in ds:
+                        tr = float(ds['RepetitionTime'].value)
+                        widget = self._settings.getParameterWidget('TR')
+                        if widget is not None: widget.setValue(tr)
+                elif ext == XmlDicom.getFileExt():
+                    ds = XmlDicom()
+                    try:
+                        ds.loadXmlDicomFilename(filename)
+                    except:
+                        messageBox(self, 'XmlDicom read', 'Invalid XmlDicom file.')
+                        return
+                    if ds.hasKeyword('EchoTime'):
+                        te = float(ds.getDataElementValue('EchoTime'))
+                        widget = self._settings.getParameterWidget('TE')
+                        if widget is not None: widget.setValue(te)
+                    if ds.hasKeyword('RepetitionTime'):
+                        tr = float(ds.getDataElementValue('RepetitionTime'))
+                        widget = self._settings.getParameterWidget('TR')
+                        if widget is not None: widget.setValue(tr)
+
+    # noinspection PyUnusedLocal
+    def _center(self, widget):
+        self.adjustSize()
+        self.move(self.screen().availableGeometry().center() - self.rect().center())
+        QApplication.processEvents()
+
+    # Public method
+
+    def getFileSelectionWidget(self):
+        return self._files
+
+    def function(self, filename, wait):
+        if exists(filename):
+            wait.setInformationText('ASL perfusion processing...')
+            masking = self._settings.getParameterValue('Masking')[0]
+            sequence = self._settings.getParameterValue('Sequence')[0][:2]
+            if sequence == 'ps': sequence = 'pcasl'
+            else: sequence = 'pasl'
+            idx = self._settings.getParameterValue('M0')
+            ld = self._settings.getParameterValue('LD')
+            pld = self._settings.getParameterValue('PLD')
+            te = self._settings.getParameterValue('TE')
+            tr = self._settings.getParameterValue('TR')
+            lmbd = self._settings.getParameterValue('Lambda')
+            alpha = self._settings.getParameterValue('Alpha')
+            t1 = self._settings.getParameterValue('T1')
+            fwhm = self._settings.getParameterValue('Smoothing')
+            if te == 0.0: te = None
+            if tr == 0.0: tr = None
+            asl = SisypheVolume()
+            asl.load(filename)
+            n = asl.getNumberOfComponentsPerPixel()
+            if abs(idx) >= n:
+                if idx < 0: idx = -n
+                else: idx = n - 1
+            masl = asl.componentsToSisypheVolumeCollection()
+            m0 = masl[idx]
+            m0.setFilename(filename)
+            m0.setFilenameSuffix('M0')
+            m0.save()
+            masl.remove(idx)
+            if fwhm > 0.0:
+                wait.addInformationText('{} smoothing...'.format(asl.getBasename()))
+                wait.setProgressRange(0, masl.count() + 1)
+                wait.progressVisibilityOn()
+                m0 = gaussianFilter(m0, fwhm)
+                m0.setFilename(filename)
+                m0.setFilenameSuffix('M0')
+                wait.setCurrentProgressValue(1)
+                for i, v in enumerate(masl):
+                    masl[i] = gaussianFilter(v, fwhm)
+                    wait.setCurrentProgressValue(i + 1)
+                wait.progressVisibilityOff()
+            if masking == 'No': mask = None
+            else:
+                wait.addInformationText('{} mask processing...'.format(asl.getBasename()))
+                mask = m0.getMask2(algo=masking, kernel=4)
+            wait.addInformationText('{} CBF processing...'.format(asl.getBasename()))
+            r = cbfASLMap(m0, masl, mask, sequence, ld, pld, te, tr, lmbd, alpha, t1)
+            wait.setInformationText('Save {}...'.format(r.getBasename()))
+            r.save()

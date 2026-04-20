@@ -340,6 +340,7 @@ class DialogSettings(QDialog):
                             'GradientMagnitudeImageFilter',
                             'LaplacianImageFilter',
                             'AnisotropicDiffusionImageFilter',
+                            'TextureImageFilter',
                             'RegressionIntensityMatchingImageFilter',
                             'HistogramIntensityMatchingImageFilter',
                             'IntensityNormalizationImageFilter',
@@ -351,13 +352,17 @@ class DialogSettings(QDialog):
                               'PriorBasedSegmentation',
                               'CorticalThickness',
                               'RegistrationBasedSegmentation',
+                              'UnetTumorSegmentation',
                               'UnetHippocampusSegmentation',
                               'UnetMedialTemporalSegmentation',
                               'UnetLesionSegmentation',
-                              'UnetWMHSegmentation'):
+                              'UnetWMHSegmentation',
+                              'UnetTissueSegmentation',
+                              'OpenMAPSegmentation'):
                 if function == 'KMeansClustering': item.setText(0, 'KMeans clustering')
                 elif function == 'KMeansSegmentation': item.setText(0, 'KMeans segmentation')
                 elif function == 'UnetWMHSegmentation': item.setText(0, 'Unet WMH segmentation')
+                elif function == 'OpenMAPSegmentation': item.setText(0, 'OpenMAP segmentation')
                 fitems['Segmentation'].addChild(item)
             elif function in ('Registration',
                               'T1Normalization',
@@ -381,13 +386,25 @@ class DialogSettings(QDialog):
                 fitems['Registration'].addChild(item)
             # < Revision 18/02/2025
             # add mapping settings
-            elif function in ('Conjunction',
+            elif function in ('LateralityIndex',
+                              'Conjunction',
                               'TimeSeriesPreprocessing',
                               'TimeSeriesFastICA',
                               'TimeSeriesGroupICA',
                               'TimeSeriesSeedToVoxel',
                               'TimeSeriesConnectivityMatrix',
-                              'Perfusion'):
+                              'B0Map',
+                              'B1Map',
+                              'T1Map',
+                              'T2Map',
+                              'T2pMap',
+                              'MTRMap',
+                              'QSMMap',
+                              'Perfusion2',
+                              'ASL'):
+                if function == 'Perfusion2':
+                    item.setText(0, 'Perfusion')
+                    widget.setParameterVisibility('DCM', False)
                 if function == 'TimeSeriesPreprocessing':
                     item.setText(0, 'Clean time series')
                     widget.setParameterVisibility('TissueMap', False)
@@ -400,6 +417,8 @@ class DialogSettings(QDialog):
                 elif function == 'TimeSeriesConnectivityMatrix':
                     item.setText(0, 'Time series correlation matrix')
                     widget.setParameterVisibility('Label', False)
+                elif function == 'MTRMap': item.setText(0, 'MTR map')
+                elif function == 'QSMMap': item.setText(0, 'QSM map')
                 elif function == 'Perfusion':
                     item.setText(0, 'Dynamic susceptibility contrast')
                     widget.setParameterVisibility('DCM', False)
@@ -411,21 +430,32 @@ class DialogSettings(QDialog):
                               'SelfSupervisedDenoise',
                               'DiffusionModel',
                               'DTIModel',
+                              'FWDTIModel',
+                              'RUMBAModel',
                               'DKIModel',
                               'SHCSAModel',
                               'SHCSDModel',
+                              'DSIModel',
+                              'DSIDModel',
+                              'DiffusionALPS',
                               'Tracking',
                               'BundleROISelection',
                               'BundleAtlasSelection',
                               'BundleToROI',
                               'BundleFiltering',
-                              'BundleClustering'):
+                              'BundleClustering',
+                              'BundleConnectivityMatrix'):
                 if function == 'PCADenoise': item.setText(0, 'PCA denoise')
                 elif function == 'NLMeansDenoise': item.setText(0, 'NLMeans denoise')
                 elif function == 'DTIModel': item.setText(0, 'DTI model')
+                elif function == 'FWDTIModel': item.setText(0, 'FWDTI model')
+                elif function == 'RUMBAModel': item.setText(0, 'RUMBA model')
                 elif function == 'DKIModel': item.setText(0, 'DKI model')
                 elif function == 'SHCSAModel': item.setText(0, 'SHCSA model')
                 elif function == 'SHCSDModel': item.setText(0, 'SHCSD model')
+                elif function == 'DSIModel': item.setText(0, 'DSI model')
+                elif function == 'DSIDModel': item.setText(0, 'DSID model')
+                elif function == 'DiffusionALPS': item.setText(0, 'Diffusion ALPS')
                 elif function == 'BundleROISelection': item.setText(0, 'Bundle ROI selection')
                 elif function == 'BundleToROI': item.setText(0, 'Bundle to ROI')
                 elif function == 'Tracking':

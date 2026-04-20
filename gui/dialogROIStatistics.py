@@ -425,9 +425,16 @@ class DialogROIStatistics(QDialog):
             self._boxplots['caps'][index1].set_visible(v)
             self._boxplots['boxes'][index].set_visible(v)
             self._boxplots['medians'][index].set_visible(v)
-            self._histcanvas.draw()
-            self._cumhistcanvas.draw()
-            self._plotcanvas.draw()
+            # < Revision 23/03/2026
+            # migrate from matplotlib 3.6.3 to 3.10.8
+            # self._histcanvas.draw()
+            # self._cumhistcanvas.draw()
+            # self._plotcanvas.draw()
+            self._histcanvas.draw_idle()
+            self._cumhistcanvas.draw_idle()
+            self._plotcanvas.draw_idle()
+            # faster & non-blocking GUI
+            # Revision 23/03/2026 >
 
     def _binsChanged(self):
         del self._line
@@ -436,9 +443,16 @@ class DialogROIStatistics(QDialog):
         self._cumhistfig.clear()
         self._plotfig.clear()
         self._updatePlotTab()
-        self._histcanvas.draw()
-        self._cumhistcanvas.draw()
-        self._plotcanvas.draw()
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._histcanvas.draw()
+        # self._cumhistcanvas.draw()
+        # self._plotcanvas.draw()
+        self._histcanvas.draw_idle()
+        self._cumhistcanvas.draw_idle()
+        self._plotcanvas.draw_idle()
+        # faster & non-blocking GUI
+        # Revision 23/03/2026 >
 
     def _displayLineAt(self, x):
         if isinstance(x, float):
@@ -465,9 +479,18 @@ class DialogROIStatistics(QDialog):
                     if self._volume.isFloatDatatype(): txt = 'Value {:.1f}\n{:.1f} %\n{:.4g} cc'.format(x, y * 100, v * y)
                     else: txt = '{}\nValue {}\n{:.1f} %\n{:.4g} cc'.format(name, int(x), self._gety(int(x)) * 100, v * y)
                     self._label.set_color(c)
-                    self._label.xyann = [x + step, y]
+                    # < Revision 23/03/2026
+                    # migrate from matplotlib 3.6.3 to 3.10.8
+                    # self._label.xyann = [x + step, y]
+                    self._label.set_position((x + step, y))
+                    # Revision 23/03/2026 >
                     self._label.set_text(txt)
-                    self._cumhistcanvas.draw()
+                    # < Revision 23/03/2026
+                    # migrate from matplotlib 3.6.3 to 3.10.8
+                    # self._cumhistcanvas.draw()
+                    self._cumhistcanvas.draw_idle()
+                    # faster & non-blocking GUI
+                    # Revision 23/03/2026 >
         else: raise TypeError('parameter type {} is not float.'.format(type(x)))
 
     def _gety(self, x):

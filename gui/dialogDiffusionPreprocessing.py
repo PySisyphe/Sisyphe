@@ -71,7 +71,7 @@ class DialogDiffusionPreprocessing(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Diffusion preprocessing')
-        # noinspection PyTypeChecker
+        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -150,6 +150,7 @@ class DialogDiffusionPreprocessing(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._exit = QPushButton('Close')
         self._exit.setAutoDefault(True)
@@ -185,6 +186,7 @@ class DialogDiffusionPreprocessing(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._bvals.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 17/06/2025 >
         self.setModal(True)

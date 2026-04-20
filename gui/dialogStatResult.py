@@ -1177,7 +1177,12 @@ class DialogResult(QDialog):
                         lbls = ['\n'.join(lb.split()) for lb in list(v.keys())]
                         ax.set_xticks(arange(len(v)), labels=lbls)
                         ax.tick_params(axis='x', labelrotation=45)
-                        self._fig1.canvas.draw()
+                        # < Revision 23/03/2026
+                        # migrate from matplotlib 3.6.3 to 3.10.8
+                        # self._fig1.canvas.draw()
+                        self._fig1.canvas.draw_idle()
+                        # faster & non-blocking GUI
+                        # Revision 23/03/2026 >
                         wait.close()
                         return
                     except: wait.close()
@@ -1205,7 +1210,12 @@ class DialogResult(QDialog):
                             vx = arange(len(vobs))
                             ax.plot(vx, vobs, 'o-', label='Observations')
                             ax.plot(vx, vmodel, 'o-', label='fitted model')
-                            self._fig2.canvas.draw()
+                            # < Revision 23/03/2026
+                            # migrate from matplotlib 3.6.3 to 3.10.8
+                            # self._fig2.canvas.draw()
+                            self._fig2.canvas.draw_idle()
+                            # faster & non-blocking GUI
+                            # Revision 23/03/2026 >
                             wait.close()
                             return
                         except: wait.close()
@@ -1253,7 +1263,12 @@ class DialogResult(QDialog):
                                 ax.set_xlabel('model x beta')
                                 ax.set_ylabel('mean-centered observations')
                                 c += 1
-                        self._fig3.canvas.draw()
+                        # < Revision 23/03/2026
+                        # migrate from matplotlib 3.6.3 to 3.10.8
+                        # self._fig3.canvas.draw()
+                        self._fig3.canvas.draw_idle()
+                        # faster & non-blocking GUI
+                        # Revision 23/03/2026 >
                         wait.close()
                         return
                     except: wait.close()

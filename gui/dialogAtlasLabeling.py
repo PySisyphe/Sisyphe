@@ -477,7 +477,6 @@ class DialogAtlasLabeling(QDialog):
                         roi.load(roiname)
                     else:
                         roi = mesh.convertToSisypheROI(ref)
-                        print(roi.getFilename())
                         roi.save()
                     self._filesROI.add(roi.getFilename())
                     wait.incCurrentProgressValue()
