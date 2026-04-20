@@ -17,8 +17,8 @@ from xml.dom import minidom
 
 __author__ = 'Lotterie J.-A.'
 __email__ = 'pysisyphe@gmail.com'
-# __version__ = "0.9.1"
-# __version__ = "0.18.9"
+# __version__ = "0.9.1"   # 01/07/2025
+# __version__ = "0.18.9"  # 01/09/2029
 # __version__ = "0.20.16" # 01-11-2025
 # __version__ = "0.21.08" # 18-11-2025
 # __version__ = "0.22.11" # 05-12-2025
@@ -27,8 +27,9 @@ __email__ = 'pysisyphe@gmail.com'
 # __version__ = "0.76.26" # 30-01-2026
 # __version__ = "0.78.08" # 01-02-2026
 # __version__ = "0.80.15" # 20-02-2026
-__version__ = "0.81.22" # 10-03-2026
-__build__ = '20260320'
+# __version__ = "0.81.22" # 10-03-2026
+__version__ = "0.87.08"   # 20-04-2026
+__build__ = '20260420'
 
 _V = b'70797369737970686540676d61696c2e636f6d'
 

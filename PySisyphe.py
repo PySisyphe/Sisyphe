@@ -286,13 +286,15 @@ if __name__ == "__main__":
     filename = None
     args = sys.argv
     if len(args) > 1:
-        filename = sys.argv[1]
-        ext = splitext(filename)[1]
-        if ext != SisypheVolume.getFileExt(): filename = None
+        if exists(filename):
+            filename = sys.argv[1]
+            ext = splitext(filename)[1]
+            if ext != SisypheVolume.getFileExt(): filename = None
 
     """
     Create application
     """
+
     from Sisyphe.gui.windowSisyphe import WindowSisyphe
 
     # < Revision 22/07/2025
@@ -359,6 +361,7 @@ if __name__ == "__main__":
     Logging
     PySisyphe.log file in ~/.PySisyphe
     """
+
     import logging
     userdir = abspath(join(expanduser('~'), '.PySisyphe'))
     if not exists(userdir): initPySisypheUserPath()
@@ -398,5 +401,6 @@ if __name__ == "__main__":
 
     if logger is not None: logger.info('session start')
     app.exec_()
+
     if logger is not None: logger.info('session end')
     sys.exit(0)
