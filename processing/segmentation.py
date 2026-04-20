@@ -393,7 +393,6 @@ class SegmentAnything(object):
                                          dtype=torch.float,
                                          device=self._image_embed.device)
             if len(bbox_torch.shape) == 2: bbox_torch = bbox_torch[:, None, :]
-            print(bbox_torch.shape)
             sparse_embed, dense_embed = self._model.prompt_encoder(points=None,
                                                                    boxes=bbox_torch,
                                                                    masks=None)

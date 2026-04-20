@@ -1257,6 +1257,8 @@ class ProcessDiffusionModel(Process):
     ~~~~~~~~~~~
 
     Process -> ProcessDiffusionModel
+
+    Last revision: 14/04/2026
     """
     # Special method
 
@@ -1345,7 +1347,10 @@ class ProcessDiffusionModel(Process):
         nd -= nb0  # DWI count
         # set model
         tag = False
-        fa = ga = gfa = md = tr = ad = rd = False
+        # < Revision 09/04/2026
+        # fa = ga = gfa = md = tr = ad = rd = False
+        fa = ga = gfa = md = tr = ad = rd = li = pl = sp = ts = ts2 = mj = evl = evc = fw = fcsf = fgm = fwm = fiso = False
+        # Revision 09/04/2026 >
         if 'fa' in self._maps: fa = self._maps['fa']
         if 'ga' in self._maps: ga = self._maps['ga']
         if 'gfa' in self._maps: gfa = self._maps['gfa']
@@ -1353,20 +1358,61 @@ class ProcessDiffusionModel(Process):
         if 'tr' in self._maps: tr = self._maps['tr']
         if 'ad' in self._maps: ad = self._maps['ad']
         if 'rd' in self._maps: rd = self._maps['rd']
+        # < Revision 09/04/2026
+        if 'li' in self._maps: li = self._maps['li']
+        if 'pl' in self._maps: pl = self._maps['pl']
+        if 'sp' in self._maps: sp = self._maps['sp']
+        if 'ts' in self._maps: ts = self._maps['ts']
+        # < Revision 14/04/2026
+        if 'ts2' in self._maps: ts2 = self._maps['ts2']
+        if 'evl' in self._maps: evl = self._maps['evl']
+        if 'evc' in self._maps: evc = self._maps['evc']
+        # Revision 14/04/2026 >
+        if 'mj' in self._maps: mj = self._maps['mj']
+        if 'fw' in self._maps: fw = self._maps['fw']
+        if 'fcsf' in self._maps: fcsf = self._maps['fcsf']
+        if 'fgm' in self._maps: fgm = self._maps['fgm']
+        if 'fwm' in self._maps: fwm = self._maps['fwm']
+        if 'fiso' in self._maps: fiso = self._maps['fiso']
+        # Revision 09/04/2026 >
         from Sisyphe.core.sisypheTracts import SisypheDTIModel
         if self._model == 'DTI':
             msg = 'DTI Model fitting...'
             model = SisypheDTIModel()
             model.setFitAlgorithm(self._method)
-            tag = fa or ga or md or tr or ad or rd
+            # < Revision 14/04/2026
+            # tag = fa or ga or md or tr or ad or rd
+            tag = fa or ga or md or tr or ad or rd or li or pl or sp or ts or ts2 or mj or evl or evc
+            # Revision 14/04/2026 >
             ndim = 6
+        # < Revision 09/04/2026
+        elif self._model == 'FWDTI':
+            msg = 'FWDTI Model fitting...'
+            from Sisyphe.core.sisypheTracts import SisypheFreeWaterDTIModel
+            model = SisypheFreeWaterDTIModel()
+            model.setFitAlgorithm(self._method)
+            tag = fa or ga or md or tr or ad or rd or li or pl or sp or fw
+            ndim = 32
+        # Revision 09/04/2026 >
         elif self._model == 'DKI':
             msg = 'DKI Model fitting...'
             from Sisyphe.core.sisypheTracts import SisypheDKIModel
             model = SisypheDKIModel()
             model.setFitAlgorithm(self._method)
-            tag = fa or ga or md or tr or ad or rd
+            # < Revision 09/04/2026
+            # tag = fa or ga or md or tr or ad or rd
+            tag = fa or ga or md or tr or ad or rd or li or pl or sp
+            # Revision 09/04/2026 >
             ndim = 15
+        # < Revision 09/04/2026
+        elif self._model == 'RUMBA':
+            msg = 'RUMBA Model fitting...'
+            from Sisyphe.core.sisypheTracts import SisypheRumbaModel
+            model = SisypheRumbaModel()
+            model.setFitAlgorithm(self._method)
+            tag = fcsf or fgm or fwm or fiso
+            ndim = 64
+        # Revision 09/04/2026 >
         elif self._model == 'SHCSA':
             msg = 'SHCSA Model fitting...'
             from Sisyphe.core.sisypheTracts import SisypheSHCSAModel
@@ -1400,6 +1446,7 @@ class ProcessDiffusionModel(Process):
         if nd < ndim:
             self._result.put('Not enough diffusion-weighted images for the {} model (at least {}).'.format(self._model, ndim))
             self.terminate()
+        print(self._corr)
         # noinspection PyUnboundLocalVariable
         model.setGradients(bvals, bvecs, lpstoras=self._corr)
         model.setDWI(vols)
@@ -1421,6 +1468,7 @@ class ProcessDiffusionModel(Process):
             self._mng['msg'] = 'Save model...'
             model.saveModel(filename, self._mng)
         if tag:
+            v = None
             if fa:
                 self._mng['msg'] = 'Save Fractional anisotropy map...'
                 v = model.getFA()
@@ -1429,8 +1477,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setSequenceToFractionalAnisotropyMap()
                 v.setID(model.getReferenceID())
                 v.save()
+                v = None
             if ga:
-                self._mng['msg'] = 'Save Geodesic anisotropy map...'
+                self._mng['msg'] = 'Save Geodesic Anisotropy map...'
                 v = model.getGA()
                 v.setFilename(filename)
                 v.setFilenameSuffix('GA')
@@ -1438,8 +1487,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setSequence('GA')
                 v.setID(model.getReferenceID())
                 v.save()
+                v = None
             if gfa:
-                self._mng['msg'] = 'Save Generalized fractional anisotropy map...'
+                self._mng['msg'] = 'Save Generalized Fractional Anisotropy map...'
                 v = model.getGFA()
                 v.setFilename(filename)
                 v.setFilenameSuffix('GFA')
@@ -1447,8 +1497,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setSequence('GFA')
                 v.setID(model.getReferenceID())
                 v.save()
+                v = None
             if md:
-                self._mng['msg'] = 'Save Mean diffusivity map...'
+                self._mng['msg'] = 'Save Mean Diffusivity map...'
                 v = model.getMD()
                 v.setFilename(filename)
                 v.setFilenameSuffix('MD')
@@ -1456,6 +1507,7 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setSequence('MD')
                 v.setID(model.getReferenceID())
                 v.save()
+                v = None
             if tr:
                 self._mng['msg'] = 'Save Trace map...'
                 v = model.getTrace()
@@ -1464,8 +1516,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setSequenceToApparentDiffusionMap()
                 v.setID(model.getReferenceID())
                 v.save()
+                v = None
             if ad:
-                self._mng['msg'] = 'Save Axial diffusivity map...'
+                self._mng['msg'] = 'Save Axial Diffusivity map...'
                 v = model.getAxialDiffusivity()
                 v.setFilename(filename)
                 v.setFilenameSuffix('AD')
@@ -1473,13 +1526,138 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setSequence('AD')
                 v.setID(model.getReferenceID())
                 v.save()
+                v = None
             if rd:
-                self._mng['msg'] = 'Save Radial diffusivity map...'
+                self._mng['msg'] = 'Save Radial Diffusivity map...'
                 v = model.getRadialDiffusivity()
                 v.setFilename(filename)
                 v.setFilenameSuffix('RD')
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('RD')
+                v.setID(model.getReferenceID())
+                v.save()
+                v = None
+            if li:
+                self._mng['msg'] = 'Save diffusion Linearity map...'
+                v = model.getLinearity()
+                v.setFilename(filename)
+                v.setFilenameSuffix('LINEARITY')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('LINEARITY')
+                v.setID(model.getReferenceID())
+                v.save()
+                v = None
+            if pl:
+                self._mng['msg'] = 'Save diffusion Planarity map...'
+                v = model.getPlanarity()
+                v.setFilename(filename)
+                v.setFilenameSuffix('PLANARITY')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('PLANARITY')
+                v.setID(model.getReferenceID())
+                v.save()
+                v = None
+            if sp:
+                self._mng['msg'] = 'Save diffusion Sphericity map...'
+                v = model.getSphericity()
+                v.setFilename(filename)
+                v.setFilenameSuffix('SPHERICITY')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('SPHERICITY')
+                v.setID(model.getReferenceID())
+                v.save()
+                v = None
+            if ts:
+                self._mng['msg'] = 'Save diffusion Tensor...'
+                v = model.getTensor()
+                v.setFilename(filename)
+                v.setFilenameSuffix('TENSOR')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('TENSOR')
+                v.setID(model.getReferenceID())
+                v.save()
+            if ts2:
+                self._mng['msg'] = 'Save diffusion Tensor components...'
+                if v is None: v = model.getTensor()
+                c = {0: 'XX', 1:'XY', 2 :'XZ', 4:'YY', 5:'YZ', 8:'ZZ'}
+                for i in c:
+                    v2 = v.copyComponent(i)
+                    v2.setFilename(filename)
+                    v2.setFilenameSuffix('TENSOR ' + c[i])
+                    v2.acquisition.setModalityToOT()
+                    v2.acquisition.setSequence('TENSOR ' + c[i])
+                    v2.setID(model.getReferenceID())
+                    v2.save()
+            if mj:
+                self._mng['msg'] = 'Save diffusion tensor major direction...'
+                v = model.getMajorEigenVector()
+                v.setFilename(filename)
+                v.setFilenameSuffix('PRINCIPAL')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('PRINCIPAL')
+                v.setID(model.getReferenceID())
+                v.save()
+            if evl:
+                self._mng['msg'] = 'Save diffusion tensor eigen values...'
+                v = model.getEigenValues()
+                v.setFilename(filename)
+                v.setFilenameSuffix('EIGENVAL')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('EIGENVAL')
+                v.setID(model.getReferenceID())
+                v.save()
+            if evc:
+                self._mng['msg'] = 'Save diffusion tensor eigen vectors...'
+                v = model.getEigenVectors()
+                v.setFilename(filename)
+                v.setFilenameSuffix('EIGENVEC')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('EIGENVEC')
+                v.setID(model.getReferenceID())
+                v.save()
+            if fw:
+                self._mng['msg'] = 'Save Free Water Fraction map...'
+                v = model.getFreeWaterFraction()
+                v.setFilename(filename)
+                v.setFilenameSuffix('FWF')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('FWF')
+                v.setID(model.getReferenceID())
+                v.save()
+            if fcsf:
+                self._mng['msg'] = 'Save Cerebro-Spinal Fluid Fraction map...'
+                v = model.getCerebroSpinalFluidFraction()
+                v.setFilename(filename)
+                v.setFilenameSuffix('FCSF')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('FCSF')
+                v.setID(model.getReferenceID())
+                v.save()
+            if fgm:
+                self._mng['msg'] = 'Save Gray Matter Fraction map...'
+                v = model.getGrayMatterFraction()
+                v.setFilename(filename)
+                v.setFilenameSuffix('FGM')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('FGM')
+                v.setID(model.getReferenceID())
+                v.save()
+            if fwm:
+                self._mng['msg'] = 'Save White Matter Fraction map...'
+                v = model.getWhiteMatterFraction()
+                v.setFilename(filename)
+                v.setFilenameSuffix('FWM')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('FWM')
+                v.setID(model.getReferenceID())
+                v.save()
+            if fiso:
+                self._mng['msg'] = 'Save Isotropic Fraction map...'
+                v = model.getIsotropicFraction()
+                v.setFilename(filename)
+                v.setFilenameSuffix('FISO')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('FISO')
                 v.setID(model.getReferenceID())
                 v.save()
         self._result.put('terminate')

@@ -85,7 +85,8 @@ __all__ = ['getArterialInputVoxels',
            'oSVD',
            'boxNLR',
            'fit_boxNLR',
-           'dscMaps2']
+           'dscMaps2',
+           'cbfASLMap']
 
 """
 functions
@@ -838,11 +839,25 @@ def dscMaps(vols: SisypheVolume,
             r['lkv'].setFilenameSuffix('lkv')
     return r
 
+
 """
+Dynamic susceptibility contrast
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 functions
 ~~~~~~~~~
 
-PyPeT Python Perfusion Tool implementation from Borghouts et al. 2025
+    - gamma_variate
+    - fit_gamma_variate
+    - generate_ttp
+    - generate_leakage
+    - generate_perfusion_maps
+    - oSVD
+    - boxNLR
+    - fit_boxNLR
+    - dscMaps2
+
+The code was adapted from the PyPeT Python Perfusion Tool.
 https://github.com/Marijn311/CT-and-MR-Perfusion-Tool
 
 reference: PyPeT: A Python Perfusion Tool for Automated Quantitative Brain CT and MR Perfusion Analysis. Borghouts M. 
@@ -989,8 +1004,11 @@ def generate_leakage(ctc: ndarray | list[ndarray],
         wait.setCurrentProgressValue(0)
         wait.setProgressVisibility(True)
     r = zeros(shape=mask.shape)
+    # noinspection PyUnresolvedReferences
     zi: cython.int
+    # noinspection PyUnresolvedReferences
     yi: cython.int
+    # noinspection PyUnresolvedReferences
     xi: cython.int
     for zi in range(ctc.shape[0]):
         for yi in range(ctc.shape[1]):
@@ -1235,8 +1253,11 @@ def oSVD(ctc_pad: ndarray,
         wait.setProgressRange(0, mask.shape[0])
         wait.setCurrentProgressValue(0)
         wait.setProgressVisibility(True)
+    # noinspection PyUnresolvedReferences
     zi: cython.int
+    # noinspection PyUnresolvedReferences
     yi: cython.int
+    # noinspection PyUnresolvedReferences
     xi: cython.int
     for zi in range(z):
         for yi in range(y):
@@ -1355,9 +1376,13 @@ def boxNLR(ctc: ndarray | list[ndarray],
     brain_coords = where(mask == 1)
     total_voxels = len(brain_coords[0])
     # Process each brain voxel
+    # noinspection PyUnresolvedReferences
     z: cython.int
+    # noinspection PyUnresolvedReferences
     y: cython.int
+    # noinspection PyUnresolvedReferences
     x: cython.int
+    # noinspection PyUnresolvedReferences
     idx: cython.int
     for idx, (z, y, x) in enumerate(zip(*brain_coords)):
         if idx % 1000 == 0 and wait is not None:
@@ -1411,6 +1436,7 @@ def fit_boxNLR(aif: ndarray,
         indices = arange(1, n + 1) - 0.5 - pdelay
         indices_shifted = arange(1, n + 1) - 0.5 - pdelay - pmtt
         # Create interpolation function for AUC
+        # noinspection PyDeprecation
         auc_interp = interp1d(arange(len(auc)), auc, kind='linear', bounds_error=False, fill_value=0)
         # Interpolate at shifted indices
         a = auc_interp(indices)
@@ -1454,6 +1480,7 @@ def fit_boxNLR(aif: ndarray,
          'cbv': cbv * 100,  # Convert to ml/100g
          'tmax': tmax}
     return r
+
 
 def dscMaps2(vols: SisypheVolume,
              mask: SisypheVolume,
@@ -1667,4 +1694,152 @@ def dscMaps2(vols: SisypheVolume,
         r['lkv'].display.getLUT().setLut('inserm')
         r['lkv'].setFilename(vols.getFilename())
         r['lkv'].setFilenameSuffix('lkv')
+    return r
+
+"""
+Arterial Spin Labeling (ASL)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+function
+~~~~~~~~
+
+The code was adapted from:
+ 
+    - erwin qMRI toolbox, https://github.com/lamyj/erwin
+    - https://github.com/SaraDupont/ASL_processing
+    
+    - cbfASLMap
+
+references: 
+
+Comparison of quantitative perfusion imaging using arterial spin labeling at 1.5 and 4.0 Tesla. Wang J, Alsop DC, Li L, 
+Listerud J., Gonzalez-At J.B., Schnall M.D., Detre J.A. Magn Reson Med. 2002 Aug;48(2):242-54.
+
+Correcting for the echo-time effect after measuring the cerebral blood flow by arterial spin labeling.
+Foucher J.R., Roquet D., Marrer C., Pham B.T., Gounot D. J Magn Reson Imaging. 2011 Oct;34(4):785-90.
+
+A Beginner's Guide to Arterial Spin Labeling (ASL) Image Processing. Clement P., Petr J., Dijsselhof M.B.J., Padrela B., 
+Pasternak M., Dolui S., Jarutyte L., Pinter N., Hernandez-Garcia L., Jahn A., Kuijer J.P.A., Barkhof F., 
+Mutsaerts H.J.M., Keil V.C. Front Radiol. 2022 Jun 14:2:929533.
+
+In vivo blood T1 measurements at 1.5 T, 3 T, and 7 T. Zhang X., Petersen E.T., Ghariq E., De Vis J.B., Webb A.G., 
+Teeuwisse W.M., Hendrikse J. van Osch M.J.P. Magn Reson Med. 2013 70:1082–1086.
+"""
+
+
+def cbfASLMap(m0: SisypheVolume,
+              asl: list[SisypheVolume] | SisypheVolumeCollection,
+              mask: SisypheVolume | None,
+              sequence: str,
+              ti1: float,
+              ti2: float,
+              te: float | None = None,
+              tr: float | None = None,
+              lmbda: float = 0.9,
+              alpha: float = 0.98,
+              t1blood: float = 1640.0) -> SisypheVolume:
+    """
+    CBF processing from Arterial Spin Labeling (ASL) series.
+    Cerebral blood flow (CBF) in ml / min / 100g
+
+    Code adpated from https://github.com/SaraDupont/ASL_processing & https://github.com/lamyj/erwin
+
+    Parameters
+    ----------
+    m0 : SisypheVolume
+        M0 control proton density weighted volume, acquired without blood spin tagging
+    asl : list[SisypheVolume] | SisypheVolumeCollection
+        ASL volumes, acquired after blood spin tagging
+    mask : SisypheVolume
+        mask of analyzis, voxels outisde mask are set to 0.0
+    sequence : str
+        type of ASL sequence 'pasl' (pulsed ASL) or 'pcasl' (pseudo-continuous ASL)
+    ti1 : float
+        label duration (LD) in ms (typically 700-900 ms in pasl, 1800-2000 ms in pcasl)
+    ti2 : float
+        post labeling delay (PLD) in ms (typically 1600-2000 ms in pasl, 1800-2000 ms in pcasl)
+    te : float | None (optional)
+        echo time in ms, used for magnetization correction. No correction if None (default None, no correction)
+    tr : float | None (optional)
+        repetition time in ms, used to correct intensity of proton density weighted volume if the repetition time is too short (default None, no correction)
+    lmbda : float (optional)
+        lambda paramter, blood brain partition coefficient in mL/g eq. L/Kg (default 0.9)
+
+            - 0.9 mL/g in Wang et al. and Foucher et al. (global)
+            - 0.98 mL/g in Foucher (gray matter)
+            - 0.81 mL/g in Foucher (white matter)
+    alpha : float
+        alpha parameter, labeling efficiency (default 0.98; 0.95 in Wang et al. and Foucher et al.)
+    t1blood : float
+        T1 relaxation time of blood in ms (default 1650)
+
+            - ~1200–1350 ms 1.5T, Zhang et al.
+            - ~1600–1700 ms 3.0T, Zhang et al.
+            - ~2100–2300 ms 7.0T, Zhang et al.
+
+    Returns
+    -------
+    SisypheVolume
+        CBF map
+    """
+    if isinstance(asl, list):
+        buff = SisypheVolumeCollection()
+        buff.copyFromList(asl)
+        asl = buff
+    asl = asl.getMeanVolume()
+    filename = m0.getFilename()
+    filename = filename.replace('_M0', '')
+    asl.setFilename(filename)
+    asl.setFilenameSuffix('MEAN_TAG')
+    asl.save()
+    ti1 /= 1000.0
+    ti2 /= 1000.0
+    t1blood /= 1000.0
+    if te is not None: te /= 1000.0
+    corrtr = 1.0
+    if tr is not None:
+        tr /= 1000.0
+        if tr > 0.0:
+            # correct intensity of proton density weighted volume if the repetition time is too short
+            t1gm = 1.82
+            corrtr = 1.0 - exp(- tr / t1gm)
+    if corrtr != 1.0: sub = (m0.getNumpy() / corrtr) - asl.getNumpy()
+    else: sub = m0.getNumpy() - asl.getNumpy()
+    v = SisypheVolume()
+    v.copyFromNumpyArray(sub,
+                         spacing=m0.getSpacing(),
+                         origin=m0.getOrigin(),
+                         direction=m0.getDirections())
+    v.copyAttributesFrom(m0, display=False, slope=False, acquisition=False)
+    v.acquisition.setSequenceToCerebralBloodFlowMap()
+    v.setFilename(filename)
+    v.setFilenameSuffix('SUB')
+    v.save()
+    # Difference in the apparent transverse relaxation rates between
+    # labeled water in capillaries and nonlabeled water in the tissue, in Hz
+    deltar2 = 20.0
+    if te is None or te == 0.0: corrte = 1.0
+    else: corrte = exp(deltar2 * te)
+    if sequence == 'pasl':
+        cbf = ((60.0 * lmbda * sub * corrte * exp(ti2 / t1blood)) /
+               (2 * alpha * ti1 * m0.getNumpy()))
+    elif sequence == 'pcasl':
+        cbf = ((60.0 * lmbda * sub * corrte * exp(ti2 / t1blood)) /
+               (2 * alpha * t1blood * m0.getNumpy() * (1 - exp(-ti1 / t1blood))))
+    else: raise ValueError('{} invalid sequence, pasl or pcasl')
+    cbf = nan_to_num(cbf, nan = 0.0, posinf = 0.0, neginf = 0.0)
+    if mask is not None: cbf = cbf * mask.getNumpy()
+    cbf[cbf < 0.0] = 0.0
+    cbf[cbf > 1000.0] = 1000.0
+    r = SisypheVolume()
+    r.copyFromNumpyArray(cbf,
+                         spacing=m0.getSpacing(),
+                         origin=m0.getOrigin(),
+                         direction=m0.getDirections())
+    r.copyAttributesFrom(m0, display=False, slope=False, acquisition=False)
+    r.acquisition.setSequenceToCerebralBloodFlowMap()
+    r.acquisition.setUnit('ml / min / 100g')
+    r.display.getLUT().setLut('inserm')
+    r.setFilename(filename)
+    r.setFilenameSuffix(r.acquisition.CBF)
     return r
