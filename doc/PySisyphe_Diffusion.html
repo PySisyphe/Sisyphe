@@ -77,6 +77,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#gradients">Gradients</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#preprocessing">Preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#diffusion-model">Diffusion model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diffusion-analysis-along-perivascular-space">Diffusion analysis along perivascular space</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tractogram-generation">tractogram generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#roi-based-streamlines-selection">ROI based streamlines selection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#filter-based-streamlines-selection">Filter based streamlines selection</a></li>
@@ -124,6 +125,7 @@
 <li><p><a class="reference internal" href="#menu-section-gradients"><span class="std std-ref">Gradients</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-preprocessing"><span class="std std-ref">Preprocessing</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-diffmodel"><span class="std std-ref">Diffusion model</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-diffalps"><span class="std std-ref">Diffusion analysis along perivascular space</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-tractogram"><span class="std std-ref">tractogram generation</span></a></p></li>
 <li><dl class="simple">
 <dt>Bundle &gt;</dt><dd><ul>
@@ -214,11 +216,13 @@
 </section>
 <section id="diffusion-model">
 <span id="menu-section-diffmodel"></span><h2>Diffusion model<a class="headerlink" href="#diffusion-model" title="Link to this heading"></a></h2>
-<p>This menu is used to define and fit a diffusion model. The diffusion models available in Pysisyphe are as follows: <em>Diffusion Tensor model</em> (<a class="reference external" href="https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dti.html">DTI</a>), <em>Diffusional Kurtosis model</em> (<a class="reference external" href="https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dki.html">DKI</a>), <em>Constant Solid Angle ODF model</em> Q-Ball (<a class="reference external" href="https://docs.dipy.org/stable/examples_built/reconstruction/reconst_csa.html">SHCSA</a>), <em>Constrained Spherical Deconvolution model</em> (<a class="reference external" href="https://docs.dipy.org/stable/examples_built/reconstruction/reconst_csd.html">SHCSD</a>), <em>Diffusion Spectrum model</em> (<a class="reference external" href="https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dsi.html">DSI</a>) and <em>Diffusion Spectrum Deconvolution model</em> (<a class="reference external" href="https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dsid.html">DSID</a>). PySisyphe uses the <a class="reference external" href="https://dipy.org/">Dipy</a> library implemenentation.</p>
+<p>This menu is used to define and fit a diffusion model. The diffusion models available in Pysisyphe are as follows: <em>Diffusion Tensor model</em> (<a class="reference external" href="https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dti.html">DTI</a>), <em>Free Water Diffusion Tensor model</em> (<a class="reference external" href="https://docs.dipy.org/1.9.0/examples_built/reconstruction/reconst_fwdti.html">FWDTI</a>), <em>Diffusional Kurtosis model</em> (<a class="reference external" href="https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dki.html">DKI</a>), <em>RUMBA Robust and Unbiased Model-BAsed Spherical Deconvolution model</em> (<a class="reference external" href="https://docs.dipy.org/1.10.0/examples_built/reconstruction/reconst_rumba.html">RUMBA</a>), <em>Constant Solid Angle ODF model</em> Q-Ball (<a class="reference external" href="https://docs.dipy.org/stable/examples_built/reconstruction/reconst_csa.html">SHCSA</a>), <em>Constrained Spherical Deconvolution model</em> (<a class="reference external" href="https://docs.dipy.org/stable/examples_built/reconstruction/reconst_csd.html">SHCSD</a>), <em>Diffusion Spectrum model</em> (<a class="reference external" href="https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dsi.html">DSI</a>) and <em>Diffusion Spectrum Deconvolution model</em> (<a class="reference external" href="https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dsid.html">DSID</a>). PySisyphe uses the <a class="reference external" href="https://dipy.org/">Dipy</a> library implemenentation.</p>
 <p>Each model has its own acquisition constraints:</p>
 <ul class="simple">
 <li><p>DTI requires up to 6 directions, b-value 1000 s/mm^2, at least 1 B0.</p></li>
+<li><p>FWDTI requires at least 32 directions evenly distributed, b-value less than or equal to 1000 s/mm^2, multiple B0.</p></li>
 <li><p>DKI requires b-values of 0, 500, 1000, 1500, 2000, +/- 2500 s/mm^2, at least 15 directions.</p></li>
+<li><p>RUMBA requires HARDI data with at least 64 directions, b-value 2500 s/mm^2, at least 3 B0 images.</p></li>
 <li><p>SHCSA requires HARDI data with at least 200 directions, b-value 3000 s/mm^2, or multi-shell.</p></li>
 <li><p>SHCSD requires 20 directions, b-value 1000 s/mm^2; benefits additionally from HARDI data 60 direction, b-value 3000 s/mm^2 or multi-shell.</p></li>
 <li><p>DSI requires at least 100 directions with b-values = 1000, 2000, 3000 s/mm^2.</p></li>
@@ -244,12 +248,22 @@
 <p>Toggle <strong>DTI model…</strong> button to show/hide DTI parameters:</p>
 <ul class="simple">
 <li><p>Select the <strong>Fitting algorithm</strong> from the combobox. The fitting methods available in Pysisyphe are as follows: <em>weighted least squares</em> (WLS), <em>ordinary least squares</em> (LS or OLS), <em>non-linear least-squares</em> (NLLS) or <em>RESTORE robust tensor</em> (RT or RESTORE).</p></li>
-<li><p>Check the map(s) to be calculated: <em>Fractional anisotropy</em> (FA), <em>Geodesic anisotropy</em> (GA), <em>Mean diffusivity</em> (MD), <em>Trace</em> of the tensor, <em>Axial diffusivity</em> (AD), <em>Radial diffusivity</em> (RD). These maps are saved using the file name of the first diffusion-weighted volume suffixed by the map acronym.</p></li>
+<li><p>Check the map(s) to be calculated: <em>Fractional anisotropy</em> (FA), <em>Geodesic anisotropy</em> (GA), <em>Mean diffusivity</em> (MD), <em>Trace</em> of the tensor, <em>Axial diffusivity</em> (AD), <em>Radial diffusivity</em> (RD), <em>Linearity</em>, <em>planarity</em>, <em>sphericity</em>, <em>tensor</em>, <em>tensor components</em>, <em>major tensor direction</em>, <em>tensor eigen values</em> and <em>tensor eigen vectors</em>. These maps are saved using the file name of the first diffusion-weighted volume suffixed by the map acronym.</p></li>
+</ul>
+<p>Toggle <strong>FWDTI model…</strong> button to show/hide DKI parameters:</p>
+<ul class="simple">
+<li><p>Select the <strong>Fitting algorithm</strong> from the combobox. The fitting methods available in Pysisyphe are as follows: <em>weighted least squares</em> (WLS), <em>non-linear least-squares</em> (NLS).</p></li>
+<li><p>Check the map(s) to be calculated: <em>Fractional anisotropy</em> (FA), <em>Geodesic anisotropy</em> (GA), <em>Mean diffusivity</em> (MD), <em>Trace</em> of the tensor, <em>Axial diffusivity</em> (AD), <em>Radial diffusivity</em> (RD), <em>Linearity</em>, <em>planarity</em>, <em>sphericity</em>, and <em>free water</em> (FW). These maps are saved using the file name of the first diffusion-weighted volume suffixed by the map acronym.</p></li>
 </ul>
 <p>Toggle <strong>DKI model…</strong> button to show/hide DKI parameters:</p>
 <ul class="simple">
 <li><p>Select the <strong>Fitting algorithm</strong> from the combobox. The fitting methods available in Pysisyphe are as follows: <em>ordinary least squares</em> (OLS or ULLS), <em>weighted ordinary least squares</em> (WLS, WLLS or UWLLS), <em>constrained ordinary least squares</em> (CLS or LMI), <em>constrained weighted least squares</em> (CWLS).</p></li>
 <li><p>Check the map(s) to be calculated: <em>Fractional anisotropy</em> (FA), <em>Geodesic anisotropy</em> (GA), <em>Mean diffusivity</em> (MD), <em>Trace</em> of the tensor, <em>Axial diffusivity</em> (AD), <em>Radial diffusivity</em> (RD). These maps are saved using the file name of the first diffusion-weighted volume suffixed by the map acronym.</p></li>
+</ul>
+<p>Toggle <strong>RUMBA model…</strong> button to show/hide DKI parameters:</p>
+<ul class="simple">
+<li><p>Select the <strong>Fitting algorithm</strong> from the combobox. The fitting methods available in Pysisyphe are as follows: <em>spatial matched filter</em> (SMF), <em>sum-of-squares</em> (SOS).</p></li>
+<li><p>Check the map(s) to be calculated: <em>Cerebro-spinal fluid fraction</em> (FCSF), <em>Gray matter fraction</em> (FGM), <em>White matter fraction</em> (WMF), <em>Isotropic fraction</em> (FISO). These maps are saved using the file name of the first diffusion-weighted volume suffixed by the map acronym.</p></li>
 </ul>
 <p>Toggle <strong>SHCSA model…</strong> button to show/hide SHCSA parameters:</p>
 <ul class="simple">
@@ -261,7 +275,51 @@
 <li><p>Edit the spherical harmonic order from the <strong>Order</strong> spinbox (default 6).</p></li>
 <li><p>Check the map to be calculated: <em>Generalized Fractional Anisotropy</em> (GFA). This map is saved using the file name of the first diffusion-weighted volume suffixed by “GFA”.</p></li>
 </ul>
+<p>Toggle <strong>DSI model…</strong> button to show/hide DSI parameters:</p>
+<ul class="simple">
+<li><p>Check the map to be calculated: <em>Generalized Fractional Anisotropy</em> (GFA). This map is saved using the file name of the first diffusion-weighted volume suffixed by “GFA”.</p></li>
+</ul>
+<p>Toggle <strong>DSID model…</strong> button to show/hide DSIF parameters:</p>
+<ul class="simple">
+<li><p>Check the map to be calculated: <em>Generalized Fractional Anisotropy</em> (GFA). This map is saved using the file name of the first diffusion-weighted volume suffixed by “GFA”.</p></li>
+</ul>
 <p>Left-click <strong>Execute</strong> button to fit the model and calculate the map(s).</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="diffusion-analysis-along-perivascular-space">
+<span id="menu-section-diffalps"></span><h2>Diffusion analysis along perivascular space<a class="headerlink" href="#diffusion-analysis-along-perivascular-space" title="Link to this heading"></a></h2>
+<p>This menu is used to process the <strong>ALPS diffusion index</strong>. ALPS-index express the influence of the water diffusion along the perivascular space which will reflect activity of the glymphatic system in the individual cases. The glymphatic system is a recently discovered waste drainage system in the brain that involves movement of the cerebrospinal fluid (CSF) along the perivascular space. This system promotes elimination of soluble proteins including amyloid-β (Aβ) and metabolites.</p>
+<p>The motion of water molecules toward the perivascular space is estimated by measuring diffusivity using the diffusion tensor method. At the level of the lateral ventricle body, the medullary veins run perpendicular to the ventricular wall, and the perivascular space runs in the same direction as the medullary veins, which is the right-left direction (x-axis). On the plane of this area, projection fibers (projection area) run in the head-foot direction (z-axis), mainly adjacent to the lateral ventricle, and superior longitudinal fascicles, representing association fibers (association area), run in the anterior-posterior direction outside the projection fibers.</p>
+<p>ALPS-index = ((Dxx(PArea) + Dxx(AArea)) / 2) / ((Dyy(PArea) + Dzz(AArea)) / 2)</p>
+<p>Dxx(PArea): diffusion in x-axis direction (glymphatic system effect) of the projection area
+Dxx(AArea): diffusion in x-axis direction (glymphatic system effect) of the association area
+Dyy(PArea): diffusion in y-axis direction of the projection area
+Dzz(AArea): diffusion in z-axis direction of the association area</p>
+<p>When the ALPS-index is close to 1, it means that the influence of the water diffusion along the perivascular space is minimal (i.e. impaired glymphatic system), and a larger ratio will represent larger water diffusivity along the perivascular space.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7456821/">Article</a>: Evaluation of glymphatic system activity with the diffusion MR technique: diffusion tensor image analysis along the perivascular space (DTI-ALPS) in Alzheimer’s disease cases. T. Taoka, Y. Masutani, H. Kawai, T. Nakane, K. Matsuoka, F. Yasuno, T. Kishimoto, S. Naganawa. Jpn J Radiol 2017 Apr;35(4):172-178.</p>
+</div>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select PySisyphe <strong>Multicomponent tensor volume(s)</strong> (.xvol, with <em>TENSOR</em> sequence attribute). These volumes are processed from the <a class="reference internal" href="#menu-section-diffmodel"><span class="std std-ref">Diffusion model</span></a> menu and saved with the ‘TENSOR’ suffix.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget to select PySisyphe <strong>Multicomponent tensor volume reference</strong> (.xvol, with sequence attribute ‘TENSOR’). This volume will be used as a reference to define the ROI of the projection and association areas required for ALPS-index processing. We recommend installing the IIT atlas from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> and using the icbm152_IIT_TENSOR.xvol (./ICBM152/BUNDLES IIT/MEAN or ./ICBM152/BUNDLES IIT/MEDIAN subdirectories) tensor volume as reference. Each tensor volume used to calculate the ALPS-index is registered with this reference volume.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget to select PySisyphe <strong>Label volume of reference proj./assoc. areas</strong> (.xvol with <em>LABEL LB</em> modality). This volume must be in the same space (space/transform ID) as the reference volume. This is a label volume that stores the ROI of the projection and association areas. Label values must be as follows: label 1=left association area, label 2= right association area, label 3=left projection area and label 4=right projection area. This volume is provided by the IIT Atlas under the icbm152_IIT_ALPS_LABELS.xvol name in the ./ICBM152/BUNDLES IIT/MEAN or ./ICBM152/BUNDLES IIT/MEDIAN subdirectories.</p>
+<p>Toggle <strong>Diffusion ALPS…</strong> button to show/hide parameters:</p>
+<ul>
+<li><p>Set the structuring element radius (in pixels) using <strong>Dilatation of areas</strong> spinbox. This parameter is provided to extend the ROI of the association and projection areas using morphological dilation. Choose 0 to ignore this setting and preserve the original dimensions of the projection and association areas in the reference label volume. The default size is a 3-voxel cube in the icbm152_IIT_ALPS_LABELS.xvol label volume of the IIT Atlas.</p></li>
+<li><p>Select the registration algorithm using the <strong>Transform</strong> comb.box:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>AntsAffine</em>: 4 multiresolution stages with last at full resolution.</p></li>
+<li><p><em>AntsFastAffine</em>: fast scheme with only 3 multiresolution stages, and no iteration at full resolution.</p></li>
+<li><p><em>AntsSplineDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.</p></li>
+<li><p><em>AntsDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.</p></li>
+<li><p><em>AntsFastSplineDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.</p></li>
+<li><p><em>AntsFastDiffeomorphic</em>: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to calculate Diffusion ALPS. The result is displayed in a dialog box with a table. The observations (i.e. tensor volumes) are arranged in rows and the ALPS indices in columns in the table. There are three ALPS indices calculated based on the mean, median, or maximum diffusivity in the reference proj./assoc. areas. Press the <strong>Save Dataset</strong> button, to save the table in one of the following formats: CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET).</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
 </section>
 <section id="tractogram-generation">

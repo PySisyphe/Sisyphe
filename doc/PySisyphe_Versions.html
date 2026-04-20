@@ -95,6 +95,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-78-08-build-01-02-2026">version 0.78.08, build 01/02/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-80-15-build-20-02-2026">version 0.80.15, build 20/02/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-81-22-build-20-03-2026">version 0.81.22, build 20/03/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-87-08-build-20-04-2026">version 0.87.08, build 20/04/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -142,6 +143,7 @@
 <li><p><a class="reference internal" href="#build01-02-2026"><span class="std std-ref">version 0.78.08, build 01/02/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-02-2026"><span class="std std-ref">version 0.80.15, build 20/02/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-03-2026"><span class="std std-ref">version 0.81.22, build 20/03/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build20-04-2026"><span class="std std-ref">version 0.87.08, build 20/04/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -6332,7 +6334,7 @@
 <div><ul class="simple">
 <li><p>version-histrory.rst</p></li>
 <li><p>PySisyphe_dockroitools.rst</p></li>
-<li><p>PySisyphe_File.rst</p></li>
+<li><p>PySisyphe_Diffusion.rst</p></li>
 <li><p>PySisyphe_Segmentation.rst</p></li>
 <li><p>rebuild sphinx documentation</p></li>
 </ul>
@@ -6359,7 +6361,7 @@
 </ul>
 </div></blockquote>
 </li>
-<li><p><strong>new external module</strong></p>
+<li><p><strong>new external modules</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li><p>sam (Segment Anything Pre-trained Model MedSAM), added as PySisyphe module Sisyphe.lib.sam</p></li>
@@ -7077,6 +7079,1145 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>update DrawRectangleFlag &amp; DrawThresholdRectangleFlag</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="version-0-87-08-build-20-04-2026">
+<span id="build20-04-2026"></span><h2>version 0.87.08, build 20/04/2026<a class="headerlink" href="#version-0-87-08-build-20-04-2026" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>updated html documentation</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>version-histrory.rst</p></li>
+<li><p>PySisyphe_browser.rst</p></li>
+<li><p>PySisyphe_Diffusion.rst</p></li>
+<li><p>PySisyphe_File.rst</p></li>
+<li><p>PySisyphe_Mapping.rst</p></li>
+<li><p>PySisyphe_Functions.rst</p></li>
+<li><p>PySisyphe_Segmentation.rst</p></li>
+<li><p>PySisyphe_menubar.rst</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated files</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>/settings/functions.xml</p></li>
+<li><p>/settings/tooltips.xml</p></li>
+<li><p>requirements.txt</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>upgraded packages</strong></p>
+<blockquote>
+<div><ul>
+<li><p>dipy, migrate from 1.11.0 to 1.12.0, PySisyphe dependencies</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>core.sisypheTools</p></li>
+<li><p>core.sisypheImage</p></li>
+<li><p>core.sisypheTracts</p></li>
+<li><p>gui.dialogDiffusionPreprocessing</p></li>
+<li><p>lib.dipy.localpca</p></li>
+<li><p>lib.dipy.non_local_means</p></li>
+<li><p>lib.dipy.streamline</p></li>
+<li><p>processing.dipyFunctions</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>matplotlib, migrate from 3.6.3 to 3.10.8, PySisyphe dependencies</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>core.sisypheLUT</p></li>
+<li><p>core.sisypheVolume</p></li>
+<li><p>gui.dialogStatContrast</p></li>
+<li><p>gui.dialogStatResult</p></li>
+<li><p>gui.dialogGenericResults</p></li>
+<li><p>gui.dialogPerfusion</p></li>
+<li><p>gui.dialogROIStatistics</p></li>
+<li><p>gui.dialogSeriesRealignment</p></li>
+<li><p>gui.dialogSplash</p></li>
+<li><p>gui.dialogWait</p></li>
+<li><p>gui.windowSisyphe</p></li>
+<li><p>widgets.LUTWidgets</p></li>
+<li><p>widgets.abstractViewWidget</p></li>
+<li><p>widgets.fileBrowserWidget</p></li>
+<li><p>widgets.imageWidgets</p></li>
+<li><p>widgets.multiComponentViewWidget</p></li>
+<li><p>widgets.sheetWidget</p></li>
+<li><p>widgets.thresholdWidget</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new external modules</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>MyRelax, <a class="reference external" href="https://github.com/fragrussu/MyRelax">https://github.com/fragrussu/MyRelax</a>, added as PySisyphe module Sisyphe.lib.myrelax</p></li>
+<li><p>TGVQSM, <a class="reference external" href="https://www.neuroimaging.at/pages/qsm.php">https://www.neuroimaging.at/pages/qsm.php</a>, added as PySisyphe module Sisyphe.lib.tgvqsm</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new modules</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>processing.qMRFunctions</p></li>
+<li><p>gui.dialogQuantitativeMR</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated modules</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheLUT</p></li>
+<li><p>core.sisypheTracts</p></li>
+<li><p>core.sisypheImageAttributes</p></li>
+<li><p>core.sisypheStatistics</p></li>
+<li><p>core.sisypheDicom</p></li>
+<li><p>core.sisypheVolume</p></li>
+<li><p>core.sisypheImage</p></li>
+<li><p>core.sisypheTransform</p></li>
+<li><p>core.sisypheROI</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update cython compilation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSettings</p></li>
+<li><p>gui.dialogVolumeAttributes</p></li>
+<li><p>gui.dialogStatResult</p></li>
+<li><p>gui.dialogGenericResults</p></li>
+<li><p>gui.dialogPerfusion</p></li>
+<li><p>gui.dialogROIStatistics</p></li>
+<li><p>gui.dialogPerfusion</p></li>
+<li><p>gui.dialogDiffusionModel</p></li>
+<li><p>gui.dialogStatContrast</p></li>
+<li><p>gui.dialogFunction</p></li>
+<li><p>gui.dialogSkullStripping</p></li>
+<li><p>gui.dialogImport</p></li>
+<li><p>gui.dialogResample</p></li>
+<li><p>gui.dialogDatatype</p></li>
+<li><p>gui.dialogDiffusionModel</p></li>
+<li><p>gui.dialogWait</p></li>
+<li><p>gui.dialogEditLabels</p></li>
+<li><p>gui.dialogSettings</p></li>
+<li><p>gui.windowSisyphe</p></li>
+<li><p>processing.dscFunctions</p></li>
+<li><p>processing.capturedStdoutProcessing</p></li>
+<li><p>widgets.LUTWidgets</p></li>
+<li><p>widgets.imageWidgets</p></li>
+<li><p>widgets.multiComponentViewWidget</p></li>
+<li><p>widgets.sheetWidget</p></li>
+<li><p>widgets.thresholdWidget</p></li>
+<li><p>widgets.selectFileWidgets</p></li>
+<li><p>widgets.dicomWidgets</p></li>
+<li><p>widgets.attributesWidgets</p></li>
+<li><p>widgets.functionsSettingsWidget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new functions</strong></p>
+<blockquote>
+<div><ul>
+<li><p>processing.dscFunctions.cbfAslMap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>CBF processing from Arterial Spin Labeling (ASL) series</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.qMRFunctions.B0DblEchoMap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>B0 main static magnetic field map (in Hz) processing using the phase difference between two echoes</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.qMRFunctions.B1DblTRMap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>B1 radiofrequency (RF) coil map processing from two-pulse spoiled gradient echo with short and long TR (actual flip angle imaging)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.qMRFunctions.B1GEDblAngleMap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>B1 radiofrequency (RF) coil map processing from two gradient echo images using the double angle method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.qMRFunctions.B1SEDblAngleMap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>B1 radiofrequency (RF) coil map processing from two spin echo images using the double angle method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.qMRFunctions.T1MultiTRMap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>voxel-wise mono-exponential T1 fitting on spin echo volumes at variable TR (VTR)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.qMRFunctions.T1MultiAngleMap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>voxel-wise mono-exponential T1 fitting for a variable flip angle (VFA) volumes</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.qMRFunctions.T2MonoExpMap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>voxel-wise mono-exponential T2/T2* fitting on volumes at variable echo times</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.qMRFunctions.T2BiExpMap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>voxel-wise bi-exponential T2/T2* fitting on volumes at variable echo times</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.qMRFunctions.T2primeMap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>T2’ processing from quantitative T2 and T2* maps</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.qMRFunctions.MTRMap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>magnetization Transfer Ratio (MTR) from MT “on” and MT “off” acquisitions</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.qMRFunctions.QSMMap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>quantitative susceptibility mapping (QSM) processing using total generalized variation (TGV-QSM).</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.qMRFunctions.phaseRescaling()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>phase MR image rescaling to (-pi, +pi)</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheTracts.SisypheFreeWaterDTIModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>class to manage free water diffusion tensor imaging model</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheRumbaModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>class to manage Robust and Unbiased Model-BAsed Spherical Deconvolution (RUMBA) model</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogPerfusion.DialogASLPerfusion</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for ASL processing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogQuantitativeMR.DialogB0Map</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for B0 map processing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogQuantitativeMR.DialogB1Map</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for B1 map processing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogQuantitativeMR.DialogT1Map</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for T1 map processing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogQuantitativeMR.DialogT2Map</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for T2/T2* map processing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogQuantitativeMR.DialogMTRMap</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for Magnetization Transfer Ratio (MTR) map processing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogQuantitativeMR.DialogQSMMap</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for map Quantitative Susceptibility (QSM) processing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogALPS</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for diffusion tensor image analysis along the perivascular space (DTI‑ALPS)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widget.selectFileWidgets.FilesSelectionWithParametersWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>widget that manages files selection with associated parameters</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheLUT.SisypheLUT</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update SisypheLut.setInternalLut() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheDTIModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new getLinearity() method</p></li>
+<li><p>new getPlanarity() method</p></li>
+<li><p>new getSphericity() method</p></li>
+<li><p>new getIsotropic() method</p></li>
+<li><p>new getDeviatropic() method</p></li>
+<li><p>new getTensor() method</p></li>
+<li><p>new getEigenValues() method</p></li>
+<li><p>new getEigenVectors() method</p></li>
+<li><p>new getMajorEigenVector() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheDKIModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new getLinearity() method</p></li>
+<li><p>new getPlanarity() method</p></li>
+<li><p>new getSphericity() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheSHCSAModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getModel() method</p></li>
+<li><p>update computeFitting() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheSHCSDModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getModel() method</p></li>
+<li><p>update computeFitting() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getLBSequences() method</p></li>
+<li><p>new setSequenceToB0Map() method</p></li>
+<li><p>new setSequenceToB1Map() method</p></li>
+<li><p>new setSequenceToT1Map() method</p></li>
+<li><p>new setSequenceToT2Map() method</p></li>
+<li><p>new setSequenceToT2primeMap() method</p></li>
+<li><p>new setSequenceToMTRMap() method</p></li>
+<li><p>new setSequenceToQSMMap() method</p></li>
+<li><p>new setSequenceToMagnitude() method</p></li>
+<li><p>new setSequenceToPhase() method</p></li>
+<li><p>new isB0Map() method</p></li>
+<li><p>new isB1Map() method</p></li>
+<li><p>new isT1Map() method</p></li>
+<li><p>new isT2Map() method</p></li>
+<li><p>new isMTRMap() method</p></li>
+<li><p>new isQSMMap() method</p></li>
+<li><p>new isMagnitude() method</p></li>
+<li><p>new isPhase() method</p></li>
+<li><p>new setUnitToHz() method</p></li>
+<li><p>new setUnitToMillisecond() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheStatistics.SisypheDesign</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update addHRFBoxCarModelToCondition() method</p></li>
+<li><p>update addHighPassToCondition() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheDicom.DicomToXmlDicom</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolumeCollection</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update remove() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update loadFromNIFTI() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTransform.SisypheApplyTransform</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update resampleMoving() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROICollection</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update toLabelVolume() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSettings.SisypheSettings</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getFieldValue() method</p></li>
+<li><p>update setFieldValue() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogVolumeAttributes.DialogVolumeAttributes</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update  _setSequencesFromModality() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogStatResult.DialogResult</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _updateBetaChart() method</p></li>
+<li><p>update _updateTimeSeriesChart() method</p></li>
+<li><p>update _updateRegressionChart() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogGenericResults.DialogGenericResults</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update chartBarFromTreeWidgetColumn() method</p></li>
+<li><p>update chartPlotFromTreeWidgetColumn() method</p></li>
+<li><p>update chartBoxplotFromTreeWidgetColumn() method</p></li>
+<li><p>update chartPieFromTreeWidgetColumn() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogPerfusion.DialogArterialInputFunction</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _cursorPositionChanged() method</p></li>
+<li><p>update _addVoxel() method</p></li>
+<li><p>update _removeVoxel() method</p></li>
+<li><p>update _clear() method</p></li>
+<li><p>update setVolume() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogPerfusion.DialogPerfusion</p></li>
+<li><p>gui.dialogPerfusion.DialogPerfusion2</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update function() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogROIStatistics.DialogROIStatistics</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _checkStateChanged() method</p></li>
+<li><p>update _binsChanged() method method</p></li>
+<li><p>update ._displayLineAt() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update _modelChanged() method</p></li>
+<li><p>update multiExecute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogStatContrast.DialogContrast</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogFunction.AbstractDialogFunction</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogFunction.DialogRemoveNeckSlices</p></li>
+<li><p>gui.dialogFunction.DialogGaussianFilter</p></li>
+<li><p>gui.dialogFunction.DialogMeanFilter</p></li>
+<li><p>gui.dialogFunction.DialogMedianFilter</p></li>
+<li><p>gui.dialogFunction.DialogAnisotropicDiffusionFilter</p></li>
+<li><p>gui.dialogFunction.DialogGradientFilter</p></li>
+<li><p>gui.dialogFunction.DialogLaplacianFilter</p></li>
+<li><p>gui.dialogFunction.DialogBiasFieldCorrectionFilter</p></li>
+<li><p>gui.dialogFunction.DialogHistogramIntensityMatching</p></li>
+<li><p>gui.dialogFunction.DialogRegressionIntensityMatching</p></li>
+<li><p>gui.dialogFunction.DialogIntensityNormalization</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSkullStripping.DialogSkullStripping</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogImport.DialogImport</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update convert() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogResample.DialogResample</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update _updateMoving() method</p></li>
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDatatype.DialogEditID</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update _refChanged() method</p></li>
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogEditLabels.DialogEditLabels</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setVolume() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogWait.DialogWait</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update messageFromDictProxyManager() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSettings.DialogSettings</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _initSettings() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _initMapMenu() method</p></li>
+<li><p>upadte _initDiffusionMenu() method</p></li>
+<li><p>update _openModel() method</p></li>
+<li><p>new mapB0() method</p></li>
+<li><p>new mapB1() method</p></li>
+<li><p>new mapT1() method</p></li>
+<li><p>new mapT2() method</p></li>
+<li><p>new mapT2p() method</p></li>
+<li><p>new mapQSM() method</p></li>
+<li><p>new mapMTR() method</p></li>
+<li><p>new mapASL() method</p></li>
+<li><p>new diffusionALPS() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.capturedStdoutProcessing.ProcessDiffusionModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update run() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.LutWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _get_span_left() method</p></li>
+<li><p>update _get_span_right() method</p></li>
+<li><p>update _set_span_left() method</p></li>
+<li><p>update _set_span_right() method</p></li>
+<li><p>update _draw() method</p></li>
+<li><p>update _onMouseMoveEvent() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.AlphaTransferWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update _updateLines() method</p></li>
+<li><p>update setTransfer() method</p></li>
+<li><p>update _onMouseMoveEvent() method</p></li>
+<li><p>update _onMenuClear() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.ComboBoxLut</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _addInternalLut() method</p></li>
+<li><p>update getCurrentAsMatplotlibColormap() method</p></li>
+<li><p>update _addInternalLut() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.PopupMenuLut</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getCurrentAsMatplotlibColormap() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.ImagePreviewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update setDefaultLut() method</p></li>
+<li><p>update setLut() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update updateSpan() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sheetWidget.SheetChartWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _drawChart() method</p></li>
+<li><p>update properties() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.thresholdWidget.ThresholdViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update _get_span_left() method</p></li>
+<li><p>update _get_span_right() method</p></li>
+<li><p>update _set_span_left() method</p></li>
+<li><p>update _set_span_right() method</p></li>
+<li><p>update addCurrentCurveToChart() method</p></li>
+<li><p>update _cursorPositionChanged() method</p></li>
+<li><p>update cleanChart() method</p></li>
+<li><p>update _onMouseMoveEvent() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new fileCountWarningOn() method</p></li>
+<li><p>new fileCountWarningOff() method</p></li>
+<li><p>new setFileCountWarning() method</p></li>
+<li><p>new getFileCountWarning() method</p></li>
+<li><p>update copySelectionFrom() method</p></li>
+<li><p>update copySelectionTo() method</p></li>
+<li><p>update add() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.SynchronizedFilesSelectionWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.dicomWidgets.DicomFilesTreeWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _pathToDict() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListROIAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>new saveLabelSisyphe() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _initSettingsLayout() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheTracts.SisypheDTIModel.getLinearity()</p></li>
+<li><p>core.sisypheTracts.SisypheDTIModel.getPlanarity()</p></li>
+<li><p>core.sisypheTracts.SisypheDTIModel.getSphericity()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get linearity, planarity and sphericity diffusion maps</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.setSequenceToB0Map()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.setSequenceToB1Map()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.setSequenceToT1Map()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.setSequenceToT2Map()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.setSequenceToT2primeMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.setSequenceToMTRMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.setSequenceToQSMMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.setSequenceToMagnitude()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.setSequenceToPhase()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isB0Map()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isB1Map()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isT1Map()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isT2Map()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isT2primeMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isMTRMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isQSMMap()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isMagnitude()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.isPhase()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add B0 map, B1 map, T1 map, T2 map, T2’ map, MTR map, QSM map, phase &amp; magnitude sequences</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.setUnitToHz()</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.setUnitToMillisecond()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add msec and Hz units</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.mapB0()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.mapB1()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.mapT1()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.mapT2()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.mapT2p()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.mapQSM()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.mapMTR()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.asl()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.diffusionALPS()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add processing of B0, B1, T1, T2, T2’, QSM, MTR, ASL maps and DTI-ALPS</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget.fileCountWarningOn()</p></li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget.fileCountWarningOff()</p></li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget.setFileCountWarning()</p></li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget.getFileCountWarning()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>management of self._countWarning attribute</p></li>
+<li><p>self._countWarning is used as a flag to display or not a warning when the maximum number of files is reached</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListROIAttributesWidget.saveLabelSisyphe()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>save the checked ROI to label xvol</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheTracts.SisypheSHCSAModel.getModel()</p></li>
+<li><p>core.sisypheTracts.SisypheSHCSAModel.computeFitting()</p></li>
+<li><p>core.sisypheTracts.SisypheSHCSDModel.getModel()</p></li>
+<li><p>core.sisypheTracts.SisypheSHCSDModel.computeFitting()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace sh_order parameter name by sh_order_max</p></li>
+<li><p>new parameter name since dipy v1.9</p></li>
+<li><p>required for dipy migration from version 1.11.0 to 1.12.0</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.getLBSequences()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, return replace tuple(cls._LBSEQUENCE) by return cls._LBSEQUENCE,</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheStatistics.SisypheDesign.addHRFBoxCarModelToCondition()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 3659, name variable splitting/joining</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheStatistics.SisypheDesign.addHighPassToCondition()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 3709, name variable splitting/joining</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheDicom.DicomToXmlDicom.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>pydicom bug: some DataElements have empty keywords</p></li>
+<li><p>work around the pydicom bug, detect empty keyword and create it from DataElement.name</p></li>
+<li><p>work around the pydicom bug, replace keyword by tag to extract DataElement from DataSet</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolumeCollection.remove()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix for int value type, line 4930, replace self.pop(self.index(value)) by self.pop(value)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.loadFromNIFTI()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, add support for vector images of all data types</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTransform.SisypheApplyTransform.resampleMoving()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, origin update of the moving volume</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROICollection.toLabelVolume()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace roi = roi + self[i].getSITKImage() * i by roi = roi + self[i].getSITKImage() * (i + 1)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSettings.SisypheSettings.getFieldValue()</p></li>
+<li><p>core.sisypheSettings.SisypheSettings.setFieldValue()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lines 914 &amp; 1007, add elif path == ‘~’: base = abspath(expanduser(‘~’))</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogVolumeAttributes.DialogVolumeAttributes._setSequencesFromModality()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add LB modality management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel.__init__()</p></li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel._modelChanged()</p></li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel.save()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add free water DTI and RUMBA models management</p></li>
+<li><p>add linearity, planarity and sphericity maps (DTI, FWDTI and DKI models)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe._initMapMenu()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new ‘B0 map…’ menu</p></li>
+<li><p>new ‘B1 map…’ menu</p></li>
+<li><p>new ‘T1 map…’ menu</p></li>
+<li><p>new ‘T2/T2* map…’ menu</p></li>
+<li><p>new ‘T2prinme map…’ menu</p></li>
+<li><p>new ‘MTR map…’ menu</p></li>
+<li><p>new ‘QSM map…’ menu</p></li>
+<li><p>new ‘QSM map…’ menu</p></li>
+<li><p>new ‘ASL perfusion…’ menu</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe._initDiffusionMenu()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new ‘Diffusion analysis along perivascular space…’ menu</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe._openModel()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 2024, replace basename(filename)[0] by splitext(basename(filename))[0]</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogStatContrast.DialogContrast.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 206, replace self._cfactors.addItem(‘Main factor’) by self._cfactors.addItem(‘Main’)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogFunction.AbstractDialogFunction.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add a messageBox to perform additional processing</p></li>
+<li><p>add self._files.setSelectionTo(i)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogFunction.DialogRemoveNeckSlices.__init__()</p></li>
+<li><p>gui.dialogFunction.DialogGaussianFilter.__init__()</p></li>
+<li><p>gui.dialogFunction.DialogMeanFilter.__init__()</p></li>
+<li><p>gui.dialogFunction.DialogMedianFilter.__init__()</p></li>
+<li><p>gui.dialogFunction.DialogAnisotropicDiffusionFilter.__init__()</p></li>
+<li><p>gui.dialogFunction.DialogGradientFilter.__init__()</p></li>
+<li><p>gui.dialogFunction.DialogLaplacianFilter.__init__()</p></li>
+<li><p>gui.dialogFunction.DialogBiasFieldCorrectionFilter.__init__()</p></li>
+<li><p>gui.dialogFunction.DialogHistogramIntensityMatching.__init__()</p></li>
+<li><p>gui.dialogFunction.DialogRegressionIntensityMatching.__init__()</p></li>
+<li><p>gui.dialogFunction.DialogIntensityNormalization.__init__()</p></li>
+<li><p>gui.dialogSkullStripping.DialogSkullStripping.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add setWindowTitle()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogPerfusion.DialogPerfusion.function()</p></li>
+<li><p>gui.dialogPerfusion.DialogPerfusion2.function()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove the messageBox to perform additional processing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSkullStripping.DialogSkullStripping.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add a messageBox to perform additional processing</p></li>
+<li><p>add self._files.setSelectionTo(i)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogImport.DialogImport.convert()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>hide dialog and dialogWait if exception</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogResample.DialogResample. __init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._apply FilesSelectionWidget attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogResample.DialogResample._updateMoving()</p></li>
+<li><p>gui.dialogResample.DialogResample.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>self._apply FilesSelectionWidget management</p></li>
+<li><p>resample additional moving volumes</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDatatype.DialogEditID.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._origin attribute (volume origin)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDatatype.DialogEditID._refChanged()</p></li>
+<li><p>gui.dialogDatatype.DialogEditID.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>self._origin management</p></li>
+<li><p>copy reference volume origin</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._FWDTI and self._RUMBA attributes</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel._modelChanged()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add management of FWDTI and RUMBA models</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel.multiExecute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>save support for linearity, planarity, sphericity, ifree water fraction,</p></li>
+<li><p>save support for csf fraction, gray matter fraction, white matter fraction</p></li>
+<li><p>save support tensor, eigen values, eigen vectors, tensor major direction</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogWait.DialogWait.messageFromDictProxyManager()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add ‘acc’ key</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogEditLabels.DialogEditLabels.setVolume()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix if number of labels &gt; max value in image array</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSettings.DialogSettings._initSettings()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add sections</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.capturedStdoutProcessing.ProcessDiffusionModel.run()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add FWDTI model processing &amp; free water fraction map</p></li>
+<li><p>add RUMBA model processing &amp; cerebro-spinal fluid fraction, gray matter fraction, white matter fraction, isotropic fraction maps</p></li>
+<li><p>add linearity, planarity, sphericity, tensor, tensor major direction maps for DTI</p></li>
+<li><p>add linearity, planarity, sphericity FWDTI &amp; DKI models</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget.copySelectionFrom()</p></li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget.copySelectionTo()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace widget by widget._list</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget.add()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>self._countWarning attribute is used as a flag to display or not a warning when the maximum number of files is reached</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add params paramter, if false, multiple widgets are FileSelectionWidget or FilesSelectionWithParametersWidget, otherwise.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.dicomWidgets.DicomFilesTreeWidget._pathToDict()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, support for mosaics with dimensions other than 8 x 8</p></li>
+<li><p>line 1023, replace mosaic = ((v // 8) + 1) * 8 by mosaic = (int(sqrt(v)) + 1) ** 2</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListROIAttributesWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._action[‘lbl’] action, save the checked ROI to label xvol</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget._initSettingsLayout()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add attribute ‘component’ for ‘vol’ node, to define single or multicomponent xvol selection</p></li>
+<li><p>bug fix, line 755, replace data = abspath(join(base, data)) by if base != ‘’: data = abspath(join(base, data))</p></li>
 </ul>
 </div></blockquote>
 </li>

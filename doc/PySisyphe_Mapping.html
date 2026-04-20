@@ -85,6 +85,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#seed-to-voxel-time-series-correlation">Seed-to-voxel time series correlation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#single-subject-time-series-ica">Single subject time series ICA</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#time-series-correlation-matrix">Time series correlation matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#b0-map">B0 map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#b1-map">B1 map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#t1-map">T1 map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#t2-map">T2 map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#menu-section-t2pmap">T2’ map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mtr-map">MTR map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qsm-map">QSM map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#asl-perfusion">ASL perfusion</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dynamic-susceptibility-contrast">Dynamic susceptibility contrast</a></li>
 </ul>
 </li>
@@ -142,6 +150,14 @@
 <li><p><a class="reference internal" href="#menu-section-seriesseed"><span class="std std-ref">Seed-to-voxel time series correlation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-seriesica"><span class="std std-ref">Single subject time series ICA</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-seriescorr"><span class="std std-ref">Time series correlation matrix</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-b0map"><span class="std std-ref">B0 map</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-b1map"><span class="std std-ref">B1 map</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-t1map"><span class="std std-ref">T1 map</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-t2map"><span class="std std-ref">T2 map</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-t2pmap"><span class="std std-ref">T2’ map</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-mtrmap"><span class="std std-ref">MTR map</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-qsmmap"><span class="std std-ref">QSM map</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-asl"><span class="std std-ref">ASL perfusion</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-dsc"><span class="std std-ref">Dynamic susceptibility contrast</span></a></p></li>
 </ul>
 <section id="fmri-model-definition">
@@ -558,6 +574,196 @@ norm ppf, Normal inverse cumulative distribution function (i.e. percent point fu
 </ul>
 <p>Left-click <strong>Execute</strong> button to compute the correlation matrix.</p>
 <p>The result is displayed in a dialog box with two tabs. The first tab, titled <strong>Connectivity matrix</strong>, shows the connectivity matrix as a chart. This tab includes three buttons at the bottom: a <strong>Save bitamp</strong> button to save a bitmap of the chart (supported bitmap formats BMP, JPG, PNG, TIFF and SVG), a <strong>Copy to clipboard</strong> button to copy a bitmap capture of the chart to the clipboard, and a <strong>Copy to screenshots</strong> button to copy a bitmap capture of the chart to the <a class="reference internal" href="PySisyphe_screenshots.html#page-screenshots"><span class="std std-ref">Screenshots manager</span></a>. The second tab, titled <strong>Connectivity table</strong>, shows the connectivity matrix values in table format. This tab includes the button <strong>Save Dataset</strong>, which shows a dialog box to save the table in various formats (CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET).</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="b0-map">
+<span id="menu-section-b0map"></span><h2>B0 map<a class="headerlink" href="#b0-map" title="Link to this heading"></a></h2>
+<p>This menu is used to process the static magnetic field map B0 (in Hz) based on the phase difference between two echoes in a gradient echo sequence.
+The PySisyphe code was adapted from the <a class="reference external" href="https://github.com/lamyj/erwin">erwin package</a>.
+See <a class="reference external" href="https://qmrlab.org/mooc/b0-mapping/">https://qmrlab.org/mooc/b0-mapping/</a> for theory.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2896433/">Article</a>: An in vivo automated shimming method taking into account shim current constraints. Wen H. &amp; Jaffer F.A. Magn Reson Med. 1995 34(6),pp.898-904.</p>
+</div>
+<p>Use the <strong>Two phase volumes</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select two PySisyphe volumes acquired with two echo times (.xvol, with <em>PHASE</em> sequence attribute). Echo times can be extracted automatically if DICOM conversion files are associated with PySisyphe volumes (same filename with .xdcm extension). If this is not the case, edit the echo time values for each volume using the spin boxes located in the column to the right of the file names. You can also load echo times from a file (supported formats .txt, .csv or numpy .npy) by clicking the <strong>Load parameter</strong> button and then selecting the <strong>EchoTime</strong> menu. Echo times are saved by clicking the <strong>Save parameter</strong> and then selecting the <strong>EchoTime</strong> menu.</p>
+<p>Use the <strong>Analysis mask</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select a PySisyphe volume used as mask (.xvol, with <em>MASK</em> sequence attribute). B0 map is not processed in background voxels of the mask. This field is optional and may be left blank.</p>
+<p>Toggle <strong>B0 map…</strong> button to show/hide parameters:</p>
+<ul class="simple">
+<li><p>Check the box <strong>Rescale phase signal</strong> to rescale the phase volume signal. This option ensures that the scalar range of the phase images lies between -π and +π.</p></li>
+<li><p>The B0 map is saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> fields.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to compute B0 map.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="b1-map">
+<span id="menu-section-b1map"></span><h2>B1 map<a class="headerlink" href="#b1-map" title="Link to this heading"></a></h2>
+<p>This menu is used to process B1 radiofrequency (RF) coil map from two gradient echo images using the double angle method (actual flip angle imaging AFI).
+The PySisyphe code was adapted from the <a class="reference external" href="https://github.com/fragrussu/MyRelax">MyRelax package</a>.
+See <a class="reference external" href="https://qmrlab.org/mooc/b1-mapping/">https://qmrlab.org/mooc/b1-mapping/</a> for theory.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S1064185883711332">Article</a>: Mapping of the radiofrequency field. Insko E.K. &amp; Bolinger L. J Magn Reson Imaging. 1993 Series A, 103:82-85.</p>
+</div>
+<p>Use the <strong>Two spoiled gradient echo</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select two PySisyphe volumes (.xvol, with <em>MAGNITUDE</em> sequence attribute). Echo times and reptition times can be extracted automatically if DICOM conversion files are associated with PySisyphe volumes (same filename with .xdcm extension). If this is not the case, edit the echo time and repetition time values for each volume using the spin boxes located in the column to the right of the file names. You can also load echo and repetition times from a file (supported formats .txt, .csv or numpy .npy) by clicking the <strong>Load parameter</strong> button and then selecting the <strong>EchoTime</strong>/<strong>RepetitionTime</strong> menu. Echo and repetition times are saved by clicking the <strong>Save parameter</strong> and then selecting the <strong>EchoTime</strong>/<strong>RepetitionTime</strong> menu.</p>
+<p>Use the <strong>Analysis mask</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select a PySisyphe volume used as mask (.xvol, with <em>MASK</em> sequence attribute). B1 map is not processed in background voxels of the mask. This field is optional and may be left blank.</p>
+<p>Toggle <strong>B1 map…</strong> button to show/hide parameters:</p>
+<ul class="simple">
+<li><p>Select an algorithm from the <strong>Automatic masking</strong> combobox to process a mask from the PySisyphe magnitude volumes (default <em>No</em>, no automatic mask). This field is ignored if an <strong>Analysis mask</strong> is provided. The following algorithms are available: <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html">Huang</a>, Mean, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html">Otsu</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html">Renyi</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html">Yen</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html">Li</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html">Shanbhag</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1TriangleThresholdImageFilter.html">Triangle</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html">Intermodes</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html">Maximumentropy</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html">Kittler</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html">Isodata</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html">Moments</a>.</p></li>
+<li><p>Set the <strong>flip angle</strong> (in degrees) of the gradient echo images.</p></li>
+<li><p>The B1 map is saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> fields.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to compute B1 map.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="t1-map">
+<span id="menu-section-t1map"></span><h2>T1 map<a class="headerlink" href="#t1-map" title="Link to this heading"></a></h2>
+<p>This menu is used to process voxel-wise mono-exponential T1 fitting for variable flip angle (VFA) gradient echo images.
+The PySisyphe code was adapted from the <a class="reference external" href="https://github.com/fragrussu/MyRelax">MyRelax package</a>.
+See <a class="reference external" href="https://qmrlab.org/mooc/t1-mapping/">https://qmrlab.org/mooc/t1-mapping/</a> for theory.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="http://qmri.org/">Book</a>: Quantitative MRI of the brain, 2nd edition, Tofts, Cercignani and Dowell editors, Taylor and Francis Group.</p>
+</div>
+<p>Use the <strong>Volumes with variable TR (VTR) or variable flip angles (VFA)</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select PySisyphe volumes (.xvol, with <em>MAGNITUDE</em> sequence attribute). Echo time/reptition time/flip angle values can be extracted automatically if DICOM conversion files are associated with PySisyphe volumes (same filename with .xdcm extension). If this is not the case, edit the echo time/repetition time/flip angle values for each volume using the spin boxes located in the column to the right of the file names. You can also load echo time/repetition time/flip angle from a file (supported formats .txt, .csv or numpy .npy) by clicking the <strong>Load parameter</strong> button and then selecting the <strong>EchoTime</strong>/<strong>RepetitionTime</strong>/<strong>FlipAngle</strong> menu. Echo time/repetition time/flip angle are saved by clicking the <strong>Save parameter</strong> and then selecting the <strong>EchoTime</strong>/<strong>RepetitionTime</strong>/<strong>FlipAngle</strong> menu.</p>
+<p>Use the <strong>Analysis mask</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select a PySisyphe volume used as mask (.xvol, with <em>MASK</em> sequence attribute). T1 map is not processed in background voxels of the mask. This field is optional and may be left blank.</p>
+<p>Use the <strong>B1 map</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select a B1 map PySisyphe volume (.xvol, with <em>B1 MAP</em> sequence attribute). This field is optional and may be left blank.</p>
+<p>Toggle <strong>T1 map…</strong> button to show/hide parameters:</p>
+<ul class="simple">
+<li><p>Select an algorithm from the <strong>Automatic masking</strong> combobox to process a mask from the PySisyphe magnitude volumes (default <em>No</em>, no automatic mask). This field is ignored if an <strong>Analysis mask</strong> is provided. The following algorithms are available: <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html">Huang</a>, Mean, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html">Otsu</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html">Renyi</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html">Yen</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html">Li</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html">Shanbhag</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1TriangleThresholdImageFilter.html">Triangle</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html">Intermodes</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html">Maximumentropy</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html">Kittler</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html">Isodata</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html">Moments</a>.</p></li>
+<li><p>Select the <strong>Fitting method</strong>: <em>linear</em> (default), <em>non linear</em></p></li>
+<li><p>The T1 map is saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> fields.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to compute T1 map.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="t2-map">
+<span id="menu-section-t2map"></span><h2>T2 map<a class="headerlink" href="#t2-map" title="Link to this heading"></a></h2>
+<p>This menu is used to process voxel-wise mono-exponential or bi-exponential T2/T2* fitting on gradient echo images at variable echo times.
+The PySisyphe code was adapted from the <a class="reference external" href="https://github.com/fragrussu/MyRelax">MyRelax package</a>.
+See <a class="reference external" href="https://qmrlab.org/mooc/t2-mapping/">https://qmrlab.org/mooc/t2-mapping/</a> for theory.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p>Mono-exponential signal model  = S0 * exp(-TE/T2)</p>
+<p>Bi-exponential signal model    = S0 * f * exp(-TE/T2l) + S0 * (1 - f) * exp(-TE/T2s)</p>
+<ul class="simple">
+<li><p>TE, echo time</p></li>
+<li><p>S0, signal for zero TE</p></li>
+<li><p>T2/T2* tissue</p></li>
+<li><p>T2l, T2/T2* of the slowly-decaying water</p></li>
+<li><p>T2s (T2s &lt;= T2l), T2/T2* of the fast-decaying water</p></li>
+<li><p>f signal fraction of the slowly-decaying water</p></li>
+</ul>
+<p>Usual brain values:</p>
+<ul class="simple">
+<li><p>T2* gray matter   48.5 +/- 12.1 ms</p></li>
+<li><p>T2* white matter  67.6 +/- 11.0 ms</p></li>
+<li><p>T2 gray matter    96.1 +/- 9.1 ms</p></li>
+<li><p>T2 white matter   109.8 +/- 11.4 ms</p></li>
+</ul>
+<p><a class="reference external" href="http://qmri.org/">Book</a>: Quantitative MRI of the brain, 2nd edition, Tofts, Cercignani and Dowell editors, Taylor and Francis Group.</p>
+</div>
+<p>Use the <strong>Volumes at variable echo times</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select two PySisyphe volumes acquired with two echo times (.xvol, with <em>MAGNITUDE</em> sequence attribute). Echo times can be extracted automatically if DICOM conversion files are associated with PySisyphe volumes (same filename with .xdcm extension). If this is not the case, edit the echo time values for each volume using the spin boxes located in the column to the right of the file names. You can also load echo times from a file (supported formats .txt, .csv or numpy .npy) by clicking the <strong>Load parameter</strong> button and then selecting the <strong>EchoTime</strong> menu. Echo times are saved by clicking the <strong>Save parameter</strong> and then selecting the <strong>EchoTime</strong> menu.</p>
+<p>Use the <strong>Analysis mask</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select a PySisyphe volume used as mask (.xvol, with <em>MASK</em> sequence attribute). T2 map is not processed in background voxels of the mask. This field is optional and may be left blank.</p>
+<p>Toggle <strong>T2 map…</strong> button to show/hide parameters:</p>
+<ul class="simple">
+<li><p>Select an algorithm from the <strong>Automatic masking</strong> combobox to process a mask from the PySisyphe magnitude volumes (default <em>No</em>, no automatic mask). This field is ignored if an <strong>Analysis mask</strong> is provided. The following algorithms are available: <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html">Huang</a>, Mean, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html">Otsu</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html">Renyi</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html">Yen</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html">Li</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html">Shanbhag</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1TriangleThresholdImageFilter.html">Triangle</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html">Intermodes</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html">Maximumentropy</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html">Kittler</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html">Isodata</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html">Moments</a>.</p></li>
+<li><p>Select the <strong>Fitting model</strong>, mono or bi-exponential.</p></li>
+<li><p>Select the <strong>Fitting method</strong>: <em>linear</em> (default), <em>non linear</em>. This field is only used for the mono-exponential fitting. The bi-exponential fitting algorithm is always non-linear and uses the Limited-memory Broyden-Fletcher-Goldfarb-Shanno L-BFGS optimization algorithm.</p></li>
+<li><p>The T2 map is saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> fields.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to compute T2 map.</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="menu-section-t2pmap">
+<span id="id32"></span><h2>T2’ map<a class="headerlink" href="#menu-section-t2pmap" title="Link to this heading"></a></h2>
+<p>This menu is used to process T2’ from quantitative T2 and T2* maps.
+The PySisyphe code was adapted from the <a class="reference external" href="https://github.com/fragrussu/MyRelax">MyRelax package</a>.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8128565/">Article</a>: Age-dependent normal values of T2* and T2’ in brain parenchyma. Siemonsen  S., Finsterbusch J., Matschke J., Lorenzen A., Ding X.-Q., Fiehler J. AJNR Am J Neuroradiol. 2008 May;29(5):950-955.</p>
+</div>
+<p>Use the <strong>T2 map(s)</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select T2 map PySisyphe volume(s) (.xvol, with <em>T2 MAP</em> sequence attribute).</p>
+<p>Use the <strong>T2star map(s)</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select T2* map PySisyphe volume(s) (.xvol, with <em>T2star MAP</em> sequence attribute).</p>
+<p>Use the <strong>Analysis mask</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select a PySisyphe volume used as mask (.xvol, with <em>MASK</em> sequence attribute). T2’ map is not processed in background voxels of the mask. This field is optional and may be left blank.</p>
+<p>The PySisyphe volumes located at the same row number in the three previous widgets must have the same field of view, the same space/transform ID, and be acquired from the same patient.</p>
+<p>Toggle <strong>T2’ map…</strong> button to show/hide parameters:</p>
+<ul class="simple">
+<li><p>Select an algorithm from the <strong>Automatic masking</strong> combobox to process a mask from the PySisyphe T2/T2* map volumes (default <em>No</em>, no automatic mask). This field is ignored if an <strong>Analysis mask</strong> is provided. The following algorithms are available: <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html">Huang</a>, Mean, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html">Otsu</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html">Renyi</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html">Yen</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html">Li</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html">Shanbhag</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1TriangleThresholdImageFilter.html">Triangle</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html">Intermodes</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html">Maximumentropy</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html">Kittler</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html">Isodata</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html">Moments</a>.</p></li>
+<li><p>The T2’ map is saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> fields.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to compute T2’ map(s).</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="mtr-map">
+<span id="menu-section-mtrmap"></span><h2>MTR map<a class="headerlink" href="#mtr-map" title="Link to this heading"></a></h2>
+<p>This menu is used to process Magnetization Transfer Ratio (MTR) from MT “on” and MT “off” acquisitions.
+The PySisyphe code was adapted from the <a class="reference external" href="https://github.com/fragrussu/MyRelax">MyRelax package</a>.
+See <a class="reference external" href="https://qmrlab.org/mooc/magnetization-transfer-imaging/">https://qmrlab.org/mooc/magnetization-transfer-imaging/</a> for theory.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p>MTR = 100.0 * (MToff - MTon) / MToff</p>
+<p><a class="reference external" href="https://onlinelibrary.wiley.com/doi/10.1002/mrm.20605">Article</a>: T1, T2 relaxation and magnetization transfer in tissue at 3T. Stanisz G.J. Magn Reson Med. 2005 54:507-512.</p>
+</div>
+<p>Use the <strong>Magnetization transfer Off volume(s)</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select PySisyphe volume(s) (.xvol, with <em>MTR</em> sequence attribute).</p>
+<p>Use the <strong>Magnetization transfer On volume(s)</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select PySisyphe volume(s) (.xvol,  with <em>MTR</em> sequence attribute).</p>
+<p>Use the <strong>Analysis mask</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select a PySisyphe volume used as mask (.xvol, with <em>MASK</em> sequence attribute). MTR map is not processed in background voxels of the mask. This field is optional and may be left blank.</p>
+<p>The PySisyphe volumes located at the same row number in the three previous widgets must have the same field of view, the same space/transform ID, and be acquired from the same patient.</p>
+<p>Toggle <strong>MTR map…</strong> button to show/hide parameters:</p>
+<ul class="simple">
+<li><p>Select an algorithm from the <strong>Automatic masking</strong> combobox to process a mask from the PySisyphe MTR volumes (default <em>No</em>, no automatic mask). This field is ignored if an <strong>Analysis mask</strong> is provided. The following algorithms are available: <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html">Huang</a>, Mean, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html">Otsu</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html">Renyi</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html">Yen</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html">Li</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html">Shanbhag</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1TriangleThresholdImageFilter.html">Triangle</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html">Intermodes</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html">Maximumentropy</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html">Kittler</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html">Isodata</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html">Moments</a>.</p></li>
+<li><p>The MTR map is saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> fields.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to compute MTR map(s).</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="qsm-map">
+<span id="menu-section-qsmmap"></span><h2>QSM map<a class="headerlink" href="#qsm-map" title="Link to this heading"></a></h2>
+<p>This menu is used to process Quantitative Susceptibility Mapping (QSM).
+The PySisyphe code was adapted from the <a class="reference external" href="https://www.neuroimaging.at/pages/qsm.php">TGVQSM package</a>.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S1053811915001421?via%3Dihub">Article</a>: Fast Quantitative Susceptibility Mapping using 3D EPI and Total Generalized Variation. Langkammer C., Bredies K., Poser B.A., Barth M., Reishofer G. Fan A.P., Bilgic B., Fazekas F., Mainero C., Ropele S. Neuroimage. 2015 May 1;111:622-30</p>
+</div>
+<p>Use the <strong>Phase volume(s)</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select gradient echo PySisyphe volume(s) (.xvol, with <em>PHASE</em> sequence attribute). Echo time/Magnetic field strength values can be extracted automatically if DICOM conversion files are associated with PySisyphe volumes (same filename with .xdcm extension). If this is not the case, edit the echo time/Magnetic field strength values for each volume using the spin boxes located in the column to the right of the file names. You can also load echo time/Magnetic field strength values from a file (supported formats .txt, .csv or numpy .npy) by clicking the <strong>Load parameter</strong> button and then selecting the <strong>EchoTime</strong>/<strong>MagneticFieldStrength</strong> menu. Echo time/Magnetic field strength values are saved by clicking the <strong>Save parameter</strong> and then selecting the <strong>EchoTime</strong>/<strong>MagneticFieldStrength</strong> menu.</p>
+<p>Use the <strong>Analysis mask</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select a PySisyphe volume used as mask (.xvol, with <em>MASK</em> sequence attribute). QSM map is not processed in background voxels of the mask. This field is optional and may be left blank.</p>
+<p>The PySisyphe volumes located at the same row number in the two previous widgets must have the same field of view, the same space/transform ID, and be acquired from the same patient.</p>
+<p>Toggle <strong>QSM map…</strong> button to show/hide parameters:</p>
+<ul class="simple">
+<li><p>Set the <strong>Number of iterations</strong> of the Total Generalized Variation (TGV) algorithm (default 1000).</p></li>
+<li><p>Check the box <strong>Rescale phase signal</strong> to rescale the phase volume signal. This option ensures that the scalar range of the phase images lies between -π and +π.</p></li>
+<li><p>The QSM map is saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> fields.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to compute QSM map(s).</p>
+<p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+</section>
+<section id="asl-perfusion">
+<span id="menu-section-asl"></span><h2>ASL perfusion<a class="headerlink" href="#asl-perfusion" title="Link to this heading"></a></h2>
+<p>This menu is used to process Cerebral Blood Flow (CBF) processing from Arterial Spin Labeling (ASL) series.
+The PySisyphe code was adapted from the <a class="reference external" href="https://github.com/SaraDupont/ASL_processing">ASL_processing package</a> and <a class="reference external" href="https://github.com/lamyj/erwin">erwin package</a>.
+See <a class="reference external" href="https://radiologykey.com/arterial-spin-labeled-mr-perfusion-imaging-techniques/">https://radiologykey.com/arterial-spin-labeled-mr-perfusion-imaging-techniques/</a> for theory.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://onlinelibrary.wiley.com/doi/10.1002/mrm.10211">Article</a>: Comparison of quantitative perfusion imaging using arterial spin labeling at 1.5 and 4.0 Tesla. Wang J, Alsop DC, Li L, Listerud J., Gonzalez-At J.B., Schnall M.D., Detre J.A. Magn Reson Med. 2002 Aug;48(2):242-54.</p>
+<p><a class="reference external" href="https://onlinelibrary.wiley.com/doi/10.1002/jmri.22678">Article</a>: Correcting for the echo-time effect after measuring the cerebral blood flow by arterial spin labeling. Foucher J.R., Roquet D., Marrer C., Pham B.T., Gounot D. J Magn Reson Imaging. 2011 Oct;34(4):785-90.</p>
+<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10365107/">Article</a>: A Beginner’s Guide to Arterial Spin Labeling (ASL) Image Processing. Clement P., Petr J., Dijsselhof M.B.J., Padrela B., Pasternak M., Dolui S., Jarutyte L., Pinter N., Hernandez-Garcia L., Jahn A., Kuijer J.P.A., Barkhof F., Mutsaerts H.J.M., Keil V.C. Front Radiol. 2022 Jun 14:2:929533.</p>
+<p><a class="reference external" href="https://onlinelibrary.wiley.com/doi/10.1002/mrm.24550">Article</a>: In vivo blood T1 measurements at 1.5 T, 3 T, and 7 T. Zhang X., Petersen E.T., Ghariq E., De Vis J.B., Webb A.G., Teeuwisse W.M., Hendrikse J. van Osch M.J.P. Magn Reson Med. 2013 70:1082–1086.</p>
+</div>
+<p>Use the <strong>ASL multi-component volume(s)</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select multicomponent PySisyphe ASL series volume(s) (.xvol, with <em>ASL</em> sequence attribute). ASL sequences typically include a volume acquired without saturation pulses, referred to as M0, and several volumes acquired after applying saturation pulses. All of these volumes must be combined into a multi-component volume (See <a class="reference internal" href="PySisyphe_Functions.html#menu-section-join"><span class="std std-ref">Join single component volume(s)</span></a>).</p>
+<p>Toggle <strong>ASL</strong> button to show/hide parameters:</p>
+<ul class="simple">
+<li><p>Select an algorithm from the <strong>Automatic masking</strong> combobox to process a mask from the PySisyphe ASL volumes (default <em>No</em>, no masking). The following algorithms are available: <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html">Huang</a>, Mean, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html">Otsu</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html">Renyi</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html">Yen</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html">Li</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html">Shanbhag</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1TriangleThresholdImageFilter.html">Triangle</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html">Intermodes</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html">Maximumentropy</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html">Kittler</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html">Isodata</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html">Moments</a>.</p></li>
+<li><p>Set the <strong>Gaussian smoothing FWHM</strong> (mm), full width at hall maximum of the gaussian kernel in mm used to smooth ASL images before CBF processing (default 0.0, no smoothing)</p></li>
+<li><p>Set the type of ASL <strong>Sequence</strong>: pulsed ASL or pseudo-continuous ASL</p></li>
+<li><p>Set the <strong>M0 index</strong>, index of the M0 volume, acquired without saturation pulses, in the multi-component ASL volume (default 0, first component)</p></li>
+<li><p>Set the <strong>Label duration</strong> in ms of the labeling sequence (default 1800). Typically 700-900 ms in pulsed ASL and 1800-2000 ms in pseudo-continuous ASL.</p></li>
+<li><p>Set the <strong>Post labeling delay</strong> in ms of the labeling sequence (default 1800). Typically 1600-2000 ms in pulsed ASL and 1800-2000 ms in pseudo-continuous ASL.</p></li>
+<li><p>Set the <strong>TE</strong>, echo time in ms of the ASL series. It is used for magnetization correction. This value can be taken from a DICOM file of the perfusion time series using the widget <strong>Get TR/TE from dicom file</strong> above.</p></li>
+<li><p>Set the <strong>TR</strong>, repetition time in ms of the ASL series. It is used to correct intensity of proton density weighted M0 volume if the repetition time is too short. This value can be taken from a DICOM file of the perfusion time series using the widget <strong>Get TR/TE from dicom file</strong> above.</p></li>
+<li><p>Set the <strong>Blood brain partition coefficient</strong> value in mL/g eq. L/Kg (default 0.9). Estimated to 0.9 mL/g in the global brain parenchyma (<a class="reference external" href="https://onlinelibrary.wiley.com/doi/10.1002/mrm.10211">Wang J et al</a> and <a class="reference external" href="https://onlinelibrary.wiley.com/doi/10.1002/jmri.22678">Foucher JR et al</a>, 0.98 mL/g in gray matter (<a class="reference external" href="https://onlinelibrary.wiley.com/doi/10.1002/jmri.22678">Foucher JR et al</a>), 0.81 mL/g in white matter (<a class="reference external" href="https://onlinelibrary.wiley.com/doi/10.1002/jmri.22678">Foucher JR et al</a>).</p></li>
+<li><p>Set the <strong>Labeling efficiency</strong> value (default 0.98). Estimated to 0.95 in <a class="reference external" href="https://onlinelibrary.wiley.com/doi/10.1002/mrm.10211">Wang J et al</a> and <a class="reference external" href="https://onlinelibrary.wileyhttps://onlinelibrary.wiley.com/doi/10.1002/mrm.10211.com/doi/10.1002/jmri.22678">Foucher JR et al</a></p></li>
+<li><p>Set the <strong>T1 relaxation time of blood</strong> value in ms (default 1650). Estimated to ~1200–1350 ms 1.5T, ~1600–1700 ms 3.0T, ~2100–2300 ms 7.0T (<a class="reference external" href="https://onlinelibrary.wiley.com/doi/10.1002/mrm.24550">Zhang et al</a>).</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to compute ASL map(s).</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
 </section>
 <section id="dynamic-susceptibility-contrast">
