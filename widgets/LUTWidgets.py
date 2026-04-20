@@ -38,7 +38,11 @@ from numpy import iinfo
 from numpy import finfo
 
 from matplotlib.figure import Figure
-from matplotlib.cm import get_cmap
+# < Revision 23/03/2026
+# migrate from matplotlib 3.6.3 to 3.10.8
+# from matplotlib.cm import get_cmap
+from matplotlib import colormaps
+# Revision 23/03/2026 >
 from matplotlib.patches import Rectangle
 from matplotlib.colors import Colormap
 from matplotlib.colors import ListedColormap
@@ -481,7 +485,12 @@ class LutWidget(QWidget):
             self._rect2axe.set_position([p2, 0.0, 1-p2, self._ratio], which='both')
             self._rect1axe.set_visible(True)
             self._rect2axe.set_visible(True)
-        self._canvas.draw()
+        #< Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._canvas.draw()
+        self._canvas.draw_idle()
+        # faster & non-blocking GUI
+        # Revision 23/03/2026 >
         self._updateViewWidget()
 
     def _initDecimals(self) -> None:
@@ -663,7 +672,11 @@ class LutWidget(QWidget):
         float
             left coordinate of the windowing span.
         """
-        return self._span.xy[0][0]
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # return self._span.xy[0][0]
+        return self._span.get_xy()[0][0]
+        # Revision 23/03/2026 >
 
     def _get_span_right(self) -> float:
         """
@@ -674,7 +687,11 @@ class LutWidget(QWidget):
         float
             right coordinate of the windowing span.
         """
-        return self._span.xy[2][0]
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # return self._span.xy[2][0]
+        return self._span.get_xy()[2][0]
+        # Revision 23/03/2026 >
 
     def _set_span_left(self, x: float) -> float:
         """
@@ -689,9 +706,16 @@ class LutWidget(QWidget):
             x = self._volume.display.getRangeMin()
         if x > self._volume.display.getWindowMax():
             x = self._volume.display.getWindowMax()
-        self._span.xy[0][0] = x
-        self._span.xy[1][0] = x
-        self._span.xy[4][0] = x
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._span.xy[0][0] = x
+        # self._span.xy[1][0] = x
+        # self._span.xy[4][0] = x
+        xy = self._span.get_xy()
+        xy[0][0] = x
+        xy[1][0] = x
+        xy[4][0] = x
+        # Revision 23/03/2026 >
         return x
 
     def _set_span_right(self, x: float) -> float:
@@ -707,8 +731,14 @@ class LutWidget(QWidget):
             x = self._volume.display.getWindowMin()
         if x > self._volume.display.getRangeMax():
             x = self._volume.display.getRangeMax()
-        self._span.xy[2][0] = x
-        self._span.xy[3][0] = x
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._span.xy[2][0] = x
+        # self._span.xy[3][0] = x
+        xy = self._span.get_xy()
+        xy[2][0] = x
+        xy[3][0] = x
+        # Revision 23/03/2026 >
         return x
 
     def _is_in_span(self, x: float) -> bool:
@@ -1497,7 +1527,12 @@ class LutEditWidget(QWidget):
         # Draw points in axes
         self._scatter = self._axe.scatter(self._xlist, [0.5]*len(self._xlist), marker='^', s=250,
                                           edgecolors='brown', linewidths=2, color=self._rgblist, picker=5, zorder=1)
-        self._canvas.draw()
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._canvas.draw()
+        self._canvas.draw_idle()
+        # faster & non-blocking GUI
+        # Revision 23/03/2026 >
 
     # Public methods
 
@@ -1639,7 +1674,12 @@ class LutEditWidget(QWidget):
             if self._selected is not None and event.xdata is not None:
                 if self._xlist[self._selected - 1] < event.xdata < self._xlist[self._selected + 1]:
                     self._scatter.get_offsets()[self._selected][0] = event.xdata
-                self._canvas.draw()
+                # < Revision 23/03/2026
+                # migrate from matplotlib 3.6.3 to 3.10.8
+                # self._canvas.draw()
+                self._canvas.draw_idle()
+                # faster & non-blocking GUI
+                # Revision 23/03/2026 >
 
     def _onMouseReleaseEvent(self, event):
         """
@@ -2286,8 +2326,12 @@ class AlphaTransferWidget(QWidget):
         self._canvas.setFocus()
         self._cursor = QCursor()
         self._canvas.setCursor(self._cursor)
-
-        self._canvas.draw()
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._canvas.draw()
+        self._canvas.draw_idle()
+        # faster & non-blocking GUI
+        # Revision 23/03/2026 >
 
     """
     Private attributes
@@ -2398,7 +2442,12 @@ class AlphaTransferWidget(QWidget):
                 v1 = '{:.2f}'.format(self._xlist[i])
             v2 = '{:.2f}'.format(self._ylist[i] / self._h)
             self._text[i].set_text('{}\n{}\n'.format(v1, v2))
-        self._canvas.draw()
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._canvas.draw()
+        self._canvas.draw_idle()
+        # faster & non-blocking GUI
+        # Revision 23/03/2026 >
 
     def _updateTransfer(self) -> None:
         """
@@ -2490,7 +2539,12 @@ class AlphaTransferWidget(QWidget):
             self._text = []
             self._initHist()
             self._initLines()
-            self._canvas.draw()
+            # < Revision 23/03/2026
+            # migrate from matplotlib 3.6.3 to 3.10.8
+            # self._canvas.draw()
+            self._canvas.draw_idle()
+            # faster & non-blocking GUI
+            # Revision 23/03/2026 >
 
     def getTransfer(self) -> SisypheColorTransfer:
         """
@@ -2678,7 +2732,12 @@ class AlphaTransferWidget(QWidget):
                 v2 = '{:.2f}'.format(self._ylist[self._selected] / self._h)
                 self._text[self._selected].set_text('{}\n{}\n'.format(v1, v2))
                 self._text[self._selected].xyann = (self._xlist[self._selected], self._ylist[self._selected])
-                self._canvas.draw()
+                # < Revision 23/03/2026
+                # migrate from matplotlib 3.6.3 to 3.10.8
+                # self._canvas.draw()
+                self._canvas.draw_idle()
+                # faster & non-blocking GUI
+                # Revision 23/03/2026>
 
     def _onMouseReleaseEvent(self, event) -> None:
         """
@@ -2715,7 +2774,12 @@ class AlphaTransferWidget(QWidget):
                 if self._type == 'alpha':
                     self._clist.insert(index, list(self._transfer.getColorFromValue(self._xpos)) + [1])
                 self._updateLines()
-                self._canvas.draw()
+                # < Revision 23/03/2026
+                # migrate from matplotlib 3.6.3 to 3.10.8
+                # self._canvas.draw()
+                self._canvas.draw_idle()
+                # faster & non-blocking GUI
+                # Revision 23/03/2026 >
                 self._updateTransfer()
                 break
         self._xpos = None
@@ -2739,7 +2803,12 @@ class AlphaTransferWidget(QWidget):
                     self._scatter.set_facecolors(self._clist)
                 self._updateLines()
                 self._selected = None
-                self._canvas.draw()
+                # < Revision 23/03/2026
+                # migrate from matplotlib 3.6.3 to 3.10.8
+                # self._canvas.draw()
+                self._canvas.draw_idle()
+                # faster & non-blocking GUI
+                # Revision 23/03/2026 >
                 self._updateTransfer()
 
     def _onMenuClear(self) -> None:
@@ -2758,7 +2827,12 @@ class AlphaTransferWidget(QWidget):
         self._text = []
         self._initHist()
         self._initLines()
-        self._canvas.draw()
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._canvas.draw()
+        self._canvas.draw_idle()
+        # faster & non-blocking GUI
+        # Revision 23/03/2026 >
 
     def _onMenuSave(self) -> None:
         """
@@ -3201,7 +3275,11 @@ class ComboBoxLut(QComboBox):
         Populates the combo box with built-in Matplotlib colormaps.
         """
         for name in SisypheLut.getColormapList():
-            lut = get_cmap(name, 256)
+            # < Revision 23/03/2026
+            # migrate from matplotlib 3.6.3 to 3.10.8
+            # lut = get_cmap(name, 256)
+            lut = colormaps[name].resampled(256)
+            # Revision 23/03/2026 >
             self.addItem(QIcon(drawLutToPixmap(lut, 128)), SisypheLut.getColormapFromName(name), userData=name)
 
     def _getLutFiles(self, pathname: str | None = None) -> list[str]:
@@ -3354,7 +3432,11 @@ class ComboBoxLut(QComboBox):
         name = self.currentData()
         # Internal
         if name in SisypheLut().getColormapList():
-            lut = get_cmap(name, 256)
+            # < Revision 23/03/2026
+            # migrate from matplotlib 3.6.3 to 3.10.8
+            # lut = get_cmap(name, 256)
+            lut = colormaps[name].resampled(256)
+            # Revision 23/03/2026 >
         # File
         else:
             if exists(name):
@@ -3461,7 +3543,11 @@ class PopupMenuLut(QMenu):
             name = action.data()
             # Internal
             if name in SisypheLut().getColormapList():
-                lut = get_cmap(name, 256)
+                # < Revision 23/03/2026
+                # migrate from matplotlib 3.6.3 to 3.10.8
+                # lut = get_cmap(name, 256)
+                lut = colormaps[name].resampled(256)
+                # Revision 23/03/2026 >
             # File
             else:
                 lut = SisypheLut()
@@ -3533,7 +3619,11 @@ class PopupMenuLut(QMenu):
         Populates the menu with actions for built-in Matplotlib colormaps.
         """
         for name in SisypheLut.getColormapList():
-            lut = get_cmap(name, 256)
+            # < Revision 23/03/2026
+            # migrate from matplotlib 3.6.3 to 3.10.8
+            # lut = get_cmap(name, 256)
+            lut = colormaps[name].resampled(256)
+            # Revision 23/03/2026 >
             action = QAction(QIcon(drawLutToPixmap(lut, 128)), SisypheLut.getColormapFromName(name), self)
             action.setData(name)
             self.addAction(action)

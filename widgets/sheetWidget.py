@@ -612,7 +612,12 @@ class SheetChartWidget(SheetStatisticsWidget):
         elif c == 'Hi': self._sheet.getChart(axes=self._axes, chart='hist')
         elif c == 'Bo': self._sheet.getChart(axes=self._axes, chart='box')
         elif c == 'De': self._sheet.getChart(axes=self._axes, chart='density')
-        self._canvas.draw()
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._canvas.draw()
+        self._canvas.draw_idle()
+        # faster & non-blocking GUI
+        # Revision 23/03/2026 >
 
     # Public method
 
@@ -646,7 +651,12 @@ class SheetChartWidget(SheetStatisticsWidget):
             self._fig.set_facecolor(c)
             c = settings.getParameterValue('FrameColor')
             self._axes.set_facecolor(c)
-            self._canvas.draw()
+            # < Revision 23/03/2026
+            # migrate from matplotlib 3.6.3 to 3.10.8
+            # self._canvas.draw()
+            self._canvas.draw_idle()
+            # faster & non-blocking GUI
+            # Revision 23/03/2026 >
 
     def saveChart(self, filename=''):
         if not self.isEmpty():

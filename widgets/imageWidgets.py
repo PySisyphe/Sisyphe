@@ -23,7 +23,11 @@ from time import perf_counter
 from numpy import ndarray as np_ndarray
 from numpy import fliplr
 
-from matplotlib.cm import get_cmap
+# < Revision 23/03/2026
+# migrate from matplotlib 3.6.3 to 3.10.8
+# from matplotlib.cm import get_cmap
+from matplotlib import colormaps
+# Revision 23/03/2026 >
 from matplotlib.figure import Figure
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 from matplotlib.backend_bases import MouseButton
@@ -201,10 +205,16 @@ class ImagePreviewWidget(QWidget):
         self._vmin = None
         self._vmax = None
         if isinstance(lut, ListedColormap): self._lut = lut
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
         elif isinstance(lut, str):
-            try: self._lut = get_cmap(lut, 256)
-            except ValueError: self._lut = get_cmap('gray', 256)
-        else: self._lut = get_cmap('gray', 256)
+            # try: self._lut = get_cmap(lut, 256)
+            try: self._lut = colormaps[lut].resampled(256)
+            # except ValueError: self._lut = get_cmap('gray', 256)
+            except ValueError: self._lut = colormaps['gray'].resampled(256)
+        # else: self._lut = get_cmap('gray', 256)
+        else: self._lut = colormaps['gray'].resampled(256)
+        # Revision 23/03/2026>
 
         # Draw image in tool
 
@@ -237,21 +247,37 @@ class ImagePreviewWidget(QWidget):
     # Public methods
 
     def setDefaultLut(self):
-        self._lut = get_cmap('gray', 256)
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._lut = get_cmap('gray', 256)
+        self._lut = colormaps['gray'].resampled(256)
+        # Revision 23/03/2026 >
         self._drawImage()
 
     def setLut(self, lut, update=True):
         if isinstance(lut, str):
             try:
-                self._lut = get_cmap(lut, 256)
+                # < Revision 23/03/2026
+                # migrate from matplotlib 3.6.3 to 3.10.8
+                # self._lut = get_cmap(lut, 256)
+                self._lut = colormaps[lut].resampled(256)
+                # Revision 23/03/2026 >
             except ValueError:
-                self._lut = get_cmap('gray', 256)
+                # < Revision 23/03/2026
+                # migrate from matplotlib 3.6.3 to 3.10.8
+                # self._lut = get_cmap('gray', 256)
+                self._lut = colormaps['gray'].resampled(256)
+                # Revision 23/03/2026 >
         elif isinstance(lut, SisypheLut):
             self._lut = lut.copyToMatplotlibColormap()
         elif isinstance(lut, (ListedColormap, LinearSegmentedColormap)):
             self._lut = lut
         else:
-            self._lut = get_cmap('gray', 256)
+            # < Revision 23/03/2026
+            # migrate from matplotlib 3.6.3 to 3.10.8
+            # self._lut = get_cmap('gray', 256)
+            self._lut = colormaps['gray'].resampled(256)
+            # Revision 23/03/2026 >
         if update: self._drawImage()
 
     def getLut(self):

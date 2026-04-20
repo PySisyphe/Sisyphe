@@ -316,7 +316,11 @@ class MultiComponentViewWidget(MultiViewWidget):
                 self._axe.relim()
                 self._axe.autoscale_view()
                 self._axe.legend()
-                self._canvas.draw()
+                # < Revision 23/03/2026
+                # migrate from matplotlib 3.6.3 to 3.10.8
+                # self._canvas.draw()
+                self._canvas.draw_idle()
+                # Revision 23/03/2026 >
 
     def _chartClicked(self, event: PickEvent) -> None:
         """
@@ -568,8 +572,11 @@ class MultiComponentViewWidget(MultiViewWidget):
         for i in range(n):
             ydata.append(self._multi.getMean(mask, i))
         self._axe.plot(xdata, ydata, 'o-', label='Mean signal')
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
         # self._canvas.draw()
-        self._canvas.draw()
+        self._canvas.draw_idle()
+        # Revision 23/03/2026 >
         self._cursorPositionChanged()
         self._axe.legend()
         # Span
@@ -584,19 +591,31 @@ class MultiComponentViewWidget(MultiViewWidget):
         visible components in the grid.
         """
         if self._span is not None:
-            # noinspection PyUnresolvedReferences
-            self._span.xy[0][0] = self._first
-            # noinspection PyUnresolvedReferences
-            self._span.xy[1][0] = self._first
-            # noinspection PyUnresolvedReferences
-            self._span.xy[4][0] = self._first
+            # < Revision 23/03/2026
+            # migrate from matplotlib 3.6.3 to 3.10.8
+            # self._span.xy[0][0] = self._first
+            # self._span.xy[1][0] = self._first
+            # self._span.xy[4][0] = self._first
+            xy = self._span.get_xy()
+            xy[0][0] = self._first
+            xy[1][0] = self._first
+            xy[4][0] = self._first
+            # Revision 23/03/2026 >
             n = self._multi.getNumberOfComponentsPerPixel()
             last = min(self._first + 8, n - 1)
-            # noinspection PyUnresolvedReferences
-            self._span.xy[2][0] = last
-            # noinspection PyUnresolvedReferences
-            self._span.xy[3][0] = last
-            self._canvas.draw()
+            # < Revision 23/03/2026
+            # migrate from matplotlib 3.6.3 to 3.10.8
+            # self._span.xy[2][0] = last
+            # self._span.xy[3][0] = last
+            xy = self._span.get_xy()
+            xy[2][0] = last
+            xy[3][0] = last
+            # Revision 23/03/2026 >
+            # < Revision 23/03/2026
+            # migrate from matplotlib 3.6.3 to 3.10.8
+            # self._canvas.draw()
+            self._canvas.draw_idle()
+            # Revision 23/03/2026 >
 
     def addCurrentCurveToChart(self) -> None:
         """
@@ -608,7 +627,11 @@ class MultiComponentViewWidget(MultiViewWidget):
             artist, = self._axe.plot(xdata, ydata, 'o-', label=self._line.get_label())
             artist.set_picker(True)
             self._axe.legend()
-            self._canvas.draw()
+            # Revision 23/03/2026
+            # migrate from matplotlib 3.6.3 to 3.10.8
+            # self._canvas.draw()
+            self._canvas.draw_idle()
+            # Revision 23/03/2026 >
 
     def saveChart(self) -> None:
         """

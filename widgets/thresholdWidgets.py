@@ -226,6 +226,7 @@ class ThresholdViewWidget(QWidget):
             lyout.setContentsMargins(5, 5, 5, 5)
 
             hlyout = QHBoxLayout()
+            # noinspection PyUnresolvedReferences
             hlyout.setDirection(QHBoxLayout.LeftToRight)
             hlyout.addStretch()
             hlyout.addWidget(self._minflag)
@@ -235,13 +236,18 @@ class ThresholdViewWidget(QWidget):
             lyout.addLayout(hlyout, 1, 0)
 
             hlyout = QHBoxLayout()
+            # noinspection PyUnresolvedReferences
             hlyout.setDirection(QHBoxLayout.LeftToRight)
+            # noinspection PyUnresolvedReferences
             hlyout.addWidget(self._editmin, Qt.AlignLeft)
+            # noinspection PyUnresolvedReferences
             hlyout.addWidget(self._autobutton, Qt.AlignHCenter)
             # < Revision 29/08/2025
             # add reset button
+            # noinspection PyUnresolvedReferences
             hlyout.addWidget(self._resetbutton, Qt.AlignHCenter)
             # Revision 29/08/2025 >
+            # noinspection PyUnresolvedReferences
             hlyout.addWidget(self._editmax, Qt.AlignRight)
             lyout.addLayout(hlyout, 1, 1)
 
@@ -253,6 +259,7 @@ class ThresholdViewWidget(QWidget):
             self.setToolTip('Left click and drag vertical dotted line to move it\n'
                             'and modify threshold settings.')
 
+            # noinspection PyUnresolvedReferences
             self._canvas.setFocusPolicy(Qt.ClickFocus)
             self._canvas.setFocus()
             self._cursor = QCursor()
@@ -260,7 +267,12 @@ class ThresholdViewWidget(QWidget):
 
             # Draw tool
 
-            self._canvas.draw()
+            # < Revision 23/03/2026
+            # migrate from matplotlib 3.6.3 to 3.10.8
+            # self._canvas.draw()
+            self._canvas.draw_idle()
+            # faster & non-blocking GUI
+            # Revision 23/03/2026 >
 
             # Win32 settings
 
@@ -384,19 +396,34 @@ class ThresholdViewWidget(QWidget):
             self._editmax.blockSignals(False)
 
     def _get_span_left(self):
-        return self._span.xy[0][0]
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # return self._span.xy[0][0]
+        return self._span.get_xy()[0][0]
+        # Revision 23/03/2026 >
 
     def _get_span_right(self):
-        return self._span.xy[2][0]
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # return self._span.xy[2][0]
+        return self._span.get_xy()[2][0]
+        # Revision 23/03/2026 >
 
     def _set_span_left(self, x):
         if x < self._volume.display.getRangeMin():
             x = self._volume.display.getRangeMin()
         if x > self._get_span_right():
             x = self._get_span_right()
-        self._span.xy[0][0] = x
-        self._span.xy[1][0] = x
-        self._span.xy[4][0] = x
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._span.xy[0][0] = x
+        # self._span.xy[1][0] = x
+        # self._span.xy[4][0] = x
+        xy = self._span.get_xy()
+        xy[0][0] = x
+        xy[1][0] = x
+        xy[4][0] = x
+        # Revision 23/03/2026 >
         return x
 
     def _set_span_right(self, x):
@@ -404,8 +431,14 @@ class ThresholdViewWidget(QWidget):
             x = self._volume.display.getRangeMax()
         if x < self._get_span_left():
             x = self._get_span_left()
-        self._span.xy[2][0] = x
-        self._span.xy[3][0] = x
+        # < Revision 23/03/2026
+        # migrate from matplotlib 3.6.3 to 3.10.8
+        # self._span.xy[2][0] = x
+        # self._span.xy[3][0] = x
+        xy = self._span.get_xy()
+        xy[2][0] = x
+        xy[3][0] = x
+        # Revision 23/03/2026 >
         return x
 
     def _is_in_span(self, x):
@@ -428,6 +461,7 @@ class ThresholdViewWidget(QWidget):
                     self._on_move_left_span_flag = True
                     self._on_move_right_span_flag = False
                     self._on_move_span_flag = False
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.SplitHCursor)
                     self._canvas.setCursor(self._cursor)
                 # Drag right line
@@ -435,6 +469,7 @@ class ThresholdViewWidget(QWidget):
                     self._on_move_right_span_flag = True
                     self._on_move_left_span_flag = False
                     self._on_move_span_flag = False
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.SplitHCursor)
                     self._canvas.setCursor(self._cursor)
                 # Drag rectangle
@@ -442,6 +477,7 @@ class ThresholdViewWidget(QWidget):
                     self._on_move_span_flag = True
                     self._on_move_left_span_flag = False
                     self._on_move_right_span_flag = False
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.ClosedHandCursor)
                     self._canvas.setCursor(self._cursor)
                 self._xpos = float(event.xdata)
@@ -505,7 +541,12 @@ class ThresholdViewWidget(QWidget):
                     self._editmin.setValue(tmin)
                     self._editmax.setValue(tmax)
                     # Revision 23/07/2024 >
-                self._canvas.draw()
+                # < Revision 23/03/2026
+                # migrate from matplotlib 3.6.3 to 3.10.8
+                # self._canvas.draw()
+                self._canvas.draw_idle()
+                # faster & non-blocking GUI
+                # Revision 23/03/2026 >
                 # Update view widget
                 self._drawImage()
             else:
@@ -515,22 +556,27 @@ class ThresholdViewWidget(QWidget):
                 xright = self._get_span_right()
                 # Drag left line
                 if (0 < abs(event.xdata - xleft) < tol) and (minflag or twoflag):
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.SplitHCursor)
                     self._canvas.setCursor(self._cursor)
                 # Drag right line
                 elif (0 < abs(xright - event.xdata) < tol) and (maxflag or twoflag):
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.SplitHCursor)
                     self._canvas.setCursor(self._cursor)
                 # Drag rectangle
                 elif (xleft < event.xdata < xright) and twoflag:
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.OpenHandCursor)
                     self._canvas.setCursor(self._cursor)
                 else:
+                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.ArrowCursor)
                     self._canvas.setCursor(self._cursor)
 
     # noinspection PyUnusedLocal
     def _onMouseReleaseEvent(self, event):
+        # noinspection PyUnresolvedReferences
         self._cursor.setShape(Qt.ArrowCursor)
         self._canvas.setCursor(self._cursor)
         self._on_move_span_flag = False
@@ -766,6 +812,7 @@ class ThresholdViewWidget(QWidget):
         self._editmin.setVisible(True)
         self._editmax.setVisible(False)
         self._editmin.setToolTip('Threshold')
+        # noinspection PyUnresolvedReferences
         self._editmin.setAlignment(Qt.AlignHCenter)
 
     def setThresholdFlagToMaximum(self) -> None:
@@ -782,6 +829,7 @@ class ThresholdViewWidget(QWidget):
         self._editmin.setVisible(False)
         self._editmax.setVisible(True)
         self._editmax.setToolTip('Threshold')
+        # noinspection PyUnresolvedReferences
         self._editmax.setAlignment(Qt.AlignHCenter)
 
     def setThresholdFlagToTwo(self) -> None:
@@ -790,7 +838,9 @@ class ThresholdViewWidget(QWidget):
         self._editmax.setVisible(True)
         self._editmin.setToolTip('Minimum threshold')
         self._editmax.setToolTip('Maximum threshold')
+        # noinspection PyUnresolvedReferences
         self._editmin.setAlignment(Qt.AlignLeft)
+        # noinspection PyUnresolvedReferences
         self._editmax.setAlignment(Qt.AlignRight)
 
     def setThresholdFlagButtonsVisibility(self, v: bool) -> None:

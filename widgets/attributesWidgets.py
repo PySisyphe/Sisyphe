@@ -2834,7 +2834,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListROIAttributesWidget
 
-    Last revision: 14/02/2026
+    Last revision: 14/04/2026
     """
 
     # Special method
@@ -2916,6 +2916,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action = dict()
         self._action['xvol'] = QAction('Export to PySisyphe format')
+        # < Revision 14/04/2026
+        self._action['lbl'] = QAction('Export to Label PySisyphe format')
+        # Revision 14/04/2026 >
         self._action['nii'] = QAction('Export to Nifti format')
         self._action['nrrd'] = QAction('Export to Nrrd format')
         self._action['minc'] = QAction('Export to Minc format')
@@ -2924,6 +2927,10 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._action['dcm'] = QAction('Export to DICOM RT format')
         # noinspection PyUnresolvedReferences
         self._action['xvol'].triggered.connect(self.saveSisyphe)
+        # < Revision 14/04/2026
+        # noinspection PyUnresolvedReferences
+        self._action['lbl'].triggered.connect(self.saveLabelSisyphe)
+        # Revision 14/04/2026 >
         # noinspection PyUnresolvedReferences
         self._action['nii'].triggered.connect(self.saveNifti)
         # noinspection PyUnresolvedReferences
@@ -2937,6 +2944,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         # noinspection PyUnresolvedReferences
         self._action['dcm'].triggered.connect(self.saveDicomRT)
         self._popup.addAction(self._action['xvol'])
+        self._popup.addAction(self._action['lbl'])
         self._popup.addAction(self._action['nii'])
         self._popup.addAction(self._action['nrrd'])
         self._popup.addAction(self._action['minc'])
@@ -3294,7 +3302,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 if not roi.hasFilename(): filename = join(ref.getFilename(), roi.getName() + ref.getFileExt())
                 else: filename = roi.getFilename()
                 # Revision 29/01/2026 >
-                wait.setInformationText('save {}'.format(basename(filename)))
+                wait.setInformationText('Save {}'.format(basename(filename)))
                 wait.incCurrentProgressValue()
                 vol = SisypheVolume(roi)
                 ref.copyAttributesTo(vol)
@@ -3309,6 +3317,40 @@ class ListROIAttributesWidget(ListAttributesWidget):
             if mainwindow is not None:
                 mainwindow.setStatusBarMessage('Checked ROI(s) exported to PySisyphe format.')
         else: messageBox(self, 'Export to PySisyphe format', 'No ROI checked.')
+
+    # < Revision 14/04/2026
+    # add saveLabelSisyphe method
+    def saveLabelSisyphe(self):
+        rois = self.getCheckedROI()
+        n = len(rois)
+        if n > 0:
+            wait = DialogWait()
+            wait.open()
+            wait.setInformationText('Save as Sisyphe volume...')
+            ref = self.getViewCollection().getVolume()
+            c = SisypheROICollection()
+            c.setReferenceID(ref)
+            for roi in rois: c.append(roi)
+            vol = c.toLabelVolume()
+            vol.setFilename(ref.getFilename())
+            vol.setFilenameSuffix('LABEL')
+            wait.hide()
+            filename = QFileDialog.getSaveFileName(self,
+                                                   'Save PySisyphe Label',
+                                                   vol.getFilename(),
+                                                   filter=vol.getFilterExt())[0]
+            QApplication.processEvents()
+            if filename:
+                wait.show()
+                vol.saveAs(filename)
+                wait.setInformationText('Save {}'.format(vol.getBasename()))
+                self._logger.info('Save Label volume {}'.format(vol.getFilename()))
+                mainwindow = self._getMainWindow()
+                if mainwindow is not None:
+                    mainwindow.setStatusBarMessage('Checked ROI(s) exported to Label PySisyphe format.')
+            wait.close()
+        else: messageBox(self, 'Export to Label PySisyphe format', 'No ROI checked.')
+    # Revision 14/04/2026 >
 
     def saveNifti(self):
         rois = self.getCheckedROI()

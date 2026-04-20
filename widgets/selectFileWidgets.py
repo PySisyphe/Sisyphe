@@ -3,6 +3,8 @@ External packages/modules
 -------------------------
 
     - darkdetect, OS Dark Mode detection, https://github.com/albertosottile/darkdetect
+    - Numpy, Scientific computing, https://numpy.org/
+    - pydicom, DICOM library, https://pydicom.github.io/pydicom/stable/
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
@@ -11,6 +13,8 @@ from typing import TYPE_CHECKING
 from typing import Optional
 
 from sys import platform
+from sys import maxsize
+from sys import float_info
 
 from os import chdir
 from os import getcwd
@@ -26,6 +30,16 @@ from os.path import splitext
 
 from glob import glob
 
+from numpy import array
+from numpy import save
+from numpy import savetxt
+from numpy import load
+from numpy import loadtxt
+
+from pydicom.datadict import tag_for_keyword
+from pydicom.datadict import get_entry
+from pydicom import dcmread
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QSize
@@ -33,12 +47,19 @@ from PyQt5.QtCore import QPoint
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QSpinBox
+from PyQt5.QtWidgets import QDoubleSpinBox
+from PyQt5.QtWidgets import QComboBox
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QHeaderView
+from PyQt5.QtWidgets import QTreeWidget
+from PyQt5.QtWidgets import QTreeWidgetItem
 from PyQt5.QtWidgets import QListWidget
 from PyQt5.QtWidgets import QListWidgetItem
 from PyQt5.QtWidgets import QFileDialog
@@ -81,6 +102,7 @@ if TYPE_CHECKING:
 __all__ = ['SelectionFilter',
            'FileSelectionWidget',
            'FilesSelectionWidget',
+           'FilesSelectionWithParametersWidget',
            'MultiExtFilesSelectionWidget',
            'SynchronizedFilesSelectionWidget']
 
@@ -90,6 +112,7 @@ Class hierarchy
 
     - object -> SelectionFilter, QWidget  -> FileSelectionWidget
                                           -> FilesSelectionWidget
+                                          -> FilesSelectionParametersWidget
                                           -> FilesSelectionWidget -> MultiExtFilesSelectionWidget
     - QWidget ->  SynchronizedFileSelectionWidget
               ->  SynchronizedFilesSelectionWidget
@@ -364,6 +387,7 @@ class SelectionFilter(object):
         """
         self._refDir = False
         self._refID = None
+        self._refSpaceID = None
         self._refICBM = False
         self._refField = False
         self._refdicom = False
@@ -601,7 +625,7 @@ class SelectionFilter(object):
 
     def filterSameFOV(self, v: SisypheVolume | SisypheROI | list[float] | tuple[float, float, float] | None = None) -> None:
         """
-        Set a Field of View (FOV) filter. Only PySisyphe volumes (.xvol) or ROI (.xroi) with an FOV matching the
+        Set a Field of View (FOV) filter. Only PySisyphe volumes (.xvol) or ROI (.xroi) with an FOV that matches the
         provided SisypheVolume, SisypheROI, or a (x, y, z) tuple will be allowed.
 
         Parameters
@@ -2371,7 +2395,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
 
     QWidget, SelectionFilter -> FilesSelectionWidget
 
-    Last revision: 24/02/2026
+    Last revision: 26/03/2026
     """
 
     # Custom Qt Signals
@@ -2402,6 +2426,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         SelectionFilter.__init__(self)
 
         self._refCount = maxcount
+        self._countWarning = True
         self._checkbox = checkbox
         self._stop = False
         self.setAcceptDrops(True)
@@ -2470,14 +2495,15 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
     """
     Private attributes
 
-    _label      QLabel
-    _list       QListWidget
-    _current    QPushButton
-    _add        QPushButton
-    _clear      QPushButton
-    _clearall   QPushButton
-    _stop       bool, break files check after failure
-    _refCount   int, maximum number of files
+    _label          QLabel
+    _list           QListWidget
+    _current        QPushButton
+    _add            QPushButton
+    _clear          QPushButton
+    _clearall       QPushButton
+    _stop           bool, break files check after failure
+    _refCount       int, maximum number of files
+    _countWarning   bool, display or not warning when the maximum number of files is reached
     """
 
     # Private method
@@ -2564,6 +2590,18 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             self.FilesSelectionWidgetDoubleClicked.emit(item)
 
     # Public methods
+
+    def fileCountWarningOn(self):
+        self._countWarning = True
+
+    def fileCountWarningOff(self):
+        self._countWarning = False
+
+    def setFileCountWarning(self, v: bool = True):
+        self._countWarning = v
+
+    def getFileCountWaring(self) -> bool:
+        return self._countWarning
 
     def setStopCheckAfterFailure(self, stop: bool) -> None:
         """
@@ -2884,8 +2922,12 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         if isinstance(widget, FilesSelectionWidget):
             items = widget.selectedItems()
             for item in items:
-                row = widget.row(item)
-                self._list.item(row).setSelected(True)
+                # < Revision 26/03/2026
+                # replace widget by widget._list
+                row = widget._list.row(item)
+                if row < self._list.count():
+                    self._list.item(row).setSelected(True)
+                # Revision 26/03/2026 >
         else: raise TypeError('parameter type {} is not FilesSelectionWidget.'.format(type(widget)))
 
     def copySelectionTo(self, widget: QWidget) -> None:
@@ -2900,8 +2942,12 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         if isinstance(widget, FilesSelectionWidget):
             items = self._list.selectedItems()
             for item in items:
+                # < Revision 26/03/2026
+                # replace widget by widget._list
                 row = self._list.row(item)
-                widget.item(row).setSelected(True)
+                if row < widget._list.count():
+                    widget._list.item(row).setSelected(True)
+                # Revision 26/03/2026 >
         else: raise TypeError('parameter type {} is not FilesSelectionWidget.'.format(type(widget)))
 
     def clearSelection(self) -> None:
@@ -3604,11 +3650,12 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                                 self.FilesSelectionChanged.emit(self)
                         if self._list.count() == self._refCount:
                             wait.hide()
-                            messageBox(self,
-                                       'PySisyphe volume file selector',
-                                       text='Maximum number of files is reached ({}).\n'
-                                            'Remove file from the list if you want to\n'
-                                            'add a new one.'.format(self._refCount))
+                            if self._countWarning:
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
                             self._add.setEnabled(False)
                             break
                     if dtag: wait.close()
@@ -3780,11 +3827,12 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                                 self.FilesSelectionChanged.emit(self)
                         if self._list.count() == self._refCount:
                             wait.hide()
-                            messageBox(self,
-                                       'PySisyphe ROI file selector',
-                                       text='Maximum number of files is reached ({}).\n'
-                                            'Remove file from the list if you want to\n'
-                                            'add a new one.'.format(self._refCount))
+                            if self._countWarning:
+                                messageBox(self,
+                                           'PySisyphe ROI file selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
                             self._add.setEnabled(False)
                             break
                     if dtag: wait.close()
@@ -3903,11 +3951,12 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                                 self.FilesSelectionChanged.emit(self)
                         if self._list.count() == self._refCount:
                             wait.hide()
-                            messageBox(self,
-                                       'PySisyphe mesh file selector',
-                                       text='Maximum number of files is reached ({}).\n'
-                                            'Remove file from the list if you want to\n'
-                                            'add a new one.'.format(self._refCount))
+                            if self._countWarning:
+                                messageBox(self,
+                                           'PySisyphe mesh file selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
                             self._add.setEnabled(False)
                             break
                     if dtag: wait.close()
@@ -4100,11 +4149,12 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                                 self.FilesSelectionChanged.emit(self)
                         if self._list.count() == self._refCount:
                             wait.hide()
-                            messageBox(self,
-                                       'PySisyphe streamlines file selector',
-                                       text='Maximum number of files is reached ({}).\n'
-                                            'Remove file from the list if you want to\n'
-                                            'add a new one.'.format(self._refCount))
+                            if self._countWarning:
+                                messageBox(self,
+                                           'PySisyphe streamlines file selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
                             self._add.setEnabled(False)
                             break
                     if dtag: wait.close()
@@ -4243,11 +4293,12 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                                 self.FilesSelectionChanged.emit(self)
                         if self._list.count() == self._refCount:
                             wait.hide()
-                            messageBox(self,
-                                       'PySisyphe tools file selector',
-                                       text='Maximum number of files is reached ({}).\n'
-                                            'Remove file from the list if you want to\n'
-                                            'add a new one.'.format(self._refCount))
+                            if self._countWarning:
+                                messageBox(self,
+                                           'PySisyphe tools file selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
                             self._add.setEnabled(False)
                             break
                     if dtag: wait.close()
@@ -4348,11 +4399,12 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                             wait.show()
                         if self._list.count() == self._refCount:
                             wait.hide()
-                            messageBox(self,
-                                       'DICOM file selector',
-                                       text='Maximum number of files is reached ({}).\n'
-                                            'Remove file from the list if you want to\n'
-                                            'add a new one.'.format(self._refCount))
+                            if self._countWarning:
+                                messageBox(self,
+                                           'DICOM file selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
                             self._add.setEnabled(False)
                             break
                     if dtag: wait.close()
@@ -4445,11 +4497,12 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                                 self.FilesSelectionChanged.emit(self)
                         if self._list.count() == self._refCount:
                             wait.hide()
-                            messageBox(self,
-                                       'File selector',
-                                       text='Maximum number of files is reached ({}).\n'
-                                            'Remove file from the list if you want to\n'
-                                            'add a new one.'.format(self._refCount))
+                            if self._countWarning:
+                                messageBox(self,
+                                           'File selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
                             self._add.setEnabled(False)
                             break
                     if dtag: wait.close()
@@ -4538,11 +4591,12 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                                 self.FilesSelectionChanged.emit(self)
                         if self._list.count() == self._refCount:
                             wait.hide()
-                            messageBox(self,
-                                       'File selector',
-                                       text='Maximum number of files is reached ({}).\n'
-                                            'Remove file from the list if you want to\n'
-                                            'add a new one.'.format(self._refCount))
+                            if self._countWarning:
+                                messageBox(self,
+                                           'File selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
                             self._add.setEnabled(False)
                             break
                     if dtag: wait.close()
@@ -4684,6 +4738,2810 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 if file != '': self.add(file[7:])
 
 
+# < Revision 26/03/2026
+# add FilesSelectionWithParametersWidget class
+class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
+    """
+    FilesSelectionWithParametersWidget class
+
+    Description
+    ~~~~~~~~~~~
+
+    Widget that manages files selection and associated parameters.
+
+    This widget consists of the following elements, which are displayed from left to right.
+
+    - QTreeWidget widget, displays a list of selected files and parameters
+    - IconLabel widget with '<' icon, to add a PySisypheVolume from the thumbnail bar (optional widget)
+    - QPushButton 'add', to add a file from a dialog
+    - QPushButton 'remove', to remove the selected file(s) from the list
+    - QPushButton 'remove all', to remove all the files from the list
+    - QPushButton 'load', to load parmater values
+    - QPushButton 'save', to save parmater values
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QWidget, SelectionFilter -> FilesSelectionWithParametersWidget
+
+    Creation: 26/03/2026
+    Last revision: 09/04/2026
+    """
+
+    # Custom Qt Signals
+
+    FieldChanged = pyqtSignal(QWidget, str)
+    FieldCleared = pyqtSignal(QWidget, list)
+    FilesSelectionChanged = pyqtSignal(QWidget)
+    FilesSelectionWidgetSelectionChanged = pyqtSignal(QWidget, str)
+    FilesSelectionWidgetCleared = pyqtSignal(QWidget)
+    FilesSelectionWidgetDoubleClicked = pyqtSignal(QTreeWidgetItem)
+
+    # Special method
+
+    def __init__(self, maxcount: int = 100, checkbox: bool = False, parent: QWidget | None = None)  -> None:
+        """
+        FilesSelectionWidget instance constructor.
+
+        Parameters
+        ----------
+        maxcount : int
+            maximum number of files allowed in the list.
+        checkbox : bool
+            display or not a QCheckbox widget before each file name in the list.
+        parent : QWidget | None (optional)
+            parent widget.
+        """
+        QWidget.__init__(self, parent)
+        SelectionFilter.__init__(self)
+
+        self._refCount = maxcount
+        self._countWarning = True
+        self._checkbox = checkbox
+        self._stop = False
+        self.setAcceptDrops(True)
+        # < Revision 12/12/2024
+        # select only single-component volumes
+        self.filterSingleComponent()
+        # < Revision 12/12/2024
+        self._parameters = dict()
+
+        # Init QLayout
+
+        self._layout = QVBoxLayout()
+        self._layout.setContentsMargins(0, 0, 0, 0)
+        self._layout.setSpacing(0)
+        self.setLayout(self._layout)
+
+        # Init QWidgets
+
+        self._label = QLabel()
+        self._label.setVisible(False)
+        self._list = QTreeWidget()
+        self._list.setAlternatingRowColors(True)
+        # < Revision 09/04/2026
+        self._list.header().hide()
+        # Revision 09/04/2026 >
+        # noinspection PyUnresolvedReferences
+        self._list.itemSelectionChanged.connect(self._selectionChanged)
+        # noinspection PyTypeChecker
+        self._list.setSelectionMode(3)  # Extended selection
+        # noinspection PyUnresolvedReferences
+        self._list.itemDoubleClicked.connect(self._onDoubleClicked)
+        self._current = QPushButton(QIcon(join(self.getDefaultIconDirectory(), 'left.png')), '')
+        self._add = QPushButton('Add')
+        self._clear = QPushButton('Remove')
+        self._clearall = QPushButton('Remove all')
+        self._load = QPushButton('Load parameter')
+        self._save = QPushButton('Save parameter')
+        self._load.setVisible(False)
+        self._save.setVisible(False)
+        # self._current.setFixedSize(QSize(50, 32))
+        self._current.setToolTip('Add thumbnail volume to the list.')
+        self._add.setToolTip('Add file(s) to the list.')
+        self._clear.setToolTip('Remove selected file(s) from the list.')
+        self._clearall.setToolTip('Remove all files from the list.')
+        self._load.setToolTip('Load parameter values from a file.')
+        self._save.setToolTip('Save parameter values to a file.')
+
+        # noinspection PyUnresolvedReferences
+        self._current.clicked.connect(self._onMenuThumbnailShow)
+
+        self._layout.addWidget(self._label)
+        self._layout.addWidget(self._list)
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(5)
+        layout.addWidget(self._current)
+        layout.addWidget(self._add)
+        layout.addWidget(self._clear)
+        layout.addWidget(self._clearall)
+        layout.addWidget(self._load)
+        layout.addWidget(self._save)
+        layout.addStretch()
+        self._layout.addLayout(layout)
+
+        self._current.setVisible(False)
+
+        # noinspection PyUnresolvedReferences
+        self._add.clicked.connect(lambda: self.add())
+        # < Revision 19/06/2025
+        # self._clear.clicked.connect(self.clear)
+        # self._clearall.clicked.connect(self.clearall)
+        # noinspection PyUnresolvedReferences
+        self._clear.clicked.connect(lambda: self.clear())
+        # noinspection PyUnresolvedReferences
+        self._clearall.clicked.connect(lambda: self.clearall())
+        # Revision 19/06/2025 >
+
+    """
+    Private attributes
+
+    _label      QLabel
+    _list       QTreeWidget
+    _current    QPushButton
+    _add        QPushButton
+    _clear      QPushButton
+    _clearall   QPushButton
+    _stop       bool, break files check after failure
+    _refCount   int, maximum number of files
+    """
+
+    # Private method
+
+    def _selectionChanged(self):
+        """
+        Slot connected to the itemSelectionChanged signal of the QListWidget.
+        Emits FilesSelectionWidgetSelectionChanged signal with the filename of the first selected item.
+        """
+        selecteditems = self._list.selectedItems()
+        if len(selecteditems) > 0:
+            # noinspection PyUnresolvedReferences
+            self.FilesSelectionWidgetSelectionChanged.emit(self, selecteditems[0].data(0, 256))
+
+    def _onMenuThumbnailShow(self):
+        """
+        Displays the context menu for selecting PySisyphe (.xvol) volumes from the thumbnail toolbar.
+        If only one volume is available, it's directly added. If multiple, a popup menu is shown.
+        Includes an 'All' option for adding all volumes from the toolbar.
+        """
+        if self.hasToolbarThumbnail():
+            n = self._thumbnail.getWidgetsCount()
+            if n == 1:
+                v = self._thumbnail.getVolumeFromIndex(0)
+                self.add(v.getFilename())
+            if n > 1:
+                menu = QMenu(self._current)
+                # noinspection PyUnresolvedReferences
+                menu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+                # noinspection PyUnresolvedReferences
+                menu.setWindowFlag(Qt.FramelessWindowHint, True)
+                # noinspection PyUnresolvedReferences
+                menu.setAttribute(Qt.WA_TranslucentBackground, True)
+                for i in range(n):
+                    v = self._thumbnail.getVolumeFromIndex(i)
+                    action = menu.addAction(v.getBasename())
+                    action.setData(v.getFilename())
+                # < Revision 08/11/2024
+                if n > 1:
+                    menu.addSeparator()
+                    menu.addAction('All')
+                # Revision 08/11/2024 >
+                # noinspection PyUnresolvedReferences
+                menu.triggered.connect(self._onMenuThumbnailSelect)
+                menu.exec(self._current.mapToGlobal(QPoint(0, self._current.height())))
+
+    def _onMenuThumbnailSelect(self, action: QAction):
+        """
+        Handles the selection of a PySisyphe volume (.xvol) from the thumbnail menu.
+        If 'All' is selected, it adds all PySisyphe volumes (.xvol) from the thumbnail toolbar.
+
+        Parameters
+        ----------
+        action : QAction
+            QAction that was triggered, containing the filename or 'All'.
+        """
+        # < Revision 08/11/2024
+        if action.text() == 'All':
+            n = self._thumbnail.getWidgetsCount()
+            wait = DialogWait(progress=True, progressmin=0, progressmax=n, cancel=True)
+            wait.open()
+            for i in range(n):
+                filename = self._thumbnail.getVolumeFromIndex(i).getFilename()
+                wait.incCurrentProgressValue()
+                wait.setInformationText('Add {}...'.format(basename(filename)))
+                self.add(filename)
+                if wait.getStopped(): break
+            wait.close()
+        # Revision 08/11/2024 >
+        else: self.add(str(action.data()))
+
+    def _onDoubleClicked(self, item: QTreeWidgetItem):
+        """
+        Slot connected to the itemDoubleClicked signal of the QListWidget.
+        Emits FilesSelectionWidgetDoubleClicked signal with the double-clicked item.
+
+        Parameters
+        ----------
+        item : QTreeWidgetItem
+            QTreeWidgetItem that was double-clicked.
+        """
+        if item is not None:
+            # noinspection PyUnresolvedReferences
+            self.FilesSelectionWidgetDoubleClicked.emit(item)
+
+    def _initItemParameterWidgets(self, item: QTreeWidgetItem) -> None:
+        if len(self._parameters) > 0:
+            for i, name in enumerate(self._parameters):
+                param = self._parameters[name]
+                if param['dtype'] == 'int':
+                    widget = QSpinBox(self)
+                    if 'vmin' in param: widget.setMinimum(int(param['vmin']))
+                    else: widget.setMinimum(0)
+                    if 'vmax' in param: widget.setMaximum(int(param['vmax']))
+                    else: widget.setMaximum(maxsize)
+                elif param['dtype'] == 'float':
+                    widget = QDoubleSpinBox(self)
+                    if 'vmin' in param: widget.setMinimum(float(param['vmin']))
+                    else: widget.setMinimum(0.0)
+                    if 'vmax' in param: widget.setMaximum(float(param['vmax']))
+                    else: widget.setMaximum(float_info.max)
+                    if 'decimals' in param:
+                        d = int(param['decimals'])
+                        widget.setDecimals(d)
+                        widget.setSingleStep(1 / (10 * d))
+                    else:
+                        widget.setDecimals(1)
+                        widget.setSingleStep(0.1)
+                elif param['dtype'] == 'str':
+                    widget = QLineEdit(self)
+                elif param['dtype'] == 'lstr':
+                    widget = QComboBox(self)
+                    if len(param['values']) > 0:
+                        for v in param['values']:
+                            widget.addItem(v)
+                        widget.setCurrentIndex(0)
+                else: raise AttributeError('parameter data type {} is not defined.'.format(param['dtype']))
+                widget.setMinimumWidth(100)
+                if 'width' in param: widget.setFixedWidth(int(param['width']))
+                else: widget.adjustSize()
+                container = QWidget()
+                lyout = QHBoxLayout()
+                lyout.setContentsMargins(0, 0, 0, 0)
+                lyout.setAlignment(widget, Qt.AlignmentFlag.AlignHCenter)
+                lyout.addWidget(widget)
+                container.setLayout(lyout)
+                self._list.setItemWidget(item, i + 1, container)
+                self._list.setColumnWidth(i + 1, widget.sizeHint().width() + 20)
+                if param['dcm']:
+                    value = None
+                    filename = item.data(0, 256)
+                    if exists(filename):
+                        bname, ext = splitext(filename)
+                        if ext == '.dcm':
+                            ds = dcmread(filename, stop_before_pixels=True)
+                            if name in ds: value = ds[name].value
+                        elif ext == '.xvol':
+                            ext = XmlDicom.getFileExt()
+                            filename = bname + ext
+                            if not exists(filename): continue
+                        if ext == XmlDicom.getFileExt():
+                            dcm = XmlDicom()
+                            dcm.loadXmlDicomFilename(filename)
+                            if name in dcm: value = dcm.getDataElementValue(name)
+                    if value:
+                        dtype = param['dtype']
+                        if dtype == 'int': widget.setValue(int(value))
+                        elif dtype == 'float': widget.setValue(float(value))
+                        elif dtype == 'str': widget.setText(str(value))
+                        elif dtype == 'lstr':
+                            c = widget.findText(str(value), Qt.MatchFlag.MatchContains)
+                            if c > -1: widget.setCurrentIndex(c)
+
+    def _loadParameters(self, action: QAction) -> None:
+        if self._list.topLevelItemCount() > 0:
+            name = action.text()
+            if name in self._parameters:
+                filt = 'Text file (*.txt);;CSV file (*.csv);;Numpy file (*.npy)'
+                filename = QFileDialog.getOpenFileName(self,
+                                                       'Load the {} values'.format(name),
+                                                       getcwd(),
+                                                       filt)[0]
+                QApplication.processEvents()
+                if filename:
+                    ext = splitext(filename)[1]
+                    try:
+                        if ext == '.txt':
+                            with open(filename) as f:
+                                buff = f.read()
+                                if ',' in buff: values = loadtxt(filename, delimiter=',')
+                                elif ';' in buff: values = loadtxt(filename, delimiter=';')
+                                elif '|' in buff: values = loadtxt(filename, delimiter='|')
+                                elif ' ' in buff: values = loadtxt(filename, delimiter=' ')
+                        elif ext == '.csv': values = loadtxt(filename, delimiter=',')
+                        elif ext == '.npy': values = load(filename)
+                    except:
+                        messageBox(self,
+                                   'Load {} values'.format(name),
+                                   text='Error loading {} values.'.format(basename(filename)))
+                        return
+                    dtype = self._parameters[name]['dtype']
+                    idx = list(self._parameters.keys()).index(name) + 1
+                    if values.ndim > 1: values = values[0, ...]
+                    for i in range(self._list.topLevelItemCount()):
+                        if i < values.shape[0]:
+                            w = self._list.itemWidget(self._list.topLevelItem(i), idx)
+                            widget = w.layout().itemAt(0).widget()
+                            if widget is not None:
+                                try:
+                                    if dtype == 'int': widget.setValue(int(values[i]))
+                                    elif dtype == 'float': widget.setValue(float(values[i]))
+                                    elif dtype == 'str': widget.setText(str(values[i]))
+                                    elif dtype == 'lstr':
+                                        c = widget.findText(str(values[i]), Qt.MatchFlag.MatchContains)
+                                        if c > -1: widget.setCurrentIndex(c)
+                                except: pass
+
+    def _saveParameters(self, action: QAction) -> None:
+        if self._list.topLevelItemCount() > 0:
+            name = action.text()
+            if name in self._parameters:
+                filt = 'Text file (*.txt);;CSV file (*.csv);;Numpy file (*.npy)'
+                filename = QFileDialog.getSaveFileName(self,
+                                                       'Save the {} values'.format(name),
+                                                       getcwd(),
+                                                       filt)[0]
+                QApplication.processEvents()
+                if filename:
+                    ext = splitext(filename)[1]
+                    values = array(self.getParameterValues(name))
+                    try:
+                        if ext == '.txt': savetxt(filename, values, delimiter=',')
+                        elif ext == '.csv': savetxt(filename, values, delimiter=',')
+                        elif ext == '.npy': save(filename, values)
+                    except:
+                        messageBox(self,
+                                   'Save {} values'.format(name),
+                                   text='Error saving {} values.'.format(basename(filename)))
+
+    # Public methods
+
+    def addParameter(self,
+                     name: str,
+                     dtype: str,
+                     vmin: int | float | None = None,
+                     vmax: int |float | None = None,
+                     decimals: int = 1,
+                     values: list[str] | None = None,
+                     width: int = 0) -> None:
+        """
+        Add a parameter.
+
+        The parameters are displayed to the right of the file name.
+        Four parameter types are defined as 'dtype' keys:
+            - 'int', displayed as a QSpinBox
+            - 'float', displayed as a QDoubleSpinBox
+            - 'str', displayed as a QLineEdit
+            - 'lstr', displayed as a QComboBox
+        The 'vmin' and 'vmax' keys are used to set the range of "int" or "float" parameters.
+        The 'decimals' key is used to set the number of decimals for the float data type.
+        The 'values' key is used to set the ComboBox items.
+        The 'width' key is used to set the fixed width of the widget.
+        The 'dcm' key indicates if this parameter is a DICOM field.
+
+        Parameters
+        ----------
+        name : str
+            parameter name
+        dtype : str
+            parameter type 'int', 'float', 'str', 'lstr'
+        vmin : int | float | None
+            minimum value parameter defined for the 'int' and 'float' data types
+        vmax : int | float | None
+            maximum value parameter defined for the 'int' and 'float' data types
+        decimals : int
+            number of decimals for float data type
+        values : list[str] | None
+            ComboBox items
+        width : int (optional)
+            fixed width of the parameter widget (default 0, no fixed width)
+        """
+        if dtype in ('int', 'float', 'str', 'lstr'):
+            param = dict()
+            param['dtype'] = dtype
+            if vmin is not None:
+                if dtype == 'int': param['vmin'] = int(vmin)
+                elif dtype == 'float': param['vmin'] = float(vmin)
+            if vmax is not None:
+                if dtype == 'int': param['vmax'] = int(vmax)
+                elif dtype == 'float': param['vmax'] = float(vmax)
+            if decimals is not None and dtype == 'float': param['decimals'] = decimals
+            if values is not None and dtype == 'lstr': param['values'] = values
+            param['width'] = 100
+            if width is not None and width > 0: param['width'] = width
+            param['dcm'] = False
+            self._parameters[name] = param
+            hdr = [self._label.text()] + list(self._parameters.keys())
+            self._list.setHeaderLabels(hdr)
+            self._list.header().setStretchLastSection(False)
+            self._list.header().setSectionResizeMode(0, QHeaderView.Stretch)
+            # < Revision 09/04/2026
+            self._list.header().show()
+            # Revision 09/04/2026 >
+            for i in range(1, len(hdr)):
+                self._list.header().setSectionResizeMode(i, QHeaderView.Interactive)
+            if self._load.menu() is not None: self._load.menu().clear()
+            if self._save.menu() is not None: self._save.menu().clear()
+            menu_load = QMenu(self._load)
+            menu_save = QMenu(self._save)
+            for key in self._parameters:
+                menu_load.addAction(key)
+                menu_save.addAction(key)
+            menu_load.triggered.connect(self._loadParameters)
+            menu_save.triggered.connect(self._saveParameters)
+            self._load.setMenu(menu_load)
+            self._save.setMenu(menu_save)
+            self._load.setVisible(True)
+            self._save.setVisible(True)
+        else: raise ValueError('dtype parameter {} is not valid.'.format(dtype))
+
+    def addDicomParameter(self,
+                          name: str,
+                          vmin: int | float | None = None,
+                          vmax: int | float | None = None,
+                          decimals: int = 1,
+                          width: int = 0):
+        """
+        Add a dicom field parameter. The value of this parameter is automatically retrieved from a DICOM file or an
+        .xvol file (searched in the associated XmlDicom .xml file) added by the user in the widget. The parameter name
+        is used as a Dicom field keyword.
+
+        The parameters are displayed to the right of the file name.
+        Four parameter types are defined as 'dtype' keys:
+            - 'int', displayed as a QSpinBox
+            - 'float', displayed as a QDoubleSpinBox
+            - 'str', displayed as a QLineEdit
+            - 'lstr', displayed as a QComboBox
+        The 'vmin' and 'vmax' keys are used to set the range of "int" or "float" parameters.
+        The 'decimals' key is used to set the number of decimals for the float data type.
+        The 'values' key is used to set the ComboBox items.
+        The 'width' key is used to set the fixed width of the widget.
+        The 'dcm' key indicates if this parameter is a DICOM field.
+
+        Parameters
+        ----------
+        name : str
+            dicom field name
+        vmin : int | float | None
+            minimum value parameter defined for the 'int' and 'float' data types
+        vmax : int | float | None
+            maximum value parameter defined for the 'int' and 'float' data types
+        decimals : int
+            number of decimals for float data type
+        width : int (optional)
+            fixed width of the parameter widget (default 0, no fixed width)
+        """
+        tag = tag_for_keyword(name)
+        if tag is not None:
+            param = dict()
+            VR = get_entry(tag)[0]
+            if VR in ('AE', 'AS', 'CS', 'DA', 'DT', 'LO', 'PN', 'SH', 'ST', 'TM', 'UI'): param['dtype'] = 'str'
+            elif VR in ('DS', 'FL', 'FD'): param['dtype'] = 'float'
+            elif VR in ('IS', 'SL', 'SS', 'US'): param['dtype'] = 'int'
+            else: raise ValueError('unsupported VR {} from {} parameter.'.format(VR, name))
+            if vmin is not None:
+                if param['dtype'] == 'int': param['vmin'] = int(vmin)
+                elif param['dtype'] == 'float': param['vmin'] = float(vmin)
+            if vmax is not None:
+                if param['dtype'] == 'int': param['vmax'] = int(vmax)
+                elif param['dtype'] == 'float': param['vmax'] = float(vmax)
+            if decimals is not None and param['dtype'] == 'float': param['decimals'] = decimals
+            param['dcm'] = True
+            param['width'] = 100
+            if width is not None and width > 0: param['width'] = width
+            self._parameters[name] = param
+            hdr = [self._label.text()] + list(self._parameters.keys())
+            self._list.setHeaderLabels(hdr)
+            self._list.header().setStretchLastSection(False)
+            self._list.header().setSectionResizeMode(0, QHeaderView.Stretch)
+            # < Revision 09/04/2026
+            self._list.header().show()
+            # Revision 09/04/2026 >
+            for i in range(1, len(hdr)):
+                self._list.header().setSectionResizeMode(i, QHeaderView.Interactive)
+            if self._load.menu() is not None: self._load.menu().clear()
+            if self._save.menu() is not None: self._save.menu().clear()
+            menu_load = QMenu(self._load)
+            menu_save = QMenu(self._save)
+            for key in self._parameters:
+                menu_load.addAction(key)
+                menu_save.addAction(key)
+            menu_load.triggered.connect(self._loadParameters)
+            menu_save.triggered.connect(self._saveParameters)
+            self._load.setMenu(menu_load)
+            self._save.setMenu(menu_save)
+            self._load.setVisible(True)
+            self._save.setVisible(True)
+        else: raise ValueError('Dicom parameter {} is not valid.'.format(name))
+
+    def hasParameter(self, name: str) -> bool:
+        """
+        Check if the parameter name is defined.
+
+        The parameters are displayed to the right of the file name.
+        Four parameter types are defined as 'dtype' keys:
+            - 'int', displayed as a QSpinBox
+            - 'float', displayed as a QDoubleSpinBox
+            - 'str', displayed as a QLineEdit
+            - 'lstr', displayed as a QComboBox
+        The 'vmin' and 'vmax' keys are used to set the range of "int" or "float" parameters.
+        The 'decimals' key is used to set the number of decimals for the float data type.
+        The 'values' key is used to set the ComboBox items.
+        The 'width' key is used to set the fixed width of the widget.
+        The 'dcm' key indicates if this parameter is a DICOM field.
+
+        Parameters
+        ----------
+        name : str
+            parameter name
+
+        Returns
+        -------
+        bool
+        """
+        return name in self._parameters
+
+    def setParameterDict(self, params: dict[str, dict[str, str | int | float | list[str]]]) -> None:
+        """
+        Set the parameters attribute.
+
+        The parameters are displayed to the right of the file name.
+        Four parameter types are defined as 'dtype' keys:
+            - 'int', displayed as a QSpinBox
+            - 'float', displayed as a QDoubleSpinBox
+            - 'str', displayed as a QLineEdit
+            - 'lstr', displayed as a QComboBox
+        The 'vmin' and 'vmax' keys are used to set the range of "int" or "float" parameters.
+        The 'decimals' key is used to set the number of decimals for the float data type.
+        The 'values' key is used to set the ComboBox items.
+        The 'width' key is used to set the fixed width of the widget.
+        The 'dcm' key indicates if this parameter is a DICOM field.
+
+        Parameters
+        ----------
+        params : dict[str, dict[str, str | int | float | list[str]]]
+            parameters dict
+        """
+        self._parameters = params
+
+    def getParameterDict(self) -> dict[str, dict[str, str | int | float | list[str]]]:
+        """
+        Get the parameters attribute.
+
+        The parameters are displayed to the right of the file name.
+        Four parameter types are defined as 'dtype' keys:
+            - 'int', displayed as a QSpinBox
+            - 'float', displayed as a QDoubleSpinBox
+            - 'str', displayed as a QLineEdit
+            - 'lstr', displayed as a QComboBox
+        The 'vmin' and 'vmax' keys are used to set the range of "int" or "float" parameters.
+        The 'decimals' key is used to set the number of decimals for the float data type.
+        The 'values' key is used to set the ComboBox items.
+        The 'width' key is used to set the fixed width of the widget.
+        The 'dcm' key indicates if this parameter is a DICOM field.
+
+        Returns
+        -------
+        dict[str, dict[str, str | int | float | list[str]]]
+            parameters dict
+        """
+        return self._parameters
+
+    def getParameterValues(self, name: str) -> list:
+        """
+        Get the values of a parameter.
+
+        The parameters are displayed to the right of the file name.
+        Four parameter types are defined as 'dtype' keys:
+            - 'int', displayed as a QSpinBox
+            - 'float', displayed as a QDoubleSpinBox
+            - 'str', displayed as a QLineEdit
+            - 'lstr', displayed as a QComboBox
+        The 'vmin' and 'vmax' keys are used to set the range of "int" or "float" parameters.
+        The 'decimals' key is used to set the number of decimals for the float data type.
+        The 'values' key is used to set the ComboBox items.
+        The 'width' key is used to set the fixed width of the widget.
+        The 'dcm' key indicates if this parameter is a DICOM field.
+
+        Parameters
+        ----------
+        name : str
+            parameter name
+
+        Returns
+        -------
+        list
+            parameter values
+        """
+        if name in self._parameters:
+            idx = list(self._parameters.keys()).index(name) + 1
+            r = list()
+            for i in range(self._list.topLevelItemCount()):
+                w = self._list.itemWidget(self._list.topLevelItem(i), idx)
+                widget = w.layout().itemAt(0).widget()
+                if widget is not None:
+                    dtype = self._parameters[name]['dtype']
+                    if dtype == 'int': r.append(widget.value())
+                    elif dtype == 'float': r.append(widget.value())
+                    elif dtype == 'str': r.append(widget.text())
+                    elif dtype == 'lstr': r.append(widget.currentText())
+            return r
+        else: raise ValueError('No parameter {}.'.format(name))
+
+    def fileCountWarningOn(self):
+        self._countWarning = True
+
+    def fileCountWarningOff(self):
+        self._countWarning = False
+
+    def setFileCountWarning(self, v: bool = True):
+        self._countWarning = v
+
+    def getFileCountWaring(self) -> bool:
+        return self._countWarning
+
+    def setStopCheckAfterFailure(self, stop: bool) -> None:
+        """
+        Set whether the file checking process should stop after the first file fails a filter check during an 'add' operation.
+
+        Parameters
+        ----------
+        stop : bool
+            True to stop on first failure, False to continue checking other files.
+        """
+        if isinstance(stop, bool): self._stop = stop
+        else: raise TypeError('parameter type {} is not bool.'.format(type(stop)))
+
+    def getStopCheckAfterFailure(self) -> bool:
+        """
+        Get the current setting for stopping file checks after a failure.
+
+        Returns
+        -------
+        bool
+            True if checks stop on first failure, False otherwise.
+        """
+        return self._stop
+
+    def setMaximumNumberOfFiles(self, n: int)  -> None:
+        """
+        Set the maximum number of files allowed in the list.
+
+        Parameters
+        ----------
+        n : int
+            maximum number of files.
+        """
+        if isinstance(n, int): self._refCount = n
+        else: raise TypeError('parameter type {} is not int.'.format(type(n)))
+
+    def getMaximumNumberOfFiles(self) -> int:
+        """
+        Get the maximum number of files allowed in the list.
+
+        Returns
+        -------
+        int
+            maximum number of files.
+        """
+        return self._refCount
+
+    def setToolbarThumbnail(self, t: ToolBarThumbnail) -> None:
+        """
+        Set the ToolBarThumbnail widget for accessing volumes and makes the 'current volume' button visible if a
+        thumbnail toolbar is provided.
+
+        Parameters
+        ----------
+        t : ToolBarThumbnail
+            ToolBarThumbnail instance.
+        """
+        super().setToolbarThumbnail(t)
+        self._current.setVisible(True)
+
+    def setLabelVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the descriptive label for the widget.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the label, False to hide it.
+        """
+        if isinstance(v, bool): self._label.setVisible(v)
+        else: raise TypeError('parameter {} is not bool.'.format(type(v)))
+
+    def showLabel(self) -> None:
+        """
+        Show the descriptive label.
+        """
+        self._label.setVisible(True)
+
+    def hideLabel(self) -> None:
+        """
+        Hide the descriptive label.
+        """
+        self._label.setVisible(False)
+
+    def getLabelVisibility(self) -> bool:
+        """
+        Get the visibility state of the descriptive label.
+
+        Returns
+        -------
+        bool
+            True if the label is visible, False otherwise.
+        """
+        return self._label.isVisible()
+
+    def setTextLabel(self, txt: str) -> None:
+        """
+        Set the text of the descriptive label and makes it visible.
+
+        Parameters
+        ----------
+        txt : str
+            text to set for the label.
+        """
+        if isinstance(txt, str):
+            self._label.setText(txt)
+            self._label.setVisible(True)
+        else: raise TypeError('parameter type {} is not str'.format(type(txt)))
+
+    def getTextLabel(self) -> str:
+        """
+        Get the current text of the descriptive label.
+
+        Returns
+        -------
+        str
+            text of the label.
+        """
+        return self._label.text()
+
+    def getLabel(self) -> QLabel:
+        """
+        Get the QLabel widget used as the descriptive label.
+
+        Returns
+        -------
+        QLabel
+            QLabel instance.
+        """
+        return self._label
+
+    def setCurrentVolumeButtonVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the button that allows adding the current thumbnail volume to the list.
+
+        Parameters
+        ----------
+        v : bool
+            True to show the button, False to hide it.
+        """
+        if isinstance(v, bool):
+            v = v and self.hasToolbarThumbnail()
+            self._current.setVisible(v)
+        else: raise TypeError('parameter {} is not bool.'.format(type(v)))
+
+    def showCurrentVolumeButton(self) -> None:
+        """
+        Show the 'current volume' button.
+        """
+        self.setCurrentVolumeButtonVisibility(True)
+
+    def hideCurrentVolumeButton(self) -> None:
+        """
+        Hide the 'current volume' button.
+        """
+        self.setCurrentVolumeButtonVisibility(False)
+
+    def getCurrentVolumeButtonVisibility(self) -> bool:
+        """
+        Get the visibility state of the 'current volume' button.
+
+        Returns
+        -------
+        bool
+            True if the button is visible, False otherwise.
+        """
+        return self._current.isVisible()
+
+    def setButtonsVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of all control buttons (add, remove, remove all, current volume).
+
+        Parameters
+        ----------
+        v : bool
+            True to show buttons, False to hide them.
+        """
+        if isinstance(v, bool):
+            self._add.setVisible(v)
+            self._clear.setVisible(v)
+            self._clearall.setVisible(v)
+            self.setCurrentVolumeButtonVisibility(v)
+        else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
+
+    def showButtons(self) -> None:
+        """
+        Show all control buttons (add, remove, remove all, current volume).
+        """
+        self.setButtonsVisibility(True)
+
+    def hideButtons(self) -> None:
+        """
+        Hide all control buttons (add, remove, remove all, current volume).
+        """
+        self.setButtonsVisibility(False)
+
+    def getButtonsVisibility(self) -> bool:
+        """
+        Get the visibility state of control buttons (add, remove, remove all, current volume).
+
+        Returns
+        -------
+        bool
+            True if buttons are visible, False otherwise.
+        """
+        return self._add.isVisible()
+
+    def setRemoveButtonVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the 'Remove' button.
+
+        Parameters
+        ~~~~~~~~~~
+        v : bool
+            True to show the button, False to hide it.
+        """
+        if isinstance(v, bool): self._clear.setVisible(v)
+        else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
+
+    def showRemoveButton(self) -> None:
+        """
+        Show 'remove' button.
+        """
+        self._clear.setVisible(True)
+
+    def hideRemoveButton(self) -> None:
+        """
+        Hide 'remove' button.
+        """
+        self._clear.setVisible(False)
+
+    def getRemoveButtonVisibility(self) -> bool:
+        """
+        Get the visibility state of the 'remove' button.
+
+        Returns
+        -------
+        bool
+            True if buttons are visible, False otherwise.
+        """
+        return self._clear.isVisible()
+
+    def setRemoveAllButtonVisibility(self, v: bool) -> None:
+        """
+        Set the visibility of the 'remove all' button.
+
+        Parameters
+        ~~~~~~~~~~
+        v : bool
+            True to show the button, False to hide it.
+        """
+        if isinstance(v, bool): self._clearall.setVisible(v)
+        else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
+
+    def showRemoveAllButton(self) -> None:
+        """
+        Show 'remove all' button.
+        """
+        self._clearall.setVisible(True)
+
+    def hideRemoveAllButton(self) -> None:
+        """
+        Hide 'remove all' button.
+        """
+        self._clearall.setVisible(False)
+
+    def getRemoveAllButtonVisibility(self) -> bool:
+        """
+        Get the visibility state of the 'remove all' button.
+
+        Returns
+        -------
+        bool
+            True if buttons are visible, False otherwise.
+        """
+        return self._clearall.isVisible()
+
+    def getCheckBoxVisibility(self) -> bool:
+        """
+        Check whether checkboxes are displayed before each file name in the list.
+
+        Returns
+        -------
+        bool
+            True if checkboxes are visible, False otherwise.
+        """
+        return self._checkbox
+
+    def setSelectionTo(self, index: str | int) -> None:
+        """
+        Select a file in the list by its index or by matching its text.
+
+        Parameters
+        ----------
+        index : str | int
+            index (int) or text (str) of the item to select.
+        """
+        if not self.isEmpty():
+            if isinstance(index, str):
+                # noinspection PyTypeChecker
+                index = self._list.findItems(index, 0)
+                if len(index) > 0: index = index[0]
+            if isinstance(index, int):
+                if index < self._list.topLevelItemCount():
+                    item = self._list.topLevelItem(index)
+                    item.setSelected(True)
+            else: raise TypeError('parameter type {} is not int or str.'.format(type(index)))
+
+    def copySelectionFrom(self, widget: QWidget) -> None:
+        """
+        Copy the selection state from another FilesSelectionWidget to this widget.
+
+        Parameters
+        ----------
+        widget : QWidget
+            source FilesSelectionWidget to copy selection from
+        """
+        if isinstance(widget, FilesSelectionWidget):
+            items = widget.selectedItems()
+            for item in items:
+                # noinspection PyProtectedMember
+                row = widget._list.indexOfTopLevelItem(item)
+                if row < self._list.topLevelItemCount():
+                    self._list.topLevelItem(row).setSelected(True)
+        else: raise TypeError('parameter type {} is not FilesSelectionWidget.'.format(type(widget)))
+
+    def copySelectionTo(self, widget: QWidget) -> None:
+        """
+        Copy the selection state from this widget to another FilesSelectionWidget.
+
+        Parameters
+        ----------
+        widget : QWidget
+            target FilesSelectionWidget to copy selection to
+        """
+        if isinstance(widget, FilesSelectionWidget):
+            items = self._list.selectedItems()
+            for item in items:
+                row = self._list.indexOfTopLevelItem(item)
+                # noinspection PyProtectedMember
+                if row <  widget._list.topLevelItemCount():
+                    # noinspection PyProtectedMember
+                    widget._list.topLevelItem(row).setSelected(True)
+        else: raise TypeError('parameter type {} is not FilesSelectionWidget.'.format(type(widget)))
+
+    def clearSelection(self) -> None:
+        """
+        Clear the current selection in the list widget.
+        """
+        self._list.clearSelection()
+
+    def hasSelection(self) -> bool:
+        """
+        Checks if any file is currently selected in the list.
+
+        Returns
+        -------
+        bool
+            True if at least one item is selected, False otherwise.
+        """
+        return len(self._list.selectedItems()) > 0
+
+    def setSelectionMode(self, v: int) -> None:
+        """
+        Set the selection mode of the internal QListWidget.
+
+        Parameters
+        ----------
+        v : int
+            QAbstractItemView.selection mode (e.g., QAbstractItemView.SingleSelection,
+            QAbstractItemView.ExtendedSelection).
+        """
+        if isinstance(v, int):
+            if 0 <= v < 5:
+                # noinspection PyTypeChecker
+                self._list.setSelectionMode(v)
+            else: raise ValueError('parameter value {} is not between 0 and 4.'.format(v))
+        else: raise TypeError('parameter type {} is not int.'.format(type(v)))
+
+    def setSelectionModeToSingle(self) -> None:
+        """
+        Set the selection mode of the list widget to single item selection.
+        """
+        # noinspection PyTypeChecker
+        self._list.setSelectionMode(1)
+
+    def setSelectionModeToContiguous(self) -> None:
+        """
+        Set the selection mode of the list widget to contiguous item selection.
+        """
+        # noinspection PyTypeChecker
+        self._list.setSelectionMode(4)
+
+    def setSelectionModeToExtended(self) -> None:
+        """
+        Set the selection mode of the list widget to extended item selection.
+        """
+        # noinspection PyTypeChecker
+        self._list.setSelectionMode(3)
+
+    def getSelectionMode(self) -> int:
+        """
+        Get the current selection mode of the list widget.
+
+        Returns
+        -------
+        int
+            current selection mode.
+        """
+        return self._list.selectionMode()
+
+    def getFilenames(self) -> list[str]:
+        """
+        Get a list of all filenames currently in the widget's list.
+
+        Returns
+        -------
+        list[str]
+            list of absolute file paths, or None if the list is empty.
+        """
+        filenames = None
+        n = self._list.topLevelItemCount()
+        if n > 0:
+            filenames = list()
+            for i in range(n):
+                filenames.append(self._list.topLevelItem(i).data(0, 256))
+        return filenames
+
+    def getSelectedFilenames(self) -> list[str]:
+        """
+        Get a list of filenames for all currently selected items in the list.
+
+        Returns
+        -------
+        list[str]
+            list of absolute file paths for selected items, or None if no items are selected.
+        """
+        items = self._list.selectedItems()
+        filenames = None
+        if len(items) > 0:
+            filenames = list()
+            for item in items:
+                filenames.append(item.data(0, 256))
+        return filenames
+
+    def getCheckedFilenames(self) -> list[str]:
+        """
+        Get a list of filenames for all checked items in the list. If checkboxes are not enabled, it returns all
+        filenames.
+
+        Returns
+        -------
+        list[str]
+            list of absolute file paths for checked items.
+        """
+        if not self._checkbox: return self.getFilenames()
+        else:
+            r = list()
+            for i in range(self._list.topLevelItemCount()):
+                if self._list.topLevelItem(i).checkState(0) > 0:
+                    r.append(self._list.topLevelItem(i).data(0, 256))
+            return r
+
+    def getCheckedIndexes(self) -> list[int]:
+        """
+        Get a list of indexes for all checked items in the list. If checkboxes are not enabled, it returns indexes for
+        all items.
+
+        Returns
+        -------
+        list[int]
+            list of integer indexes for checked items.
+        """
+        if not self._checkbox: return list(range(self._list.topLevelItemCount()))
+        else:
+            r = list()
+            for i in range(self._list.topLevelItemCount()):
+                if self._list.topLevelItem(i).checkState(0) > 0: r.append(i)
+            return r
+
+    def getCheckStateList(self) -> list[bool]:
+        """
+        Get a list of boolean check states for all items in the list. If checkboxes are not enabled, it returns a list
+        of True for all items.
+
+        Returns
+        -------
+        list[bool]
+            list where True indicates a checked item, False an unchecked item.
+        """
+        if not self._checkbox: return [True] * self._list.topLevelItemCount()
+        else:
+            r = list()
+            for i in range(self._list.topLevelItemCount()):
+                r.append(self._list.topLevelItem(i).checkState(0) > 0)
+            return r
+
+    def filterSisypheVolume(self) -> None:
+        """
+        Set the filter to allow only PySisyphe volume files (.xvol) and updates the visibility of the 'current volume'
+        button based on the presence of a thumbnail toolbar.
+        """
+        SelectionFilter.filterSisypheVolume(self)
+        self._current.setVisible(self.hasToolbarThumbnail())
+
+    def containsItem(self, v: QTreeWidgetItem) -> bool:
+        """
+        Check if a QTreeWidgetItem with the same text and data (filename) is already present in the list.
+
+        Parameters
+        ----------
+        v : QTreeWidgetItem
+            QTreeWidgetItem to check for
+
+        Returns
+        -------
+        bool
+            True if the item is found, False otherwise.
+        """
+        if isinstance(v, QTreeWidgetItem):
+            # noinspection PyUnresolvedReferences
+            items = self._list.findItems(v.text(0), Qt.MatchExactly, 0)
+            if len(items) > 0:
+                for item in items:
+                    if v.data(0, 256) == item.data(0, 256):
+                        return True
+            return False
+        else: raise TypeError('parameter type {} is not QTreeWidgetItem.'.format(type(v)))
+
+    def getIndexFromItem(self, v: QTreeWidgetItem) -> int:
+        """
+        Get the row index of a given QTreeWidgetItem in the list.
+
+        Parameters
+        ----------
+        v : QTreeWidgetItem
+            QTreeWidgetItem to find the index for.
+
+        Returns
+        -------
+        int
+            row index of the item.
+        """
+        if isinstance(v, QTreeWidgetItem):
+            return self._list.indexOfTopLevelItem(v)
+        else: raise TypeError('parameter type {} is not QTreeWidgetItem.'.format(type(v)))
+
+    # < Revision 03/11/2025
+    def getItemFromIndex(self, i: int) -> QTreeWidgetItem:
+        """
+        Get the QTreeWidgetItem item at a given row index.
+
+        Parameters
+        ----------
+        i : int
+            row index
+
+        Returns
+        -------
+        QTreeWidgetItem
+            item at row index i.
+        """
+        if isinstance(i, int):
+            # return self._list.item(i).data(256)
+            return self._list.topLevelItem(i)
+        else: raise TypeError('parameter type {} is not int.'.format(type(i)))
+    # Revision 03/11/2025 >
+
+    def getFilenameFromIndex(self, i: int) -> str:
+        """
+        Get the filename at a given index.
+
+        Parameters
+        ----------
+        i : int
+            element index
+
+        Returns
+        -------
+        str
+            filename at index i.
+        """
+        if isinstance(i, int):
+            return self._list.topLevelItem(i).data(0, 256)
+        else: raise TypeError('parameter type {} is not int.'.format(type(i)))
+
+    # noinspection PyUnboundLocalVariable
+    def add(self,
+            filenames: str | list[str] = '',
+            label: str = '',
+            signal: bool = True,
+            wait: DialogWait | None = None) -> None:
+        """
+        Open a file dialog to select one or more files/directories and adds them to the list. Applies all configured
+        filters and performs checks (component, identity, FOV, size, modality, etc.) before adding each file. Displays
+        a progress dialog for multiple file additions.
+
+        Parameters
+        ----------
+        filenames : str | list[str] (optional)
+            pre-selected filename or directory to add directly. Defaults to an empty string.
+        label : str (optional)
+            an optional label for the file dialog title. Defaults to an empty string.
+        signal : bool (optional)
+            If True, emits FieldChanged and FilesSelectionChanged signals upon successful addition. Defaults to True.
+        wait : DialogWait | None (optional)
+            an optional DialogWait instance to use for progress reporting. If None, a new one is created for multiple
+            files. Defaults to None.
+        """
+        dtag = wait is None
+        if label != '': label += ' '
+        # < Revision 30/11/2025
+        # param = filenames != '' and exists(filenames)
+        #    if param:
+        #        buff, paramext = splitext(filenames)
+        #        paramext = paramext.lower()
+        #        filenames = [filenames]
+        #    else: paramext = ''
+        if isinstance(filenames, str):
+            # Extract filepath, filename and ext of parameter if exists
+            param = filenames != '' and exists(filenames)
+            if param:
+                buff, paramext = splitext(filenames)
+                paramext = paramext.lower()
+                filenames = [filenames]
+            else: paramext = ''
+        elif isinstance(filenames, list):
+            if len(filenames) > 0:
+                buff, paramext = splitext(filenames[0])
+                paramext = paramext.lower()
+                buff = list()
+                for filename in filenames:
+                    if exists(filename): buff.append(filename)
+                filenames = buff
+                param = len(filenames) > 0
+            else:
+                param = False
+                paramext = ''
+        # Revision 30/11/2025 >
+        # Apply filters
+        if self._refDir:
+            if param:
+                # noinspection PyTypeChecker
+                directory = split(filenames)[0]
+            else:
+                directory = QFileDialog.getExistingDirectory(self, 'Select directory',
+                                                             getcwd(), QFileDialog.ShowDirsOnly)
+                QApplication.processEvents()
+                self.activateWindow()
+            if directory:
+                directory = abspath(directory)
+                chdir(directory)
+                directories = [directory]
+                sub = glob(join(directory, '**'))
+                for i in range(len(sub)-1, -1, -1):
+                    if not isdir(sub[i]): del sub[i]
+                if len(sub) > 0:
+                    if messageBox(self,
+                                  'Select directory',
+                                  'Add subdirectories ?',
+                                  icon=QMessageBox.Question,
+                                  buttons=QMessageBox.Yes | QMessageBox.No,
+                                  default=QMessageBox.No) == QMessageBox.Yes:
+                        directories += sub
+                for directory in directories:
+                    item = QTreeWidgetItem()
+                    item.setText(0, directory)
+                    item.setData(0, 256, directory)
+                    if self._checkbox:
+                        # noinspection PyUnresolvedReferences
+                        item.setCheckState(0, Qt.Checked)
+                    if self.containsItem(item):
+                        messageBox(self,
+                                   'Select directory',
+                                   text='{} is already in the list.'.format(item.text(0)))
+                    else:
+                        self._list.addTopLevelItem(item)
+                        self._initItemParameterWidgets(item)
+                        if signal:
+                            # noinspection PyUnresolvedReferences
+                            self.FieldChanged.emit(self, directory)
+                            # noinspection PyUnresolvedReferences
+                            self.FilesSelectionChanged.emit(self)
+        elif len(self._refExt) > 0:
+            # SisypheVolume
+            if self._refxvol:
+                if not param or paramext != SisypheVolume.getFileExt():
+                    filt = 'PySisyphe Volume (*.xvol)'
+                    filenames = QFileDialog.getOpenFileNames(self, 'Select {}PySisyphe volume(s)'.format(label),
+                                                             getcwd(), filt)
+                    QApplication.processEvents()
+                    filenames = filenames[0]
+                if len(filenames) > 0 and self._list.topLevelItemCount() < self._refCount:
+                    chdir(dirname(filenames[0]))
+                    if wait is None:
+                        wait = DialogWait(progress=True,
+                                          progressmin=0,
+                                          progressmax=len(filenames),
+                                          cancel=True)
+                    if len(filenames) > 1:
+                        wait.open()
+                        wait.setInformationText('Add PySisyphe Volumes...')
+                    for filename in filenames:
+                        filename = abspath(filename)
+                        wait.incCurrentProgressValue()
+                        wait.setInformationText('Add {}...'.format(basename(filename)))
+                        img = SisypheVolume()
+                        # < Revision 17/11/2024
+                        # load only XML part (attributes)
+                        # fast volume loading
+                        # try: img.load(filename)
+                        try: img.load(filename, binary=False)
+                        # Revision 17/11/2024 >
+                        except:
+                            wait.hide()
+                            messageBox(self,
+                                       'PySisyphe volume file selector',
+                                       text='{} is not a valid Sisyphe volume file.'.format(basename(filename)))
+                            if self._stop: break
+                            else:
+                                wait.show()
+                                continue
+                        # First volume is reference
+                        if self._list.topLevelItemCount() == 0:
+                            if self._reftofirst: self._volume = img
+                            if self._volume is not None:
+                                if self._refID is not None:
+                                    self._refID = self._volume.getID()
+                                if self._refSpaceID is not None:
+                                    self._refSpaceID = self._volume.getID()
+                                if self._refidentity is not None:
+                                    self._refidentity = self._volume.getIdentity()
+                                if self._refFOV is not None:
+                                    self._refFOV = self._volume.getFieldOfView()
+                                if self._refSize is not None:
+                                    self._refSize = self._volume.getSize()
+                                if self._refmodality is not None:
+                                    self._refmodality = self._volume.getAcquisition().getModality()
+                                if self._refsequence is not None:
+                                    self._refsequence = self._volume.getAcquisition().getSequence()
+                                if self._refdatatype is not None:
+                                    self._refdatatype = self._volume.getDatatype()
+                                if self._reforientation is not None:
+                                    self._reforientation = self._volume.getOrientationAsString().lower()
+                        # Component verification, is single component ?
+                        if self._refcomponent == 1:
+                            c = img.getNumberOfComponentsPerPixel()
+                            if c > 1:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} is a multi component image.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Component verification, is multi-component ?
+                        elif self._refcomponent > 1:
+                            c = img.getNumberOfComponentsPerPixel()
+                            if c == 1:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} is a single component image.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Same Identity verification
+                        if self._refidentity:
+                            if img.getIdentity().isNotEqual(self._refidentity):
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} image identity is not allowed.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Same FOV verification
+                        if self._refFOV:
+                            # < Revision 19/09/2024
+                            # if img.getFieldOfView() != self._refFOV:
+                            # Revision 19/09/2024 >
+                            if not img.hasSameFieldOfView(self._refFOV, decimals=1):
+                                wait.hide()
+                                txt = '{0} image FOV {1[0]:.1f} x {1[1]:.1f} x {1[2]:.1f} mm ' \
+                                      'does not match reference {2[0]:.1f} x {2[1]:.1f} x {2[2]:.1f} mm.'
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text=txt.format(basename(filename),
+                                                           img.getFieldOfView(),
+                                                           self._refFOV))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Same Size verification
+                        if self._refSize:
+                            if img.getSize() != self._refSize:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} image size {} does not match reference {}.'.format(
+                                               basename(filename),
+                                               img.getSize(),
+                                               self._refSize))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # ICBM verification
+                        if self._refICBM:
+                            if not img.acquisition.isICBM152():
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} image is not in ICBM space.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Displacement field verification
+                        if self._refField:
+                            if not (img.isFloatDatatype() and
+                                    img.getNumberOfComponentsPerPixel() == 3
+                                    and img.getAcquisition().isDisplacementField()):
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} image is not displacement field.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Modality verification
+                        if self._refmodality:
+                            # < Revision 10/10/2024
+                            # multiple modality management
+                            # self._refmodality is list and not str as before
+                            # if img.getAcquisition().getModality() != self._refmodality:
+                            # Revision 10/10/2024 >
+                            if img.getAcquisition().getModality() not in self._refmodality:
+                                # < Revision 17/11/2024
+                                # modality list to str conversion
+                                if len(self._refmodality) == 1: refmodality = self._refmodality[0]
+                                else: refmodality = ', '.join(str(m) for m in self._refmodality)
+                                # Revision 17/11/2024 >
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} image modality {} is not allowed ({} required).'.format(
+                                               basename(filename),
+                                               img.getAcquisition().getModality(),
+                                               refmodality))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Sequence verification
+                        if self._refsequence:
+                            # < Revision 10/10/2024
+                            # multiple sequence management
+                            # self._refsequence is list and not str as before
+                            # if img.getAcquisition().getSequence() != self._refsequence:
+                            # Revision 10/10/2024 >
+                            if img.getAcquisition().getSequence() not in self._refsequence:
+                                # < Revision 17/11/2024
+                                # sequence list to str conversion
+                                if len(self._refsequence) == 1: refsequence = self._refsequence[0]
+                                else: refsequence = ', '.join(str(s) for s in self._refsequence)
+                                # Revision 17/11/2024 >
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} image sequence {} is not allowed ({} required).'.format(
+                                               basename(filename),
+                                               img.getAcquisition().getSequence(),
+                                               refsequence))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Datatype verification
+                        if self._refdatatype:
+                            if img.getDatatype() != self._refdatatype:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} image datatype {} is not allowed ({} required).'.format(
+                                               basename(filename),
+                                               img.getDatatype(),
+                                               self._refdatatype))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Orientation verification
+                        if self._reforientation:
+                            if img.getOrientationAsString().lower() != self._reforientation:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} image orientation {} is not allowed ({} required).'.format(
+                                               basename(filename),
+                                               img.getOrientationAsString(),
+                                               self._reforientation))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # ID verification
+                        if self._refSpaceID:
+                            if img.getID() != self._refSpaceID:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} image ID is not allowed.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Registered verification
+                        if self._refID:
+                            if img.getID() != self._refID:
+                                if self._refID not in img.getTransforms():
+                                    wait.hide()
+                                    messageBox(self,
+                                               'PySisyphe volume file selector',
+                                               text='{} image is not registered to reference.'.format(
+                                                   basename(filename)))
+                                    if self._stop: break
+                                    else:
+                                        wait.show()
+                                        continue
+                        # Prefix verification
+                        if self._refprefix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[:len(self._refprefix)] == self._refprefix:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} does not have {} prefix.'.format(basename(filename),
+                                                                                     self._refprefix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Suffix verification
+                        if self._refsuffix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[-len(self._refsuffix):] == self._refsuffix:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} does not have {} suffix.'.format(basename(filename),
+                                                                                     self._refsuffix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Filename contains verification
+                        if self._refcontains:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if bname.find(self._refcontains) > -1:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} does not contains {} string.'.format(basename(filename),
+                                                                                         self._refcontains))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Frame verification
+                        if self._refframe:
+                            if not img.getAcquisition().getFrame():
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} image has no frame.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Range verification
+                        if self._refRange:
+                            r = img.display.getRange()
+                            if r[0] < self._refRange[0] or r[1] > self._refRange[1]:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='{} image range is not between {} and {} .'.format(
+                                               basename(filename),
+                                               self._refRange[0],
+                                               self._refRange[1]))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Transform verification
+                        # < Revision 04/01/2026
+                        if self._reftrf:
+                            if not img.hasTransform(self._reftrf):
+                                wait.hide()
+                                if self._reftrf == 'LEKSELL':
+                                    messageBox(self,
+                                               'PySisyphe volume file selector',
+                                               text='{} image has no geometric transformation to the '
+                                                    'Leksell\'s stereotactic space.'.format(basename(filename)))
+                                else:
+                                    messageBox(self,
+                                               'PySisyphe volume file selector',
+                                               text='{} image has no transform to {} .'.format(
+                                                   basename(filename), self._reftrf))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Revision 04/01/2026 >
+                        # Item already in list ?
+                        path, name = split(filename)
+                        item = QTreeWidgetItem()
+                        item.setText(0, name)
+                        item.setData(0,256, filename)
+                        if self._checkbox:
+                            # noinspection PyUnresolvedReferences
+                            item.setCheckState(0, Qt.Checked)
+                        if self.containsItem(item):
+                            wait.hide()
+                            messageBox(self,
+                                       'PySisyphe volume file selector',
+                                       text='{} is already in the list.'.format(item.text(0)))
+                            wait.show()
+                        # Add item
+                        else:
+                            self._list.addTopLevelItem(item)
+                            self._initItemParameterWidgets(item)
+                            idx = self._list.indexOfTopLevelItem(item)
+                            item.setToolTip(0, 'PySisyphe volume index {}\n{}'.format(idx, str(img)))
+                            if signal:
+                                # noinspection PyUnresolvedReferences
+                                self.FieldChanged.emit(self, filename)
+                                # noinspection PyUnresolvedReferences
+                                self.FilesSelectionChanged.emit(self)
+                        if self._list.topLevelItemCount() == self._refCount:
+                            wait.hide()
+                            if self._countWarning:
+                                messageBox(self,
+                                           'PySisyphe volume file selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
+                            self._add.setEnabled(False)
+                            break
+                    if dtag: wait.close()
+            # SisypheROI
+            elif self._refxroi:
+                if not param or paramext != SisypheROI.getFileExt():
+                    filt = 'PySisyphe ROI (*.xroi)'
+                    filenames = QFileDialog.getOpenFileNames(self, 'Select {}PySisyphe ROI(s)'.format(label),
+                                                             getcwd(), filt)
+                    QApplication.processEvents()
+                    self.activateWindow()
+                    filenames = filenames[0]
+                if len(filenames) > 0 and self._list.topLevelItemCount() < self._refCount:
+                    chdir(dirname(filenames[0]))
+                    if wait is None:
+                        wait = DialogWait(progress=True,
+                                          progressmin=0,
+                                          progressmax=len(filenames),
+                                          cancel=True)
+                    if len(filenames) > 1:
+                        wait.open()
+                        wait.setInformationText('Add PySisyphe ROIs...')
+                    for filename in filenames:
+                        filename = abspath(filename)
+                        wait.incCurrentProgressValue()
+                        wait.setInformationText('Add {}...'.format(basename(filename)))
+                        img = SisypheROI()
+                        try: img.load(filename)
+                        except:
+                            wait.hide()
+                            messageBox(self,
+                                       'File selector',
+                                       text='{} is not a valid PySisyphe ROI file.'.format(basename(filename)))
+                            if self._stop: break
+                            else:
+                                wait.show()
+                                continue
+                        # First volume is reference
+                        if self._list.topLevelItemCount() == 0:
+                            if self._reftofirst: self._volume = img
+                            if self._volume is not None:
+                                if self._refID is not None:
+                                    # noinspection PyUnresolvedReferences
+                                    self._refID = self._volume.getReferenceID()
+                                if self._refSpaceID is not None:
+                                    # noinspection PyUnresolvedReferences
+                                    self._refSpaceID = self._volume.getReferenceID()
+                                if self._refFOV is not None:
+                                    self._refFOV = self._volume.getFieldOfView()
+                                if self._refSize is not None:
+                                    self._refSize = self._volume.getSize()
+                        # Size verification
+                        if self._refSize:
+                            if img.getSize() != self._refSize:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe ROI file selector',
+                                           text='{} ROI size {} does not match reference {}.'.format(
+                                               basename(filename),
+                                               img.getSize(),
+                                               self._refSize))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # FOV verification
+                        if self._refFOV:
+                            # < Revision 19/09/2024
+                            # if img.getFieldOfView() != self._refFOV:
+                            # Revision 19/09/2024 >
+                            if not img.hasSameFieldOfView(self._refFOV, decimals=1):
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe ROI file selector',
+                                           text='{} ROI FOV {} does not match reference {}.'.format(
+                                               basename(filename),
+                                               img.getFieldOfView(),
+                                               self._refFOV))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # ID verification
+                        if self._refSpaceID:
+                            if img.getReferenceID() != self._refSpaceID:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe ROI file selector',
+                                           text='{} ROI ID does not match reference.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Registered verification
+                        if self._refID:
+                            if img.getReferenceID() != self._refID:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe ROI file selector',
+                                           text='{} ROI is not registered to reference.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Prefix verification
+                        if self._refprefix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[:len(self._refprefix)] == self._refprefix:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe ROI file selector',
+                                           text='{} does not have {} prefix.'.format(basename(filename),
+                                                                                     self._refprefix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Suffix verification
+                        if self._refsuffix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[-len(self._refsuffix):] == self._refsuffix:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe ROI file selector',
+                                           text='{} does not have {} suffix.'.format(basename(filename),
+                                                                                     self._refsuffix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Filename contains verification
+                        if self._refcontains:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if bname.find(self._refcontains) > -1:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe ROI file selector',
+                                           text='{} does not contains {} string.'.format(basename(filename),
+                                                                                         self._refcontains))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Item already in list ?
+                        path, name = split(filename)
+                        item = QTreeWidgetItem()
+                        item.setText(0, name)
+                        item.setData(0,256, filename)
+                        if self._checkbox:
+                            # noinspection PyUnresolvedReferences
+                            item.setCheckState(0, Qt.Checked)
+                        if self.containsItem(item):
+                            wait.hide()
+                            messageBox(self,
+                                       'PySisyphe ROI file selector',
+                                       text='{} is already in the list.'.format(item.text(0)))
+                            wait.show()
+                        # Add item
+                        else:
+                            self._list.addTopLevelItem(item)
+                            self._initItemParameterWidgets(item)
+                            idx = self._list.indexOfTopLevelItem(item)
+                            item.setToolTip(0, 'PySisyphe ROI index {}\n{}'.format(idx, str(img)))
+                            if signal:
+                                # noinspection PyUnresolvedReferences
+                                self.FieldChanged.emit(self, filename)
+                                # noinspection PyUnresolvedReferences
+                                self.FilesSelectionChanged.emit(self)
+                        if self._list.topLevelItemCount() == self._refCount:
+                            wait.hide()
+                            if self._countWarning:
+                                messageBox(self,
+                                           'PySisyphe ROI file selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
+                            self._add.setEnabled(False)
+                            break
+                    if dtag: wait.close()
+            # SisypheMesh
+            elif self._refxmesh:
+                if not param or paramext != SisypheMesh.getFileExt():
+                    filt = SisypheMesh.getFilterExt()
+                    # < Revision 17/02/2026
+                    # filenames = QFileDialog.getOpenFileName(self, 'Select PySisyphe mesh', getcwd(), filt)
+                    filenames = QFileDialog.getOpenFileNames(self, 'Select {}PySisyphe mesh'.format(label),
+                                                             getcwd(), filt)
+                    # Revision 17/02/2026 >
+                    QApplication.processEvents()
+                    self.activateWindow()
+                    filenames = filenames[0]
+                if len(filenames) > 0 and self._list.topLevelItemCount() < self._refCount:
+                    chdir(dirname(filenames[0]))
+                    if wait is None:
+                        wait = DialogWait(progress=True,
+                                          progressmin=0,
+                                          progressmax=len(filenames),
+                                          cancel=True)
+                    if len(filenames) > 1:
+                        wait.setInformationText('Add PySisyphe mesh(es)...')
+                        wait.open()
+                    for filename in filenames:
+                        filename = abspath(filename)
+                        wait.incCurrentProgressValue()
+                        wait.setInformationText('Add {}...'.format(basename(filename)))
+                        mesh = SisypheMesh()
+                        try: mesh.load(filename)
+                        except:
+                            wait.hide()
+                            messageBox(self,
+                                       'PySisyphe mesh file selector',
+                                       text='{} is not a valid Sisyphe mesh file.'.format(basename(filename)))
+                            if self._stop: break
+                            else:
+                                wait.show()
+                                continue
+                        # ID verification
+                        if self._refSpaceID:
+                            if mesh.getReferenceID() != self._refSpaceID:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe mesh file selector',
+                                           text='{} mesh ID is not allowed.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Prefix verification
+                        if self._refprefix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[:len(self._refprefix)] == self._refprefix:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe mesh file selector',
+                                           text='{} does not have {} prefix.'.format(basename(filename),
+                                                                                     self._refprefix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Suffix verification
+                        if self._refsuffix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[-len(self._refsuffix):] == self._refsuffix:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe mesh file selector',
+                                           text='{} does not have {} suffix.'.format(basename(filename),
+                                                                                     self._refsuffix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Filename contains verification
+                        if self._refcontains:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if bname.find(self._refcontains) > -1:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe mesh file selector',
+                                           text='{} does not contains {} string.'.format(basename(filename),
+                                                                                         self._refcontains))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Item already in list ?
+                        path, name = split(filename)
+                        item = QTreeWidgetItem()
+                        item.setText(0, name)
+                        item.setData(0,256, filename)
+                        if self._checkbox:
+                            # noinspection PyUnresolvedReferences
+                            item.setCheckState(0, Qt.Checked)
+                        if self.containsItem(item):
+                            wait.hide()
+                            messageBox(self,
+                                       'PySisyphe mesh file selector',
+                                       text='{} is already in the list.'.format(item.text(0)))
+                            wait.show()
+                        # Add item
+                        else:
+                            self._list.addTopLevelItem(item)
+                            self._initItemParameterWidgets(item)
+                            idx = self._list.indexOfTopLevelItem(item)
+                            item.setToolTip(0, 'PySisyphe mesh index {}\n{}'.format(idx, str(mesh)))
+                            if signal:
+                                # noinspection PyUnresolvedReferences
+                                self.FieldChanged.emit(self, filename)
+                                # noinspection PyUnresolvedReferences
+                                self.FilesSelectionChanged.emit(self)
+                        if self._list.topLevelItemCount() == self._refCount:
+                            wait.hide()
+                            if self._countWarning:
+                                messageBox(self,
+                                           'PySisyphe mesh file selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
+                            self._add.setEnabled(False)
+                            break
+                    if dtag: wait.close()
+            # SisypheStreamlines
+            elif self._refxtracts:
+                if not param or paramext != SisypheStreamlines.getFileExt():
+                    filt = SisypheStreamlines.getFilterExt()
+                    # < Revision 17/02/2026
+                    # filenames = QFileDialog.getOpenFileName(self, 'Select PySisyphe streamlines', getcwd(), filt)
+                    filenames = QFileDialog.getOpenFileNames(self, 'Select {}PySisyphe streamlines'.format(label),
+                                                             getcwd(), filt)
+                    # Revision 17/02/2026 >
+                    QApplication.processEvents()
+                    self.activateWindow()
+                    filenames = filenames[0]
+                if len(filenames) > 0 and self._list.topLevelItemCount() < self._refCount:
+                    chdir(dirname(filenames[0]))
+                    if wait is None:
+                        wait = DialogWait(progress=True,
+                                          progressmin=0,
+                                          progressmax=len(filenames),
+                                          cancel=True)
+                    if len(filenames) > 1:
+                        wait.setInformationText('Add PySisyphe streamlines...')
+                        wait.open()
+                    for filename in filenames:
+                        filename = abspath(filename)
+                        wait.incCurrentProgressValue()
+                        wait.setInformationText('Add {}...'.format(basename(filename)))
+                        sl = SisypheStreamlines()
+                        try: sl.load(filename)
+                        except:
+                            wait.hide()
+                            messageBox(self,
+                                       'PySisyphe streamlines file selector',
+                                       text='{} is not a valid Sisyphe streamlines file.'.format(basename(filename)))
+                            if self._stop: break
+                            else:
+                                wait.show()
+                                continue
+                        # ID verification
+                        if self._refSpaceID:
+                            if sl.getReferenceID() != self._refSpaceID:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe streamlines file selector',
+                                           text='{} streamlines ID is not allowed.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # FOV verification
+                        if self._refFOV:
+                            # < Revision 19/09/2024
+                            # if img.getFieldOfView() != self._refFOV:
+                            # Revision 19/09/2024 >
+                            if not sl.getDWIFOV(decimals=1) != self._refFOV:
+                                wait.hide()
+                                txt = '{0} streamlines field of view {1[0]:.1f} x {1[1]:.1f} x {1[2]:.1f} mm ' \
+                                      'does not match reference {2[0]:.1f} x {2[1]:.1f} x {2[2]:.1f} mm.'
+                                messageBox(self,
+                                           'PySisyphe streamlines file selector',
+                                           text=txt.format(basename(filename), sl.getDWIFOV, self._refFOV))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Size verification
+                        if self._refSize:
+                            if sl.getDWIShape() != self._refSize:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe streamlines file selector',
+                                           text='{} size {} does not match reference {}.'.format(
+                                               basename(filename),
+                                               sl.getDWIShape(),
+                                               self._refSize))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Whole brain tractogram verification
+                        if self._refwhole:
+                            if not sl.isWholeBrainTractogram():
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe streamlines file selector',
+                                           text='{} is not a whole brain tractogram.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Not whole brain tractogram verification
+                        if self._refnotwhole:
+                            if sl.isWholeBrainTractogram():
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe streamlines file selector',
+                                           text='{} is a whole brain tractogram.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Centroid verification
+                        if self._refcentroid:
+                            if not sl.isCentroid():
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe streamlines file selector',
+                                           text='{} is not a centroid streamline.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Not centroid vérification
+                        if self._refnotcentroid:
+                            if sl.isCentroid():
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe streamlines file selector',
+                                           text='{} is a centroid streamline.'.format(basename(filename)))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Prefix verification
+                        if self._refprefix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[:len(self._refprefix)] == self._refprefix:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe streamlines file selector',
+                                           text='{} does not have {} prefix.'.format(basename(filename),
+                                                                                     self._refprefix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Suffix verification
+                        if self._refsuffix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[-len(self._refsuffix):] == self._refsuffix:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe streamlines file selector',
+                                           text='{} does not have {} suffix.'.format(basename(filename),
+                                                                                     self._refsuffix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Filename contains verification
+                        if self._refcontains:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if bname.find(self._refcontains) > -1:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe streamlines file selector',
+                                           text='{} does not contains {} string.'.format(basename(filename),
+                                                                                         self._refcontains))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Item already in list ?
+                        path, name = split(filename)
+                        item = QTreeWidgetItem()
+                        item.setText(0, name)
+                        item.setData(0,256, filename)
+                        if self._checkbox:
+                            # noinspection PyUnresolvedReferences
+                            item.setCheckState(0, Qt.Checked)
+                        if self.containsItem(item):
+                            wait.hide()
+                            messageBox(self,
+                                       'PySisyphe streamlines file selector',
+                                       text='{} is already in the list.'.format(item.text(0)))
+                            wait.show()
+                        # Add item
+                        else:
+                            self._list.addTopLevelItem(item)
+                            self._initItemParameterWidgets(item)
+                            idx = self._list.indexOfTopLevelItem(item)
+                            item.setToolTip(0, 'PySisyphe streamlines index {}\n{}'.format(idx, str(sl)))
+                            if signal:
+                                # noinspection PyUnresolvedReferences
+                                self.FieldChanged.emit(self, filename)
+                                # noinspection PyUnresolvedReferences
+                                self.FilesSelectionChanged.emit(self)
+                        if self._list.topLevelItemCount() == self._refCount:
+                            wait.hide()
+                            if self._countWarning:
+                                messageBox(self,
+                                           'PySisyphe streamlines file selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
+                            self._add.setEnabled(False)
+                            break
+                    if dtag: wait.close()
+            # Tools, HandleWidget, LineWidget, ToolCollectionWidget
+            # < Revision 13/02/2026
+            elif self._refxtools:
+                if not param or paramext not in (HandleWidget.getFileExt(),
+                                                 LineWidget.getFileExt(),
+                                                 ToolWidgetCollection.getFileExt()):
+                    # < Revision 20/02/2026
+                    filt = ';;'.join([ToolWidgetCollection.getFilterExt(),
+                                      HandleWidget.getFilterExt(),
+                                      LineWidget.getFilterExt()])
+                    # Revision 20/02/2026 >
+                    # < Revision 17/02/2026
+                    # filenames = QFileDialog.getOpenFileName(self, 'Select PySisyphe tools', getcwd(), filt)
+                    filenames = QFileDialog.getOpenFileNames(self, 'Select {}PySisyphe tools'.format(label),
+                                                             getcwd(), filt)
+                    # Revision 17/02/2026 >
+                    QApplication.processEvents()
+                    self.activateWindow()
+                    filenames = filenames[0]
+                if len(filenames) > 0 and self._list.topLevelItemCount() < self._refCount:
+                    chdir(dirname(filenames[0]))
+                    if wait is None:
+                        wait = DialogWait(progress=True,
+                                          progressmin=0,
+                                          progressmax=len(filenames),
+                                          cancel=True)
+                    if len(filenames) > 1:
+                        wait.setInformationText('Add PySisyphe tools...')
+                        wait.open()
+                    for filename in filenames:
+                        filename = abspath(filename)
+                        wait.incCurrentProgressValue()
+                        wait.setInformationText('Add {}...'.format(basename(filename)))
+                        ext = splitext(filename)[1]
+                        try:
+                            if ext == HandleWidget.getFileExt():
+                                tool = HandleWidget('')
+                                tool.load(filename)
+                            elif ext == LineWidget.getFileExt():
+                                tool = LineWidget('')
+                                tool.load(filename)
+                            elif ext == ToolWidgetCollection.getFileExt():
+                                tool = ToolWidgetCollection()
+                                tool.load(filename)
+                            else:
+                                if self._stop: break
+                                else: continue
+                        except:
+                            wait.hide()
+                            messageBox(self,
+                                       'PySisyphe tools file selector',
+                                       text='{} is not a valid Sisyphe tools file.'.format(basename(filename)))
+                            if self._stop: break
+                            else:
+                                wait.show()
+                                continue
+                        # ID verification
+                        if self._refSpaceID:
+                            if isinstance(tool, ToolWidgetCollection):
+                                if tool.getReferenceID() != self._refSpaceID:
+                                    wait.hide()
+                                    messageBox(self,
+                                               'PySisyphe tools file selector',
+                                               text='{} tools ID is not allowed.'.format(basename(filename)))
+                                    if self._stop: break
+                                    else:
+                                        wait.show()
+                                        continue
+                        # Prefix verification
+                        if self._refprefix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[:len(self._refprefix)] == self._refprefix:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe tools file selector',
+                                           text='{} does not have {} prefix.'.format(basename(filename),
+                                                                                     self._refprefix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Suffix verification
+                        if self._refsuffix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[-len(self._refsuffix):] == self._refsuffix:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe tools file selector',
+                                           text='{} does not have {} suffix.'.format(basename(filename),
+                                                                                     self._refsuffix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Filename contains verification
+                        if self._refcontains:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if bname.find(self._refcontains) > -1:
+                                wait.hide()
+                                messageBox(self,
+                                           'PySisyphe tools file selector',
+                                           text='{} does not contains {} string.'.format(basename(filename),
+                                                                                         self._refcontains))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Item already in list ?
+                        path, name = split(filename)
+                        item = QTreeWidgetItem()
+                        item.setText(0, name)
+                        item.setData(0,256, filename)
+                        if self._checkbox:
+                            # noinspection PyUnresolvedReferences
+                            item.setCheckState(0, Qt.Checked)
+                        if self.containsItem(item):
+                            wait.hide()
+                            messageBox(self,
+                                       'PySisyphe tools file selector',
+                                       text='{} is already in the list.'.format(item.text(0)))
+                            wait.show()
+                        # Add item
+                        else:
+                            self._list.addTopLevelItem(item)
+                            self._initItemParameterWidgets(item)
+                            idx = self._list.indexOfTopLevelItem(item)
+                            item.setToolTip(0, 'PySisyphe tools index {}\n{}'.format(idx, str(tool)))
+                            if signal:
+                                # noinspection PyUnresolvedReferences
+                                self.FieldChanged.emit(self, filename)
+                                # noinspection PyUnresolvedReferences
+                                self.FilesSelectionChanged.emit(self)
+                        if self._list.topLevelItemCount() == self._refCount:
+                            wait.hide()
+                            if self._countWarning:
+                                messageBox(self,
+                                           'PySisyphe tools file selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
+                            self._add.setEnabled(False)
+                            break
+                    if dtag: wait.close()
+            # Revision 13/02/2026 >
+            # DICOM
+            elif self._refdicom:
+                # < Revision 13/02/2026
+                #if not param or paramext not in getDicomExt().append(''):
+                if not param or paramext not in getDicomExt():
+                # Revision 13/02/2026 >
+                    filt = 'DICOM (*.dcm *.dicom *.ima *.nema *)'
+                    filenames = QFileDialog.getOpenFileNames(self, 'Select DICOM file(s)', getcwd(), filt)
+                    QApplication.processEvents()
+                    self.activateWindow()
+                    filenames = filenames[0]
+                if len(filenames) > 0 and self._list.topLevelItemCount() < self._refCount:
+                    chdir(dirname(filenames[0]))
+                    if wait is None:
+                        wait = DialogWait(progress=True,
+                                          progressmin=0,
+                                          progressmax=len(filenames),
+                                          cancel=True,
+                                          parent=self)
+                    if len(filenames) > 1:
+                        wait.setInformationText('Add DICOM files...')
+                        wait.open()
+                    for filename in filenames:
+                        filename = abspath(filename)
+                        wait.incCurrentProgressValue()
+                        wait.setInformationText('Add {}...'.format(basename(filename)))
+                        if isDicom(filename):
+                            # Prefix verification
+                            if self._refprefix:
+                                bname = splitext(basename(filename))[0]
+                                bname = bname.lower()
+                                if not bname[:len(self._refprefix)] == self._refprefix:
+                                    wait.hide()
+                                    messageBox(self,
+                                               'DICOM file selector',
+                                               text='{} does not have {} prefix.'.format(basename(filename),
+                                                                                         self._refprefix))
+                                    if self._stop: break
+                                    else:
+                                        wait.show()
+                                        continue
+                            # Suffix verification
+                            if self._refsuffix:
+                                bname = splitext(basename(filename))[0]
+                                bname = bname.lower()
+                                if not bname[-len(self._refsuffix):] == self._refsuffix:
+                                    wait.hide()
+                                    messageBox(self,
+                                               'DICOM file selector',
+                                               text='{} does not have {} suffix.'.format(basename(filename),
+                                                                                         self._refsuffix))
+                                    if self._stop: break
+                                    else:
+                                        wait.show()
+                                        continue
+                            # Filename contains verification
+                            if self._refcontains:
+                                bname = splitext(basename(filename))[0]
+                                bname = bname.lower()
+                                if bname.find(self._refcontains) > -1:
+                                    wait.hide()
+                                    messageBox(self,
+                                               'DICOM file selector',
+                                               text='{} does not contains {} string.'.format(basename(filename),
+                                                                                             self._refcontains))
+                                    if self._stop: break
+                                    else:
+                                        wait.show()
+                                        continue
+                            path, name = split(filename)
+                            item = QTreeWidgetItem()
+                            item.setText(0, name)
+                            item.setData(0,256, filename)
+                            if self._checkbox:
+                                # noinspection PyUnresolvedReferences
+                                item.setCheckState(0, Qt.Checked)
+                            if self.containsItem(item):
+                                wait.hide()
+                                messageBox(self,
+                                           'DICOM file selector',
+                                           text='{} is already in the list.'.format(item.text(0)))
+                                wait.show()
+                            else:
+                                self._list.addTopLevelItem(item)
+                                self._initItemParameterWidgets(item)
+                                if signal:
+                                    # noinspection PyUnresolvedReferences
+                                    self.FieldChanged.emit(self, filename)
+                                    # noinspection PyUnresolvedReferences
+                                    self.FilesSelectionChanged.emit(self)
+                        else:
+                            wait.hide()
+                            messageBox(self,
+                                       'DICOM file selector',
+                                       text='{} is not a valid dicom file.'.format(self._name))
+                            wait.show()
+                        if self._list.topLevelItemCount() == self._refCount:
+                            wait.hide()
+                            if self._countWarning:
+                                messageBox(self,
+                                           'DICOM file selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
+                            self._add.setEnabled(False)
+                            break
+                    if dtag: wait.close()
+            # Other file
+            else:
+                if not param or paramext not in self._refExt:
+                    filt = 'Files ('
+                    for ext in self._refExt:
+                        filt += '*{} '.format(ext)
+                    filt = filt.rstrip() + ')'
+                    filenames = QFileDialog.getOpenFileNames(self, 'Select file(s)', getcwd(), filt)
+                    QApplication.processEvents()
+                    self.activateWindow()
+                    filenames = filenames[0]
+                if len(filenames) > 0 and self._list.topLevelItemCount() < self._refCount:
+                    chdir(dirname(filenames[0]))
+                    if wait is None:
+                        wait = DialogWait(progress=True,
+                                          progressmin=0,
+                                          progressmax=len(filenames),
+                                          cancel=True,
+                                          parent=self)
+                    if len(filenames) > 1:
+                        wait.setInformationText('Add files...')
+                        wait.open()
+                    for filename in filenames:
+                        filename = abspath(filename)
+                        wait.incCurrentProgressValue()
+                        wait.setInformationText('Add {}...'.format(basename(filename)))
+                        # Prefix verification
+                        if self._refprefix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[:len(self._refprefix)] == self._refprefix:
+                                wait.hide()
+                                messageBox(self,
+                                           'File selector',
+                                           text='{} does not have {} prefix.'.format(basename(filename),
+                                                                                     self._refprefix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Suffix verification
+                        if self._refsuffix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[-len(self._refsuffix):] == self._refsuffix:
+                                wait.hide()
+                                messageBox(self,
+                                           'File selector',
+                                           text='{} does not have {} suffix.'.format(basename(filename),
+                                                                                     self._refsuffix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Filename contains verification
+                        if self._refcontains:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if bname.find(self._refcontains) > -1:
+                                wait.hide()
+                                messageBox(self,
+                                           'File selector',
+                                           text='{} does not contains {} string.'.format(basename(filename),
+                                                                                         self._refcontains))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        path, name = split(filename)
+                        item = QTreeWidgetItem()
+                        item.setText(0, name)
+                        item.setData(0,256, filename)
+                        if self._checkbox:
+                            # noinspection PyUnresolvedReferences
+                            item.setCheckState(0, Qt.Checked)
+                        if self.containsItem(item):
+                            wait.hide()
+                            messageBox(self,
+                                       'File selector',
+                                       text='{} is already in the list.'.format(item.text(0)))
+                            wait.show()
+                        else:
+                            self._list.addTopLevelItem(item)
+                            self._initItemParameterWidgets(item)
+                            if signal:
+                                # noinspection PyUnresolvedReferences
+                                self.FieldChanged.emit(self, filename)
+                                # noinspection PyUnresolvedReferences
+                                self.FilesSelectionChanged.emit(self)
+                        if self._list.topLevelItemCount() == self._refCount:
+                            wait.hide()
+                            if self._countWarning:
+                                messageBox(self,
+                                           'File selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
+                            self._add.setEnabled(False)
+                            break
+                    if dtag: wait.close()
+        else:
+            if not param:
+                filt = 'All files (*.*)'
+                filenames = QFileDialog.getOpenFileNames(self, 'Select file', getcwd(), filt)
+                QApplication.processEvents()
+                self.activateWindow()
+                filenames = filenames[0]
+                if len(filenames) > 0 and self._list.topLevelItemCount() < self._refCount:
+                    chdir(dirname(filenames[0]))
+                    if wait is None:
+                        wait = DialogWait(progress=True,
+                                          progressmin=0,
+                                          progressmax=len(filenames),
+                                          cancel=True,
+                                          parent=self)
+                    if len(filenames) > 1:
+                        wait.setInformationText('Add files...')
+                        wait.open()
+                    for filename in filenames:
+                        filename = abspath(filename)
+                        wait.incCurrentProgressValue()
+                        wait.setInformationText('Add {}...'.format(basename(filename)))
+                        # Prefix verification
+                        if self._refprefix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[:len(self._refprefix)] == self._refprefix:
+                                wait.hide()
+                                messageBox(self,
+                                           'DICOM file selector',
+                                           text='{} does not have {} prefix.'.format(basename(filename),
+                                                                                     self._refprefix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Suffix verification
+                        if self._refsuffix:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if not bname[-len(self._refsuffix):] == self._refsuffix:
+                                wait.hide()
+                                messageBox(self,
+                                           'DICOM file selector',
+                                           text='{} does not have {} suffix.'.format(basename(filename),
+                                                                                     self._refsuffix))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        # Filename contains verification
+                        if self._refcontains:
+                            bname = splitext(basename(filename))[0]
+                            bname = bname.lower()
+                            if bname.find(self._refcontains) > -1:
+                                wait.hide()
+                                messageBox(self,
+                                           'DICOM file selector',
+                                           text='{} does not contains {} string.'.format(basename(filename),
+                                                                                         self._refcontains))
+                                if self._stop: break
+                                else:
+                                    wait.show()
+                                    continue
+                        path, name = split(filename)
+                        item = QTreeWidgetItem()
+                        item.setText(0, name)
+                        item.setData(0,256, filename)
+                        if self._checkbox:
+                            # noinspection PyUnresolvedReferences
+                            item.setCheckState(0, Qt.Checked)
+                        if self.containsItem(item):
+                            wait.hide()
+                            messageBox(self,
+                                       'File selector',
+                                       text='{} is already in the list.'.format(item.text(0)))
+                            wait.show()
+                        else:
+                            self._list.addTopLevelItem(item)
+                            self._initItemParameterWidgets(item)
+                            if signal:
+                                # noinspection PyUnresolvedReferences
+                                self.FieldChanged.emit(self, filename)
+                                # noinspection PyUnresolvedReferences
+                                self.FilesSelectionChanged.emit(self)
+                        if self._list.topLevelItemCount() == self._refCount:
+                            wait.hide()
+                            if self._countWarning:
+                                messageBox(self,
+                                           'File selector',
+                                           text='Maximum number of files is reached ({}).\n'
+                                                'Remove file from the list if you want to\n'
+                                                'add a new one.'.format(self._refCount))
+                            self._add.setEnabled(False)
+                            break
+                    if dtag: wait.close()
+
+    def clearItem(self, i: int, signal: bool = True) -> None:
+        """
+        Remove a file from the list at the specified index.
+
+        Parameters
+        ----------
+        i : int
+            index of the item to remove
+        signal : bool (optional)
+            If True, emits FieldCleared signal. Defaults to True.
+        """
+        if isinstance(i, int):
+            if i < self._list.topLevelItemCount():
+                self._list.takeTopLevelItem(i)
+                self._add.setEnabled(True)
+                if signal:
+                    # noinspection PyUnresolvedReferences
+                    self.FieldCleared.emit(self, [i])
+            else: raise ValueError('parameter index is out of range.')
+        else: raise TypeError('parameter type {} is not int.'.format(type(i)))
+
+    def clearLastItem(self, signal: bool = True) -> None:
+        """
+        Remove the last file from the list.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            if True, emits FieldCleared signal. Defaults to True.
+        """
+        n = self._list.topLevelItemCount()
+        if n > 0: self._list.takeTopLevelItem(n - 1)
+        self._add.setEnabled(True)
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.FieldCleared.emit(self, [n-1])
+
+    def clear(self, signal: bool = True) -> None:
+        """
+        Remove all currently selected files from the list.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            if True, emits FieldCleared and FilesSelectionWidgetCleared signals. Defaults to True.
+        """
+        rows = list()
+        selecteditems = self._list.selectedItems()
+        if len(selecteditems) > 0:
+            for item in selecteditems:
+                row = self._list.indexOfTopLevelItem(item)
+                rows.append(row)
+                self._list.takeTopLevelItem(row)
+            self._add.setEnabled(True)
+        if self._list.topLevelItemCount() == 0:
+            if self.isReferenceVolumeToFirst(): self._volume = None
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.FieldCleared.emit(self, rows)
+            # noinspection PyUnresolvedReferences
+            self.FilesSelectionWidgetCleared.emit(self)
+
+    def clearall(self, signal: bool = True) -> None:
+        """
+        Remove all files from the list.
+
+        Parameters
+        ----------
+        signal : bool (optional)
+            if True, emits FieldCleared and FilesSelectionWidgetCleared signals. Defaults to True.
+        """
+        rows = list(range(self._list.topLevelItemCount()))
+        self._list.clear()
+        self._add.setEnabled(True)
+        if self.isReferenceVolumeToFirst(): self._volume = None
+        if signal:
+            # noinspection PyUnresolvedReferences
+            self.FieldCleared.emit(self, rows)
+            # noinspection PyUnresolvedReferences
+            self.FilesSelectionWidgetCleared.emit(self)
+
+    def isEmpty(self) -> bool:
+        """
+        Check if the list of files is empty.
+
+        Returns
+        -------
+        bool
+            True if the list contains no files, False otherwise.
+        """
+        return self._list.topLevelItemCount() == 0
+
+    def filenamesCount(self) -> int:
+        """
+        Get the number of files currently in the list.
+
+        Returns
+        -------
+        int
+            count of files.
+        """
+        return self._list.topLevelItemCount()
+
+    # Qt Drop events
+
+    def dragEnterEvent(self, event: Optional[QDragEnterEvent]) -> None:
+        """
+        Handles drag enter events, accepting drops if the mime data contains text (e.g., file paths).
+        This is the method used to manage the drag-and-drop of files from Finder on the macOS platform or File Explorer
+        on the Windows platform.
+
+        Parameters
+        ----------
+        event : QDragEnterEvent
+            Qt drag enter event.
+        """
+        if event.mimeData().hasText(): event.accept()
+        else: event.ignore()
+
+    def dropEvent(self, event: Optional[QDropEvent]) -> None:
+        """
+        Handles drop events, attempting to open the dropped file(s).
+        This is the method used to manage the drag-and-drop of files from Finder on the macOS platform or File Explorer
+        on the Windows platform.
+
+        Parameters
+        ----------
+        event ! QDropEvent
+            Qt drop event.
+        """
+        if event.mimeData().hasText():
+            event.accept()
+            files = event.mimeData().text().split('\n')
+            for file in files:
+                if file != '': self.add(file[7:])
+# Revision 26/03/2026 >
+
+
 class MultiExtFilesSelectionWidget(FilesSelectionWidget):
     """
     MultiExtFilesSelectionWidget class
@@ -4802,7 +7660,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
 
     QWidget -> SynchronizedFileSelectionWidget
 
-    Last revision: 30/11/2025
+    Last revision: 09/04/2026
     """
 
     # Special method
@@ -4811,6 +7669,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
                  single: list[str] | tuple[str, ...] | None,
                  multiple: list[str] | tuple[str, ...] | None,
                  maxcount: int = 100,
+                 params: bool = False,
                  parent: QWidget | None = None) -> None:
         """
         SynchronizedFilesSelectionWidget instance constructor.
@@ -4822,7 +7681,9 @@ class SynchronizedFilesSelectionWidget(QWidget):
         multiple : list[str] | tuple[str, ...] | None
             titles of multiple file selection widgets.
         maxcount : int (optional)
-            maximum number of files allowed in the list.
+            maximum number of files allowed in the list (default 100).
+        params : bool (optional)
+            If false, multiple widgets are FileSelectionWidget or FilesSelectionWithParametersWidget, otherwise.
         parent : QWidget | None (optional)
             parent widget (default None).
         """
@@ -4854,7 +7715,11 @@ class SynchronizedFilesSelectionWidget(QWidget):
                 self._layout.addWidget(flist)
         elif multiple is not None and len(multiple) > 0:
             for label in multiple:
-                flist = FilesSelectionWidget(parent=parent)
+                # < Revision 09/04/2026
+                # flist = FilesSelectionWidget(parent=parent)
+                if params: flist = FilesSelectionWithParametersWidget(parent=parent)
+                else: flist = FilesSelectionWidget(parent=parent)
+                # Revision 09/04/2026 >
                 flist.setMaximumNumberOfFiles(maxcount)
                 flist.hideRemoveAllButton()
                 flist.filterSisypheVolume()
@@ -5536,7 +8401,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
 
     def isSingleEmpy(self) -> bool:
         """
-        Check if all single file selection widgets (FileSelectionWidget) empty.
+        Check if all single file selection widgets (FileSelectionWidget) are empty.
 
         Returns
         -------
@@ -5550,7 +8415,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
 
     def isMultipleEmpty(self) -> bool:
         """
-        Check if all multiple file selection widgets (FilesSelectionWidget) empty.
+        Check if all multiple file selection widgets (FilesSelectionWidget) are empty.
 
         Returns
         -------

@@ -15,6 +15,7 @@ from os.path import join
 from os.path import exists
 from os.path import dirname
 from os.path import abspath
+from os.path import expanduser
 
 from datetime import date
 from datetime import datetime
@@ -142,7 +143,7 @@ class SettingsWidget(QWidget):
     QWidget -> SettingsWidget -> FunctionSettingsWidget
 
     Creation: 11/08/2022
-    Last revision: 02/12/2025
+    Last revision: 15/04/2026
     """
 
     _VSIZE = 24
@@ -736,16 +737,26 @@ class SettingsWidget(QWidget):
                     edit = FileSelectionWidget(parent=self)
                     edit.filterSisypheVolume()
                     edit.setFixedWidth(400)
+                    # < Revision 15/04/2026
+                    if node.hasAttribute('component'):
+                        comp = node.getAttribute('component')
+                        if comp == 'multi': edit.filterMultiComponent()
+                    # Revision 15/04/2026 >
                     # < Revision 30/11/2025
                     if node.hasAttribute('path'):
                         path = node.getAttribute('path')
                         import Sisyphe
+                        # < Revision 15/04/2026
                         if path == '': base = ''
                         elif path == '.': base = abspath(dirname(Sisyphe.__file__))
+                        elif path == '~': base = abspath(expanduser('~'))
                         else: base = abspath(join(dirname(Sisyphe.__file__), path))
-                        data = abspath(join(base, data))
+                        # data = abspath(join(base, data))
+                        if base != '': data = abspath(join(base, data))
+                        # Revision 15/04/2026 >
                     # Revision 30/11/2025 >
-                    if exists(data): edit.open(data)
+                    if exists(data):
+                        edit.open(data)
                     edit.FieldChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
                     # noinspection PyUnresolvedReferences

@@ -800,7 +800,6 @@ class FileBrowserWidget(QWidget):
                     self._preview.setCurrentIndex(0)
                     self._textpreview.document().setMarkdown(lines)
             elif self._chksource.isChecked() and ext[1] == 'x':
-                print('x')
                 with open(filename, 'r') as f:
                     lines = f.read()
                 self._xmlpreview.setPlainText(lines)

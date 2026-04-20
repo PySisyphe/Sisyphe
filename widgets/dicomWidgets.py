@@ -26,6 +26,8 @@ from glob import glob
 
 from datetime import datetime
 
+from math import sqrt
+
 from numpy import int16
 from numpy import int32
 from numpy import uint16
@@ -872,7 +874,7 @@ class DicomFilesTreeWidget(QTreeWidget):
 
     QTreeWidget -> DicomFilesTreeWidget
 
-    Last revision: 24/02/2026
+    Last revision: 01/04/2026
     """
 
     # Special method
@@ -1017,7 +1019,11 @@ class DicomFilesTreeWidget(QTreeWidget):
                     if Tag(0x0019, 0x100a) in ds:
                         v = ds[0x0019, 0x100a].value
                         if isinstance(v, bytes): v = int.from_bytes(v, byteorder='little')
-                        if v > 1: mosaic = ((v // 8) + 1) * 8
+                        if v > 1:
+                            # < Revision 01/04/2026
+                            # mosaic = ((v // 8) + 1) * 8
+                            mosaic = (int(sqrt(v)) + 1) ** 2
+                            # Revision 01/04/2026 >
                     # Add values to dict
                     if series not in self._dict: self._dict[series] = dict()
                     # Modality
