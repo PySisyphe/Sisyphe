@@ -6,7 +6,7 @@
 		<ThumbnailSize varmax="256" varmin="64" vartype="int">92</ThumbnailSize>
 		<IconSize varmax="64" varmin="24" vartype="int">32</IconSize>
 		<FontFamily vartype="font"></FontFamily>
-		<FontSize varmax="24" varmin="8" vartype="int">10</FontSize>
+		<FontSize varmax="24" varmin="8" vartype="int">12</FontSize>
 		<ZoomFactor label="Documentation zoom factor" varmax="1.0" varmin="0.5" vartype="float">0.8</ZoomFactor>
 	</GUI>
 	<ToolbarIcons>

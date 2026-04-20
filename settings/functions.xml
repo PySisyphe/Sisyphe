@@ -375,6 +375,46 @@
 		<Preprocessing vartype="bool">False</Preprocessing>
 		<Label label="Label volume" vartype="vol"/>
 	</TimeSeriesConnectivityMatrix>
+	<B0Map>
+		<Rescaling label='Rescale phase signal -pi, +pi' vartype="bool">True</Rescaling>
+		<Prefix vartype="str"></Prefix>
+		<Suffix vartype="str">B0_Map</Suffix>
+	</B0Map>
+	<B1Map>
+		<Masking label="Automatic masking" vartype="lstr">No|Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximumentropy|Kittler|Isodata|Moments</Masking>
+		<FlipAngle label="Flip angle (degrees)" varmin="0" varmax="180" vartype="float"></FlipAngle>
+		<Prefix vartype="str"></Prefix>
+		<Suffix vartype="str">B1_Map</Suffix>
+	</B1Map>
+	<T1Map>
+		<Masking label="Automatic masking" vartype="lstr">No|Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximumentropy|Kittler|Isodata|Moments</Masking>
+		<FittingMethod vartype="lstr">linear|non linear</FittingMethod>
+		<Prefix vartype="str"></Prefix>
+		<Suffix vartype="str">T1_Map</Suffix>
+	</T1Map>
+	<T2Map>
+		<Masking label="Automatic masking" vartype="lstr">No|Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximumentropy|Kittler|Isodata|Moments</Masking>
+		<FittingModel vartype="lstr">mono-exp|bi-exp</FittingModel>
+		<FittingMethod vartype="lstr">linear|non linear</FittingMethod>
+		<Prefix vartype="str"></Prefix>
+		<Suffix vartype="str">T2_Map</Suffix>
+	</T2Map>
+	<T2pMap>
+		<Masking label="Automatic masking" vartype="lstr">No|Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximumentropy|Kittler|Isodata|Moments</Masking>
+		<Prefix vartype="str"></Prefix>
+		<Suffix vartype="str">T2prime_Map</Suffix>
+	</T2pMap>
+	<MTRMap>
+		<Masking label="Automatic masking" vartype="lstr">No|Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximumentropy|Kittler|Isodata|Moments</Masking>
+		<Prefix vartype="str"></Prefix>
+		<Suffix vartype="str">MTR</Suffix>
+	</MTRMap>
+	<QSMMap>
+		<Iters label="Number of iterations" varmin="100" varmax="2000" vartype="int">1000</Iters>
+		<Rescaling label="Rescale phase signal -pi, +pi" vartype="bool">True</Rescaling>
+		<Prefix vartype="str"></Prefix>
+		<Suffix vartype="str">QSM</Suffix>
+	</QSMMap>
 	<Perfusion>
 		<DCM label="Get TR/TE from dicom file" vartype="dcm"/>
 		<TR label="TR (ms)" varmax="10000.0" varmin="1.0" vartype="float">2000.0</TR>
@@ -404,6 +444,20 @@
 		<DSC label="DSC maps processing" vartype="bool">True</DSC>
 		<Leakage label="Leakage map processing" vartype="bool">False</Leakage>
 	</Perfusion2>
+	<ASL>
+		<Masking label="Automatic masking" vartype="lstr">No|Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximumentropy|Kittler|Isodata|Moments</Masking>
+		<Smoothing label="Gaussian smoothing FWHM (mm)" varmax="10.0" varmin="0.0" vartype="float">0.0</Smoothing>
+		<Sequence vartype="lstr">pseudo-continuous ASL|pulsed ASL</Sequence>
+		<M0 label="M0 index" varmax="1000" varmin="-1000" vartype="int">0</M0>
+		<LD label="Label duration (ms)" varmin="100.0" varmax="5000.0" vartype="float">1800.0</LD>
+		<PLD label="Post labeling delay (ms)" varmin="100.0" varmax="5000.0" vartype="float">1800.0</PLD>
+		<DCM label="Get TE from dicom file" vartype="dcm"/>
+		<TE label="TE (ms)" varmax="10000.0" varmin="0.0" vartype="float">0.0</TE>
+		<TR label="TR (ms)" varmax="10000.0" varmin="0.0" vartype="float">0.0</TR>
+		<Lambda label="Blood brain partition coefficient" varmin="0.8" varmax="1.0" vartype="float">0.90</Lambda>
+		<Alpha label="Labeling efficiency"  varmin="0.9" varmax="1.0" vartype="float">0.98</Alpha>
+		<T1 label="T1 relaxation time of blood (ms)" varmin="1000.0" varmax="3000.0" vartype="float">1650.0</T1>
+	</ASL>
 	<DiffusionPreprocessing>
 		<Mask vartype="bool">True</Mask>
 		<Algo label="Background thresholding algorithm (mask)" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximum Entropy|Kittler|Isodata|Moments</Algo>
@@ -433,7 +487,7 @@
 		<Solver label="Solver algorithm" vartype="lstr">OLS|RIDGE|LASSO</Solver>
 	</SelfSupervisedDenoise>
 	<DiffusionModel>
-		<Model label="Diffusion model" vartype="lstr">DTI|DKI|SHCSA|SHCSD|DSI|DSID</Model>
+		<Model label="Diffusion model" vartype="lstr">DTI|FWDTI|DKI|RUMBA|SHCSA|SHCSD|DSI|DSID</Model>
 		<Algo label="Background thresholding algorithm (mask)" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximumentropy|Kittler|Isodata|Moments</Algo>
 		<Size label="Morphological kernel size (mask)" varmax="10" varmin="1" vartype="int">1</Size>
 		<Iter label="Number of morphological operator iterations (mask)" varmax="10" varmin="1" vartype="int">2</Iter>
@@ -448,7 +502,28 @@
 		<Trace vartype="bool">False</Trace>
 		<AD label="Axial diffusivity" vartype="bool">False</AD>
 		<RD label="Radial diffusivity" vartype="bool">False</RD>
+		<Linearity label="Tensor linearity" vartype="bool">False</Linearity>
+		<Planarity label="Tensor planarity" vartype="bool">False</Planarity>
+		<Sphericity label="Tensor sphericity" vartype="bool">False</Sphericity>
+		<Tensor label="Tensor" vartype="bool">False</Tensor>
+		<Tensor2 label="Tensor components" vartype="bool">False</Tensor2>
+		<Major label="Tensor major direction" vartype="bool">False</Major>
+		<Eval label="Tensor eigen values" vartype="bool">False</Eval>
+		<Evec label="Tensor eigen vectors" vartype="bool">False</Evec>
 	</DTIModel>
+	<FWDTIModel>
+		<Method label="Fitting algorithm" vartype="lstr">NLS|WLS</Method>
+		<FA label="Fractional anisotropy" vartype="bool">False</FA>
+		<GA label="Geodesic anisotropy" vartype="bool">False</GA>
+		<MD label="Mean diffusivity" vartype="bool">False</MD>
+		<Trace vartype="bool">False</Trace>
+		<AD label="Axial diffusivity" vartype="bool">False</AD>
+		<RD label="Radial diffusivity" vartype="bool">False</RD>
+		<Linearity label="Tensor linearity" vartype="bool">False</Linearity>
+		<Planarity label="Tensor planarity" vartype="bool">False</Planarity>
+		<Sphericity label="Tensor sphericity" vartype="bool">False</Sphericity>
+		<FW label="Free water fraction" vartype="bool">False</FW>
+	</FWDTIModel>
 	<DKIModel>
 		<Method label="Fitting algorithm" vartype="lstr">WLS|OLS|CLS|CWLS</Method>
 		<FA label="Fractional anisotropy" vartype="bool">False</FA>
@@ -457,7 +532,17 @@
 		<Trace vartype="bool">False</Trace>
 		<AD label="Axial diffusivity" vartype="bool">False</AD>
 		<RD label="Radial diffusivity" vartype="bool">False</RD>
+		<Linearity label="Tensor linearity" vartype="bool">False</Linearity>
+		<Planarity label="Tensor planarity" vartype="bool">False</Planarity>
+		<Sphericity label="Tensor sphericity" vartype="bool">False</Sphericity>
 	</DKIModel>
+	<RUMBAModel>
+		<Method label="Fitting algorithm" vartype="lstr">SMF|SOS</Method>
+		<FCSF label="Cerebro-spinal fluid fraction" vartype="bool">False</FCSF>
+		<FGM label="Gray matter fraction" vartype="bool">False</FGM>
+		<FWM label="White matter fraction" vartype="bool">False</FWM>
+		<FISO label="Isotropic fraction" vartype="bool">False</FISO>
+	</RUMBAModel>
 	<SHCSAModel>
 		<Order varmax="10" varmin="2" vartype="int">6</Order>
 		<GFA label="Generalized fractional anisotropy" vartype="bool">False</GFA>
@@ -472,6 +557,12 @@
 	<DSIDModel>
 		<GFA label="Generalized fractional anisotropy" vartype="bool">False</GFA>
 	</DSIDModel>
+	<DiffusionALPS>
+		<Dilatation label="Dilatation of areas (radius in pixels)" varmax="5" varmin="0" vartype="int">0</Dilatation>
+		<Transform vartype="lstr">AntsAffine|AntsFastAffine|AntsSplineDiffeomorphic|AntsDiffeomorphic|AntsFastSplineDiffeomorphic|AntsFastDiffeomorphic</Transform>
+		<RefTensor label="Reference tensor" component="multi" path="" vartype="vol"></RefTensor>
+		<RefLabels label="Reference label" path="" vartype="vol"></RefLabels>
+	</DiffusionALPS>
 	<Tracking>
 		<BundleName vartype="str">tractogram</BundleName>
 		<TrackingAlgorithm vartype="lstr">Deterministic|Probabilistic</TrackingAlgorithm>

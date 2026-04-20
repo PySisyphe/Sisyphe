@@ -1655,6 +1655,152 @@
 			parcellation.
 		</Label>
 	</TimeSeriesConnectivityMatrix>
+	<B0Map>
+		<Title>
+			B0 main static magnetic field map (in Hz) processing using the 
+			phase difference between two echoes.
+		</Title>
+		<Rescaling>
+			Phase MR image rescaling to (-pi, +pi).
+		</Rescaling>
+		<Prefix>Prefix added to file name to save the B0 map.</Prefix>
+		<Suffix>Suffix added to file name to save the B0 map.</Suffix>
+	</B0Map>
+	<B1Map>
+		<Title>
+			B1 radiofrequency (RF) coil map processing.
+
+			- from two-pulse spoiled gradient echo with short and long TR.
+			- or from from two gradient echo images using the double angle 
+			method (actual flip angle imaging AFI).
+
+    		Code adapted from MyRelax package
+    		https://github.com/fragrussu/MyRelax
+		</Title>
+		<Masking>
+			Automatic thresholding algorithm used for brain segmentation: 
+			No (no mask, default), Huang, Mean, Otsu, Renyi, Yen, Li, Shanbhag, 
+			Triangle, Intermodes, Maximumentropy, Kittler, Isodata, Moments.
+
+			PySisyphe uses the SimpleITK library implemenentation.
+		</Masking>
+		<FlipAngle>
+			Flip angle theta in degrees used in the AFI acquisition.
+			
+			- first gradient echo volume acquired with flip angle theta
+        	- second gradient echo volume acquired with flip angle 2 x theta
+        </FlipAngle>
+		<Prefix>Prefix added to file name to save the B1 map.</Prefix>
+		<Suffix>Suffix added to file name to save the B1 map.</Suffix>
+	</B1Map>
+	<T1Map>
+		<Title>
+			Use voxel-wise mono-exponential T1 fitting for variable flip angle 
+			(VFA) volumes to process T1 relaxation maps.
+
+			Code adapted from MyRelax package
+			https://github.com/fragrussu/MyRelax
+		</Title>
+		<Masking>
+			Automatic thresholding algorithm used for brain segmentation: 
+			No (no mask, default), Huang, Mean, Otsu, Renyi, Yen, Li, Shanbhag, 
+			Triangle, Intermodes, Maximumentropy, Kittler, Isodata, Moments.
+
+			PySisyphe uses the SimpleITK library implemenentation.
+		</Masking>
+		<FittingMethod>
+			Fitting method:
+			- linear
+			- non linear (L-BFGS-B minimizing algorithm, not recommended)
+		</FittingMethod>
+		<Prefix>Prefix added to file name to save the T1 map.</Prefix>
+		<Suffix>Suffix added to file name to save the T1 map.</Suffix>
+	</T1Map>
+	<T2Map>
+		<Title>
+			Use voxel-wise mono-exponential or bi-exponential T2 fitting 
+			on volumes at variable echo times.
+		</Title>
+		<Masking>
+			Automatic thresholding algorithm used for brain segmentation: 
+			No (no mask, default), Huang, Mean, Otsu, Renyi, Yen, Li, Shanbhag, 
+			Triangle, Intermodes, Maximumentropy, Kittler, Isodata, Moments.
+
+			PySisyphe uses the SimpleITK library implemenentation.
+		</Masking>
+		<FittingModel>
+			Fitting model:
+			
+			- mono-exponential
+
+			signal = S0 * f * exp(-TE/T2)
+			
+			- bi-exponential
+
+			signal = S0 * [f * exp(-TE/T2l) + (1 - f) * exp(-TE/T2s)]
+
+    		- TE, echo time
+    		- S0, signal for zero TE
+    		- T2l, T2/T2* of the slowly-decaying water
+    		- T2s, T2/T2star of fast-decaying water
+    		- f signal fraction of the slowly-decaying water
+		</FittingModel>
+		<FittingMethod>
+			Fitting method used for the mono-exponential fitting:
+			- linear
+			- non linear (L-BFGS-B minimizing algorithm, not recommended)
+		</FittingMethod>
+		<Prefix>Prefix added to file name to save the T2 map.</Prefix>
+		<Suffix>Suffix added to file name to save the T2 map.</Suffix>
+	</T2Map>
+	<T2pMap>
+		<Title>
+			T2' processing from quantitative T2 and T2* maps.
+    		T2' = 1 / ((1 / T2*) - (1 / T2))
+		</Title>
+		<Masking>
+			Automatic thresholding algorithm used for brain segmentation: 
+			No (no mask, default), Huang, Mean, Otsu, Renyi, Yen, Li, Shanbhag, 
+			Triangle, Intermodes, Maximumentropy, Kittler, Isodata, Moments.
+
+			PySisyphe uses the SimpleITK library implemenentation.
+		</Masking>
+		<Prefix>Prefix added to file name to save the T2' map.</Prefix>
+		<Suffix>Suffix added to file name to save the T2' map.</Suffix>
+	</T2pMap>
+	<MTRMap>
+		<Title>
+			Magnetization Transfer Ratio (MTR) from MT "on" and MT "off" acquisitions.
+			MTR = 100.0 * (MToff - MTon) / MToff
+		</Title>
+		<Masking>
+			Automatic thresholding algorithm used for brain segmentation: 
+			No (no mask, default), Huang, Mean, Otsu, Renyi, Yen, Li, Shanbhag, 
+			Triangle, Intermodes, Maximumentropy, Kittler, Isodata, Moments.
+
+			PySisyphe uses the SimpleITK library implemenentation.
+		</Masking>
+		<Prefix>Prefix added to file name to save the MTR map.</Prefix>
+		<Suffix>Suffix added to file name to save the MTR map.</Suffix>
+	</MTRMap>
+	<QSMMap>
+		<Title>
+			Quantitative Susceptibility Mapping (QSM) processing using 
+			Total Generalized Variation algorithm (TGV-QSM).
+
+			Code adapted from TGVQSM package
+			https://www.neuroimaging.at/pages/qsm.php
+		</Title>
+		<Iters>
+			Number of iterations used by the reconstruction algorithm 
+			(default 1000).
+		</Iters>
+		<Rescaling>
+			Phase MR image rescaling to (-pi, +pi).
+		</Rescaling>
+		<Prefix>Prefix added to file name to save the QSM map.</Prefix>
+		<Suffix>Suffix added to file name to save the QSM map.</Suffix>
+	</QSMMap>	
 	<Perfusion>
 		<Title>
 			Computes dynamic susceptibility contrast MR perfusion analysis.
@@ -1686,7 +1832,7 @@
 		</VoxelCount>
 		<Baseline>
 			Range (start, end) of volume indices used as baseline signal 
-			(default start=0, end=4).
+			(default start=0 first volume, end=4 5th volume).
 		</Baseline>
 		<Smoothing>
 			Contrast concentration time series smoothing if True (unchecked by 
@@ -1742,6 +1888,91 @@
 			will be used to compute the arterial input function.
 		</Dialog>
 	</Perfusion>
+	<Perfusion2>
+		<Title>
+			Computes dynamic susceptibility contrast MR perfusion analysis.
+			- cerebral blood flow (CBF), in ml / min / 100g
+			- cerebral blood volume (CBV), in ml / 100g
+			- mean transit time (MTT), in s
+			- leakage volume (LKV), in ml / 100g
+			- time to pic (TTP), in s
+			- time to bolus arrival (TTB), in s
+			- signal recovery (SR)
+			- percentage signal recovery (PSR)
+		</Title>
+		<DCM>Get Echo Time (TE) and Repetition Time (TR) from a dicom file</DCM>
+		<TR>Repetition Time (TR) in ms</TR>
+		<TE>Echo Time (TE) in ms</TE>
+		<Masking>
+			Automatic thresholding algorithm used for brain segmentation: 
+			Huang (default), Mean, Otsu, Renyi, Yen, Li, Shanbhag, Triangle, 
+			Intermodes, Maximumentropy, Kittler, Isodata, Moments.
+
+			PySisyphe uses the SimpleITK library implemenentation.
+		</Masking>
+		<Baseline>
+			Range (start, end) of volume indices used as baseline signal 
+			(default start=0 first volume, end=4 5th volume).
+		</Baseline>
+		<VoxelCount>Number of AIF voxels (default 10).</VoxelCount>
+		<Dialog>
+			Whether or not to display a dialog box for selecting voxels that 
+			will be used to compute the arterial input function.
+		</Dialog>
+		<Deconvolution>
+			Deconvolution algorithm:
+			- Block-circulant SVD with Simpson rule
+			- Block-circulant SVD with manual matrix construction
+			- SVD
+			- Oscillation index SVD
+			- Box non-linear regression (avoid, as it is still under development)
+		</Deconvolution>
+		<Smoothing>
+			Gaussian smoothing applied to the contrast concentration time series, 
+			full width at half maximum (FWHM) in mm (default 0.0, no smoothing).
+		</Smoothing>
+		<Recovery>Process signal recovery maps (default True).</Recovery>
+		<DSC>Process DSC maps (default True).</DSC>
+		<Leakage>Process Leakage map (default True).</Leakage>
+	</Perfusion2>
+	<ASL>
+		<Title>
+			CBF processing from Arterial Spin Labeling (ASL) series.
+    		Cerebral blood flow (CBF) in ml / min / 100g
+
+    		Code adpated from:
+    		- https://github.com/SaraDupont/ASL_processing
+    		- https://github.com/lamyj/erwin
+		</Title>
+		<Masking>
+			Automatic thresholding algorithm used for brain segmentation: 
+			No (no mask, default), Huang, Mean, Otsu, Renyi, Yen, Li, Shanbhag, 
+			Triangle, Intermodes, Maximumentropy, Kittler, Isodata, Moments.
+
+			PySisyphe uses the SimpleITK library implemenentation.
+		</Masking>
+		<Smoothing>
+			Gaussian smoothing applied to the ASL series, full width at half 
+			maximum (FWHM) in mm (default 0.0, no smoothing).
+		</Smoothing>
+		<Sequence>
+			Type of ASL sequence:
+			- pulsed ASL
+			- pseudo-continuous ASL
+		</Sequence>
+		<M0>
+			M0 proton density weighted image index in the ASL series
+			(default 0, first volume).
+		</M0>
+		<LD>Label duration in ms</LD>
+		<PLD>Post labeling delay in ms</PLD>
+		<DCM>Get Echo Time (TE) from a dicom file</DCM>
+		<TE>Echo Time (TE) in ms</TE>
+		<TR>Repetition Time (TR) in ms</TR>
+		<Lambda>Blood brain partition coefficient in mL/g (default 0.90)</Lambda>
+		<Alpha>Labeling efficiency (default 0.98)</Alpha>
+		<T1>T1 relaxation time of blood in ms (default 1650.0)</T1>
+	</ASL>
 	<DiffusionPreprocessing>
 		<Title>
 			Computes diffusion-weighted image denoising and correction of
@@ -1911,7 +2142,9 @@
 		<Model>
 			Diffusion models:
 			- DTI Diffusion Tensor model
+			- FWDTI Free Water Diffusion Tensor model
 			- DKI Diffusional Kurtosis model
+			- RUMBA Robust and Unbiased Model-BAsed Spherical Deconvolution model
 			- SHCSA Constant Solid Angle ODF (Q-Ball) model
 			- SHCSD Constrained Spherical Deconvolution model
 			- DSI Diffusion Spectrum model
@@ -1947,13 +2180,117 @@
             - NLLS: non-linear least-squares
             - RT or RESTORE: RESTORE robust tensor
 		</Method>
-		<FA>Fractional anisotropy (FA) calculated from eigenvalues.</FA>
-		<GA>Geodesic anisotropy (GA) calculated from eigenvalues.</GA>
-		<MD>Mean diffusivity (MD) calculated from eigenvalues.</MD>
-		<Trace>Trace of the tensor calculated from eigenvalues.</Trace>
-		<AD>Axial diffusivity (AD) calculated from eigenvalues.</AD>
-		<RD>Radial diffusivity (RD) calculated from eigenvalues.</RD>
+		<FA>
+			Fractional anisotropy (FA) calculated from tensor eigenvalues.
+			It is saved with the 'FA' suffix.
+		</FA>
+		<GA>
+			Geodesic anisotropy (GA) calculated from tensor eigenvalues.
+			It is saved with the 'GA' suffix.
+		</GA>
+		<MD>
+			Mean diffusivity (MD) calculated from tensor eigenvalues.
+			It is saved with the 'MD' suffix.
+		</MD>
+		<Trace>
+			Trace of the tensor calculated from tensor eigenvalues.
+			It is saved with the 'TR' suffix.
+		</Trace>
+		<AD>
+			Axial diffusivity (AD) calculated from tensor eigenvalues.
+			It is saved with the 'AD' suffix.
+		</AD>
+		<RD>
+			Radial diffusivity (RD) calculated from tensor eigenvalues.
+			It is saved with the 'RD' suffix.
+		</RD>
+		<Linearity>
+			Diffusion tensor linearity.
+			It is saved with the 'LINEARITY' suffix.
+		</Linearity>
+		<Planarity>
+			Diffusion tensor planarity.
+			It is saved with the 'PLANARITY' suffix.
+		</Planarity>
+		<Sphericity>
+			Diffusion tensor sphericity.
+			It is saved with the 'SPHERICITY' suffix.
+		</Sphericity>
+		<Tensor>
+			Diffusion tensor (multi-component volume).
+			It is saved with the "TENSOR" suffix.
+		</Tensor>
+		<Tensor2>
+			Six single-component volumes (xx, yy, zz, xy, xz, yz tensor elements).
+			They are saved with the 'TENSOR XX', 'TENSOR YY', 'TENSOR ZZ', 'TENSOR XY', 
+			'TENSOR XZ' and 'TENSOR YZ' suffixes.
+		</Tensor2>
+		<Major>
+			Diffusion tensor major direction, multi-component volume (x, y, z 
+			vector elements). It is saved with the 'PRINICPAL' suffix.
+		</Major>
+		<Eval>
+			Multi-component volume of tensor eigen values (L1, L2 and L3 elements).
+			It is saved with the 'EIGENVAL' suffix.
+		</Eval>
+		<Evec>
+			Multi-component volume of tensor eigen vectors (9 elements, vectors V1, 
+			V2 and V3). It is saved with the 'EIGENVEC' suffix.
+		</Evec>
 	</DTIModel>
+	</DTIModel>
+	<FWDTIModel>
+		<Title>
+			Free Water Diffusion Tensor model
+			DTI-style acquisition: at least 32 directions evenly distributed, 
+			b-value less than or equal to 1000 s/mm^2, multiple B0.
+		</Title>
+		<Method>
+			Fitting methods:
+			- WLS: weighted least squares (default)
+			- NLS: non-linear least-squares
+		</Method>
+		<FA>
+			Fractional anisotropy (FA) calculated from tensor eigenvalues.
+			It is saved with the 'FA' suffix.
+		</FA>
+		<GA>
+			Geodesic anisotropy (GA) calculated from tensor eigenvalues.
+			It is saved with the 'GA' suffix.
+		</GA>
+		<MD>
+			Mean diffusivity (MD) calculated from tensor eigenvalues.
+			It is saved with the 'MD' suffix.
+		</MD>
+		<Trace>
+			Trace of the tensor calculated from tensor eigenvalues.
+			It is saved with the 'TR' suffix.
+		</Trace>
+		<AD>
+			Axial diffusivity (AD) calculated from tensor eigenvalues.
+			It is saved with the 'AD' suffix.
+		</AD>
+		<RD>
+			Radial diffusivity (RD) calculated from tensor eigenvalues.
+			It is saved with the 'RD' suffix.
+		</RD>
+		<Linearity>
+			Diffusion tensor linearity.
+			It is saved with the 'LINEARITY' suffix.
+		</Linearity>
+		<Planarity>
+			Diffusion tensor planarity.
+			It is saved with the 'PLANARITY' suffix.
+		</Planarity>
+		<Sphericity>
+			Diffusion tensor sphericity.
+			It is saved with the 'SPHERICITY' suffix.
+		</Sphericity>
+		<FW>
+			Free water fraction (FW)
+			It is saved with the 'FW' suffix.
+		</FW>
+	</FWDTIModel>
 	<DKIModel>
 		<Title>
 			Diffusional Kurtosis model
@@ -1967,13 +2304,71 @@
             - CLS or LMI: constrained ordinary least squares
             - CWLS: constrained weighted least squares
 		</Method>
-		<FA>Fractional anisotropy (FA) calculated from eigenvalues.</FA>
-		<GA>Geodesic anisotropy (GA) calculated from eigenvalues.</GA>
-		<MD>Mean diffusivity (MD) calculated from eigenvalues.</MD>
-		<Trace>Trace of the tensor calculated from eigenvalues.</Trace>
-		<AD>Axial diffusivity (AD) calculated from eigenvalues.</AD>
-		<RD>Radial diffusivity (RD) calculated from eigenvalues.</RD>
+		<FA>
+			Fractional anisotropy (FA) calculated from tensor eigenvalues.
+			It is saved with the 'FA' suffix.
+		</FA>
+		<GA>
+			Geodesic anisotropy (GA) calculated from tensor eigenvalues.
+			It is saved with the 'GA' suffix.
+		</GA>
+		<MD>
+			Mean diffusivity (MD) calculated from tensor eigenvalues.
+			It is saved with the 'MD' suffix.
+		</MD>
+		<Trace>
+			Trace of the tensor calculated from tensor eigenvalues.
+			It is saved with the 'TR' suffix.
+		</Trace>
+		<AD>
+			Axial diffusivity (AD) calculated from tensor eigenvalues.
+			It is saved with the 'AD' suffix.
+		</AD>
+		<RD>
+			Radial diffusivity (RD) calculated from tensor eigenvalues.
+			It is saved with the 'RD' suffix.
+		</RD>
+		<Linearity>
+			Diffusion tensor linearity.
+			It is saved with the 'LINEARITY' suffix.
+		</Linearity>
+		<Planarity>
+			Diffusion tensor planarity.
+			It is saved with the 'PLANARITY' suffix.
+		</Planarity>
+		<Sphericity>
+			Diffusion tensor sphericity.
+			It is saved with the 'SPHERICITY' suffix.
+		</Sphericity>
 	</DKIModel>
+	<RUMBAModel>
+		<Title>
+			RUMBA Robust and Unbiased Model-BAsed Spherical Deconvolution model
+			Acquisition: HARDI data with at least 64 directions, b-value 2500 s/mm^2, 
+			at least 3 B0 images.
+		</Title>
+		<Method>
+			Fitting methods:
+			- SMF: spatial matched filter
+			- SOS: sum-of-squares
+		</Method>
+		<FCSF>
+			Cerebro-spinal fluid fraction.
+			It is saved with the 'FCSF' suffix.
+		</FCSF>
+		<FGM>
+			Gray matter fraction.
+			It is saved with the 'FGM' suffix.
+		</FGM>
+		<FWM>
+			White matter fraction.
+			It is saved with the 'FWM' suffix.
+		</FWM>
+		<FISO>
+			Isotropic fraction
+			It is saved with the 'FISO' suffix.
+		</FISO>
+	</RUMBAModel>
 	<SHCSAModel>
 		<Title>
 			Constant Solid Angle ODF (Q-Ball) model
@@ -1991,7 +2386,10 @@
 			multi-shell.
 		</Title>
 		<Order>Spherical harmonic order (default 6).</Order>
-		<GFA>Generalized Fractional Anisotropy (GFA).</GFA>
+		<GFA>
+			Generalized Fractional Anisotropy (GFA).
+			It is saved with the 'GFA' suffix.
+		</GFA>
 	</SHCSDModel>
 	<DSIModel>
 		<Title>
@@ -1999,7 +2397,10 @@
 			Acquisition: at least 100 directions with b-values = 1000, 2000, 
 			3000 s/mm^2.
 		</Title>
-		<GFA>Generalized Fractional Anisotropy (GFA).</GFA>
+		<GFA>
+			Generalized Fractional Anisotropy (GFA).
+			It is saved with the 'GFA' suffix.
+		</GFA>
 	</DSIModel>
 	<DSIDModel>
 		<Title>
@@ -2007,8 +2408,19 @@
 			Acquisition: at least 200 directions with b-values = 1000, 2000, 
 			3000 s/mm^2 +/- 4000 s/mm^2.
 		</Title>
-		<GFA>Generalized Fractional Anisotropy (GFA).</GFA>
+		<GFA>
+			Generalized Fractional Anisotropy (GFA).
+			It is saved with the 'GFA' suffix.
+		</GFA>
 	</DSIDModel>
+	<DiffusionALPS>
+		<Dilatation>
+			Radius (in voxels) of the structuring element is used to extend the 
+			ROI of the associative/projected areas by means of morphological 
+			dilation.
+		</Dilatation>
+		<Transform>Algorithm used for coregistration with the reference volume.</Transform>
+	</DiffusionALPS>
 	<Tracking>
 		<Title>Tracking algorithm selection.</Title>
 		<BundleName>Name of the tractogram</BundleName>
