@@ -49,6 +49,8 @@ List of available post-processings:
 - Deep learning segmentation (skull striping, hippocampus, medial temporal lobe, tumor, T1 hypo-intensity lesions, white matter hyper-intensities)
 - fMRI analysis (model, contrast, conjunction...)
 - Time series analysis (ICA)
+- Quantitative MR: B0 map, B1 map, T1 map, T2/T2* map, T2' map, MTR map, QSM
+- ASL DSC map
 - Dynamic susceptibility contrast MR perfusion maps
 - Diffusion/tracking visualization and analysis tools (DTI, DKI, SHCSA, SHCSD, DSI, DSID models)
 
