@@ -135,7 +135,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 24/03/2026
+    Last revision: 21/04/2026
     """
 
     # Class constants
@@ -6376,7 +6376,9 @@ class WindowSisyphe(QMainWindow):
         fselect[1].setToolbarThumbnail(self._thumbnail)
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-b0map')
+            # < Revision 21/04/2026
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-b0map')
+            # Revision 21/04/2026 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogQuantitativeMR.DialogB0Mapping]')
             self._dialog.exec()
         except Exception as err:
@@ -6391,7 +6393,9 @@ class WindowSisyphe(QMainWindow):
         fselect[1].setToolbarThumbnail(self._thumbnail)
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-b1map')
+            # < Revision 21/04/2026
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-b1map')
+            # Revision 21/04/2026 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogQuantitativeMR.DialogB1Mapping]')
             self._dialog.exec()
         except Exception as err:
@@ -6407,7 +6411,9 @@ class WindowSisyphe(QMainWindow):
         fselect[2].setToolbarThumbnail(self._thumbnail)
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-t1map')
+            # < Revision 21/04/2026
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-t1map')
+            # Revision 21/04/2026 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogQuantitativeMR.DialogT1Mapping]')
             self._dialog.exec()
         except Exception as err:
@@ -6422,7 +6428,9 @@ class WindowSisyphe(QMainWindow):
         fselect[1].setToolbarThumbnail(self._thumbnail)
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-t2map')
+            # < Revision 21/04/2026
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-t2map')
+            # Revision 21/04/2026 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogQuantitativeMR.DialogT2Mapping]')
             self._dialog.exec()
         except Exception as err:
@@ -6438,7 +6446,9 @@ class WindowSisyphe(QMainWindow):
         fselect[2].setToolbarThumbnail(self._thumbnail)
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-t2pmap')
+            # < Revision 21/04/2026
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-t2pmap')
+            # Revision 21/04/2026 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogQuantitativeMR.DialogT2pMapping]')
             self._dialog.exec()
         except Exception as err:
@@ -6453,7 +6463,9 @@ class WindowSisyphe(QMainWindow):
         fselect[1].setToolbarThumbnail(self._thumbnail)
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-qsmmap')
+            # < Revision 21/04/2026
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-qsmmap')
+            # Revision 21/04/2026 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogQuantitativeMR.DialogQSMMapping]')
             self._dialog.exec()
         except Exception as err:
@@ -6469,7 +6481,9 @@ class WindowSisyphe(QMainWindow):
         fselect[2].setToolbarThumbnail(self._thumbnail)
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-mtrmap')
+            # < Revision 21/04/2026
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-mtrmap')
+            # Revision 21/04/2026 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogQuantitativeMR.DialogMTRMapping]')
             self._dialog.exec()
         except Exception as err:
@@ -6482,7 +6496,9 @@ class WindowSisyphe(QMainWindow):
         self._dialog.getFileSelectionWidget().setToolbarThumbnail(self._thumbnail)
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            # self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-asl')
+            # < Revision 21/04/2026
+            self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-asl')
+            # Revision 21/04/2026 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogPerfusion.DialogASL]')
             self._dialog.exec()
         except Exception as err:
@@ -6581,7 +6597,9 @@ class WindowSisyphe(QMainWindow):
         fselect[2].setToolbarThumbnail(self._thumbnail)
         if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
         try:
-            # self._tabHelp.setPage('PySisyphe_Diffusion.html', 'menu-section-diffalps')
+            # < Revision 21/04/2026
+            self._tabHelp.setPage('PySisyphe_Diffusion.html', 'menu-section-diffalps')
+            # Revision 21/04/2026 >
             if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDiffusionModel.DialogALPS]')
             self._dialog.exec()
         except Exception as err:
