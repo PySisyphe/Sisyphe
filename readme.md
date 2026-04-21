@@ -76,7 +76,7 @@ Download
 Direct link to binary archives:
 - Windows binary [PySisyphe 0.87.08 python 3.10 build 20-04-2026](https://mega.nz/file/XlsE2I6R#tMcwKfGOebZgKp5Vb7RfqzfPiP_LZT_i8oGkc-AINiY)
 - Windows binary [PySisyphe 0.87.08 python 3.12 build 20-04-2026](https://mega.nz/file/WktGjBQA#Tec_oeMnervD6l-eQRwOsZMOz-G8w4hqP8047xDz6mc)
-- MacOS 11+ intel binary [PySisyphe 0.87.08 python 3.10 build 20-04-2026](https://mega.nz/file/n40ClR6L#a9Js2Q4tyMLyGEAd9eQWJd7vTxl1pCay6_Nqs-00s6Y)
+- MacOS 11+ intel binary [PySisyphe 0.87.08 python 3.10 build 20-04-2026](https://mega.nz/file/CgtRVKKD#WdIkoTwMZeJMxPGLfy0xPyliZ-1iKE23iw_RQU68GJM)
 
 Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. **We recommend copying it to the user directory**. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time. Subsequent starts take less than 30 seconds.
 
