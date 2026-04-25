@@ -18,34 +18,43 @@ freeze_support()
 import sys
 import ctypes
 
-# < Revision 10/01/2026
-# Force console hide for Windows Terminal compatibility (PyInstaller console=True)
-if sys.platform == 'win32' and hasattr(sys, '_MEIPASS'):
-    kernel32 = ctypes.WinDLL('kernel32')
-    user32 = ctypes.WinDLL('user32')
-    hWnd = kernel32.GetConsoleWindow()
-    if hWnd:
-        user32.ShowWindow(hWnd, 0) # 0 = SW_HIDE
-# Revision 10/01/2026 >
-
-# < Revision 10/01/2026
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-# Revision 10/01/2026 >
-
 import os
-os.environ['PYDEVD_DISABLE_FILE_VALIDATION'] = '1' # Disable IPython warnings
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0' # Disable tensorflow warnings
+os.environ['PYDEVD_DISABLE_FILE_VALIDATION'] = '1'  # Disable IPython warnings
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'  # Disable tensorflow warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 if sys.platform == 'darwin':
     # fix Qt crash on macOS BigSur platform
-    os.environ["QT_MAC_WANTS_LAYER"] = "1"
+    os.environ["QT_MAC_WANTS_LAYER"] = '1'
 from os.path import exists
 from os.path import join
 from os.path import splitext
 from os.path import dirname
 from os.path import expanduser
 from os.path import abspath
+
+if sys.platform == 'win32':
+    # Fix PyTorch DLL loading issue on Windows
+    # < Revision 23/04/2026
+    from importlib.util import find_spec
+    try:
+        if (spec := find_spec('torch')) and spec.origin and os.path.exists(dll_path := os.path.join(os.path.dirname(spec.origin), 'lib', 'c10.dll')):
+            ctypes.CDLL(os.path.normpath(dll_path))
+    except Exception: pass
+    # Revision 23/04/2026 >
+    # < Revision 10/01/2026
+    # Force console hide for Windows Terminal compatibility (PyInstaller console=True)
+    if hasattr(sys, '_MEIPASS'):
+        kernel32 = ctypes.WinDLL('kernel32')
+        user32 = ctypes.WinDLL('user32')
+        hWnd = kernel32.GetConsoleWindow()
+        if hWnd:
+            user32.ShowWindow(hWnd, 0)  # 0 = SW_HIDE
+    # Revision 10/01/2026 >
+
+# < Revision 10/01/2026
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+# Revision 10/01/2026 >
 
 import traceback
 
@@ -286,8 +295,8 @@ if __name__ == "__main__":
     filename = None
     args = sys.argv
     if len(args) > 1:
+        filename = sys.argv[1]
         if exists(filename):
-            filename = sys.argv[1]
             ext = splitext(filename)[1]
             if ext != SisypheVolume.getFileExt(): filename = None
 
@@ -393,6 +402,10 @@ if __name__ == "__main__":
     # splash.close()
     splash.hide()
     # Revision 17/02/2026 >
+
+    # < Revision 23/04/2026
+    main.versionControl()
+    # Revision 23/04/2026 >
 
     if filename is not None:
         if exists(filename):

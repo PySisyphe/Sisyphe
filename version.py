@@ -28,8 +28,9 @@ __email__ = 'pysisyphe@gmail.com'
 # __version__ = "0.78.08" # 01-02-2026
 # __version__ = "0.80.15" # 20-02-2026
 # __version__ = "0.81.22" # 10-03-2026
-__version__ = "0.87.08"   # 20-04-2026
-__build__ = '20260420'
+# __version__ = "0.87.08" # 20-04-2026
+__version__ = "0.87.10"   # 30-04-2026
+__build__ = '20260430'
 
 _V = b'70797369737970686540676d61696c2e636f6d'
 
@@ -109,25 +110,47 @@ def getBuildDateAsStr(f: str = '%Y-%m-%d') -> str:
 # Revision 27/01/2026 >
 
 
-def isOlderThan(version: str | list[int] | dict[str, int]) -> bool:
+# < Revision 23/04/2026
+# add current parameter
+def isOlderThan(version: str | list[int] | dict[str, int],
+                current: str | list[int] | dict[str, int] | None = None) -> bool:
     if isinstance(version, str): version = [int(v) for v in version.split('.')]
     elif isinstance(version, dict): version = [version['major'], version['minor'], version['patch']]
     if isinstance(version, list):
-        current = getVersionAsList()
+        # < Revision 23/04/2026
+        # current = getVersionAsList()
+        if current is None: current = getVersionAsList()
+        else:
+            if isinstance(current, str): current = [int(v) for v in current.split('.')]
+            elif isinstance(current, dict): current = [current['major'], current['minor'], current['patch']]
+            elif not isinstance(current, list): pass
+            else: raise TypeError('Invalid curent parameter type {}.'.format(type(current)))
+        # Revision 23/04/2026 >
         if current[0] < version[0]: return True
         elif current[0] == version[0]:
             if current[1] < version[1]: return True
             elif current[1] == version[1]:
                 if current[2] < version[2]: return True
         return False
-    else: raise TypeError('Invalid parameter type {}.'.format(type(version)))
+    else: raise TypeError('Invalid version parameter type {}.'.format(type(version)))
+# Revision 23/04/2026 >
 
-
-def isNewerThan(version: str | list[int] | dict[str, int]) -> bool:
+# < Revision 23/04/2026
+# add current parameter
+def isNewerThan(version: str | list[int] | dict[str, int],
+                current: str | list[int] | dict[str, int] | None = None) -> bool:
     if isinstance(version, str): version = [int(v) for v in version.split('.')]
     elif isinstance(version, dict): version = [version['major'], version['minor'], version['patch']]
     if isinstance(version, list):
-        current = getVersionAsList()
+        # < Revision 23/04/2026
+        # current = getVersionAsList()
+        if current is None: current = getVersionAsList()
+        else:
+            if isinstance(current, str): current = [int(v) for v in current.split('.')]
+            elif isinstance(current, dict): current = [current['major'], current['minor'], current['patch']]
+            elif not isinstance(current, list): pass
+            else: raise TypeError('Invalid current parameter type {}.'.format(type(current)))
+        # Revision 23/04/2026 >
         if current[0] > version[0]: return True
         elif current[0] == version[0]:
             if current[1] > version[1]: return True
@@ -137,8 +160,8 @@ def isNewerThan(version: str | list[int] | dict[str, int]) -> bool:
                 if current[2] > version[2]: return True
                 # Revision 27/11/2025 >
         return False
-    else: raise TypeError('Invalid parameter type {}.'.format(type(version)))
-
+    else: raise TypeError('Invalid version parameter type {}.'.format(type(version)))
+# Revision 23/04/2026 >
 
 def isCurrentVersion(version: str | list[int] | dict[str, int]) -> bool:
     if isinstance(version, list): version = '.'.join([str(v) for v in version])
