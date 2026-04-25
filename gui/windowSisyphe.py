@@ -4266,13 +4266,13 @@ class WindowSisyphe(QMainWindow):
             if hasattr(sys, '_MEIPASS'):
                 messageBox(self,
                            'Check for update',
-                           'Python version 3.10, on which this version of PySisyphe runs, is no longer supported.'
+                           'Python version 3.10, on which this version of PySisyphe runs, is no longer supported. '
                            'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
             else:
                 messageBox(self,
                            'Check for update',
-                           'Python version 3.10, on which this version of PySisyphe runs, is no longer supported.'
-                           'Please upgrade your runtime environment to Python 3.12.')
+                           'Python version 3.10, on which this version of PySisyphe runs, is no longer supported. '
+                           'Please migrate to a Python 3.12 runtime venv.')
 
     def lutEdit(self) -> None:
         from Sisyphe.gui.dialogLutEdit import DialogLutEdit
