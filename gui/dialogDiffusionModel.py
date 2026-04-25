@@ -381,15 +381,15 @@ class DialogDiffusionModel(QDialog):
                 if hasattr(sys, '_MEIPASS'):
                     messageBox(self,
                                self.windowTitle(),
-                               'The installed version of dipy ({}) does not support the FWDTI model.\n'
-                               'Module updates are not possible in the stand-alone, frozen version of PySisyphe.\n'
-                               'Please perform a complete reinstallation of the latest version of PySisyphe,\n'
+                               'The installed version of dipy ({}) does not support the FWDTI model. '
+                               'Module updates are not possible in the stand-alone, frozen version of PySisyphe. '
+                               'Please perform a complete reinstallation of the latest version of PySisyphe, '
                                'which can be downloaded from https://github.com/PySisyphe/Sisyphe.'.format(dipyv))
                 else:
                     messageBox(self,
                                self.windowTitle(),
-                               'The installed version of dipy ({}) does not support the FWDTI model.\n'
-                               'Please upgrade Dipy to version 1.12.0.\n'
+                               'The installed version of dipy ({}) does not support the FWDTI model. '
+                               'Please upgrade Dipy to version 1.12.0. '
                                '(pip install --upgrade dipy==1.12.0)'.format(dipyv))
                 return
                 # Revision 24/04/2026 ># Revision 23/04/2026 >
@@ -420,14 +420,14 @@ class DialogDiffusionModel(QDialog):
                 if hasattr(sys, '_MEIPASS'):
                     messageBox(self,
                                self.windowTitle(),
-                               'The installed version of dipy ({}) does not support the RUMBA model.\n'
-                               'Module updates are not possible in the stand-alone, frozen version of PySisyphe.\n'
-                               'Please perform a complete reinstallation of the latest version of PySisyphe,\n'
+                               'The installed version of dipy ({}) does not support the RUMBA model. '
+                               'Module updates are not possible in the stand-alone, frozen version of PySisyphe. '
+                               'Please perform a complete reinstallation of the latest version of PySisyphe, '
                                'which can be downloaded from https://github.com/PySisyphe/Sisyphe.'.format(dipyv))
                 else:
                     messageBox(self,
                                self.windowTitle(),
-                               'The installed version of dipy ({}) does not support the RUMBA model.\n'
+                               'The installed version of dipy ({}) does not support the RUMBA model. '
                                'Please upgrade Dipy to version 1.12.0.'
                                '(pip install --upgrade dipy==1.12.0)'.format(dipyv))
                 return
