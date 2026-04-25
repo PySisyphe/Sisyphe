@@ -72,6 +72,7 @@ from PyQt5.QtWidgets import QMessageBox
 import darkdetect
 
 from Sisyphe import version
+from Sisyphe.version import isOlderThan
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.core.sisypheConstants import removeAllPrefixesFromFilename
 from Sisyphe.core.sisypheVolume import SisypheVolume
@@ -84,7 +85,6 @@ from Sisyphe.core.sisypheSettings import initPySisypheUserPath
 from Sisyphe.core.sisypheSettings import setUserSettingsToDefault
 from Sisyphe.core.sisypheSettings import SisypheSettings
 from Sisyphe.core.sisypheStatistics import SisypheDesign
-
 from Sisyphe.core.sisypheFiducialBox import SisypheFiducialBox
 from Sisyphe.gui.dialogFileSelection import DialogFileSelection
 from Sisyphe.gui.dialogFileSelection import DialogFilesSelection
@@ -110,8 +110,7 @@ from Sisyphe.widgets.iconBarViewWidgets import IconBarSynchronisedGridViewWidget
 from Sisyphe.widgets.multiComponentViewWidget import IconBarMultiComponentViewWidget
 from Sisyphe.widgets.projectionViewWidget import IconBarMultiProjectionViewWidget
 
-
-# noinspection PyCompatibility
+# noinspection PyCompatibility,PyPackageRequirements
 import __main__
 from PyQt5.QtWidgets import QApplication
 
@@ -1576,39 +1575,39 @@ class WindowSisyphe(QMainWindow):
         self._menu['views'].setAttribute(Qt.WA_TranslucentBackground, True)
 
         sliceview = self._sliceview()[0, 0].getPopup()
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         sliceview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         sliceview.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         sliceview.setAttribute(Qt.WA_TranslucentBackground, True)
         orthoview = self._orthoview()[0, 0].getPopup()
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         orthoview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         orthoview.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         orthoview.setAttribute(Qt.WA_TranslucentBackground, True)
         synchroview = self._synchroview()[0, 0].getPopup()
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         synchroview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         synchroview.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         synchroview.setAttribute(Qt.WA_TranslucentBackground, True)
         projview = self._projview()[0, 0].getPopup()
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         projview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         projview.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         projview.setAttribute(Qt.WA_TranslucentBackground, True)
         compview = self._compview()[0, 0].getPopup()
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         compview.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         compview.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         compview.setAttribute(Qt.WA_TranslucentBackground, True)
         sliceview.setTitle(self._tabview.tabText(0))
         orthoview.setTitle(self._tabview.tabText(1))
@@ -1653,6 +1652,7 @@ class WindowSisyphe(QMainWindow):
         console.setTitle(self._tabview.tabText(7))
         self._menu['views'].addMenu(console)
 
+    # noinspection PyTypeChecker
     def _initWindowMenu(self) -> None:
         """
             Window menu
@@ -1885,9 +1885,9 @@ class WindowSisyphe(QMainWindow):
         if self._settings.getFieldValue('ToolbarIcons', 'exit'): self._toolbar.addAction(self._action['exit'])
         n = len(self._toolbar.actions())
         if n > 0 and self._toolbar.actions()[n-1].isSeparator(): self._toolbar.removeAction(self._toolbar.actions()[n-1])
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         self.addToolBar(Qt.TopToolBarArea, self._toolbar)
-        # noinspection PyUnresolvedReferences
+        # noinspection PyUnresolvedReferences,PyTypeChecker
         self.addToolBarBreak(Qt.TopToolBarArea)
         self._toolbar.setStyleSheet('QToolButton:pressed {border-color: rgb(176, 176, 176); border-style: '
                                     'solid; border-width: 1px; border-radius: 6px;}')
@@ -2208,6 +2208,104 @@ class WindowSisyphe(QMainWindow):
         # Revision 05/12/2025 >
 
     # Settings public methods
+
+    # < Revision 23/04/2026
+    # add versionControl method
+    def versionControl(self):
+        import sys
+        # check google.genai module
+        # noinspection PyUnresolvedReferences
+        if importlib.util.find_spec('google.genai') is None:
+            if hasattr(sys, '_MEIPASS'):
+                messageBox(self,
+                           'Check for update',
+                           'The module Google GenAI is not installed. '
+                           'You will therefore not be able to benefit from the new features related to this module. '
+                           'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
+            else:
+                messageBox(self,
+                           'Check for update',
+                           'The module Google GenAI is not installed. '
+                           'You will therefore not be able to benefit from the new features related to this module. '
+                           'Please install it in your venv (pip install google-genai==1.55.0).')
+        # check pymupdf module
+        # noinspection PyUnresolvedReferences
+        if importlib.util.find_spec('pymupdf') is None:
+            if hasattr(sys, '_MEIPASS'):
+                messageBox(self,
+                           'Check for update',
+                           'The module PyMuPDF is not installed. '
+                           'You will therefore not be able to benefit from the new features related to this module. '
+                           'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
+            else:
+                messageBox(self,
+                           'Check for update',
+                           'The module PyMuPDF is not installed. '
+                           'You will therefore not be able to benefit from the new features related to this module. '
+                           'Please install it in your venv (pip install PyMuPDF==1.26.7).')
+        # check easyocr module
+        # noinspection PyUnresolvedReferences
+        if importlib.util.find_spec('easyocr') is None:
+            if hasattr(sys, '_MEIPASS'):
+                messageBox(self,
+                           'Check for update',
+                           'The module easyocr is not installed. '
+                           'You will therefore not be able to benefit from the new features related to this module. '
+                           'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
+            else:
+                messageBox(self,
+                           'Check for update',
+                           'The module easyocr is not installed. '
+                           'You will therefore not be able to benefit from the new features related to this module. '
+                           'Please install it in your venv (pip install easyocr==1.7.2).')
+        # check openpyxl module
+        # noinspection PyUnresolvedReferences
+        if importlib.util.find_spec('openpyxl') is None:
+            if hasattr(sys, '_MEIPASS'):
+                messageBox(self,
+                           'Check for update',
+                           'The module openpyxl is not installed. '
+                           'You will therefore not be able to save tables in xlsx format. '
+                           'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
+            else:
+                messageBox(self,
+                           'Check for update',
+                           'The module openpyxl is not installed.'
+                           'You will therefore not be able to benefit from the new features related to this module. '
+                           'Please install it in your venv (pip install openpyxl==3.1.5).')
+        # check matplotlib version
+        from matplotlib import __version__ as pltv
+        if isOlderThan('3.10.8', pltv):
+            if hasattr(sys, '_MEIPASS'):
+                messageBox(self,
+                           self.windowTitle(),
+                           'The installed version of matplotlib ({}) is no longer supported. '
+                           'Module updates are not possible in the stand-alone, frozen version of PySisyphe. '
+                           'Please perform a complete reinstallation of the latest version of PySisyphe, '
+                           'which can be downloaded from https://github.com/PySisyphe/Sisyphe.'.format(pltv))
+            else:
+                messageBox(self,
+                           self.windowTitle(),
+                           'The installed version of matplotlib ({}) is no longer supported. '
+                           'Please upgrade matplotlib in your venv to version 3.10.8 '
+                           '(pip install --upgrade matplotlib==3.10.8).'.format(pltv))
+        # check dipy version
+        from dipy import __version__ as dipyv
+        if isOlderThan('1.12.0', dipyv):
+            if hasattr(sys, '_MEIPASS'):
+                messageBox(self,
+                           self.windowTitle(),
+                           'The installed version of dipy ({}) is no longer supported. '
+                           'Module updates are not possible in the stand-alone, frozen version of PySisyphe. '
+                           'Please perform a complete reinstallation of the latest version of PySisyphe, '
+                           'which can be downloaded from https://github.com/PySisyphe/Sisyphe.'.format(dipyv))
+            else:
+                messageBox(self,
+                           self.windowTitle(),
+                           'The installed version of dipy ({}) is no longer supported. '
+                           'Please upgrade Dipy in your venv to version 1.12.0. '
+                           '(pip install --upgrade dipy==1.12.0)'.format(dipyv))
+    # Revision 23/04/2026 >
 
     def getDisplayScaleFactor(self) -> float:
         return self.screen().devicePixelRatio()
@@ -4083,61 +4181,98 @@ class WindowSisyphe(QMainWindow):
         self._updatePluginsMenu()
 
     def checkUpdate(self) -> None:
-        from Sisyphe import version
-        wait = DialogWait(progress=False)
-        wait.open()
-        wait.setInformationText('Check for update, connection to host...')
-        QApplication.processEvents()
-        try: v = version.getVersionFromHost()
-        except:
-            wait.close()
-            messageBox(self,
-                       'Check for update',
-                       'Host connection failed.')
-            return
-        if version.isOlderThan(v):
-            wait.hide()
-            r = messageBox(self,
+        import sys
+        if sys.version_info.major == 3 and sys.version_info.minor > 11:
+            from Sisyphe import version
+            wait = DialogWait(progress=False)
+            wait.open()
+            wait.setInformationText('Check for update, connection to host...')
+            QApplication.processEvents()
+            try: v = version.getVersionFromHost()
+            except:
+                wait.close()
+                messageBox(self,
                            'Check for update',
-                           'A more recent version of PySisyphe is available.\n'
-                           'Would you like to install it ?',
-                           icon=QMessageBox.Question,
-                           buttons=QMessageBox.Yes | QMessageBox.No,
-                           default=QMessageBox.No)
-            if r == QMessageBox.Yes:
-                from Sisyphe.core.sisypheDownload import updatePySisyphe
-                wait.setInformationText('Update to version {}...'.format(v))
-                wait.show()
-                updatePySisyphe(wait)
+                           'Host connection failed.')
+                return
+            if version.isOlderThan(v):
                 wait.hide()
-                # < Revision 08/01/2026
-                try: import google.genai
-                except ImportError:
-                    messageBox(self,
-                               'Check for update',
-                               'The new modules Google GenAI, PyMuPDF, and EasyOCR cannot be installed with this update.'
-                               'You will therefore not be able to benefit from the new features related to these modules.'
-                               'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
-                # Revision 08/01/2026 >
-                # < Revision 17/10/2025
                 r = messageBox(self,
                                'Check for update',
-                               'You must close and restart the application to complete the update.\n'
-                               'Do you want to exit now ?',
+                               'A more recent version of PySisyphe is available.\n'
+                               'Would you like to install it ?',
                                icon=QMessageBox.Question,
                                buttons=QMessageBox.Yes | QMessageBox.No,
                                default=QMessageBox.No)
                 if r == QMessageBox.Yes:
-                    wait.close()
-                    self.exit()
-                # Revision 17/10/2025 >
-            wait.close()
+                    from Sisyphe.core.sisypheDownload import updatePySisyphe
+                    wait.setInformationText('Update to version {}...'.format(v))
+                    wait.show()
+                    updatePySisyphe(wait)
+                    wait.hide()
+                    # < Revision 08/01/2026
+                    # noinspection PyUnresolvedReferences
+                    if importlib.util.find_spec('google.genai') is None:
+                        messageBox(self,
+                                   'Check for update',
+                                   'The new modules Google GenAI, PyMuPDF, and EasyOCR cannot be installed with this update. '
+                                   'You will therefore not be able to benefit from the new features related to these modules. '
+                                   'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
+                    # Revision 08/01/2026 >
+                    # < Revision 24/04/2026
+                    # noinspection PyUnresolvedReferences
+                    if importlib.util.find_spec('google.genai') is None:
+                        messageBox(self,
+                                   'Check for update',
+                                   'The module openpyxl cannot be installed with this update. '
+                                   'You will therefore not be able to save tables in xlsx format. '
+                                   'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
+                    from matplotlib import __version__ as pltv
+                    if isOlderThan('3.10.8', pltv):
+                        messageBox(self,
+                                   'Check for update',
+                                   'Matplotlib ({}) cannot be upgraded to 3.10.8 with this update. '
+                                   'This will result in display errors in PySisyphe, '
+                                   'which can be downloaded from https://github.com/PySisyphe/Sisyphe.'.format(pltv))
+                    from dipy import __version__ as dipyv
+                    if isOlderThan('1.12.0', dipyv):
+                        messageBox(self,
+                                   'Check for update',
+                                   'dipy ({}) cannot be upgraded to 1.12.0 with this update. '
+                                   'This will result in PySisyphe errors for FWDTI and RUMBA diffusion models, '
+                                   'Please perform a complete reinstallation of the latest version of PySisyphe, '
+                                   'which can be downloaded from https://github.com/PySisyphe/Sisyphe.'.format(dipyv))
+                    # Revision 24/04/2026 >
+                    # < Revision 17/10/2025
+                    r = messageBox(self,
+                                   'Check for update',
+                                   'You must close and restart the application to complete the update.\n'
+                                   'Do you want to exit now ?',
+                                   icon=QMessageBox.Question,
+                                   buttons=QMessageBox.Yes | QMessageBox.No,
+                                   default=QMessageBox.No)
+                    if r == QMessageBox.Yes:
+                        wait.close()
+                        self.exit()
+                    # Revision 17/10/2025 >
+                wait.close()
+            else:
+                wait.close()
+                messageBox(self,
+                           'Check for update',
+                           'PySisyphe is up-to-date'.format(version.__version__),
+                           icon=QMessageBox.Information)
         else:
-            wait.close()
-            messageBox(self,
-                       'Check for update',
-                       'PySisyphe is up-to-date'.format(version.__version__),
-                       icon=QMessageBox.Information)
+            if hasattr(sys, '_MEIPASS'):
+                messageBox(self,
+                           'Check for update',
+                           'Python version 3.10, on which this version of PySisyphe runs, is no longer supported.'
+                           'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
+            else:
+                messageBox(self,
+                           'Check for update',
+                           'Python version 3.10, on which this version of PySisyphe runs, is no longer supported.'
+                           'Please upgrade your runtime environment to Python 3.12.')
 
     def lutEdit(self) -> None:
         from Sisyphe.gui.dialogLutEdit import DialogLutEdit
@@ -5298,9 +5433,9 @@ class WindowSisyphe(QMainWindow):
                 self._menubar.setEnabled(False)
                 self.repaint()
                 self._dialog.setEnabled(True)
-                # noinspection PyUnresolvedReferences
+                # noinspection PyUnresolvedReferences,PyTypeChecker
                 self._dialog.setAttribute(Qt.WA_DeleteOnClose)
-                # noinspection PyUnresolvedReferences
+                # noinspection PyUnresolvedReferences,PyTypeChecker
                 self._dialog.setWindowFlag(Qt.WindowStaysOnTopHint)
                 # noinspection PyUnresolvedReferences
                 self._dialog.finished.connect(lambda: self.setEnabled(True))
@@ -6182,9 +6317,9 @@ class WindowSisyphe(QMainWindow):
                     self._menubar.setEnabled(False)
                     self.repaint()
                     self._dialog.setEnabled(True)
-                    # noinspection PyUnresolvedReferences
+                    # noinspection PyUnresolvedReferences,PyTypeChecker
                     self._dialog.setAttribute(Qt.WA_DeleteOnClose)
-                    # noinspection PyUnresolvedReferences
+                    # noinspection PyUnresolvedReferences,PyTypeChecker
                     self._dialog.setWindowFlag(Qt.WindowStaysOnTopHint)
                     # noinspection PyUnresolvedReferences
                     self._dialog.finished.connect(lambda: self.setEnabled(True))
@@ -6590,7 +6725,7 @@ class WindowSisyphe(QMainWindow):
     # < Revision 13/04/2026
     def diffusionALPS(self) -> None:
         from Sisyphe.gui.dialogDiffusionModel import DialogALPS
-        self._dialog =  DialogALPS()
+        self._dialog = DialogALPS()
         fselect = self._dialog.getFileSelectionWidget()
         fselect[0].setToolbarThumbnail(self._thumbnail)
         fselect[1].setToolbarThumbnail(self._thumbnail)

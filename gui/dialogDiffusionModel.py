@@ -7,6 +7,7 @@ External packages/modules
     - scikit-image, image processing, https://scikit-image.org/
 """
 
+import sys
 from sys import platform
 
 from os.path import exists
@@ -29,6 +30,9 @@ from PyQt5.QtWidgets import QApplication
 
 from skimage.morphology import isotropic_dilation
 
+from dipy import __version__ as dipyv
+
+from Sisyphe.version import isOlderThan
 from Sisyphe.core.sisypheDicom import loadBVal
 from Sisyphe.core.sisypheDicom import loadBVec
 from Sisyphe.core.sisypheVolume import SisypheVolume
@@ -67,7 +71,7 @@ class DialogDiffusionModel(QDialog):
 
     QDialog -> DialogDiffusionModel
 
-    Last revision: 14/04/2026
+    Last revision: 23/04/2026
     """
 
     # Special method
@@ -190,7 +194,9 @@ class DialogDiffusionModel(QDialog):
         exitb.setDefault(True)
         exitb.setFixedWidth(100)
         self._save = QPushButton('Execute')
-        self._save.setFixedWidth(100)
+        # < Revision 23/04/2026
+        # self._save.setFixedWidth(100)
+        # Revision 23/04/2026 >
         self._save.setToolTip('Diffusion model processing')
         self._save.setEnabled(False)
         layout.addWidget(exitb)
@@ -358,17 +364,35 @@ class DialogDiffusionModel(QDialog):
             # Revision 23/03/2026 >
         # < Revision 23/03/2026
         elif self._combo.currentText() == 'FWDTI':
-            method = self._FWDTI.getParameterValue('Method')[0]
-            maps['fa'] = self._FWDTI.getParameterValue('FA')
-            maps['ga'] = self._FWDTI.getParameterValue('GA')
-            maps['md'] = self._FWDTI.getParameterValue('MD')
-            maps['tr'] = self._FWDTI.getParameterValue('Trace')
-            maps['ad'] = self._FWDTI.getParameterValue('AD')
-            maps['rd'] = self._FWDTI.getParameterValue('RD')
-            maps['li'] = self._FWDTI.getParameterValue('Linearity')
-            maps['pl'] = self._FWDTI.getParameterValue('Planarity')
-            maps['sp'] = self._FWDTI.getParameterValue('Sphericity')
-            maps['fw'] = self._FWDTI.getParameterValue('FW')
+            if not isOlderThan('1.12.10',dipyv):
+                method = self._FWDTI.getParameterValue('Method')[0]
+                maps['fa'] = self._FWDTI.getParameterValue('FA')
+                maps['ga'] = self._FWDTI.getParameterValue('GA')
+                maps['md'] = self._FWDTI.getParameterValue('MD')
+                maps['tr'] = self._FWDTI.getParameterValue('Trace')
+                maps['ad'] = self._FWDTI.getParameterValue('AD')
+                maps['rd'] = self._FWDTI.getParameterValue('RD')
+                maps['li'] = self._FWDTI.getParameterValue('Linearity')
+                maps['pl'] = self._FWDTI.getParameterValue('Planarity')
+                maps['sp'] = self._FWDTI.getParameterValue('Sphericity')
+                maps['fw'] = self._FWDTI.getParameterValue('FW')
+            else:
+                # < Revision 24/04/2026
+                if hasattr(sys, '_MEIPASS'):
+                    messageBox(self,
+                               self.windowTitle(),
+                               'The installed version of dipy ({}) does not support the FWDTI model.\n'
+                               'Module updates are not possible in the stand-alone, frozen version of PySisyphe.\n'
+                               'Please perform a complete reinstallation of the latest version of PySisyphe,\n'
+                               'which can be downloaded from https://github.com/PySisyphe/Sisyphe.'.format(dipyv))
+                else:
+                    messageBox(self,
+                               self.windowTitle(),
+                               'The installed version of dipy ({}) does not support the FWDTI model.\n'
+                               'Please upgrade Dipy to version 1.12.0.\n'
+                               '(pip install --upgrade dipy==1.12.0)'.format(dipyv))
+                return
+                # Revision 24/04/2026 ># Revision 23/04/2026 >
         # Revision 23/03/2026 >
         elif self._combo.currentText() == 'DKI':
             method = self._DKI.getParameterValue('Method')[0]
@@ -385,11 +409,29 @@ class DialogDiffusionModel(QDialog):
             # Revision 23/03/2026 >
         # < Revision 23/03/2026
         elif self._combo.currentText() == 'RUMBA':
-            method = self._RUMBA.getParameterValue('Method')[0]
-            maps['fcsf'] = self._RUMBA.getParameterValue('FCSF')
-            maps['fgm'] = self._RUMBA.getParameterValue('FGM')
-            maps['fwm'] = self._RUMBA.getParameterValue('FWM')
-            maps['fiso'] = self._RUMBA.getParameterValue('FISO')
+            if not isOlderThan('1.12.10',dipyv):
+                method = self._RUMBA.getParameterValue('Method')[0]
+                maps['fcsf'] = self._RUMBA.getParameterValue('FCSF')
+                maps['fgm'] = self._RUMBA.getParameterValue('FGM')
+                maps['fwm'] = self._RUMBA.getParameterValue('FWM')
+                maps['fiso'] = self._RUMBA.getParameterValue('FISO')
+            else:
+                # < Revision 24/04/2026
+                if hasattr(sys, '_MEIPASS'):
+                    messageBox(self,
+                               self.windowTitle(),
+                               'The installed version of dipy ({}) does not support the RUMBA model.\n'
+                               'Module updates are not possible in the stand-alone, frozen version of PySisyphe.\n'
+                               'Please perform a complete reinstallation of the latest version of PySisyphe,\n'
+                               'which can be downloaded from https://github.com/PySisyphe/Sisyphe.'.format(dipyv))
+                else:
+                    messageBox(self,
+                               self.windowTitle(),
+                               'The installed version of dipy ({}) does not support the RUMBA model.\n'
+                               'Please upgrade Dipy to version 1.12.0.'
+                               '(pip install --upgrade dipy==1.12.0)'.format(dipyv))
+                return
+                # Revision 23/04/2026 >
         # Revision 23/03/2026 >
         elif self._combo.currentText() == 'SHCSA':
             order = self._SHCSA.getParameterValue('Order')
@@ -553,7 +595,9 @@ class DialogALPS(QDialog):
         exitb.setDefault(True)
         exitb.setFixedWidth(100)
         self._exec = QPushButton('Execute')
-        self._exec.setFixedWidth(100)
+        # < Revision 23/04/2026
+        # self._exec.setFixedWidth(100)
+        # Revision 23/04/2026 >
         self._exec.setToolTip('DTI-ALPS index processing')
         self._exec.setEnabled(False)
         layout.addWidget(exitb)
