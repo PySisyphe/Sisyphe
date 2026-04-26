@@ -9626,6 +9626,30 @@ class SisypheFreeWaterDTIModel(SisypheDTIModel):
 
     # Public methods
 
+    def computeFitting(self, algfit: str = '', wait: DialogWait | None = None) -> None:
+        """
+        Estimate the diffusion model of the current SisypheFreeWaterDTIModel instance.
+
+        Parameters
+        ----------
+        algfit : str
+            fitting algorithm:
+                - 'WLS' weighted least squares
+                - 'NLS' non-linear least squares
+                - if is empty, uses fitting algorithm attribute
+        wait: Sisyphe.gui.dialogWait.DialogWait | None
+            progress bar dialog (optional)
+        """
+        if self.hasGradients() and self.hasDWI():
+            if self._fmodel is None:
+                if wait is not None:
+                    wait.setInformationText('FWDTI model fitting...')
+                if algfit == '' or algfit not in self._ALG: algfit = self._algfit
+                else: self._algfit = algfit
+                self._model = FreeWaterTensorModel(gtab=self._gtable, fit_method=algfit)
+                # noinspection PyTypeChecker
+                self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
+
     def getFreeWaterFraction(self) -> SisypheVolume:
         """
         Calculate free water diffusion volume fraction map.
