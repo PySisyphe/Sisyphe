@@ -2291,7 +2291,7 @@ class WindowSisyphe(QMainWindow):
                            '(pip install --upgrade matplotlib==3.10.8).'.format(pltv))
         # check dipy version
         from dipy import __version__ as dipyv
-        if isOlderThan('1.12.0', dipyv):
+        if isOlderThan('1.11.0', dipyv):
             if hasattr(sys, '_MEIPASS'):
                 messageBox(self,
                            self.windowTitle(),
@@ -4181,98 +4181,85 @@ class WindowSisyphe(QMainWindow):
         self._updatePluginsMenu()
 
     def checkUpdate(self) -> None:
-        import sys
-        if sys.version_info.major == 3 and sys.version_info.minor > 11:
-            from Sisyphe import version
-            wait = DialogWait(progress=False)
-            wait.open()
-            wait.setInformationText('Check for update, connection to host...')
-            QApplication.processEvents()
-            try: v = version.getVersionFromHost()
-            except:
-                wait.close()
-                messageBox(self,
+        from Sisyphe import version
+        wait = DialogWait(progress=False)
+        wait.open()
+        wait.setInformationText('Check for update, connection to host...')
+        QApplication.processEvents()
+        try: v = version.getVersionFromHost()
+        except:
+            wait.close()
+            messageBox(self,
+                       'Check for update',
+                       'Host connection failed.')
+            return
+        if version.isOlderThan(v):
+            wait.hide()
+            r = messageBox(self,
                            'Check for update',
-                           'Host connection failed.')
-                return
-            if version.isOlderThan(v):
+                           'A more recent version of PySisyphe is available.\n'
+                           'Would you like to install it ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
+            if r == QMessageBox.Yes:
+                from Sisyphe.core.sisypheDownload import updatePySisyphe
+                wait.setInformationText('Update to version {}...'.format(v))
+                wait.show()
+                updatePySisyphe(wait)
                 wait.hide()
+                # < Revision 08/01/2026
+                # noinspection PyUnresolvedReferences
+                if importlib.util.find_spec('google.genai') is None:
+                    messageBox(self,
+                               'Check for update',
+                               'The new modules Google GenAI, PyMuPDF, and EasyOCR cannot be installed with this update. '
+                               'You will therefore not be able to benefit from the new features related to these modules. '
+                               'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
+                # Revision 08/01/2026 >
+                # < Revision 24/04/2026
+                # noinspection PyUnresolvedReferences
+                if importlib.util.find_spec('google.genai') is None:
+                    messageBox(self,
+                               'Check for update',
+                               'The module openpyxl cannot be installed with this update. '
+                               'You will therefore not be able to save tables in xlsx format. '
+                               'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
+                from matplotlib import __version__ as pltv
+                if isOlderThan('3.10.8', pltv):
+                    messageBox(self,
+                               'Check for update',
+                               'Matplotlib ({}) cannot be upgraded to 3.10.8 with this update. '
+                               'This will result in display errors in PySisyphe, '
+                               'which can be downloaded from https://github.com/PySisyphe/Sisyphe.'.format(pltv))
+                from dipy import __version__ as dipyv
+                if isOlderThan('1.11.0', dipyv):
+                    messageBox(self,
+                               'Check for update',
+                               'dipy ({}) cannot be upgraded to 1.11.0+ with this update. '
+                               'This will result in PySisyphe errors for FWDTI and RUMBA diffusion models, '
+                               'Please perform a complete reinstallation of the latest version of PySisyphe, '
+                               'which can be downloaded from https://github.com/PySisyphe/Sisyphe.'.format(dipyv))
+                # Revision 24/04/2026 >
+                # < Revision 17/10/2025
                 r = messageBox(self,
                                'Check for update',
-                               'A more recent version of PySisyphe is available.\n'
-                               'Would you like to install it ?',
+                               'You must close and restart the application to complete the update.\n'
+                               'Do you want to exit now ?',
                                icon=QMessageBox.Question,
                                buttons=QMessageBox.Yes | QMessageBox.No,
                                default=QMessageBox.No)
                 if r == QMessageBox.Yes:
-                    from Sisyphe.core.sisypheDownload import updatePySisyphe
-                    wait.setInformationText('Update to version {}...'.format(v))
-                    wait.show()
-                    updatePySisyphe(wait)
-                    wait.hide()
-                    # < Revision 08/01/2026
-                    # noinspection PyUnresolvedReferences
-                    if importlib.util.find_spec('google.genai') is None:
-                        messageBox(self,
-                                   'Check for update',
-                                   'The new modules Google GenAI, PyMuPDF, and EasyOCR cannot be installed with this update. '
-                                   'You will therefore not be able to benefit from the new features related to these modules. '
-                                   'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
-                    # Revision 08/01/2026 >
-                    # < Revision 24/04/2026
-                    # noinspection PyUnresolvedReferences
-                    if importlib.util.find_spec('google.genai') is None:
-                        messageBox(self,
-                                   'Check for update',
-                                   'The module openpyxl cannot be installed with this update. '
-                                   'You will therefore not be able to save tables in xlsx format. '
-                                   'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
-                    from matplotlib import __version__ as pltv
-                    if isOlderThan('3.10.8', pltv):
-                        messageBox(self,
-                                   'Check for update',
-                                   'Matplotlib ({}) cannot be upgraded to 3.10.8 with this update. '
-                                   'This will result in display errors in PySisyphe, '
-                                   'which can be downloaded from https://github.com/PySisyphe/Sisyphe.'.format(pltv))
-                    from dipy import __version__ as dipyv
-                    if isOlderThan('1.12.0', dipyv):
-                        messageBox(self,
-                                   'Check for update',
-                                   'dipy ({}) cannot be upgraded to 1.12.0 with this update. '
-                                   'This will result in PySisyphe errors for FWDTI and RUMBA diffusion models, '
-                                   'Please perform a complete reinstallation of the latest version of PySisyphe, '
-                                   'which can be downloaded from https://github.com/PySisyphe/Sisyphe.'.format(dipyv))
-                    # Revision 24/04/2026 >
-                    # < Revision 17/10/2025
-                    r = messageBox(self,
-                                   'Check for update',
-                                   'You must close and restart the application to complete the update.\n'
-                                   'Do you want to exit now ?',
-                                   icon=QMessageBox.Question,
-                                   buttons=QMessageBox.Yes | QMessageBox.No,
-                                   default=QMessageBox.No)
-                    if r == QMessageBox.Yes:
-                        wait.close()
-                        self.exit()
-                    # Revision 17/10/2025 >
-                wait.close()
-            else:
-                wait.close()
-                messageBox(self,
-                           'Check for update',
-                           'PySisyphe is up-to-date'.format(version.__version__),
-                           icon=QMessageBox.Information)
+                    wait.close()
+                    self.exit()
+                # Revision 17/10/2025 >
+            wait.close()
         else:
-            if hasattr(sys, '_MEIPASS'):
-                messageBox(self,
-                           'Check for update',
-                           'Python version 3.10, on which this version of PySisyphe runs, is no longer supported. '
-                           'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.')
-            else:
-                messageBox(self,
-                           'Check for update',
-                           'Python version 3.10, on which this version of PySisyphe runs, is no longer supported. '
-                           'Please migrate to a Python 3.12 runtime venv.')
+            wait.close()
+            messageBox(self,
+                       'Check for update',
+                       'PySisyphe is up-to-date'.format(version.__version__),
+                       icon=QMessageBox.Information)
 
     def lutEdit(self) -> None:
         from Sisyphe.gui.dialogLutEdit import DialogLutEdit

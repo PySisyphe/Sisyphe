@@ -364,7 +364,7 @@ class DialogDiffusionModel(QDialog):
             # Revision 23/03/2026 >
         # < Revision 23/03/2026
         elif self._combo.currentText() == 'FWDTI':
-            if not isOlderThan('1.12.10',dipyv):
+            if not isOlderThan('1.11.0',dipyv):
                 method = self._FWDTI.getParameterValue('Method')[0]
                 maps['fa'] = self._FWDTI.getParameterValue('FA')
                 maps['ga'] = self._FWDTI.getParameterValue('GA')
@@ -409,7 +409,7 @@ class DialogDiffusionModel(QDialog):
             # Revision 23/03/2026 >
         # < Revision 23/03/2026
         elif self._combo.currentText() == 'RUMBA':
-            if not isOlderThan('1.12.10',dipyv):
+            if not isOlderThan('1.11.0',dipyv):
                 method = self._RUMBA.getParameterValue('Method')[0]
                 maps['fcsf'] = self._RUMBA.getParameterValue('FCSF')
                 maps['fgm'] = self._RUMBA.getParameterValue('FGM')
