@@ -338,6 +338,7 @@
 		<Template vartype="vol"/>
 		<LeftMask vartype="vol"/>
 		<RightMask vartype="vol"/>
+		<ApplyMask label="Save masked statistical map" vartype="bool">False</ApplyMask>
 	</LateralityIndex>
 	<Conjunction>
 		<Method vartype="lstr">Fisher|Mudholkar|Stouffer|Tippett|Worsley</Method>
