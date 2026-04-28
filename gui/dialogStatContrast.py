@@ -1012,6 +1012,20 @@ class DialogLateralityIndex(QDialog):
                 v = SisypheROI()
                 v.load(self._rmask.getFilename())
                 rmask = v.getNumpy().flatten() > 0
+            # < Revision 28/04/2026
+            if self._settings.getParameterValue('ApplyMask'):
+                masked = lmask + rmask
+                masked = masked * rmap.getNumpy().flatten()
+                v = SisypheVolume()
+                v.copyFromNumpyArray(masked.reshape(rmap.getSize()[::-1]),
+                                     spacing=rmap.getSpacing(),
+                                     origin=rmap.getOrigin(),
+                                     direction=rmap.getDirections())
+                v.copyAttributesFrom(rmap)
+                v.setFilename(rmap.getFilename())
+                v.setFilenameSuffix('masked')
+                v.save()
+            # Revision 28/04/2026 >
             dlg = DialogGenericResults()
             if platform == 'win32':
                 import pywinstyles
