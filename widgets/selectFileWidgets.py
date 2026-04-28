@@ -4765,7 +4765,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
     QWidget, SelectionFilter -> FilesSelectionWithParametersWidget
 
     Creation: 26/03/2026
-    Last revision: 09/04/2026
+    Last revision: 27/04/2026
     """
 
     # Custom Qt Signals
@@ -5058,11 +5058,15 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
                                 elif ';' in buff: values = loadtxt(filename, delimiter=';')
                                 elif '|' in buff: values = loadtxt(filename, delimiter='|')
                                 elif ' ' in buff: values = loadtxt(filename, delimiter=' ')
+                                # < Revision 27/04/2026
+                                else: values = loadtxt(filename)
+                                if values.size == 1: values = values.flatten()
+                                # Revision 27/04/2026 >
                         elif ext == '.csv': values = loadtxt(filename, delimiter=',')
                         elif ext == '.npy': values = load(filename)
                     except:
                         messageBox(self,
-                                   'Load {} values'.format(name),
+                                   'Load values'.format(name),
                                    text='Error loading {} values.'.format(basename(filename)))
                         return
                     dtype = self._parameters[name]['dtype']
@@ -5101,7 +5105,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
                         elif ext == '.npy': save(filename, values)
                     except:
                         messageBox(self,
-                                   'Save {} values'.format(name),
+                                   'Save values'.format(name),
                                    text='Error saving {} values.'.format(basename(filename)))
 
     # Public methods

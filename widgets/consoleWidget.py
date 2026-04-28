@@ -740,7 +740,7 @@ class ConsoleWidget(QWidget):
 
     QWidget -> ConsoleWidget
 
-    Last revision: 19/02/2026
+    Last revision: 27/04/2026
     """
 
     @classmethod
@@ -802,8 +802,21 @@ class ConsoleWidget(QWidget):
         self._console.kernel_client = kernel_client = self._console.kernel_manager.client()
         kernel_client.start_channels()
         self.pushVariables(variables)
-        # self._console.execute('%config InProcessInteractiveShell.cache_size=0', hidden=True)
-        self._console.execute('%matplotlib inline', hidden=True)
+
+        # < Revision 27/04/2026
+        # inline setup
+        try:
+            # workaround for the exception raised by %matplotlib inline during a frozen execution
+            # this bug is related to upgrading Matplotlib to version 3.10.8.
+            if hasattr(sys, '_MEIPASS'):
+                self._console.execute("import matplotlib; matplotlib.use('QtAgg')", hidden=True)
+                from PyQt5.QtCore import QTimer
+                QTimer.singleShot(0, self._enable_inline)
+                # self._console.execute(setup_inline, hidden=True)
+            else: self._console.execute('%matplotlib inline', hidden=True)
+        except: pass
+        # Revision 27/04/2026 >
+
         if platform == 'win32':
             # bug fix of windows console encodings (code page 850 vs code page 1252)
             self._console.execute('import os', hidden=True)
@@ -1026,6 +1039,43 @@ class ConsoleWidget(QWidget):
         self._console.executed.connect(self.update)
 
     # Private methods
+
+    # < Revision 27/04/2026
+    # add _enable_inline method
+    def _enable_inline(self):
+        # workaround for the exception raised by %matplotlib inline during a frozen execution
+        # this bug is related to upgrading Matplotlib to version 3.10.8
+        if sys.version_info.minor == 10:
+            self._console.execute("import matplotlib\n"
+                                  "import matplotlib.rcsetup as rcsetup\n"
+                                  "\n"
+                                  "def _no_validate_backend(s):\n"
+                                  "    return s\n"
+                                  "\n"
+                                  "matplotlib.rcParams.validate['backend'] = _no_validate_backend\n"
+                                  "import matplotlib_inline.backend_inline\n"
+                                  "from IPython import get_ipython\n"
+                                  "ip = get_ipython()\n"
+                                  "if ip:\n"
+                                  "    ip.run_line_magic('matplotlib', 'inline')\n", hidden=True)
+        elif sys.version_info.minor == 12:
+            # hook for inline display without inline backend
+            self._console.execute("import matplotlib.pyplot as plt\n"
+                                  "from IPython.display import display\n"
+                                  "\n"
+                                  "try:\n"
+                                  "    from matplotlib_inline.backend_inline import configure_inline_support\n"
+                                  "    from IPython import get_ipython\n"
+                                  "    ip = get_ipython()\n"
+                                  "    if ip:\n"
+                                  "        configure_inline_support(ip, 'inline')\n"
+                                  "except: pass\n"
+                                  "\n"
+                                  "def _inline_show(*args, **kwargs):\n"
+                                  "    display(plt.gcf())\n"
+                                  "\n"
+                                  "plt.show = _inline_show\n", hidden=True)
+    # Revision 27/04/2026 >
 
     # noinspection PyUnusedLocal
     def _globalsDblClicked(self, item, c):
@@ -1695,7 +1745,19 @@ class ConsoleWidget(QWidget):
     def restart(self):
         self._console.reset(clear=True)
         self.pushVariables(self._variables)
-        self._console.execute('%matplotlib inline', hidden=True)
+
+        # < Revision 27/04/2026
+        # workaround for the exception raised by %matplotlib inline during a frozen execution
+        # this bug is related to upgrading Matplotlib to version 3.10.8
+        try:
+            if hasattr(sys, '_MEIPASS'):
+                self._console.execute("import matplotlib; matplotlib.use('QtAgg')", hidden=True)
+                from PyQt5.QtCore import QTimer
+                QTimer.singleShot(0, self._enable_inline)
+            else: self._console.execute('%matplotlib inline', hidden=True)
+        except: pass
+        # Revision 27/04/2026 >
+
         self.update()
 
     def save(self):

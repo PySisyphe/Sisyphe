@@ -107,7 +107,7 @@ class MultiComponentViewWidget(MultiViewWidget):
     QWidget -> MultiViewWidget -> GridViewWidget -> MultiComponentViewWidget
 
     Creation: 10/12/2024
-    Last revision: 19/02/2026
+    Last revision: 23/04/2026
     """
 
     # Special method
@@ -596,10 +596,13 @@ class MultiComponentViewWidget(MultiViewWidget):
             # self._span.xy[0][0] = self._first
             # self._span.xy[1][0] = self._first
             # self._span.xy[4][0] = self._first
-            xy = self._span.get_xy()
-            xy[0][0] = self._first
-            xy[1][0] = self._first
-            xy[4][0] = self._first
+            # < Revision 23/04/2026
+            # xy = self._span.get_xy()
+            # xy[0][0] = self._first
+            # xy[1][0] = self._first
+            # xy[4][0] = self._first
+            self._span.set_x(self._first)
+            # Revision 23/04/2026 >
             # Revision 23/03/2026 >
             n = self._multi.getNumberOfComponentsPerPixel()
             last = min(self._first + 8, n - 1)
@@ -607,9 +610,12 @@ class MultiComponentViewWidget(MultiViewWidget):
             # migrate from matplotlib 3.6.3 to 3.10.8
             # self._span.xy[2][0] = last
             # self._span.xy[3][0] = last
-            xy = self._span.get_xy()
-            xy[2][0] = last
-            xy[3][0] = last
+            # < Revision 23/04/2026
+            # xy = self._span.get_xy()
+            # xy[2][0] = last
+            # xy[3][0] = last
+            self._span.set_width(last - self._first)
+            # Revision 23/04/2026 >
             # Revision 23/03/2026 >
             # < Revision 23/03/2026
             # migrate from matplotlib 3.6.3 to 3.10.8

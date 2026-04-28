@@ -222,7 +222,7 @@ class LutWidget(QWidget):
     QWidget -> LutWidget
 
     Creation: 01/11/2022
-    Last revision: 20/10/2025
+    Last revision: 23/04/2026
     """
 
     # Custom Qt Signal
@@ -451,7 +451,7 @@ class LutWidget(QWidget):
     _rect1axe           Axes, Left lut display, values under window
     _rect2axe           Axes, Right lut display, values above window
     _imglut             AxesImage, Lut image
-    _span               avxspan, Span artist (polygon patches instance)
+    _span               Rectangle, Span artist (polygon patches instance)
     _cursor             QCursor, Mouse cursor
     _thresholdinftext   Annotation, Window inf. value displayed on the span
     _thresholdsuptext   Annotation, Window sup. value displayed on the span
@@ -675,7 +675,10 @@ class LutWidget(QWidget):
         # < Revision 23/03/2026
         # migrate from matplotlib 3.6.3 to 3.10.8
         # return self._span.xy[0][0]
-        return self._span.get_xy()[0][0]
+        # < Revision 23/04/2026
+        # return self._span.get_xy()[0][0]
+        return self._span.get_x()
+        # Revision 23/04/2026 >
         # Revision 23/03/2026 >
 
     def _get_span_right(self) -> float:
@@ -690,7 +693,10 @@ class LutWidget(QWidget):
         # < Revision 23/03/2026
         # migrate from matplotlib 3.6.3 to 3.10.8
         # return self._span.xy[2][0]
-        return self._span.get_xy()[2][0]
+        # < Revision 23/04/2026
+        # return self._span.get_xy()[2][0]
+        return self._span.get_x() + self._span.get_width()
+        # Revision 23/04/2026 >
         # Revision 23/03/2026 >
 
     def _set_span_left(self, x: float) -> float:
@@ -711,10 +717,14 @@ class LutWidget(QWidget):
         # self._span.xy[0][0] = x
         # self._span.xy[1][0] = x
         # self._span.xy[4][0] = x
-        xy = self._span.get_xy()
-        xy[0][0] = x
-        xy[1][0] = x
-        xy[4][0] = x
+        # < Revision 23/04/2026
+        # xy = self._span.get_xy()
+        # xy[0][0] = x
+        # xy[1][0] = x
+        # xy[4][0] = x
+        self._span.set_width(self._get_span_right() - x)
+        self._span.set_x(x)
+        # Revision 23/04/2026 >
         # Revision 23/03/2026 >
         return x
 
@@ -735,9 +745,12 @@ class LutWidget(QWidget):
         # migrate from matplotlib 3.6.3 to 3.10.8
         # self._span.xy[2][0] = x
         # self._span.xy[3][0] = x
-        xy = self._span.get_xy()
-        xy[2][0] = x
-        xy[3][0] = x
+        # < Revision 23/04/2026
+        # xy = self._span.get_xy()
+        # xy[2][0] = x
+        # xy[3][0] = x
+        self._span.set_width(x - self._span.get_x())
+        # Revision 23/04/2026 >
         # Revision 23/03/2026 >
         return x
 

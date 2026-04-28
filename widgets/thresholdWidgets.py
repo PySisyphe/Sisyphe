@@ -58,7 +58,7 @@ class ThresholdViewWidget(QWidget):
 
     QWidget -> ThresholdViewWidget
 
-    Last revision: 20/10/2025
+    Last revision: 23/04/2026
     """
 
     # Class methods
@@ -399,14 +399,20 @@ class ThresholdViewWidget(QWidget):
         # < Revision 23/03/2026
         # migrate from matplotlib 3.6.3 to 3.10.8
         # return self._span.xy[0][0]
-        return self._span.get_xy()[0][0]
+        # < Revision 23/04/2026
+        # return self._span.get_xy()[0][0]
+        return self._span.get_x()
+        # Revision 23/04/2026 >
         # Revision 23/03/2026 >
 
     def _get_span_right(self):
         # < Revision 23/03/2026
         # migrate from matplotlib 3.6.3 to 3.10.8
         # return self._span.xy[2][0]
-        return self._span.get_xy()[2][0]
+        # < Revision 23/04/2026
+        # return self._span.get_xy()[2][0]
+        return self._span.get_x() + self._span.get_width()
+        # Revision 23/04/2026 >
         # Revision 23/03/2026 >
 
     def _set_span_left(self, x):
@@ -419,10 +425,14 @@ class ThresholdViewWidget(QWidget):
         # self._span.xy[0][0] = x
         # self._span.xy[1][0] = x
         # self._span.xy[4][0] = x
-        xy = self._span.get_xy()
-        xy[0][0] = x
-        xy[1][0] = x
-        xy[4][0] = x
+        # < Revision 23/04/2026
+        # xy = self._span.get_xy()
+        # xy[0][0] = x
+        # xy[1][0] = x
+        # xy[4][0] = x
+        self._span.set_width(self._get_span_right() - x)
+        self._span.set_x(x)
+        # Revision 23/04/2026 >
         # Revision 23/03/2026 >
         return x
 
@@ -435,9 +445,12 @@ class ThresholdViewWidget(QWidget):
         # migrate from matplotlib 3.6.3 to 3.10.8
         # self._span.xy[2][0] = x
         # self._span.xy[3][0] = x
-        xy = self._span.get_xy()
-        xy[2][0] = x
-        xy[3][0] = x
+        # < Revision 23/04/2026
+        # xy = self._span.get_xy()
+        # xy[2][0] = x
+        # xy[3][0] = x
+        self._span.set_width(x - self._span.get_x())
+        # Revision 23/04/2026 >
         # Revision 23/03/2026 >
         return x
 
