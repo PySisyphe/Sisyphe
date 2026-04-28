@@ -454,8 +454,8 @@
 		<DCM label="Get TE from dicom file" vartype="dcm"/>
 		<TE label="TE (ms)" varmax="10000.0" varmin="0.0" vartype="float">0.0</TE>
 		<TR label="TR (ms)" varmax="10000.0" varmin="0.0" vartype="float">0.0</TR>
-		<Lambda label="Blood brain partition coefficient" varmin="0.8" varmax="1.0" vartype="float">0.90</Lambda>
-		<Alpha label="Labeling efficiency"  varmin="0.9" varmax="1.0" vartype="float">0.98</Alpha>
+		<Lambda label="Blood brain partition coefficient" varmin="0.80" varmax="1.00" decimals="2" vartype="float">0.90</Lambda>
+		<Alpha label="Labeling efficiency"  varmin="0.90" varmax="1.00" decimals="2" vartype="float">0.98</Alpha>
 		<T1 label="T1 relaxation time of blood (ms)" varmin="1000.0" varmax="3000.0" vartype="float">1650.0</T1>
 	</ASL>
 	<DiffusionPreprocessing>
