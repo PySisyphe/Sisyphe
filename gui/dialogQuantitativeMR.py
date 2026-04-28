@@ -1401,7 +1401,7 @@ class DialogQSMMapping(QDialog):
     QDialog -> DialogQSMMapping
 
     Creation: 31/03/2026
-    Last revision: 09/04/2026
+    Last revision: 27/04/2026
     """
 
     # Special method
@@ -1517,6 +1517,8 @@ class DialogQSMMapping(QDialog):
             wait.open()
             te = self._select.getParameterValues('EchoTime')
             field = self._select.getParameterValues('MagneticFieldStrength')
+            print(te)
+            print(field)
             for i in range(n):
                 if te[i] == '0.0':
                     wait.close()
@@ -1535,12 +1537,15 @@ class DialogQSMMapping(QDialog):
                 self._maskSelect.clearSelection()
                 img = SisypheVolume()
                 img.load(fphse[i])
-                if i < len(fmask):
+                # < Revision 27/04/2026
+                # if i < len(fmask):
+                if fmask is not None and i < len(fmask):
                     self._maskSelect.setSelectionTo(i)
                     mask = SisypheVolume()
                     wait.addInformationText('Open {}...'.format(basename(fmask[i])))
                     mask.load(fmask[i])
-                else:mask = None
+                else: mask = None
+                # Revision 27/04/2026 >
                 wait.setInformationText('QSM map processing...')
                 try: r = QSMMap(img, mask, te[i], field[i], rescaling, iters, wait=wait)
                 except UserAbortException:
