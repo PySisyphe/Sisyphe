@@ -913,12 +913,16 @@ def QSMMap(img : SisypheVolume,
         QSM map
     """
     gamma = 42.5781
-    phase = img.getNumpy(defaultshape=False)
+    # < Revision 27/04/2026
     if rescaling:
         # phase = (phase / 4096.0) * pi
-        phase = phaseRescaling(phase)
-    msk = mask.getNumpy(defaultshape=False)
-    msk[msk > 0] = 1
+        img = phaseRescaling(img)
+    phase = img.getNumpy(defaultshape=False)
+    if mask is not None:
+        msk = mask.getNumpy(defaultshape=False)
+        msk[msk > 0] = 1
+    else: msk = ones(phase.shape, 'uint8')
+    # Revision 27/04/2026 >
     te /= 1000.0 # in s
     scale = (2.0 * pi * te) * (field * gamma)
     laplace_phi0 = get_laplace_phase3(phase, img.getSpacing())
