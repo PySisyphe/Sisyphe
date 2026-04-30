@@ -69,7 +69,7 @@ PySisyphe is plug-in extensible and provides a fully documented API that gives a
 Download
 ========
 
-[Download source](https://mega.nz/folder/G18X2IRQ#BRpA7_fcyHBIK66aZNyntA)
+[Download source](https://mega.nz/file/f1dDzIwb#A5-KwfvM1CHam0YGM1LWZHy3Zn3lADZxFzXesjFPVkI)
 
 [Download folder](https://mega.nz/folder/Kt8hzbSa#AUkLH1WH0zoawYolT8Ep0w)
 
