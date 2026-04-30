@@ -95,7 +95,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-78-08-build-01-02-2026">version 0.78.08, build 01/02/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-80-15-build-20-02-2026">version 0.80.15, build 20/02/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-81-22-build-20-03-2026">version 0.81.22, build 20/03/2026</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-0-87-08-build-20-04-2026">version 0.87.08, build 20/04/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-87-12-build-20-04-2026">version 0.87.12, build 20/04/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -143,7 +143,7 @@
 <li><p><a class="reference internal" href="#build01-02-2026"><span class="std std-ref">version 0.78.08, build 01/02/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-02-2026"><span class="std std-ref">version 0.80.15, build 20/02/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-03-2026"><span class="std std-ref">version 0.81.22, build 20/03/2026</span></a></p></li>
-<li><p><a class="reference internal" href="#build20-04-2026"><span class="std std-ref">version 0.87.08, build 20/04/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build20-04-2026"><span class="std std-ref">version 0.87.12, build 20/04/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -7087,8 +7087,8 @@
 </li>
 </ul>
 </section>
-<section id="version-0-87-08-build-20-04-2026">
-<span id="build20-04-2026"></span><h2>version 0.87.08, build 20/04/2026<a class="headerlink" href="#version-0-87-08-build-20-04-2026" title="Link to this heading"></a></h2>
+<section id="version-0-87-12-build-20-04-2026">
+<span id="build20-04-2026"></span><h2>version 0.87.12, build 20/04/2026<a class="headerlink" href="#version-0-87-12-build-20-04-2026" title="Link to this heading"></a></h2>
 <ul>
 <li><p><strong>updated html documentation</strong></p>
 <blockquote>
@@ -7101,6 +7101,7 @@
 <li><p>PySisyphe_Functions.rst</p></li>
 <li><p>PySisyphe_Segmentation.rst</p></li>
 <li><p>PySisyphe_menubar.rst</p></li>
+<li><p>rebuild sphinx documentation</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -7110,6 +7111,13 @@
 <li><p>/settings/functions.xml</p></li>
 <li><p>/settings/tooltips.xml</p></li>
 <li><p>requirements.txt</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>update main PySisyphe.py</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 36, Fix PyTorch DLL loading issue on Windows</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -7157,6 +7165,15 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>rebuild frozen version (pyinstaller)</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PySisyphe.py update</p></li>
+<li><p>upgrade to dipy version 1.12.0</p></li>
+<li><p>upgrade to matplotlib version 3.10.8</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p><strong>new external modules</strong></p>
 <blockquote>
 <div><ul class="simple">
@@ -7176,6 +7193,7 @@
 <li><p><strong>updated modules</strong></p>
 <blockquote>
 <div><ul>
+<li><p>version</p></li>
 <li><p>core.sisypheLUT</p></li>
 <li><p>core.sisypheTracts</p></li>
 <li><p>core.sisypheImageAttributes</p></li>
@@ -7209,6 +7227,7 @@
 <li><p>gui.dialogWait</p></li>
 <li><p>gui.dialogEditLabels</p></li>
 <li><p>gui.dialogSettings</p></li>
+<li><p>gui.dialogStatContrast</p></li>
 <li><p>gui.windowSisyphe</p></li>
 <li><p>processing.dscFunctions</p></li>
 <li><p>processing.capturedStdoutProcessing</p></li>
@@ -7221,6 +7240,7 @@
 <li><p>widgets.dicomWidgets</p></li>
 <li><p>widgets.attributesWidgets</p></li>
 <li><p>widgets.functionsSettingsWidget</p></li>
+<li><p>widgets.consoleWidget</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -7407,6 +7427,14 @@
 <li><p><strong>updated classes</strong></p>
 <blockquote>
 <div><ul>
+<li><p>version</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update isOlderThan() method</p></li>
+<li><p>update isNewerThan() method</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>core.sisypheLUT.SisypheLUT</p>
 <blockquote>
 <div><ul class="simple">
@@ -7679,6 +7707,13 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.dialogStatContrast.DialogLateralityIndex</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>gui.windowSisyphe.WindowSisyphe</p>
 <blockquote>
 <div><ul class="simple">
@@ -7694,6 +7729,7 @@
 <li><p>new mapMTR() method</p></li>
 <li><p>new mapASL() method</p></li>
 <li><p>new diffusionALPS() method</p></li>
+<li><p>new versionControl() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -7712,6 +7748,13 @@
 <li><p>update _set_span_left() method</p></li>
 <li><p>update _set_span_right() method</p></li>
 <li><p>update _draw() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.LutEditWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
 <li><p>update _onMouseMoveEvent() method</p></li>
 </ul>
 </div></blockquote>
@@ -7723,6 +7766,8 @@
 <li><p>update _updateLines() method</p></li>
 <li><p>update setTransfer() method</p></li>
 <li><p>update _onMouseMoveEvent() method</p></li>
+<li><p>update _onMenuNew() method</p></li>
+<li><p>update _onMenuRemove() method</p></li>
 <li><p>update _onMenuClear() method</p></li>
 </ul>
 </div></blockquote>
@@ -7755,6 +7800,9 @@
 <li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget</p>
 <blockquote>
 <div><ul class="simple">
+<li><p>update _cursorPositionChanged() method</p></li>
+<li><p>update addCurrentCurveToChart() method</p></li>
+<li><p>update cleanChart() method</p></li>
 <li><p>update updateSpan() method</p></li>
 </ul>
 </div></blockquote>
@@ -7775,9 +7823,6 @@
 <li><p>update _get_span_right() method</p></li>
 <li><p>update _set_span_left() method</p></li>
 <li><p>update _set_span_right() method</p></li>
-<li><p>update addCurrentCurveToChart() method</p></li>
-<li><p>update _cursorPositionChanged() method</p></li>
-<li><p>update cleanChart() method</p></li>
 <li><p>update _onMouseMoveEvent() method</p></li>
 </ul>
 </div></blockquote>
@@ -7821,6 +7866,15 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>update _initSettingsLayout() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new _enable_inline() method</p></li>
+<li><p>update __init__() method</p></li>
+<li><p>upadte restart() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -7886,6 +7940,13 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.windowSisyphe.WindowSisyphe.versionControl()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Check the module versions to detect any incompatibilities with the current version of PySisyphe</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>widgets.selectFileWidgets.FilesSelectionWidget.fileCountWarningOn()</p></li>
 <li><p>widgets.selectFileWidgets.FilesSelectionWidget.fileCountWarningOff()</p></li>
 <li><p>widgets.selectFileWidgets.FilesSelectionWidget.setFileCountWarning()</p></li>
@@ -7904,12 +7965,27 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>widgets.consoleWidget.ConsoleWidget._enable_inline()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>workaround for the exception raised by %matplotlib inline during a frozen execution related to the matplotlib upgrade to 3.10.8 version</p></li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </div></blockquote>
 </li>
 <li><p><strong>updated methods</strong></p>
 <blockquote>
 <div><ul>
+<li><p>version.isOlderThan()</p></li>
+<li><p>version.isNewerThan()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add current parameter</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>core.sisypheTracts.SisypheSHCSAModel.getModel()</p></li>
 <li><p>core.sisypheTracts.SisypheSHCSAModel.computeFitting()</p></li>
 <li><p>core.sisypheTracts.SisypheSHCSDModel.getModel()</p></li>
@@ -8002,6 +8078,13 @@
 <div><ul class="simple">
 <li><p>add free water DTI and RUMBA models management</p></li>
 <li><p>add linearity, planarity and sphericity maps (DTI, FWDTI and DKI models)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogStatContrast.DialogLateralityIndex.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>save masked statistical map</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8176,6 +8259,150 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>widgets.LUTWidgets.LutWidget._get_span_left()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>matplotlib migration to 3.10.8, replace self._span.get_xy()[0][0] by self._span.get_x()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.LutWidget._get_span_right()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>matplotlib migration to 3.10.8, replace self._span.get_xy()[2][0] by self._span.get_x() + self._span.get_width()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.LutWidget._set_span_left()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>matplotlib migration to 3.10.8, replace span left update by self._span.set_x(x)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.LutWidget._set_span_right()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>matplotlib migration to 3.10.8, replace span right update by self._span.set_width(x - self._span.get_x())</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.LutWidget._draw()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self._canvas.draw() by self._canvas.draw_idle()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.LutEditWidget.__init__()</p></li>
+<li><p>widgets.LUTWidgets.LutEditWidget._onMouseMoveEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self._canvas.draw() by self._canvas.draw_idle()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.AlphaTransferWidget.__init__()</p></li>
+<li><p>widgets.LUTWidgets.AlphaTransferWidget._updateLines()</p></li>
+<li><p>widgets.LUTWidgets.AlphaTransferWidget.setTransfer()</p></li>
+<li><p>widgets.LUTWidgets.AlphaTransferWidget._onMouseMoveEvent()</p></li>
+<li><p>widgets.LUTWidgets.AlphaTransferWidget._onMenuNew()</p></li>
+<li><p>widgets.LUTWidgets.AlphaTransferWidget._onMenuRemove()</p></li>
+<li><p>widgets.LUTWidgets.AlphaTransferWidget._onMenuClear()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self._canvas.draw() by self._canvas.draw_idle()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.ComboBoxLut._addInternalLut()</p></li>
+<li><p>widgets.LUTWidgets.ComboBoxLut.getCurrentAsMatplotlibColormap()</p></li>
+<li><p>widgets.LUTWidgets.ComboBoxLut._addInternalLut()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>matplotlib migration to 3.10.8, replace lut = get_cmap(name, 256) by lut = colormaps[name].resampled(256)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.PopupMenuLut.getCurrentAsMatplotlibColormap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>matplotlib migration to 3.10.8, replace lut = get_cmap(name, 256) by lut = colormaps[name].resampled(256)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.ImagePreviewWidget.__init__()</p></li>
+<li><p>widgets.imageWidgets.ImagePreviewWidget.setDefaultLut()</p></li>
+<li><p>widgets.imageWidgets.ImagePreviewWidget.setLut()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>matplotlib migration to 3.10.8, replace self._lut = get_cmap(lut, 256) by self._lut = colormaps[lut].resampled(256)</p></li>
+<li><p>matplotlib migration to 3.10.8, replace self._lut = get_cmap(‘gray’, 256) by self._lut = colormaps[‘gray’].resampled(256)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget._cursorPositionChanged()</p></li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget.addCurrentCurveToChart()</p></li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget.cleanChart()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self._canvas.draw() by self._canvas.draw_idle()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget.updateSpan()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>matplotlib migration to 3.10.8, replace left span update by self._span.set_x(self._first)</p></li>
+<li><p>matplotlib migration to 3.10.8, replace right span update by self._span.set_width(last - self._first)</p></li>
+<li><p>replace self._canvas.draw() by self._canvas.draw_idle()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sheetWidget.SheetChartWidget._drawChart()</p></li>
+<li><p>widgets.sheetWidget.SheetChartWidget.properties()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self._canvas.draw() by self._canvas.draw_idle()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.thresholdWidget.ThresholdViewWidget.__init__()</p></li>
+<li><p>widgets.thresholdWidget.ThresholdViewWidget._onMouseMoveEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self._canvas.draw() by self._canvas.draw_idle()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.thresholdWidget.ThresholdViewWidget._get_span_left()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>matplotlib migration to 3.10.8, replace self._span.get_xy()[0][0] by self._span.get_x()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.thresholdWidget.ThresholdViewWidget._get_span_right()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>matplotlib migration to 3.10.8, replace self._span.get_xy()[2][0] by self._span.get_x() + self._span.get_width()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.thresholdWidget.ThresholdViewWidget._set_span_left()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>matplotlib migration to 3.10.8, replace span left update by self._span.set_x(x)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.thresholdWidget.ThresholdViewWidget._set_span_right()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>matplotlib migration to 3.10.8, replace span right update by self._span.set_width(x - self._span.get_x())</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>widgets.selectFileWidgets.FilesSelectionWidget.copySelectionFrom()</p></li>
 <li><p>widgets.selectFileWidgets.FilesSelectionWidget.copySelectionTo()</p>
 <blockquote>
@@ -8218,6 +8445,14 @@
 <div><ul class="simple">
 <li><p>add attribute ‘component’ for ‘vol’ node, to define single or multicomponent xvol selection</p></li>
 <li><p>bug fix, line 755, replace data = abspath(join(base, data)) by if base != ‘’: data = abspath(join(base, data))</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget.__init__()</p></li>
+<li><p>widgets.consoleWidget.ConsoleWidget.restart()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>workaround for the exception raised by %matplotlib inline during a frozen execution related to the matplotlib upgrade to 3.10.8 version</p></li>
 </ul>
 </div></blockquote>
 </li>
