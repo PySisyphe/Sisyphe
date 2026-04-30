@@ -19,20 +19,27 @@ import sys
 import ctypes
 
 import os
-os.environ['PYDEVD_DISABLE_FILE_VALIDATION'] = '1'  # Disable IPython warnings
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'  # Disable tensorflow warnings
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-if sys.platform == 'darwin':
-    # fix Qt crash on macOS BigSur platform
-    os.environ["QT_MAC_WANTS_LAYER"] = '1'
+from os import mkdir
 from os.path import exists
 from os.path import join
 from os.path import splitext
 from os.path import dirname
+from os.path import basename
 from os.path import expanduser
 from os.path import abspath
 
-if sys.platform == 'win32':
+# Disable IPython warnings
+os.environ['PYDEVD_DISABLE_FILE_VALIDATION'] = '1'
+# Disable tensorflow warnings
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+if sys.platform == 'darwin':
+    # fix Qt crash on macOS BigSur platform
+    os.environ['QT_MAC_WANTS_LAYER'] = '1'
+    # Fix matplotlib crash when scanning X11 fonts
+    os.environ['X11_PREFERENCE'] = '0'
+elif sys.platform == 'win32':
     # Fix PyTorch DLL loading issue on Windows
     # < Revision 23/04/2026
     from importlib.util import find_spec
@@ -48,20 +55,43 @@ if sys.platform == 'win32':
         user32 = ctypes.WinDLL('user32')
         hWnd = kernel32.GetConsoleWindow()
         if hWnd:
-            user32.ShowWindow(hWnd, 0)  # 0 = SW_HIDE
+            # 0 = SW_HIDE
+            user32.ShowWindow(hWnd, 0)
     # Revision 10/01/2026 >
 
 # < Revision 10/01/2026
 import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings('ignore', category=DeprecationWarning)
 # Revision 10/01/2026 >
 
 import traceback
 
-# < Revision 16/07/2025
+
+# < Revision 30/04/2026
+mpl_cache_dir = abspath(join(expanduser('~'), '.matplotlib'))
+if not exists(mpl_cache_dir): mkdir(mpl_cache_dir)
+os.environ['MPLCONFIGDIR'] = mpl_cache_dir
+
+from glob import glob
+fontlist_filename = glob(join(mpl_cache_dir, 'fontlist-v*.json'))
+if len(fontlist_filename) == 0:
+    import json
+    import Sisyphe.gui
+    path = join(dirname(Sisyphe.gui.__file__), 'font')
+    filename = join(path, 'template.json')
+    if exists(filename):
+        with open(filename, 'r') as f:
+            fontlist = json.load(f)
+        for font in fontlist['ttflist']:
+            fname = basename(font['fname'])
+            font['fname'] = join(path, fname)
+        fontlist_filename = join(mpl_cache_dir, 'fontlist-v{}.json'.format(fontlist['_version']))
+        with open(fontlist_filename, 'w') as f:
+            json.dump(fontlist, f, indent=4)
+
 import matplotlib
 matplotlib.use('Qt5Agg')
-# Revision 16/07/2025 >
+# Revision 30/04/2026 >
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QLocale
@@ -156,21 +186,16 @@ def globalExceptionHandler(tp, value, tb):
     # < Revision 16/03/2026
     if tp.__name__ == 'UserAbortException': return
     # Revision 16/03/2026 >
-    messageBox(None,
-               'PySisyphe uncaught exception',
-               '{}\nSee PySisyphe.log for traceback details.'.format(str(value)))
-    # < Revision 10/11/2025
-    # stack = traceback.format_list(traceback.extract_stack())
-    # summary = traceback.format_list(traceback.extract_tb(tb))
-    # if len(summary) > 0: summary = summary[0]
-    # else: summary = ''
-    # if len(stack) > 1: msg = ''.join(stack[:-1])
-    # else: msg = ''
-    # if not hasattr(sys, '_MEIPASS'):
-    # logging.error('{}{}  {}'.format(msg, summary, str(value)))
+    try: messageBox(None,
+                    'PySisyphe uncaught exception',
+                    '{}\nSee PySisyphe.log for traceback details.'.format(str(value)))
+    except: pass
     msg = ''.join(traceback.format_exception(tp, value, tb))
-    # Revision 10/11/2025 >
-    logging.error(msg)
+    try: logging.error(msg)
+    except:
+        sys.stderr.write(msg)
+        sys.stderr.flush()
+
 # Revision 04/07/2025 >
 
 sys.excepthook = globalExceptionHandler
