@@ -54,7 +54,7 @@ From source
 
 If you plan to develop plugins, you will need to install PySisyphe from source.
 
-PySisyphe runs on Python version 3.10 or 3.12, download the last release with binary installer (3.10.11, release date: April 5, 2023 or 3.12.10 release date: April 8, 2025) at https://www.python.org/downloads/release/python-31011/ or https://www.python.org/downloads/release/python-31210/, and install it.
+PySisyphe runs on Python version 3.12, download the last release with binary installer (3.12.10 release date: April 8, 2025) at https://www.python.org/downloads/release/python-31210/, and install it.
 
 We recommend working with the PyCharm IDE development environment (JetBrains Distributions s.r.o., Czech Republic), download community edition at https://www.jetbrains.com/fr-fr/pycharm/, and install it. Run PyCharm IDE and create a new project (menu File -> New project) with venv interpreter type and previously installed Python 3.10.11 or 3.12.10 version.
 
@@ -65,7 +65,7 @@ We recommend working with the PyCharm IDE development environment (JetBrains Dis
 5. Open the Pycharm terminal (ALT-F12), the current folder is by default the root of the project folder (a requirements.txt exists in this folder).
 6. To install the python modules needed to work with PySisyphe, type at the command line: pip install -r requirements.txt
 
-Reinstall numpy package, if necessary, to force version 1.26.4: pip install numpy==1.26.4
+Reinstall numpy package, to force version 1.26.4: pip install numpy==1.26.4.
 
 At this stage, all external and PySisyphe modules are installed for your own development.
 PySisyphe core (Sisyphe.core.<module name>) and widget (Sisyphe.widgets.<module name>) modules can be imported with: 

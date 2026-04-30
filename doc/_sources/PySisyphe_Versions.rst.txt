@@ -4391,7 +4391,7 @@ version 0.81.22, build 20/03/2026
 
 .. _build20-04-2026:
 
-version 0.87.08, build 20/04/2026
+version 0.87.12, build 20/04/2026
 ---------------------------------
 
 - **updated html documentation**
@@ -4404,12 +4404,17 @@ version 0.87.08, build 20/04/2026
 	- PySisyphe_Functions.rst
 	- PySisyphe_Segmentation.rst
 	- PySisyphe_menubar.rst
+	- rebuild sphinx documentation
 
 - **updated files**
 
 	- /settings/functions.xml
 	- /settings/tooltips.xml
 	- requirements.txt
+
+- **update main PySisyphe.py**
+
+	- line 36, Fix PyTorch DLL loading issue on Windows
 
 - **upgraded packages**
 
@@ -4445,6 +4450,12 @@ version 0.87.08, build 20/04/2026
 		- widgets.sheetWidget
 		- widgets.thresholdWidget
 
+- rebuild frozen version (pyinstaller)
+
+	- PySisyphe.py update
+	- upgrade to dipy version 1.12.0
+	- upgrade to matplotlib version 3.10.8
+
 - **new external modules**
 
 	- MyRelax, https://github.com/fragrussu/MyRelax, added as PySisyphe module Sisyphe.lib.myrelax
@@ -4457,6 +4468,7 @@ version 0.87.08, build 20/04/2026
 
 - **updated modules**
 
+	- version
 	- core.sisypheLUT
 	- core.sisypheTracts
 	- core.sisypheImageAttributes
@@ -4487,6 +4499,7 @@ version 0.87.08, build 20/04/2026
 	- gui.dialogWait
 	- gui.dialogEditLabels
 	- gui.dialogSettings
+	- gui.dialogStatContrast
 	- gui.windowSisyphe
 	- processing.dscFunctions
 	- processing.capturedStdoutProcessing
@@ -4499,6 +4512,7 @@ version 0.87.08, build 20/04/2026
 	- widgets.dicomWidgets
 	- widgets.attributesWidgets
 	- widgets.functionsSettingsWidget
+	- widgets.consoleWidget
 
 - **new functions**
 
@@ -4601,6 +4615,11 @@ version 0.87.08, build 20/04/2026
 		- widget that manages files selection with associated parameters
 
 - **updated classes**
+
+	- version
+
+		- update isOlderThan() method
+		- update isNewerThan() method
 
 	- core.sisypheLUT.SisypheLUT
 	
@@ -4784,6 +4803,10 @@ version 0.87.08, build 20/04/2026
 
 		- update _initSettings() method
 
+	- gui.dialogStatContrast.DialogLateralityIndex
+
+		- update execute() method
+
 	- gui.windowSisyphe.WindowSisyphe
 
 		- update _initMapMenu() method
@@ -4798,6 +4821,7 @@ version 0.87.08, build 20/04/2026
 		- new mapMTR() method
 		- new mapASL() method
 		- new diffusionALPS() method
+		- new versionControl() method
 
 	- processing.capturedStdoutProcessing.ProcessDiffusionModel
 
@@ -4810,6 +4834,10 @@ version 0.87.08, build 20/04/2026
 		- update _set_span_left() method
 		- update _set_span_right() method
 		- update _draw() method
+
+	- widgets.LUTWidgets.LutEditWidget
+
+		- update __init__() method
 		- update _onMouseMoveEvent() method
 
 	- widgets.LUTWidgets.AlphaTransferWidget
@@ -4818,6 +4846,8 @@ version 0.87.08, build 20/04/2026
 		- update _updateLines() method
 		- update setTransfer() method
 		- update _onMouseMoveEvent() method
+		- update _onMenuNew() method
+		- update _onMenuRemove() method
 		- update _onMenuClear() method
 
 	- widgets.LUTWidgets.ComboBoxLut
@@ -4837,7 +4867,10 @@ version 0.87.08, build 20/04/2026
 		- update setLut() method
 
 	- widgets.multiComponentViewWidget.MultiComponentViewWidget
-
+		
+		- update _cursorPositionChanged() method
+		- update addCurrentCurveToChart() method
+		- update cleanChart() method
 		- update updateSpan() method
 
 	- widgets.sheetWidget.SheetChartWidget
@@ -4852,9 +4885,6 @@ version 0.87.08, build 20/04/2026
 		- update _get_span_right() method
 		- update _set_span_left() method
 		- update _set_span_right() method
-		- update addCurrentCurveToChart() method
-		- update _cursorPositionChanged() method
-		- update cleanChart() method
 		- update _onMouseMoveEvent() method
 
 	- widgets.selectFileWidgets.FilesSelectionWidget
@@ -4883,6 +4913,12 @@ version 0.87.08, build 20/04/2026
 	- widgets.functionsSettingsWidget.SettingsWidget
 
 		- update _initSettingsLayout() method
+
+	- widgets.consoleWidget.ConsoleWidget
+
+		- new _enable_inline() method
+		- update __init__() method
+		- upadte restart() method
 
 - **new methods**
 
@@ -4930,6 +4966,10 @@ version 0.87.08, build 20/04/2026
 
 		- add processing of B0, B1, T1, T2, T2', QSM, MTR, ASL maps and DTI-ALPS
 
+	- gui.windowSisyphe.WindowSisyphe.versionControl()
+
+		- Check the module versions to detect any incompatibilities with the current version of PySisyphe
+
 	- widgets.selectFileWidgets.FilesSelectionWidget.fileCountWarningOn()
 	- widgets.selectFileWidgets.FilesSelectionWidget.fileCountWarningOff()
 	- widgets.selectFileWidgets.FilesSelectionWidget.setFileCountWarning()
@@ -4942,7 +4982,16 @@ version 0.87.08, build 20/04/2026
 
 		- save the checked ROI to label xvol
 
+	- widgets.consoleWidget.ConsoleWidget._enable_inline()
+
+		- workaround for the exception raised by %matplotlib inline during a frozen execution related to the matplotlib upgrade to 3.10.8 version
+
 - **updated methods**
+
+	- version.isOlderThan()
+	- version.isNewerThan()
+
+		- add current parameter
 
 	- core.sisypheTracts.SisypheSHCSAModel.getModel()
 	- core.sisypheTracts.SisypheSHCSAModel.computeFitting()
@@ -5002,6 +5051,10 @@ version 0.87.08, build 20/04/2026
 
 		- add free water DTI and RUMBA models management
 		- add linearity, planarity and sphericity maps (DTI, FWDTI and DKI models)
+
+	- gui.dialogStatContrast.DialogLateralityIndex.execute()
+
+		- save masked statistical map
 
 	- gui.windowSisyphe.WindowSisyphe._initMapMenu()
 
@@ -5114,6 +5167,96 @@ version 0.87.08, build 20/04/2026
 		- add linearity, planarity, sphericity, tensor, tensor major direction maps for DTI
 		- add linearity, planarity, sphericity FWDTI & DKI models
 
+	- widgets.LUTWidgets.LutWidget._get_span_left()
+
+		- matplotlib migration to 3.10.8, replace self._span.get_xy()[0][0] by self._span.get_x()
+
+	- widgets.LUTWidgets.LutWidget._get_span_right()
+
+		- matplotlib migration to 3.10.8, replace self._span.get_xy()[2][0] by self._span.get_x() + self._span.get_width()
+		
+	- widgets.LUTWidgets.LutWidget._set_span_left()
+
+		- matplotlib migration to 3.10.8, replace span left update by self._span.set_x(x)
+
+	- widgets.LUTWidgets.LutWidget._set_span_right()
+
+		- matplotlib migration to 3.10.8, replace span right update by self._span.set_width(x - self._span.get_x())
+
+	- widgets.LUTWidgets.LutWidget._draw()
+
+		- replace self._canvas.draw() by self._canvas.draw_idle()
+
+	- widgets.LUTWidgets.LutEditWidget.__init__()
+	- widgets.LUTWidgets.LutEditWidget._onMouseMoveEvent()
+	
+		- replace self._canvas.draw() by self._canvas.draw_idle()
+
+	- widgets.LUTWidgets.AlphaTransferWidget.__init__()
+	- widgets.LUTWidgets.AlphaTransferWidget._updateLines()
+	- widgets.LUTWidgets.AlphaTransferWidget.setTransfer()
+	- widgets.LUTWidgets.AlphaTransferWidget._onMouseMoveEvent()
+	- widgets.LUTWidgets.AlphaTransferWidget._onMenuNew()
+	- widgets.LUTWidgets.AlphaTransferWidget._onMenuRemove()
+	- widgets.LUTWidgets.AlphaTransferWidget._onMenuClear()
+
+		- replace self._canvas.draw() by self._canvas.draw_idle()
+
+	- widgets.LUTWidgets.ComboBoxLut._addInternalLut()
+	- widgets.LUTWidgets.ComboBoxLut.getCurrentAsMatplotlibColormap()
+	- widgets.LUTWidgets.ComboBoxLut._addInternalLut()
+
+		- matplotlib migration to 3.10.8, replace lut = get_cmap(name, 256) by lut = colormaps[name].resampled(256)
+
+	- widgets.LUTWidgets.PopupMenuLut.getCurrentAsMatplotlibColormap()
+
+		- matplotlib migration to 3.10.8, replace lut = get_cmap(name, 256) by lut = colormaps[name].resampled(256)
+
+	- widgets.imageWidgets.ImagePreviewWidget.__init__()
+	- widgets.imageWidgets.ImagePreviewWidget.setDefaultLut()
+	- widgets.imageWidgets.ImagePreviewWidget.setLut()
+
+		- matplotlib migration to 3.10.8, replace self._lut = get_cmap(lut, 256) by self._lut = colormaps[lut].resampled(256)
+		- matplotlib migration to 3.10.8, replace self._lut = get_cmap('gray', 256) by self._lut = colormaps['gray'].resampled(256)
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget._cursorPositionChanged()
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget.addCurrentCurveToChart()
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget.cleanChart()
+		
+		- replace self._canvas.draw() by self._canvas.draw_idle()
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget.updateSpan()
+
+		- matplotlib migration to 3.10.8, replace left span update by self._span.set_x(self._first)
+		- matplotlib migration to 3.10.8, replace right span update by self._span.set_width(last - self._first)
+		- replace self._canvas.draw() by self._canvas.draw_idle()
+
+	- widgets.sheetWidget.SheetChartWidget._drawChart()
+	- widgets.sheetWidget.SheetChartWidget.properties()
+
+		- replace self._canvas.draw() by self._canvas.draw_idle()
+
+	- widgets.thresholdWidget.ThresholdViewWidget.__init__()
+	- widgets.thresholdWidget.ThresholdViewWidget._onMouseMoveEvent()
+
+		- replace self._canvas.draw() by self._canvas.draw_idle()
+
+	- widgets.thresholdWidget.ThresholdViewWidget._get_span_left()
+
+		- matplotlib migration to 3.10.8, replace self._span.get_xy()[0][0] by self._span.get_x()
+
+	- widgets.thresholdWidget.ThresholdViewWidget._get_span_right()
+
+		- matplotlib migration to 3.10.8, replace self._span.get_xy()[2][0] by self._span.get_x() + self._span.get_width()
+
+	- widgets.thresholdWidget.ThresholdViewWidget._set_span_left()
+
+		- matplotlib migration to 3.10.8, replace span left update by self._span.set_x(x)
+
+	- widgets.thresholdWidget.ThresholdViewWidget._set_span_right()
+
+		- matplotlib migration to 3.10.8, replace span right update by self._span.set_width(x - self._span.get_x())
+
 	- widgets.selectFileWidgets.FilesSelectionWidget.copySelectionFrom()
 	- widgets.selectFileWidgets.FilesSelectionWidget.copySelectionTo()
 
@@ -5140,3 +5283,8 @@ version 0.87.08, build 20/04/2026
 
 		- add attribute 'component' for 'vol' node, to define single or multicomponent xvol selection
 		- bug fix, line 755, replace data = abspath(join(base, data)) by if base != '': data = abspath(join(base, data))
+
+	- widgets.consoleWidget.ConsoleWidget.__init__()
+	- widgets.consoleWidget.ConsoleWidget.restart()
+
+		- workaround for the exception raised by %matplotlib inline during a frozen execution related to the matplotlib upgrade to 3.10.8 version
