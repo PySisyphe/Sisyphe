@@ -72,12 +72,13 @@ mpl_cache_dir = abspath(join(expanduser('~'), '.matplotlib'))
 if not exists(mpl_cache_dir): mkdir(mpl_cache_dir)
 os.environ['MPLCONFIGDIR'] = mpl_cache_dir
 
+import Sisyphe
 from glob import glob
 fontlist_filename = glob(join(mpl_cache_dir, 'fontlist-v*.json'))
-if len(fontlist_filename) == 0:
+tag = exists(join(dirname(Sisyphe.__file__), 'tag'))
+if len(fontlist_filename) == 0 or tag:
     import json
-    import Sisyphe.gui
-    path = join(dirname(Sisyphe.gui.__file__), 'font')
+    path = join(dirname(Sisyphe.__file__), 'gui', 'font')
     filename = join(path, 'template.json')
     if exists(filename):
         with open(filename, 'r') as f:
@@ -107,7 +108,9 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QApplication
 
 if sys.platform == 'win32':
+    # noinspection PyUnresolvedReferences
     import pywinstyles
+    # noinspection PyUnresolvedReferences
     import qdarktheme
 
 from vtk import vtkObject
