@@ -20,6 +20,7 @@ import ctypes
 
 import os
 from os import mkdir
+from os import remove
 from os.path import exists
 from os.path import join
 from os.path import splitext
@@ -66,7 +67,6 @@ warnings.filterwarnings('ignore', category=DeprecationWarning)
 
 import traceback
 
-
 # < Revision 30/04/2026
 mpl_cache_dir = abspath(join(expanduser('~'), '.matplotlib'))
 if not exists(mpl_cache_dir): mkdir(mpl_cache_dir)
@@ -75,8 +75,15 @@ os.environ['MPLCONFIGDIR'] = mpl_cache_dir
 import Sisyphe
 from glob import glob
 fontlist_filename = glob(join(mpl_cache_dir, 'fontlist-v*.json'))
+
 tag = exists(join(dirname(Sisyphe.__file__), 'tag'))
-if len(fontlist_filename) == 0 or tag:
+n = len(fontlist_filename)
+if n == 0 or tag:
+    # < Revision 04/05/2026
+    if n > 0:
+        for filename in fontlist_filename:
+            if exists(filename): remove(filename)
+    # Revision 04/05/2026 >
     import json
     path = join(dirname(Sisyphe.__file__), 'gui', 'font')
     filename = join(path, 'template.json')
