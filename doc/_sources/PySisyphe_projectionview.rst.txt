@@ -85,6 +85,7 @@ Projection view widget includes a vertical icon bar to the left:
 	- **Tooltip** (**t** shortkey), tooltip visibility.
 	- **Show all**, show all widgets.
 	- **Hide all**, hide all widgets.
+	- **Line/font properties** (**p** shortkey) to edit line properties (line width in pixels, color and opacity) and font properties (font name, size and scale factor).
 
 .. _proj-section-info:
 

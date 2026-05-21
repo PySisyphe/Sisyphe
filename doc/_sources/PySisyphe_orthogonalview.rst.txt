@@ -147,6 +147,7 @@ Orthogonal view widget includes a vertical icon bar to the left:
 	- **All**, visibility of all widgets.
 	- **Texture volume rendering**, texture rendering visibility in the 3D renderer cell.
 	- **Outer mesh isosurface**, automatic outer isosurface visibility in the 3D renderer cell.
+	- **Line/font properties** (**p** shortkey) to edit line properties (line width in pixels, color and opacity) and font properties (font name, size and scale factor).
 
 .. _ortho-section-info:
 

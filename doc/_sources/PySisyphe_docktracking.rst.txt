@@ -27,7 +27,7 @@ Whole tractogram virtual dissection tools
 |tracking|
 	Left-click to show a dialog box for virtual dissection with inclusion and exlusion ROI(s).
 
-	The list box on the left (1) shows avalaible ROI(s) i.e. ROI(s) loaded in :ref:`ROI dock <page-dockroi>`. It is possible to load ROI(s) from disk into this box provided they have the same space ID or, failing that, the same field of view. Left click on **Add ROI(s)..** to display a ROI selection dialog. There are two list boxes on the right, the top box lists the inclusion ROI(s) and the bottom box lists the exclusion ROI(s). The |left| buttons moves a selected ROI from the box of available ROI(s) to the box of inclusion or exclusion. The |right| buttons to remove a selected ROI from the include or exclude box and return it to the box of available ROI(s).
+	The list box on the left (1) shows avalaible ROI(s) i.e. ROI(s) loaded in :ref:`ROI dock <page-dockroi>`. It is possible to load ROI(s) from disk into this box, provided they have the same space ID or, failing that, the same field of view. Left click on **Add ROI(s)** to display a ROI selection dialog. There are two list boxes on the right, the top box lists the inclusion ROI(s) and the bottom box lists the exclusion ROI(s). The |left| buttons moves a selected ROI from the box of available ROI(s) to the box of inclusion or exclusion. The |right| buttons removes a selected ROI from the include or exclude box and returns it to the box of available ROI(s).
 
 	Settings fields are at the bottom of the dialog box:
 

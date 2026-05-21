@@ -91,6 +91,7 @@ Synchronized view widget includes a vertical icon bar to the left:
 	- **Colorbar** (**b** shortkey), colorbar visibility (select colorbar position with |lut| button).
 	- **Ruler** (**r** shortkey), ruler visibility (select colorbar position with |axis| button).
 	- **Tooltip** (**t** shortkey), tooltip visibility.
+	- **Line/font properties** (**p** shortkey) to edit line properties (line width in pixels, color and opacity) and font properties (font name, size and scale factor).
 
 .. _synchro-section-info:
 

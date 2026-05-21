@@ -359,6 +359,7 @@ Filter parameters are as follows:
 	- standardize the intensity values to the *range [0, 1]* i.e. [min, max] mapped to [0, 1].
 
 - **Truncate centile**, truncate volume intensities with thresholds expressed in percentile (min threshold = centile, max threshold = 100 - centile), no truncation by default i.e centile set to 0.
+- **Truncate only max**, only maximum intensities are truncated if True, minimum values remain unchanged.
 - Intensity-normalized volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the **prefix** and **suffix** parameters.
 
 Add PySisyphe volume(s) to be processed in the :ref:`widgets-section-multi-file` widget.

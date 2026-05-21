@@ -536,6 +536,8 @@ Left-click **Execute** button to compute B0 map.
 
 Left-click **Close** button to exit dialog box.
 
+Sample volumes can be downloaded from the :ref:`menu-section-download` to test this processing.
+
 .. _menu-section-b1map:
 
 B1 map
@@ -592,6 +594,8 @@ Left-click **Execute** button to compute T1 map.
 
 Left-click **Close** button to exit dialog box.
 
+Sample volumes can be downloaded from the :ref:`menu-section-download` to test this processing.
+
 .. _menu-section-t2map:
 
 T2 map
@@ -637,6 +641,8 @@ Toggle **T2 map...** button to show/hide parameters:
 Left-click **Execute** button to compute T2 map.
 
 Left-click **Close** button to exit dialog box.
+
+Sample volumes can be downloaded from the :ref:`menu-section-download` to test this processing.
 
 .. _menu-section-t2pmap:
 
@@ -726,6 +732,8 @@ Toggle **QSM map...** button to show/hide parameters:
 Left-click **Execute** button to compute QSM map(s).
 
 Left-click **Close** button to exit dialog box.
+
+Sample volumes can be downloaded from the :ref:`menu-section-download` to test this processing.
 
 .. _menu-section-asl:
 
@@ -823,3 +831,5 @@ If the AIF dialog parameter is checked, an **arterial input function** dialog bo
 Perfusion maps are saved with the original file name, which is suffixed with the map acronym (i.e. cbf, cbv, mtt, ttp, tmax, lkv, sr, psr).
  
 Left-click **Close** button to exit dialog box.
+
+Sample volumes can be downloaded from the :ref:`menu-section-download` to test this processing.

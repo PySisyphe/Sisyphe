@@ -62,7 +62,7 @@ File
 		- Import Minc...
 		- Import Nrrd...
 		- Import Vtk...
-		- Import Sisyphe (*.vol)
+		- Import Sisyphe (*.vol)...
 
 	- :ref:`Export <menu-section-export>` >
 
@@ -170,9 +170,11 @@ Segmentation
 	- Deep learning segmentation >
 
 		- :ref:`Atlas parcellation... <menu-section-parcellation>`
+		- :ref:`Focal cortical dysplasia detection... <menu-section-fcd>`
 		- :ref:`Hippocampus segmentation... <menu-section-hipp>`
 		- :ref:`Hypo-intensity lesion segmentation... <menu-section-lesion>`
 		- :ref:`Medial temporal clustering... <menu-section-temporal>`
+		- :ref:`Microbleeds segmentation... <menu-section-microbld>`
 		- :ref:`Tissue segmentation... <menu-section-tissue>`
 		- :ref:`Tumor clustering... <menu-section-tumor>`
 		- :ref:`White matter hyper-intensities segmentation... <menu-section-wmh>`

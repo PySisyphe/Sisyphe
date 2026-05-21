@@ -26,7 +26,7 @@ This menu is used to create PySisyphe XML files for b-values (.xbval) and gradie
 Use the :ref:`widgets-section-multi-file` widget at the top to select **Diffusion weighted Volumes**.
 
 Use the :ref:`widgets-section-single-file` widget to select **Associated B-values**, text file (.bval) with b-values for each diffusion-weighted volume.
- and b-values
+
 Use the :ref:`widgets-section-single-file` widget to select **Associated gradient directions**, text file (.bvec) with gradient vectors for each diffusion-weighted volume.
 
 Left-click **Save** button to store the PySisyphe XML files for b-values (.xbval) and gradient vectors (.xbvec).
@@ -179,6 +179,8 @@ Left-click **Execute** button to fit the model and calculate the map(s).
 
 Left-click **Close** button to exit dialog box.
 
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` to test DTI processsing.
+
 .. _menu-section-diffalps:
 
 Diffusion analysis along perivascular space
@@ -269,8 +271,7 @@ Toggle **Tracking...** button to show/hide tractography parameters:
 
 	- FA/GFA, mask calculated from FA/GFA map threshold.
 	- ROI, mask is a PySisyphe ROI (.xroi) given by the user.
-	- GM/WM/CSF, anatomically-constrained tractography, masks calculated from GM/WM/CSF maps. Anatomically-constrained tractography (ACT) uses information from anatomical images to determine when the
-	tractography stops. The include map defines when the streamline reached a "valid" stopping region (i.e. gray matter map) and the exclude map defines when the streamline reached an "invalid" stopping region (i.e. corticospinal fluid map). The ACT stopping criterion uses a trilinear interpolation at the tracking position. Streamline reconstruction is stopped when the current point is in a voxel belonging to gray matter (> 0.5), cerebro-spinal fluid (> 0.5) or background which is defined as binary not(gray matter + white matter + corticospinal fluid maps).
+	- GM/WM/CSF, anatomically-constrained tractography, masks calculated from GM/WM/CSF maps. Anatomically-constrained tractography (ACT) uses information from anatomical images to determine when the tractography stops. The include map defines when the streamline reached a "valid" stopping region (i.e. gray matter map) and the exclude map defines when the streamline reached an "invalid" stopping region (i.e. corticospinal fluid map). The ACT stopping criterion uses a trilinear interpolation at the tracking position. Streamline reconstruction is stopped when the current point is in a voxel belonging to gray matter (> 0.5), cerebro-spinal fluid (> 0.5) or background which is defined as binary not(gray matter + white matter + corticospinal fluid maps).
 
 - Set the **FA/GFA Threshold stopping criterion** value from the spinbox. It is used to calculate the mask of voxels that stop streamline generation. This parameter is only displayed if the stopping crtiterion is FA/GFA (see above).
 - Use the **ROI stopping criterion** :ref:`widgets-section-single-file` widget to select a PySisyphe ROI (.xroi). It is used as a mask of voxels that stop streamline generation. This parameter is only displayed if the stopping criterion is ROI (see above).
@@ -279,6 +280,8 @@ Toggle **Tracking...** button to show/hide tractography parameters:
 Left-click **Execute** button to calculate the tractogram.
 
 Left-click **Close** button to exit dialog box.
+
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for testing.
 
 .. _menu-section-roisel:
 
@@ -305,6 +308,8 @@ Left-click **Execute** button to perform streamline selection.
 
 Left-click **Close** button to exit dialog box.
 
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for testing.
+
 .. _menu-section-filtersel:
 
 Filter based streamlines selection
@@ -326,6 +331,8 @@ Toggle **Bundle filtering...** button to show/hide parameters:
 Left-click **Execute** button to perform streamline selection.
 
 Left-click **Close** button to exit dialog box.
+
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for testing.
 
 .. _menu-section-templatesel:
 
@@ -354,6 +361,8 @@ Left-click **Execute** button to perform streamline selection. Selected streamli
 
 Left-click **Close** button to exit dialog box.
 
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for testing.
+
 .. _menu-section-density:
 
 Density map
@@ -366,6 +375,8 @@ Use the **Streamlines** :ref:`widgets-section-single-file` widget a the top to s
 Left-click **Execute** button for map processing. The density map volume is saved with the file name of the first diffusion-weighted volume, prefixed by "density".
 
 Left-click **Close** button to exit dialog box.
+
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for testing.
 
 .. _menu-section-path:
 
@@ -381,6 +392,8 @@ Use the **Reference ROI** :ref:`widgets-section-multi-file` widget, under the pr
 Left-click **Execute** button for map processing. The path length map volume is saved with the file name of the first diffusion-weighted volume, prefixed by "pathlength".
 
 Left-click **Close** button to exit dialog box.
+
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for testing.
 
 .. _menu-section-connectivity:
 
@@ -403,3 +416,5 @@ Left-click **Execute** button to calculate the connectivity matrix.
 The result is displayed in a dialog box with two tabs. The first tab, titled **Connectivity matrix**, shows the connectivity matrix as a chart. This tab includes three buttons at the bottom: a **Save bitamp** button, which shows a dialog box to save a bitmap of the chart (supported bitmap formats BMP, JPG, PNG, TIFF and SVG), a **Copy to clipboard** button to copy a bitmap capture of the chart to the clipboard, and a **Copy to screenshots** button to copy a bitmap capture of the chart to the :ref:`Screenshots manager <page-screenshots>`. The second tab, titled **Connectivity table**, shows the connectivity matrix values in table format. This tab includes the button **Save Dataset**, which shows a dialog box to save the table (supported formats CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET).
 
 Left-click **Close** button to exit dialog box.
+
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for testing.

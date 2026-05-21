@@ -64,6 +64,27 @@ Left-click to select a target or a trajectory element in the list (blue outline 
 |view|
 	Left-click to show/hide all Target(s)/Trajectory(ies) of the list.
 
+|settings|
+	Left-click to show a dialog to edit Target/Trajectory properties:
+
+	- **Target text**, to edit Target/Trajectory name displayed in the view widget.
+	- **Font size**, to define font size used to display Target/Trajectory name in the view widget.
+	- **Font family**, combobox to define font family (**Arial**, **Courier** or **Times**) used to display Target/Trajectory name in the view widget.
+	- **Font bold**, checkbox to display Target/Trajectory name in bold.
+	- **Font italic**, checkbox to display Target/Trajectory name in italic.
+	- **Text offset**, to define the distance, in pixels, between the Target/Trajectory and the name along the x (first exit box) and y (second edit box) axes.
+	- **Text visbility**, checkbox to define Target/Trajectory name visibility.
+	- **Color**, show a dialog box to choose Target/Trajectory color.
+	- **Selected color**, show a dialog box to choose Target/Trajectory selected color.
+	- **Opacity**, to define Target/Trajectory opacity (0% transparent, 100% opaque).
+	- **Handle size**, to define handle size in pixels.
+	- **Handle line width**, to define handle line width in pixels.
+	- **Safety radius**, to define margin displayed as a sphere around Target in mm, margin is displayed as cylinder around Trajectory in mm.
+	- **safety visbility**, checkbox to select safety margin visibility.
+	- **Tolerance**, to define tolerance around handles (in pixels) for mouse selection.
+
+	The changes are applied to the checked tools. If no tool is checked, all tools will be modified.
+
 |cross|
 	Left-click to remove checked Target(s)/Trajectory(ies) from the list and from the view widget.
 

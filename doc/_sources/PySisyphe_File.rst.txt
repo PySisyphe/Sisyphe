@@ -73,6 +73,8 @@ Each submenu displays a file selection dialog to open a volume in the thumbnail 
 
 You can also click |open-nii| |open-nrrd| |open-mnc| |open-mgh| |open-vol| |open-vmr| |open-vtk| buttons in the toolbar.
 
+Sample volumes of various formats (Brainvoyager, FreeSurfer, NRRD) can be downloaded from the :ref:`menu-section-download` for testing.
+
 .. _menu-section-recent:
 
 Open recent
@@ -257,6 +259,25 @@ Contents:
 - **Samples**
 
 	Various volumes for testing PySisyphe. These files are saved in the "samples" subfolder of the PySisyphe user folder (~/.PySisyphe).
+
+	- **B0MAP** to test B0 map processing
+	- **BRAINVOYAGER** to test Brainvoyager volume conversion
+	- **COREGISTRATION** to test MR-PET coregistration
+	- **DTI** to test diffusion/tracking processing
+	- **FCD** to deep learning focal cortical dysplasia detection
+	- **FREESURFER** to test Freesurfer volume conversion
+	- **NRRD** to test NRRD volume conversion
+	- **PERFUSION** to dynamic suceptibility contrast MR perfusion processing
+	- **QSM** to test QSM map processing
+	- **SEEG** to test SEEG plugins (electrode/contact detection, trajectory accuracy)
+	- **STEREO** to test Leksell stereotactic frame detection
+	- **SWI** to test deep learning microbleeds segmentation
+	- **T1MAP** to test T1 map processing
+ 	- **T2MAP** to test T2 map processing
+	- **UNET_HIPPOCAMPUS** to test deep learning hippocampus segmentation
+	- **UNET_T1_LESION** to test deep learning porencephalic T1 lesion segmentation
+	- **UNET_TUMOR** to test deep learning glial tumor segmentation
+	- **UNET_WMH** to test deep learning white matter hypersignal segmentatrion
 
 .. _menu-section-update:
 

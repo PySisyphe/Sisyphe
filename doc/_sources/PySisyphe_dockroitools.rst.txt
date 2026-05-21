@@ -71,6 +71,8 @@ Slice tools
 
 All tools in this section work in 2D and are applied to the selected slice displayed in the view widget (slice view or synchronized view in the central area), other slices are not affected. Left-click in the view widget to select a slice, the selected slice will be outlined in white. If no slice is selected, these tools will have no effect.
 
+The keyboard shortcut **²** re-executes the action of the last tool clicked.
+
 |dilate|
 	Left-click for morphological dilatation (see `Morphology dilatation in wikipedia <https://en.wikipedia.org/wiki/Dilation_(morphology)>`_) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
 
@@ -217,6 +219,8 @@ Volume tools
 |
 
 All tools in this section work in 3D, in the full volume of the ROI.
+
+The keyboard shortcut **²** re-executes the action of the last tool clicked.
 
 |dilate|
 	Left-click for morphological dilatation (see `Morphology dilatation in wikipedia <https://en.wikipedia.org/wiki/Dilation_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
