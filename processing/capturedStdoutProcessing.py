@@ -3,6 +3,9 @@ External packages/modules
 -------------------------
 
     - ANTs, image registration, https://github.com/ANTsX/ANTsPy
+    - Numpy, scientific computing, https://numpy.org/
+    - NiBabel, Euler angle conversions, https://nipy.org/nibabel
+    - pandas, data analysis and manipulation tool, https://pandas.pydata.org/
 """
 
 import sys
@@ -21,11 +24,21 @@ from os.path import abspath
 
 from multiprocessing import Process
 
+from time import time
+
 from numpy import array
 from numpy import diag
 from numpy import copy
 from numpy import pad
 from numpy import roll
+from numpy import stack
+from numpy import mean
+from numpy import squeeze
+from numpy import arange
+from numpy import reshape
+from numpy import concatenate
+from numpy import zeros_like
+from numpy import count_nonzero
 
 from pandas import read_csv
 
@@ -53,6 +66,10 @@ __all__ = ['CaptureStdout',
            'ProcessDeepTOFVesselSegmentation',
            'ProcessDeepTissueSegmentation',
            'ProcessDeepAtlasParcellation',
+           'ProcessDeepFCDSegmentation',
+           'ProcessDeepMeningiomaSegmentation',
+           'ProcessDeepMetastasisSegmentation',
+           'ProcessDeepMicrobleedsSegmentation',
            'ProcessDiffusionPreprocessing',
            'ProcessDiffusionModel',
            'ProcessDiffusionTracking']
@@ -82,6 +99,10 @@ Class hierarchy
               -> ProcessDeepTOFVesselSegmentation
               -> ProcessDeepTissueSegmentation
               -> ProcessDeepAtlasParcellation
+              -> ProcessDeepFCDSegmentation
+              -> ProcessDeepMeningiomaSegmentation
+              -> ProcessDeepMetastasisSegmentation
+              -> ProcessDeepMicrobleedsSegmentation
               -> ProcessDiffusionPreprocessing
               -> ProcessDiffusionModel
               -> ProcessDiffusionTracking
@@ -229,6 +250,7 @@ class ProcessSkullStrip(Process):
 
     Process -> ProcessSkullStrip
     """
+
     # Special method
 
     """
@@ -273,6 +295,7 @@ class ProcessRegistration(Process):
 
     Process -> ProcessRegistration
     """
+
     # Special method
 
     """
@@ -586,6 +609,7 @@ class ProcessDeepTumorSegmentation(Process):
 
     Process -> ProcessDeepTumorSegmentation
     """
+
     # Special method
 
     """
@@ -657,6 +681,7 @@ class ProcessDeepHippocampusSegmentation(Process):
 
     Process -> ProcessDeepHippocampusSegmentation
     """
+
     # Special method
 
     """
@@ -710,6 +735,7 @@ class ProcessDeepMedialTemporalSegmentation(Process):
 
     Process -> ProcessDeepMedialTemporalSegmentation
     """
+
     # Special method
 
     """
@@ -783,6 +809,7 @@ class ProcessDeepLesionSegmentation(Process):
 
     Process -> ProcessDeepLesionSegmentation
     """
+
     # Special method
 
     """
@@ -836,6 +863,7 @@ class ProcessDeepWhiteMatterHyperIntensitiesSegmentation(Process):
 
     Process -> ProcessDeepWhiteMatterHyperIntensitiesSegmentation
     """
+
     # Special method
 
     """
@@ -914,6 +942,7 @@ class ProcessDeepTOFVesselSegmentation(Process):
 
     Process -> ProcessDeepTOFVesselSegmentation
     """
+
     # Special method
 
     """
@@ -968,6 +997,7 @@ class ProcessDeepTissueSegmentation(Process):
 
     Process -> ProcessDeepTissueSegmentation
     """
+
     # Special method
 
     """
@@ -1021,6 +1051,7 @@ class ProcessDeepAtlasParcellation(Process):
     ~~~~~~~~~~~
 
     Multiprocessing Process class for deep learning atlas parcellation using OpenMAP-T1 model.
+    Code in PySisyphe is a fork of https://github.com/OishiLab/OpenMAP-T1
 
     Reference:
     OpenMAP-T1: A Rapid Deep-Learning Approach to Parcellate 280 Anatomical Regions to Cover the Whole Brain.
@@ -1034,6 +1065,7 @@ class ProcessDeepAtlasParcellation(Process):
 
     Creation: 12/03/2026
     """
+
     # Special method
 
     """
@@ -1059,9 +1091,9 @@ class ProcessDeepAtlasParcellation(Process):
         r2 = dict()
         # load model
         self._mng['msg'] = 'Load OpenMAP-T1 model...'
-        if torch.cuda.is_available(): device = torch.device("cuda")
-        elif torch.backends.mps.is_available(): device = torch.device("mps")
-        else: device = torch.device("cpu")
+        if torch.cuda.is_available(): device = torch.device('cuda')
+        elif torch.backends.mps.is_available(): device = torch.device('mps')
+        else: device = torch.device('cpu')
         import Sisyphe
         path = join(dirname(abspath(Sisyphe.lib.openmap.__file__)), 'model')
         cnet, ssnet, pnet, hnet = load_model(path, device)
@@ -1144,6 +1176,321 @@ class ProcessDeepAtlasParcellation(Process):
         self._result.put(r2)
 
 
+class ProcessDeepFCDSegmentation(Process):
+    """
+    ProcessDeepFCDSegmentation
+
+    Description
+    ~~~~~~~~~~~
+
+    Multiprocessing Process class for deep learning focal cortical dysplasia (FCD) segmentation using deepFCD model.
+    Code in PySisyphe is a fork of https://github.com/NOEL-MNI/deepFCD
+
+    Reference:
+    Multicenter Validation of a Deep Learning Detection Algorithm for Focal Cortical Dysplasia.
+    Ravnoor Singh Gill, H.-M. Lee, B. Caldairou, S.-J. Hong, C. Barba, F. Deleo, L. D'Incerti, V.C. Mendes Coelho,
+    M. Lenge, M. Semmelroch, D.V. Schrader, F. Bartolomei, M. Guye, A. Schulze-Bonhage, H. Urbach, K.H. Cho, F. Cendes,
+    R. Guerrini, G. Jackson, R. E. Hogan, N. Bernasconi, A. Bernasconi. Neurology, 97(16), e1571–e1582.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    Process -> ProcessDeepFCDSegmentation
+
+    Creation: 05/05/2026
+    """
+
+    # Special method
+
+    """
+    Private attributes
+
+    _t1         ndarray, T1 volume
+    _flair      ndarray, FLAIR volume
+    _mask       ndarray, mask of analysis
+    _threshold  float, mask = normalized flair > threshold (0.4)
+    _batchsize  int, number of voxels in batch (350000)
+    _spacing    tuple[float, float, float], voxel spacing
+    _mng        dict[str]
+    _result     Queue
+    """
+
+    def __init__(self, t1, flair, mask, threshold, batchsize, mng, queue):
+        Process.__init__(self)
+        self._t1 = t1.getNumpy(defaultshape=False)
+        self._flair = flair.getNumpy(defaultshape=False)
+        if mask is not None: self._mask = mask.getNumpy(defaultshape=False)
+        else: self._mask = None
+        self._threshold = threshold
+        self._batchsize = batchsize
+        self._spacing = t1.getSpacing()
+        self._mng = mng
+        self._result = queue
+
+    # Public methods
+
+    def run(self):
+        import os
+        if 'KERAS_BACKEND' not in os.environ:
+            os.environ['KERAS_BACKEND'] = 'tensorflow'
+        import keras
+        keras.config.set_image_data_format('channels_first')
+        # load model
+        self._mng['msg'] = 'Load deepFCD model...'
+        import Sisyphe
+        path = join(dirname(Sisyphe.__file__), 'lib', 'deepfcd', 'weights')
+        path0 = join(path, 'noel_deepFCD_dropoutMC_model_1.h5')
+        path1 = join(path, 'noel_deepFCD_dropoutMC_model_2.h5')
+        from Sisyphe.lib.deepfcd.config.experiment import options
+        options['parallel_gpu'] = False
+        options['dropout_mc'] = True
+        options['batch_size'] = self._batchsize # 350000
+        options['mini_batch_size'] = 2048
+        options['load_checkpoint_1'] = True
+        options['load_checkpoint_2'] = True
+        from Sisyphe.lib.deepfcd.models.noel_models_keras import off_the_shelf_model
+        model = off_the_shelf_model(options)
+        model[0] = keras.models.load_model(path0, compile=False)
+        model[1] = keras.models.load_model(path1, compile=False)
+        # processing
+        self._mng['msg'] = 'FCD detection...'
+        from Sisyphe.lib.deepfcd.predict import normalize
+        imgs = normalize((self._t1, self._flair))
+        seg = zeros_like(imgs[1], dtype='float32')
+        if self._mask is None:
+            self._mask = imgs[1] > self._threshold
+        vmax = int(count_nonzero(self._mask) / self._batchsize) + 1
+        self._mng['max'] = vmax
+        from Sisyphe.lib.deepfcd.predict import load_patches
+        v = 0
+        start = time()
+        for batch, centers in load_patches(imgs,
+                                           self._mask,
+                                           options['patch_size'],
+                                           self._batchsize):
+            pred = model[1].predict(squeeze(batch), batch_size=2048, verbose=1)
+            [x, y, z] = stack(centers, axis=1)
+            seg[x, y, z] = pred[:, 1]
+            v += 1
+            self._mng['value'] = v
+            r = ((time() - start) / v) * (vmax - v)
+            if r <= 60.0: self._mng['amsg'] = 'Estimated time remaining {} sec.'.format(int(r))
+            else: self._mng['amsg'] = 'Estimated time remaining {} min.'.format(int(r / 60))
+        self._result.put(seg)
+
+
+class ProcessDeepMeningiomaSegmentation(Process):
+    """
+    ProcessDeepMeningiomaSegmentation
+
+    Description
+    ~~~~~~~~~~~
+
+    Multiprocessing Process class for deep learning meningioma segmentation using neuronet ams model.
+    Code in PySisyphe is a fork of https://github.com/neuronets/ams/tree/master
+
+    Reference:
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    Process -> ProcessDeepMeningiomaSegmentation
+
+    Creation: 19/05/2026
+    """
+
+    # Special method
+
+    """
+    Private attributes
+
+    _t1         ndarray, post-contrast T1 volume
+    _result     Queue
+    """
+
+    def __init__(self, t1, queue):
+        Process.__init__(self)
+        self._t1 = t1.getNumpy(defaultshape=False).astype('float32')
+        self._result = queue
+
+    # Public methods
+
+    def run(self):
+        from Sisyphe.lib.ams.brainer import standardize_numpy
+        from Sisyphe.lib.ams.brainer import to_blocks_numpy
+        x = standardize_numpy(self._t1)
+        x = to_blocks_numpy(x, (128, 128, 128))
+        x = x[..., None]
+        import Sisyphe.lib.ams
+        model_file = join(dirname(Sisyphe.lib.ams.__file__), 'weights', 'meningioma_T1wc_128iso_v1.h5')
+        import tf_keras as keras
+        model = keras.models.load_model(model_file, compile=False, safe_mode=False)
+        y = model.predict(x, batch_size=1, verbose=1)
+        y = squeeze(y, axis=-1)
+        from Sisyphe.lib.ams.brainer import from_blocks_numpy
+        seg = from_blocks_numpy(y, (256, 256, 256))
+        self._result.put(seg)
+
+
+class ProcessDeepMetastasisSegmentation(Process):
+    """
+    ProcessDeepMetastasisSegmentation
+
+    Description
+    ~~~~~~~~~~~
+
+    Multiprocessing Process class for deep learning metastasis segmentation using RLK-Unet model.
+    Code in PySisyphe is a fork of https://github.com/nibabel/RLK-Unet/tree/main
+
+    Reference:
+    Development of RLK-Unet: A clinically favorable deep learning algorithm for brain metastasis detection and
+    treatment response assessment. Son S., Joo B., Park M., Suh S.H., Oh H.S., Kim J.W., Lee S., Ahn S.J., Lee J.-M.
+    Front Oncol. 2024 Jan 15:13:1273013.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    Process ->  ProcessDeepMetastasisSegmentation
+
+    Creation: 19/05/2026
+    Last revision: 21/05/2026
+    """
+
+    # Special method
+
+    """
+    Private attributes
+
+    _t1         ndarray, post-contrast T1 volume
+    _mng        dict[str]
+    _result     Queue
+    """
+
+    def __init__(self, t1, threshold, mng, queue):
+        Process.__init__(self)
+        self._t1 = t1.getNumpy(defaultshape=False)
+        self._threshold = threshold
+        self._mng = mng
+        self._result = queue
+
+    # Public methods
+
+    def run(self):
+        if torch.cuda.is_available():
+            device = torch.device('cuda')
+            torch.cuda.set_device(device)
+        elif torch.backends.mps.is_available(): device = torch.device('mps')
+        else: device = torch.device('cpu')
+        import Sisyphe.lib.rlk
+        path = join(dirname(Sisyphe.lib.rlk.__file__), 'weights')
+        from Sisyphe.lib.rlk.data_process import data_loaders
+        data = data_loaders(self._t1)
+        from Sisyphe.lib.rlk.network_architecture import RLKunet
+        with torch.no_grad():
+            for img in data:
+                img = img.to(device).float()
+                self._mng['max'] = 5
+                for i in range(5):
+                    model_file = join(path, 'RLK_Unet_{}.model'.format(i))
+                    net = RLKunet()
+                    net.to(device)
+                    # < Revision 21/05/2026
+                    # net.load_state_dict(torch.load(model_file))
+                    net.load_state_dict(torch.load(model_file, map_location=device))
+                    # Revision 21/05/2026 >
+                    net.eval()
+                    _, _, _, x = net(img)
+                    x = x[:, 0, :, :, :]
+                    x = torch.unsqueeze(x, 1)
+                    x = torch.where(x >= 0.5, 1.0, 0.0)
+                    if i == 0: outputs = x
+                    else: outputs += x
+                    self._mng['value'] = i + 1
+                outputs = torch.where(outputs > 2.5, 1, 0)
+                from Sisyphe.lib.rlk.utils import label_thr
+                outputs = label_thr(outputs, self._threshold).to(device)
+                from Sisyphe.lib.rlk.utils import numpy_convert
+                seg = numpy_convert(outputs)
+                self._result.put(seg)
+
+
+class ProcessDeepMicrobleedsSegmentation(Process):
+    """
+    ProcessDeepMicrobleedsSegmentation
+
+    Description
+    ~~~~~~~~~~~
+
+    Multiprocessing Process class for deep learning microbleeds segmentation using SHIVA_CMB model.
+    Code in PySisyphe is a fork of https://github.com/pboutinaud/SHIVA_CMB/tree/main
+
+    Reference:
+    SHIVA-CMB: a deep-learning-based robust cerebral microbleed segmentation tool trained on multi-source T2*GRE- and
+    susceptibility-weighted MRI. Tsuchida A., Goubet M., Boutinaud P., Astafeva I., Nozais V., Hervé P.Y., Tourdias T.,
+    Debette S., Joliot M. Sci Rep. 2024 Dec 28;14(1):30901.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    Process ->  ProcessDeepMicrobleedsSegmentation
+
+    Creation: 19/05/2026
+    Last revision: 21/05/2026
+    """
+
+    # Special method
+
+    """
+    Private attributes
+
+    _swi         ndarray, SWI volume
+    _mng        dict[str]
+    _result     Queue
+    """
+
+    def __init__(self, swi, models, mng, queue):
+        Process.__init__(self)
+        self._swi = swi.getNumpy(defaultshape=False).astype('float32')
+        self._models = models
+        self._mng = mng
+        self._result = queue
+
+    # Public methods
+
+    def run(self):
+        import Sisyphe.lib.shiva
+        path = join(dirname(Sisyphe.lib.shiva.__file__), 'weights')
+        import tensorflow as tf
+        models = list()
+        if self._models[0]: models.append(tf.saved_model.load(join(path, '20250129-192041_ResUnet3D-8.9.2-1.5-SWAN.CMB_prod2_fold_0_bestvalloss.tf_inference')))
+        if self._models[1]: models.append(tf.saved_model.load(join(path, '20250129-192041_ResUnet3D-8.9.2-1.5-SWAN.CMB_prod2_fold_2_bestvalloss.tf_inference')))
+        if self._models[2]: models.append(tf.saved_model.load(join(path, '20250129-195344_ResUnet3D-8.9.2-1.5-SWAN.CMB_prod2_fold_1_bestvalloss.tf_inference')))
+        seg = None
+        if len(models) > 0:
+            # < Revision 21/05/2026
+            # img = reshape(self._swi, (1,) + self._swi.shape)
+            img = reshape(self._swi, (1,) + self._swi.shape + (1,))
+            # Revision 21/05/2026 >
+            import gc
+            ys = list()
+            n = len(models)
+            if n > 1: self._mng['max'] = n
+            for i, model in enumerate(models):
+                tf.keras.backend.clear_session()
+                gc.collect()
+                n_images = len(img)
+                batched_preds = []
+                for ibatch in arange(0, n_images, 1):
+                    begin, end = int(ibatch), int(min(ibatch + 1, n_images))
+                    batch = img[begin:end]
+                    batched_preds.append(model.serve(batch))
+                ys.append(concatenate(batched_preds, axis=0))
+                if n > 1: self._mng['value'] = i + 1
+            seg = mean(ys, axis=0)
+            seg = squeeze(seg)
+        self._result.put(seg)
+
+
 class ProcessDiffusionPreprocessing(Process):
     """
     ProcessDiffusionPreprocessing
@@ -1158,6 +1505,7 @@ class ProcessDiffusionPreprocessing(Process):
 
     Process -> ProcessDiffusionPreprocessing
     """
+
     # Special method
 
     """
@@ -1260,6 +1608,7 @@ class ProcessDiffusionModel(Process):
 
     Last revision: 14/04/2026
     """
+
     # Special method
 
     """
@@ -1677,6 +2026,7 @@ class ProcessDiffusionTracking(Process):
 
     Process -> ProcessDiffusionTracking
     """
+
     # Special method
 
     """

@@ -278,7 +278,7 @@ class SegmentAnything(object):
     object -> SegmentAnything
 
     Creation: 24/02/2026
-    Last revision: 26/02/2026
+    Last revision: 02/05/2026
     """
     __slots__ = ['_model', '_image_embed', '_sizex', '_sizey', '_slc', '_orient', '_roi']
 
@@ -291,7 +291,14 @@ class SegmentAnything(object):
         import Sisyphe.lib.sam
         path = abspath(join(dirname(Sisyphe.lib.sam.__file__), 'model', 'medsam_vit_b.pth'))
         self._model = sam_model_registry['vit_b'](checkpoint=path)
-        self._model.to('cuda:0' if torch.cuda.is_available() else 'cpu')
+        # < Revision 02/05/2026
+        # add mps support to torch
+        # self._model.to('cuda:0' if torch.cuda.is_available() else 'cpu')
+        if torch.backends.mps.is_available(): device = 'mps'
+        elif torch.cuda.is_available(): device = 'cuda:0'
+        else: device = 'cpu'
+        self._model.to(device)
+        # Revision 02/05/2026 >
         self._model.eval()
         self._image_embed: Tensor | None = None
         self._sizex: int = 0
