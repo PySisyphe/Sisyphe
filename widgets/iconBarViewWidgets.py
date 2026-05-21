@@ -126,7 +126,7 @@ class IconBarWidget(QWidget):
     QWidget -> IconBarWidget
 
     Creation: 17/04/2022
-    Last revision: 05/12/2025
+    Last revision: 04/05/2026
     """
 
     _BTSIZE = 40    # default button size
@@ -367,6 +367,9 @@ class IconBarWidget(QWidget):
         self._shcutb = QShortcut('b', self)  # Show color bar shortcut
         self._shcutr = QShortcut('r', self)  # Show ruler shortcut
         self._shcutt = QShortcut('t', self)  # Show tooltip shortcut
+        # < Revision 04/05/2026
+        self._shcutf = QShortcut('f', self)  # Line/font properties shortcut
+        # Revision 04/05/2026 >
 
         # Drop settings
 
@@ -1225,7 +1228,8 @@ class IconBarWidget(QWidget):
                                                'm key show/hide orientation marker\n'
                                                'b key show/hide colorbar\n'
                                                'r key show/hide ruler\n'
-                                               't key show/hide tooltip')
+                                               't key show/hide tooltip\n'
+                                               'f key line/font properties')
                 # noinspection PyUnresolvedReferences
                 self._shcutx.activated.connect(lambda: self._icons['show'].menu().actions()[0].trigger())
                 # noinspection PyUnresolvedReferences
@@ -1240,6 +1244,10 @@ class IconBarWidget(QWidget):
                 self._shcutr.activated.connect(lambda: self._icons['show'].menu().actions()[7].trigger())
                 # noinspection PyUnresolvedReferences
                 self._shcutt.activated.connect(lambda: self._icons['show'].menu().actions()[8].trigger())
+                # < Revision 04/05/2026
+                # noinspection PyUnresolvedReferences
+                self._shcutf.activated.connect(lambda: self._icons['show'].menu().actions()[-1].trigger())
+                # Revision 04/05/2026 >
                 widget.popupMenuROIDisabled()
                 if multi:
                     self._icons['grid'] = self._createButton('wgrid.png', 'grid.png', checkable=False, autorepeat=False)
@@ -1341,7 +1349,8 @@ class IconBarWidget(QWidget):
                                                'm key show/hide orientation marker\n'
                                                'b key show/hide colorbar\n'
                                                'r key show/hide ruler\n'
-                                               't key show/hide tooltip')
+                                               't key show/hide tooltip\n'
+                                               'f key line/font properties')
                 # noinspection PyUnresolvedReferences
                 self._shcutx.activated.connect(lambda: self._icons['show'].menu().actions()[0].trigger())
                 # noinspection PyUnresolvedReferences
@@ -1354,7 +1363,10 @@ class IconBarWidget(QWidget):
                 self._shcutr.activated.connect(lambda: self._icons['show'].menu().actions()[4].trigger())
                 # noinspection PyUnresolvedReferences
                 self._shcutt.activated.connect(lambda: self._icons['show'].menu().actions()[5].trigger())
-
+                # < Revision 04/05/2026
+                # noinspection PyUnresolvedReferences
+                self._shcutf.activated.connect(lambda: self._icons['show'].menu().actions()[-1].trigger())
+                # Revision 04/05/2026 >
 
                 # < Revision 12/12/2024
                 # add align visibility flag
@@ -3085,6 +3097,11 @@ class IconBarMultiSliceGridViewWidget(IconBarWidget):
         else: raise TypeError('parameter type {} is not MultiSliceGridViewWidget.'.format(type(widget)))
         self._hideViewWidget()
 
+        # < Revision 05/05/2026
+        self._shcutLastAction = QShortcut('²', self)
+        self._shcutLastAction.activated.connect(self.lastAction)
+        # Revision 05/05/2026 >
+
     # Public method
 
     def setVolume(self, vol: SisypheVolume) -> None:
@@ -3105,6 +3122,17 @@ class IconBarMultiSliceGridViewWidget(IconBarWidget):
             elif orient == 2: self().setCoronalOrientation()
             elif orient == 3: self().setSagittalOrientation()
             else: self().setAxialOrientation()
+
+    def lastAction(self) -> None:
+        if self._thumbnail is not None:
+            main = self._thumbnail.getMainWindow()
+            if main is not None:
+                if main.isROIToolsEnabled():
+                    roitools = main.getROIToolsWidget()
+                    if roitools is not None:
+                        lastaction = roitools.getLastAction()
+                        if lastaction is not None:
+                            lastaction()
 
 
 class IconBarSynchronisedGridViewWidget(IconBarWidget):
@@ -3151,6 +3179,11 @@ class IconBarSynchronisedGridViewWidget(IconBarWidget):
         else: raise TypeError('parameter type {} is not SynchronisedGridViewWidget.'.format(type(widget)))
         self._hideViewWidget()
 
+        # < Revision 05/05/2026
+        self._shcutLastAction = QShortcut('²', self)
+        self._shcutLastAction.activated.connect(self.lastAction)
+        # Revision 05/05/2026 >
+
     # Private method
 
     def setVolume(self, vol: SisypheVolume) -> None:
@@ -3171,6 +3204,17 @@ class IconBarSynchronisedGridViewWidget(IconBarWidget):
             elif orient == 2: self().setCoronalOrientation()
             elif orient == 3: self().setSagittalOrientation()
             else: self().setAxialOrientation()
+
+    def lastAction(self) -> None:
+        if self._thumbnail is not None:
+            main = self._thumbnail.getMainWindow()
+            if main is not None:
+                if main.isROIToolsEnabled():
+                    roitools = main.getROIToolsWidget()
+                    if roitools is not None:
+                        lastaction = roitools.getLastAction()
+                        if lastaction is not None:
+                            lastaction()
 
 
 class IconBarSliceViewWidget(IconBarWidget):

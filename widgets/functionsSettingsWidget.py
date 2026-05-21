@@ -143,7 +143,7 @@ class SettingsWidget(QWidget):
     QWidget -> SettingsWidget -> FunctionSettingsWidget
 
     Creation: 11/08/2022
-    Last revision: 15/04/2026
+    Last revision: 03/05/2026
     """
 
     _VSIZE = 24
@@ -1129,6 +1129,11 @@ class SettingsWidget(QWidget):
             # < Revision 16/03/2025
             # str or QFont type
             if isinstance(v, QFont): v = v.family()
+            # < Revision 03/05/2026
+            if v.endswith('.ttf'):
+                from matplotlib.font_manager import FontProperties
+                v = FontProperties(fname=v).get_name()
+            # Revision 03/05/2026 >
             # Revision 16/03/2025 >
             widget.setFont(v)
         # Revision 15/03/2025 >

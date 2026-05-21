@@ -4307,7 +4307,8 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             elif self._refdicom:
                 # < Revision 13/02/2026
                 #if not param or paramext not in getDicomExt().append(''):
-                if not param or paramext not in getDicomExt():
+                # if not param or paramext not in getDicomExt():
+                if not param:
                 # Revision 13/02/2026 >
                     filt = 'DICOM (*.dcm *.dicom *.ima *.nema *)'
                     filenames = QFileDialog.getOpenFileNames(self, 'Select DICOM file(s)', getcwd(), filt)

@@ -64,11 +64,13 @@ from PyQt5.QtWidgets import QTabWidget
 from PyQt5.QtWidgets import QTableView
 from PyQt5.QtWidgets import QTreeView
 from PyQt5.QtWidgets import QPlainTextEdit
+from PyQt5.QtWidgets import QFileIconProvider
 from PyQt5.QtWidgets import QFileSystemModel
 from PyQt5.QtWidgets import QHeaderView
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QStyledItemDelegate
+from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
@@ -236,6 +238,11 @@ class FileFilterProxyModel(QSortFilterProxyModel):
     def filterAcceptsRow(self, srcrow: int, srcparent: QModelIndex) -> bool:
         index = self.sourceModel().index(srcrow, 0, srcparent)
         # return not self.sourceModel().isDir(index)
+        # < Revision 21/05/2026
+        # noinspection PyUnresolvedReferences
+        path = self.sourceModel().filePath(index)
+        if path == self._rootpath: return True
+        # Revision 21/05/2026 >
         # noinspection PyUnresolvedReferences
         if not self.sourceModel().isDir(index): return True
         if self._rootpath:
@@ -301,6 +308,45 @@ class FileDragDropTreeView(QTreeView):
         if accepted: event.acceptProposedAction()
 
 
+# < Revision 11/05/2026
+# new IconProvider class
+class IconProvider(QFileIconProvider):
+
+    def icon(self, fileInfo: QFileInfo):
+        import darkdetect
+        if darkdetect.isDark(): icondir = 'darkroi'
+        else: icondir = 'lightroi'
+        import Sisyphe.gui
+        path = join(dirname(Sisyphe.gui.__file__), icondir)
+        if fileInfo.isDir(): return QIcon(join(path, 'folder.png'))
+        elif fileInfo.isFile():
+            from Sisyphe.core.sisypheConstants import (getImageExt,
+                                                       getBitmapExt)
+            try:
+                ext = '.' + fileInfo.completeSuffix()
+                if ext == '.xvol': return QIcon(join(path, 'head.png'))
+                elif ext in getImageExt(): return QIcon(join(path, 'head.png'))
+                elif ext in getBitmapExt(): return QIcon(join(path, 'bitmap.png'))
+                elif ext == '.xml': return QIcon(join(path, 'xml.png'))
+                elif ext == '.json': return QIcon(join(path, 'json.png'))
+                elif ext == '.xroi': return QIcon(join(path, 'roi.png'))
+                elif ext == '.xmesh': return QIcon(join(path, 'mesh.png'))
+                elif ext == '.xtracts': return QIcon(join(path, 'tracking-atlas.png'))
+                elif ext in ('.xtrf', '.xtrfs'): return QIcon(join(path, '360.png'))
+                elif ext == '.xlabels': return QIcon(join(path, 'labels.png'))
+                elif ext in ('.xtools', '.xline', '.xpoint'): return QIcon(join(path, 'target.png'))
+                elif ext in ('.lut', '.xlut'): return QIcon(join(path, 'palette.png'))
+                elif ext in ('.xlsx', '.csv', '.xsheet', '.npy'): return QIcon(join(path, 'sheet.png'))
+                elif ext in ('.xdcm', '.dcm', '.dicom', '.nema'): return QIcon(join(path, 'scan.png'))
+                elif ext == '.xmodel': return QIcon(join(path, 'model.png'))
+                elif ext == '.xfid': return QIcon(join(path, 'frame.png'))
+                elif ext == '.xwflow': return QIcon(join(path, 'workflow.png'))
+                else: return QIcon(join(path, 'page.png'))
+            except: pass
+        return QFileIconProvider.icon(self, fileInfo)
+# Revision 11/05/2026 >
+
+
 class FileBrowserWidget(QWidget):
     """
     FileBrowserWidget
@@ -316,7 +362,7 @@ class FileBrowserWidget(QWidget):
     QWidget -> FileBrowserWidget
 
     Creation: 09/02/2026
-    Last revision: 19/02/2026
+    Last revision: 21/05/2026
     """
 
     # Special method
@@ -340,25 +386,44 @@ class FileBrowserWidget(QWidget):
 
         # Init widgets
 
+        # < Revision 11/05/2026
+        self._iconProvider = IconProvider()
+        # Revision 11/05/2026 >
+
         self._filemodel1 = QFileSystemModel(self)
         self._filemodel1.setRootPath(QDir.rootPath())
         self._filemodel1.setFilter(QDir.AllDirs | QDir.NoDotAndDotDot)
         # < Revision 11/02/2026
         self._filemodel1.setReadOnly(False)
         # Revision 11/02/2026 >
+        # < Revision 11/05/2026
+        self._filemodel1.setIconProvider(self._iconProvider)
+        # Revision 11/05/2026 >
 
         self._filemodel2 = QFileSystemModel(self)
-        self._filemodel2.setRootPath(QDir.rootPath())
-        self._filemodel2.setFilter(QDir.Files | QDir.NoDotAndDotDot)
+        # < Revision 21/05/2026
+        self._filemodel2.setFilter(QDir.AllEntries | QDir.NoDotAndDotDot)
+        # self._filemodel2.setRootPath(QDir.rootPath())
+        # self._filemodel2.setFilter(QDir.Files | QDir.NoDotAndDotDot)
+        # Revision 21/05/2026 >
         # < Revision 11/02/2026
         self._filemodel2.setReadOnly(False)
         self._proxymodel = FileFilterProxyModel(self)
         self._proxymodel.setSourceModel(self._filemodel2)
         # Revision 11/02/2026 >
+        # < Revision 11/05/2026
+        self._filemodel2.setIconProvider(self._iconProvider)
+        # Revision 11/05/2026 >
+        # < Revision 21/05/2026
+        self._filemodel2.setRootPath(QDir.rootPath())
+        # Revision 21/05/2026 >
 
         self._treedir = FileDragDropTreeView(self)
         self._treedir.setObjectName('folders')
         self._treedir.setModel(self._filemodel1)
+        # < Revision 21/05/2026
+        self._treedir.setUniformRowHeights(True)
+        # Revision 21/05/2026 >
         self._treedir.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self._treedir.header().hideSection(1)
         self._treedir.header().hideSection(2)
@@ -385,6 +450,9 @@ class FileBrowserWidget(QWidget):
         # self._listfiles.setModel(self._filemodel2)
         self._listfiles.setModel(self._proxymodel)
         # Revision 11/02/2026 >
+        # < Revision 21/05/2026
+        self._listfiles.setUniformRowHeights(True)
+        # Revision 21/05/2026 >
         self._listfiles.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self._listfiles.header().setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self._listfiles.header().setSectionResizeMode(3, QHeaderView.ResizeToContents)
@@ -685,11 +753,17 @@ class FileBrowserWidget(QWidget):
                 self._treedir.setExpanded(index, True)
                 # < Revision 12/02/2026
                 # self._listfiles.setRootIndex(self._filemodel2.setRootPath(path))
-                self._proxymodel.setFilterRootPath(path)
-                srcindex = self._filemodel2.setRootPath(path)
-                self._listfiles.setRootIndex(self._proxymodel.mapFromSource(srcindex))
-                chdir(path)
+                # self._proxymodel.setFilterRootPath(path)
+                # srcindex = self._filemodel2.setRootPath(path)
+                # self._listfiles.setRootIndex(self._proxymodel.mapFromSource(srcindex))
                 # Revision 12/02/2026 >
+                # < Revision 21/05/2026
+                self._proxymodel.setFilterRootPath(path)
+                srcindex = self._filemodel2.index(path)
+                proxyindex = self._proxymodel.mapFromSource(srcindex)
+                self._listfiles.setRootIndex(proxyindex)
+                # Revision 21/05/2026 >
+                chdir(path)
 
     def _fileClicked(self, index: QModelIndex) -> None:
         # < Revision 11/02/2026
@@ -1247,9 +1321,22 @@ class FileBrowserWidget(QWidget):
             elif ext == '.xwflow':
                 action = QAction(basename(filename))
                 action.setData(filename)
+                # < Revision 14/05/2026
+                # self._mainWindow_openWorkflow(action)
                 # noinspection PyProtectedMember
-                self._mainWindow_openWorkflow(action)
+                self._mainWindow._openWorkflow(action)
+                # Revision 14/05/2026 >
                 return
+            elif ext == '.xdcm':
+                # < Revision 12/05/2026
+                self._mainWindow.xmlDicom(filename)
+                return
+                # Revision 12/05/2026 >
+            elif ext in ('.dcm', '.dicom', '.nema') or isDicom(filename):
+                # < Revision 12/05/2026
+                self._mainWindow.datasetDicom(filename)
+                return
+                # Revision 12/05/2026 >
             if v:
                 self._mainWindow.addVolume(v)
                 wait.close()

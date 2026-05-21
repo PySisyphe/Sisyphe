@@ -682,8 +682,13 @@ class MultiViewWidget(QWidget):
             count of visible views.
         """
         n = 0
-        for view in self._views:
-            if view.isVisible(): n += 1
+        # < Revision 06/05/2026
+        # bug fix
+        # for view in self._views:
+        #   if views.isVisible(): n += 1
+        for k in self._views:
+            if self._views[k].isVisible(): n += 1
+        # Revision 06/05/2026 >
         return n
 
     def expandViewWidget(self, widget: AbstractViewWidget) -> None:

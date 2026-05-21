@@ -421,7 +421,7 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
     _background: vtkImageSlice  vtkImageSlice of the ICBM152 T1 atlas displayed as background
     """
 
-    # Public synchronisation event methods
+    # Public synchronization event methods
 
     def synchroniseRenderUpdated(self, obj: QWidget) -> None:
         """
@@ -1378,7 +1378,8 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
                                        'i key show/hide information\n'
                                        'l key show/hide orientation labels\n'
                                        'b key show/hide colorbar\n'
-                                       't key show/hide tooltip')
+                                       't key show/hide tooltip\n'
+                                       'f key line/font properties')
         # noinspection PyUnresolvedReferences
         self._shcuti.activated.connect(lambda: self._icons['show'].menu().actions()[1].trigger())
         # noinspection PyUnresolvedReferences
@@ -1387,19 +1388,23 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
         self._shcutb.activated.connect(lambda: self._icons['show'].menu().actions()[5].trigger())
         # noinspection PyUnresolvedReferences
         self._shcutt.activated.connect(lambda: self._icons['show'].menu().actions()[7].trigger())
+        # noinspection PyUnresolvedReferences
+        self._shcutf.activated.connect(lambda: self._icons['show'].menu().actions()[-1].trigger())
 
         # Capture button
 
         submenu = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         submenu.addAction('Save grid capture...')
         submenu.addAction('Save selected view capture...')
         submenu.addSeparator()
         action = submenu.addAction('Send selected view capture to screenshots preview')
+        # noinspection PyUnresolvedReferences
         action.setShortcut(Qt.Key_Space)
         # noinspection PyUnresolvedReferences
         submenu.triggered.connect(self._onMenuSaveCapture)
@@ -1409,6 +1414,7 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
 
         self._icons['opacity'] = self._createButton('wopacity.png', 'opacity.png', checkable=True, autorepeat=False)
         self._icons['opacity'].setToolTip('Opacity')
+        # noinspection PyUnresolvedReferences
         self._slider = QSlider(Qt.Vertical)
         self._slider.setFixedHeight(80)
         self._slider.setTickPosition(QSlider.NoTicks)
@@ -1420,10 +1426,11 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
         # noinspection PyUnresolvedReferences
         self._slider.valueChanged.connect(self._opacityChanged)
         submenu = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         a = QWidgetAction(self)
         a.setDefaultWidget(self._slider)
@@ -1442,10 +1449,11 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
         # noinspection PyUnresolvedReferences
         self._depth.editingFinished.connect(self._depthChanged)
         submenu = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         a = QWidgetAction(self)
         a.setDefaultWidget(self._depth)
@@ -1459,10 +1467,11 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
         self._icons['operator'] = self._createButton('wintegral.png', 'integral.png', checkable=True, autorepeat=False)
         self._icons['operator'].setToolTip('Operator applied to voxels on a projection line')
         submenu = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         amax = submenu.addAction('Maximum')
         amean = submenu.addAction('Mean')

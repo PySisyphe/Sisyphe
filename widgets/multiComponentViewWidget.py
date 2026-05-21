@@ -107,7 +107,7 @@ class MultiComponentViewWidget(MultiViewWidget):
     QWidget -> MultiViewWidget -> GridViewWidget -> MultiComponentViewWidget
 
     Creation: 10/12/2024
-    Last revision: 23/04/2026
+    Last revision: 06/05/2026
     """
 
     # Special method
@@ -140,17 +140,19 @@ class MultiComponentViewWidget(MultiViewWidget):
         # Init Figure
 
         self._fig = Figure()
+        # noinspection PyTypeHints
         self._axe: Axes | None = None
         self._canvas = FigureCanvas(self._fig)
         self._canvas.mpl_connect('pick_event', self._chartClicked)
-        # < Revision 02/02/2026
+
+        # < Revision 06/02/2026
         # self._layout.addWidget(self._canvas, 3, 0, 1, 3)
         self._layout.addWidget(self._canvas, 3, 0, 1, 3)
         self._layout.setRowStretch(0, 2)
         self._layout.setRowStretch(1, 2)
         self._layout.setRowStretch(2, 2)
         self._layout.setRowStretch(3, 3)
-        # Revision 02/02/2026 >
+        # Revision 06/02/2026 >
 
     """
     Private attributes
@@ -325,7 +327,7 @@ class MultiComponentViewWidget(MultiViewWidget):
     def _chartClicked(self, event: PickEvent) -> None:
         """
         Callback for 'pick_event' on the Matplotlib chart.
-        If a curve representing voxel data is clicked, it moves the cursor in the slice view widgets  to that voxel's
+        If a curve representing voxel data is clicked, it moves the cursor in the slice view widgets to that voxel's
         location.
 
         Parameters
@@ -443,10 +445,26 @@ class MultiComponentViewWidget(MultiViewWidget):
                 view.setVolume(component)
             # update visible views
             nbv = last - first - 1
-            if nbv < 3: self.setRowsAndCols(nbv // 3 + 1, nbv % 3 + 1)
-            elif nbv == 3: self.setRowsAndCols(2, 2)
-            elif nbv in [4, 5]: self.setRowsAndCols(2, 3)
-            else: self.setRowsAndCols(3, 3)
+            if nbv < 3:
+                self.setRowsAndCols(nbv // 3 + 1, nbv % 3 + 1)
+                # < Revision 06/05/2026
+                self.setNumberOfVisibleViews(1, 3)
+                # Revision 06/05/2026 >
+            elif nbv == 3:
+                self.setRowsAndCols(2, 2)
+                # < Revision 06/05/2026
+                self.setNumberOfVisibleViews(2, 2)
+                # Revision 06/05/2026 >
+            elif nbv in [4, 5]:
+                self.setRowsAndCols(2, 3)
+                # < Revision 06/05/2026
+                self.setNumberOfVisibleViews(2, 3)
+                # Revision 06/05/2026 >
+            else:
+                self.setRowsAndCols(3, 3)
+                # < Revision 06/05/2026
+                self.setNumberOfVisibleViews(3, 3)
+                # Revision 06/05/2026 >
             # update chart, add mean curve
             self.cleanChart()
         else: raise ValueError('{} is not a multi-component volume.')
@@ -605,7 +623,11 @@ class MultiComponentViewWidget(MultiViewWidget):
             # Revision 23/04/2026 >
             # Revision 23/03/2026 >
             n = self._multi.getNumberOfComponentsPerPixel()
-            last = min(self._first + 8, n - 1)
+            nbv = self.getViewsArrangement()
+            nbv = nbv[0] * nbv[1]
+            if nbv > n: nbv = n
+            # last = min(self._first + 8, n - 1)
+            last = min(self._first + nbv - 1, n - 1)
             # < Revision 23/03/2026
             # migrate from matplotlib 3.6.3 to 3.10.8
             # self._span.xy[2][0] = last
@@ -776,6 +798,24 @@ class MultiComponentViewWidget(MultiViewWidget):
             else: self[a, b].setVisible(i in [0, 1, 3, 4])
             self.setRows(r)
             self.setCols(c)
+        # < Revision 06/05/2026
+        if r == 1:
+            self._layout.setRowStretch(0, 6)
+            self._layout.setRowStretch(1, 0)
+            self._layout.setRowStretch(2, 0)
+            self._layout.setRowStretch(3, 3)
+        elif r == 2:
+            self._layout.setRowStretch(0, 3)
+            self._layout.setRowStretch(1, 3)
+            self._layout.setRowStretch(2, 0)
+            self._layout.setRowStretch(3, 3)
+        else:
+            self._layout.setRowStretch(0, 2)
+            self._layout.setRowStretch(1, 2)
+            self._layout.setRowStretch(2, 2)
+            self._layout.setRowStretch(3, 3)
+        self.updateSpan()
+        # Revision 06/05/2026 >
 
     def getViewsArrangement(self) -> tuple[int, int]:
         """
@@ -1063,7 +1103,8 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
                                            'b key show/hide colorbar\n'
                                            'r key show/hide ruler\n'
                                            't key show/hide tooltip\n'
-                                           'g key show/hide chart')
+                                           'g key show/hide chart\n'
+                                           'f key line/font properties')
             # noinspection PyUnresolvedReferences
             self._shcutx.activated.connect(lambda: self._icons['show'].menu().actions()[0].trigger())
             # noinspection PyUnresolvedReferences
@@ -1080,6 +1121,10 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
             self._shcutt.activated.connect(lambda: self._icons['show'].menu().actions()[6].trigger())
             # noinspection PyUnresolvedReferences
             self._shcutg.activated.connect(lambda: self._icons['show'].menu().actions()[7].trigger())
+            # < Revision 04/05/2026
+            # noinspection PyUnresolvedReferences
+            self._shcutf.activated.connect(lambda: self._icons['show'].menu().actions()[-1].trigger())
+            # Revision 04/05/2026 >
             submenu = QMenu()
             # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)

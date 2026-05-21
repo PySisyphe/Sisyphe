@@ -51,6 +51,7 @@ from PyQt5.QtWidgets import QApplication
 import __main__
 
 __all__ = ['messageBox',
+           'findFontPath',
            'colorDialog',
            'fontDialog',
            'RoundedButton',
@@ -70,6 +71,8 @@ __all__ = ['messageBox',
            'OpacityPushButton',
            'WidthPushButton']
 
+FONTPATHS: dict[str, str] = dict()
+
 """
 function
 ~~~~~~~~
@@ -77,6 +80,7 @@ function
     - messageBox
     - colorDialog
     - fontDialog
+    - findFontPath
 """
 
 
@@ -192,6 +196,42 @@ def fontDialog(parent: QWidget | None = None,
     dialog.move(QApplication.primaryScreen().availableGeometry().center() - dialog.rect().center())
     if dialog.exec() > 0: return dialog.currentFont()
     else: return None
+
+# < Revision 03/05/2026
+# add findFontPath function
+def findFontPath(name: str) -> str:
+    """
+    Description
+    ~~~~~~~~~~~
+
+    Get font path from font family name.
+
+    Parameters
+    ~~~~~~~~~~~
+    name: str
+        font family name
+
+    Returns
+    ~~~~~~~
+    str
+        font path
+
+    Creation: 03/05/2026
+    """
+    if len(FONTPATHS) == 0:
+        from matplotlib.font_manager import findSystemFonts
+        from matplotlib.font_manager import FontProperties
+        try:
+            fontpaths = findSystemFonts(fontext='ttf')
+            if len(fontpaths) > 0:
+                for path in fontpaths:
+                    fontname = FontProperties(fname=path)
+                    FONTPATHS[fontname.get_name()] = path
+        except: return 'Arial'
+    if name in FONTPATHS:
+        return FONTPATHS[name]
+    else: return 'Arial'
+# Revision 03/05/2026 >
 
 """
 Class hierarchy
@@ -647,6 +687,13 @@ class FontSelect(QWidget):
     def getFont(self) -> QFont:
         if self._field.text() != '': return QFont(self._field.text(), self.font().pointSize())
         else: return self.font()
+
+    # < Revision 03/05/2026
+    # add getFontPath method
+    def getFontPath(self) -> str:
+        font = self.getFont()
+        return findFontPath(font.family())
+    # Revision 03/05/2026 >
 
     def setFont(self, name: str | QFont, signal: bool = False) -> None:
         # < Revision 16/03/2025

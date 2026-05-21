@@ -5137,7 +5137,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListToolAttributesWidget
 
-    Last revision: 17/02/2026
+    Last revision: 04/05/2026
     """
 
     # Special method
@@ -5204,7 +5204,8 @@ class ListToolAttributesWidget(ListAttributesWidget):
         # < Revision 13/11/2025
         self._visibility.setToolTip('Show/hide all tools')
         self._lock.setToolTip('Lock/unlock all tools')
-        self._properties.setToolTip('Change properties of checked tool(s)')
+        self._properties.setToolTip('Change properties of checked tool(s)\n'
+                                    'This is applied to all tools if none are checked.')
         # Revision 13/11/2025 >
 
         self._new.setVisible(False)
@@ -6183,6 +6184,10 @@ class ListToolAttributesWidget(ListAttributesWidget):
             if self.hasViewCollection():
                 if len(self._collection) > 0:
                     idx = self.getCheckedIndex()
+                    # < Revision 04/05/2026
+                    if len(idx) == 0:
+                        idx = list(range(self._list.count()))
+                    # Revision 04/05/2026 >
                     if len(idx) > 0:
                         settings = self._dialogprop.getSettingsWidget()
                         self._logger.info('Dialog exec [gui.dialogSettings.DialogSetting - Tool properties]')

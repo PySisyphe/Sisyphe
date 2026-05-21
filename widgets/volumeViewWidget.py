@@ -281,10 +281,11 @@ class VolumeViewWidget(AbstractViewWidget):
         self._action['showslices'].triggered.connect(self.showAllSlices)
         self._action['hideslices'].triggered.connect(self.hideAllSlices)
         self._menuPosition = QMenu('Position', self._popup)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menuPosition.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menuPosition.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._menuPosition.setAttribute(Qt.WA_TranslucentBackground, True)
         self._menuPosition.addAction(self._action['top'])
         self._menuPosition.addAction(self._action['bottom'])
@@ -324,10 +325,11 @@ class VolumeViewWidget(AbstractViewWidget):
         # Init texture popup menu
 
         self._texturepopup = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._texturepopup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._texturepopup.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._texturepopup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['crop'] = QAction('Crop picked region', self)
         self._action['uncrop'] = QAction('Uncrop volume rendering', self)
@@ -368,10 +370,11 @@ class VolumeViewWidget(AbstractViewWidget):
         self._group_blend.addAction(self._action['additive'])
         self._group_blend.addAction(self._action['isosurface'])
         submenu = QMenu('Blend mode', self._texturepopup)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         submenu.addAction(self._action['composite'])
         submenu.addAction(self._action['maxintensity'])
@@ -381,10 +384,11 @@ class VolumeViewWidget(AbstractViewWidget):
         submenu.addAction(self._action['isosurface'])
         self._texturepopup.addMenu(submenu)
         submenu = QMenu('Transfer function', self._texturepopup)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         submenu.addAction(self._action['loadtransfer'])
         submenu.addAction(self._action['savetransfer'])
@@ -393,10 +397,11 @@ class VolumeViewWidget(AbstractViewWidget):
         # Init mesh popup menu
 
         self._meshpopup = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._meshpopup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._meshpopup.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._meshpopup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['meshprop'] = QAction('Edit properties...', self)
         self._action['meshprop'].triggered.connect(self.editActorProperties)

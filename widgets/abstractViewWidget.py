@@ -24,8 +24,6 @@ from tempfile import gettempdir
 
 from math import sqrt
 
-from matplotlib import font_manager
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QPoint
@@ -131,7 +129,7 @@ class AbstractViewWidget(QFrame):
     QWidget -> AbstractViewWidget
 
     Creation: 20/03/2022
-    Last Revision: 05/03/2026
+    Last Revision: 02/05/2026
     """
 
     _DEFAULTZOOM = 128.0  # Default zoom (vtk parallel scale) = conventional FOV of head imaging / 2
@@ -259,6 +257,8 @@ class AbstractViewWidget(QFrame):
             Show tooltip (self._action['showtooltip'])
             Show all (self._action['showall'])
             Hide all (self._action['hideall'])
+            ---
+            Line/font properties
         Information (self._menuInformation)
             Identity (self._action['showident'])
             Image attributes (self._action['showimg'])
@@ -325,6 +325,9 @@ class AbstractViewWidget(QFrame):
         self._action['showident'] = QAction('Identity', self)
         self._action['showimg'] = QAction('Image attributes', self)
         self._action['showacq'] = QAction('Acquisition attributes', self)
+        # < Revision 02/05/2026
+        self._action['lineprop'] = QAction('Line/font properties', self)
+        # Revision 02/05/2026 >
         self._action['leftcolorbar'] = QAction('Left colorbar', self)
         self._action['rightcolorbar'] = QAction('Right colorbar', self)
         self._action['topcolorbar'] = QAction('Top colorbar', self)
@@ -410,6 +413,9 @@ class AbstractViewWidget(QFrame):
         # noinspection PyUnresolvedReferences
         self._action['showacq'].triggered.connect(
             lambda: self.setInfoAcquisitionVisibility(self._action['showacq'].isChecked()))
+        # < Revision 02/05/2026
+        self._action['lineprop'].triggered.connect(self._updateLineProperties)
+        # Revisiob 02/05/2026 >
 
         # noinspection PyUnresolvedReferences
         self._action['noflag'].triggered.connect(lambda: self.setNoActionFlag(True))
@@ -545,6 +551,10 @@ class AbstractViewWidget(QFrame):
         self._menuVisibility.addAction(self._action['showtooltip'])
         self._menuVisibility.addAction(self._action['showall'])
         self._menuVisibility.addAction(self._action['hideall'])
+        # < Revision 02/05/2026
+        self._menuVisibility.addSeparator()
+        self._menuVisibility.addAction(self._action['lineprop'])
+        # Revision 02/05/2026 >
         self._menuInformation = self._popup.addMenu('Information')
         self._menuInformation.addAction(self._action['showident'])
         self._menuInformation.addAction(self._action['showimg'])
@@ -851,15 +861,10 @@ class AbstractViewWidget(QFrame):
         if self._fsize is None: self._fsize = 12
         if self._ffamily is None: self._ffamily = 'Arial'
         elif self._ffamily not in ('Arial', 'Courier', 'Times'):
-            try:
-                path = font_manager.findfont(self._ffamily, fallback_to_default=False)
-                if (not exists(path) or
-                        splitext(path)[1] not in ('.ttf', '.otf')): self._ffamily = 'Arial'
-                else: self._ffamily = path
-            except: self._ffamily = 'Arial'
+            from Sisyphe.widgets.basicWidgets import findFontPath
+            self._ffamily = findFontPath(self._ffamily)
         if self._fscale is None: self._fscale = 1.0
         # Revision 17/03/2025 >
-
         """
             Settings -> actions        
         """
@@ -1463,6 +1468,38 @@ class AbstractViewWidget(QFrame):
             if signal:
                 # noinspection PyUnresolvedReferences
                 self.ViewMethodCalled.emit(self, '_updateRuler', None)
+
+    # < Revision 02/05/2026
+    # add _updateLineProperties method
+    def _updateLineProperties(self) -> None:
+        from Sisyphe.gui.dialogFromXml import DialogFromXml
+        dialog = DialogFromXml('Line/font properties', 'LineProperties')
+        settings = dialog.getFieldsWidget()
+        settings.setParameterValue('LineWidth', self._lwidth)
+        settings.setParameterValue('LineOpacity', self._lalpha)
+        settings.setParameterValue('LineColor', self._lcolor)
+        settings.setParameterValue('FontFamily', self._ffamily)
+        settings.setParameterValue('FontSize', self._fsize)
+        settings.setParameterValue('FontSizeScale', self._fscale)
+        # copy current properties
+        if platform == 'win32':
+            import pywinstyles
+            cl = self.palette().base().color()
+            c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+            pywinstyles.change_header_color(dialog, c)
+        if dialog.exec() == dialog.Accepted:
+            self.setLineWidth(settings.getParameterValue('LineWidth'))
+            self.setLineOpacity(settings.getParameterValue('LineOpacity'))
+            self.setLineColor(settings.getParameterValue('LineColor'))
+            fontfamily = settings.getParameterValue('FontFamily')
+            fontfamily = fontfamily.family()
+            if fontfamily not in ( 'Arial', 'Courier', 'Times'):
+                from Sisyphe.widgets.basicWidgets import findFontPath
+                fontfamily = findFontPath(fontfamily)
+            self.setFontProperties((fontfamily,
+                                    settings.getParameterValue('FontSize'),
+                                    settings.getParameterValue('FontSizeScale')))
+    # Revision 02/05/2026 >
 
     def _updateToolMenu(self) -> None:
         """
