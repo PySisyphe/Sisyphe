@@ -301,7 +301,7 @@ class SisypheImage(object):
     object -> SisypheImage
 
     Creation: 12/01/2021
-    Last revision: 10/04/2026
+    Last revision: 20/05/2026
     """
     __slots__ = ['_sitk_image', '_itk_image', '_vtk_image', '_numpy_array', '_attr']
 
@@ -2769,6 +2769,64 @@ class SisypheImage(object):
             img = BinaryFillhole(img)
         # Revision 25/12/2025 >
         return SisypheImage(img)
+
+    # < Revision 20/05/2026
+    def getThresholdingMask(self,
+                            threshold: float = 0.5,
+                            op: str = '>',
+                            c: int | None = 0) -> SisypheImage:
+        """
+        Converting current SisypheImage instance to SisypheImage mask using a threshold.
+
+        Parameters
+        ----------
+        threshold  : float
+            threshold for binarization (default 0.5)
+        op : str
+            comparison operator: '>' (default), '>=', '<', '<=', '==', '!=', '0<' (0 < x < threshold), '0<='
+            (0 < x <= threshold)
+        c : int | None
+            - parameter only used for multi-component image
+            - int index of the component to process (default 0, first component)
+            - None, processing is performed on the mean image
+
+        Returns
+        -------
+        SisypheImage
+        """
+        n = self.getNumberOfComponentsPerPixel()
+        if n == 1: vol = self
+        else:
+            if c is None: vol = self.getComponentMean()
+            else: vol = self.copyComponent(c)
+        img = SisypheImage()
+        if op == '>':
+            # noinspection PyTypeChecker
+            img.setSITKImage(vol.getSITKImage() > threshold)
+        elif op == '>=':
+            # noinspection PyTypeChecker
+            img.setSITKImage(vol.getSITKImage() >= threshold)
+        elif op == '<':
+            # noinspection PyTypeChecker
+            img.setSITKImage(vol.getSITKImage() < threshold)
+        elif op == '0<':
+            # noinspection PyTypeChecker
+            img.setSITKImage((vol.getSITKImage() > 0) * (vol.getSITKImage() < threshold))
+        elif op == '<=':
+            # noinspection PyTypeChecker
+            img.setSITKImage(vol.getSITKImage() <= threshold)
+        elif op == '0<=':
+            # noinspection PyTypeChecker
+            img.setSITKImage((vol.getSITKImage() > 0) * (vol.getSITKImage() <= threshold))
+        elif op == '==':
+            # noinspection PyTypeChecker
+            img.setSITKImage(vol.getSITKImage() == threshold)
+        elif op == '!=':
+            # noinspection PyTypeChecker
+            img.setSITKImage(vol.getSITKImage() != threshold)
+        else: raise ValueError('invalid comparison operator {}'.format(op))
+        return img
+    # Revision 20/05/2026 >
 
     # < Revision 23/10/2024
     # add getROI method
@@ -5360,7 +5418,8 @@ class SisypheImage(object):
     # add truncateIntensity method, not yet tested
     def truncateIntensity(self,
                           centile: int = 1,
-                          outputrange: tuple[float, float] | None = None):
+                          outputrange: tuple[float, float] | None = None,
+                          onlymax: bool = False) -> None:
         """
         Truncate intensity of the current SisypheImage instance. Truncate threshold is expressed in percentile
         (min threshold = centile, max threshold = 100 - centile). The max and min values of the output image are given
@@ -5369,15 +5428,22 @@ class SisypheImage(object):
 
         Parameters
         ----------
-        centile : int
-            truncate threshold expressed in percentile
-        outputrange : tuple[float, float] | None
-            max and min values of the output image
+        centile : int (optional)
+            truncate threshold expressed in percentile (default 1)
+        outputrange : tuple[float, float] | None (optional)
+            max and min values of the output image (default None)
+        onlymax : bool (optional)
+            truncate only max values if True (default False)
         """
         if self.getNumberOfComponentsPerPixel() == 1:
             img = self.getNumpy().flatten()
-            wmin = percentile(img, centile)
-            wmax = percentile(img, 100 - centile)
+            # < Revision 21/05/2026
+            # wmin = percentile(img, centile)
+            # wmax = percentile(img, 100 - centile)
+            if onlymax: wmin = float(img.min())
+            else: wmin = float(percentile(img, centile))
+            wmax = float(percentile(img, 100 - centile))
+            # Revision 21/05/2026 >
             f = IntensityWindowingImageFilter()
             f.SetWindowMinimum(wmin)
             f.SetWindowMaximum(wmax)
@@ -5397,7 +5463,8 @@ class SisypheImage(object):
     # noinspection PyTypeChecker
     def getTruncateIntensity(self,
                              centile: int = 1,
-                             outputrange: tuple[float, float] | None = None) -> SisypheImage:
+                             outputrange: tuple[float, float] | None = None,
+                             onlymax : bool = False) -> SisypheImage:
         """
         Get intensity truncated copy of the current SisypheImage instance.
         Truncate threshold is expressed in percentile (min threshold = centile, max threshold = 100 - centile).
@@ -5410,6 +5477,8 @@ class SisypheImage(object):
             truncate threshold expressed in percentile
         outputrange : tuple[float, float] | None
             max and min values of the output image
+        onlymax : bool (optional)
+            truncate only max values if True (default False)
 
         Returns
         -------
@@ -5418,8 +5487,13 @@ class SisypheImage(object):
         """
         if self.getNumberOfComponentsPerPixel() == 1:
             img = self.getNumpy().flatten()
-            wmin = percentile(img, centile)
-            wmax = percentile(img, 100 - centile)
+            # < Revision 21/05/2026
+            # wmin = percentile(img, centile)
+            # wmax = percentile(img, 100 - centile)
+            if onlymax: wmin = float(img.min())
+            else: wmin = float(percentile(img, centile))
+            wmax = float(percentile(img, 100 - centile))
+            # Revision 21/05/2026 >
             f = IntensityWindowingImageFilter()
             f.SetWindowMinimum(wmin)
             f.SetWindowMaximum(wmax)

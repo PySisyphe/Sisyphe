@@ -2414,7 +2414,7 @@ class SisypheApplyTransform(object):
     object -> SisypheApplyTransform
 
     Creation: 05/10/2021
-    Last revision: 11/04/2026
+    Last revision: 20/05/2026
     """
     __slots__ = ['_moving', '_roi', '_mesh', '_sl', '_transform', '_resample']
 
@@ -2978,7 +2978,11 @@ class SisypheApplyTransform(object):
             mtrfs = self._moving.getTransforms()
             # Template fixed volume is not updated
             if not self._moving.acquisition.isTP():
-                mtrfs.append(forwardtrf)
+                # < Revision 20/05/2026
+                # mtrfs.append(forwardtrf)
+                if forwardtrf.hasID():
+                    mtrfs.append(forwardtrf)
+                # Revision 20/05/2026 >
             # Add backward transform (resampled -> moving) to resampled volume
             rtrfs = resampled.getTransforms()
             rtrfs.append(backwardtrf)
@@ -3047,6 +3051,51 @@ class SisypheApplyTransform(object):
                     if fixed.hasFilename(): fixed.saveTransforms()
                 # Revision 03/09/2024 >
         else: raise AttributeError('No SisypheTransform or moving SisypheVolume.')
+
+    # < Revision 18/05/2026
+    # add resampleToFOV method
+    def resampleToFOV(self,
+                      size: tuple[int, int, int] | list[int],
+                      spacing: tuple[float, float, float] | list[float],
+                      save: bool = True,
+                      prefix: str | None = None,
+                      suffix: str | None = None,
+                      wait: DialogWait | None = None) -> SisypheVolume | None:
+        """
+        Reslice the moving volume attribute in a new FOV.
+
+        Parameters
+        ----------
+        size : tuple[int, int, int] | list[int]
+            voxels in x, y, z
+        spacing : tuple[float, float, float] | list[float]
+            voxel spacing in x, y, z
+        save : bool
+            save resliced moving volume if True (default)
+        prefix : str | None
+            file name prefix of the resliced moving volume (default None)
+        suffix : str | None
+            file name suffix of the resliced moving volume (default None)
+        wait : Sisyphe.gui.dialogWait.DialogWait | None
+            progress bar dialog (optional)
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            resliced moving volume
+        """
+        if self.hasMoving():
+            cm = self._moving.getCenter()
+            cr = [(size[i] - 1) * spacing[i] * 0.5 for i in range(3)]
+            t = [cr[i] - cm[i] for i in range(3)]
+            trf = SisypheTransform()
+            trf.setSize(size)
+            trf.setSpacing(spacing)
+            trf.setTranslations(t)
+            self.setTransform(trf)
+            return self.resampleMoving(save=save, prefix=prefix, suffix=suffix, wait=wait)
+        else: raise AttributeError('No moving SisypheVolume.')
+    # Revision 18/05/2026 >
 
     def resampleMoving(self,
                        fixed: SisypheVolume | None = None,

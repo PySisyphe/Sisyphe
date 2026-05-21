@@ -213,7 +213,7 @@ class SisypheVolume(SisypheImage):
     object -> SisypheImage -> SisypheVolume
 
     Creation: 04/02/2021
-    Last revisions: 03/02/2026
+    Last revisions: 20/05/2026
     """
     __slots__ = ['_ID', '_arrayID', '_filename', '_compression', '_identity', '_acquisition',
                  '_display', '_acpc', '_transforms', '_xdcm', '_slope', '_intercept', '_orientation']
@@ -2252,6 +2252,39 @@ class SisypheVolume(SisypheImage):
         """
         return self._compression
 
+    # < Revision 20/05/2026
+    def getThresholdingMask(self,
+                            threshold: float = 0.5,
+                            op: str = '>',
+                            c: int | None = 0) -> SisypheVolume:
+        """
+        Converting current SisypheVolume instance to SisypheVolume mask using a threshold.
+
+        Parameters
+        ----------
+        threshold  : float
+            threshold for binarization (default 0.5)
+        op : str
+            comparison operator: '>' (default), '>=', '<', '<=', '==', '!=', '0<' (0 < x < threshold), '0<='
+            (0 < x <= threshold)
+        c : int | None
+            - parameter only used for multi-component image
+            - int index of the component to process (default 0, first component)
+            - None, processing is performed on the mean image
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        vol = SisypheVolume(super().getThresholdingMask(threshold, op, c))
+        vol.copyAttributesFrom(self, display=False, acquisition=False)
+        vol.setFilename(self._filename)
+        vol.setFilenamePrefix('mask')
+        vol.acquisition.setModalityToOT()
+        vol.acquisition.setSequenceToMask()
+        return vol
+    # Revision 20/05/2026 >
+
     # < Revision 23/10/2024
     # add getROI method
     def getROI(self,
@@ -3208,7 +3241,8 @@ class SisypheVolume(SisypheImage):
     # add getTruncateIntensity method, not yet tested
     def getTruncateIntensity(self,
                              centile: int = 1,
-                             outputrange: tuple[float, float] | None = None) -> SisypheVolume:
+                             outputrange: tuple[float, float] | None = None,
+                             onlymax: bool = False) -> SisypheVolume:
         """
         Get intensity truncated copy of the current SisypheImage instance. Truncate threshold is expressed in
         percentile (min threshold = centile, max threshold = 100 - centile). The max and min values of the output image
@@ -3221,13 +3255,18 @@ class SisypheVolume(SisypheImage):
             truncate threshold expressed in percentile
         outputrange : tuple[float, float] | None
             max and min values of the output image
+        onlymax : bool (optional)
+            truncate only max values if True (default False)
 
         Returns
         -------
             SisypheVolume
                 truncated volume
         """
-        r = super().getTruncateIntensity(centile, outputrange)
+        # < Revision 20/05/2026
+        # r = super().getTruncateIntensity(centile, outputrange)
+        r = super().getTruncateIntensity(centile, outputrange, onlymax)
+        # Revision 20/05/2026 >
         r = SisypheVolume(r)
         r.copyPropertiesFrom(self, slope=False)
         r.setFilename(self.getFilename())
@@ -3273,6 +3312,16 @@ class SisypheVolume(SisypheImage):
             geometric transform collection
         """
         return self._transforms
+
+    # < Revision 19/05/2026
+    # add clearTransforms method
+    def clearTransforms(self):
+        """
+        Clear the transforms attribute of the current SisypheVolume instance.
+        However, the associated .xtrfs file is not deleted.
+        """
+        self._transforms.clear()
+    # Revision 19/05/2026 >
 
     def hasTransform(self, ID: str | SisypheVolume) -> bool:
         """
@@ -3358,7 +3407,7 @@ class SisypheVolume(SisypheImage):
         """
         Load the transforms attribute of the current SisypheVolume instance. Each SisypheVolume is associated with a
         SisypheTransforms instance, which stores all the geometric transformations calculated from co-registrations
-        with other SisypheVolume instances.
+        with other SisypheVolume instances (associated .xtrfs file).
         """
         filename = splitext(self._filename)[0] + self._transforms.getFileExt()
         if exists(filename): self._transforms.load(filename)
@@ -3370,7 +3419,7 @@ class SisypheVolume(SisypheImage):
         """
         Save the transforms attribute of the current SisypheVolume instance. Each SisypheVolume is associated with a
         SisypheTransforms instance, which stores all the geometric transformations calculated from co-registrations
-        with other SisypheVolume instances.
+        with other SisypheVolume instances (associated .xtrfs file).
         """
         if self.hasFilename():
             path, ext = splitext(self._filename)
@@ -3381,6 +3430,19 @@ class SisypheVolume(SisypheImage):
             else:
                 if exists(filename): remove(filename)
             # Revision 18/04/2025 >
+
+    # < Revision 19/05/2026
+    # add removeTransforms method
+    def removeTransforms(self) -> None:
+        """
+        Clear the transforms attribute of the current SisypheVolume instance.
+        Delete the associated .xtrfs file.
+        """
+        path, ext = splitext(self._filename)
+        filename = path + self._transforms.getFileExt()
+        if exists(filename): remove(filename)
+        self._transforms.clear()
+    # Revision 19/05/2026 >
 
     def hasICBMTransform(self) -> bool:
         """
