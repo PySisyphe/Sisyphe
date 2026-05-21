@@ -844,6 +844,134 @@
 			p = p(STRUCT) ^ (1 + log(0.5 / p(TISSUE)))
 		</PMAPCorrection>
 	</RegistrationBasedSegmentation>
+	<UnetTumorSegmentation>
+		<Title>
+			Tumor clustering in three classes: peritumoral oedema  (FLAIR/T2 hyper-intensity, 
+			T1 hypo-intensity), enhancing tumor core, and non-enhancing tumor core. Four MR 
+			sequences could be given: FLAIR, T1, contrast-enhanced T1 and T2. All of these 
+			volumes must be coregistered and resampled using the same space/transform ID.
+		</Title>
+		<SaveROI>Save ROI in addition of label map ?</SaveROI>
+		<Prefix>Prefix added to T1 file name to save label map.</Prefix>
+		<Suffix>Prefix added to T1 file name to save label map.</Suffix>
+	</UnetTumorSegmentation>
+	<UnetHippocampusSegmentation>
+		<Title>
+			Hippocampal segmentation using deep-learning U-net pre-trained model.
+		</Title>
+		<SaveROI>Save ROI in addition of label map ?</SaveROI>
+		<Prefix>Prefix added to T1 file name to save label map.</Prefix>
+		<Suffix>Prefix added to T1 file name to save label map.</Suffix>
+	</UnetHippocampusSegmentation>
+	<UnetMedialTemporalSegmentation>
+		<Title>
+			Medial temporal segmentation using deep-learning U-net pre-trained model.
+		</Title>
+		<UseT2>
+			Perform segmentation using two sequences T1 and T2, 
+			rather than just T1.
+		</UseT2>
+		<Model>Choose one of the two pre-trained models: yassa or wip</Model>
+		<SaveProbability>Save probability maps in addition of label map ?</SaveProbability>
+		<SaveROI>Save ROI in addition of label map ?</SaveROI>
+		<Prefix>Prefix added to T1 file name to save label map.</Prefix>
+		<Suffix>Prefix added to T1 file name to save label map.</Suffix>
+	</UnetMedialTemporalSegmentation>
+	<UnetLesionSegmentation>
+		<Title>
+			T1 hypo-intensity lesion segmentation, such as stroke sequelae, using 
+			deep-learning U-net pre-trained model.
+		</Title>
+		<SaveROI>Save ROI in addition of lesion mask ?</SaveROI>
+		<Prefix>Prefix added to T1 file name to save lesion mask.</Prefix>
+		<Suffix>Suffix added to T1 file name to save lesion mask.</Suffix>
+	</UnetLesionSegmentation>
+	<UnetWMHSegmentation>
+		<Title>
+			White matter hyper-intensities segmentation, such as multiple sclerosis 
+			or vasculo-degenerative lesions using deep-learning U-net pre-trained 
+			model.
+		</Title>
+		<UseT1>
+			Perform segmentation using two sequences FLAIR and T1, 
+			rather than just FLAIR.
+		</UseT1>
+		<Model>
+			Choose one of the three pre-trained models: sysu, hypermapp3r or antsxnet.
+		</Model>
+		<SaveROI>Save WMH ROI in addition of label map ?</SaveROI>
+		<Prefix>Prefix added to FLAIR file name to save WMH probability map.</Prefix>
+		<Suffix>Suffix added to FLAIR file name to save WMH probability map.</Suffix>
+	</UnetWMHSegmentation>
+	<UnetTissueSegmentation>
+		<Title>
+			Tissue segmentation (gray matter, white matter and cerebro-spinal fluid) 
+			using deep-learning U-net pre-trained model.
+		</Title>
+		<SaveProbability>Save tissue probability maps in addition to the label map ?</SaveProbability>
+		<SaveROI>Save tissue ROIs in addition of label map ?</SaveROI>
+		<Prefix>Prefix added to T1 file name to save label map(s).</Prefix>
+		<Suffix>Suffix added to T1 file name to save label map(s).</Suffix>
+	</UnetTissueSegmentation>
+	<OpenMAPSegmentation>
+		<Title>
+			MR T1 parcellation into the 280 anatomical structures of the 
+			JHU MNI atlas using deep-learning OpenMAP-T1 pre-trained model.
+		</Title>
+		<Bias>Bias field correction preprocessing before parcellation ?</Bias>
+		<Save8>Save a parcellation map of 8 labels.</Save8>
+		<Save20>Save a parcellation map of 20 labels.</Save20>
+		<Save58>Save a parcellation map of 58 labels.</Save58>
+		<Save144>Save a parcellation map of 144 labels.</Save144>
+		<Save280>Save the full parcellation map of 144 labels.</Save280>
+		<Prefix>
+			Prefix added to T1 file name to save label map(s).
+			This prefix must contain an asterisk acting as a wildcard, which 
+			will be replaced by the number of labels on the current map.
+		</Prefix>
+		<Suffix>
+			Suffix added to T1 file name to save label map(s).
+			This suffix must contain an asterisk acting as a wildcard, which 
+			will be replaced by the number of labels on the current map.			
+		</Suffix>
+		<PrefixCrop>Prefix added to T1 file name to save cropped volume.</PrefixCrop>
+		<SuffixCrop>Suffix added to T1 ile name to save cropped volume.</SuffixCrop>
+		<PrefixStrip>Prefix added to T1 file name to save stripped volume.</PrefixStrip>
+		<SuffixStrip>Suffix added to T1 ile name to save stripped volume.</SuffixStrip>
+	</OpenMAPSegmentation>
+	<DeepFCDSegmentation>
+		<Title>
+			Focal cortical dysplasia detection using deep-learning deepFCD 
+			pre-trained model. Two MR sequences could be given: T1 and FLAIR.
+			Brain mask is optional.
+		</Title>
+		<Bias>Bias field correction preprocessing before detection ?</Bias>
+		<Threshold>
+			Threshold applied to the intensity-normalized FLAIR to calculate 
+			the analysis mask (values between 0.1 and 1.0, default 0.4). This 
+			parameter is not used if a mask is selected.
+		</Threshold>
+		<Batch>
+			Internal parameter used to limit memory usage. It is not recommended 
+			to change the default value (8192; 4096 to 32768); unless you encounter 
+			out-of-memory issues, use a lower batch size value.
+		</Batch>
+		<Fwhm>
+			FCD probability map smoothing, full width at hall maximum of the gaussian 
+			kernel in mm.
+		</Fwhm>
+		<Prefix>Prefix added to T1 file name to save FCD probability map.</Prefix>
+		<Suffix>Suffix added to T1 ile name to save FCD probability map.</Suffix>
+	</DeepFCDSegmentation>
+	<DeepMeningiomaSegmentation>
+		<Title>
+			Meningioma segmentation using deep-learning neuronet ams 
+			pre-trained model.
+		</Title>
+		<Bias>Bias field correction preprocessing before segmentation ?</Bias>
+		<Prefix>Prefix added to T1 file name to save meningioma mask.</Prefix>
+		<Suffix>Suffix added to T1 file name to save meningioma mask.</Suffix>
+	</DeepMeningiomaSegmentation>
 	<Registration>
 		<Title>
 			Register a pair of volumes with ANTs registration methods.

@@ -232,4 +232,12 @@
 		<cmap label="Colormap" vartype="lut">gray</cmap>
 		<colorbar label="Colorbar" vartype="bool">False</colorbar>
 	</ImagePlot>
+	<LineProperties>
+		<LineWidth label="Line width" varmax="5.0" varmin="0.5" vartype="float">2.0</LineWidth>
+		<LineOpacity label="Font/Line opacity" vartype="percent">1.0</LineOpacity>
+		<LineColor label="Font/Line color" vartype="color">1.0 1.0 1.0</LineColor>
+		<FontFamily vartype="font"></FontFamily>
+		<FontSize varmax="24" varmin="8" vartype="int">12</FontSize>
+		<FontSizeScale varmax="2.0" varmin="1.0" vartype="float">1.0</FontSizeScale>
+	</LineProperties>
 </settings>

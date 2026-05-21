@@ -78,6 +78,7 @@
 	<IntensityNormalizationImageFilter>
 		<Method vartype="lstr">zscore|rescale [0, 1]</Method>
 		<Truncate label="Truncate centile" varmax="10" varmin="0" vartype="int">0</Truncate>
+		<OnlyMax label="Truncate only maximum" vartype="bool">True</OnlyMax>
 		<Prefix vartype="str">norm</Prefix>
 		<Suffix vartype="str"/>
 	</IntensityNormalizationImageFilter>
@@ -236,6 +237,34 @@
 		<PrefixStrip label="Stripped volume prefix" vartype="str">strip</PrefixStrip>
 		<SuffixStrip label="Stripped volume suffix" vartype="str"/>
 	</OpenMAPSegmentation>
+	<DeepFCDSegmentation>
+		<Bias label="Bias field correction" vartype="bool">True</Bias>
+		<Threshold label="Normalized FLAIR threshold" varmax="1.0" varmin="0.1" decimals="1" vartype="float">0.4</Threshold>
+		<Batch label="Batch size" vartype="lstr">8192|4096|16384|32768</Batch>
+		<Fwhm label="FCD map smoothing\n(FWHM in mm)" varmax="20" varmin="0.0" vartype="float">4.0</Fwhm>
+		<Prefix label="FCD probability map prefix" vartype="str">fcd</Prefix>
+		<Suffix label="FCD probability map suffix" vartype="str"/>
+	</DeepFCDSegmentation>
+	<DeepMeningiomaSegmentation>
+		<Bias label="Bias field correction" vartype="bool">False</Bias>
+		<Prefix label="Meningioma probability map prefix" vartype="str">meningioma</Prefix>
+		<Suffix label="Meningioma probability map suffix" vartype="str"/>
+	</DeepMeningiomaSegmentation>
+	<DeepMetastasisSegmentation>
+		<Bias label="Bias field correction" vartype="bool">False</Bias>
+		<Threshold label="Metastasis extent threshold (in voxels)" varmax="10" varmin="1" vartype="int">3</Threshold>
+		<Prefix label="Metastasis mask prefix" vartype="str">met</Prefix>
+		<Suffix label="Metastasis mask suffix" vartype="str"/>
+	</DeepMetastasisSegmentation>
+	<DeepMicrobleedsSegmentation>
+		<Model0 label="Use first model" vartype="bool">True</Model0>
+		<Model1 label="Use second model" vartype="bool">True</Model1>
+		<Model2 label="Use third model" vartype="bool">True</Model2>
+		<SaveMask label="Save microbleeds mask" vartype="bool">False</SaveMask>
+		<Threshold label="Probability threshold" varmax="1.0" varmin="0.1" vartype="float">0.4</Threshold>
+		<Prefix label="Microbleeds probability map prefix" vartype="str">mrcbld</Prefix>
+		<Suffix label="Microbleeds probability map suffix" vartype="str"/>
+	</DeepMicrobleedsSegmentation>
 	<Registration>
 		<FixedMask label="Fixed volume mask" vartype="bool">True</FixedMask>
 		<Estimation vartype="lstr">FOV center alignment|Center of mass alignment|No estimation</Estimation>
