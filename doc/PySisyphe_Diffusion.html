@@ -144,10 +144,7 @@
 <span id="menu-section-gradients"></span><h2>Gradients<a class="headerlink" href="#gradients" title="Link to this heading"></a></h2>
 <p>This menu is used to create PySisyphe XML files for b-values (.xbval) and gradient vectors (.xbvec) from a list of diffusion-weighted Volumes and text files for b-values and gradient directions (.bval, .bvec).</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>Diffusion weighted Volumes</strong>.</p>
-<dl class="simple">
-<dt>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget to select <strong>Associated B-values</strong>, text file (.bval) with b-values for each diffusion-weighted volume.</dt><dd><p>and b-values</p>
-</dd>
-</dl>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget to select <strong>Associated B-values</strong>, text file (.bval) with b-values for each diffusion-weighted volume.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget to select <strong>Associated gradient directions</strong>, text file (.bvec) with gradient vectors for each diffusion-weighted volume.</p>
 <p>Left-click <strong>Save</strong> button to store the PySisyphe XML files for b-values (.xbval) and gradient vectors (.xbvec).</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
@@ -285,6 +282,7 @@
 </ul>
 <p>Left-click <strong>Execute</strong> button to fit the model and calculate the map(s).</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>Sample volumes (DTI) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test DTI processsing.</p>
 </section>
 <section id="diffusion-analysis-along-perivascular-space">
 <span id="menu-section-diffalps"></span><h2>Diffusion analysis along perivascular space<a class="headerlink" href="#diffusion-analysis-along-perivascular-space" title="Link to this heading"></a></h2>
@@ -375,9 +373,8 @@ Dzz(AArea): diffusion in z-axis direction of the association area</p>
 <div><ul class="simple">
 <li><p>FA/GFA, mask calculated from FA/GFA map threshold.</p></li>
 <li><p>ROI, mask is a PySisyphe ROI (.xroi) given by the user.</p></li>
-<li><p>GM/WM/CSF, anatomically-constrained tractography, masks calculated from GM/WM/CSF maps. Anatomically-constrained tractography (ACT) uses information from anatomical images to determine when the</p></li>
+<li><p>GM/WM/CSF, anatomically-constrained tractography, masks calculated from GM/WM/CSF maps. Anatomically-constrained tractography (ACT) uses information from anatomical images to determine when the tractography stops. The include map defines when the streamline reached a “valid” stopping region (i.e. gray matter map) and the exclude map defines when the streamline reached an “invalid” stopping region (i.e. corticospinal fluid map). The ACT stopping criterion uses a trilinear interpolation at the tracking position. Streamline reconstruction is stopped when the current point is in a voxel belonging to gray matter (&gt; 0.5), cerebro-spinal fluid (&gt; 0.5) or background which is defined as binary not(gray matter + white matter + corticospinal fluid maps).</p></li>
 </ul>
-<p>tractography stops. The include map defines when the streamline reached a “valid” stopping region (i.e. gray matter map) and the exclude map defines when the streamline reached an “invalid” stopping region (i.e. corticospinal fluid map). The ACT stopping criterion uses a trilinear interpolation at the tracking position. Streamline reconstruction is stopped when the current point is in a voxel belonging to gray matter (&gt; 0.5), cerebro-spinal fluid (&gt; 0.5) or background which is defined as binary not(gray matter + white matter + corticospinal fluid maps).</p>
 </div></blockquote>
 </li>
 <li><p>Set the <strong>FA/GFA Threshold stopping criterion</strong> value from the spinbox. It is used to calculate the mask of voxels that stop streamline generation. This parameter is only displayed if the stopping crtiterion is FA/GFA (see above).</p></li>
@@ -386,6 +383,7 @@ Dzz(AArea): diffusion in z-axis direction of the association area</p>
 </ul>
 <p>Left-click <strong>Execute</strong> button to calculate the tractogram.</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>Sample volumes (DTI) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> for testing.</p>
 </section>
 <section id="roi-based-streamlines-selection">
 <span id="menu-section-roisel"></span><h2>ROI based streamlines selection<a class="headerlink" href="#roi-based-streamlines-selection" title="Link to this heading"></a></h2>
@@ -408,6 +406,7 @@ Dzz(AArea): diffusion in z-axis direction of the association area</p>
 </ul>
 <p>Left-click <strong>Execute</strong> button to perform streamline selection.</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>Sample volumes (DTI) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> for testing.</p>
 </section>
 <section id="filter-based-streamlines-selection">
 <span id="menu-section-filtersel"></span><h2>Filter based streamlines selection<a class="headerlink" href="#filter-based-streamlines-selection" title="Link to this heading"></a></h2>
@@ -424,6 +423,7 @@ Dzz(AArea): diffusion in z-axis direction of the association area</p>
 </ul>
 <p>Left-click <strong>Execute</strong> button to perform streamline selection.</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>Sample volumes (DTI) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> for testing.</p>
 </section>
 <section id="template-based-streamlines-selection">
 <span id="menu-section-templatesel"></span><h2>Template based streamlines selection<a class="headerlink" href="#template-based-streamlines-selection" title="Link to this heading"></a></h2>
@@ -444,6 +444,7 @@ Dzz(AArea): diffusion in z-axis direction of the association area</p>
 </ul>
 <p>Left-click <strong>Execute</strong> button to perform streamline selection. Selected streamlines are saved to a PySisyphe XML tractogtram file (.xtracts).</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>Sample volumes (DTI) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> for testing.</p>
 </section>
 <section id="density-map">
 <span id="menu-section-density"></span><h2>Density map<a class="headerlink" href="#density-map" title="Link to this heading"></a></h2>
@@ -451,6 +452,7 @@ Dzz(AArea): diffusion in z-axis direction of the association area</p>
 <p>Use the <strong>Streamlines</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget a the top to select a PySisyphe XML tractogram file (.xtracts). This file is calculated from the <a class="reference internal" href="#menu-section-tractogram"><span class="std std-ref">tractogram generation</span></a> menu.</p>
 <p>Left-click <strong>Execute</strong> button for map processing. The density map volume is saved with the file name of the first diffusion-weighted volume, prefixed by “density”.</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>Sample volumes (DTI) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> for testing.</p>
 </section>
 <section id="path-length-map">
 <span id="menu-section-path"></span><h2>Path length map<a class="headerlink" href="#path-length-map" title="Link to this heading"></a></h2>
@@ -459,6 +461,7 @@ Dzz(AArea): diffusion in z-axis direction of the association area</p>
 <p>Use the <strong>Reference ROI</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget, under the previous, to select the PySisyphe ROI(s) (.xroi) that wil be used as reference.</p>
 <p>Left-click <strong>Execute</strong> button for map processing. The path length map volume is saved with the file name of the first diffusion-weighted volume, prefixed by “pathlength”.</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>Sample volumes (DTI) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> for testing.</p>
 </section>
 <section id="connectivity-matrix">
 <span id="menu-section-connectivity"></span><h2>Connectivity matrix<a class="headerlink" href="#connectivity-matrix" title="Link to this heading"></a></h2>
@@ -473,6 +476,7 @@ Dzz(AArea): diffusion in z-axis direction of the association area</p>
 <p>Left-click <strong>Execute</strong> button to calculate the connectivity matrix.</p>
 <p>The result is displayed in a dialog box with two tabs. The first tab, titled <strong>Connectivity matrix</strong>, shows the connectivity matrix as a chart. This tab includes three buttons at the bottom: a <strong>Save bitamp</strong> button, which shows a dialog box to save a bitmap of the chart (supported bitmap formats BMP, JPG, PNG, TIFF and SVG), a <strong>Copy to clipboard</strong> button to copy a bitmap capture of the chart to the clipboard, and a <strong>Copy to screenshots</strong> button to copy a bitmap capture of the chart to the <a class="reference internal" href="PySisyphe_screenshots.html#page-screenshots"><span class="std std-ref">Screenshots manager</span></a>. The second tab, titled <strong>Connectivity table</strong>, shows the connectivity matrix values in table format. This tab includes the button <strong>Save Dataset</strong>, which shows a dialog box to save the table (supported formats CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET).</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>Sample volumes (DTI) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> for testing.</p>
 </section>
 </section>
 

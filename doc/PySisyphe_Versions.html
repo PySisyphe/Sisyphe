@@ -96,6 +96,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-80-15-build-20-02-2026">version 0.80.15, build 20/02/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-81-22-build-20-03-2026">version 0.81.22, build 20/03/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-87-12-build-20-04-2026">version 0.87.12, build 20/04/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-92-10-build-20-05-2026">version 0.92.10, build 20/05/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -144,6 +145,7 @@
 <li><p><a class="reference internal" href="#build20-02-2026"><span class="std std-ref">version 0.80.15, build 20/02/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-03-2026"><span class="std std-ref">version 0.81.22, build 20/03/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-04-2026"><span class="std std-ref">version 0.87.12, build 20/04/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build20-05-2026"><span class="std std-ref">version 0.92.10, build 20/05/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -639,7 +641,7 @@
 </ul>
 </div></blockquote>
 </li>
-<li><p>add version-histrory.rst</p></li>
+<li><p>add PySisyphe_Version.rst</p></li>
 <li><p>update API documentation, docstring corrections</p></li>
 <li><p>rebuild sphinx documentation</p></li>
 </ul>
@@ -1283,10 +1285,9 @@
 <li><p>add “Label volume to mask” dialog box documentation in PySisyphe_File.rst &amp; PySisyphe:_menubar.rst</p></li>
 <li><p>add “Remaps label volume” dialog box documentation in PySisyphe_File.rst &amp; PySisyphe:_menubar.rst</p></li>
 <li><p>add “Laterality index” dialog box documentation in PySisyphe_Mapping.rst &amp; PySisyphe:_menubar.rst</p></li>
-<li><p>PySisyphe_File.rst update</p></li>
-<li><p>PySisyphe_Versions.rst update</p></li>
-<li><p>API documentation update</p></li>
-<li><p>version-histrory.rst update</p></li>
+<li><p>PySisyphe_File.rst</p></li>
+<li><p>PySisyphe_Versions.rst</p></li>
+<li><p>API documentation</p></li>
 <li><p>rebuild sphinx documentation</p></li>
 </ul>
 </div></blockquote>
@@ -1513,7 +1514,7 @@
 <li><p>/API2/api_widgets_settings.rst</p></li>
 <li><p>/API2/api_widgets_single_view.rst</p></li>
 <li><p>/API2/index.rst</p></li>
-<li><p>version-histrory.rst</p></li>
+<li><p>PySisyphe_Versions.rst</p></li>
 <li><p>rebuild sphinx documentation</p></li>
 </ul>
 </div></blockquote>
@@ -1733,7 +1734,7 @@
 <li><p>/API/api_volume.rst</p></li>
 <li><p>/API2/api_widgets_select_file.rst</p></li>
 <li><p>/API2/api_widgets_settings.rst</p></li>
-<li><p>version-histrory.rst</p></li>
+<li><p>PySisyphe_Version.rst</p></li>
 <li><p>rebuild sphinx documentation</p></li>
 </ul>
 </div></blockquote>
@@ -2157,7 +2158,7 @@
 <li><p>PySisyphe_docktarget.rst</p></li>
 <li><p>PySisyphe_docktracking.rst</p></li>
 <li><p>PySisyphe_thumbnailbar.rst</p></li>
-<li><p>version-histrory.rst</p></li>
+<li><p>PySisyphe_Versions.rst</p></li>
 <li><p>rebuild sphinx documentation</p></li>
 </ul>
 </div></blockquote>
@@ -2990,7 +2991,7 @@
 <li><p>PySisyphe_Segmentation.rst</p></li>
 <li><p>PySisyphe_dockroitools.rst</p></li>
 <li><p>PySisyphe_Mapping.rst</p></li>
-<li><p>version-histrory.rst</p></li>
+<li><p>PySisyphe_Versions.rst</p></li>
 <li><p>rebuild sphinx documentation</p></li>
 </ul>
 </div></blockquote>
@@ -3858,7 +3859,7 @@
 <div><ul class="simple">
 <li><p>API/api_tools.rst</p></li>
 <li><p>API/api_fiducial.rst</p></li>
-<li><p>version-histrory.rst</p></li>
+<li><p>PySisyphe_Versions.rst</p></li>
 <li><p>rebuild sphinx documentation</p></li>
 </ul>
 </div></blockquote>
@@ -4059,12 +4060,11 @@
 <li><p>core.sisypheTools.ToolWidgetCollection.verifyName()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>check if a tool name is already in the current ToolWidgetCollection instance. If so, a new name is returned</p></li>
+<li><p>check if a tool name is already in the current ToolWidgetCollection instance. If so, a new name is returned with a numeric suffix (e.g. #1 …), the same name is returned otherwise</p></li>
 </ul>
 </div></blockquote>
 </li>
 </ul>
-<p>with a numeric suffix (e.g. #1 …), the same name is returned otherwise</p>
 </dd>
 </dl>
 </li>
@@ -4722,7 +4722,7 @@
 <li><p><strong>updated html documentation</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>version-histrory.rst</p></li>
+<li><p>PySisyphe_Version.rst</p></li>
 <li><p>PySisyphe_Segmentation.rst</p></li>
 <li><p>PySisyphe_sliceview.rst</p></li>
 <li><p>PySisyphe_orthogonalview.rst</p></li>
@@ -5070,7 +5070,7 @@
 <li><p><strong>updated html documentation</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>version-histrory.rst</p></li>
+<li><p>PySisyphe_Version.rst</p></li>
 <li><p>PySisyphe_main.rst</p></li>
 <li><p>PySisyphe_ipython.rst</p></li>
 <li><p>PySisyphe_Registration.rst</p></li>
@@ -6332,7 +6332,7 @@
 <li><p><strong>updated html documentation</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>version-histrory.rst</p></li>
+<li><p>PySisyphe_Version.rst</p></li>
 <li><p>PySisyphe_dockroitools.rst</p></li>
 <li><p>PySisyphe_Diffusion.rst</p></li>
 <li><p>PySisyphe_Segmentation.rst</p></li>
@@ -7105,6 +7105,14 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p><strong>new files</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>/gui/font/DejaVuSans.ttf</p></li>
+<li><p>/gui/font/template.json</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p><strong>updated files</strong></p>
 <blockquote>
 <div><ul class="simple">
@@ -7117,7 +7125,8 @@
 <li><p><strong>update main PySisyphe.py</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>line 36, Fix PyTorch DLL loading issue on Windows</p></li>
+<li><p>line 43, fix PyTorch DLL loading issue on Windows</p></li>
+<li><p>line 70, fix matplotlib cache dir issue in frozen version</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -7174,6 +7183,7 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>build python 3.12 frozen version for darwin platform</p></li>
 <li><p><strong>new external modules</strong></p>
 <blockquote>
 <div><ul class="simple">
@@ -7629,6 +7639,13 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.dialogStatContrast.DialogLateralityIndex</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>gui.dialogFunction.AbstractDialogFunction</p>
 <blockquote>
 <div><ul class="simple">
@@ -7704,13 +7721,6 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>update _initSettings() method</p></li>
-</ul>
-</div></blockquote>
-</li>
-<li><p>gui.dialogStatContrast.DialogLateralityIndex</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>update execute() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8081,13 +8091,6 @@
 </ul>
 </div></blockquote>
 </li>
-<li><p>gui.dialogStatContrast.DialogLateralityIndex.execute()</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>save masked statistical map</p></li>
-</ul>
-</div></blockquote>
-</li>
 <li><p>gui.windowSisyphe.WindowSisyphe._initMapMenu()</p>
 <blockquote>
 <div><ul class="simple">
@@ -8121,6 +8124,13 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>bug fix, line 206, replace self._cfactors.addItem(‘Main factor’) by self._cfactors.addItem(‘Main’)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogStatContrast.DialogLateralityIndex.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>save masked statistical map</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8456,6 +8466,823 @@
 </ul>
 </div></blockquote>
 </li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="version-0-92-10-build-20-05-2026">
+<span id="build20-05-2026"></span><h2>version 0.92.10, build 20/05/2026<a class="headerlink" href="#version-0-92-10-build-20-05-2026" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>updated html documentation</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PySisyphe_Versions.rst</p></li>
+<li><p>PySisyphe_sliceview.rst</p></li>
+<li><p>PySisyphe_orthogonalview.rst</p></li>
+<li><p>PySisyphe_synchronizedview.rst</p></li>
+<li><p>PySisyphe_projectionview.rst</p></li>
+<li><p>PySisyphe_multicomponentview.rst</p></li>
+<li><p>PySisyphe_dockroitools.rst</p></li>
+<li><p>PySisyphe_docktracking.rst</p></li>
+<li><p>PySisyphe_docktarget.rst</p></li>
+<li><p>PySisyphe_Segmentation.rst</p></li>
+<li><p>PySisyphe_Mapping.rst</p></li>
+<li><p>PySisyphe_Diffusion.rst</p></li>
+<li><p>PySisyphe_File.rst</p></li>
+<li><p>PySisyphe_Functions.rst</p></li>
+<li><p>PySisyphe_menubar</p></li>
+<li><p>API/api_image.rst</p></li>
+<li><p>API/api_volume.rst</p></li>
+<li><p>API/api_transform.rst</p></li>
+<li><p>rebuild sphinx documentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new files</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>/gui/darkroi/bitmap.png</p></li>
+<li><p>/gui/darkroi/folder.png</p></li>
+<li><p>/gui/darkroi/json.png</p></li>
+<li><p>/gui/darkroi/model.png</p></li>
+<li><p>/gui/darkroi/page.png</p></li>
+<li><p>/gui/darkroi/scan.png</p></li>
+<li><p>/gui/darkroi/sheet.png</p></li>
+<li><p>/gui/darkroi/workflow.png</p></li>
+<li><p>/gui/darkroi/xml.png</p></li>
+<li><p>/gui/lightroi/bitmap.png</p></li>
+<li><p>/gui/lightroi/folder.png</p></li>
+<li><p>/gui/lightroi/json.png</p></li>
+<li><p>/gui/lightroi/model.png</p></li>
+<li><p>/gui/lightroi/page.png</p></li>
+<li><p>/gui/lightroi/scan.png</p></li>
+<li><p>/gui/lightroi/sheet.png</p></li>
+<li><p>/gui/lightroi/workflow.png</p></li>
+<li><p>/gui/lightroi/xml.png</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated files</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>/settings/dialogs.xml</p></li>
+<li><p>/settings/functions.xml</p></li>
+<li><p>/settings/tooltips.xml</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new external modules</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>deepFCD, <a class="reference external" href="https://github.com/NOEL-MNI/deepFCD">https://github.com/NOEL-MNI/deepFCD</a>, added as PySisyphe module Sisyphe.lib.deepfcd</p></li>
+<li><p>SHIVA-CMB, <a class="reference external" href="https://github.com/pboutinaud/SHIVA_CMB">https://github.com/pboutinaud/SHIVA_CMB</a>, added as PySisyphe module Sisyphe.lib.shiva</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated plugin</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>SEEG_Trajectories</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated modules</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>core.sisypheImage</p></li>
+<li><p>core.sisypheVolume</p></li>
+<li><p>core.sisypheTransform</p></li>
+<li><p>processing.segmentation</p></li>
+<li><p>processing.capturedStdoutProcessing</p></li>
+<li><p>gui.dialogSettings</p></li>
+<li><p>gui.dialogDeepSegmentation</p></li>
+<li><p>gui.dialogXmlDicom</p></li>
+<li><p>gui.dialogDicomDataset</p></li>
+<li><p>gui.dialogFunction</p></li>
+<li><p>gui.windowSisyphe</p></li>
+<li><p>widgets.abstractViewWidget</p></li>
+<li><p>widgets.basicWidgets</p></li>
+<li><p>widgets.functionsSettingsWidget</p></li>
+<li><p>widgets.attributesWidgets</p></li>
+<li><p>widgets.iconBarWidgets</p></li>
+<li><p>widgets.multiComponentViewWidget</p></li>
+<li><p>widgets.projectionViewWidget</p></li>
+<li><p>widgets.tabToolsWidgets</p></li>
+<li><p>widgets.fileBrowserWidget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>processing.capturedStdoutProcessing.ProcessDeepFCDSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>deep learning focal cortical dysplasia (FCD) segmentation using deepFCD model</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.capturedStdoutProcessing.ProcessDeepMicrobleedsSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>deep learning microbleeds segmentation using SHIVA-CMB model</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.IconProvider</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>class to customize the icons of the FileBrowserWidget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.dialogDeepSegmentation.DialogDeepFCDSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for deep learning focal cortical dysplasia (FCD) segmentation using deepFCD model</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.dialogDeepSegmentation.DialogDeepMicrobleedsSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for deep learning microbleeds segmentation using SHIVA-CMB model</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImage.SisypheImage</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new getThresholdingMask() method</p></li>
+<li><p>update truncateIntensity() method</p></li>
+<li><p>update getTruncateIntensity() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new getThresholdingMask() method</p></li>
+<li><p>new clearTransforms() method</p></li>
+<li><p>new removeTransforms() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTransform.SisypheApplyTransform</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new resampleToFOV() method</p></li>
+<li><p>update updateTransforms() method</p></li>
+<li><p>update getTruncateIntensity() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.segmentation.SegmentAnything</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setApplicationFont() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSettings.DialogSettings</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update apply() method</p></li>
+<li><p>update _initSettings() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepTumorSegmentation</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepHippocampusSegmentation</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepLesionSegmentation</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepWhiteMatterHyperIntensitiesSegmentation</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepTissueSegmentation</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepAtlasParcellation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogXmlDicom.DialogXmlDicom</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDicomDataset.DialogDicomDataset</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setFilename() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogFunction.DialogIntensityNormalization</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update function() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new fcdDetection() method</p></li>
+<li><p>update xmlDicom() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new _updateLineProperties() method</p></li>
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.basicWidgets.FontSelect</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new def getFontPath() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setParameterValue() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>upadte properties() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarWidgets.IconBarWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update setViewWidget() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setVolulme() method</p></li>
+<li><p>update setNumberOfVisibleViews() method</p></li>
+<li><p>update updateSpan() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiComponentViewWidget.IconBarMultiComponentViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setViewWidget() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.IconBarMultiProjectionViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new getLastAction() method</p></li>
+<li><p>update __init__() method</p></li>
+<li><p>update brush() method</p></li>
+<li><p>update area() method</p></li>
+<li><p>update sam() method</p></li>
+<li><p>update undo() method</p></li>
+<li><p>update redo() method</p></li>
+<li><p>update slcDilate() method</p></li>
+<li><p>update slcErode() method</p></li>
+<li><p>update slcOpening() method</p></li>
+<li><p>update slcClosing() method</p></li>
+<li><p>update slcInvert() method</p></li>
+<li><p>update slcHoles() method</p></li>
+<li><p>update slcFill() method</p></li>
+<li><p>update slcObject() method</p></li>
+<li><p>update slcBack() method</p></li>
+<li><p>update slcThresholding() method</p></li>
+<li><p>update slcCopy() method</p></li>
+<li><p>update slcCut() method</p></li>
+<li><p>update slcPaste() method</p></li>
+<li><p>update slcClear() method</p></li>
+<li><p>update slcHFlip() method</p></li>
+<li><p>update slcVFlip() method</p></li>
+<li><p>update slcUp() method</p></li>
+<li><p>update slcDown() method</p></li>
+<li><p>update slcLeft() method</p></li>
+<li><p>update slcRight() method</p></li>
+<li><p>update slcFilterExtent() method</p></li>
+<li><p>update slcRegionGrowing() method</p></li>
+<li><p>update slcRegionConfidence() method</p></li>
+<li><p>update slcBlobDilate() method</p></li>
+<li><p>update slcBlobErode() method</p></li>
+<li><p>update slcBlobOpening() method</p></li>
+<li><p>update slcBlocClosing() method</p></li>
+<li><p>update slcBlobCopy() method</p></li>
+<li><p>update slcBlobCuy() method</p></li>
+<li><p>update slcBlobPaste() method</p></li>
+<li><p>update slcBlobRemove() method</p></li>
+<li><p>update slcBlobKeep() method</p></li>
+<li><p>update slcBlobTresholding() method</p></li>
+<li><p>update slcBlobRegionGrowing() method</p></li>
+<li><p>update slcBlobRegionConfidence() method</p></li>
+<li><p>update voiEuclideanExpand() method</p></li>
+<li><p>update voiEuclideanShrink() method</p></li>
+<li><p>update voiDilate() method</p></li>
+<li><p>update voiErode() method</p></li>
+<li><p>update voiOpening() method</p></li>
+<li><p>update voiClosing() method</p></li>
+<li><p>update voiInvert() method</p></li>
+<li><p>update voi3DHoles() method</p></li>
+<li><p>update voi2DHoles() method</p></li>
+<li><p>update voiFill() method</p></li>
+<li><p>update voiClear() method</p></li>
+<li><p>update voiObject() method</p></li>
+<li><p>update voiBack() method</p></li>
+<li><p>update voiThresholding() method</p></li>
+<li><p>update voiHFlip() method</p></li>
+<li><p>update voiVFlip() method</p></li>
+<li><p>update voiUp() method</p></li>
+<li><p>update voiDown() method</p></li>
+<li><p>update voiLeft() method</p></li>
+<li><p>update voiRight() method</p></li>
+<li><p>update voiFilterExtent() method</p></li>
+<li><p>update voiRegionGrowing() method</p></li>
+<li><p>update voiRegionConfidence() method</p></li>
+<li><p>update voiActiveContour() method</p></li>
+<li><p>update statistics() method</p></li>
+<li><p>update voiBlobDilate() method</p></li>
+<li><p>update voiBlobErode() method</p></li>
+<li><p>update voiBlobOpening() method</p></li>
+<li><p>update voiBlocClosing() method</p></li>
+<li><p>update voiBlobCopy() method</p></li>
+<li><p>update voiBlobCuy() method</p></li>
+<li><p>update voiBlobPaste() method</p></li>
+<li><p>update voiBlobRemove() method</p></li>
+<li><p>update voiBlobKeep() method</p></li>
+<li><p>update voiBlobEuclideanExpand() method</p></li>
+<li><p>update voiBlobEuclideanShrink() method</p></li>
+<li><p>update voiBlobTresholding() method</p></li>
+<li><p>update voiBlobRegionGrowing() method</p></li>
+<li><p>update voiBlobRegionConfidence() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarWidgets.IconBarMultiSliceGridViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new lastAction() method</p></li>
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarWidgets.IconBarSynchronisedGridViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new lastAction() method</p></li>
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update _open() method</p></li>
+<li><p>update _dirClicked() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileFilterProxyModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update filterAcceptsRow() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImage.SisypheImage.getThresholdingMask</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getThresholdingMask</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>converting SisypheImage/Volume to mask using a threshold</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume.clearTransforms()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>clear the self._transforms attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume.removeTransforms()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>clear the self._transforms attribute &amp; delete the associated .xtrfs file</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTransform.SisypheApplyTransform.resampleToFOV()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>reslice the moving volume attribute in a new FOV</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.fcdDetection()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>focal cortical dysplasia detection</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget._updateLineProperties()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for line/font properties</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.basicWidgets.FontSelect.getFontPath()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get path of the selected font</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.getLastAction()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get self._lastaction attribute, last ROI tool method that was called</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarWidgets.IconBarMultiSliceGridViewWidget.lastAction()</p></li>
+<li><p>widgets.iconBarWidgets.IconBarSynchronisedGridViewWidget.lastAction()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>called by QShortcut self._shcutLastAction activation (² key)</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImage.SisypheImage.truncateIntensity()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getTruncateIntensity()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add onlymax parameter, to truncate only max values</p></li>
+<li><p>bug fix, convert wmin &amp; wmax to float</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume.getTruncateIntensity()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add onlymax parameter, to truncate only max values</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTransform.SisypheApplyTransform.updateTransforms()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A geometric transform is not added to the moving volume if it has no ID</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.segmentation.SegmentAnything.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>line 294, add mps support to torch</p></li>
+<li><p>PyTorch backend that enables GPU acceleration on Apple silicon devices using the Metal Performance Shaders (mps) framework</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.setApplicationFont()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update font in child widgets</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSettings.DialogSettings.apply()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add wait box</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSettings.DialogSettings._initSettings()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add DeepFCDSegmentation section</p></li>
+<li><p>add DeepMicrobleedsSegmentation section</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepTumorSegmentation.__init__()</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepHippocampusSegmentation.__init__()</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation.__init__()</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepLesionSegmentation.__init__()</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepWhiteMatterHyperIntensitiesSegmentation.__init__()</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepTissueSegmentation.__init__()</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepAtlasParcellation.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove default button</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepTumorSegmentation.execute()</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepHippocampusSegmentation.execute()</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation.execute()</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepLesionSegmentation.execute()</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepWhiteMatterHyperIntensitiesSegmentation.execute()</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepTissueSegmentation.execute()</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepAtlasParcellation.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace self._volumeSelect.clear() by self._volumeSelect.clearall()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogXmlDicom.DialogXmlDicom.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove self._save.setFixedWidth(60)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDicomDataset.DialogDicomDataset.setFilename()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self._files.add(filename) by self._files.add(filename, signal=False)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogFunction.DialogIntensityNormalization.function()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add truncate only max parameter</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.xmlDicom()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add filename parameter</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add ‘lineprop’ QAction, dialog for line/font properties is calling</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget.setParameterValue()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, font path conversion to font family name</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>change self._properties tooltip</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.properties()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>changes the properties of all tools if none are checked</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarWidgets.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._shcutp attribute, f shortkey for line/font properties</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarWidgets.setViewWidget()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add f shortkey action for line/font properties</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget.setVolulme()</p></li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget.setNumberOfVisibleViews()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, adjust the grid layout on the number of visible rows</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget.updateSpan()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update the span width based on the number of visible views</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiComponentViewWidget.IconBarMultiComponentViewWidget.setViewWidget()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add f shortkey action for line/font properties</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.IconBarMultiProjectionViewWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add f shortkey action for line/font properties</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.__init__() method</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._lastaction attribute, last ROI tool method that was called</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.brush()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.area()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.sam()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.undo()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.redo()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcDilate()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcErode()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcOpening()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcClosing()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcInvert()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcHoles()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcFill()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcObject()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBack()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcThresholding()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcCopy()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcCut()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcPaste()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcClear()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcHFlip()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcVFlip()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcUp()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcDown()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcLeft()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcRight()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcFilterExtent()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcRegionGrowing()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcRegionConfidence()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobDilate()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobErode()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobOpening()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBlocClosing()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobCopy()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobCuy()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobPaste()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobRemove()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobKeep()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobTresholding()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobRegionGrowing()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobRegionConfidence()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiEuclideanExpand()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiEuclideanShrink()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiDilate()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiErode()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiOpening()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiClosing()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiInvert()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voi3DHoles()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voi2DHoles()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiFill()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiClear()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiObject()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBack()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiThresholding()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiHFlip()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiVFlip()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiUp()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiDown()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiLeft()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiRight()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiFilterExtent()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiRegionGrowing()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiRegionConfidence()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiActiveContour()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.statistics()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobDilate()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobErode()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobOpening()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBlocClosing()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobCopy()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobCuy()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobPaste()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobRemove()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobKeep()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobEuclideanExpand()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobEuclideanShrink()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobTresholding()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobRegionGrowing()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobRegionConfidence()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>copy last ROI tool method that was called to self._lastaction attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarWidgets.IconBarMultiSliceGridViewWidget.__init__()</p></li>
+<li><p>widgets.iconBarWidgets.IconBarSynchronisedGridViewWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add QShortcut self._shcutLastAction attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>custom icons for folders and files</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget._open()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace self._mainWindow_openWorkflow(action) by self._mainWindow._openWorkflow(action)</p></li>
+<li><p>open the dataset of dicom file</p></li>
+<li><p>open the dataset of .xdcm file</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget._dirClicked()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace srcindex = self._filemodel2.setRootPath(path) by srcindex = self._filemodel2.index(path)</p></li>
+<li><p>this result in a dramatic improvement in the widget’s responsiveness (end of lags)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileFilterProxyModel.filterAcceptsRow()</p>
+<blockquote>
+<div><ul>
+<li><p>add</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>path = self.sourceModel().filePath(index)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>if path == self._rootpath: return True</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>required for the method FileBrowserWidget._dirClicked() to work correctly after its fix</p></li>
 </ul>
 </div></blockquote>
 </li>

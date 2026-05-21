@@ -523,7 +523,7 @@ norm ppf, Normal inverse cumulative distribution function (i.e. percent point fu
 <p>The preprocessing parameters are as follows:</p>
 <ul class="simple">
 <li><p>Check the <strong>Tissue confounds</strong> parameter if you want to add tissue-based signal confounds: mean signal in cerebro-spinal fluid, mean signal in gray matter, mean signal in white matter, mean global signal (cerebro-spinal fluid + gray matter + white matter). Tissue masks are extracted from a tissue label volume (see next).</p></li>
-<li><p>Use the <strong>Tissue label map</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select a tissue label volume used to calculate tissue signal confounding variables. The label volume must be in the same space/transform ID as the time series multi-component volume. It is generated from either the <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a> or <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmenation</span></a> menu.</p></li>
+<li><p>Use the <strong>Tissue label map</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select a tissue label volume used to calculate tissue signal confounding variables. The label volume must be in the same space/transform ID as the time series multi-component volume. It is generated from either the <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a> or <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmentation</span></a> menu.</p></li>
 <li><p>Set the <strong>Gaussian smoothing FWHM</strong> in millimeters to apply to the time series. No smoothing if 0.0 (default).</p></li>
 <li><p>Check the <strong>Detrend</strong> parameter to detrend the time series.</p></li>
 <li><p>Check the <strong>Standardize</strong> parameter to standardize the time series signal. Timeseries are z-scored, i.e. shifted to zero mean and scaled to unit variance (default False).</p></li>
@@ -594,6 +594,7 @@ See <a class="reference external" href="https://qmrlab.org/mooc/b0-mapping/">htt
 </ul>
 <p>Left-click <strong>Execute</strong> button to compute B0 map.</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>Sample volumes can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
 </section>
 <section id="b1-map">
 <span id="menu-section-b1map"></span><h2>B1 map<a class="headerlink" href="#b1-map" title="Link to this heading"></a></h2>
@@ -635,6 +636,7 @@ See <a class="reference external" href="https://qmrlab.org/mooc/t1-mapping/">htt
 </ul>
 <p>Left-click <strong>Execute</strong> button to compute T1 map.</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>Sample volumes can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
 </section>
 <section id="t2-map">
 <span id="menu-section-t2map"></span><h2>T2 map<a class="headerlink" href="#t2-map" title="Link to this heading"></a></h2>
@@ -673,6 +675,7 @@ See <a class="reference external" href="https://qmrlab.org/mooc/t2-mapping/">htt
 </ul>
 <p>Left-click <strong>Execute</strong> button to compute T2 map.</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>Sample volumes can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
 </section>
 <section id="menu-section-t2pmap">
 <span id="id32"></span><h2>T2’ map<a class="headerlink" href="#menu-section-t2pmap" title="Link to this heading"></a></h2>
@@ -735,6 +738,7 @@ The PySisyphe code was adapted from the <a class="reference external" href="http
 </ul>
 <p>Left-click <strong>Execute</strong> button to compute QSM map(s).</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>Sample volumes can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
 </section>
 <section id="asl-perfusion">
 <span id="menu-section-asl"></span><h2>ASL perfusion<a class="headerlink" href="#asl-perfusion" title="Link to this heading"></a></h2>
@@ -815,6 +819,7 @@ See <a class="reference external" href="https://radiologykey.com/arterial-spin-l
 </ul>
 <p>Perfusion maps are saved with the original file name, which is suffixed with the map acronym (i.e. cbf, cbv, mtt, ttp, tmax, lkv, sr, psr).</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
+<p>Sample volumes can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
 </section>
 </section>
 

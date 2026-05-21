@@ -80,10 +80,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#registration-based-segmentation">Registration based segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#structs">Structs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-atlas-parcellation">Deep-learning Atlas parcellation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deep-learning-focal-cortical-dysplasia-detection">Deep-learning Focal cortical dysplasia detection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-hippocampus-segmentation">Deep-learning Hippocampus segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-hypo-intensity-lesion-segmentation">Deep-learning Hypo-intensity lesion segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-medial-temporal-segmentation">Deep-learning Medial temporal segmentation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#deep-learning-tissue-segmenation">Deep-learning Tissue segmenation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deep-learning-microbleeds-segmentation">Deep-learning Microbleeds segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deep-learning-tissue-segmentation">Deep-learning Tissue segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-tumor-clustering">Deep-learning Tumor clustering</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-white-matter-hyper-intensities-segmentation">Deep-learning White matter hyper-intensities segmentation</a></li>
 </ul>
@@ -135,10 +137,12 @@
 <li><dl class="simple">
 <dt>Deep learning segmentation &gt;</dt><dd><ul>
 <li><p><a class="reference internal" href="#menu-section-parcellation"><span class="std std-ref">Deep-learning Atlas parcellation</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-fcd"><span class="std std-ref">Deep-learning Focal cortical dysplasia detection</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-hipp"><span class="std std-ref">Deep-learning Hippocampus segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-lesion"><span class="std std-ref">Deep-learning Hypo-intensity lesion segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-temporal"><span class="std std-ref">Deep-learning Medial temporal segmentation</span></a></p></li>
-<li><p><a class="reference internal" href="#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmenation</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-microbld"><span class="std std-ref">Deep-learning Microbleeds segmentation</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-tumor"><span class="std std-ref">Deep-learning Tumor clustering</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-wmh"><span class="std std-ref">Deep-learning White matter hyper-intensities segmentation</span></a></p></li>
 </ul>
@@ -148,7 +152,7 @@
 </ul>
 <section id="kmeans-clustering">
 <span id="menu-section-kmclustering"></span><h2>KMeans clustering<a class="headerlink" href="#kmeans-clustering" title="Link to this heading"></a></h2>
-<p>This menu is used to classify the intensity values of a scalar volume using the K-Means algorithm. The result is a volume of labels with a label index for each class. PySisyphe uses the <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ScalarImageKmeansImageFilter.html">SimpleITK</a> library implemenentation. Anisotropic diffusion filtering and bias field correction can be performed before the classification stage.</p>
+<p>This menu is used to classify the intensity values of a scalar volume using the K-Means algorithm. The result is a volume of labels with a label index for each class. PySisyphe uses the <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ScalarImageKmeansImageFilter.html">SimpleITK</a> module. Anisotropic diffusion filtering and bias field correction can be performed before the classification stage.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select PySisyphe <strong>Volume(s)</strong>.</p>
 <p>Check <strong>Use mask(s)</strong> to display a <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget and select the mask(s) that will restrict clustering to mask voxels.</p>
 <p>Toggle <strong>K means clustering…</strong> button to show/hide clustering parameters:</p>
@@ -167,7 +171,7 @@
 </section>
 <section id="kmeans-segmentation">
 <span id="menu-section-kmsegmentation"></span><h2>KMeans segmentation<a class="headerlink" href="#kmeans-segmentation" title="Link to this heading"></a></h2>
-<p>This menu is used to compute tissue probability maps with a kmeans clustering. The result is a probability volume for each class. PySisyphe uses the <a class="reference external" href="https://antspy.readthedocs.io/en/latest/segmentation.html">ANTs</a> library implemenentation. Anisotropic diffusion filtering and bias field correction can be performed before the classification stage.</p>
+<p>This menu is used to compute tissue probability maps with a kmeans clustering. The result is a probability volume for each class. PySisyphe uses the <a class="reference external" href="https://antspy.readthedocs.io/en/latest/segmentation.html">ANTs</a> package. Anisotropic diffusion filtering and bias field correction can be performed before the classification stage.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select PySisyphe <strong>Volume(s)</strong>.</p>
 <p>Check <strong>Use mask(s)</strong> to display a <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget and select the mask(s) that will restrict clustering to mask voxels.</p>
 <p>Toggle <strong>K means segmentation…</strong> button to show/hide segmentation parameters:</p>
@@ -205,7 +209,8 @@
 </section>
 <section id="mixture-model-tissue-segmentation">
 <span id="menu-section-atropos"></span><h2>Mixture model tissue segmentation<a class="headerlink" href="#mixture-model-tissue-segmentation" title="Link to this heading"></a></h2>
-<p>This menu is used to compute tissue probability maps (gray matter, white matter and cerebro-spinal fluid) with a finite mixture modeling (FMM) segmentation approach with prior constraints. These prior constraints include the specification of prior probability images (one for each class), and MRF prior to enforce spatial smoothing of the labels. Similar algorithms include FAST and SPM. This prior based segmentation provides an Expectation-Maximization framework for statistical segmentation where the intensity profile of each class is modeled as a mixture model and spatial smoothness is enforced by MRF prior. Initial labeling can be performed by kmeans clustering, a set of user-specified prior probability volumes. If specified, the latter initialization option are also used as priors in the MRF update step. The assumed labeling is such that classes are assigned consecutive indices 1, 2, 3, etc. Label 0 is reserved for the background when a mask is specified. The result is a probability volume for each class and a tissue labeled volume. PySisyphe uses the <a class="reference external" href="https://antspy.readthedocs.io/en/latest/segmentation.html">ANTs</a> library implemenentation.</p>
+<p><strong>We recommend replacing this algorithm with the deep learning version</strong> <a class="reference internal" href="#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmentation</span></a> <strong>which is more efficient and faster</strong>.</p>
+<p>This menu is used to compute tissue probability maps (gray matter, white matter and cerebro-spinal fluid) with a finite mixture modeling (FMM) segmentation approach with prior constraints. These prior constraints include the specification of prior probability images (one for each class), and MRF prior to enforce spatial smoothing of the labels. Similar algorithms include FAST and SPM. This prior based segmentation provides an Expectation-Maximization framework for statistical segmentation where the intensity profile of each class is modeled as a mixture model and spatial smoothness is enforced by MRF prior. Initial labeling can be performed by kmeans clustering, a set of user-specified prior probability volumes. If specified, the latter initialization option are also used as priors in the MRF update step. The assumed labeling is such that classes are assigned consecutive indices 1, 2, 3, etc. Label 0 is reserved for the background when a mask is specified. The result is a probability volume for each class and a tissue labeled volume. PySisyphe uses the <a class="reference external" href="https://antspy.readthedocs.io/en/latest/segmentation.html">ANTs</a> package.</p>
 <div class="admonition-reference admonition">
 <p class="admonition-title">Reference</p>
 <p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3297199/">Article</a>: An open source multivariate framework for n-tissue segmentation with evaluation on public data. BB Avants, NJ Tustison, J Wu, PA Cook, JC Gee. Neuroinformatics, 2011 Dec, 9(4):381-400.</p>
@@ -260,13 +265,13 @@
 </section>
 <section id="cortical-thickness">
 <span id="menu-section-thickness"></span><h2>Cortical thickness<a class="headerlink" href="#cortical-thickness" title="Link to this heading"></a></h2>
-<p>This menu is designed to compute cortical thickness using the DiReCT algorithm (Diffeomorphic Registration-based Cortical Thickness measurement). DiReCT is a registration based estimate of cortical thickness. To guide the deformation, DiReCT constructs a gradient field from the segmented cortical surfaces (WM/GM and GM/CSF). This field acts as an external force that pushes the white matter surface toward the pial surface. PySisyphe uses the <a class="reference external" href="https://antspy.readthedocs.io/en/latest/segmentation.html">ANTs</a> library implemenentation.</p>
+<p>This menu is designed to compute cortical thickness using the DiReCT algorithm (Diffeomorphic Registration-based Cortical Thickness measurement). DiReCT is a registration based estimate of cortical thickness. To guide the deformation, DiReCT constructs a gradient field from the segmented cortical surfaces (WM/GM and GM/CSF). This field acts as an external force that pushes the white matter surface toward the pial surface. PySisyphe uses the <a class="reference external" href="https://antspy.readthedocs.io/en/latest/segmentation.html">ANTs</a> package. <strong>This is a computationally intensive process that may take longer than 30 minutes</strong>.</p>
 <div class="admonition-reference admonition">
 <p class="admonition-title">Reference</p>
 <p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2836782/">Article</a>: Registration based cortical thickness measurement. SR Das, BB Avants, M Grossman, and JC Gee. Neuroimage 2009, 45:867-879.</p>
 </div>
-<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select PySisyphe <strong>Label map(s) - Three tissue labels</strong>. These maps are calculated from the <a class="reference internal" href="#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a> or <a class="reference internal" href="#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmenation</span></a> menus. This is an image in which the csf, gray matter, and white matter voxels are all labeled with values of 1, 2, Ind 3, respectively.</p>
-<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widgets below to select <strong>Gray matter map(s)</strong> and <strong>White matter map(s)</strong>. These maps are also calculated from the <a class="reference internal" href="#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a> or <a class="reference internal" href="#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmenation</span></a> menus.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select PySisyphe <strong>Label map(s) - Three tissue labels</strong>. These maps are calculated from the <a class="reference internal" href="#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a> or <a class="reference internal" href="#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmentation</span></a> menus. This is an image in which the csf, gray matter, and white matter voxels are all labeled with values of 1, 2, Ind 3, respectively.</p>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widgets below to select <strong>Gray matter map(s)</strong> and <strong>White matter map(s)</strong>. These maps are also calculated from the <a class="reference internal" href="#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a> or <a class="reference internal" href="#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmentation</span></a> menus.</p>
 <p>Toggle <strong>Settings…</strong> button to show/hide cortical thickness parameters.</p>
 <ul class="simple">
 <li><p>Select the <strong>Number of iterations</strong> with the spinbox (default 50).</p></li>
@@ -275,7 +280,7 @@
 <li><p>Set the <strong>Gradient smoothing</strong> (default 1.0), which is the gaussian kernel extent, expressed in voxels, used for gradient field smoothing to obtain a more regular and anatomically plausible field. In practice, this smoothing prevents noisy deformation trajectories and ensures that the measured thickness corresponds to an average cortical distance rather than a series of micro-irregularities from the segmentation. Values that are too high (&gt; 3) can over-smooth and bias the thickness in thin regions.</p></li>
 <li><p>Cortical thickness volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Prefix</strong> and <strong>Suffix</strong> parameters.</p></li>
 </ul>
-<p>Left-click <strong>Execute</strong> button to perform cortical thickness processing. This is a computationally intensive process that may take longer than 30 minutes.</p>
+<p>Left-click <strong>Execute</strong> button to perform cortical thickness processing.</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without processing.</p>
 </section>
 <section id="registration-based-segmentation">
@@ -325,7 +330,7 @@
 </section>
 <section id="deep-learning-atlas-parcellation">
 <span id="menu-section-parcellation"></span><h2>Deep-learning Atlas parcellation<a class="headerlink" href="#deep-learning-atlas-parcellation" title="Link to this heading"></a></h2>
-<p>This menu is designed to perform MR T1 parcellation into the 280 anatomical structures of the <a class="reference external" href="https://github.com/OishiLab/JHU-MNI-Eve-atlas/blob/main/README.md">JHU MNI atlas</a>. PySisyphe uses the <a class="reference external" href="https://github.com/OishiLab/OpenMAP-T1/tree/main">OpenMapT1</a> implementation.</p>
+<p>This menu is designed to perform MR T1 parcellation into the 280 anatomical structures of the <a class="reference external" href="https://github.com/OishiLab/JHU-MNI-Eve-atlas/blob/main/README.md">JHU MNI atlas</a>. The PySisyphe code is a fork of the <a class="reference external" href="https://github.com/OishiLab/OpenMAP-T1/tree/main">OpenMapT1</a> package. The parcellation is saved as a label volume.</p>
 <p><a class="reference external" href="https://github.com/OishiLab/OpenMAP-T1/tree/main">OpenMapT1</a> integrates several convolutional neural network models across six stages: preprocessing, cropping (centers and crops image around the brain), skull stripping, parcellation, hemisphere segmentation, and final merging. This process involves standardizing MRI images, isolating the brain tissue, and parcellating it into 280 anatomical structures that cover the whole brain, including detailed gray and white matter structures, while simplifying the parcellation processes and incorporating robust training to handle various scan types and conditions.</p>
 <div class="admonition-reference admonition">
 <p class="admonition-title">Reference</p>
@@ -343,9 +348,32 @@
 <p>Left-click <strong>Execute</strong> button to perform parcellation.</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without parcellation.</p>
 </section>
+<section id="deep-learning-focal-cortical-dysplasia-detection">
+<span id="menu-section-fcd"></span><h2>Deep-learning Focal cortical dysplasia detection<a class="headerlink" href="#deep-learning-focal-cortical-dysplasia-detection" title="Link to this heading"></a></h2>
+<p>This menu is designed to perform focal cortical dysplasia (FCD) detection using deep-learning pre-trained model. Two MR sequences could be given: T1 and FLAIR. The brain mask, on the other hand, is optional. All of these volumes must be coregistered and resampled using the same space/transform ID. The FCD segmentation is saved as a probability map. <strong>This is a computationally intensive process that may take longer than 30 minutes</strong>.</p>
+<p>The PySisype code is a fork of the <a class="reference external" href="https://github.com/NOEL-MNI/deepFCD">deepFCD</a> package. This model is applied voxel by voxel, using image subregions (patches) consisting of 16 x 16 x 16 voxels centered on each voxel to be classified in the analysis mask.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://europepmc.org/article/med/34521691">Article</a>: Multicenter Validation of a Deep Learning Detection Algorithm for Focal Cortical Dysplasia. Ravnoor Singh Gill, H.-M. Lee, B. Caldairou, S.-J. Hong, C. Barba, F. Deleo, L. D’Incerti, V.C. Mendes Coelho, M. Lenge, M. Semmelroch, D.V. Schrader, F. Bartolomei, M. Guye, A. Schulze-Bonhage, H. Urbach, K.H. Cho, F. Cendes, R. Guerrini, G. Jackson, R. E. Hogan, N. Bernasconi, A. Bernasconi. Neurology, 2021 97(16), e1571–e1582.</p>
+</div>
+<p>Use the first <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select <strong>T1</strong> PySisyphe volume(s) to be analyzed.</p>
+<p>Use the second <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select <strong>FLAIR</strong> PySisyphe volume(s) to be analyzed. This volume must be coregistered with the T1 volume (same space/transform ID).</p>
+<p>Use the second <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select <strong>Mask</strong> PySisyphe volume(s). A brain mask of the T1 (OT modality, MASK sequence, same space/transform ID as T1) can be obtained from the <a class="reference internal" href="#menu-section-skull"><span class="std std-ref">Skull stripping</span></a> menu. The mask is optional, this widget can be left blank. In that case, a mask is automatically calculated based on the FLAIR.</p>
+<p>Toggle <strong>FCD detection…</strong> button to show/hide parameters.</p>
+<ul class="simple">
+<li><p>Check <strong>Bias field correction</strong> to peform a bias field correction of the T1 and FLAIR before the detection processing.</p></li>
+<li><p>Set the <strong>Normalized FLAIR Threshold</strong> value, which is used to calculate the analysis mask, should be set between 0.1 and 1.0. This parameter is not used if a mask is selected.</p></li>
+<li><p>the <strong>Batch size</strong> is an internal parameter used to limit memory usage. It is not recommended to change the default value (8192); unless you encounter out-of-memory issues, use a lower batch size value.</p></li>
+<li><p>Set the <strong>FCD map smoothing</strong> value, full width at hall maximum of the gaussian kernel in mm used to smooth the FCD probability map. Set it to 0.0 to disable smoothing.</p></li>
+<li><p>The FCD probability map is saved with the original T1 file name, which is prefixed and/or suffixed by the strings edited in the <strong>Prefix</strong> and <strong>Suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform FCD detection.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without dtection.</p>
+<p>Sample volumes (FCD) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
+</section>
 <section id="deep-learning-hippocampus-segmentation">
 <span id="menu-section-hipp"></span><h2>Deep-learning Hippocampus segmentation<a class="headerlink" href="#deep-learning-hippocampus-segmentation" title="Link to this heading"></a></h2>
-<p>This menu is designed to perform hippocampal segmentation using deep-learning U-net pre-trained model. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> library implemenentation. The segmentation is saved as a label volume. A voxel is labeled 1 for the right hippocampus and 2 for the left.</p>
+<p>This menu is designed to perform hippocampal segmentation using deep-learning U-net pre-trained model. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> package. The segmentation is saved as a label volume. A voxel is labeled 1 for the right hippocampus and 2 for the left.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>T1</strong> PySisyphe volume(s) to be segmented.</p>
 <p>Toggle <strong>Unet hippocampus segmentation…</strong> button to show/hide parameters.</p>
 <ul class="simple">
@@ -354,10 +382,11 @@
 </ul>
 <p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+<p>Sample volumes can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
 </section>
 <section id="deep-learning-hypo-intensity-lesion-segmentation">
 <span id="menu-section-lesion"></span><h2>Deep-learning Hypo-intensity lesion segmentation<a class="headerlink" href="#deep-learning-hypo-intensity-lesion-segmentation" title="Link to this heading"></a></h2>
-<p>This menu is designed to perform T1 hypo-intensity lesion segmentation, such as stroke sequelae, using deep-learning U-net pre-trained model. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> library implemenentation. The lesion is saved as a probability map.</p>
+<p>This menu is designed to perform T1 hypo-intensity lesion segmentation, such as stroke sequelae, using deep-learning U-net pre-trained model. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> package. The lesion is saved as a probability map.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>T1</strong> PySisyphe volume(s) to be segmented.</p>
 <p>Toggle <strong>Unet lesion segmentation…</strong> button to show/hide parameters.</p>
 <ul class="simple">
@@ -366,10 +395,11 @@
 </ul>
 <p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+<p>Sample volumes can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
 </section>
 <section id="deep-learning-medial-temporal-segmentation">
 <span id="menu-section-temporal"></span><h2>Deep-learning Medial temporal segmentation<a class="headerlink" href="#deep-learning-medial-temporal-segmentation" title="Link to this heading"></a></h2>
-<p>This menu is designed to perform medial temporal segmentation using deep-learning U-net pre-trained model. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> library implemenentation. The segmentation is saved as a label volume.</p>
+<p>This menu is designed to perform medial temporal segmentation using deep-learning U-net pre-trained model. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> package. The segmentation is saved as a label volume.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>T1</strong> PySisyphe volume(s) to be segmented.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget below to select <strong>T2</strong> PySisyphe volume(s) to be segmented. This widget will only be displayed if the <strong>Use T2</strong> parameter is checked. T1 and T2 volumes must be coregistered and resampled using the same space/transform ID.</p>
 <p>Toggle <strong>Unet lesion segmentation…</strong> button to show/hide parameters.</p>
@@ -381,10 +411,30 @@
 </ul>
 <p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+<p>Sample volume (FCD) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
 </section>
-<section id="deep-learning-tissue-segmenation">
-<span id="menu-section-tissue"></span><h2>Deep-learning Tissue segmenation<a class="headerlink" href="#deep-learning-tissue-segmenation" title="Link to this heading"></a></h2>
-<p>This menu is used to compute tissue segmentation (gray matter, white matter and cerebro-spinal fluid) using deep-learning U-net pre-trained model. This function serves as an alternative to the mixture model approach (<a class="reference internal" href="#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a>). The segmentation is saved as a label volume. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> library implemenentation.</p>
+<section id="deep-learning-microbleeds-segmentation">
+<span id="menu-section-microbld"></span><h2>Deep-learning Microbleeds segmentation<a class="headerlink" href="#deep-learning-microbleeds-segmentation" title="Link to this heading"></a></h2>
+<p>This menu is designed to perform microbleeds segmentation using deep-learning pre-trained model from SWI or T2* sequences. The segmentation is saved as a probability map.</p>
+<p>The code in PySisype is a fork of the <a class="reference external" href="https://github.com/pboutinaud/SHIVA_CMB/tree/main">SHIVA_CMB</a> package.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://www.nature.com/articles/s41598-024-81870-5">Article</a>: SHIVA-CMB: a deep-learning-based robust cerebral microbleed segmentation tool trained on multi-source T2*GRE- and susceptibility-weighted MRI. Tsuchida A., Goubet M., Boutinaud P., Astafeva I., Nozais V., Hervé P.Y., Tourdias T., Debette S., Joliot M. Sci Rep. 2024 Dec 28;14(1):30901.</p>
+</div>
+<p>Toggle <strong>Microbleeds segmentation…</strong> button to show/hide parameters.</p>
+<ul class="simple">
+<li><p>There are three models available, which can be selected individually using the first three checkboxes: <strong>Use first model</strong>, <strong>Use second model</strong>, and <strong>Use third model</strong>. If several models are selected (all models by default), the final map is a combination of the maps generated by each model.</p></li>
+<li><p>Check <strong>Save Mask</strong> if you also want to save the result as a PySisyphe (xvol) mask.</p></li>
+<li><p>Set the probability <strong>Threshold</strong>, between 0.0 and 1.0, which is used to process the mask. This option is only active if <strong>Save Mask</strong> is checked.</p></li>
+<li><p>The probability map is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Prefix</strong> and <strong>Suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+<p>Sample volume (SWI) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
+</section>
+<section id="deep-learning-tissue-segmentation">
+<span id="menu-section-tissue"></span><h2>Deep-learning Tissue segmentation<a class="headerlink" href="#deep-learning-tissue-segmentation" title="Link to this heading"></a></h2>
+<p>This menu is used to compute tissue segmentation (gray matter, white matter and cerebro-spinal fluid) using deep-learning U-net pre-trained model. This function serves as an alternative to the mixture model approach (<a class="reference internal" href="#menu-section-atropos"><span class="std std-ref">Mixture model tissue segmentation</span></a>). The segmentation is saved as a label volume. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> package implemenentation.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>T1</strong> PySisyphe volume(s) to be segmented.</p>
 <p>Toggle <strong>Unet tissue segmentation…</strong> button to show/hide parameters.</p>
 <ul class="simple">
@@ -397,7 +447,7 @@
 </section>
 <section id="deep-learning-tumor-clustering">
 <span id="menu-section-tumor"></span><h2>Deep-learning Tumor clustering<a class="headerlink" href="#deep-learning-tumor-clustering" title="Link to this heading"></a></h2>
-<p>This menu is used to compute tumor clustering in three classes: peritumoral oedema (FLAIR/T2 hyper-intensity, T1 hypo-intensity), enhancing tumor core, and non-enhancing tumor core. Four MR sequences could be given: FLAIR, T1, contrast-enhanced T1 and T2. All of these volumes must be coregistered and resampled using the same space/transform ID. The segmentation is saved as a label volume and three mask volumes. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a>  library implemenentation.</p>
+<p>This menu is used to compute tumor clustering in three classes: peritumoral oedema (FLAIR/T2 hyper-intensity, T1 hypo-intensity), enhancing tumor core, and non-enhancing tumor core. Four MR sequences could be given: FLAIR, T1, contrast-enhanced T1 and T2. All of these volumes must be coregistered and resampled using the same space/transform ID. The segmentation is saved as a label volume and three mask volumes. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a>  package implemenentation.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select <strong>FLAIR</strong> PySisyhpe volume(s) to be segmented.
 Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select <strong>T1</strong> PySisyhpe volume(s) to be segmented.
 Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select <strong>Contrast-enhanced T1</strong> PySisyhpe volume(s) to be segmented.
@@ -409,10 +459,11 @@ Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-secti
 </ul>
 <p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+<p>Sample volumes can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
 </section>
 <section id="deep-learning-white-matter-hyper-intensities-segmentation">
 <span id="menu-section-wmh"></span><h2>Deep-learning White matter hyper-intensities segmentation<a class="headerlink" href="#deep-learning-white-matter-hyper-intensities-segmentation" title="Link to this heading"></a></h2>
-<p>This menu is designed to perform white matter hyper-intensities segmentation, such as multiple sclerosis or vasculo-degenerative lesions. The segmentation is saved as a probability map. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> library implemenentation.</p>
+<p>This menu is designed to perform white matter hyper-intensities segmentation, such as multiple sclerosis or vasculo-degenerative lesions. The segmentation is saved as a probability map. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> package implemenentation.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>FLAIR</strong> PySisyphe volume(s) to be segmented.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget below to select <strong>T1</strong> PySisyphe volume(s) to be segmented. This widget will only be displayed if the <strong>Use T1</strong> parameter is checked. FLAIR and T1 volumes must be coregistered and resampled using the same space/transform ID.</p>
 <p>Toggle <strong>Unet whm segmentation…</strong> button to show/hide parameters.</p>
@@ -424,6 +475,7 @@ Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-secti
 </ul>
 <p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+<p>Sample volumes can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
 </section>
 </section>
 
