@@ -987,10 +987,15 @@ class DialogIntensityNormalization(AbstractDialogFunction):
         img.load(filename)
         method = self.getParameterValue('Method')[0]
         truncate = self.getParameterValue('Truncate')
+        onlymax = self.getParameterValue('OnlyMax')
         prefix = self.getParameterValue('Prefix')
         suffix = self.getParameterValue('Suffix')
 
-        if truncate != 0: rimg = img.getTruncateIntensity(truncate)
+        if truncate != 0:
+            # < Revision 20/05/2026
+            # rimg = img.getTruncateIntensity(truncate)
+            rimg = img.getTruncateIntensity(truncate, onlymax=onlymax)
+            # Revision 20/05/2026 >
         else: rimg = img
         if method[0] == 'z': method = 'norm'
         elif method[0] == 'r': method = 'rescale'

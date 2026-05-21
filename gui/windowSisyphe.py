@@ -40,8 +40,6 @@ from shutil import rmtree
 from zipfile import ZipFile
 from zipfile import is_zipfile
 
-from matplotlib import font_manager
-
 from numpy import stack
 from numpy import nanmean
 from numpy import nanmedian
@@ -134,7 +132,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 21/04/2026
+    Last revision: 12/05/2026
     """
 
     # Class constants
@@ -234,6 +232,10 @@ class WindowSisyphe(QMainWindow):
     def __init__(self, splash: DialogSplash | None = None) -> None:
         super().__init__()
         self.setObjectName('MainWindow')
+
+        # < Revision 03/05/2026
+        self._fontpaths: dict[str, str] = dict()
+        # Revision 03/05/2026 >
 
         # < Revision 01/07/2025
         # if not hasattr(sys, '_MEIPASS'):
@@ -1255,8 +1257,12 @@ class WindowSisyphe(QMainWindow):
                 ---
                 Deep learning segmentation
                     Atlas parcellation
+                    Focal cortical dysplasia detection
                     Hippocampus segmentation
                     Medial temporal segmentation
+                    Meningioma segmentation
+                    Metastasis segmentation
+                    Microbeeds segmentation
                     Tumor segmentation
                     T1 hypo-intensity lesion segmentation
                     White matter hyper-intensities segmentation
@@ -1319,9 +1325,19 @@ class WindowSisyphe(QMainWindow):
         # < Revision 12/03/2026
         self._action['Atlas'] = submenu.addAction('Atlas parcellation...')
         # Revision 12/03/2026 >
+        # < Revision 12/05/2026
+        self._action['fcd'] = submenu.addAction('Focal cortical dysplasia detection...')
+        # Revision 12/05/2026 >
         self._action['hipp'] = submenu.addAction('Hippocampus segmentation...')
         self._action['lesion'] = submenu.addAction('Hypo-intensity lesion segmentation...')
         self._action['temporal'] = submenu.addAction('Medial temporal clustering...')
+        # < Revision 19/05/2026
+        # self._action['mngioma'] = submenu.addAction('Meningioma segmentation...')
+        # Revision 19/05/2026 >
+        # < Revision 20/05/2026
+        # self._action['meta'] = submenu.addAction('Metastasis segmentation...')
+        self._action['microbl'] = submenu.addAction('Microbleeds segmentation...')
+        # Revision 20/05/2026 >
         # self._action['tof'] = submenu.addAction('TOF vessels segmentation...')
         self._action['tissue'] = submenu.addAction('Tissue segmentation...')
         self._action['tumor'] = submenu.addAction('Tumor clustering...')
@@ -1345,6 +1361,16 @@ class WindowSisyphe(QMainWindow):
         # < Revision 12/03/2026
         self._action['Atlas'].triggered.connect(self.atlasParcellation)
         # Revision 12/03/2026 >
+        # < Revision 12/05/2026
+        self._action['fcd'].triggered.connect(self.fcdDetection)
+        # Revision 12/05/2026 >
+        # < Revision 19/05/2026
+        # self._action['mngioma'].triggered.connect(self.meningiomaSegmentation)
+        # Revision 19/05/2026 >
+        # < Revision 20/05/2026
+        # self._action['meta'].triggered.connect(self.metastasisSegmentation)
+        self._action['microbl'].triggered.connect(self.microbleedsSegmentation)
+        # Revision 20/05/2026 >
 
     def _initMapMenu(self) -> None:
         """
@@ -2343,6 +2369,14 @@ class WindowSisyphe(QMainWindow):
 
     def setApplicationFont(self, name: str | QFont | None,
                            pointsize: int = 12):
+
+        from PyQt5.QtWidgets import QWidget
+        def forceFontRecursive(widget: QWidget, rfont: QFont):
+            widget.setFont(rfont)
+            for child in widget.findChildren(QWidget):
+                child.setFont(rfont)
+                forceFontRecursive(child, rfont)
+
         if name is None: name = self.font().defaultFamily()
         database = QFontDatabase()
         families = database.families()
@@ -2350,11 +2384,33 @@ class WindowSisyphe(QMainWindow):
         if name in families:
             font = QFont(name, pointSize=pointsize)
             QApplication.setFont(font)
-            self.setFont(font)
-            # noinspection PyProtectedMember
-            self._console.setFont(font)
-            try: path = font_manager.findfont(name, fallback_to_default=False)
+            # < Revision 03/05/2026
+            # self.setFont(font)
+            # self._tabview.setFont(font)
+            # self._menubar.setFont(font)
+            # self._database.setFont(font)
+            # self._captures.setFont(font)
+            # self._browser.setFont(font)
+            # self._console.setFont(font)
+            # self._dock.setFont(font)
+            # self._tabROIList.setFont(font)
+            # self._tabROITools.setFont(font)
+            # self._tabTargetList.setFont(font)
+            # self._tabMeshList.setFont(font)
+            # self._tabTrackingList.setFont(font)
+            # self._tabHelp.setFont(font)
+            # self._tabROIList.getROIListWidget().setFont(font)
+            # self._tabTargetList.getToolListWidget().setFont(font)
+            # self._tabMeshList.getMeshListWidget().setFont(font)
+            # self._tabTrackingList.getTrackingListWidget().setFont(font)
+            forceFontRecursive(self, font)
+            # Revision 03/05/2026 >
+            # < Revision 02/05/2026
+            # try: path = font_manager.findfont(name, fallback_to_default=False)
+            from Sisyphe.widgets.basicWidgets import findFontPath
+            try: path = findFontPath(name)
             except: path = 'Arial'
+            # Revision 02/05/2026 >
             # < Revision 17/03/2025
             self._sliceview().setFontProperties((path, pointsize, None))
             self._orthoview().setFontProperties((path, pointsize, None))
@@ -3793,10 +3849,11 @@ class WindowSisyphe(QMainWindow):
             messageBox(self, 'DICOM Dataset dialog error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
-    def xmlDicom(self) -> None:
+    def xmlDicom(self, filename: str | None = None) -> None:
         from Sisyphe.core.sisypheDicom import XmlDicom
-        filename = QFileDialog.getOpenFileName(self, 'Open Xml Dicom...', getcwd(),
-                                               filter=XmlDicom.getFilterExt())[0]
+        if filename is None:
+            filename = QFileDialog.getOpenFileName(self, 'Open Xml Dicom...', getcwd(),
+                                                   filter=XmlDicom.getFilterExt())[0]
         if filename:
             chdir(dirname(filename))
             from Sisyphe.gui.dialogXmlDicom import DialogXmlDicom
@@ -6112,6 +6169,7 @@ class WindowSisyphe(QMainWindow):
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
     # < Revision 12/03/2026
+    # add atlasParcellation method
     def atlasParcellation(self) -> None:
         from Sisyphe.gui.dialogDeepSegmentation import DialogDeepAtlasParcellation
         self._dialog = DialogDeepAtlasParcellation()
@@ -6129,6 +6187,80 @@ class WindowSisyphe(QMainWindow):
             messageBox(self, 'Deep learning atlas parcellation dialog error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
     # Revision 12/03/2026 >
+
+    # < Revision 12/05/2026
+    # add fcdDetection method
+    def fcdDetection(self) -> None:
+        from Sisyphe.gui.dialogDeepSegmentation import DialogDeepFCDSegmentation
+        self._dialog = DialogDeepFCDSegmentation()
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        w1, w2, w3 = self._dialog.getSelectionWidgets()
+        w1.setToolbarThumbnail(self._thumbnail)
+        w2.setToolbarThumbnail(self._thumbnail)
+        w3.setToolbarThumbnail(self._thumbnail)
+        try:
+            self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-fcd')
+            if self._logger is not None: self._logger.info(
+                'Dialog exec [gui.dialogDeepSegmentation.DialogDeepFCDSegmentation]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'Deep learning FCD detection dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 12/05/2026 >
+
+    # < Revision 19/05/2026
+    # add meningiomaSegmentation method
+    def meningiomaSegmentation(self) -> None:
+        from Sisyphe.gui.dialogDeepSegmentation import DialogDeepMeningiomaSegmentation
+        self._dialog = DialogDeepMeningiomaSegmentation()
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        w = self._dialog.getSelectionWidgets()
+        w.setToolbarThumbnail(self._thumbnail)
+        try:
+            # self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-')
+            if self._logger is not None: self._logger.info(
+                'Dialog exec [gui.dialogDeepSegmentation.DialogDeepMeningiomaSegmentation]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'Deep learning meningioma segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 19/05/2026 >
+
+    # < Revision 20/05/2026
+    # add metastasisSegmentation method
+    def metastasisSegmentation(self) -> None:
+        from Sisyphe.gui.dialogDeepSegmentation import DialogDeepMetastasisSegmentation
+        self._dialog = DialogDeepMetastasisSegmentation()
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        w = self._dialog.getSelectionWidgets()
+        w.setToolbarThumbnail(self._thumbnail)
+        try:
+            # self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-')
+            if self._logger is not None: self._logger.info(
+                'Dialog exec [gui.dialogDeepSegmentation.DialogDeepMetastasisSegmentation]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'Deep learning metastasis segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 20/05/2026 >
+
+    # < Revision 20/05/2026
+    # add microbleedsSegmentation method
+    def microbleedsSegmentation(self) -> None:
+        from Sisyphe.gui.dialogDeepSegmentation import DialogDeepMicrobleedsSegmentation
+        self._dialog = DialogDeepMicrobleedsSegmentation()
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        w = self._dialog.getSelectionWidgets()
+        w.setToolbarThumbnail(self._thumbnail)
+        try:
+            self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-microbld')
+            if self._logger is not None: self._logger.info(
+                'Dialog exec [gui.dialogDeepSegmentation.DialogDeepMicrobleedsSegmentation]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'Deep learning microbleeds segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 20/05/2026 >
 
     # Map processing methods called from main menu
 

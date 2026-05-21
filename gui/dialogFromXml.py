@@ -32,7 +32,7 @@ class DialogFromXml(QDialog):
     Description
     ~~~~~~~~~~~
 
-    GUI dialog window generated from xml file (Sisyphe.settings.__file__/dialogs.xml).
+    GUI dialog window generated from XML file (Sisyphe.settings.__file__/dialogs.xml).
 
     Inheritance
     ~~~~~~~~~~~
@@ -57,7 +57,7 @@ class DialogFromXml(QDialog):
         if isinstance(names, str): names = [names]
 
         self.setWindowTitle('{}'.format(title))
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self._names = names
 
@@ -93,6 +93,7 @@ class DialogFromXml(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         self._ok.setFixedWidth(100)

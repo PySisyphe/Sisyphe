@@ -23,6 +23,7 @@ from Sisyphe.core.sisypheSettings import SisypheSettings
 from Sisyphe.core.sisypheSettings import SisypheFunctionsSettings
 from Sisyphe.widgets.functionsSettingsWidget import SettingsWidget
 from Sisyphe.widgets.functionsSettingsWidget import FunctionSettingsWidget
+from Sisyphe.gui.dialogWait import DialogWait
 
 __all__ = ['DialogSetting',
            'DialogFunctionSetting',
@@ -172,7 +173,7 @@ class DialogSettings(QDialog):
 
     QDialog -> DialogSettings
 
-    Last revision: 19/01/2026
+    Last revision: 21/05/2026
     """
 
     # Class method
@@ -358,11 +359,15 @@ class DialogSettings(QDialog):
                               'UnetLesionSegmentation',
                               'UnetWMHSegmentation',
                               'UnetTissueSegmentation',
-                              'OpenMAPSegmentation'):
+                              'OpenMAPSegmentation',
+                              'DeepFCDSegmentation',
+                              'DeepMicrobleedsSegmentation'):
                 if function == 'KMeansClustering': item.setText(0, 'KMeans clustering')
                 elif function == 'KMeansSegmentation': item.setText(0, 'KMeans segmentation')
                 elif function == 'UnetWMHSegmentation': item.setText(0, 'Unet WMH segmentation')
                 elif function == 'OpenMAPSegmentation': item.setText(0, 'OpenMAP segmentation')
+                elif function == 'DeepFCDSegmentation': item.setText(0, 'FCD segmentation')
+                elif function == 'DeepMicrobleedsSegmentation': item.setText(0, 'Microbleeds segmentation')
                 fitems['Segmentation'].addChild(item)
             elif function in ('Registration',
                               'T1Normalization',
@@ -493,6 +498,9 @@ class DialogSettings(QDialog):
 
     def apply(self):
         if self.hasMainWindow():
+            wait = DialogWait()
+            wait.open()
+            wait.setInformationText('Applying settings...')
             window = self.getMainWindow()
             # < Revision 18/02/2025
             #  c = self._sections.currentItem().data(0, Qt.UserRole)
@@ -613,6 +621,7 @@ class DialogSettings(QDialog):
                     if v is None: v = ''
                     window.getROIToolsWidget().setGeminiAvailability(v != '')
                     # Revision 12/12/2025 >
+            wait.close()
         self._apply.setEnabled(False)
 
     def accept(self):

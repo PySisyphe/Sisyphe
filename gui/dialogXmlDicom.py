@@ -81,7 +81,9 @@ class DialogXmlDicom(QDialog):
         self._uncheckall.adjustSize()
         self._checksel.adjustSize()
         self._unchecksel.adjustSize()
-        self._save.setFixedWidth(60)
+        # < Revision 14/05/2026
+        # self._save.setFixedWidth(60)
+        # Revision 14/05/2026 >
         self._action = dict()
         self._action['xml'] = self._save.addAction('Save Xml (*.xsheet)')
         self._action['txt'] = self._save.addAction('Save Text (*.txt)')

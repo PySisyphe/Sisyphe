@@ -61,7 +61,7 @@ class DialogDicomDataset(QDialog):
 
     QDialog -> DialogDicomDataset
 
-    Last revision: 13/02/2026
+    Last revision: 14/05/2026
     """
 
     # Special method
@@ -404,6 +404,9 @@ class DialogDicomDataset(QDialog):
     # < Revision 13/02/2026
     def setFilename(self, filename):
         if exists(filename):
-            self._files.add(filename)
+            # < Revision 14/05/2026
+            # self._files.add(filename)
+            self._files.add(filename, signal=False)
+            # Revision 14/05/2026 >
             self._initDataset(self._files, filename)
     # Revision 13/02/2026 >

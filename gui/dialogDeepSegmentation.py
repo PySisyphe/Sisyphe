@@ -2,10 +2,7 @@
 External packages/modules
 -------------------------
 
-    - ANTs, image registration, https://stnava.github.io/ANTs/
-    - Numpy, scientific computing, https://numpy.org/
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
-    - SimpleITK, medical image processing, https://simpleitk.org/
 """
 
 from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepTumorSegmentation
@@ -16,6 +13,10 @@ from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepWhiteMatterHy
 from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepTOFVesselSegmentation
 from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepTissueSegmentation
 from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepAtlasParcellation
+from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepFCDSegmentation
+from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepMeningiomaSegmentation
+from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepMetastasisSegmentation
+from Sisyphe.processing.capturedStdoutProcessing import ProcessDeepMicrobleedsSegmentation
 from Sisyphe.processing.simpleItkFilters import biasFieldCorrection
 
 from multiprocessing import Queue
@@ -44,6 +45,7 @@ from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheImageAttributes import SisypheAcquisition
+from Sisyphe.core.sisypheTransform import SisypheApplyTransform
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.functionsSettingsWidget import FunctionSettingsWidget
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
@@ -57,7 +59,11 @@ _all__ = ['DialogDeepTumorSegmentation',
           'DialogDeepWhiteMatterHyperIntensitiesSegmentation',
           'DialogDeepTOFVesselSegmentation',
           'DialogDeepTissueSegmentation',
-          'DialogDeepAtlasParcellation']
+          'DialogDeepAtlasParcellation',
+          'DialogDeepFCDSegmentation',
+          'DialogDeepMeningiomaSegmentation',
+          'DialogDeepMetastasisSegmentation',
+          'DialogDeepMicrobleedsSegmentation']
 
 """
 Class hierarchy
@@ -71,6 +77,9 @@ Class hierarchy
               -> DialogDeepTOFVesselSegmentation
               -> DialogDeepTissueSegmentation
               -> DialogDeepAtlasParcellation
+              -> DialogDeepMeningiomaSegmentation
+              -> DialogDeepMetastasisSegmentation
+              -> DialogDeepMicrobleedsSegmentation
 """
 
 
@@ -89,7 +98,7 @@ class DialogDeepTumorSegmentation(QDialog):
     QDialog -> DialogDeepTumorSegmentation
 
     Creation: 22/10/2024
-    Last revision: 02/10/2025
+    Last revision: 12/05/2026
     """
 
     # Class method
@@ -154,8 +163,10 @@ class DialogDeepTumorSegmentation(QDialog):
         self._execute = QPushButton('Execute')
         # self._execute.setFixedWidth(100)
         self._execute.setToolTip('Execute segmentation')
-        self._execute.setAutoDefault(True)
-        self._execute.setDefault(True)
+        # < Revision 12/05/2026
+        # self._execute.setAutoDefault(True)
+        # self._execute.setDefault(True)
+        # Revision 12/05/2026 >
         layout.addWidget(self._execute)
         layout.addWidget(cancel)
         layout.addStretch()
@@ -261,14 +272,13 @@ class DialogDeepTumorSegmentation(QDialog):
                                 if extractor.is_alive(): extractor.terminate()
                                 wait.progressVisibilityOff()
                             if wait.getStopped(): extractor.terminate()
-                    except Exception as err:
+                    except Exception:
                         if extractor.is_alive(): extractor.terminate()
                         wait.hide()
                         if not wait.getStopped():
                             messageBox(self,
                                        title=self.windowTitle(),
-                                       text='{} U-net tumor segmentation error: '
-                                            '{}\n{}.'.format(flair.getBasename(), type(err), str(err)))
+                                       text='{} U-net tumor segmentation error.'.format(flair.getBasename()))
                             return
                     finally:
                         # Remove temporary std::cout file
@@ -338,7 +348,11 @@ class DialogDeepTumorSegmentation(QDialog):
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
-            if r == QMessageBox.Yes: self._volumeSelect.clear()
+            if r == QMessageBox.Yes:
+                # < Revision 12/05/2026
+                # self._volumeSelect.clear()
+                self._volumeSelect.clearall()
+                # Revision 12/05/2026 >
             else: self.accept()
 
 
@@ -357,7 +371,7 @@ class DialogDeepHippocampusSegmentation(QDialog):
     QDialog -> DialogDeepHippocampusSegmentation
 
     Creation: 22/10/2024
-    Last revision: 03/06/2025
+    Last revision: 12/05/2026
     """
 
     # Class method
@@ -414,8 +428,10 @@ class DialogDeepHippocampusSegmentation(QDialog):
         self._execute = QPushButton('Execute')
         # self._execute.setFixedWidth(100)
         self._execute.setToolTip('Execute segmentation')
-        self._execute.setAutoDefault(True)
-        self._execute.setDefault(True)
+        # < Revision 12/05/2026
+        # self._execute.setAutoDefault(True)
+        # self._execute.setDefault(True)
+        # Revision 12/05/2026 >
         layout.addWidget(self._execute)
         layout.addWidget(cancel)
         layout.addStretch()
@@ -486,14 +502,13 @@ class DialogDeepHippocampusSegmentation(QDialog):
                                     if extractor.is_alive(): extractor.terminate()
                                     wait.progressVisibilityOff()
                                 if wait.getStopped(): extractor.terminate()
-                        except Exception as err:
+                        except Exception:
                             if extractor.is_alive(): extractor.terminate()
                             wait.hide()
                             if not wait.getStopped():
                                 messageBox(self,
                                            title=self.windowTitle(),
-                                           text='{} U-net hippocampus segmentation error: '
-                                                '{}\n{}.'.format(t1.getBasename(), type(err), str(err)))
+                                           text='{} U-net hippocampus segmentation error.'.format(t1.getBasename()))
                                 return
                         finally:
                             # Remove temporary std::cout file
@@ -538,7 +553,11 @@ class DialogDeepHippocampusSegmentation(QDialog):
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
-            if r == QMessageBox.Yes: self._volumeSelect.clear()
+            if r == QMessageBox.Yes:
+                # < Revision 12/05/2026
+                # self._volumeSelect.clear()
+                self._volumeSelect.clearall()
+                # Revision 12/05/2026 >
             else: self.accept()
 
 
@@ -557,7 +576,7 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
     QDialog -> DialogDeepMedialTemporalSegmentation
 
     Creation: 22/10/2024
-    Last revision: 03/06/2025
+    Last revision: 12/05/2026
     """
 
     # Class method
@@ -619,8 +638,10 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
         self._execute = QPushButton('Execute')
         # self._execute.setFixedWidth(100)
         self._execute.setToolTip('Execute segmentation')
-        self._execute.setAutoDefault(True)
-        self._execute.setDefault(True)
+        # < Revision 12/05/2026
+        # self._execute.setAutoDefault(True)
+        # self._execute.setDefault(True)
+        # Revision 12/05/2026 >
         layout.addWidget(self._execute)
         layout.addWidget(cancel)
         layout.addStretch()
@@ -708,14 +729,13 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                                 if extractor.is_alive(): extractor.terminate()
                                 wait.progressVisibilityOff()
                             if wait.getStopped(): extractor.terminate()
-                    except Exception as err:
+                    except Exception:
                         if extractor.is_alive(): extractor.terminate()
                         wait.hide()
                         if not wait.getStopped():
                             messageBox(self,
                                        title=self.windowTitle(),
-                                       text='{} U-net temporal segmentation error: '
-                                            '{}\n{}.'.format(t1.getBasename(), type(err), str(err)))
+                                       text='{} U-net temporal segmentation error.'.format(t1.getBasename()))
                             return
                     finally:
                         # Remove temporary std::cout file
@@ -849,7 +869,11 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
-            if r == QMessageBox.Yes: self._volumeSelect.clear()
+            if r == QMessageBox.Yes:
+                # < Revision 12/05/2026
+                # self._volumeSelect.clear()
+                self._volumeSelect.clearall()
+                # Revision 12/05/2026 >
             else: self.accept()
 
 
@@ -868,7 +892,7 @@ class DialogDeepLesionSegmentation(QDialog):
     QDialog -> DialogDeepLesionSegmentation
 
     Creation: 22/10/2024
-    Last revision: 03/06/2025
+    Last revision: 12/05/2026
     """
 
     # Class method
@@ -925,8 +949,10 @@ class DialogDeepLesionSegmentation(QDialog):
         self._execute = QPushButton('Execute')
         # self._execute.setFixedWidth(100)
         self._execute.setToolTip('Execute segmentation')
-        self._execute.setAutoDefault(True)
-        self._execute.setDefault(True)
+        # < Revision 12/05/2026
+        # self._execute.setAutoDefault(True)
+        # self._execute.setDefault(True)
+        # Revision 12/05/2026 >
         layout.addWidget(self._execute)
         layout.addWidget(cancel)
         layout.addStretch()
@@ -997,14 +1023,13 @@ class DialogDeepLesionSegmentation(QDialog):
                                     if extractor.is_alive(): extractor.terminate()
                                     wait.progressVisibilityOff()
                                 if wait.getStopped(): extractor.terminate()
-                        except Exception as err:
+                        except Exception:
                             if extractor.is_alive(): extractor.terminate()
                             wait.hide()
                             if not wait.getStopped():
                                 messageBox(self,
                                            title=self.windowTitle(),
-                                           text='{} U-net lesion segmentation error: '
-                                                '{}\n{}.'.format(t1.getBasename(), type(err), str(err)))
+                                           text='{} U-net lesion segmentation error.'.format(t1.getBasename()))
                                 return
                         finally:
                             # Remove temporary std::cout file
@@ -1048,7 +1073,11 @@ class DialogDeepLesionSegmentation(QDialog):
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
-            if r == QMessageBox.Yes: self._volumeSelect.clear()
+            if r == QMessageBox.Yes:
+                # < Revision 12/05/2026
+                # self._volumeSelect.clear()
+                self._volumeSelect.clearall()
+                # Revision 12/05/2026 >
             else: self.accept()
 
 
@@ -1067,6 +1096,7 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
     QDialog -> DialogDeepWhiteMatterHyperIntensitiesSegmentation
 
     Creation: 22/10/2024
+    Last revision: 12/05/2026
     """
 
     # Class method
@@ -1133,8 +1163,10 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
         self._execute = QPushButton('Execute')
         # self._execute.setFixedWidth(100)
         self._execute.setToolTip('Execute segmentation')
-        self._execute.setAutoDefault(True)
-        self._execute.setDefault(True)
+        # < Revision 12/05/2026
+        # self._execute.setAutoDefault(True)
+        # self._execute.setDefault(True)
+        # Revision 12/05/2026 >
         layout.addWidget(self._execute)
         layout.addWidget(cancel)
         layout.addStretch()
@@ -1245,14 +1277,13 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
                                 r = queue.get()
                                 if extractor.is_alive(): extractor.terminate()
                             if wait.getStopped(): extractor.terminate()
-                    except Exception as err:
+                    except Exception:
                         if extractor.is_alive(): extractor.terminate()
                         wait.hide()
                         if not wait.getStopped():
                             messageBox(self,
                                        title=self.windowTitle(),
-                                       text='{} U-net white matter hyper-intensities segmentation error: '
-                                            '{}\n{}.'.format(flair.getBasename(), type(err), str(err)))
+                                       text='{} U-net white matter hyper-intensities segmentation error.'.format(flair.getBasename()))
                             return
                     finally:
                         # Remove temporary std::cout file
@@ -1296,7 +1327,11 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
-            if r == QMessageBox.Yes: self._volumeSelect.clear()
+            if r == QMessageBox.Yes:
+                # < Revision 12/05/2026
+                # self._volumeSelect.clear()
+                self._volumeSelect.clearall()
+                # Revision 12/05/2026 >
             else: self.accept()
 
     def showEvent(self, event):
@@ -1321,7 +1356,7 @@ class DialogDeepTOFVesselSegmentation(QDialog):
     QDialog -> DialogDeepTOFVesselSegmentation
 
     Creation: 22/10/2024
-    Last revision: 31/01/2026
+    Last revision: 12/05/2026
     """
 
     # Class method
@@ -1378,8 +1413,10 @@ class DialogDeepTOFVesselSegmentation(QDialog):
         self._execute = QPushButton('Execute')
         # self._execute.setFixedWidth(100)
         self._execute.setToolTip('Execute segmentation')
-        self._execute.setAutoDefault(True)
-        self._execute.setDefault(True)
+        # < Revision 12/05/2026
+        # self._execute.setAutoDefault(True)
+        # self._execute.setDefault(True)
+        # Revision 12/05/2026 >
         layout.addWidget(self._execute)
         layout.addWidget(cancel)
         layout.addStretch()
@@ -1450,7 +1487,7 @@ class DialogDeepTOFVesselSegmentation(QDialog):
                                     extractor.terminate()
                                     wait.progressVisibilityOff()
                                 if wait.getStopped(): extractor.terminate()
-                        except Exception as err:
+                        except Exception:
                             # < Revision 31/01/2026
                             # if flt.is_alive(): flt.terminate()
                             if extractor.is_alive(): extractor.terminate()
@@ -1459,8 +1496,7 @@ class DialogDeepTOFVesselSegmentation(QDialog):
                             if not wait.getStopped():
                                 messageBox(self,
                                            title=self.windowTitle(),
-                                           text='{} U-net vessel segmentation error: '
-                                                '{}\n{}.'.format(tof.getBasename(), type(err), str(err)))
+                                           text='{} U-net vessel segmentation error.'.format(tof.getBasename()))
                                 return
                         finally:
                             # Remove temporary std::cout file
@@ -1504,7 +1540,11 @@ class DialogDeepTOFVesselSegmentation(QDialog):
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
-            if r == QMessageBox.Yes: self._volumeSelect.clear()
+            if r == QMessageBox.Yes:
+                # < Revision 12/05/2026
+                # self._volumeSelect.clear()
+                self._volumeSelect.clearall()
+                # Revision 12/05/2026 >
             else: self.accept()
 
 
@@ -1523,7 +1563,7 @@ class DialogDeepTissueSegmentation(QDialog):
     QDialog -> DialogDeepTissueSegmentation
 
     Creation: 03/06/2025
-    Last revision: 31/01/2025
+    Last revision: 12/05/2026
     """
 
     # Class method
@@ -1580,8 +1620,10 @@ class DialogDeepTissueSegmentation(QDialog):
         self._execute = QPushButton('Execute')
         # self._execute.setFixedWidth(100)
         self._execute.setToolTip('Execute segmentation')
-        self._execute.setAutoDefault(True)
-        self._execute.setDefault(True)
+        # < Revision 12/05/2026
+        # self._execute.setAutoDefault(True)
+        # self._execute.setDefault(True)
+        # Revision 12/05/2026 >
         layout.addWidget(self._execute)
         layout.addWidget(cancel)
         layout.addStretch()
@@ -1652,14 +1694,13 @@ class DialogDeepTissueSegmentation(QDialog):
                                     if extractor.is_alive(): extractor.terminate()
                                     wait.progressVisibilityOff()
                                 if wait.getStopped(): extractor.terminate()
-                        except Exception as err:
+                        except Exception:
                             if extractor.is_alive(): extractor.terminate()
                             wait.hide()
                             if not wait.getStopped():
                                 messageBox(self,
                                            title=self.windowTitle(),
-                                           text='{} U-net tissue segmentation error: '
-                                                '{}\n{}.'.format(t1.getBasename(), type(err), str(err)))
+                                           text='{} U-net tissue segmentation error.'.format(t1.getBasename()))
                                 return
                         finally:
                             # Remove temporary std::cout file
@@ -1764,7 +1805,11 @@ class DialogDeepTissueSegmentation(QDialog):
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
-            if r == QMessageBox.Yes: self._volumeSelect.clear()
+            if r == QMessageBox.Yes:
+                # < Revision 12/05/2026
+                # self._volumeSelect.clear()
+                self._volumeSelect.clearall()
+                # Revision 12/05/2026 >
             else: self.accept()
 
 
@@ -1783,7 +1828,7 @@ class DialogDeepAtlasParcellation(QDialog):
     QDialog -> DialogDeepAtlasParcellation
 
     Creation: 12/03/2026
-    Last revision:
+    Last revision: 12/05/2026
     """
 
     # Special method
@@ -1832,9 +1877,11 @@ class DialogDeepAtlasParcellation(QDialog):
         # cancel.setFixedWidth(100)
         self._execute = QPushButton('Execute')
         # self._execute.setFixedWidth(100)
-        self._execute.setToolTip('Execute segmentation')
-        self._execute.setAutoDefault(True)
-        self._execute.setDefault(True)
+        self._execute.setToolTip('Execute atlas parcellation')
+        # < Revision 12/05/2026
+        # self._execute.setAutoDefault(True)
+        # self._execute.setDefault(True)
+        # Revision 12/05/2026 >
         layout.addWidget(self._execute)
         layout.addWidget(cancel)
         layout.addStretch()
@@ -1917,7 +1964,7 @@ class DialogDeepAtlasParcellation(QDialog):
                                         r = queue.get()
                                         if extractor.is_alive(): extractor.terminate()
                                     if wait.getStopped(): extractor.terminate()
-                            except Exception as err:
+                            except Exception:
                                 if extractor.is_alive(): extractor.terminate()
                         # noinspection PyUnreachableCode
                         if wait.getStopped():
@@ -1927,8 +1974,7 @@ class DialogDeepAtlasParcellation(QDialog):
                             wait.close()
                             messageBox(self,
                                        title=self.windowTitle(),
-                                       text='{} OpenMAP-T1 atlas parcellation error: '
-                                            '{}\n{}.'.format(t1.getBasename(), type(err), str(err)))
+                                       text='{} OpenMAP-T1 atlas parcellation error.'.format(t1.getBasename()))
                             return
                         """
                         Save
@@ -2056,5 +2102,924 @@ class DialogDeepAtlasParcellation(QDialog):
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
-            if r == QMessageBox.Yes: self._volumeSelect.clear()
+            if r == QMessageBox.Yes:
+                # < Revision 12/05/2026
+                # self._volumeSelect.clear()
+                self._volumeSelect.clearall()
+                # Revision 12/05/2026 >
+            else: self.accept()
+
+
+class DialogDeepFCDSegmentation(QDialog):
+    """
+    DialogDeepFCDSegmentation
+
+    Description
+    ~~~~~~~~~~~
+
+    GUI dialog for deep learning focal cortical dysplasia segmentation using deepFCD model.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> DialogDeepFCDSegmentation
+
+    Creation: 12/05/2026
+    Last revision: 12/05/2026
+    """
+
+    # Special method
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # Init window
+
+        self.setWindowTitle('FCD detection')
+        # noinspection PyUnresolvedReferences
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # Init QLayout
+
+        self._layout = QVBoxLayout()
+        self._layout.setContentsMargins(5, 5, 5, 0)
+        self._layout.setSpacing(0)
+        self.setLayout(self._layout)
+
+        # Init widgets
+
+        self._volumeSelect = SynchronizedFilesSelectionWidget(single=None,
+                                                              multiple=('T1',
+                                                                        'FLAIR',
+                                                                        'Mask'),
+                                                              parent=self)
+        self._volumeSelect.setSisypheVolumeFilters({'multiple': [True, True, True]})
+        flt = {'multiple': [SisypheAcquisition.T1,
+                            SisypheAcquisition.FLAIR,
+                            SisypheAcquisition.MASK]}
+        self._volumeSelect.setSequenceFilters(flt)
+        self._volumeSelect.setMinimumWidth(400)
+        self._volumeSelect.setMaximumHeight(600)
+        self._volumeSelect.setVisible(True)
+        self._t1Select = self._volumeSelect.getSelectionWidget('T1')
+        self._flairSelect = self._volumeSelect.getSelectionWidget('FLAIR')
+        self._maskSelect = self._volumeSelect.getSelectionWidget('Mask')
+        self._layout.addWidget(self._volumeSelect)
+
+        self._settings = FunctionSettingsWidget('DeepFCDSegmentation', parent=self)
+        # self._settings.setSettingsButtonFunctionText()
+        self._settings.setSettingsButtonText('FCD detection')
+        self._settings.settingsVisibilityOn()
+        self._layout.addWidget(self._settings)
+
+        # Init default dialog buttons
+
+        layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
+        layout.setDirection(QHBoxLayout.RightToLeft)
+        cancel = QPushButton('Cancel')
+        # cancel.setFixedWidth(100)
+        self._execute = QPushButton('Execute')
+        # self._execute.setFixedWidth(100)
+        self._execute.setToolTip('Execute FCD detection')
+        layout.addWidget(self._execute)
+        layout.addWidget(cancel)
+        layout.addStretch()
+
+        self._layout.addLayout(layout)
+
+        # Qt Signals
+
+        # noinspection PyUnresolvedReferences
+        cancel.clicked.connect(self.reject)
+        # noinspection PyUnresolvedReferences
+        self._execute.clicked.connect(self.execute)
+
+        # < Revision 20/05/2025
+        self.adjustSize()
+        # imposing dialog width -> set minimum width to a child widget of the main layout
+        screen = QApplication.primaryScreen().geometry()
+        self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
+        # dialog resize off
+        # noinspection PyUnresolvedReferences
+        self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
+        # Revision 20/05/2025 >
+        self.setModal(True)
+
+    # Private method
+
+    # noinspection PyUnusedLocal
+    def _center(self, widget):
+        self.adjustSize()
+        self.move(self.screen().availableGeometry().center() - self.rect().center())
+        QApplication.processEvents()
+
+    # Public method
+
+    def getSelectionWidgets(self):
+        return self._volumeSelect.getSelectionWidgets()
+
+    def execute(self):
+        self._maskSelect.setVisible(False)
+        if self._volumeSelect.isReady():
+            self._maskSelect.setVisible(True)
+            ft1s = self._t1Select.getFilenames()
+            fflairs = self._flairSelect.getFilenames()
+            fmasks = self._maskSelect.getFilenames()
+            if len(ft1s) > 0:
+                for index in range(len(ft1s)):
+                    wait = DialogWaitRegistration()
+                    wait.open()
+                    self._t1Select.clearSelection()
+                    self._t1Select.setSelectionTo(index)
+                    self._flairSelect.clearSelection()
+                    self._flairSelect.setSelectionTo(index)
+                    ft1 = ft1s[index]
+                    fflair = fflairs[index]
+                    if exists(ft1) and exists(fflair):
+                        wait.setInformationText('Load T1 {}...'.format(basename(ft1)))
+                        t1 = SisypheVolume()
+                        t1.load(ft1)
+                        t1.setDefaultOrigin()
+                        wait.setInformationText('Load FLAIR {}...'.format(basename(fflair)))
+                        flair = SisypheVolume()
+                        flair.load(fflair)
+                        flair.setDefaultOrigin()
+                        wait.progressVisibilityOff()
+                        mask = None
+                        if fmasks:
+                            if index < len(fmasks):
+                                fmask = fmasks[index]
+                                if exists(fmask):
+                                    wait.setInformationText('Load mask {}...'.format(basename(fmask)))
+                                    mask = SisypheVolume()
+                                    mask.load(fmask)
+                                    mask.setDefaultOrigin()
+                        """
+                        Bias field correction
+                        """
+                        if self._settings.getParameterValue('Bias'):
+                            wait.setInformationText('T1 bias field correction...')
+                            try:
+                                t1 = biasFieldCorrection(t1, shrink=4, wait=wait)[0]
+                                t1.saveAs(ft1)
+                            except: pass
+                            wait.progressVisibilityOff()
+                            if wait.getStopped():
+                                wait.close()
+                                return
+                            wait.setInformationText('FLAIR bias field correction...')
+                            try:
+                                flair = biasFieldCorrection(flair, shrink=4, wait=wait)[0]
+                                flair.saveAs(fflair)
+                            except: pass
+                            wait.progressVisibilityOff()
+                            if wait.getStopped():
+                                wait.close()
+                                return
+                        """
+                        Isotropic mm resampling
+                        """
+                        size = t1.getSize()
+                        spacing = t1.getSpacing()
+                        for i in range(3):
+                            if spacing[i] < 1.0:
+                                size = int(size[i] * spacing[i])
+                                spacing[i] = 1.0
+                        if spacing == t1.getSpacing():
+                            f = None
+                            rt1, rflair, rmask = t1, flair, mask
+                        else:
+                            f = SisypheApplyTransform()
+                            f.setInterpolator('linear')
+                            f.setMoving(t1)
+                            rt1 = f.resampleToFOV(size, spacing, save=False)
+                            f.setMoving(flair)
+                            rflair = f.resampleToFOV(size, spacing, save=False)
+                            f.setInterpolator('nearest')
+                            f.setMoving(mask)
+                            rmask = f.resampleToFOV(size, spacing, save=False)
+                        """
+                        Segmentation
+                        """
+                        threshold = self._settings.getParameterValue('Threshold')
+                        if threshold is None: threshold = 0.4
+                        batchsize = self._settings.getParameterValue('Batch')[0]
+                        if batchsize is None: batchsize = 8192
+                        else: batchsize = int(batchsize)
+                        # noinspection PyUnusedLocal
+                        r = None
+                        wait.setInformationText('FCD detection initialization...')
+                        wait.setButtonVisibility(True)
+                        with Manager() as manager:
+                            mng = manager.dict()
+                            queue = Queue()
+                            try:
+                                extractor = ProcessDeepFCDSegmentation(rt1, rflair, rmask, threshold, batchsize, mng, queue)
+                                extractor.start()
+                                while extractor.is_alive():
+                                    # noinspection PyTypeChecker
+                                    wait.messageFromDictProxyManager(mng)
+                                    if not queue.empty():
+                                        # noinspection PyUnusedLocal
+                                        r = queue.get()
+                                        if extractor.is_alive(): extractor.terminate()
+                                    if wait.getStopped(): extractor.terminate()
+                            except Exception:
+                                if extractor.is_alive(): extractor.terminate()
+                        # noinspection PyUnreachableCode
+                        if wait.getStopped():
+                            wait.close()
+                            return
+                        if not wait.getStopped() and r is None:
+                            wait.close()
+                            messageBox(self,
+                                       title=self.windowTitle(),
+                                       text='{} FCD detection error'.format(t1.getBasename()))
+                            return
+                        wait.progressVisibilityOff()
+                        wait.setButtonVisibility(False)
+                        if r is not None:
+                            prefix = self._settings.getParameterValue('Prefix')
+                            suffix = self._settings.getParameterValue('Suffix')
+                            v = SisypheVolume()
+                            v.copyFromNumpyArray(r, spacing=rt1.getSpacing(), defaultshape=False)
+                            v.copyAttributesFrom(t1, display=False, slope=False)
+                            if f:
+                                """
+                                Resample fcd map to native FOV
+                                """
+                                trf = f.getTransform()
+                                trf = trf.getInverseTransform()
+                                trf.setSize(t1.getSize())
+                                trf.setSpacing(t1.getSpacing())
+                                f = SisypheApplyTransform()
+                                f.setInterpolator('linear')
+                                f.setTransform(trf)
+                                f.setMoving(v)
+                                vr = f.resampleMoving(save=False)
+                            else: vr = v
+                            """
+                            fcd map smoothing
+                            """
+                            fwhm = float(self._settings.getParameterValue('Fwhm'))
+                            if fwhm > 0.0:
+                                wait.setInformationText('FCD map smoothing...')
+                                from Sisyphe.processing.simpleItkFilters import gaussianFilter
+                                vr = gaussianFilter(vr, fwhm)
+                            """
+                            Save fcd map
+                            """
+                            vr.setFilename(t1.getFilename())
+                            vr.acquisition.setModalityToOT()
+                            vr.acquisition.setSequenceToStructMap()
+                            vr.setID(t1.getID())
+                            vr.setFilenamePrefix(prefix)
+                            vr.setFilenameSuffix(suffix)
+                            wait.setInformationText('Save {}...'.format(vr.getBasename()))
+                            vr.save()
+                    wait.close()
+            """
+            Exit
+            """
+            r = messageBox(self,
+                           self.windowTitle(),
+                           'Would you like to do\nmore FCD detection ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
+            if r == QMessageBox.Yes:
+                self._volumeSelect.clearall()
+            else: self.accept()
+
+
+class DialogDeepMeningiomaSegmentation(QDialog):
+    """
+    DialogDeepMeningiomaSegmentation
+
+    Description
+    ~~~~~~~~~~~
+
+    GUI dialog for deep learning meningioma segmentation using neuronet ams model.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> DialogDeepMeningiomaSegmentation
+
+    Creation: 19/05/2026
+    """
+
+    # Special method
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # Init window
+
+        self.setWindowTitle('Meningioma segmentation')
+        # noinspection PyUnresolvedReferences
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # Init QLayout
+
+        self._layout = QVBoxLayout()
+        self._layout.setContentsMargins(5, 5, 5, 0)
+        self._layout.setSpacing(0)
+        self.setLayout(self._layout)
+
+        # Init widgets
+
+        self._volumeSelect = FilesSelectionWidget(parent=self)
+        self._volumeSelect.filterSisypheVolume()
+        self._volumeSelect.filterSameSequence(SisypheAcquisition.T1)
+        self._volumeSelect.setCurrentVolumeButtonVisibility(True)
+        self._volumeSelect.setTextLabel('T1')
+        self._volumeSelect.setMinimumWidth(500)
+        self._volumeSelect.setVisible(True)
+        self._layout.addWidget(self._volumeSelect)
+
+        self._settings = FunctionSettingsWidget('DeepMeningiomaSegmentation', parent=self)
+        self._settings.setSettingsButtonText('Meningioma segmentation')
+        self._settings.settingsVisibilityOn()
+        self._layout.addWidget(self._settings)
+
+        # Init default dialog buttons
+
+        layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
+        layout.setDirection(QHBoxLayout.RightToLeft)
+        cancel = QPushButton('Cancel')
+        # cancel.setFixedWidth(100)
+        self._execute = QPushButton('Execute')
+        # self._execute.setFixedWidth(100)
+        self._execute.setToolTip('Execute meningioma segmentation')
+        layout.addWidget(self._execute)
+        layout.addWidget(cancel)
+        layout.addStretch()
+
+        self._layout.addLayout(layout)
+
+        # Qt Signals
+
+        # noinspection PyUnresolvedReferences
+        cancel.clicked.connect(self.reject)
+        # noinspection PyUnresolvedReferences
+        self._execute.clicked.connect(self.execute)
+
+        # < Revision 20/05/2025
+        self.adjustSize()
+        # imposing dialog width -> set minimum width to a child widget of the main layout
+        screen = QApplication.primaryScreen().geometry()
+        self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
+        # dialog resize off
+        # noinspection PyUnresolvedReferences
+        self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
+        # Revision 20/05/2025 >
+        self.setModal(True)
+
+    # Private method
+
+    # noinspection PyUnusedLocal
+    def _center(self, widget):
+        self.adjustSize()
+        self.move(self.screen().availableGeometry().center() - self.rect().center())
+        QApplication.processEvents()
+
+    # Public method
+
+    def getSelectionWidgets(self):
+        return self._volumeSelect
+
+    def execute(self):
+        if not self._volumeSelect.isEmpty():
+            ft1s = self._volumeSelect.getFilenames()
+            if len(ft1s) > 0:
+                for index in range(len(ft1s)):
+                    wait = DialogWaitRegistration()
+                    wait.open()
+                    self._volumeSelect.clearSelection()
+                    self._volumeSelect.setSelectionTo(index)
+                    ft1 = ft1s[index]
+                    if exists(ft1):
+                        wait.setInformationText('Load T1 {}...'.format(basename(ft1)))
+                        t1 = SisypheVolume()
+                        t1.load(ft1)
+                        t1.setDefaultOrigin()
+                        """
+                        Bias field correction
+                        """
+                        if self._settings.getParameterValue('Bias'):
+                            wait.setInformationText('T1 bias field correction...')
+                            try:
+                                t1 = biasFieldCorrection(t1, shrink=4, wait=wait)[0]
+                                t1.saveAs(ft1)
+                            except: pass
+                            wait.progressVisibilityOff()
+                            if wait.getStopped():
+                                wait.close()
+                                return
+                        """
+                        256 x 256 x 256 isotropic mm resampling
+                        """
+                        f = SisypheApplyTransform()
+                        f.setInterpolator('linear')
+                        f.setMoving(t1)
+                        rt1 = f.resampleToFOV((256, 256, 256), (1.0, 1.0, 1.0), save=False)
+                        """
+                        Segmentation
+                        """
+                        r = None
+                        wait.setInformationText('Meningioma segmentation initialization...')
+                        wait.setButtonVisibility(True)
+                        with Manager() as manager:
+                            mng = manager.dict()
+                            queue = Queue()
+                            try:
+                                extractor = ProcessDeepMeningiomaSegmentation(rt1, queue)
+                                wait.setInformationText('Meningioma segmentation...')
+                                extractor.start()
+                                while extractor.is_alive():
+                                    # noinspection PyTypeChecker
+                                    wait.messageFromDictProxyManager(mng)
+                                    if not queue.empty():
+                                        # noinspection PyUnusedLocal
+                                        r = queue.get()
+                                        if extractor.is_alive(): extractor.terminate()
+                                    if wait.getStopped(): extractor.terminate()
+                            except Exception:
+                                if extractor.is_alive(): extractor.terminate()
+                        # noinspection PyUnreachableCode
+                        if wait.getStopped():
+                            wait.close()
+                            return
+                        if not wait.getStopped() and r is None:
+                            wait.close()
+                            messageBox(self,
+                                       title=self.windowTitle(),
+                                       text='{} Meningioma segmentation error'.format(t1.getBasename()))
+                            return
+                        wait.progressVisibilityOff()
+                        wait.setButtonVisibility(False)
+                        if r is not None:
+                            prefix = self._settings.getParameterValue('Prefix')
+                            suffix = self._settings.getParameterValue('Suffix')
+                            v = SisypheVolume()
+                            v.copyFromNumpyArray(r, spacing=(1.0, 1.0, 1.0), defaultshape=False)
+                            v.copyAttributesFrom(t1, display=False, slope=False)
+                            """
+                            Resample menigioma map to native FOV
+                            """
+                            trf = f.getTransform()
+                            trf = trf.getInverseTransform()
+                            trf.setSize(t1.getSize())
+                            trf.setSpacing(t1.getSpacing())
+                            f = SisypheApplyTransform()
+                            f.setInterpolator('linear')
+                            f.setTransform(trf)
+                            f.setMoving(v)
+                            vr = f.resampleMoving(save=False)
+                            """
+                            Save meningioma map
+                            """
+                            vr.setFilename(t1.getFilename())
+                            vr.acquisition.setModalityToOT()
+                            vr.acquisition.setSequenceToStructMap()
+                            vr.setID(t1.getID())
+                            vr.clearTransforms()
+                            vr.setFilenamePrefix(prefix)
+                            vr.setFilenameSuffix(suffix)
+                            wait.setInformationText('Save {}...'.format(vr.getBasename()))
+                            vr.save()
+                    wait.close()
+            """
+            Exit
+            """
+            r = messageBox(self,
+                           self.windowTitle(),
+                           'Would you like to do\nmore meningioma segmentation ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
+            if r == QMessageBox.Yes:
+                self._volumeSelect.clearall()
+            else: self.accept()
+
+
+class DialogDeepMetastasisSegmentation(QDialog):
+    """
+    DialogDeepMetastasisSegmentation
+
+    Description
+    ~~~~~~~~~~~
+
+    GUI dialog for deep learning metastasis segmentation using RLK-Unet model.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> DialogDeepMetastasisSegmentation
+
+    Creation: 20/05/2026
+    """
+
+    # Special method
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # Init window
+
+        self.setWindowTitle('Metastasis segmentation')
+        # noinspection PyUnresolvedReferences
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # Init QLayout
+
+        self._layout = QVBoxLayout()
+        self._layout.setContentsMargins(5, 5, 5, 0)
+        self._layout.setSpacing(0)
+        self.setLayout(self._layout)
+
+        # Init widgets
+
+        self._volumeSelect = FilesSelectionWidget(parent=self)
+        self._volumeSelect.filterSisypheVolume()
+        self._volumeSelect.filterSameSequence(SisypheAcquisition.T1)
+        self._volumeSelect.setCurrentVolumeButtonVisibility(True)
+        self._volumeSelect.setTextLabel('Black blood contrast T1')
+        self._volumeSelect.setMinimumWidth(500)
+        self._volumeSelect.setVisible(True)
+        self._layout.addWidget(self._volumeSelect)
+
+        self._settings = FunctionSettingsWidget('DeepMetastasisSegmentation', parent=self)
+        self._settings.setSettingsButtonText('Metastasis segmentation')
+        self._settings.settingsVisibilityOn()
+        self._layout.addWidget(self._settings)
+
+        # Init default dialog buttons
+
+        layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
+        layout.setDirection(QHBoxLayout.RightToLeft)
+        cancel = QPushButton('Cancel')
+        # cancel.setFixedWidth(100)
+        self._execute = QPushButton('Execute')
+        # self._execute.setFixedWidth(100)
+        self._execute.setToolTip('Execute metastasis segmentation')
+        layout.addWidget(self._execute)
+        layout.addWidget(cancel)
+        layout.addStretch()
+
+        self._layout.addLayout(layout)
+
+        # Qt Signals
+
+        # noinspection PyUnresolvedReferences
+        cancel.clicked.connect(self.reject)
+        # noinspection PyUnresolvedReferences
+        self._execute.clicked.connect(self.execute)
+
+        # < Revision 20/05/2025
+        self.adjustSize()
+        # imposing dialog width -> set minimum width to a child widget of the main layout
+        screen = QApplication.primaryScreen().geometry()
+        self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
+        # dialog resize off
+        # noinspection PyUnresolvedReferences
+        self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
+        # Revision 20/05/2025 >
+        self.setModal(True)
+
+    # Private method
+
+    # noinspection PyUnusedLocal
+    def _center(self, widget):
+        self.adjustSize()
+        self.move(self.screen().availableGeometry().center() - self.rect().center())
+        QApplication.processEvents()
+
+    # Public method
+
+    def getSelectionWidgets(self):
+        return self._volumeSelect
+
+    def execute(self):
+        if not self._volumeSelect.isEmpty():
+            ft1s = self._volumeSelect.getFilenames()
+            if len(ft1s) > 0:
+                for index in range(len(ft1s)):
+                    wait = DialogWaitRegistration()
+                    wait.open()
+                    self._volumeSelect.clearSelection()
+                    self._volumeSelect.setSelectionTo(index)
+                    ft1 = ft1s[index]
+                    if exists(ft1):
+                        wait.setInformationText('Load T1 {}...'.format(basename(ft1)))
+                        t1 = SisypheVolume()
+                        t1.load(ft1)
+                        t1.setDefaultOrigin()
+                        """
+                        Bias field correction
+                        """
+                        if self._settings.getParameterValue('Bias'):
+                            wait.setInformationText('T1 bias field correction...')
+                            try:
+                                t1 = biasFieldCorrection(t1, shrink=4, wait=wait)[0]
+                                t1.saveAs(ft1)
+                            except: pass
+                            wait.progressVisibilityOff()
+                            if wait.getStopped():
+                                wait.close()
+                                return
+                        """
+                        Segmentation
+                        """
+                        r = None
+                        threshold = self._settings.getParameterValue('Threshold')
+                        wait.setInformationText('Metastasis segmentation initialization...')
+                        wait.setButtonVisibility(True)
+                        with Manager() as manager:
+                            mng = manager.dict()
+                            queue = Queue()
+                            try:
+                                extractor = ProcessDeepMetastasisSegmentation(t1, threshold, mng, queue)
+                                wait.setInformationText('Metastasis segmentation...')
+                                extractor.start()
+                                while extractor.is_alive():
+                                    # noinspection PyTypeChecker
+                                    wait.messageFromDictProxyManager(mng)
+                                    if not queue.empty():
+                                        # noinspection PyUnusedLocal
+                                        r = queue.get()
+                                        if extractor.is_alive(): extractor.terminate()
+                                    if wait.getStopped(): extractor.terminate()
+                            except Exception:
+                                if extractor.is_alive(): extractor.terminate()
+                        # noinspection PyUnreachableCode
+                        if wait.getStopped():
+                            wait.close()
+                            return
+                        if not wait.getStopped() and r is None:
+                            wait.close()
+                            messageBox(self,
+                                       title=self.windowTitle(),
+                                       text='{} Meningioma segmentation error'.format(t1.getBasename()))
+                            return
+                        wait.progressVisibilityOff()
+                        wait.setButtonVisibility(False)
+                        if r is not None:
+                            prefix = self._settings.getParameterValue('Prefix')
+                            suffix = self._settings.getParameterValue('Suffix')
+                            v = SisypheVolume()
+                            v.copyFromNumpyArray(r, spacing=(1.0, 1.0, 1.0), defaultshape=False)
+                            v.copyAttributesFrom(t1, display=False, slope=False)
+                            v.setFilename(t1.getFilename())
+                            v.acquisition.setModalityToOT()
+                            v.acquisition.setSequenceToStructMap()
+                            v.setFilenamePrefix(prefix)
+                            v.setFilenameSuffix(suffix)
+                            wait.setInformationText('Save {}...'.format(v.getBasename()))
+                            v.save()
+                    wait.close()
+            """
+            Exit
+            """
+            r = messageBox(self,
+                           self.windowTitle(),
+                           'Would you like to do\nmore metastasis segmentation ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
+            if r == QMessageBox.Yes:
+                self._volumeSelect.clearall()
+            else: self.accept()
+
+
+class DialogDeepMicrobleedsSegmentation(QDialog):
+    """
+    DialogDeepMicrobleedsSegmentation
+
+    Description
+    ~~~~~~~~~~~
+
+    GUI dialog for deep learning microbleeds segmentation using SHIVA-CMB model.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> DialogDeepMicrobleedsSegmentation
+
+    Creation: 20/05/2026
+    Last revision: 21/05/2026
+    """
+
+    # Special method
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # Init window
+
+        self.setWindowTitle('Microbleeds segmentation')
+        # noinspection PyUnresolvedReferences
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # Init QLayout
+
+        self._layout = QVBoxLayout()
+        self._layout.setContentsMargins(5, 5, 5, 0)
+        self._layout.setSpacing(0)
+        self.setLayout(self._layout)
+
+        # Init widgets
+
+        self._volumeSelect = FilesSelectionWidget(parent=self)
+        self._volumeSelect.filterSisypheVolume()
+        self._volumeSelect.filterSameSequence([SisypheAcquisition.SWI, SisypheAcquisition.T2S])
+        self._volumeSelect.setCurrentVolumeButtonVisibility(True)
+        self._volumeSelect.setTextLabel('SWI or T2*')
+        self._volumeSelect.setMinimumWidth(500)
+        self._volumeSelect.setVisible(True)
+        self._layout.addWidget(self._volumeSelect)
+
+        self._settings = FunctionSettingsWidget('DeepMicrobleedsSegmentation', parent=self)
+        self._settings.setSettingsButtonText('Microbleeds segmentation')
+        self._settings.settingsVisibilityOn()
+        self._layout.addWidget(self._settings)
+
+        # Init default dialog buttons
+
+        layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
+        layout.setDirection(QHBoxLayout.RightToLeft)
+        cancel = QPushButton('Cancel')
+        # cancel.setFixedWidth(100)
+        self._execute = QPushButton('Execute')
+        # self._execute.setFixedWidth(100)
+        self._execute.setToolTip('Execute microbleeds segmentation')
+        layout.addWidget(self._execute)
+        layout.addWidget(cancel)
+        layout.addStretch()
+
+        self._layout.addLayout(layout)
+
+        # Qt Signals
+
+        # noinspection PyUnresolvedReferences
+        cancel.clicked.connect(self.reject)
+        # noinspection PyUnresolvedReferences
+        self._execute.clicked.connect(self.execute)
+
+        # < Revision 20/05/2025
+        self.adjustSize()
+        # imposing dialog width -> set minimum width to a child widget of the main layout
+        screen = QApplication.primaryScreen().geometry()
+        self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
+        # dialog resize off
+        # noinspection PyUnresolvedReferences
+        self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
+        # Revision 20/05/2025 >
+        self.setModal(True)
+
+    # Private method
+
+    # noinspection PyUnusedLocal
+    def _center(self, widget):
+        self.adjustSize()
+        self.move(self.screen().availableGeometry().center() - self.rect().center())
+        QApplication.processEvents()
+
+    # Public method
+
+    def getSelectionWidgets(self):
+        return self._volumeSelect
+
+    def execute(self):
+        if not self._volumeSelect.isEmpty():
+            fswis = self._volumeSelect.getFilenames()
+            if len(fswis) > 0:
+                for index in range(len(fswis)):
+                    wait = DialogWaitRegistration()
+                    wait.open()
+                    self._volumeSelect.clearSelection()
+                    self._volumeSelect.setSelectionTo(index)
+                    fswi = fswis[index]
+                    if exists(fswi):
+                        wait.setInformationText('Load T1 {}...'.format(basename(fswi)))
+                        swi = SisypheVolume()
+                        swi.load(fswi)
+                        swi.setDefaultOrigin()
+                        """
+                        160 × 214 × 176 isotropic mm resampling
+                        """
+                        f = SisypheApplyTransform()
+                        f.setInterpolator('linear')
+                        f.setMoving(swi)
+                        # < Revision 21/05/2026
+                        # rswi = f.resampleToFOV((160, 214, 173), (1.0, 1.0, 1.0), save=False)
+                        rswi = f.resampleToFOV((160, 214, 176), (1.0, 1.0, 1.0), save=False)
+                        # Revision 21/05/2026 >
+                        """
+                        Intensity normalization
+                        """
+                        rswi.truncateIntensity(1, onlymax=True)
+                        rswi.standardizeIntensity('rescale')
+                        """
+                        Segmentation
+                        """
+                        models = list()
+                        models.append(self._settings.getParameterValue('Model0'))
+                        models.append(self._settings.getParameterValue('Model1'))
+                        models.append(self._settings.getParameterValue('Model2'))
+                        r = None
+                        wait.setInformationText('Microbleeds segmentation initialization...')
+                        wait.setButtonVisibility(True)
+                        with Manager() as manager:
+                            mng = manager.dict()
+                            queue = Queue()
+                            try:
+                                extractor = ProcessDeepMicrobleedsSegmentation(rswi, models, mng, queue)
+                                wait.setInformationText('Microbleeds segmentation...')
+                                extractor.start()
+                                while extractor.is_alive():
+                                    # noinspection PyTypeChecker
+                                    wait.messageFromDictProxyManager(mng)
+                                    if not queue.empty():
+                                        # noinspection PyUnusedLocal
+                                        r = queue.get()
+                                        if extractor.is_alive(): extractor.terminate()
+                                    if wait.getStopped(): extractor.terminate()
+                            except Exception:
+                                if extractor.is_alive(): extractor.terminate()
+                        # noinspection PyUnreachableCode
+                        if wait.getStopped():
+                            wait.close()
+                            return
+                        if not wait.getStopped() and r is None:
+                            wait.close()
+                            messageBox(self,
+                                       title=self.windowTitle(),
+                                       text='{} Microbleeds segmentation error'.format(swi.getBasename()))
+                            return
+                        wait.progressVisibilityOff()
+                        wait.setButtonVisibility(False)
+                        if r is not None:
+                            prefix = self._settings.getParameterValue('Prefix')
+                            suffix = self._settings.getParameterValue('Suffix')
+                            v = SisypheVolume()
+                            v.copyFromNumpyArray(r, spacing=(1.0, 1.0, 1.0), defaultshape=False)
+                            v.copyAttributesFrom(swi, display=False, slope=False)
+                            """
+                            Resample microbleeds map to native FOV
+                            """
+                            trf = f.getTransform()
+                            trf = trf.getInverseTransform()
+                            trf.setSize(swi.getSize())
+                            trf.setSpacing(swi.getSpacing())
+                            f = SisypheApplyTransform()
+                            f.setInterpolator('linear')
+                            f.setTransform(trf)
+                            f.setMoving(v)
+                            vr = f.resampleMoving(save=False)
+                            """
+                            Save microbleeds probability map
+                            """
+                            vr.setFilename(swi.getFilename())
+                            vr.acquisition.setModalityToOT()
+                            vr.acquisition.setSequenceToStructMap()
+                            vr.setID(swi.getID())
+                            vr.clearTransforms()
+                            vr.setFilenamePrefix(prefix)
+                            vr.setFilenameSuffix(suffix)
+                            wait.setInformationText('Save {}...'.format(vr.getBasename()))
+                            vr.save()
+                            """
+                            Save microbleeds mask
+                            """
+                            if self._settings.getParameterValue('SaveMask'):
+                                threshold = self._settings.getParameterValue('Threshold')
+                                if threshold is not None: threshold = 0.4
+                                mask = vr.getThresholdingMask(threshold, '>=')
+                                mask.save()
+                    wait.close()
+            """
+            Exit
+            """
+            r = messageBox(self,
+                           self.windowTitle(),
+                           'Would you like to do\nmore microbleeds segmentation ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
+            if r == QMessageBox.Yes:
+                self._volumeSelect.clearall()
             else: self.accept()

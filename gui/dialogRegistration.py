@@ -104,7 +104,7 @@ class DialogRegistration(QDialog):
 
     QDialog -> DialogRegistration
 
-    Last revision: 26/01/2026
+    Last revision: 16/05/2026
     """
     # Class method
 
@@ -349,7 +349,10 @@ class DialogRegistration(QDialog):
                 self._movingSelect.setEnabled(editable)
 
     # < Revision 27/11/2025
-    def setFilesToApply(self, files: list[str], editable=True):
+    def setFilesToApply(self, files: str | list[str], editable=True):
+        # < Revision 16/05/2026
+        if isinstance(files, str): files = [files]
+        # Revision 16/05/2026 >
         for f in files:
             self._applyToSelect.add(f)
         if self._applyToSelect.isEmpty(): self._applyToSelect.setEnabled(True)
