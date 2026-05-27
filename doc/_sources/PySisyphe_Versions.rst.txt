@@ -59,7 +59,7 @@ version 0.9.1, build 26/07/2025
 - Github page deployment: https://github.com/PySisyphe/Sisyphe
 - NITRC page deployment: https://www.nitrc.org/projects/pysisyphe/
 - First PyInstaller stand alone frozen version for Windows and MacOS platforms (x64 CPU)
-- Shared link to Mega repository for downloading frozen versions: https://mega.nz/folder/hKEBzRTR#MUodQFh4N8LeukE2hbkzNA
+- Shared link to Mega repository for downloading frozen versions: https://mega.nz/folder/Kt8hzbSa#AUkLH1WH0zoawYolT8Ep0w
 
 .. _build05-08-2025:
 
