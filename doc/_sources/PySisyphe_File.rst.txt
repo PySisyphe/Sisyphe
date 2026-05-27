@@ -266,6 +266,7 @@ Contents:
 	- **DTI** to test diffusion/tracking processing
 	- **FCD** to deep learning focal cortical dysplasia detection
 	- **FREESURFER** to test Freesurfer volume conversion
+	- **CT1BB** to test deep learning metastasis segmentation
 	- **NRRD** to test NRRD volume conversion
 	- **PERFUSION** to dynamic suceptibility contrast MR perfusion processing
 	- **QSM** to test QSM map processing

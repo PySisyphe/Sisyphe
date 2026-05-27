@@ -49,6 +49,7 @@ Left-Click on the lower right of the thumbnail (on the three dots "..."), or rig
 - **Display in projection view**, display the thumbnail volume as reference in the projection view. Select the thumbnail volume (blue border) if it is not.
 - **Display in multi-component view**, display the thumbnail volume as reference in the multi-component view. Select the thumbnail volume (blue border) if it is not.
 - **Display in all views**, display the thumbnail volume as reference in all views (slice view, orthogonal view, synchronized view, projection view, multi-component view). Select the thumbnail volume (blue border) if it is not.
+- **Remove from all views**, close all views and unselect the thumbnail volume.
 - **Display as overlay**, display the thumbnail volume as overlay in views.
 - **Save**, save the thumbnail volume.
 - **Save as...**, display a dialog box to save volume with a new file name.

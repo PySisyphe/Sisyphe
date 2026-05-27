@@ -174,6 +174,7 @@ Segmentation
 		- :ref:`Hippocampus segmentation... <menu-section-hipp>`
 		- :ref:`Hypo-intensity lesion segmentation... <menu-section-lesion>`
 		- :ref:`Medial temporal clustering... <menu-section-temporal>`
+		- :ref:`Metastasis segmentation... <menu-section-meta>`
 		- :ref:`Microbleeds segmentation... <menu-section-microbld>`
 		- :ref:`Tissue segmentation... <menu-section-tissue>`
 		- :ref:`Tumor clustering... <menu-section-tumor>`

@@ -20,7 +20,8 @@ Version history
 - :ref:`build20-02-2026`
 - :ref:`build20-03-2026`
 - :ref:`build20-04-2026`
-- :ref:`build20-05-2026`
+- :ref:`build30-05-2026`
+- :ref:`build20-06-2026`
 
 .. _version-increment-rules:
 
@@ -5296,9 +5297,9 @@ version 0.87.12, build 20/04/2026
 
 		- workaround for the exception raised by %matplotlib inline during a frozen execution related to the matplotlib upgrade to 3.10.8 version
 
-.. _build20-05-2026:
+.. _build30-05-2026:
 
-version 0.92.10, build 20/05/2026
+version 0.92.10, build 30/05/2026
 ---------------------------------
 
 - **updated html documentation**
@@ -5396,11 +5397,11 @@ version 0.92.10, build 20/05/2026
 
 		- class to customize the icons of the FileBrowserWidget
 
-	- widgets.dialogDeepSegmentation.DialogDeepFCDSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepFCDSegmentation
 
 		- dialog for deep learning focal cortical dysplasia (FCD) segmentation using deepFCD model
 
-	- widgets.dialogDeepSegmentation.DialogDeepMicrobleedsSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepMicrobleedsSegmentation
 
 		- dialog for deep learning microbleeds segmentation using SHIVA-CMB model
 
@@ -5871,3 +5872,162 @@ version 0.92.10, build 20/05/2026
         	- if path == self._rootpath: return True
 
         - required for the method FileBrowserWidget._dirClicked() to work correctly after its fix
+
+.. _build20-06-2026:
+
+version 0.94.02, build 20/06/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- PySisyphe_Versions.rst
+	- PySisyphe_Segmentation.rst
+	- PySisyphe_menubar.rst
+	- PySisyphe_toolbar.rst
+	- PySisyphe_thumbnailbar.rst
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- /settings/functions.xml
+	- /settings/tooltips.xml
+	- /settings/settings.xml
+	- /gui/darkicons/hide.png
+	- /gui/lighticons/hide.png
+
+- **new external module**
+
+	- RLK-Unet, https://github.com/nibabel/RLK-Unet, added as PySisyphe module Sisyphe.lib.rlk
+
+- **updated modules**
+
+	- core.sisypheRecent
+	- processing.capturedStdoutProcessing
+	- gui.dialogDeepSegmentation
+	- gui.dialogSettings
+	- gui.dialogStatResult
+	- gui.windowSisyphe
+	- widgets.imageWidgets
+	- widgets.toolBarThumbnail
+	- widgets.projectionViewWidget
+	
+- **new classes**
+
+	- processing.capturedStdoutProcessing.ProcessDeepMetastasisSegmentation
+
+		- deep learning focal metastasis segmentation using RLK-Unet model
+
+	- gui.dialogDeepSegmentation.DialogDeepMetastasisSegmentation
+
+		- dialog for deep learning focal metastasis segmentation using RLK-Unet model
+
+- **updated classes**
+
+	- core.sisypheRecent.SisypheRecent
+
+		- update append() method
+
+	- gui.dialogSettings.DialogSettings
+
+		- add 'DeepMetastasisSegmentation' section
+
+	- gui.dialogStatResult.DialogResult
+
+		- update setMap() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- new metastasisSegmentation() method
+		- new closeAllViews() method
+		- update _initSegmentationMenu() method
+		- update _initToolBar() method
+		- update _initWindowMenu() method
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget
+
+		- new removeFromAllViews() method
+		- new getDisplayedViewCount() method
+		- update __init__() method
+		- update displayInSliceView() method
+		- update displayInOrthogonalView() method
+		- update displayInSynchronisedView() method
+		- update displayInProjectionView() method
+		- update displayInMultiComponentView() method
+		- update mouseDoubleClickEvent() method
+
+	- widgets.toolBarThumbnail.ToolBarThumbnail
+
+		- new removeReference() method
+		- new getThumbnailCount() method
+
+	- widgets.projectionViewWidget.IconBarMultiProjectionViewWidget
+
+		- update setVolume() method
+
+- **new methods**
+
+	- gui.windowSisyphe.WindowSisyphe.metastasisSegmentation()
+
+		- deep learning metastasis segmentation
+
+	- gui.windowSisyphe.WindowSisyphe.closeAllViews()
+
+		- remove reference status from thumbnail and close all views
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.removeFromAllViews()
+
+		- remove the current volume from all views
+
+	- widgets.toolBarThumbnail.ToolBarThumbnail.removeReference()
+
+		- remove reference status from thumbnail
+
+	- widgets.toolBarThumbnail.ToolBarThumbnail.getThumbnailCount()
+
+		- number of thumbnail in the thumbnail toolbar
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.getDisplayedViewCount()
+
+		- number of views in which the current thumbnail is displayed
+
+- **updated classes**
+
+	- core.sisypheRecent.SisypheRecent.append()
+
+		- bug fix in windows platform, add filename = abspath(filename) to avoid duplicates
+
+	- gui.dialogStatResult.DialogResult
+
+		- bug fix, line 1456, force origin to (98.0, 134.0, 72.0) if ICBM152 ID
+
+	- gui.windowSisyphe.WindowSisyphe._initSegmentationMenu()
+
+		- add self._action['meta'] action
+
+	- gui.windowSisyphe.WindowSisyphe._initToolBar()
+
+		- add self._action['hide'] to toolbar
+
+	- gui.windowSisyphe.WindowSisyphe._initWindowMenu()
+
+		- add self._action['hide'] action
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.__init__()
+
+		- add self._action['hide'] action
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInSliceView()
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInOrthogonalView()
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInSynchronisedView()
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInProjectionView()
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInMultiComponentView()
+
+		- hide view widget if uncheck
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.mouseDoubleClickEvent()
+
+		- add self._action['slices'].setChecked(True)
+
+	- widgets.projectionViewWidget.IconBarMultiProjectionViewWidget.setVolume()
+
+		- Set the opacity to 100% for ICBM152 volume

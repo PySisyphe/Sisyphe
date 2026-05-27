@@ -89,19 +89,22 @@ Icons displayed in toolbar can be modified in the **settings** dialog box (tab G
 	Display a dialog box to import Dicom files. You can also use menubar (File > DICOM > DICOM Import...).
 
 |slice-view|
-	Display the selected volume of the thumbnail bar (blue border) in the slice view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the slice view. You can also select thumbail popup menu **Display in slice view**, or press **F1** key.
+	Display the selected volume of the thumbnail bar (blue border, reference volume) in the slice view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected displayed in the slice view. You can also select thumbail popup menu **Display in slice view**, or press **F1** key.
 
 |ortho-view|
-	Display the selected volume of the thumbnail bar (blue border) in the orthogonal view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the orthogonal view. You can also select thumbail popup menu **Display in orthogonal view**, or press **F2** key.
+	Display the selected volume of the thumbnail bar (blue border, reference volume) in the orthogonal view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the orthogonal view. You can also select thumbail popup menu **Display in orthogonal view**, or press **F2** key.
 
 |sync-view|
-	Display the selected volume of the thumbnail bar (blue border) in the synchronized view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the synchronized view. You can also select thumbail popup menu **Display in synchronized view**, or press **F3** key.
+	Display the selected volume of the thumbnail bar (blue border, reference volume) in the synchronized view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the synchronized view. You can also select thumbail popup menu **Display in synchronized view**, or press **F3** key.
 
 |proj-view|
-	Display the selected volume of the thumbnail bar (blue border) in the projection view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the projection view. You can also select thumbail popup menu **Display in projection view**, or press **F4** key.
+	Display the selected volume of the thumbnail bar (blue border, reference volume) in the projection view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the projection view. You can also select thumbail popup menu **Display in projection view**, or press **F4** key.
 
 |multi-view|
-	Display the selected volume of the thumbnail bar (blue border) in the multi-component view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the multi-component view. This viewer is assigned to multi-component volume (array image values are vectors, not scalar values). You can also select thumbail popup menu **Display in multi-component view**, or press **F5** key.
+	Display the selected volume of the thumbnail bar (blue border, reference volume) in the multi-component view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the multi-component view. This viewer is assigned to multi-component volume (array image values are vectors, not scalar values). You can also select thumbail popup menu **Display in multi-component view**, or press **F5** key.
+
+|hide-view|
+	Close all views. No volume of the thumbnail bar is selected.
 
 |join|
 	Join several single-component volumes to produce a multi-component volume. Display a file selection dialog box to open a list of single-component volumes. You can also use menubar (Functions > Join single component volume(s)...).
@@ -261,6 +264,8 @@ Icons displayed in toolbar can be modified in the **settings** dialog box (tab G
 .. |proj-view| image:: /GUI/toolbar/proj-view.png
    :scale: 25 %
 .. |multi-view| image:: /GUI/toolbar/multi-view.png
+   :scale: 25 %
+.. |hide-view| image:: /GUI/toolbar/hide.png
    :scale: 25 %
 .. |join| image:: /GUI/toolbar/join.png
    :scale: 25 %
