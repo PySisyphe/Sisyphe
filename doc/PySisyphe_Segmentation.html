@@ -84,6 +84,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-hippocampus-segmentation">Deep-learning Hippocampus segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-hypo-intensity-lesion-segmentation">Deep-learning Hypo-intensity lesion segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-medial-temporal-segmentation">Deep-learning Medial temporal segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deep-learning-metastasis-segmentation">Deep-learning Metastasis segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-microbleeds-segmentation">Deep-learning Microbleeds segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-tissue-segmentation">Deep-learning Tissue segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-tumor-clustering">Deep-learning Tumor clustering</a></li>
@@ -141,6 +142,7 @@
 <li><p><a class="reference internal" href="#menu-section-hipp"><span class="std std-ref">Deep-learning Hippocampus segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-lesion"><span class="std std-ref">Deep-learning Hypo-intensity lesion segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-temporal"><span class="std std-ref">Deep-learning Medial temporal segmentation</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-meta"><span class="std std-ref">Deep-learning Metastasis segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-microbld"><span class="std std-ref">Deep-learning Microbleeds segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-tumor"><span class="std std-ref">Deep-learning Tumor clustering</span></a></p></li>
@@ -412,6 +414,24 @@
 <p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
 <p>Sample volume (FCD) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
+</section>
+<section id="deep-learning-metastasis-segmentation">
+<span id="menu-section-meta"></span><h2>Deep-learning Metastasis segmentation<a class="headerlink" href="#deep-learning-metastasis-segmentation" title="Link to this heading"></a></h2>
+<p>This menu is designed to perform metastasis segmentation using deep-learning pre-trained model from post-contrast black blood T1 sequences. The segmentation is saved as a probability map.</p>
+<p>The code in PySisype is a fork of the <a class="reference external" href="https://github.com/nibabel/RLK-Unet">RLK Unet</a> package.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2023.1273013/full">Article</a>: Development of RLK-Unet: A clinically favorable deep learning algorithm for brain metastasis detection and treatment response assessment. Son S., Joo B., Park M., Suh S.H., Oh H.S., Kim J.W., Lee S., Ahn S.J., Lee J.-M. Front Oncol. 2024 Jan 15:13:1273013.</p>
+</div>
+<p>Toggle <strong>Metastasis segmentation…</strong> button to show/hide parameters.</p>
+<ul class="simple">
+<li><p>Check <strong>Bias field correction</strong> to peform a bias field correction of the T1 before the segmentation processing.</p></li>
+<li><p>Set the extent <strong>Threshold</strong> in voxels, which is used to remove small noise-related detections.</p></li>
+<li><p>The probability map is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Prefix</strong> and <strong>Suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+<p>Sample volume (CT1BB) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
 </section>
 <section id="deep-learning-microbleeds-segmentation">
 <span id="menu-section-microbld"></span><h2>Deep-learning Microbleeds segmentation<a class="headerlink" href="#deep-learning-microbleeds-segmentation" title="Link to this heading"></a></h2>
