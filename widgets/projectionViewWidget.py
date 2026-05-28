@@ -1347,7 +1347,7 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
     QWidget -> IconBarWidget -> IconBarMultiProjectionViewWidget
 
     Creation: 13/10/2024
-    Last revision: 10/10/2025
+    Last revision: 27/05/2026
     """
 
     # Special method
@@ -1581,8 +1581,14 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
             self._widget.setVolume(foreground, background, mask)
             self._showViewWidget()
             if foreground is not None:
-                self._slider.setValue(50)
+                # < Revision 27/05/2026
+                # self._slider.setValue(50)
+                # self._opacityChanged()
+                if foreground.acquisition.isICBM152(): alpha = 50
+                else: alpha = 100
+                self._slider.setValue(alpha)
                 self._opacityChanged()
+                # Revision 27/05/2026 >
             # < Revision 08/11/2024
             # To solve VTK mouse move event bug
             self.timerEnabled()

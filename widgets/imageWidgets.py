@@ -467,7 +467,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     QPushButton - > SisypheVolumeThumbnailButtonWidget
 
-    Last revision: 03/09/2025
+    Last revision: 27/05/2026
     """
 
     # Special method
@@ -587,6 +587,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self._action['multi'] = QAction('Display in multi-component view', self)
             self._action['multi'].setVisible(n > 1)
             self._action['display'] = QAction('Display in all views', self)
+            # < Revision 26/05/2026
+            self._action['hide'] = QAction('Remove from all views', self)
+            # Revision 26/05/2026 >
             self._action['overlay'] = QAction('Display as overlay', self)
             self._action['anonymize'] = QAction('Anonymize', self)
             self._action['attributes'] = QAction('Edit attributes...', self)
@@ -646,6 +649,10 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self._action['multi'].triggered.connect(self.displayInMultiComponentView)
             # noinspection PyUnresolvedReferences
             self._action['display'].triggered.connect(self.displayInAllViews)
+            # < Revision 26/05/2026
+            # noinspection PyUnresolvedReferences
+            self._action['hide'].triggered.connect(self.removeFromAllViews)
+            # Revision 26/05/2026 >
             # noinspection PyUnresolvedReferences
             self._action['overlay'].triggered.connect(self.overlay)
             # noinspection PyUnresolvedReferences
@@ -711,6 +718,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self._popup.addAction(self._action['projections'])
             self._popup.addAction(self._action['multi'])
             self._popup.addAction(self._action['display'])
+            # < Revision 26/05/2026
+            self._popup.addAction(self._action['hide'])
+            # Revision 26/05/2026 >
             self._popup.addAction(self._action['overlay'])
             self._popup.addSeparator()
             self._popup.addAction(self._action['save'])
@@ -1316,12 +1326,68 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
         if self._thumbnail is not None: self._thumbnail.removeVolume(self._multi)
     # Revision 10/12/2024 >
 
+    # < Revision 27/05/2026
+    # add getDisplayedViewCount method
+    def getDisplayedViewCount(self) -> int:
+        keys = ('slices', 'orthogonal', 'synchronised', 'projections', 'multi')
+        n = 0
+        for k in keys:
+            if self._action[k].isChecked(): n += 1
+        return n
+    # Revision 27/05/2026 >
+
     def getNotDisplayedViewsCount(self) -> int:
         keys = ('slices', 'orthogonal', 'synchronised', 'projections', 'multi')
         n = 0
         for k in keys:
             if not self._action[k].isChecked(): n += 1
         return n
+
+    # < Revision 26/05/2026
+    # add removeFromAllViews method
+    def removeFromAllViews(self):
+        if self.isChecked():
+            if self._action['slices'].isChecked():
+                self._views['slices'].viewWidgetVisibleOff()
+                self._action['slices'].blockSignals(True)
+                self._action['slices'].setChecked(False)
+                self._action['slices'].blockSignals(False)
+                if self.hasMainWindow(): self.getMainWindow().hideSliceView()
+            if self._action['orthogonal'].isChecked():
+                self._views['orthogonal'].viewWidgetVisibleOff()
+                self._action['orthogonal'].blockSignals(True)
+                self._action['orthogonal'].setChecked(False)
+                self._action['orthogonal'].blockSignals(False)
+                if self.hasMainWindow(): self.getMainWindow().hideOrthogonalView()
+            if self._action['synchronised'].isChecked():
+                self._views['synchronised'].viewWidgetVisibleOff()
+                self._action['synchronised'].blockSignals(True)
+                self._action['synchronised'].setChecked(False)
+                self._action['synchronised'].blockSignals(False)
+                if self.hasMainWindow(): self.getMainWindow().hideSynchronisedView()
+            if self._action['projections'].isChecked():
+                self._views['projections'].viewWidgetVisibleOff()
+                self._action['projections'].blockSignals(True)
+                self._action['projections'].setChecked(False)
+                self._action['projections'].blockSignals(False)
+                if self.hasMainWindow(): self.getMainWindow().hideProjectionView()
+            if self._action['multi'].isChecked():
+                self._views['components'].viewWidgetVisibleOff()
+                self._action['multi'].blockSignals(True)
+                self._action['multi'].setChecked(False)
+                self._action['multi'].blockSignals(False)
+                if self.hasMainWindow(): self.getMainWindow().hideComponentView()
+            if self.hasMainWindow():
+                self.getMainWindow().clearDockListWidgets()
+            self.getThumbnailToolbar().removeAllOverlays()
+            self._views.removeVolume()
+            self.blockSignals(True)
+            group = self.group()
+            group.setExclusive(False)
+            self.setChecked(False)
+            group.setExclusive(True)
+            self.blockSignals(False)
+    # Revision 26/05/2026 >
 
     # < Revision 19/10/2024
     def displayInAllViews(self):
@@ -1386,94 +1452,45 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                            update: bool = False,
                            wait: DialogWait | None = None):
         if self._views is not None:
-            if wait is None:
-                wait = DialogWait(title='Display volume...')
-                wait.open()
-                wait.setInformationText('{} slice view display...'.format(self._volume.getBasename()))
-                QApplication.processEvents()
-                flag = True
-            else: flag = False
-            if not self.isChecked():
-                """
-
-                Volume is not displayed
-
-                """
-                # Hide slice view widget during update
-                # noinspection PyUnresolvedReferences
-                self._views['slices'].viewWidgetVisibleOff()
-                # Clear all dock widgets
-                if self.hasMainWindow():
-                    self.getMainWindow().clearDockListWidgets()
-                # Remove volume/overlay(s)/ROI(s) from all view widgets
-                # self._views['slices'].removeVolume()
-                self._views.removeVolume()
-                # Remove all overlay flags from thumbnail
-                if self.hasThumbnailToolbar():
-                    self.getThumbnailToolbar().removeAllOverlays()
-                # Display current volume in slice view widget
-                # noinspection PyUnresolvedReferences
-                self._views['slices'].setVolume(self._volume)
-                # Set display flag, button border in blue
-                self.setChecked(True)
-                # < Revision 02/06/2025
-                # move button to first position
-                if self.hasThumbnailToolbar():
-                    self.getThumbnailToolbar().moveSelectedToFisrt()
-                # Revision 02/06/2025 >
-                # Update other SisypheVolumeThumbnailButtonWidget in thumbnail
-                if self.hasThumbnailToolbar():
-                    self.getThumbnailToolbar().updateWidgets()
-                # Show slice view widget
-                # noinspection PyUnresolvedReferences
-                self._views['slices'].viewWidgetVisibleOn()
-                if self.hasMainWindow():
-                    # Enable ListROIAttributesWidget in dock
-                    self.getMainWindow().setROIListEnabled(True)
-                    # Set slice view widget visibility
-                    self._updateViewsVisibility()
-                    if moveto:
-                        self.getMainWindow().showSliceView()
-                        self.getMainWindow().updateTimers()
-            else:
-                """
-        
-                Volume is already displayed
-        
-                """
-                if self._action['slices'].isChecked() and not update:
+            if self._action['slices'].isChecked():
+                if wait is None:
+                    wait = DialogWait(title='Display volume...')
+                    wait.open()
+                    wait.setInformationText('{} slice view display...'.format(self._volume.getBasename()))
+                    QApplication.processEvents()
+                    flag = True
+                else: flag = False
+                if not self.isChecked():
                     """
-
-                    Volume is not already displayed in slice view widget
-
+    
+                    Volume is not displayed
+    
                     """
                     # Hide slice view widget during update
                     # noinspection PyUnresolvedReferences
                     self._views['slices'].viewWidgetVisibleOff()
-                    # Remove overlay(s) from slice view widget
-                    # noinspection PyUnresolvedReferences
-                    self._views['slices'].removeAllOverlays()
+                    # Clear all dock widgets
+                    if self.hasMainWindow():
+                        self.getMainWindow().clearDockListWidgets()
+                    # Remove volume/overlay(s)/ROI(s) from all view widgets
+                    # self._views['slices'].removeVolume()
+                    self._views.removeVolume()
+                    # Remove all overlay flags from thumbnail
+                    if self.hasThumbnailToolbar():
+                        self.getThumbnailToolbar().removeAllOverlays()
                     # Display current volume in slice view widget
                     # noinspection PyUnresolvedReferences
                     self._views['slices'].setVolume(self._volume)
-                    # Display ROI, ROI collection is shared between view widgets
-                    if self.isDisplayedInSynchronisedView():
-                        # noinspection PyUnresolvedReferences
-                        if self._views['synchronised']().getFirstSliceViewWidget().hasROI():
-                            # noinspection PyUnresolvedReferences
-                            self._views['slices']().getFirstSliceViewWidget().updateROIDisplay(signal=True)
-                            # noinspection PyUnresolvedReferences
-                            roi = self._views['synchronised']().getFirstSliceViewWidget().getActiveROI()
-                            # noinspection PyUnresolvedReferences
-                            self._views['slices']().getFirstSliceViewWidget().setActiveROI(roi, signal=True)
-                    # Display overlay(s) in slice view widget
+                    # Set display flag, button border in blue
+                    self.setChecked(True)
+                    # < Revision 02/06/2025
+                    # move button to first position
                     if self.hasThumbnailToolbar():
-                        overlays = self.getThumbnailToolbar().getOverlays()
-                        n = len(overlays)
-                        if n > 0:
-                            for i in range(n):
-                                # noinspection PyUnresolvedReferences
-                                self._views['slices'].addOverlay(overlays[i])
+                        self.getThumbnailToolbar().moveSelectedToFisrt()
+                    # Revision 02/06/2025 >
+                    # Update other SisypheVolumeThumbnailButtonWidget in thumbnail
+                    if self.hasThumbnailToolbar():
+                        self.getThumbnailToolbar().updateWidgets()
                     # Show slice view widget
                     # noinspection PyUnresolvedReferences
                     self._views['slices'].viewWidgetVisibleOn()
@@ -1481,31 +1498,92 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                         # Enable ListROIAttributesWidget in dock
                         self.getMainWindow().setROIListEnabled(True)
                         # Set slice view widget visibility
+                        self._updateViewsVisibility()
                         if moveto:
                             self.getMainWindow().showSliceView()
                             self.getMainWindow().updateTimers()
-                        else: self.getMainWindow().setSliceViewVisibility(True)
-                elif update:
+                else:
                     """
-
-                    Volume is already displayed in slice view widget
-
+            
+                    Volume is already displayed
+            
                     """
-                    # noinspection PyUnresolvedReferences
-                    previous = self._views['slices'].getVolume()
-                    if previous.hasSameFieldOfView(self._volume):
+                    if self._action['slices'].isChecked() and not update:
+                        """
+    
+                        Volume is not already displayed in slice view widget
+    
+                        """
+                        # Hide slice view widget during update
+                        # noinspection PyUnresolvedReferences
+                        self._views['slices'].viewWidgetVisibleOff()
+                        # Remove overlay(s) from slice view widget
+                        # noinspection PyUnresolvedReferences
+                        self._views['slices'].removeAllOverlays()
                         # Display current volume in slice view widget
                         # noinspection PyUnresolvedReferences
-                        self._views['slices'].replaceVolume(self._volume)
-                        # Set slice view widget visibility
-                        if moveto:
-                            self.getMainWindow().showSliceView()
-                            self.getMainWindow().updateTimers()
-                if self._logger is not None: self._logger.info('Slice view display {}'.format(self._volume.getBasename()))
-            if flag: wait.close()
-        self._action['slices'].blockSignals(True)
-        self._action['slices'].setChecked(True)
-        self._action['slices'].blockSignals(False)
+                        self._views['slices'].setVolume(self._volume)
+                        # Display ROI, ROI collection is shared between view widgets
+                        if self.isDisplayedInSynchronisedView():
+                            # noinspection PyUnresolvedReferences
+                            if self._views['synchronised']().getFirstSliceViewWidget().hasROI():
+                                # noinspection PyUnresolvedReferences
+                                self._views['slices']().getFirstSliceViewWidget().updateROIDisplay(signal=True)
+                                # noinspection PyUnresolvedReferences
+                                roi = self._views['synchronised']().getFirstSliceViewWidget().getActiveROI()
+                                # noinspection PyUnresolvedReferences
+                                self._views['slices']().getFirstSliceViewWidget().setActiveROI(roi, signal=True)
+                        # Display overlay(s) in slice view widget
+                        if self.hasThumbnailToolbar():
+                            overlays = self.getThumbnailToolbar().getOverlays()
+                            n = len(overlays)
+                            if n > 0:
+                                for i in range(n):
+                                    # noinspection PyUnresolvedReferences
+                                    self._views['slices'].addOverlay(overlays[i])
+                        # Show slice view widget
+                        # noinspection PyUnresolvedReferences
+                        self._views['slices'].viewWidgetVisibleOn()
+                        if self.hasMainWindow():
+                            # Enable ListROIAttributesWidget in dock
+                            self.getMainWindow().setROIListEnabled(True)
+                            # Set slice view widget visibility
+                            if moveto:
+                                self.getMainWindow().showSliceView()
+                                self.getMainWindow().updateTimers()
+                            else: self.getMainWindow().setSliceViewVisibility(True)
+                    elif update:
+                        """
+    
+                        Volume is already displayed in slice view widget
+    
+                        """
+                        # noinspection PyUnresolvedReferences
+                        previous = self._views['slices'].getVolume()
+                        if previous.hasSameFieldOfView(self._volume):
+                            # Display current volume in slice view widget
+                            # noinspection PyUnresolvedReferences
+                            self._views['slices'].replaceVolume(self._volume)
+                            # Set slice view widget visibility
+                            if moveto:
+                                self.getMainWindow().showSliceView()
+                                self.getMainWindow().updateTimers()
+                    if self._logger is not None: self._logger.info('Slice view display {}'.format(self._volume.getBasename()))
+                if flag: wait.close()
+                self._action['slices'].blockSignals(True)
+                self._action['slices'].setChecked(True)
+                self._action['slices'].blockSignals(False)
+            else:
+                # < Revision 27/05/2026
+                self._action['slices'].blockSignals(True)
+                self._action['slices'].setChecked(False)
+                self._action['slices'].blockSignals(False)
+                # noinspection PyUnresolvedReferences
+                self._views['slices'].viewWidgetVisibleOff()
+                if self.hasMainWindow(): self.getMainWindow().hideSliceView()
+                if self.getDisplayedViewCount() == 0:
+                    self.removeFromAllViews()
+                # Revision 27/05/2026 >
     # Revision 19/10/2024 >
 
     # < Revision 19/10/2024
@@ -1627,9 +1705,20 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                                 self.getMainWindow().updateTimers()
                     if self._logger is not None: self._logger.info('Orthogonal view display {}'.format(self._volume.getBasename()))
                 if flag: wait.close()
-        self._action['orthogonal'].blockSignals(True)
-        self._action['orthogonal'].setChecked(True)
-        self._action['orthogonal'].blockSignals(False)
+                self._action['orthogonal'].blockSignals(True)
+                self._action['orthogonal'].setChecked(True)
+                self._action['orthogonal'].blockSignals(False)
+            else:
+                # < Revision 27/05/2026
+                self._action['orthogonal'].blockSignals(True)
+                self._action['orthogonal'].setChecked(False)
+                self._action['orthogonal'].blockSignals(False)
+                # noinspection PyUnresolvedReferences
+                self._views['orthogonal'].viewWidgetVisibleOff()
+                if self.hasMainWindow(): self.getMainWindow().hideOrthogonalView()
+                if self.getDisplayedViewCount() == 0:
+                    self.removeFromAllViews()
+                # Revision 27/05/2026 >
     # Revision 19/10/2024 >
 
     # < Revision 15/10/2024
@@ -1757,9 +1846,20 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                                 self.getMainWindow().updateTimers()
                     if self._logger is not None: self._logger.info('Synchronized view display {}'.format(self._volume.getBasename()))
                 if flag: wait.close()
-        self._action['synchronised'].blockSignals(True)
-        self._action['synchronised'].setChecked(True)
-        self._action['synchronised'].blockSignals(False)
+                self._action['synchronised'].blockSignals(True)
+                self._action['synchronised'].setChecked(True)
+                self._action['synchronised'].blockSignals(False)
+            else:
+                # < Revision 27/05/2026
+                self._action['synchronised'].blockSignals(True)
+                self._action['synchronised'].setChecked(False)
+                self._action['synchronised'].blockSignals(False)
+                # noinspection PyUnresolvedReferences
+                self._views['synchronised'].viewWidgetVisibleOff()
+                if self.hasMainWindow(): self.getMainWindow().hideSynchronisedView()
+                if self.getDisplayedViewCount() == 0:
+                    self.removeFromAllViews()
+                # Revision 27/05/2026 >
     # Revision 19/10/2024 >
 
     # < Revision 19/10/2024
@@ -1862,9 +1962,20 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                                 self.getMainWindow().updateTimers()
                     if self._logger is not None: self._logger.info('Projection view display {}'.format(self._volume.getBasename()))
                 if flag: wait.close()
-        self._action['projections'].blockSignals(True)
-        self._action['projections'].setChecked(True)
-        self._action['projections'].blockSignals(False)
+                self._action['projections'].blockSignals(True)
+                self._action['projections'].setChecked(True)
+                self._action['projections'].blockSignals(False)
+            else:
+                # < Revision 27/05/2026
+                self._action['projections'].blockSignals(True)
+                self._action['projections'].setChecked(False)
+                self._action['projections'].blockSignals(False)
+                # noinspection PyUnresolvedReferences
+                self._views['projections'].viewWidgetVisibleOff()
+                if self.hasMainWindow(): self.getMainWindow().hideProjectionView()
+                if self.getDisplayedViewCount() == 0:
+                    self.removeFromAllViews()
+                # Revision 27/05/2026 >
     # Revision 19/10/2024 >
 
     # < Revision 10/12/2024
@@ -1873,45 +1984,59 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                                     moveto: bool = True,
                                     wait: DialogWait | None = None):
         if self._views is not None:
-            if wait is None:
-                wait = DialogWait(title='Display multi-component volume...')
-                wait.open()
-                wait.setInformationText('{} multi-component view display...'.format(self._volume.getBasename()))
+            if self._action['components'].isChecked():
+                if wait is None:
+                    wait = DialogWait(title='Display multi-component volume...')
+                    wait.open()
+                    wait.setInformationText('{} multi-component view display...'.format(self._volume.getBasename()))
+                    QApplication.processEvents()
+                    flag = True
+                else: flag = False
+                # noinspection PyUnresolvedReferences
+                self._views['components'].viewWidgetVisibleOff()
+                # noinspection PyUnresolvedReferences
+                self._views['components'].setVolume(self._multi)
+                # noinspection PyUnresolvedReferences
+                self._views['components']().visibleChartOff()
+                # Set display flag
+                self.setChecked(True)
+                # < Revision 02/06/2025
+                # move button to first position
+                if self.hasThumbnailToolbar():
+                    self.getThumbnailToolbar().moveSelectedToFisrt()
+                # Revision 02/06/2025 >
+                # Update other SisypheVolumeThumbnailButtonWidget in thumbnail
+                if self.hasThumbnailToolbar():
+                    self.getThumbnailToolbar().updateWidgets()
+                # noinspection PyUnresolvedReferences
+                self._views['components'].viewWidgetVisibleOn()
                 QApplication.processEvents()
-                flag = True
-            else: flag = False
+                # noinspection PyUnresolvedReferences
+                self._views['components']().visibleChartOn()
+                if self.hasMainWindow():
+                    # Set multi-component view widget visibility
+                    self._updateViewsVisibility()
+                    if moveto:
+                        self.getMainWindow().showComponentView()
+                        self.getMainWindow().updateTimers()
+                if self._logger is not None: self._logger.info('Multi-component view display {}'.format(self._volume.getBasename()))
+                if flag: wait.close()
+            self._action['multi'].blockSignals(True)
+            self._action['multi'].setChecked(True)
+            self._action['multi'].blockSignals(False)
+        else:
+            # < Revision 27/05/2026
+            self._action['multi'].blockSignals(True)
+            self._action['multi'].setChecked(False)
+            self._action['multi'].blockSignals(False)
             # noinspection PyUnresolvedReferences
             self._views['components'].viewWidgetVisibleOff()
             # noinspection PyUnresolvedReferences
-            self._views['components'].setVolume(self._multi)
-            # noinspection PyUnresolvedReferences
             self._views['components']().visibleChartOff()
-            # Set display flag
-            self.setChecked(True)
-            # < Revision 02/06/2025
-            # move button to first position
-            if self.hasThumbnailToolbar():
-                self.getThumbnailToolbar().moveSelectedToFisrt()
-            # Revision 02/06/2025 >
-            # Update other SisypheVolumeThumbnailButtonWidget in thumbnail
-            if self.hasThumbnailToolbar():
-                self.getThumbnailToolbar().updateWidgets()
-            # noinspection PyUnresolvedReferences
-            self._views['components'].viewWidgetVisibleOn()
-            QApplication.processEvents()
-            # noinspection PyUnresolvedReferences
-            self._views['components']().visibleChartOn()
-            if self.hasMainWindow():
-                # Set multi-component view widget visibility
-                self._updateViewsVisibility()
-                if moveto:
-                    self.getMainWindow().showComponentView()
-                    self.getMainWindow().updateTimers()
-            if self._logger is not None: self._logger.info('Multi-component view display {}'.format(self._volume.getBasename()))
-            if flag: wait.close()
-        self._action['multi'].blockSignals(True)
-        self._action['multi'].setChecked(True)
-        self._action['multi'].blockSignals(False)
+            if self.hasMainWindow(): self.getMainWindow().hideComponentView()
+            if self.getDisplayedViewCount() == 0:
+                self.removeFromAllViews()
+            # Revision 27/05/2026 >
     # Revision 10/12/2024 >
 
     # < Revision 15/10/2024
@@ -2320,7 +2445,10 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     def mouseDoubleClickEvent(self, event):
         if not self.isChecked():
+            # < Revision 27/05/2026
+            self._action['slices'].setChecked(True)
             self.displayInSliceView()
+            # Revision 27/05/2026 >
 
     def mouseReleaseEvent(self, event):
         self._dragpos0 = None

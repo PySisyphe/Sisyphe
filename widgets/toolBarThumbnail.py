@@ -63,7 +63,7 @@ class ToolBarThumbnail(QToolBar):
     QToolBar -> ToolBarThumbnail
 
     Creation: 02/11/2022
-    Last revision: 17/02/2026
+    Last revision: 27/05/2026
     """
 
     # Special method
@@ -246,6 +246,17 @@ class ToolBarThumbnail(QToolBar):
                     return action.defaultWidget().getVolume()
         return None
 
+    # < Revision 26/05/2026
+    # add removeReference method
+    def removeReference(self):
+        if not self.isEmpty():
+            for action in self.actions():
+                # noinspection PyUnresolvedReferences
+                w = action.defaultWidget()
+                if w.isChecked():
+                    w.removeFromAllViews()
+    # Revision 26/05/2026 >
+
     # < Revision 15/10/2024
     # add hasOverlay method
     def hasOverlay(self):
@@ -286,6 +297,12 @@ class ToolBarThumbnail(QToolBar):
                 if action.defaultWidget().isDown(): n += 1
         return n
     # Revision 06/11/2024 >
+
+    # < Revision 27/05/2026
+    # add getThumbnailCount method
+    def getThumbnailCount(self):
+        return len(self.actions())
+    # Revision 27/05/2026 >
 
     def getWidgetFromIndex(self, index):
         if isinstance(index, int):
