@@ -11,6 +11,7 @@ from os.path import exists
 from os.path import basename
 from os.path import expanduser
 from os.path import splitext
+from os.path import abspath
 
 from xml.dom import minidom
 
@@ -171,6 +172,7 @@ class SisypheRecent(object):
         filename : str
             file name
         """
+        filename = abspath(filename)
         if exists(filename):
             ext = splitext(filename)[1]
             if ext == SisypheVolume.getFileExt():
