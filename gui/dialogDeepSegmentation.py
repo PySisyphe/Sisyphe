@@ -2739,6 +2739,16 @@ class DialogDeepMetastasisSegmentation(QDialog):
                                 wait.close()
                                 return
                         """
+                        256^3 isotropic mm resampling
+                        """
+                        f = None
+                        if t1.getSize() == (256, 256, 256) and t1.getSpacing() == (1.0, 1.0, 1.0): rt1 = t1
+                        else:
+                            f = SisypheApplyTransform()
+                            f.setInterpolator('linear')
+                            f.setMoving(t1)
+                            rt1 = f.resampleToFOV((256, 256, 256), (1.0, 1.0, 1.0), save=False)
+                        """
                         Segmentation
                         """
                         r = None
@@ -2749,7 +2759,7 @@ class DialogDeepMetastasisSegmentation(QDialog):
                             mng = manager.dict()
                             queue = Queue()
                             try:
-                                extractor = ProcessDeepMetastasisSegmentation(t1, threshold, mng, queue)
+                                extractor = ProcessDeepMetastasisSegmentation(rt1, threshold, mng, queue)
                                 wait.setInformationText('Metastasis segmentation...')
                                 extractor.start()
                                 while extractor.is_alive():
@@ -2770,7 +2780,7 @@ class DialogDeepMetastasisSegmentation(QDialog):
                             wait.close()
                             messageBox(self,
                                        title=self.windowTitle(),
-                                       text='{} Meningioma segmentation error'.format(t1.getBasename()))
+                                       text='{} Metastasis segmentation error'.format(t1.getBasename()))
                             return
                         wait.progressVisibilityOff()
                         wait.setButtonVisibility(False)
@@ -2780,13 +2790,32 @@ class DialogDeepMetastasisSegmentation(QDialog):
                             v = SisypheVolume()
                             v.copyFromNumpyArray(r, spacing=(1.0, 1.0, 1.0), defaultshape=False)
                             v.copyAttributesFrom(t1, display=False, slope=False)
-                            v.setFilename(t1.getFilename())
-                            v.acquisition.setModalityToOT()
-                            v.acquisition.setSequenceToStructMap()
-                            v.setFilenamePrefix(prefix)
-                            v.setFilenameSuffix(suffix)
-                            wait.setInformationText('Save {}...'.format(v.getBasename()))
-                            v.save()
+                            """
+                            Resample metastasis map to native FOV
+                            """
+                            if f:
+                                trf = f.getTransform()
+                                trf = trf.getInverseTransform()
+                                trf.setSize(t1.getSize())
+                                trf.setSpacing(t1.getSpacing())
+                                f = SisypheApplyTransform()
+                                f.setInterpolator('linear')
+                                f.setTransform(trf)
+                                f.setMoving(v)
+                                vr = f.resampleMoving(save=False)
+                            else: vr = v
+                            """
+                            Save metastasis map
+                            """
+                            vr.setFilename(t1.getFilename())
+                            vr.acquisition.setModalityToOT()
+                            vr.acquisition.setSequenceToStructMap()
+                            vr.setID(t1.getID())
+                            vr.clearTransforms()
+                            vr.setFilenamePrefix(prefix)
+                            vr.setFilenameSuffix(suffix)
+                            wait.setInformationText('Save {}...'.format(vr.getBasename()))
+                            vr.save()
                     wait.close()
             """
             Exit

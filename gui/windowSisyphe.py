@@ -132,7 +132,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 12/05/2026
+    Last revision: 26/05/2026
     """
 
     # Class constants
@@ -1335,7 +1335,7 @@ class WindowSisyphe(QMainWindow):
         # self._action['mngioma'] = submenu.addAction('Meningioma segmentation...')
         # Revision 19/05/2026 >
         # < Revision 20/05/2026
-        # self._action['meta'] = submenu.addAction('Metastasis segmentation...')
+        self._action['meta'] = submenu.addAction('Metastasis segmentation...')
         self._action['microbl'] = submenu.addAction('Microbleeds segmentation...')
         # Revision 20/05/2026 >
         # self._action['tof'] = submenu.addAction('TOF vessels segmentation...')
@@ -1368,7 +1368,7 @@ class WindowSisyphe(QMainWindow):
         # self._action['mngioma'].triggered.connect(self.meningiomaSegmentation)
         # Revision 19/05/2026 >
         # < Revision 20/05/2026
-        # self._action['meta'].triggered.connect(self.metastasisSegmentation)
+        self._action['meta'].triggered.connect(self.metastasisSegmentation)
         self._action['microbl'].triggered.connect(self.microbleedsSegmentation)
         # Revision 20/05/2026 >
 
@@ -1753,6 +1753,11 @@ class WindowSisyphe(QMainWindow):
         self._action['synchro'] = QAction(QIcon(join(icpath, 'sync-view.png')), 'Synchronized view', parent=self)
         self._action['proj'] = QAction(QIcon(join(icpath, 'proj-view.png')), 'Projection view', parent=self)
         self._action['multi'] = QAction(QIcon(join(icpath, 'multi-view.png')), 'Multi-component view ', parent=self)
+        # < Revision 26/05/2026
+        self._action['hide'] = QAction(QIcon(join(icpath, 'hide.png')), 'Close all views', parent=self)
+        self._action['hide'].setToolTip('Close all views.')
+        self._action['hide'].triggered.connect(self.closeAllViews)
+        # Revision 26/05/2026 >
         self._action['database'] = QAction('Database', parent=self)
         # < Revision 10/02/2026
         self._action['browser'] = QAction('File browser', parent=self)
@@ -1870,6 +1875,9 @@ class WindowSisyphe(QMainWindow):
         if self._settings.getFieldValue('ToolbarIcons', 'synchro'): self._toolbar.addAction(self._action['synchro'])
         if self._settings.getFieldValue('ToolbarIcons', 'proj'): self._toolbar.addAction(self._action['proj'])
         if self._settings.getFieldValue('ToolbarIcons', 'multi'): self._toolbar.addAction(self._action['multi'])
+        # < Revision 26/05/2026
+        if self._settings.getFieldValue('ToolbarIcons', 'hide'): self._toolbar.addAction(self._action['hide'])
+        # Revision 26/05/2026 >
         n = len(self._toolbar.actions())
         if n > 0 and not self._toolbar.actions()[n-1].isSeparator(): self._toolbar.addSeparator()
         if self._settings.getFieldValue('ToolbarIcons', 'join'): self._toolbar.addAction(self._action['join'])
@@ -2939,6 +2947,12 @@ class WindowSisyphe(QMainWindow):
     def hideViewWidgets(self) -> None:
         for i in range(5):
             self._tabview.setTabVisible(i, False)
+
+    # < Revision 26/05/2026
+    # add closeAllViews method
+    def closeAllViews(self) -> None:
+        self._thumbnail.removeReference()
+    # Revision 26/05/2026 >
 
     def showDatabase(self) -> None:
         self._tabview.setTabVisible(5, True)

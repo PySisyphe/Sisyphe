@@ -361,12 +361,14 @@ class DialogSettings(QDialog):
                               'UnetTissueSegmentation',
                               'OpenMAPSegmentation',
                               'DeepFCDSegmentation',
+                              'DeepMetastasisSegmentation',
                               'DeepMicrobleedsSegmentation'):
                 if function == 'KMeansClustering': item.setText(0, 'KMeans clustering')
                 elif function == 'KMeansSegmentation': item.setText(0, 'KMeans segmentation')
                 elif function == 'UnetWMHSegmentation': item.setText(0, 'Unet WMH segmentation')
                 elif function == 'OpenMAPSegmentation': item.setText(0, 'OpenMAP segmentation')
                 elif function == 'DeepFCDSegmentation': item.setText(0, 'FCD segmentation')
+                elif function == 'DeepMetastasisSegmentation': item.setText(0, 'Metastasis segmentation')
                 elif function == 'DeepMicrobleedsSegmentation': item.setText(0, 'Microbleeds segmentation')
                 fitems['Segmentation'].addChild(item)
             elif function in ('Registration',

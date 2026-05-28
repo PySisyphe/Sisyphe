@@ -128,7 +128,7 @@ class DialogResult(QDialog):
     QDialog -> DialogResult
 
     Creation: 18/11/2024
-    Last revision: 19/02/2026
+    Last revision: 26/05/2026
     """
 
     # class method
@@ -1453,6 +1453,9 @@ class DialogResult(QDialog):
                 self._map.save()
             # Revision 05/02/2026 >
             if self._map.acquisition.isICBM152():
+                # < Revision 26/05/2026
+                self._map.setOrigin(getOrigin_ICBM152())
+                # Revision 26/05/2026 >
                 self.setBrodmannLabel(wait=wait)
                 self.setAnatomyLabel(wait=wait)
                 self.setBackgroundVolume(wait=wait)
