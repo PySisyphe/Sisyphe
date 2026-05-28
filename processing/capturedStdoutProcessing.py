@@ -1353,7 +1353,7 @@ class ProcessDeepMetastasisSegmentation(Process):
     Process ->  ProcessDeepMetastasisSegmentation
 
     Creation: 19/05/2026
-    Last revision: 21/05/2026
+    Last revision: 22/05/2026
     """
 
     # Special method
@@ -1384,6 +1384,7 @@ class ProcessDeepMetastasisSegmentation(Process):
         import Sisyphe.lib.rlk
         path = join(dirname(Sisyphe.lib.rlk.__file__), 'weights')
         from Sisyphe.lib.rlk.data_process import data_loaders
+        # crop + signal normalization
         data = data_loaders(self._t1)
         from Sisyphe.lib.rlk.network_architecture import RLKunet
         with torch.no_grad():
@@ -1410,7 +1411,14 @@ class ProcessDeepMetastasisSegmentation(Process):
                 from Sisyphe.lib.rlk.utils import label_thr
                 outputs = label_thr(outputs, self._threshold).to(device)
                 from Sisyphe.lib.rlk.utils import numpy_convert
-                seg = numpy_convert(outputs)
+                # < Revision 22/05/2026
+                # seg = numpy_convert(outputs)
+                # uncrop outputs
+                outputs = numpy_convert(outputs)
+                seg = zeros_like(self._t1).astype('float32')
+                bb = data.dataset.getBBox()
+                seg[bb[0]:bb[1], bb[2]:bb[3], bb[4]:bb[5]] = outputs
+                # Revision 22/05/2026 >
                 self._result.put(seg)
 
 
