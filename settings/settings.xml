@@ -37,6 +37,7 @@
 		<synchro label="Synchronised view" icon="sync-view.png" vartype="visibility">True</synchro>
 		<proj label="Projection view" icon="proj-view.png" vartype="visibility">True</proj>
 		<multi label="Multi-component view" icon="multi-view.png" vartype="visibility">True</multi>
+		<hide label="Remove from all views" icon="hide.png" vartype="visibility">True</hide>
 		<join label="Join" icon="join.png" vartype="visibility">True</join>
 		<split label="Split" icon="split.png" vartype="visibility">True</split>
 		<flip label="Flip" icon="flip.png" vartype="visibility">True</flip>
