@@ -2282,13 +2282,18 @@ class DialogDeepFCDSegmentation(QDialog):
                         """
                         Isotropic mm resampling
                         """
-                        size = t1.getSize()
-                        spacing = t1.getSpacing()
+                        # < Revision 29/05/2026
+                        # size = t1.getSize()
+                        # spacing = t1.getSpacing()
+                        size = list(t1.getSize())
+                        spacing = list(t1.getSpacing())
                         for i in range(3):
                             if spacing[i] < 1.0:
-                                size = int(size[i] * spacing[i])
+                                # size = int(size[i] * spacing[i])
+                                size[i] = int(size[i] * spacing[i])
                                 spacing[i] = 1.0
-                        if spacing == t1.getSpacing():
+                        # if spacing == t1.getSpacing():
+                        if spacing == list(t1.getSpacing()):
                             f = None
                             rt1, rflair, rmask = t1, flair, mask
                         else:
@@ -2301,6 +2306,7 @@ class DialogDeepFCDSegmentation(QDialog):
                             f.setInterpolator('nearest')
                             f.setMoving(mask)
                             rmask = f.resampleToFOV(size, spacing, save=False)
+                        # Revision 29/05/2026 >
                         """
                         Segmentation
                         """
