@@ -49,7 +49,7 @@ class DialogVolumeAttributes(QDialog):
 
     QWidget -> QDialog -> DialogVolumeAttributes
 
-    Last revision: 19/03/2026
+    Last revision: 11/06/2026
     """
 
     # Special method
@@ -71,9 +71,11 @@ class DialogVolumeAttributes(QDialog):
         # Lastname
         self._lastname = QLineEdit(self)
         self._lastname.setFixedWidth(300)
+        self._lastname.setToolTip('Lastname of the patient')
         # Firstname
         self._firstname = QLineEdit()
         self._firstname.setFixedWidth(300)
+        self._firstname.setToolTip('Firstname of the patient')
         # Gender
         self._gender = QComboBox(self)
         self._gender.setEditable(False)
@@ -81,10 +83,17 @@ class DialogVolumeAttributes(QDialog):
         self._gender.addItem('Male')
         self._gender.addItem('Female')
         self._gender.adjustSize()
+        self._gender.setToolTip('Gender of the patient\n'
+                                'male, female or unknown')
         # Date of Birthday
         self._dob = QDateEdit(self)
         self._dob.setCalendarPopup(True)
+        # < Revision 11/06/2026
+        self._dob.setDisplayFormat('dd/MM/yyyy')
+        # Revision 11/06/2026 >
         self._dob.adjustSize()
+        self._dob.setToolTip('Date of birthday of the patient\n'
+                             'dd/mm/yyyy format')
         # Modality
         self._modality = QComboBox(self)
         self._modality.setEditable(False)
@@ -93,6 +102,15 @@ class DialogVolumeAttributes(QDialog):
             self._modality.addItem(item)
         # noinspection PyUnresolvedReferences
         self._modality.adjustSize()
+        self._modality.setToolTip('Image modality\n'
+                                  'OT Other, secondary/post processed\n'
+                                  'MR Magnetic Resonance\n'
+                                  'CT Computed Tomography\n'
+                                  'PT Positron emission Tomography\n'
+                                  'NM Single Photon Emission Computed Tomography\n'
+                                  'LB Label image\n'
+                                  'TP Template image\n'
+                                  'PJ Projection image')
         # noinspection PyUnresolvedReferences
         self._modality.currentIndexChanged.connect(self._setSequencesFromModality)
         # Sequence
@@ -100,11 +118,13 @@ class DialogVolumeAttributes(QDialog):
         self._sequence.setEditable(True)
         self._setSequencesFromModality()
         self._sequence.adjustSize()
+        self._sequence.setToolTip('Sequence name')
         # noinspection PyUnresolvedReferences
         self._sequence.currentIndexChanged.connect(self._setUnitFromSequence)
         # Unit
         self._unit = QComboBox(self)
         self._unit.setEditable(True)
+        self._unit.setToolTip('Unit of scalar values in the image matrix')
         for item in SisypheAcquisition.getUnitList():
             self._unit.addItem(item)
         self._unit.adjustSize()
@@ -114,10 +134,17 @@ class DialogVolumeAttributes(QDialog):
         items = SisypheAcquisition.getFrameList()
         for item in items:
             self._frame.addItem(item)
+        self._frame.setToolTip('Stereotactic frame\n'
+                               'Elekta Leksell frame or no frame')
         self._frame.adjustSize()
         # Date of scan
         self._dos = QDateEdit(self)
         self._dos.setCalendarPopup(True)
+        # < Revision 11/06/2026
+        self._dos.setDisplayFormat('dd/MM/yyyy')
+        # Revision 11/06/2026 >
+        self._dos.setToolTip('Date of image acquisition\n'
+                             'dd/mm/yyyy format')
         self._dos.adjustSize()
         # Array ID
         self._aID = QLineEdit(self)
@@ -125,14 +152,24 @@ class DialogVolumeAttributes(QDialog):
         self._aID.setReadOnly(True)
         # noinspection PyUnresolvedReferences
         self._aID.setAlignment(Qt.AlignCenter)
+        self._aID.setToolTip('Array ID\n'
+                             'This is a unique, read-only value that is\n'
+                             'automatically generated from the image\n'
+                             'matrix using the MD5 algorithm.')
         # ID
         self._ID = QLineEdit(self)
         self._ID.setFixedWidth(400)
         # noinspection PyUnresolvedReferences
         self._ID.setAlignment(Qt.AlignCenter)
+        self._ID.setToolTip('Space/Transform ID\n'
+                            'This ID may be shared by multiple images\n'
+                            'from the same patient that are coregistered\n'
+                            'and resampled with the same field of view.')
         # Size
         self._size = QLineEdit(self)
         self._size.setReadOnly(True)
+        self._size.setToolTip('Image size i.e. voxel count along\n'
+                              'the x-axis, y-axis and z-axis.')
         self.adjustSize()
         # Spacing
         # < Revision 25/12/2025
@@ -148,6 +185,7 @@ class DialogVolumeAttributes(QDialog):
         self._spacingx.setMinimum(0.1)
         self._spacingx.setMaximum(20.0)
         self._spacingx.setSuffix(' mm')
+        self._spacingx.setToolTip('Voxel spacing in mm along the x-axis.')
         self._spacingx.adjustSize()
         self._spacingx.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
         # noinspection PyUnresolvedReferences
@@ -158,6 +196,7 @@ class DialogVolumeAttributes(QDialog):
         self._spacingy.setMinimum(0.1)
         self._spacingy.setMaximum(20.0)
         self._spacingy.setSuffix(' mm')
+        self._spacingy.setToolTip('Voxel spacing in mm along the y-axis.')
         self._spacingy.adjustSize()
         self._spacingy.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
         # noinspection PyUnresolvedReferences
@@ -168,6 +207,7 @@ class DialogVolumeAttributes(QDialog):
         self._spacingz.setMinimum(0.1)
         self._spacingz.setMaximum(20.0)
         self._spacingz.setSuffix(' mm')
+        self._spacingz.setToolTip('Voxel spacing in mm along the z-axis.')
         self._spacingz.adjustSize()
         self._spacingz.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
         # noinspection PyUnresolvedReferences
@@ -199,6 +239,7 @@ class DialogVolumeAttributes(QDialog):
         self._originx.setSuffix(' mm')
         # noinspection PyUnresolvedReferences
         self._originx.setAlignment(Qt.AlignCenter)
+        self._originx.setToolTip('Image origin in mm along the x-axis.')
         self._originx.setEnabled(False)
         self._originy = QDoubleSpinBox(self)
         self._originy.setSingleStep(0.1)
@@ -209,6 +250,7 @@ class DialogVolumeAttributes(QDialog):
         self._originy.setSuffix(' mm')
         # noinspection PyUnresolvedReferences
         self._originy.setAlignment(Qt.AlignCenter)
+        self._originy.setToolTip('Image origin in mm along the y-axis.')
         self._originy.setEnabled(False)
         self._originz = QDoubleSpinBox(self)
         self._originz.setSingleStep(0.1)
@@ -219,6 +261,7 @@ class DialogVolumeAttributes(QDialog):
         self._originz.setSuffix(' mm')
         # noinspection PyUnresolvedReferences
         self._originz.setAlignment(Qt.AlignCenter)
+        self._originz.setToolTip('Image origin in mm along the z-axis.')
         self._originz.setEnabled(False)
         self._lorigin = QHBoxLayout()
         self._lorigin.setSpacing(5)
@@ -238,30 +281,48 @@ class DialogVolumeAttributes(QDialog):
         self._datatype = QLineEdit(self)
         self._datatype.setFixedWidth(200)
         self._datatype.setReadOnly(True)
+        self._datatype.setToolTip('Data type of scalar values in the image matrix\n'
+                                  'Supported formats are:\n'
+                                  '  int8    signed 8-bit integer\n'
+                                  '  int16   signed 16-bit integer\n'
+                                  '  int32   signed 32-bit integer\n'
+                                  '  int64   signed 64-bit integer\n'
+                                  '  uint8   unsigned 8-bit integer\n'
+                                  '  uint16  unsigned 16-bit integer\n'
+                                  '  uint32  unsigned 32-bit integer\n'
+                                  '  uint64  unsigned 64-bit integer\n'
+                                  '  float32 single-precision floating point\n'
+                                  '  float64 double-precision floating point')
         # Orientation
         self._orient = QComboBox(self)
         self._orient.addItem('Unknown')
         self._orient.addItem('Axial')
         self._orient.addItem('Coronal')
         self._orient.addItem('Sagittal')
+        self._orient.setToolTip('Image orientation: axial, coronal or sagittal')
         self._orient.adjustSize()
         # Slope
         self._slope = QDoubleSpinBox(self)
         self._slope.setSingleStep(0.1)
         self._slope.setMinimum(-1e6)
         self._slope.setMaximum(1e6)
+        self._slope.setToolTip('linear transformation of scalar values in the image matrix\n'
+                               'voxel value = slope * scalar value + intercept')
         self._slope.adjustSize()
         # Intercept
         self._inter = QDoubleSpinBox(self)
         self._inter.setSingleStep(0.1)
         self._inter.setMinimum(-1e6)
         self._inter.setMaximum(1e6)
+        self._inter.setToolTip('linear transformation of scalar values in the image matrix\n'
+                               'voxel value = slope * scalar value + intercept')
         self._inter.adjustSize()
         # Directions
         self._dir1 = QDoubleSpinBox(self)
         self._dir1.setSingleStep(0.1)
         self._dir1.setMinimum(-1.0)
         self._dir1.setMaximum(1.0)
+        self._dir1.setToolTip('Unit vector of the x-axis.')
         self._dir1.adjustSize()
         # noinspection PyUnresolvedReferences
         self._dir1.setAlignment(Qt.AlignCenter)
@@ -269,6 +330,7 @@ class DialogVolumeAttributes(QDialog):
         self._dir2.setSingleStep(0.1)
         self._dir2.setMinimum(-1.0)
         self._dir2.setMaximum(1.0)
+        self._dir2.setToolTip('Unit vector of the x-axis.')
         self._dir2.adjustSize()
         # noinspection PyUnresolvedReferences
         self._dir2.setAlignment(Qt.AlignCenter)
@@ -276,6 +338,7 @@ class DialogVolumeAttributes(QDialog):
         self._dir3.setSingleStep(0.1)
         self._dir3.setMinimum(-1.0)
         self._dir3.setMaximum(1.0)
+        self._dir3.setToolTip('Unit vector of the x-axis.')
         self._dir3.adjustSize()
         # noinspection PyUnresolvedReferences
         self._dir3.setAlignment(Qt.AlignCenter)
@@ -283,6 +346,7 @@ class DialogVolumeAttributes(QDialog):
         self._dir4.setSingleStep(0.1)
         self._dir4.setMinimum(-1.0)
         self._dir4.setMaximum(1.0)
+        self._dir4.setToolTip('Unit vector of the y-axis.')
         self._dir4.adjustSize()
         # noinspection PyUnresolvedReferences
         self._dir4.setAlignment(Qt.AlignCenter)
@@ -290,6 +354,7 @@ class DialogVolumeAttributes(QDialog):
         self._dir5.setSingleStep(0.1)
         self._dir5.setMinimum(-1.0)
         self._dir5.setMaximum(1.0)
+        self._dir5.setToolTip('Unit vector of the y-axis.')
         self._dir5.adjustSize()
         # noinspection PyUnresolvedReferences
         self._dir5.setAlignment(Qt.AlignCenter)
@@ -297,6 +362,7 @@ class DialogVolumeAttributes(QDialog):
         self._dir6.setSingleStep(0.1)
         self._dir6.setMinimum(-1.0)
         self._dir6.setMaximum(1.0)
+        self._dir6.setToolTip('Unit vector of the y-axis.')
         self._dir6.adjustSize()
         # noinspection PyUnresolvedReferences
         self._dir6.setAlignment(Qt.AlignCenter)
@@ -304,6 +370,7 @@ class DialogVolumeAttributes(QDialog):
         self._dir7.setSingleStep(0.1)
         self._dir7.setMinimum(-1.0)
         self._dir7.setMaximum(1.0)
+        self._dir7.setToolTip('Unit vector of the z-axis.')
         self._dir7.adjustSize()
         # noinspection PyUnresolvedReferences
         self._dir7.setAlignment(Qt.AlignCenter)
@@ -311,6 +378,7 @@ class DialogVolumeAttributes(QDialog):
         self._dir8.setSingleStep(0.1)
         self._dir8.setMinimum(-1.0)
         self._dir8.setMaximum(1.0)
+        self._dir8.setToolTip('Unit vector of the z-axis.')
         self._dir8.adjustSize()
         # noinspection PyUnresolvedReferences
         self._dir8.setAlignment(Qt.AlignCenter)
@@ -318,6 +386,7 @@ class DialogVolumeAttributes(QDialog):
         self._dir9.setSingleStep(0.1)
         self._dir9.setMinimum(-1.0)
         self._dir9.setMaximum(1.0)
+        self._dir9.setToolTip('Unit vector of the z-axis.')
         self._dir9.adjustSize()
         # noinspection PyUnresolvedReferences
         self._dir9.setAlignment(Qt.AlignCenter)
@@ -340,6 +409,7 @@ class DialogVolumeAttributes(QDialog):
         self._memory = QLineEdit()
         self._memory.adjustSize()
         self._memory.setReadOnly(True)
+        self._memory.setToolTip('Memory size of the image in MB.')
 
         # Init QLayout
 

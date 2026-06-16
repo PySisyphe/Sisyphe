@@ -102,7 +102,7 @@ class DialogDicomQueryRetrieve(QDialog):
     QDialog -> DialogDicomQueryRetrieve
 
     Creation: 02/08/2025
-    Last revision: 03/08/2025
+    Last revision: 11/06/2026
     """
 
     _FOLDER = ''
@@ -125,7 +125,7 @@ class DialogDicomQueryRetrieve(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('DICOM Query Retrieve')
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.50), int(screen.height() * 0.50))
@@ -146,6 +146,9 @@ class DialogDicomQueryRetrieve(QDialog):
         self._cdob = QCheckBox('Date of birth', parent=self)
         self._cdob.setChecked(False)
         self._dob = QDateEdit(parent=self)
+        # < Revision 11/06/2026
+        self._dob.setDisplayFormat('dd/MM/yyyy')
+        # Revision 11/06/2026 >
         self._dob.setMinimumDate(QDate(1900, 1, 1))
         self._dob.setMaximumDate(QDate.currentDate())
         self._dob.clear()
@@ -158,6 +161,9 @@ class DialogDicomQueryRetrieve(QDialog):
         self._cdstudy = QCheckBox('Acq. date', parent=self)
         self._cdstudy.setChecked(False)
         self._dstudy = QDateEdit(parent=self)
+        # < Revision 11/06/2026
+        self._dstudy.setDisplayFormat('dd/MM/yyyy')
+        # Revision 11/06/2026 >
         self._dstudy.setMinimumDate(QDate(2000, 1, 1))
         self._dstudy.setMaximumDate(QDate.currentDate())
         self._dstudy.setDate(QDate.currentDate())
@@ -236,6 +242,7 @@ class DialogDicomQueryRetrieve(QDialog):
         lyout3 = QHBoxLayout()
         if platform == 'win32': lyout3.setContentsMargins(10, 10, 10, 10)
         lyout3.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         lyout3.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -332,6 +339,7 @@ class DialogDicomQueryRetrieve(QDialog):
                         if status is not None:
                             if status.Status in (0xFF00, 0xFF01):
                                 item = QTreeWidgetItem()
+                                # noinspection PyUnresolvedReferences
                                 item.setData(0, Qt.UserRole, dsitem.StudyInstanceUID)
                                 if 'AccessionNumber' in dsitem:
                                     item.setText(0, dsitem.AccessionNumber)
@@ -417,6 +425,7 @@ class DialogDicomQueryRetrieve(QDialog):
                 if connect.is_alive():
                     # Search dataset
                     ds = Dataset()
+                    # noinspection PyUnresolvedReferences
                     ds.StudyInstanceUID = item.data(0, Qt.UserRole)
                     ds.SeriesInstanceUID = '*'
                     ds.SeriesNumber = None
@@ -429,7 +438,9 @@ class DialogDicomQueryRetrieve(QDialog):
                         if status is not None:
                             if status.Status in (0xFF00, 0xFF01):
                                 item = QTreeWidgetItem()
+                                # noinspection PyUnresolvedReferences
                                 item.setCheckState(0, Qt.Unchecked)
+                                # noinspection PyUnresolvedReferences
                                 item.setData(0, Qt.UserRole, dsitem.SeriesInstanceUID)
                                 if 'SeriesNumber' in dsitem:
                                     item.setText(0, str(dsitem.SeriesNumber))
@@ -461,11 +472,14 @@ class DialogDicomQueryRetrieve(QDialog):
         items = self._study.selectedItems()
         if len(items) > 0:
             item = items[0]
+            # noinspection PyUnresolvedReferences
             studyuid = item.data(0, Qt.UserRole)
         else: return
         for i in range(self._series.topLevelItemCount()):
             item = self._series.topLevelItem(i)
+            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
+                # noinspection PyUnresolvedReferences
                 seriesuid = item.data(0, Qt.UserRole)
                 description = item.text(1)
                 self._aet = self._settings.getParameterValue('AET')
@@ -519,7 +533,7 @@ class DialogDicomQueryRetrieve(QDialog):
                                            text='Connection to {} DICOM SCP host timed out, '
                                                 'was aborted or received invalid response'.format(self._url))
                         self._wait.hide()
-                        # noinspection PyTypeChecker
+                        # noinspection PyTypeChecker,PyUnresolvedReferences
                         item.setCheckState(0, Qt.Unchecked)
                         connect.release()
                 elif connect.is_rejected:
@@ -534,11 +548,3 @@ class DialogDicomQueryRetrieve(QDialog):
                     messageBox(self,
                                title=self.windowTitle(),
                                text='Connection to {} DICOM SCP host failed'.format(self._url))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QApplication(sys.argv)
-    main = DialogDicomQueryRetrieve()
-    main.open()
-    sys.exit(app.exec_())

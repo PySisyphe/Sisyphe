@@ -42,13 +42,15 @@ class DialogPatient(QDialog):
     ~~~~~~~~~~~
 
     QWidget -> QDialog -> DialogPatient
+
+    Last revision: 11/06/2026
     """
 
     def __init__(self, parent=None, identity=None):
         super().__init__(parent)
 
         self.setWindowTitle('Edit patient')
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setSizeGripEnabled(False)
         self.setAcceptDrops(True)
@@ -74,6 +76,9 @@ class DialogPatient(QDialog):
         self._firstname.editingFinished.connect(self._title)
         # Date of Birthday
         self._dob = QDateEdit(self)
+        # < Revision 11/06/2026
+        self._dob.setDisplayFormat('dd/MM/yyyy')
+        # Revision 11/06/2026 >
         self._dob.setDate(self._identity.getDateOfBirthday(string=False))
         self._dob.setFixedWidth(200)
         self._dob.setCalendarPopup(True)
@@ -90,17 +95,17 @@ class DialogPatient(QDialog):
         layout = QGridLayout()
         layout.setContentsMargins(5, 5, 5, 0)
         # Identity fields
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         layout.addWidget(QLabel('Lastname'), 1, 0, alignment=Qt.AlignRight)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         layout.addWidget(self._lastname, 1, 1, alignment=Qt.AlignLeft)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         layout.addWidget(QLabel('Firstname'), 2, 0, alignment=Qt.AlignRight)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         layout.addWidget(self._firstname, 2, 1, alignment=Qt.AlignLeft)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         layout.addWidget(QLabel('Date of birth'), 4, 0, alignment=Qt.AlignRight)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         layout.addWidget(self._dob, 4, 1, alignment=Qt.AlignLeft)
         self._layout.addLayout(layout)
 
@@ -110,6 +115,7 @@ class DialogPatient(QDialog):
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         else: layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)
@@ -131,7 +137,7 @@ class DialogPatient(QDialog):
     def _update(self):
         self._identity.setLastname(self._lastname.text())
         self._identity.setFirstname(self._firstname.text())
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._identity.setDateOfBirthday(self._dob.date().toString(Qt.ISODate))
 
     def _title(self):

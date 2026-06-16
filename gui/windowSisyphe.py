@@ -132,7 +132,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 26/05/2026
+    Last revision: 16/06/2026
     """
 
     # Class constants
@@ -643,6 +643,7 @@ class WindowSisyphe(QMainWindow):
                     Open VTK
                 Recent files >
                 Open user folder
+                Open template folder
                 --
                 Save
                 Save reference volume
@@ -770,6 +771,9 @@ class WindowSisyphe(QMainWindow):
         self._menu['recent'].triggered.connect(self._openRecent)
 
         self._action['user'] = self._menu['file'].addAction('Open user folder')
+        # < Revision 16/06/2026
+        self._action['template2'] = self._menu['file'].addAction('Open template folder')
+        # Revision 16/06/2026 >
 
         self._menu['file'].addSeparator()
         self._action['save'] = self._menu['file'].addAction(icsave, 'Save')
@@ -879,7 +883,10 @@ class WindowSisyphe(QMainWindow):
         # Connect
 
         self._action['open'].triggered.connect(lambda dummy: self.open())
-        self._action['user'].triggered.connect(self._openUser)
+        self._action['user'].triggered.connect(self._openUserFolder)
+        # < Revision 16/06/2026
+        self._action['template2'].triggered.connect(self._openTemplateFolder)
+        # Revision 16/06/2026 >
         self._action['save'].triggered.connect(self.save)
         self._action['saveall'].triggered.connect(self.saveall)
         self._action['saveas'].triggered.connect(self.saveAs)
@@ -976,6 +983,7 @@ class WindowSisyphe(QMainWindow):
                 --
                 Install plugin
                 Remove plugin
+                Open plugins folder
                 Plugins >
         """
         self._menu['func'] = self._menubar.addMenu('Functions')
@@ -1083,6 +1091,9 @@ class WindowSisyphe(QMainWindow):
         self._menu['func'].addSeparator()
         self._action['addplugin'] = self._menu['func'].addAction('Install plugin...')
         self._action['delplugin'] = self._menu['func'].addAction('Remove plugin...')
+        # < Revision 16/06/2026
+        self._action['pluginfolder'] = self._menu['func'].addAction('Open plugins folder...')
+        # Revision 16/06/2026 >
         self._menu['plugins'] = self._menu['func'].addMenu('Plugins')
         self._menu['plugins'].triggered.connect(self._openPlugin)
         self._updatePluginsMenu()
@@ -1120,6 +1131,9 @@ class WindowSisyphe(QMainWindow):
         self._action['toolatlas'].triggered.connect(lambda: self.labelingTool())
         # Revision 12/02/2026 >
         self._action['workflow'].triggered.connect(self.automate)
+        # < Revision 16/06/2026
+        self._action['pluginfolder'].triggered.connect(self._openPluginsFolder)
+        # Revision 16/06/2026 >
         self._action['addplugin'].triggered.connect(lambda: self.addPlugin())
         self._action['delplugin'].triggered.connect(lambda: self.removePlugin())
 
@@ -1800,6 +1814,10 @@ class WindowSisyphe(QMainWindow):
         self._action['synchro'].setShortcut(QKeySequence(Qt.Key_F3))
         # noinspection PyUnresolvedReferences
         self._action['proj'].setShortcut(QKeySequence(Qt.Key_F4))
+        # < Revision 02/06/2026
+        # noinspection PyUnresolvedReferences
+        self._action['dock'].setShortcut(QKeySequence(Qt.Key.Key_Tab))
+        # Revision 02/06/2026 >
         # noinspection PyUnresolvedReferences
         self._action['multi'].setShortcut(QKeySequence(Qt.Key_F5))
         # noinspection PyUnresolvedReferences
@@ -2095,7 +2113,7 @@ class WindowSisyphe(QMainWindow):
                 subprocess.call(["open", folder])
         # Revision 17/06/2025 >
 
-    def _openUser(self) -> None:
+    def _openUserFolder(self) -> None:
         folder = self.getUserDirectory()
         if platform == 'win32':
             subprocess.Popen('explorer "{}"'.format(folder))
@@ -2103,6 +2121,20 @@ class WindowSisyphe(QMainWindow):
             # < Revision 15/10/20215
             # folder = '~' + folder
             # Revision 15/10/20215 >
+            subprocess.call(["open", folder])
+
+    def _openTemplateFolder(self) -> None:
+        folder = abspath(join(self.getMainDirectory(),'templates'))
+        if platform == 'win32':
+            subprocess.Popen('explorer "{}"'.format(folder))
+        elif platform == 'darwin':
+            subprocess.call(["open", folder])
+
+    def _openPluginsFolder(self) -> None:
+        folder = abspath(join(self.getMainDirectory(),'plugins'))
+        if platform == 'win32':
+            subprocess.Popen('explorer "{}"'.format(folder))
+        elif platform == 'darwin':
             subprocess.call(["open", folder])
 
     def _openStruct(self, action: QAction | None) -> None:
@@ -3263,22 +3295,19 @@ class WindowSisyphe(QMainWindow):
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def save(self) -> None:
-        try:
-            self._thumbnail.saveSelected()
+        try: self._thumbnail.saveSelected()
         except Exception as err:
             messageBox(self, 'Save xvol error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def saveall(self) -> None:
-        try:
-            self._thumbnail.saveAll()
+        try: self._thumbnail.saveAll()
         except Exception as err:
             messageBox(self, 'Save all xvol error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def saveAs(self) -> None:
-        try:
-            self._thumbnail.saveSelectedAs()
+        try: self._thumbnail.saveSelectedAs()
         except Exception as err:
             messageBox(self, 'Save xvol as error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
@@ -3313,14 +3342,14 @@ class WindowSisyphe(QMainWindow):
                 for filename in filenames:
                     filename = abspath(filename)
                     wait.setInformationText('Open {}...'.format(basename(filename)))
-                    if self._logger is not None: self._logger.info('Open {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Open {}'.format(basename(filename)))
                     v = SisypheVolume()
                     v.loadFromNIFTI(filename)
                     self.addVolume(v)
                     v.save()
                     wait.incCurrentProgressValue()
                     if wait.getStopped(): break
-                    self.setStatusBarMessage('Open {}'.format(basename(filename)))
+                    self.setStatusBarMessage('{} opened'.format(basename(filename)))
             except Exception as err:
                 messageBox(self, 'Open Nifti error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
@@ -3343,14 +3372,14 @@ class WindowSisyphe(QMainWindow):
                 for filename in filenames:
                     filename = abspath(filename)
                     wait.setInformationText('Open {}...'.format(basename(filename)))
-                    if self._logger is not None: self._logger.info('Open {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Open {}'.format(basename(filename)))
                     v = SisypheVolume()
                     v.loadFromMINC(filename)
                     self.addVolume(v)
                     v.save()
                     wait.incCurrentProgressValue()
                     if wait.getStopped(): break
-                    self.setStatusBarMessage('Open {}'.format(basename(filename)))
+                    self.setStatusBarMessage('{} opened'.format(basename(filename)))
             except Exception as err:
                 messageBox(self, 'Open Minc error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
@@ -3373,14 +3402,14 @@ class WindowSisyphe(QMainWindow):
                 for filename in filenames:
                     filename = abspath(filename)
                     wait.setInformationText('Open {}...'.format(basename(filename)))
-                    if self._logger is not None: self._logger.info('Open {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Open {}'.format(basename(filename)))
                     v = SisypheVolume()
                     v.loadFromNRRD(filename)
                     self.addVolume(v)
                     v.save()
                     wait.incCurrentProgressValue()
                     if wait.getStopped(): break
-                    self.setStatusBarMessage('Open {}'.format(basename(filename)))
+                    self.setStatusBarMessage('{} opened'.format(basename(filename)))
             except Exception as err:
                 messageBox(self, 'Open Nrrd error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
@@ -3403,14 +3432,14 @@ class WindowSisyphe(QMainWindow):
                 for filename in filenames:
                     filename = abspath(filename)
                     wait.setInformationText('Open {}...'.format(basename(filename)))
-                    if self._logger is not None: self._logger.info('Open {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Open {}'.format(basename(filename)))
                     v = SisypheVolume()
                     v.loadFromVTK(filename)
                     self.addVolume(v)
                     v.save()
                     wait.incCurrentProgressValue()
                     if wait.getStopped(): break
-                    self.setStatusBarMessage('Open {}'.format(basename(filename)))
+                    self.setStatusBarMessage('{} opened'.format(basename(filename)))
             except Exception as err:
                 messageBox(self, 'Open Vtk error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
@@ -3433,14 +3462,14 @@ class WindowSisyphe(QMainWindow):
                 for filename in filenames:
                     filename = abspath(filename)
                     wait.setInformationText('Open {}...'.format(basename(filename)))
-                    if self._logger is not None: self._logger.info('Open {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Open {}'.format(basename(filename)))
                     v = SisypheVolume()
                     v.loadFromSisyphe(filename)
                     self.addVolume(v)
                     v.save()
                     wait.incCurrentProgressValue()
                     if wait.getStopped(): break
-                    self.setStatusBarMessage('Open {}'.format(basename(filename)))
+                    self.setStatusBarMessage('{} opened'.format(basename(filename)))
             except Exception as err:
                 messageBox(self, 'Open Sisyphe error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
@@ -3464,14 +3493,14 @@ class WindowSisyphe(QMainWindow):
                 for filename in filenames:
                     filename = abspath(filename)
                     wait.setInformationText('Open {}...'.format(basename(filename)))
-                    if self._logger is not None: self._logger.info('Open {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Open {}'.format(basename(filename)))
                     v = SisypheVolume()
                     v.loadFromBrainVoyagerVMR(filename)
                     self.addVolume(v)
                     v.save()
                     wait.incCurrentProgressValue()
                     if wait.getStopped(): break
-                    self.setStatusBarMessage('Open {}'.format(basename(filename)))
+                    self.setStatusBarMessage('{} opened'.format(basename(filename)))
             except Exception as err:
                 messageBox(self, 'Open BrainVoyager VMR error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
@@ -3495,14 +3524,14 @@ class WindowSisyphe(QMainWindow):
                 for filename in filenames:
                     filename = abspath(filename)
                     wait.setInformationText('Open {}...'.format(basename(filename)))
-                    if self._logger is not None: self._logger.info('Open {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Open {}'.format(basename(filename)))
                     v = SisypheVolume()
                     v.loadFromFreeSurferMGH(filename)
                     self.addVolume(v)
                     v.save()
                     wait.incCurrentProgressValue()
                     if wait.getStopped(): break
-                    self.setStatusBarMessage('Open {}'.format(basename(filename)))
+                    self.setStatusBarMessage('{} opened'.format(basename(filename)))
             except Exception as err:
                 messageBox(self, 'Open FreeSurfer MGH error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
@@ -3520,7 +3549,7 @@ class WindowSisyphe(QMainWindow):
             if filename:
                 chdir(dirname(filename))
                 try:
-                    if self._logger is not None: self._logger.info('Save {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Save {}'.format(basename(filename)))
                     vol.saveToNIFTI(filename)
                     self.setStatusBarMessage('{} saved'.format(vol.getBasename()))
                 except Exception as err:
@@ -3540,7 +3569,7 @@ class WindowSisyphe(QMainWindow):
             if filename:
                 chdir(dirname(filename))
                 try:
-                    if self._logger is not None: self._logger.info('Save {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Save {}'.format(basename(filename)))
                     vol.saveToMINC(filename)
                     self.setStatusBarMessage('{} saved'.format(vol.getBasename()))
                 except Exception as err:
@@ -3560,7 +3589,7 @@ class WindowSisyphe(QMainWindow):
             if filename:
                 chdir(dirname(filename))
                 try:
-                    if self._logger is not None: self._logger.info('Save {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Save {}'.format(basename(filename)))
                     vol.saveToNRRD(filename)
                     self.setStatusBarMessage('{} saved'.format(vol.getBasename()))
                 except Exception as err:
@@ -3580,7 +3609,7 @@ class WindowSisyphe(QMainWindow):
             if filename:
                 chdir(dirname(filename))
                 try:
-                    if self._logger is not None: self._logger.info('Save {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Save {}'.format(basename(filename)))
                     vol.saveToVTK(filename)
                     self.setStatusBarMessage('{} saved'.format(vol.getBasename()))
                 except Exception as err:
@@ -3600,7 +3629,7 @@ class WindowSisyphe(QMainWindow):
             if filename:
                 chdir(dirname(filename))
                 try:
-                    if self._logger is not None: self._logger.info('Save {}'.format(filename))
+                    if self._logger is not None: self._logger.info('Save {}'.format(basename(filename)))
                     vol.saveToNumpy(filename)
                     self.setStatusBarMessage('{} saved'.format(vol.getBasename()))
                 except Exception as err:
@@ -4389,6 +4418,25 @@ class WindowSisyphe(QMainWindow):
                     messageBox(self, 'Join error', '{}\n{}'.format(type(err), str(err)))
                     if self._logger is not None: self._logger.error(traceback.format_exc())
                     img = None
+                # < Revision 11/06/2026
+                size = img.getSize()
+                if size[2] == 1:
+                    r = messageBox(self,
+                                   title=title,
+                                   text='Would you like to create a 3D single-component '
+                                        'volume instead of a 2D multi-component volume ?',
+                                   icon=QMessageBox.Question,
+                                   buttons=QMessageBox.Yes | QMessageBox.No,
+                                   default=QMessageBox.No)
+                    if r == QMessageBox.Yes:
+                        n = img.getNumberOfComponentsPerPixel()
+                        np = img.copyToNumpyArray(defaultshape=False)
+                        np = np.reshape((size[0], size[1], n))
+                        img2 = SisypheVolume()
+                        img2.copyFromNumpyArray(np, spacing=img.getSpacing(), defaultshape=False)
+                        img2.copyAttributesFrom(img, id=False, display=False, acpc=False, transform=False, slope=False)
+                        img = img2
+                # Revision 11/06/2026 >
                 wait.close()
                 if img is not None:
                     img.setFilename(filenames[0])
@@ -7000,9 +7048,7 @@ class WindowSisyphe(QMainWindow):
     # CLI method
 
     def addVolume(self, vol: SisypheVolume) -> None:
-        try:
-            if self._logger is not None: self._logger.info('Add {}'.format(vol.getFilename))
-            self._thumbnail.addVolume(vol)
+        try: self._thumbnail.addVolume(vol)
         except Exception as err:
             messageBox(self, 'Add xvol error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())

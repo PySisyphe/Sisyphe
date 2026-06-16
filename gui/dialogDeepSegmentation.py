@@ -761,7 +761,7 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                         elif model == 'wip':
                             v.copyFromNumpyArray(r['lbl'].astype('uint16'), spacing=t1.getSpacing(), defaultshape=False)
                             v.copyAttributesFrom(t1, display=False, slope=False)
-                            v.acquisition.setModalityToOT()
+                            v.acquisition.setModalityToLB()
                         v.setFilename(t1.getFilename())
                         v.setFilenamePrefix(prefix)
                         v.setFilenameSuffix(suffix)
@@ -820,19 +820,59 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                                     wait.setInformationText('Save {}...'.format(v2.getBasename()))
                                     v2.save()
                         elif model == 'wip':
-                            lbls = (0, 104, 204, 105, 205, 106, 206, 108, 208, 109, 209, 110, 210, 114, 214, 115, 225,
-                                    126, 226, 6001, 7001, 6003, 7003, 6008, 7008, 6009, 7009, 6010, 7010)
+                            # < Revision 02/06/2026
+                            # lbls = (0, 104, 204, 105, 205, 106, 206, 108, 208, 109, 209, 110, 210, 114, 214, 115, 225,
+                            #         126, 226, 6001, 7001, 6003, 7003, 6008, 7008, 6009, 7009, 6010, 7010)
+                            lbls = {0: [0, 'background'],
+                                    104: [10, 'Left hippocampus - Parasubiculum'],
+                                    204: [20, 'Right hippocampus - Parasubiculum'],
+                                    105: [11, 'Left hippocampus - Subiculum'],
+                                    205: [21, 'Right hippocampus - Subiculum'],
+                                    106: [12, 'Left hippocampus - CA1'],
+                                    206: [22, 'Right hippocampus - CA1'],
+                                    108: [13, 'Left hippocampus - CA2-CA3'],
+                                    208: [23, 'Right hippocampus - CA2-CA3'],
+                                    109: [14, 'Left hippocampus - CA4'],
+                                    209: [24, 'Right hippocampus - CA4'],
+                                    110: [15, 'Left hippocampus - Granule cell layer of dentate gyrus'],
+                                    210: [25, 'Right hippocampus - Granule cell layer of dentate gyrus'],
+                                    114: [16, 'Left hippocampus - Molecular layer'],
+                                    214: [26, 'Right hippocampus - Molecular layer'],
+                                    115: [17, 'Left hippocampus - Fissure'],
+                                    215: [27, 'Right hippocampus - Fissure'],
+                                    126: [18, 'Left hippocampus - Tail'],
+                                    226: [28, 'Right hippocampus - Tail'],
+                                    6001: [30, 'Left amygdala - Lateral nucleus'],
+                                    7001: [40, 'Right amygdala - Lateral nucleus'],
+                                    6003: [31, 'Left amygdala - Basal nucleus'],
+                                    7003: [41, 'Right amygdala - Basal nucleus'],
+                                    6008: [32, 'Left amygdala - Accessory basal nucleus'],
+                                    7008: [42, 'Right amygdala - Accessory basal nucleus'],
+                                    6009: [33, 'Left amygdala - Cortico-amygdaloid transition'],
+                                    7009: [43, 'Right amygdala - Cortico-amygdaloid transition'],
+                                    6010: [34, 'Left amygdala - Anterior amygdaloid area'],
+                                    7010: [44, 'Right amygdala - Anterior amygdaloid area']}
+                            # Relabelling
+                            img = v.copyToNumpyArray()
                             for k in lbls:
-                                # v.acquisition.setLabel(k, str(k))
-                                if saveroi and k > 0:
-                                    roi = v.getROI(k, '==')
-                                    roi.setFilename(t1.getFilename())
-                                    roi.setFilenamePrefix('')
-                                    roi.setFilenameSuffix(str(k))
-                                    wait.setInformationText('Save {}...'.format(basename(roi.getFilename())))
-                                    roi.save()
+                                if k > 0:
+                                    img[img == k] = lbls[k][0]
+                                v.acquisition.setLabel(lbls[k][0], lbls[k][1])
+                            v.copyFromNumpyArray(img, spacing=t1.getSpacing())
                             wait.setInformationText('Save {}...'.format(v.getBasename()))
                             v.save()
+                            # Revision 02/06/2026 >
+                            for k in lbls:
+                                if saveroi and k > 0:
+                                    roi = v.getROI(lbls[k][0], '==')
+                                    roi.setFilename(t1.getFilename())
+                                    roi.setFilenamePrefix('')
+                                    # < Revision 03/06/2026
+                                    # roi.setFilenameSuffix(str(k))
+                                    roi.setFilenameSuffix(lbls[k][1])
+                                    # Revision 03/06/2026 >
+                                    wait.setInformationText('Save {}...'.format(basename(roi.getFilename())))
+                                    roi.save()
                             if saveprob:
                                 for j, k in enumerate(lbls):
                                     if k > 0:
@@ -843,7 +883,10 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                                         v2.acquisition.setSequenceToStructMap()
                                         v2.setFilename(t1.getFilename())
                                         v2.setFilenamePrefix('')
-                                        v2.setFilenameSuffix(str(k))
+                                        # < Revision 03/06/2026
+                                        # v2.setFilenameSuffix(str(k))
+                                        v2.setFilenameSuffix(lbls[k][1])
+                                        # Revision 03/06/2026 >
                                         wait.setInformationText('Save {}...'.format(v2.getBasename()))
                                         v2.save()
                                 lbls = {'hip': 'hippocampus',
@@ -2261,24 +2304,46 @@ class DialogDeepFCDSegmentation(QDialog):
                         Bias field correction
                         """
                         if self._settings.getParameterValue('Bias'):
-                            wait.setInformationText('T1 bias field correction...')
-                            try:
-                                t1 = biasFieldCorrection(t1, shrink=4, wait=wait)[0]
-                                t1.saveAs(ft1)
-                            except: pass
-                            wait.progressVisibilityOff()
-                            if wait.getStopped():
-                                wait.close()
-                                return
-                            wait.setInformationText('FLAIR bias field correction...')
-                            try:
-                                flair = biasFieldCorrection(flair, shrink=4, wait=wait)[0]
-                                flair.saveAs(fflair)
-                            except: pass
-                            wait.progressVisibilityOff()
-                            if wait.getStopped():
-                                wait.close()
-                                return
+                            if not t1.hasFilenamePrefix('bias'):
+                                t1.setFilenamePrefix('bias')
+                                if exists(t1.getFilename()):
+                                    wait.setInformationText('Load bias field corrected T1...')
+                                    t1.load()
+                                else:
+                                    wait.setInformationText('T1 bias field correction...')
+                                    try:
+                                        t1 = biasFieldCorrection(t1, shrink=4, wait=wait)[0]
+                                        # < Revision 30/05/2026
+                                        # t1.saveAs(ft1)
+                                        t1.setFilename(ft1)
+                                        t1.setFilenamePrefix('bias')
+                                        t1.save()
+                                        # Revision 30/05/2026 >
+                                    except: pass
+                                    wait.progressVisibilityOff()
+                                    if wait.getStopped():
+                                        wait.close()
+                                        return
+                            if not flair.hasFilenamePrefix('bias'):
+                                flair.setFilenamePrefix('bias')
+                                if exists(flair.getFilename()):
+                                    wait.setInformationText('Load bias field corrected FLAIR...')
+                                    flair.load()
+                                else:
+                                    wait.setInformationText('FLAIR bias field correction...')
+                                    try:
+                                        flair = biasFieldCorrection(flair, shrink=4, wait=wait)[0]
+                                        # < Revision 30/05/2026
+                                        # flair.saveAs(fflair)
+                                        flair.setFilename(fflair)
+                                        flair.setFilenamePrefix('bias')
+                                        flair.save()
+                                        # Revision 30/05/2026 >
+                                    except: pass
+                                    wait.progressVisibilityOff()
+                                    if wait.getStopped():
+                                        wait.close()
+                                        return
                         """
                         Isotropic mm resampling
                         """
@@ -2378,7 +2443,10 @@ class DialogDeepFCDSegmentation(QDialog):
                             """
                             Save fcd map
                             """
-                            vr.setFilename(t1.getFilename())
+                            # < Revision 30/05/2026
+                            # vr.setFilename(t1.getFilename())
+                            vr.setFilename(ft1)
+                            # Revision 30/05/2026 >
                             vr.acquisition.setModalityToOT()
                             vr.acquisition.setSequenceToStructMap()
                             vr.setID(t1.getID())
