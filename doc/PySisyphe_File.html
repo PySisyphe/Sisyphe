@@ -74,6 +74,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#open-from-format">Open from format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#open-recent">Open recent</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#open-user-folder">Open user folder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#open-template-folder">Open template folder</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#save">Save</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#save-all">Save all</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#save-as">Save as</a></li>
@@ -149,6 +150,7 @@
 <li><p><a class="reference internal" href="#menu-section-openformat"><span class="std std-ref">Open from format</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-recent"><span class="std std-ref">Open recent</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-openuser"><span class="std std-ref">Open user folder</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-opentemplate2"><span class="std std-ref">Open template folder</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-save"><span class="std std-ref">Save</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-saveall"><span class="std std-ref">Save all</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-saveas"><span class="std std-ref">Save as</span></a></p></li>
@@ -229,6 +231,10 @@ Left-click on a volume menu item to open it in the thumbnail bar.</p>
 <li><p>“segmentation” subfolder, default folder for saving registration based struct segmentation (menu Segmentation -&gt; Registration based segmentation). Shortcuts to the structs in this folder are available in the menu <strong>Segmentation &gt; Structs &gt; User</strong>.</p></li>
 <li><p>“workflow” subfolder, default folder for saving workflow processings (menu <strong>Functions &gt; Workflow processing</strong>). Shortcuts to the workflows in this folder are available in the menu <strong>Functions &gt; Workflow</strong>.</p></li>
 </ul>
+</section>
+<section id="open-template-folder">
+<span id="menu-section-opentemplate2"></span><h2>Open template folder<a class="headerlink" href="#open-template-folder" title="Link to this heading"></a></h2>
+<p>Open the PySisyphe template folder in the File Manager (Windows) or Finder (MacOS).</p>
 </section>
 <section id="save">
 <span id="menu-section-save"></span><h2>Save<a class="headerlink" href="#save" title="Link to this heading"></a></h2>
@@ -524,7 +530,7 @@ Left-click on a volume menu item to open it in the thumbnail bar.</p>
 <p>This menu displays the <strong>Dicom Query Retreive</strong> dialog box, which is used to download dicom series from a PACS server (Dicom SCP host).</p>
 <p>Dicom study queries use the following items: <em>patient identity</em> (lastname, firstname, date of birth), <em>image modality</em> and <em>acquisition date</em>. You can edit these items at the top of the dialog box. Date items are used only if they are checked.</p>
 <p>Left-click <strong>Search</strong> to run a query with the current items. Series found were displayed in the first list box with the following dicom study fields: <em>accession number</em>, <em>lastname</em>, <em>firstname</em>, <em>date of birth</em>, <em>modality</em>, <em>study date</em> and <em>description</em>. Left-click on a study row to select it. The available series in this study will then be displayed in the second list box, below the first. This list will contain the following dicom series fields: <em>series number</em> and <em>description</em>. Each series is headed with a checkbox.</p>
-<p>You can choose the directory where downloaded DICOM files are saved with the <strong>Dicom folder</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget. These files are saved by default in the “dicom” sub-folder of the PySisyphe user folder ($User/.PySisyphe).</p>
+<p>You can choose the directory where downloaded DICOM files are saved with the <strong>Dicom folder</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget. These files are saved by default in the “dicom” sub-folder of the PySisyphe user folder (~/.PySisyphe).</p>
 <p>Left-click on <strong>DICOM SCP Host Settings</strong> button to toggle visibility of the PACS server parameters.</p>
 <p>PACS server parameters are as follows:</p>
 <ul class="simple">

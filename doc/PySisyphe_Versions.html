@@ -97,7 +97,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-81-22-build-20-03-2026">version 0.81.22, build 20/03/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-87-12-build-20-04-2026">version 0.87.12, build 20/04/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-92-10-build-30-05-2026">version 0.92.10, build 30/05/2026</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-0-94-02-build-20-06-2026">version 0.94.02, build 20/06/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-96-15-build-20-06-2026">version 0.96.15, build 20/06/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -147,7 +147,7 @@
 <li><p><a class="reference internal" href="#build20-03-2026"><span class="std std-ref">version 0.81.22, build 20/03/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-04-2026"><span class="std std-ref">version 0.87.12, build 20/04/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build30-05-2026"><span class="std std-ref">version 0.92.10, build 30/05/2026</span></a></p></li>
-<li><p><a class="reference internal" href="#build20-06-2026"><span class="std std-ref">version 0.94.02, build 20/06/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build20-06-2026"><span class="std std-ref">version 0.96.15, build 20/06/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -9290,8 +9290,8 @@
 </li>
 </ul>
 </section>
-<section id="version-0-94-02-build-20-06-2026">
-<span id="build20-06-2026"></span><h2>version 0.94.02, build 20/06/2026<a class="headerlink" href="#version-0-94-02-build-20-06-2026" title="Link to this heading"></a></h2>
+<section id="version-0-96-15-build-20-06-2026">
+<span id="build20-06-2026"></span><h2>version 0.96.15, build 20/06/2026<a class="headerlink" href="#version-0-96-15-build-20-06-2026" title="Link to this heading"></a></h2>
 <ul>
 <li><p><strong>updated html documentation</strong></p>
 <blockquote>
@@ -9301,6 +9301,16 @@
 <li><p>PySisyphe_menubar.rst</p></li>
 <li><p>PySisyphe_toolbar.rst</p></li>
 <li><p>PySisyphe_thumbnailbar.rst</p></li>
+<li><p>PySisyphe_docktarget.rst</p></li>
+<li><p>PySisyphe_dockroitools.rst</p></li>
+<li><p>PySisyphe_dockroi.rst</p></li>
+<li><p>PySisyphe_dockmesh.rst</p></li>
+<li><p>PySisyphe_docktarget.rst</p></li>
+<li><p>PySisyphe_docktracking.rst</p></li>
+<li><p>PySisyphe_projectionview.rst</p></li>
+<li><p>PySisyphe_Functions.rst</p></li>
+<li><p>PySisyphe_Diffusion.rst</p></li>
+<li><p>PySisyphe_browser.rst</p></li>
 <li><p>rebuild sphinx documentation</p></li>
 </ul>
 </div></blockquote>
@@ -9323,18 +9333,119 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p><strong>new docstrings</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>widgets.basicWidgets</p></li>
+<li><p>widgets.dicomWidgets</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new type hinting</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>widgets.imageWidgets.ImagePreviewWidget</p></li>
+<li><p>widgets.imageWidgets.SisypheImageViewWidget</p></li>
+<li><p>widgets.imageWidgets.SisypheVolumeViewWidget</p></li>
+<li><p>widgets.toolBarThumbail.ToolBarThumbnail</p></li>
+<li><p>widgets.sheetWidget.SheetWidgetEditingDelegate</p></li>
+<li><p>widgets.sheetWidget.SheetWidget</p></li>
+<li><p>widgets.sheetWidget.SheetStatisticsWidget</p></li>
+<li><p>widgets.sheetWidget.SheetChartWidget</p></li>
+<li><p>widgets.tabToolsWidgets.TabWidget</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIListWidget</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget</p></li>
+<li><p>widgets.tabToolsWidgets.TabMeshListWidget</p></li>
+<li><p>widgets.tabToolsWidgets.TabTargetListWidget</p></li>
+<li><p>widgets.tabToolsWidgets.TabTrackingWidget</p></li>
+<li><p>widgets.screenshotsGridWidget.ScreenshotsGridWidget</p></li>
+<li><p>widgets.databaseWidget.DatabaseWidget</p></li>
+<li><p>widgets.consoleWidget.RichJupyterWidget2</p></li>
+<li><p>widgets.consoleWidget.ConsoleWidget</p></li>
+<li><p>widgets.attributesWidgets.ItemAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ItemOverlayAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ItemROIAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ItemMeshAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ItemBundleAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ListAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ListROIAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ListMeshAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>update type hinting</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>core.sisypheConstants</p></li>
+<li><p>core.sisypheDatabase</p></li>
+<li><p>core.sisypheDicom</p></li>
+<li><p>core.sisypheDownload</p></li>
+<li><p>core.sisypheFiducialBox</p></li>
+<li><p>core.sisypheImage</p></li>
+<li><p>core.sisypheImageAttributes</p></li>
+<li><p>core.sisypheImageIO</p></li>
+<li><p>core.sisypheLUT</p></li>
+<li><p>core.sisypheMesh</p></li>
+<li><p>core.sisypheMeshIO</p></li>
+<li><p>core.sisyphePDF</p></li>
+<li><p>core.sisypheRecent</p></li>
+<li><p>core.sisypheROI</p></li>
+<li><p>core.sisypheSettings</p></li>
+<li><p>core.sisypheSheet</p></li>
+<li><p>core.sisypheStatistics</p></li>
+<li><p>core.sisypheTools</p></li>
+<li><p>core.sisypheTracts</p></li>
+<li><p>core.sisypheTransform</p></li>
+<li><p>core.sisypheVolume</p></li>
+<li><p>core.sisypheXml</p></li>
+<li><p>widgets.thresholdWidgets.ThresholdViewWidget</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p><strong>updated modules</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li><p>core.sisypheRecent</p></li>
+<li><p>core.sisypheVolume</p></li>
+<li><p>core.sisypheFudicialBox</p></li>
+<li><p>core.sisypheROI</p></li>
+<li><p>core.sisypheDownload</p></li>
 <li><p>processing.capturedStdoutProcessing</p></li>
 <li><p>gui.dialogDeepSegmentation</p></li>
 <li><p>gui.dialogSettings</p></li>
 <li><p>gui.dialogStatResult</p></li>
+<li><p>gui.dialogDeepSegmentation</p></li>
+<li><p>gui.dialogVolumeAttributes</p></li>
+<li><p>gui.dialogPatient</p></li>
+<li><p>gui.dialogDicomQuery</p></li>
 <li><p>gui.windowSisyphe</p></li>
 <li><p>widgets.imageWidgets</p></li>
 <li><p>widgets.toolBarThumbnail</p></li>
+<li><p>widgets.sliceViewWidgets</p></li>
 <li><p>widgets.projectionViewWidget</p></li>
+<li><p>widgets.volumeViewWidget</p></li>
+<li><p>widgets.attributeWidgets</p></li>
+<li><p>widgets.databaseWidget</p></li>
+<li><p>widgets.functionsSettingsWidget</p></li>
+<li><p>widgets.LUTWidgets</p></li>
+<li><p>widgets.basicWidgets</p></li>
+<li><p>widgets.fileBrowserWidget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated function</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheDownload.installFromHost</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace copy by copy2</p></li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </div></blockquote>
 </li>
@@ -9344,14 +9455,14 @@
 <li><p>processing.capturedStdoutProcessing.ProcessDeepMetastasisSegmentation</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>deep learning focal metastasis segmentation using RLK-Unet model</p></li>
+<li><p>deep learning metastasis segmentation using RLK-Unet model</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>gui.dialogDeepSegmentation.DialogDeepMetastasisSegmentation</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>dialog for deep learning focal metastasis segmentation using RLK-Unet model</p></li>
+<li><p>dialog for deep learning metastasis segmentation using RLK-Unet model</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9365,6 +9476,46 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>update append() method</p></li>
+<li><p>update load() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SîsypheVolume</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new getFilenamePrefixes() method</p></li>
+<li><p>new getFilenameSuffixes() method</p></li>
+<li><p>new hasFilenamePrefix() method</p></li>
+<li><p>new hasFilenameSuffix() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFudicialBox.SisypheFiducialBox</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _firstSliceSearch() method</p></li>
+<li><p>update _markersSearch() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update popRedoLIFO() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepFCDSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9382,14 +9533,35 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogVolumeAttributes.DialogVolumeAttributes</p></li>
+<li><p>gui.dialogPatient.DialogPatient</p></li>
+<li><p>gui.dialogDicomQuery.DialogDicomQueryRetrieve</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>gui.windowSisyphe.WindowSisyphe</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>new metastasisSegmentation() method</p></li>
 <li><p>new closeAllViews() method</p></li>
+<li><p>new _openTemplateFolder() method</p></li>
+<li><p>new _openPluginsFolder() method</p></li>
 <li><p>update _initSegmentationMenu() method</p></li>
 <li><p>update _initToolBar() method</p></li>
 <li><p>update _initWindowMenu() method</p></li>
+<li><p>update _initFileMenu() method</p></li>
+<li><p>update _initFunctionsMenu() method</p></li>
+<li><p>update join() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9405,6 +9577,8 @@
 <li><p>update displayInProjectionView() method</p></li>
 <li><p>update displayInMultiComponentView() method</p></li>
 <li><p>update mouseDoubleClickEvent() method</p></li>
+<li><p>update overlay() method</p></li>
+<li><p>update changeDatatype() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9416,10 +9590,95 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>widgets.sliceViewWidgets.SliceViewWidget</p></li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update replaceVolume() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.ProjectionViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update replaceVolume() method</p></li>
+<li><p>update updateWindowingFromReference() method</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>widgets.projectionViewWidget.IconBarMultiProjectionViewWidget</p>
 <blockquote>
 <div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update _opacityChanged() method</p></li>
 <li><p>update setVolume() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributeWidgets.ListROIAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getSelectedROI() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributeWidgets.ListMeshAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getSelectedMesh() method</p></li>
+<li><p>update saveOBJ() method</p></li>
+<li><p>upadte saveSTL() method</p></li>
+<li><p>update saveVTK() method</p></li>
+<li><p>update saveXMLVTK() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributeWidgets.ItemToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update mouseDoubleClickEvent() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributeWidgets.ListToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getSelectedTool() method</p></li>
+<li><p>update properties() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.databaseWidget.DatabaseWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _initSettingsLayout() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.basicWidgets.OpacityPushButton</p></li>
+<li><p>widgets.basicWidgets.WidthPushButton</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update _popupFolder() method</p></li>
+<li><p>update _popupFiles() method</p></li>
+<li><p>new _openExplorer() method</p></li>
+<li><p>new _userFolder() method</p></li>
+<li><p>new _templateFolder() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9429,6 +9688,22 @@
 <li><p><strong>new methods</strong></p>
 <blockquote>
 <div><ul>
+<li><p>core.sisypheVolume.SîsypheVolume.getPrefixes()</p></li>
+<li><p>core.sisypheVolume.SîsypheVolume.getSuffixes()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get the list of the file name prefixes or suffixes</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume.hasPrefix()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.hasSuffix()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>check if a prefix or suffix is in the file name</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>gui.windowSisyphe.WindowSisyphe.metastasisSegmentation()</p>
 <blockquote>
 <div><ul class="simple">
@@ -9440,6 +9715,20 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>remove reference status from thumbnail and close all views</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe._openTemplateFolder()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>open template folder in file explorer/finder</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe._openPluginsFolder()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>open plugins folder in file explorer/finder</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9471,6 +9760,27 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget._openExplorer()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>open the current folder in file explorer/finder</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget._userFolder()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>select user folder (~/.PySisyphe)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget._templateFolder()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>select template folder</p></li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </div></blockquote>
 </li>
@@ -9481,6 +9791,42 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>bug fix in windows platform, add filename = abspath(filename) to avoid duplicates</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheRecent.SisypheRecent.load()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>handle exceptions related to parsing the recent.xml file</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFudicialBox.SisypheFiducialBox._firstSliceSearch()</p></li>
+<li><p>core.sisypheFudicialBox.SisypheFiducialBox._markersSearch()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, remove posterior plate fiducials</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw.popRedoLIFO()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace self._roi.getNumpy[:, :, item[1]] = buff by self._roi.getNumpy()[:, :, item[1]] = buff</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepFCDSegmentation.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, size and spacing tuple to list conversion</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add the label names of the wip model</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9498,6 +9844,29 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>relabelling label volume</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogVolumeAttributes.DialogVolumeAttributes.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>change QDateEdit format (setDisplayFormat(‘dd/MM/yyyy’))</p></li>
+<li><p>add tooltips</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogPatient.DialogPatient.__init__()</p></li>
+<li><p>gui.dialogDicomQuery.DialogDicomQueryRetrieve.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>change QDateEdit format (setDisplayFormat(‘dd/MM/yyyy’))</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>gui.windowSisyphe.WindowSisyphe._initToolBar()</p>
 <blockquote>
 <div><ul class="simple">
@@ -9509,6 +9878,30 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>add self._action[‘hide’] action</p></li>
+<li><p>self._action[‘dock’].setShortcut(QKeySequence(Qt.Key.Key_Tab))</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe._initFileMenu()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._action[‘template2’] = self._menu[‘file’].addAction(‘Open template folder’)</p></li>
+<li><p>add self._action[‘template2’].triggered.connect(self._openTemplateFolder)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe._initFunctionsMenu()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._action[‘pluginfolder’] = self._menu[‘func’].addAction(‘Open plugins folder…’)</p></li>
+<li><p>add self._action[‘pluginfolder’].triggered.connect(self._openPluginsFolder)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.join()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>create 3D volume from 2D multicomponent</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9537,10 +9930,137 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.overlay()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._volume.loadTransforms() to update overlay transforms before displaying</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.changeDatatype()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._lutwidget.setVolume(self._volume), update the volume of the lutwidget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceViewWidget.replaceVolume()</p></li>
+<li><p>widgets.projectionViewWidget.ProjectionViewWidget.replaceVolume()</p></li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget.replaceVolume()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, update info labels</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.ProjectionViewWidget.updateWindowingFromReference()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, update range values before window</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.IconBarMultiProjectionViewWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add submenu.aboutToShow.connect(lambda: self._slider.setFocus()) to move keyboard focus to slider</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.IconBarMultiProjectionViewWidget._opacityChanged()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>display the opacity value in a tooltip</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>widgets.projectionViewWidget.IconBarMultiProjectionViewWidget.setVolume()</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>Set the opacity to 100% for ICBM152 volume</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributeWidgets.ItemToolAttributesWidget.mouseDoubleClickEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>align view to LineWidget trajectory</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributeWidgets.ListROIAttributesWidget.getSelectedROI()</p></li>
+<li><p>widgets.attributeWidgets.ListMeshAttributesWidget.getSelectedMesh()</p></li>
+<li><p>widgets.attributeWidgets.ListToolAttributesWidget.getSelectedTool()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, return None if no selected roi/mesh/tool</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributeWidgets.ListMeshAttributesWidget.saveOBJ()</p></li>
+<li><p>widgets.attributeWidgets.ListMeshAttributesWidget.saveSTL()</p></li>
+<li><p>widgets.attributeWidgets.ListMeshAttributesWidget.saveVTK()</p></li>
+<li><p>widgets.attributeWidgets.ListMeshAttributesWidget.saveXMLVTK()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, remove item and replace item by mesh</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributeWidgets.ListToolAttributesWidget.properties()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>copy properties from selected tool</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.databaseWidget.DatabaseWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>change QDateEdit format (setDisplayFormat(‘dd/MM/yyyy’))</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget._initSettingsLayout()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>change QDateEdit format (setDisplayFormat(‘dd/MM/yyyy’))</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.basicWidgets.OpacityPushButton.__init__()</p></li>
+<li><p>widgets.basicWidgets.WidthPushButton.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._popup.aboutToShow.connect(lambda: self._slider.setFocus()) to move keyboard focus to slider</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self.actions[‘explorer’] = QAction(‘Open current folder in file explorer/finder…’)</p></li>
+<li><p>add self.actions[‘user’] = QAction(‘Go to user folder…’)</p></li>
+<li><p>add self.actions[‘template’] = QAction(‘Go to template folder…’)</p></li>
+<li><p>add self.actions[‘explorer’].triggered.connect(self._openExplorer)</p></li>
+<li><p>add self.actions[‘user’].triggered.connect(self._userFolder)</p></li>
+<li><p>add self.actions[‘template’].triggered.connect(self._templateFolder)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget._popupFolder()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self.actions[‘explorer’] to popup menu</p></li>
+<li><p>add self.actions[‘user’] to popup menu</p></li>
+<li><p>add self.actions[‘template’] to popup^menu</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget._popupFiles()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self.actions[‘explorer’] to popup menu</p></li>
 </ul>
 </div></blockquote>
 </li>

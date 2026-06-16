@@ -360,7 +360,7 @@
 </div>
 <p>Use the first <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select <strong>T1</strong> PySisyphe volume(s) to be analyzed.</p>
 <p>Use the second <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select <strong>FLAIR</strong> PySisyphe volume(s) to be analyzed. This volume must be coregistered with the T1 volume (same space/transform ID).</p>
-<p>Use the second <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select <strong>Mask</strong> PySisyphe volume(s). A brain mask of the T1 (OT modality, MASK sequence, same space/transform ID as T1) can be obtained from the <a class="reference internal" href="#menu-section-skull"><span class="std std-ref">Skull stripping</span></a> menu. The mask is optional, this widget can be left blank. In that case, a mask is automatically calculated based on the FLAIR.</p>
+<p>Use the third <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget to select <strong>Mask</strong> PySisyphe volume(s). A brain mask of the T1 (OT modality, MASK sequence, same space/transform ID as T1) can be obtained from the <a class="reference internal" href="#menu-section-skull"><span class="std std-ref">Skull stripping</span></a> menu. The mask is optional, this widget can be left blank. In that case, a mask is automatically calculated based on the FLAIR.</p>
 <p>Toggle <strong>FCD detection…</strong> button to show/hide parameters.</p>
 <ul class="simple">
 <li><p>Check <strong>Bias field correction</strong> to peform a bias field correction of the T1 and FLAIR before the detection processing.</p></li>
@@ -401,19 +401,32 @@
 </section>
 <section id="deep-learning-medial-temporal-segmentation">
 <span id="menu-section-temporal"></span><h2>Deep-learning Medial temporal segmentation<a class="headerlink" href="#deep-learning-medial-temporal-segmentation" title="Link to this heading"></a></h2>
-<p>This menu is designed to perform medial temporal segmentation using deep-learning U-net pre-trained model. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> package. The segmentation is saved as a label volume.</p>
+<p>This menu is designed to perform medial temporal segmentation using deep-learning U-net pre-trained models. PySisyphe uses the <a class="reference external" href="https://github.com/ANTsX/ANTsPyNet">ANTsPyNet</a> package. The segmentation is saved as a label volume.</p>
+<p>Two models are available:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>yassa</strong>, which segments the following structures: anterior-lateral entorhinal, posterior-medial entorhinal, perirhinal, parahippocampal, DG-CA2-CA3-CA4, CA1 and subiculum.</p></li>
+<li><p><strong>wip</strong>, wich segments the following structures: parasubiculum, subiculum, CA1, CA2-CA3, CA4, granule cell layer of dentate gyrus, molecular layer, fissure, tail, amygdala lateral nucleus, amygdala basal nucleus, amygdala accessory basal nucleus, amygdala cortico-amygdaloid transition, amygdala anterior amygdaloid area.</p></li>
+</ul>
+</div></blockquote>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4461537/">Hippocampal subfields</a>: A computational atlas of the hippocampal formation using ex vivo, ultra-high resolution MRI: Application to adaptive segmentation of in vivo MRI. Iglesias J.E., Augustinack J.C., Nguyen K., Player C.M., Player A., Wright M., Roy N., Frosch M.P., McKee A.C., Wald L.L., Fischl B., Van Leemput K. Neuroimage. 2015 Apr 29;115:117–137.</p>
+<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5557007/">Amygdala nuclei</a>: High-resolution magnetic resonance imaging reveals nuclei of the human amygdala: manual segmentation to automatic atlas. Saygin Z.M., Kliemann D., Iglesias J.E., van der Kouwe A.J.W., Boyd E., Reuter M., Stevens A., Van Leemput K., McKee A., Frosch M.P., Fischl B., Augustinack J.C. Neuroimage. 2017 May 4;155:370–382.</p>
+</div>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>T1</strong> PySisyphe volume(s) to be segmented.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget below to select <strong>T2</strong> PySisyphe volume(s) to be segmented. This widget will only be displayed if the <strong>Use T2</strong> parameter is checked. T1 and T2 volumes must be coregistered and resampled using the same space/transform ID.</p>
 <p>Toggle <strong>Unet lesion segmentation…</strong> button to show/hide parameters.</p>
 <ul class="simple">
 <li><p>Check <strong>Use T2</strong> to perform segmentation using two sequences T1 and T2, rather than just T1.</p></li>
 <li><p>Select the pre-trained model <em>yassa</em> or <em>wip</em>.</p></li>
+<li><p>Check <strong>Save probability maps</strong> if you want to save each label as a probability map.</p></li>
 <li><p>Check <strong>Save ROI</strong> if you also want to save the result as a PySisyphe ROI (xroi).</p></li>
 <li><p>The label volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Label segmentation prefix</strong> and <strong>Label segmentation suffix</strong> parameters.</p></li>
 </ul>
 <p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
-<p>Sample volume (FCD) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
+<p>Sample volume can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
 </section>
 <section id="deep-learning-metastasis-segmentation">
 <span id="menu-section-meta"></span><h2>Deep-learning Metastasis segmentation<a class="headerlink" href="#deep-learning-metastasis-segmentation" title="Link to this heading"></a></h2>
