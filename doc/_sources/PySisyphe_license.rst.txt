@@ -15,4 +15,4 @@ No part of the software may be reproduced, modified, transmitted or transferred 
     
 You are not permitted under this license to use this software commercially. Use for which any financial return is received shall be defined as commercial use, and includes (1) integration of all or part of the source code or the software into a product for sale or license by or on behalf of license to third parties or (2) use of the software or any derivative of it for research with the final aim of developing software products for sale or license to a third party or (3) use of the software or any derivative of it for research with the final aim of developing non-software products for sale or license to a third party, or (4) use of the software to provide any service to an external organization for which payment is received.
 
-If you are interested in using the software for commercial purposes, please contact the author, J.-A. Lotterie, at **pysisyphe@gmail.com** to negotiate a license.
+If you are interested in using the software for commercial purposes, please contact the author, J.-A. Lotterie, at pysisyphe@gmail.com to negotiate a license.

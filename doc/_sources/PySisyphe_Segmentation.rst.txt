@@ -290,7 +290,7 @@ Use the first :ref:`widgets-section-multi-file` widget to select **T1** PySisyph
 
 Use the second :ref:`widgets-section-multi-file` widget to select **FLAIR** PySisyphe volume(s) to be analyzed. This volume must be coregistered with the T1 volume (same space/transform ID).
 
-Use the second :ref:`widgets-section-multi-file` widget to select **Mask** PySisyphe volume(s). A brain mask of the T1 (OT modality, MASK sequence, same space/transform ID as T1) can be obtained from the :ref:`menu-section-skull` menu. The mask is optional, this widget can be left blank. In that case, a mask is automatically calculated based on the FLAIR.
+Use the third :ref:`widgets-section-multi-file` widget to select **Mask** PySisyphe volume(s). A brain mask of the T1 (OT modality, MASK sequence, same space/transform ID as T1) can be obtained from the :ref:`menu-section-skull` menu. The mask is optional, this widget can be left blank. In that case, a mask is automatically calculated based on the FLAIR.
 
 Toggle **FCD detection...** button to show/hide parameters.
 
@@ -351,7 +351,18 @@ Sample volumes can be downloaded from the :ref:`menu-section-download` to test t
 Deep-learning Medial temporal segmentation
 ------------------------------------------
 
-This menu is designed to perform medial temporal segmentation using deep-learning U-net pre-trained model. PySisyphe uses the `ANTsPyNet <https://github.com/ANTsX/ANTsPyNet>`_ package. The segmentation is saved as a label volume.
+This menu is designed to perform medial temporal segmentation using deep-learning U-net pre-trained models. PySisyphe uses the `ANTsPyNet <https://github.com/ANTsX/ANTsPyNet>`_ package. The segmentation is saved as a label volume.
+
+Two models are available:
+
+	- **yassa**, which segments the following structures: anterior-lateral entorhinal, posterior-medial entorhinal, perirhinal, parahippocampal, DG-CA2-CA3-CA4, CA1 and subiculum.
+	- **wip**, wich segments the following structures: parasubiculum, subiculum, CA1, CA2-CA3, CA4, granule cell layer of dentate gyrus, molecular layer, fissure, tail, amygdala lateral nucleus, amygdala basal nucleus, amygdala accessory basal nucleus, amygdala cortico-amygdaloid transition, amygdala anterior amygdaloid area.
+
+.. admonition:: Reference
+
+	`Hippocampal subfields <https://pmc.ncbi.nlm.nih.gov/articles/PMC4461537/>`_: A computational atlas of the hippocampal formation using ex vivo, ultra-high resolution MRI: Application to adaptive segmentation of in vivo MRI. Iglesias J.E., Augustinack J.C., Nguyen K., Player C.M., Player A., Wright M., Roy N., Frosch M.P., McKee A.C., Wald L.L., Fischl B., Van Leemput K. Neuroimage. 2015 Apr 29;115:117–137.
+
+	`Amygdala nuclei <https://pmc.ncbi.nlm.nih.gov/articles/PMC5557007/>`_: High-resolution magnetic resonance imaging reveals nuclei of the human amygdala: manual segmentation to automatic atlas. Saygin Z.M., Kliemann D., Iglesias J.E., van der Kouwe A.J.W., Boyd E., Reuter M., Stevens A., Van Leemput K., McKee A., Frosch M.P., Fischl B., Augustinack J.C. Neuroimage. 2017 May 4;155:370–382.
 
 Use the :ref:`widgets-section-multi-file` widget at the top to select **T1** PySisyphe volume(s) to be segmented.
 
@@ -361,6 +372,7 @@ Toggle **Unet lesion segmentation...** button to show/hide parameters.
 
 - Check **Use T2** to perform segmentation using two sequences T1 and T2, rather than just T1.
 - Select the pre-trained model *yassa* or *wip*.
+- Check **Save probability maps** if you want to save each label as a probability map.
 - Check **Save ROI** if you also want to save the result as a PySisyphe ROI (xroi).
 - The label volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Label segmentation prefix** and **Label segmentation suffix** parameters.
 
@@ -368,7 +380,7 @@ Left-click **Execute** button to perform segmentation.
 
 Left-click **Cancel** button to close dialog box without segmentation.
 
-Sample volume (FCD) can be downloaded from the :ref:`menu-section-download` to test this processing.
+Sample volume can be downloaded from the :ref:`menu-section-download` to test this processing.
 
 .. _menu-section-meta:
 

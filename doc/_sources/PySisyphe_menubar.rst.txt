@@ -11,6 +11,7 @@ Menubar
 - :ref:`menu-section-diffusion` (:ref:`page-diffusion`)
 - :ref:`menu-section-views`
 - :ref:`menu-section-window` (:ref:`page-window`)
+- :ref:`menu-section-shortcuts`
 
 .. _menu-section-file:
 
@@ -279,3 +280,28 @@ Window
 	- :ref:`File browser <menu-section-browser>`
 	- :ref:`Screenshots <menu-section-screenshots>`
 	- :ref:`IPython <menu-section-ipython>`
+
+.. _menu-section-shortcuts:
+
+Keyboard Shortcuts
+------------------
+
+- CTRL O 		:ref:`Open... <menu-section-open>`
+- CTRL S 		:ref:`Save <menu-section-save>`
+- Del 			:ref:`Close <menu-section-close>`
+- CTRL ? 		:ref:`Edit attributes... <menu-section-attributes>`
+- CTRL -		:ref:`Minimize <menu-section-minimize>`
+- CTRL +		:ref:`Maximize <menu-section-maximize>`
+- CTRL Right	:ref:`Next tab <menu-section-nexttab>`
+- CTRL Left		:ref:`Previous tab <menu-section-previoustab>`
+- Tab 			:ref:`Show/Hide Dock <menu-section-showdock>`
+- F1 			:ref:`Slice view <menu-section-sliceview>`
+- F2			:ref:`Orthogonal view <menu-section-orthogonalview>`
+- F3			:ref:`Synchornized view <menu-section-synchronizedview>`
+- F4			:ref:`Projection view <menu-section-projectionview>`
+- F5			:ref:`Multi-component view <menu-section-multiview>`
+- F6			:ref:`Database <menu-section-database>`
+- F7			:ref:`File browser <menu-section-browser>`
+- F8			:ref:`Screenshots <menu-section-screenshots>`			
+- F9			:ref:`IPython <menu-section-ipython>`
+- F11			:ref:`Full screen <menu-section-fullscreen>`

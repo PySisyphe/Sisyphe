@@ -72,7 +72,7 @@ Left-Click on the lower right of the thumbnail (on the three dots "..."), or rig
 - **Descriptive statistics**, display a dialog box giving descriptive statistics of the thumbnail volume (minimum, 5th percentile, 25th percentile, median, 75th percentile, 95th percentile, std, mean, skewness, kurtosis).
 - **Add to database**, add the thumbnail volume to the patient database.
 - **AC-PC selection...**, display a dialog box to select anterior and posterior commissure of the thumbnail volume.
-- **Reorientation...**, display a dialog box to reorient a the thumbnail volume and/or change the field-of-view.
+- **Reorientation...**, display a dialog box to reorient the thumbnail volume and/or change the field-of-view.
 - **Stereotactic frame detection...**, display a dialog box for detecting fiducial markers of a Leksell stereotaxic frame of the thumbnail volume.
 - **Flip**, flip axes of the thumbnail volume (left/right axis, anterior/posterior axis, or cranial/caudal axis).
 - **Swap axis**, permute volume axes (swap axis order to **y-z-x**, **z-x-y**, **x-z-y**, **y-z-x**, or **z-y-x**).

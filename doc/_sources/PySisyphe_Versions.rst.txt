@@ -5875,7 +5875,7 @@ version 0.92.10, build 30/05/2026
 
 .. _build20-06-2026:
 
-version 0.94.02, build 20/06/2026
+version 0.96.15, build 20/06/2026
 ---------------------------------
 
 - **updated html documentation**
@@ -5885,6 +5885,16 @@ version 0.94.02, build 20/06/2026
 	- PySisyphe_menubar.rst
 	- PySisyphe_toolbar.rst
 	- PySisyphe_thumbnailbar.rst
+	- PySisyphe_docktarget.rst
+	- PySisyphe_dockroitools.rst
+	- PySisyphe_dockroi.rst
+	- PySisyphe_dockmesh.rst
+	- PySisyphe_docktarget.rst
+	- PySisyphe_docktracking.rst
+	- PySisyphe_projectionview.rst
+	- PySisyphe_Functions.rst
+	- PySisyphe_Diffusion.rst
+	- PySisyphe_browser.rst
 	- rebuild sphinx documentation
 
 - **updated files**
@@ -5899,33 +5909,143 @@ version 0.94.02, build 20/06/2026
 
 	- RLK-Unet, https://github.com/nibabel/RLK-Unet, added as PySisyphe module Sisyphe.lib.rlk
 
+- **new docstrings**
+
+	- widgets.basicWidgets
+	- widgets.dicomWidgets
+
+- **new type hinting**
+
+	- widgets.imageWidgets.ImagePreviewWidget
+	- widgets.imageWidgets.SisypheImageViewWidget
+	- widgets.imageWidgets.SisypheVolumeViewWidget
+	- widgets.toolBarThumbail.ToolBarThumbnail
+	- widgets.sheetWidget.SheetWidgetEditingDelegate
+	- widgets.sheetWidget.SheetWidget
+	- widgets.sheetWidget.SheetStatisticsWidget
+	- widgets.sheetWidget.SheetChartWidget
+	- widgets.tabToolsWidgets.TabWidget
+	- widgets.tabToolsWidgets.TabROIListWidget
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+	- widgets.tabToolsWidgets.TabMeshListWidget
+	- widgets.tabToolsWidgets.TabTargetListWidget
+	- widgets.tabToolsWidgets.TabTrackingWidget
+	- widgets.screenshotsGridWidget.ScreenshotsGridWidget
+	- widgets.databaseWidget.DatabaseWidget
+	- widgets.consoleWidget.RichJupyterWidget2
+	- widgets.consoleWidget.ConsoleWidget
+	- widgets.attributesWidgets.ItemAttributesWidget
+	- widgets.attributesWidgets.ItemOverlayAttributesWidget
+	- widgets.attributesWidgets.ItemROIAttributesWidget
+	- widgets.attributesWidgets.ItemMeshAttributesWidget
+	- widgets.attributesWidgets.ItemToolAttributesWidget
+	- widgets.attributesWidgets.ItemBundleAttributesWidget
+	- widgets.attributesWidgets.ListAttributesWidget
+	- widgets.attributesWidgets.ListROIAttributesWidget
+	- widgets.attributesWidgets.ListMeshAttributesWidget
+	- widgets.attributesWidgets.ListToolAttributesWidget
+	- widgets.attributesWidgets.ListBundleAttributesWidget
+
+- **update type hinting**
+
+	- core.sisypheConstants
+	- core.sisypheDatabase
+	- core.sisypheDicom
+	- core.sisypheDownload
+	- core.sisypheFiducialBox
+	- core.sisypheImage
+	- core.sisypheImageAttributes
+	- core.sisypheImageIO
+	- core.sisypheLUT
+	- core.sisypheMesh
+	- core.sisypheMeshIO
+	- core.sisyphePDF
+	- core.sisypheRecent
+	- core.sisypheROI
+	- core.sisypheSettings
+	- core.sisypheSheet
+	- core.sisypheStatistics
+	- core.sisypheTools
+	- core.sisypheTracts
+	- core.sisypheTransform
+	- core.sisypheVolume
+	- core.sisypheXml
+	- widgets.thresholdWidgets.ThresholdViewWidget
+
 - **updated modules**
 
 	- core.sisypheRecent
+	- core.sisypheVolume
+	- core.sisypheFudicialBox
+	- core.sisypheROI
+	- core.sisypheDownload 
 	- processing.capturedStdoutProcessing
 	- gui.dialogDeepSegmentation
 	- gui.dialogSettings
 	- gui.dialogStatResult
+	- gui.dialogDeepSegmentation
+	- gui.dialogVolumeAttributes
+	- gui.dialogPatient
+	- gui.dialogDicomQuery
 	- gui.windowSisyphe
 	- widgets.imageWidgets
 	- widgets.toolBarThumbnail
+	- widgets.sliceViewWidgets
 	- widgets.projectionViewWidget
+	- widgets.volumeViewWidget
+	- widgets.attributeWidgets
+	- widgets.databaseWidget
+	- widgets.functionsSettingsWidget
+	- widgets.LUTWidgets
+	- widgets.basicWidgets
+	- widgets.fileBrowserWidget
+
+- **updated function**
+
+	- core.sisypheDownload.installFromHost
+
+		- replace copy by copy2
 	
 - **new classes**
 
 	- processing.capturedStdoutProcessing.ProcessDeepMetastasisSegmentation
 
-		- deep learning focal metastasis segmentation using RLK-Unet model
+		- deep learning metastasis segmentation using RLK-Unet model
 
 	- gui.dialogDeepSegmentation.DialogDeepMetastasisSegmentation
 
-		- dialog for deep learning focal metastasis segmentation using RLK-Unet model
+		- dialog for deep learning metastasis segmentation using RLK-Unet model
 
 - **updated classes**
 
 	- core.sisypheRecent.SisypheRecent
 
 		- update append() method
+		- update load() method
+
+	- core.sisypheVolume.SîsypheVolume
+
+		- new getFilenamePrefixes() method
+		- new getFilenameSuffixes() method
+		- new hasFilenamePrefix() method
+		- new hasFilenameSuffix() method
+
+	- core.sisypheFudicialBox.SisypheFiducialBox
+
+		- update _firstSliceSearch() method
+		- update _markersSearch() method
+
+	- core.sisypheROI.SisypheROIDraw
+
+		- update popRedoLIFO() method
+
+	- gui.dialogDeepSegmentation.DialogDeepFCDSegmentation
+
+		- update execute() method
+
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation
+
+		- update execute() method
 
 	- gui.dialogSettings.DialogSettings
 
@@ -5935,13 +6055,28 @@ version 0.94.02, build 20/06/2026
 
 		- update setMap() method
 
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation
+
+		- update execute() method
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes
+	- gui.dialogPatient.DialogPatient
+	- gui.dialogDicomQuery.DialogDicomQueryRetrieve
+
+		- update __init__() method
+
 	- gui.windowSisyphe.WindowSisyphe
 
 		- new metastasisSegmentation() method
 		- new closeAllViews() method
+		- new _openTemplateFolder() method
+		- new _openPluginsFolder() method
 		- update _initSegmentationMenu() method
 		- update _initToolBar() method
 		- update _initWindowMenu() method
+		- update _initFileMenu() method
+		- update _initFunctionsMenu() method
+		- update join() method
 
 	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget
 
@@ -5954,18 +6089,85 @@ version 0.94.02, build 20/06/2026
 		- update displayInProjectionView() method
 		- update displayInMultiComponentView() method
 		- update mouseDoubleClickEvent() method
+		- update overlay() method
+		- update changeDatatype() method
 
 	- widgets.toolBarThumbnail.ToolBarThumbnail
 
 		- new removeReference() method
 		- new getThumbnailCount() method
 
+	- widgets.sliceViewWidgets.SliceViewWidget
+	- widgets.volumeViewWidget.VolumeViewWidget
+
+		- update replaceVolume() method
+
+	- widgets.projectionViewWidget.ProjectionViewWidget
+
+		- update replaceVolume() method
+		- update updateWindowingFromReference() method
+
 	- widgets.projectionViewWidget.IconBarMultiProjectionViewWidget
 
+		- update __init__() method
+		- update _opacityChanged() method
 		- update setVolume() method
+
+	- widgets.attributeWidgets.ListROIAttributesWidget
+
+		- update getSelectedROI() method
+
+	- widgets.attributeWidgets.ListMeshAttributesWidget
+
+		- update getSelectedMesh() method
+		- update saveOBJ() method
+		- upadte saveSTL() method
+		- update saveVTK() method
+		- update saveXMLVTK() method
+	
+	- widgets.attributeWidgets.ItemToolAttributesWidget
+
+		- update mouseDoubleClickEvent() method
+
+	- widgets.attributeWidgets.ListToolAttributesWidget
+
+		- update getSelectedTool() method
+		- update properties() method
+
+	- widgets.databaseWidget.DatabaseWidget
+
+		- update __init__() method
+
+	- widgets.functionsSettingsWidget.SettingsWidget
+
+		- update _initSettingsLayout() method
+
+	- widgets.basicWidgets.OpacityPushButton
+	- widgets.basicWidgets.WidthPushButton
+
+		- update __init__() method
+
+	- widgets.fileBrowserWidget.FileBrowserWidget
+
+		- update __init__() method
+		- update _popupFolder() method
+		- update _popupFiles() method
+		- new _openExplorer() method
+		- new _userFolder() method
+		- new _templateFolder() method
 
 - **new methods**
 
+	- core.sisypheVolume.SîsypheVolume.getPrefixes()
+	- core.sisypheVolume.SîsypheVolume.getSuffixes()
+
+		- get the list of the file name prefixes or suffixes
+
+	- core.sisypheVolume.SisypheVolume.hasPrefix()
+	- core.sisypheVolume.SisypheVolume.hasSuffix()
+
+		- check if a prefix or suffix is in the file name
+	
 	- gui.windowSisyphe.WindowSisyphe.metastasisSegmentation()
 
 		- deep learning metastasis segmentation
@@ -5973,6 +6175,14 @@ version 0.94.02, build 20/06/2026
 	- gui.windowSisyphe.WindowSisyphe.closeAllViews()
 
 		- remove reference status from thumbnail and close all views
+
+	- gui.windowSisyphe.WindowSisyphe._openTemplateFolder()
+
+		- open template folder in file explorer/finder
+
+	- gui.windowSisyphe.WindowSisyphe._openPluginsFolder()
+
+		- open plugins folder in file explorer/finder
 
 	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.removeFromAllViews()
 
@@ -5990,11 +6200,44 @@ version 0.94.02, build 20/06/2026
 
 		- number of views in which the current thumbnail is displayed
 
+	- widgets.fileBrowserWidget.FileBrowserWidget._openExplorer()
+
+		- open the current folder in file explorer/finder
+
+	- widgets.fileBrowserWidget.FileBrowserWidget._userFolder()
+
+		- select user folder (~/.PySisyphe)
+
+	- widgets.fileBrowserWidget.FileBrowserWidget._templateFolder()
+	
+		- select template folder
+
 - **updated classes**
 
 	- core.sisypheRecent.SisypheRecent.append()
 
 		- bug fix in windows platform, add filename = abspath(filename) to avoid duplicates
+
+	- core.sisypheRecent.SisypheRecent.load()
+
+		- handle exceptions related to parsing the recent.xml file
+
+	- core.sisypheFudicialBox.SisypheFiducialBox._firstSliceSearch()
+	- core.sisypheFudicialBox.SisypheFiducialBox._markersSearch()
+
+		- bug fix, remove posterior plate fiducials
+
+	- core.sisypheROI.SisypheROIDraw.popRedoLIFO()
+
+		- bug fix, replace self._roi.getNumpy[:, :, item[1]] = buff by self._roi.getNumpy()[:, :, item[1]] = buff
+
+	- gui.dialogDeepSegmentation.DialogDeepFCDSegmentation.execute()
+
+		- bug fix, size and spacing tuple to list conversion
+
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation.execute()
+
+		- add the label names of the wip model
 
 	- gui.dialogStatResult.DialogResult
 
@@ -6004,6 +6247,20 @@ version 0.94.02, build 20/06/2026
 
 		- add self._action['meta'] action
 
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation.execute()
+
+		- relabelling label volume
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes.__init__()
+
+		- change QDateEdit format (setDisplayFormat('dd/MM/yyyy'))
+		- add tooltips
+
+	- gui.dialogPatient.DialogPatient.__init__()
+	- gui.dialogDicomQuery.DialogDicomQueryRetrieve.__init__()
+
+		- change QDateEdit format (setDisplayFormat('dd/MM/yyyy'))
+
 	- gui.windowSisyphe.WindowSisyphe._initToolBar()
 
 		- add self._action['hide'] to toolbar
@@ -6011,6 +6268,21 @@ version 0.94.02, build 20/06/2026
 	- gui.windowSisyphe.WindowSisyphe._initWindowMenu()
 
 		- add self._action['hide'] action
+		- self._action['dock'].setShortcut(QKeySequence(Qt.Key.Key_Tab))
+
+	- gui.windowSisyphe.WindowSisyphe._initFileMenu()
+
+		- add self._action['template2'] = self._menu['file'].addAction('Open template folder')
+		- add self._action['template2'].triggered.connect(self._openTemplateFolder)
+
+	- gui.windowSisyphe.WindowSisyphe._initFunctionsMenu()
+
+		- add self._action['pluginfolder'] = self._menu['func'].addAction('Open plugins folder...')
+		- add self._action['pluginfolder'].triggered.connect(self._openPluginsFolder)
+
+	- gui.windowSisyphe.WindowSisyphe.join()
+
+		- create 3D volume from 2D multicomponent
 
 	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.__init__()
 
@@ -6028,6 +6300,85 @@ version 0.94.02, build 20/06/2026
 
 		- add self._action['slices'].setChecked(True)
 
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.overlay()
+
+		- add self._volume.loadTransforms() to update overlay transforms before displaying
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.changeDatatype()
+
+		- add self._lutwidget.setVolume(self._volume), update the volume of the lutwidget
+
+	- widgets.sliceViewWidgets.SliceViewWidget.replaceVolume()
+	- widgets.projectionViewWidget.ProjectionViewWidget.replaceVolume()
+	- widgets.volumeViewWidget.VolumeViewWidget.replaceVolume()
+
+		- bug fix, update info labels
+
+	- widgets.projectionViewWidget.ProjectionViewWidget.updateWindowingFromReference()
+
+		- bug fix, update range values before window
+
+	- widgets.projectionViewWidget.IconBarMultiProjectionViewWidget.__init__()
+
+		- add submenu.aboutToShow.connect(lambda: self._slider.setFocus()) to move keyboard focus to slider
+
+	- widgets.projectionViewWidget.IconBarMultiProjectionViewWidget._opacityChanged()
+
+		- display the opacity value in a tooltip
+
 	- widgets.projectionViewWidget.IconBarMultiProjectionViewWidget.setVolume()
 
 		- Set the opacity to 100% for ICBM152 volume
+
+	- widgets.attributeWidgets.ItemToolAttributesWidget.mouseDoubleClickEvent()
+
+		- align view to LineWidget trajectory
+
+	- widgets.attributeWidgets.ListROIAttributesWidget.getSelectedROI()
+	- widgets.attributeWidgets.ListMeshAttributesWidget.getSelectedMesh()
+	- widgets.attributeWidgets.ListToolAttributesWidget.getSelectedTool()
+	
+		- bug fix, return None if no selected roi/mesh/tool
+
+	- widgets.attributeWidgets.ListMeshAttributesWidget.saveOBJ()
+	- widgets.attributeWidgets.ListMeshAttributesWidget.saveSTL()
+	- widgets.attributeWidgets.ListMeshAttributesWidget.saveVTK()
+	- widgets.attributeWidgets.ListMeshAttributesWidget.saveXMLVTK()
+
+		- bug fix, remove item and replace item by mesh
+
+	- widgets.attributeWidgets.ListToolAttributesWidget.properties()
+
+		- copy properties from selected tool
+
+	- widgets.databaseWidget.DatabaseWidget.__init__()
+
+		- change QDateEdit format (setDisplayFormat('dd/MM/yyyy'))
+
+	- widgets.functionsSettingsWidget.SettingsWidget._initSettingsLayout()
+
+		- change QDateEdit format (setDisplayFormat('dd/MM/yyyy'))
+
+	- widgets.basicWidgets.OpacityPushButton.__init__()
+	- widgets.basicWidgets.WidthPushButton.__init__()
+
+		- add self._popup.aboutToShow.connect(lambda: self._slider.setFocus()) to move keyboard focus to slider
+
+	- widgets.fileBrowserWidget.FileBrowserWidget.__init__()
+
+		- add self.actions['explorer'] = QAction('Open current folder in file explorer/finder...')
+		- add self.actions['user'] = QAction('Go to user folder...')
+		- add self.actions['template'] = QAction('Go to template folder...')
+		- add self.actions['explorer'].triggered.connect(self._openExplorer)
+		- add self.actions['user'].triggered.connect(self._userFolder)
+		- add self.actions['template'].triggered.connect(self._templateFolder)
+
+	- widgets.fileBrowserWidget.FileBrowserWidget._popupFolder()
+
+		- add self.actions['explorer'] to popup menu
+		- add self.actions['user'] to popup menu
+		- add self.actions['template'] to popup^menu
+
+	- widgets.fileBrowserWidget.FileBrowserWidget._popupFiles()
+
+		- add self.actions['explorer'] to popup menu

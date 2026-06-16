@@ -122,7 +122,7 @@ Orthogonal view widget includes a vertical icon bar to the left:
 	- **No action**, exit previous action mode.
 
 |cursor|
-	Cursor is drawn with three intersecting orthognal lines in the 3D renderer cell. It associates a sphere with the center projected onto the intersection of the three axis lines. Left-click to display a menu to select sphere visbility and radius.
+	The cursor is drawn as three intersecting orthognal lines in the 3D renderer cell. It associates a sphere with the center projected onto the intersection of the three axis lines. Left-click to display a menu to select sphere visbility and radius.
 
 	- **Cursor radius**, to edit the sphere radius in mm.
 	- **Cursor opacity**, to edit the sphere opacity (0.0 tansparent, 1.0 opaque).

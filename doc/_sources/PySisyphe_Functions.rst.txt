@@ -51,7 +51,7 @@ PySisyphe manages both single- and multi-component volumes:
 - a single-component volume can be either a 2D or 3D volume, and its voxel value is a scalar.
 - a multi-component is a 4D volume (time series, perfusion series, diffusion series), and its voxel value is a vector.
 
-This menu displays the **Join single component volume(s)** dialog box to create a multi-component volume from a list of single-component volumes.
+This menu displays the **Join single component volume(s)** dialog box to create a multi-component volume from a list of single-component volumes. If the single-component volumes are in 2D, you can choose to create either a 3D single-component volume or a 2D multi-component volume.
 
 Add PySisyphe single-component volumes in the :ref:`widgets-section-multi-file` widget.
 

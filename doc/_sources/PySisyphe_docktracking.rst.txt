@@ -191,7 +191,7 @@ Bundle item widgets:
 	Left-click to toogle Bundle visibility in the view widget(s).
 
 |opacity|
-	Left-click to select Bundle opacity in the view widget(s) (0.0 transparent, 1.0 opaque).
+	Left-click to select Bundle opacity in the view widget(s) (0.0 transparent, 1.0 opaque). Left-click on the slider to increment or decrement the opacity by ten percent. There are also keyboard shortcuts for the slider. The left or up arrow keys decrement the opacity by one percent. The right or down arrow keys increment the opacity by one percent. The PageUp key decrements the opacity by ten percent. The PageDown key increments the opacity by ten percent. The Home key sets the opacity to zero percent (transparent). The End key sets the opacity to one hundred percent (opaque).
 
 |palette|
 	Left-click to display a Bundle color dialog.

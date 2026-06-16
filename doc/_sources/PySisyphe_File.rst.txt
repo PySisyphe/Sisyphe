@@ -8,6 +8,7 @@ File menu
 - :ref:`menu-section-openformat`
 - :ref:`menu-section-recent`
 - :ref:`menu-section-openuser`
+- :ref:`menu-section-opentemplate2`
 - :ref:`menu-section-save`
 - :ref:`menu-section-saveall`
 - :ref:`menu-section-saveas`
@@ -104,6 +105,13 @@ This folder is used to store:
 - "samples" subfolder, default folder for saving samples downloaded from :ref:`menu-section-download`.
 - "segmentation" subfolder, default folder for saving registration based struct segmentation (menu Segmentation -> Registration based segmentation). Shortcuts to the structs in this folder are available in the menu **Segmentation > Structs > User**.
 - "workflow" subfolder, default folder for saving workflow processings (menu **Functions > Workflow processing**). Shortcuts to the workflows in this folder are available in the menu **Functions > Workflow**.
+
+.. _menu-section-opentemplate2:
+
+Open template folder
+--------------------
+
+Open the PySisyphe template folder in the File Manager (Windows) or Finder (MacOS).
 
 .. _menu-section-save:
 
@@ -536,7 +544,7 @@ Dicom study queries use the following items: *patient identity* (lastname, first
 
 Left-click **Search** to run a query with the current items. Series found were displayed in the first list box with the following dicom study fields: *accession number*, *lastname*, *firstname*, *date of birth*, *modality*, *study date* and *description*. Left-click on a study row to select it. The available series in this study will then be displayed in the second list box, below the first. This list will contain the following dicom series fields: *series number* and *description*. Each series is headed with a checkbox.
 
-You can choose the directory where downloaded DICOM files are saved with the **Dicom folder** :ref:`widgets-section-single-file` widget. These files are saved by default in the "dicom" sub-folder of the PySisyphe user folder ($User/.PySisyphe).
+You can choose the directory where downloaded DICOM files are saved with the **Dicom folder** :ref:`widgets-section-single-file` widget. These files are saved by default in the "dicom" sub-folder of the PySisyphe user folder (~/.PySisyphe).
 
 Left-click on **DICOM SCP Host Settings** button to toggle visibility of the PACS server parameters.
 

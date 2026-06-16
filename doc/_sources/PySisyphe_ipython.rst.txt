@@ -98,12 +98,12 @@ This popup menu with autocomplete suggestions also appears automatically after t
 
    args:
    
-      **-p** prompt, str
-      **-i** image input to analyze, PIL.Image
-      **-pdf** input to analyze, str or pathlib.Path
-      **-json**, result in json format
-      **-model**, print current ai model
-      **-key**, print current api key
+   - **-p** prompt, str
+   - **-i** image input to analyze, PIL.Image
+   - **-pdf** input to analyze, str or pathlib.Path
+   - **-json**, result in json format
+   - **-model**, print current ai model
+   - **-key**, print current api key
 
 **%ls**
    List directory contents.
@@ -203,8 +203,8 @@ This popup menu with autocomplete suggestions also appears automatically after t
 
    args:
    
-      **?** or **help** 
-      no arg or package names separated by spaces
+   - **?** or **help** 
+   - no arg or package names separated by spaces
 
 **%run <filename.py>**
    Run the named file <filename.py> inside IPython as a program.

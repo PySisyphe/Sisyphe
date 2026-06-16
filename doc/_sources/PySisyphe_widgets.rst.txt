@@ -62,7 +62,7 @@ Thresholding
 This widget has a **view box** on the left, a **threshold selection box** on the right and a **button bar** at the bottom.
 
 **view box**
-	Shows volume with overlaid ROI in red. Voxels of this ROI have a volume signal in the range of the thresholds defined in the threshold selection box, i.e. ROI is the result of volume thresholding. This view is updated in real time as thresholds change.
+	Shows volume with overlaid ROI in red. Voxels of this ROI have a signal in the range of the thresholds defined in the threshold selection box, i.e. ROI is the result of volume thresholding. This view is updated in real time as thresholds change.
 
 **threshold selection box**
 	This box shows the extent of thresholds as a yellow frame overlaid on the volume histogram. The left edge of the frame represents the lower threshold, the right edge the upper threshold. Threshold values are written vertically in the center of each edge. The frame can be moved by pressing the left mouse button and dragging. Press the left mouse button and drag to move the left or right border (click inner part inside the frame).

@@ -67,6 +67,8 @@ Left-click to select a target or a trajectory element in the list (blue outline 
 |settings|
 	Left-click to show a dialog to edit Target/Trajectory properties:
 
+	The displayed settings are those of the selected tool.
+
 	- **Target text**, to edit Target/Trajectory name displayed in the view widget.
 	- **Font size**, to define font size used to display Target/Trajectory name in the view widget.
 	- **Font family**, combobox to define font family (**Arial**, **Courier** or **Times**) used to display Target/Trajectory name in the view widget.
@@ -141,9 +143,11 @@ Left-click to select a target or a trajectory element in the list (blue outline 
 Target/Trajectory item
 ----------------------
 
+Double-click a Target/Trajectory tool to set the cursor position on the target and align the three orthogonal 2D views of the :ref:`page-orthogonalview` to the trajectory tool axe (see the :ref:`section <ortho-section-align>` to select the alignment of the orthogonal view widget).
+
 **Common options**:
 
-|view|
+|view|:ref:`
 	Left-click to toogle Target/Trajectory visibility in the view widget(s).
 
 |ftarget|
@@ -153,7 +157,7 @@ Target/Trajectory item
 	Left-click to toogle Target/Trajectory lock. A locked tool can no longer be moved by the mouse in the viewing widget(s).
 
 |opacity|
-	Left-click to select Target/Trajectory opacity in the view widget(s) (0.0 transparent, 1.0 opaque).
+	Left-click to select Target/Trajectory opacity in the view widget(s) (0.0 transparent, 1.0 opaque). Left-click on the slider to increment or decrement the opacity by ten percent. There are also keyboard shortcuts for the slider. The left or up arrow keys decrement the opacity by one percent. The right or down arrow keys increment the opacity by one percent. The PageUp key decrements the opacity by ten percent. The PageDown key increments the opacity by ten percent. The Home key sets the opacity to zero percent (transparent). The End key sets the opacity to one hundred percent (opaque).
 
 |palette|
 	Left-click to display a Target/Trajectory color dialog.

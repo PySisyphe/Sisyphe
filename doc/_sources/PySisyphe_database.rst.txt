@@ -13,7 +13,7 @@ A patient database manager is provided by PySisyphe from the "Database" tab of t
 
    - **Lastname**, check the box and edit a patient's lastname in the edit box.
    - **Firstname**, check the box and edit a patient's firstname in the edit box.
-   - **Date of birthday**, check the box and chosse a date of birthday.
+   - **Date of birthday**, check the box and choose a date of birthday.
    - **Search**, run the database query with the identity filter.
 
 2) List of patients selected by database query bar (below query bar, on the left). The list has three columns: *Lastname*, *Firstname* and *Date of birthday*. Left-click on a column header to sort patients by identity. Left-click to select a patient row. 

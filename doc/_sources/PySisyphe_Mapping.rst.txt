@@ -235,7 +235,7 @@ Left-click **Close** button to exit dialog box.
 Models
 ------
 
-This menu displays PySisyphe statistical model files (.xmodel) in the "models" subfolder in the PySisyphe user folder ($User/.PySisyphe).
+This menu displays PySisyphe statistical model files (.xmodel) in the "models" subfolder in the PySisyphe user folder (~/.PySisyphe).
 
 Select a model item to open it in the :ref:`menu-section-fmri-model` or :ref:`menu-section-glm-model` dialog box.
 
