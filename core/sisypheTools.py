@@ -100,16 +100,16 @@ Class hierarchy
 vectorFloat2 = list[float] | tuple[float, float]
 vectorFloat3 = list[float] | tuple[float, float, float]
 
-_TOL = 20
-_HSIZE = 20.0
-_HLWIDTH = 2.0
-_PSIZE = 2.0
-_LWIDTH = 5.0
-_ALPHA = 1.0
-_FSIZE = 12
-_FFAMILY = 'Arial'
-_DEFAULTCOLOR = (1.0, 1.0, 1.0)   # White
-_DEFAULTSCOLOR = (1.0, 1.0, 1.0)  # Red
+_TOL: int = 20
+_HSIZE: float = 20.0
+_HLWIDTH: float = 2.0
+_PSIZE: float = 2.0
+_LWIDTH: float = 5.0
+_ALPHA: float = 1.0
+_FSIZE: int = 12
+_FFAMILY: str = 'Arial'
+_DEFAULTCOLOR: tuple[float, float, float] = (1.0, 1.0, 1.0)   # White
+_DEFAULTSCOLOR: tuple[float, float, float] = (1.0, 1.0, 1.0)  # Red
 
 
 class NamedWidget(object):
@@ -151,9 +151,9 @@ class NamedWidget(object):
         name : str
             tool name
         """
-        self._name = name
-        self._3D = False
-        self._alpha = 1.0
+        self._name: str = name
+        self._3D: bool = False
+        self._alpha: float = 1.0
 
     # Public methods
 
@@ -1832,9 +1832,9 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
     Last revision: 04/12/2025
     """
 
-    _FILEEXT = '.xpoint'
-    _DEFAULTSPHERERADIUS = 2
-    _DEFAULTSPHERERESOLUTION = 32
+    _FILEEXT: str = '.xpoint'
+    _DEFAULTSPHERERADIUS: int = 2
+    _DEFAULTSPHERERESOLUTION: int = 32
 
     # Class methods
 
@@ -1890,18 +1890,18 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         # noinspection PyTypeChecker
         self.AddObserver('DisableEvent', self._onDisableEvent)
 
-        self._legend = legend
-        self._prefix = ''
-        self._suffix = ''
-        self._hsize = _HSIZE
+        self._legend: str = legend
+        self._prefix: str = ''
+        self._suffix: str = ''
+        self._hsize: int = _HSIZE
         # 0 = static (absolute position), 1 = dynamic (relative or weighted position)
-        self._postype = 0
+        self._postype: int = 0
 
-        self._targetText = vtkBillboardTextActor3D()
-        self._sphere = vtkSphereSource()
-        self._sphereActor = vtkActor()
-        self._cutter = vtkCutter()
-        self._contourActor = vtkActor()
+        self._targetText: vtkBillboardTextActor3D = vtkBillboardTextActor3D()
+        self._sphere: vtkSphereSource = vtkSphereSource()
+        self._sphereActor: vtkActor = vtkActor()
+        self._cutter: vtkCutter = vtkCutter()
+        self._contourActor: vtkActor = vtkActor()
         self.setDefaultRepresentation()
 
         self._targetText.SetInput('{}\n{}'.format(legend, self.getName()))
@@ -1917,7 +1917,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         self._sphere.SetPhiResolution(self._DEFAULTSPHERERESOLUTION)
         self._sphere.SetRadius(self._DEFAULTSPHERERADIUS)
 
-        mapper = vtkPolyDataMapper()
+        mapper: vtkPolyDataMapper = vtkPolyDataMapper()
         # noinspection PyArgumentList
         mapper.SetInputConnection(self._sphere.GetOutputPort())
         self._sphereActor.SetMapper(mapper)
@@ -1929,7 +1929,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         # noinspection PyArgumentList
         self._cutter.SetInputConnection(self._sphere.GetOutputPort())
 
-        mapper = vtkDataSetMapper()
+        mapper: vtkDataSetMapper = vtkDataSetMapper()
         # noinspection PyArgumentList
         mapper.SetInputConnection(self._cutter.GetOutputPort())
         mapper.ScalarVisibilityOff()
@@ -3605,9 +3605,9 @@ class LineWidget(vtkLineWidget2, NamedWidget):
     Last revision: 13/01/2026
     """
 
-    _FILEEXT = '.xline'
-    _DEFAULTTUBERADIUS = 2
-    _DEFAULTTUBESIDES = 32
+    _FILEEXT: str = '.xline'
+    _DEFAULTTUBERADIUS: int = 2
+    _DEFAULTTUBESIDES: int = 32
 
     # Class methods
 
@@ -3663,18 +3663,18 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         # noinspection PyTypeChecker
         self.AddObserver('DisableEvent', self._onDisableEvent)
 
-        self._legend = list(legend)
-        self._prefix = ['', '']
-        self._suffix = ['', '']
+        self._legend: list[str] = list(legend)
+        self._prefix: list[str] = ['', '']
+        self._suffix: list[str] = ['', '']
         # 0 = static (absolute position), 1 = dynamic (relative or weighted position)
         self._postype = 0
 
-        self._targetText = vtkBillboardTextActor3D()
-        self._entryText = vtkBillboardTextActor3D()
-        self._tube = vtkTubeFilter()
-        self._tubeActor = vtkActor()
-        self._cutter = vtkCutter()
-        self._contourActor = vtkActor()
+        self._targetText: vtkBillboardTextActor3D = vtkBillboardTextActor3D()
+        self._entryText: vtkBillboardTextActor3D = vtkBillboardTextActor3D()
+        self._tube: vtkTubeFilter = vtkTubeFilter()
+        self._tubeActor: vtkActor = vtkActor()
+        self._cutter: vtkCutter = vtkCutter()
+        self._contourActor: vtkActor = vtkActor()
         self.setDefaultRepresentation()
 
         self._targetText.SetInput('{}\n{}'.format(legend[0], self.getName()))
@@ -3697,7 +3697,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
 
         self._tube.SetRadius(self._DEFAULTTUBERADIUS)
         self._tube.SetNumberOfSides(self._DEFAULTTUBESIDES)
-        mapper = vtkPolyDataMapper()
+        mapper: vtkPolyDataMapper = vtkPolyDataMapper()
         # noinspection PyArgumentList
         mapper.SetInputConnection(self._tube.GetOutputPort())
 
@@ -3711,7 +3711,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         # noinspection PyArgumentList
         self._cutter.SetInputConnection(self._tube.GetOutputPort())
 
-        mapper = vtkDataSetMapper()
+        mapper: vtkDataSetMapper = vtkDataSetMapper()
         # noinspection PyArgumentList
         mapper.SetInputConnection(self._cutter.GetOutputPort())
         mapper.ScalarVisibilityOff()
@@ -6190,7 +6190,7 @@ class ToolWidgetCollection(object):
     __slots__ = ['_referenceID', '_filename', '_tools', '_index', '_color', '_scolor',
                  '_purpose', '_lwidth', '_alpha', '_ffamily', '_fsize', '_interactor']
 
-    _FILEEXT = '.xtools'
+    _FILEEXT: str = '.xtools'
 
     # Class methods
 
@@ -6234,24 +6234,24 @@ class ToolWidgetCollection(object):
             vtkRenderWindowInteractor of the tool widgets in the container (default None)
         """
         self._tools = list()
-        self._index = 0
-        self._color = _DEFAULTCOLOR
-        self._scolor = _DEFAULTSCOLOR
-        self._lwidth = _LWIDTH
-        self._alpha = _ALPHA
-        self._fsize = _FSIZE
-        self._ffamily = _FFAMILY
-        self._purpose = ''
+        self._index: int = 0
+        self._color: tuple[float, float, float] = _DEFAULTCOLOR
+        self._scolor: tuple[float, float, float] = _DEFAULTSCOLOR
+        self._lwidth: float = _LWIDTH
+        self._alpha: float = _ALPHA
+        self._fsize: int = _FSIZE
+        self._ffamily: str = _FFAMILY
+        self._purpose: str = ''
         self._interactor = interactor
         # reference SisypheVolume ID
         if isinstance(volume, SisypheVolume):
-            self._referenceID = volume.getID()
+            self._referenceID: str | None = volume.getID()
             if volume.hasFilename():
                 filename, ext = splitext(volume.getFilename())
                 filename += self._FILEEXT
         else:
-            self._referenceID = None
-            self._filename = ''
+            self._referenceID: str | None = None
+            self._filename: str = ''
 
     # < Revision 17/02/2026
     # add __str__ method

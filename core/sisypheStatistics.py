@@ -2334,7 +2334,7 @@ class SisypheDesign(object):
 
     # Class constants
 
-    _FILEEXT = '.xmodel'
+    _FILEEXT: str = '.xmodel'
 
     # Class method
 
@@ -2438,27 +2438,27 @@ class SisypheDesign(object):
         """
         SisypheDesign instance constructor.
         """
-        self._grp = None  # group names
-        self._sbj = None  # subject names
-        self._cnd = None  # condition names
-        self._obs = dict()  # (Key (group, subj, cond), list of filenames)
-        self._cobs = dict()  # (Key (group, subj, cond), number of filenames)
-        self._cdesign = None  # list[(name: str, estimable: int)] of design matrix columns
-        self._design = None  # numpy.ndarray, design matrix
-        self._ancova = 0  # 0 ANCOVA global, 1 by group, 2 by subject, 3 by condition
-        self._norm = 0  # 0 no, 1 proportional scaling, 2 roi, 3 ancova
-        self._age = 0  # Age global covariate: 0 No, 1 global, 2 by group, by subject, by condition
-        self._fmri = False  # fMRI model ?
-        self._dancova = False  # ANCOVA model ?
-        self._beta = None  # SisypheVolume
-        self._variance = None  # SisypheVolume, pooled variance volume
-        self._vols = None  # SisypheVolume, observations
-        self._mean = None  # SisypheVolume, mean volume of observations
-        self._mask = None  # SisypheVolume, mask of analysis volume
-        self._autocorr = None  # (float, float, float)
-        self._filename = ''
-        self._roi1 = ''
-        self._roi2 = ''
+        self._grp: list[str] | None = None  # group names
+        self._sbj: list[str] | None  = None  # subject names
+        self._cnd: list[str] | None  = None  # condition names
+        self._obs: dict[tuple[str, str, str], list[str]] = dict()  # (Key (group, subj, cond), list of filenames)
+        self._cobs: dict[tuple[str, str, str], list[int]] = dict()  # (Key (group, subj, cond), number of filenames)
+        self._cdesign: list[tuple[str, int]] = None  # list[(name: str, estimable: int)] of design matrix columns
+        self._design: ndarray = None  # numpy.ndarray, design matrix
+        self._ancova: int = 0  # 0 ANCOVA global, 1 by group, 2 by subject, 3 by condition
+        self._norm: int = 0  # 0 no, 1 proportional scaling, 2 roi, 3 ancova
+        self._age: int = 0  # Age global covariate: 0 No, 1 global, 2 by group, by subject, by condition
+        self._fmri: bool = False  # fMRI model ?
+        self._dancova: bool = False  # ANCOVA model ?
+        self._beta: SisypheVolume | None = None  # SisypheVolume
+        self._variance: SisypheVolume | None = None  # SisypheVolume, pooled variance volume
+        self._vols: SisypheVolume | None = None  # SisypheVolume, observations
+        self._mean: SisypheVolume | None = None  # SisypheVolume, mean volume of observations
+        self._mask: SisypheVolume | None = None  # SisypheVolume, mask of analysis volume
+        self._autocorr: tuple[float, float, float] = None  # (float, float, float)
+        self._filename: str = ''
+        self._roi1: str = ''
+        self._roi2: str = ''
 
     def __str__(self) -> str:
         """
@@ -2541,6 +2541,7 @@ class SisypheDesign(object):
             for i in range(self._design.shape[0]):
                 l = ''
                 for j in range(self._design.shape[1]):
+                    # noinspection PyStringFormat
                     l += '{:.1f} '.format(self._design[i, j])
                 buff += l + '\n'
         return buff
@@ -3650,6 +3651,7 @@ class SisypheDesign(object):
             # add box car vector to design matrix
             if boxcar is not None:
                 for i in range(len(self._cdesign)):
+                    # noinspection PyUnresolvedReferences
                     name = self._cdesign[i][0].split()
                     if len(name) > 1 and name[0] == 'boxcar':
                         # < Revision 05/02/2026
@@ -3700,6 +3702,7 @@ class SisypheDesign(object):
             # add high pass vector to design matrix
             if hpass is not None:
                 for i in range(len(self._cdesign)):
+                    # noinspection PyUnresolvedReferences
                     name = self._cdesign[i][0].split()
                     if len(name) > 0 and name[0] != 'boxcar':
                         # < Revision 05/02/2026
@@ -3729,6 +3732,7 @@ class SisypheDesign(object):
                                     vhpass = vhpass.reshape((n2, 1))
                                     # Revision 15/11/2024 >
                                     self._design = append(self._design, vhpass, axis=1)
+                                    # noinspection PyUnresolvedReferences
                                     cname = '{} {}'.format('highpass#{}'.format(k + 1), self._cdesign[i][0])
                                     self._cdesign.append((cname, 0))
                             else:
@@ -3884,10 +3888,12 @@ class SisypheDesign(object):
                     sd = cov.std()
                     cov = (cov - m) / sd
                 for i in range(len(self._cdesign)):
+                    # noinspection PyUnresolvedReferences
                     if self._cdesign[i][0] in self._grp:
                         cov2 = self._design[:, i] * cov
                         cov2 = cov2.reshape((n, 1))
                         self._design = append(self._design, cov2, axis=1)
+                        # noinspection PyUnresolvedReferences
                         cname = '{} {}'.format(name, self._cdesign[i][0])
                         if estimable: estimable = 3
                         else: estimable = 0
@@ -3933,10 +3939,12 @@ class SisypheDesign(object):
                     sd = cov.std()
                     cov = (cov - m) / sd
                 for i in range(len(self._cdesign)):
+                    # noinspection PyUnresolvedReferences
                     if self._cdesign[i][0] in self._sbj:
                         cov2 = self._design[:, i] * cov
                         cov2 = cov2.reshape((n, 1))
                         self._design = append(self._design, cov2, axis=1)
+                        # noinspection PyUnresolvedReferences
                         cname = '{} {}'.format(name, self._cdesign[i][0])
                         if estimable: estimable = 4
                         else: estimable = 0
@@ -3982,10 +3990,12 @@ class SisypheDesign(object):
                     sd = cov.std()
                     cov = (cov - m) / sd
                 for i in range(len(self._cdesign)):
+                    # noinspection PyUnresolvedReferences
                     if self._cdesign[i][0] in self._cnd:
                         cov2 = self._design[:, i] * cov
                         cov2 = cov2.reshape((n, 1))
                         self._design = append(self._design, cov2, axis=1)
+                        # noinspection PyUnresolvedReferences
                         cname = '{} {}'.format(name, self._cdesign[i][0])
                         if estimable: estimable = 5
                         else: estimable = 0
@@ -4790,6 +4800,7 @@ class SisypheDesign(object):
                 root.appendChild(effects)
                 for i in range(len(self._cdesign)):
                     node = doc.createElement('effect')
+                    # noinspection PyTupleAssignmentBalance
                     name, estim = self._cdesign[i]
                     node.setAttribute('column', str(i))
                     node.setAttribute('name', name)

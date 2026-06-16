@@ -122,7 +122,7 @@ Class hierarchy
              -> ExportToRTStruct
 """
 
-_DICOMMODALITIES = ['CT', 'MR', 'NM', 'PT', 'OT', 'RTDOSE', 'RTSTRUCT']
+_DICOMMODALITIES: list[str] = ['CT', 'MR', 'NM', 'PT', 'OT', 'RTDOSE', 'RTSTRUCT']
 
 
 def getDicomModalities() -> list[str]:
@@ -307,6 +307,9 @@ def getAcquisitionFromDicom(filename: str, useacqnumber: bool = False) -> Sisyph
                         elif ('DTI' or 'DWI' or 'DIFFUSION') in sq: sequence = acq.DWI
                         elif 'B0' in sq: sequence = acq.B0
                         elif ('PD' or 'DP') in sq: sequence = acq.PD
+                        # < Revision 30/05/2026
+                        elif 'ASL' in sq: sequence = acq.ASL
+                        # Revision 30/05/2026 >
                         else: sequence = ds['SeriesDescription'].value
                         # < Revision 26/09/2024
                         # Add acquisition number
@@ -697,7 +700,7 @@ class DicomToXmlDicom(object):
     """
     __slots__ = ['_uid', '_filenames', '_xmldirectory', '_xmlfilename']
 
-    _FILEEXT = '.xdcm'
+    _FILEEXT: str = '.xdcm'
 
     # Class methods
 
@@ -1247,7 +1250,7 @@ class XmlDicom(object):
     """
     __slots__ = ['_doc']
 
-    _FILEEXT = '.xdcm'
+    _FILEEXT: str = '.xdcm'
 
     # Class method
 
@@ -1870,17 +1873,17 @@ class DicomUIDGenerator(object):
                  '_currentdate', '_currentstudytime',
                  '_currentseriestime', '_currentinstancetime']
 
-    _IMPLEMENTATIONCLASSUID = '1.2.826.0.1.3680043.1.2.100.6.40.0.76'
-    _IMPLEMENTATIONVERSIONNAME = 'PySisyphe'
-    _OTCLASSUID = '1.2.840.10008.5.1.4.1.1.7'  # Secondary capture Image Storage
-    _MRCLASSUID = '1.2.840.10008.5.1.4.1.1.4'
-    _CTCLASSUID = '1.2.840.10008.5.1.4.1.1.2'
-    _NMCLASSUID = '1.2.840.10008.5.1.4.1.1.20'
-    _PTCLASSUID = '1.2.840.10008.5.1.4.1.1.128'
-    _RTIMAGESOPCLASSUID = '1.2.840.10008.5.1.4.1.1.481.1'
-    _RTDOSESOPCLASSUID = '1.2.840.10008.5.1.4.1.1.481.2'
-    _RTSTRUCTCLASSUID = '1.2.840.10008.5.1.4.1.1.481.3'
-    _ROOTUID = '1.2.840.12052'
+    _IMPLEMENTATIONCLASSUID: str = '1.2.826.0.1.3680043.1.2.100.6.40.0.76'
+    _IMPLEMENTATIONVERSIONNAME: str = 'PySisyphe'
+    _OTCLASSUID: str = '1.2.840.10008.5.1.4.1.1.7'  # Secondary capture Image Storage
+    _MRCLASSUID: str = '1.2.840.10008.5.1.4.1.1.4'
+    _CTCLASSUID: str = '1.2.840.10008.5.1.4.1.1.2'
+    _NMCLASSUID: str = '1.2.840.10008.5.1.4.1.1.20'
+    _PTCLASSUID: str = '1.2.840.10008.5.1.4.1.1.128'
+    _RTIMAGESOPCLASSUID: str = '1.2.840.10008.5.1.4.1.1.481.1'
+    _RTDOSESOPCLASSUID: str = '1.2.840.10008.5.1.4.1.1.481.2'
+    _RTSTRUCTCLASSUID: str = '1.2.840.10008.5.1.4.1.1.481.3'
+    _ROOTUID: str = '1.2.840.12052'
 
     # Class methods
 
@@ -2055,7 +2058,7 @@ class DicomUIDGenerator(object):
          """
         return cls._ROOTUID
 
-    # Special method
+    # Special methods
 
     """
     Private attributes
@@ -2078,16 +2081,16 @@ class DicomUIDGenerator(object):
         """
         super().__init__()
 
-        self._instanceindex = 0
-        self._seriesindex = 0
-        self._currentstudy = ''
-        self._currentseries = ''
-        self._currentinstance = ''
-        self._currentframe = ''
-        self._currentdate = ''
-        self._currentstudytime = ''
-        self._currentseriestime = ''
-        self._currentinstancetime = ''
+        self._instanceindex: int = 0
+        self._seriesindex: int = 0
+        self._currentstudy: str = ''
+        self._currentseries: str = ''
+        self._currentinstance: str = ''
+        self._currentframe: str = ''
+        self._currentdate: str = ''
+        self._currentstudytime: str = ''
+        self._currentseriestime: str = ''
+        self._currentinstancetime: str = ''
 
     # Public methods
 
@@ -2307,9 +2310,9 @@ class ExportToDicom(object):
         """
         super().__init__()
 
-        self._volume = None
-        self._xmlref = None
-        self._dcmdirectory = ''
+        self._volume: SisypheVolume | None = None
+        self._xmlref: XmlDicom | None = None
+        self._dcmdirectory: str = ''
 
     # Public methods
 
@@ -2617,11 +2620,11 @@ class ImportFromDicom(object):
     """
     Private attributes
 
-    _reflist        list[(str, str, str)], one item for each filename,
+    _reflist        list[tuple[str, str, str]], one item for each filename,
                     instance: str, Dicom SOPInstanceUID value (0x0008, 0x0018)
                     filename: str
                     position: str, Dicom ImagePositionPatient (0x0020, 0x0032)
-    _refframeuid    str, frame of reference uid of Dicom series to import
+    _refuid         str, frame of reference uid of Dicom series to import
     _seriesuid      str, series uid of Dicom series to import
     _folder         str, save folder
     _refvol         SisypheVolume, converted Dicom
@@ -2634,12 +2637,12 @@ class ImportFromDicom(object):
         """
         super().__init__()
 
-        self._reflist = list()
-        self._refuid = ''
-        self._seriesuid = ''
-        self._folder = ''
-        self._refvol = None
-        self._savetag = False
+        self._reflist: list[tuple[str, str, str]] = list()
+        self._refuid: str = ''
+        self._seriesuid: str = ''
+        self._folder: str = ''
+        self._refvol: SisypheVolume | None = None
+        self._savetag: bool = False
 
     # Public methods
 
@@ -2963,8 +2966,8 @@ class ImportFromRTDose(ImportFromDicom):
         """
         super().__init__()
 
-        self._rtdosefile = list()
-        self._rtdosevol = SisypheVolumeCollection()
+        self._rtdosefile: list[str] = list()
+        self._rtdosevol: SisypheVolumeCollection = SisypheVolumeCollection()
 
     # Public methods
 
@@ -3190,8 +3193,8 @@ class ImportFromRTStruct(ImportFromDicom):
         """
         super().__init__()
 
-        self._rtstructfile = list()
-        self._rtroi = SisypheROICollection()
+        self._rtstructfile: list[str] = list()
+        self._rtroi: SisypheROICollection = SisypheROICollection()
 
     # Public methods
 

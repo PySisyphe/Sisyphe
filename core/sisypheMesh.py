@@ -151,7 +151,7 @@ class SisypheMesh(object):
     __slots__ = ['_name', '_filename', '_referenceID', '_polydata', '_mapper', '_actor']
     _counter: int = 0
 
-    _FILEEXT = '.xmesh'
+    _FILEEXT: str = '.xmesh'
 
     # Class methods
 
@@ -252,10 +252,10 @@ class SisypheMesh(object):
         # Revision 21/02/2025 >
         self._name: str = 'Mesh'
         self._filename: str = ''
-        self._referenceID = ''  # reference SisypheVolume ID
-        self._polydata = None
-        self._mapper = vtkPolyDataMapper()
-        self._actor = vtkActor()
+        self._referenceID: str = ''  # reference SisypheVolume ID
+        self._polydata: vtkPolyData | None = None
+        self._mapper: vtkPolyDataMapper = vtkPolyDataMapper()
+        self._actor: vtkActor = vtkActor()
 
     def __str__(self) -> str:
         """
@@ -3735,8 +3735,8 @@ class SisypheMeshCollection(object):
         SisypheMeshCollection instance constructor.
         """
         self._meshes: list[SisypheMesh] = list()
-        self._index = 0
-        self._referenceID = ''
+        self._index: int = 0
+        self._referenceID: str = ''
 
     def __str__(self) -> str:
         """

@@ -152,7 +152,7 @@ class SisypheTransform(object):
 
     # Class constant
 
-    _FILEEXT = '.xtrf'
+    _FILEEXT: str = '.xtrf'
 
     # Class methods
 
@@ -273,20 +273,20 @@ class SisypheTransform(object):
         parent : Sisyphe.core.sisypheVolume.SisypheVolume | None
             reference volume (default None)
         """
-        self._transform = sitkAffineTransform(3)
-        self._field = None
-        self._fieldname = ''
+        self._transform: sitkAffineTransform = sitkAffineTransform(3)
+        self._field: sitkDisplacementFieldTransform | None = None
+        self._fieldname: str = ''
         if parent and isinstance(parent, SisypheVolume):
-            self._ID = parent.getID()
-            self._name = parent.getName()
-            self._size = parent.getSize()
-            self._spacing = parent.getSpacing()
+            self._ID: str = parent.getID()
+            self._name: str = parent.getName()
+            self._size: tuple[int, int, int] = parent.getSize()
+            self._spacing: tuple[float, float, float] = parent.getSpacing()
             self._transform.SetCenter(parent.getCenter())
         else:
-            self._ID = ''  # moving SisypheVolume ID
-            self._name = ''
-            self._size = (0, 0, 0)
-            self._spacing = (0.0, 0.0, 0.0)
+            self._ID: str = ''  # moving SisypheVolume ID
+            self._name: str = ''
+            self._size: tuple[int, int, int] = (0, 0, 0)
+            self._spacing:tuple[float, float, float] = (0.0, 0.0, 0.0)
             self.setCenter((0.0, 0.0, 0.0))
         self._parent = parent
 
@@ -2422,15 +2422,15 @@ class SisypheApplyTransform(object):
 
     _NEAREST, _LIBITK, _LIBSITK, _LIBVTK, _LIBSITKVEC = 0, 1, 2, 3, 4
 
-    _TOCODE = {'nearest': sitkNearestNeighbor,
-               'linear': sitkLinear,
-               'bspline': sitkBSpline,
-               'gaussian': sitkGaussian,
-               'hammingsinc': sitkHammingWindowedSinc,
-               'cosinesinc': sitkCosineWindowedSinc,
-               'welchsinc': sitkWelchWindowedSinc,
-               'lanczossinc': sitkLanczosWindowedSinc,
-               'blackmansinc': sitkBlackmanWindowedSinc}
+    _TOCODE: dict[str, int] = {'nearest': sitkNearestNeighbor,
+                               'linear': sitkLinear,
+                               'bspline': sitkBSpline,
+                               'gaussian': sitkGaussian,
+                               'hammingsinc': sitkHammingWindowedSinc,
+                               'cosinesinc': sitkCosineWindowedSinc,
+                               'welchsinc': sitkWelchWindowedSinc,
+                               'lanczossinc': sitkLanczosWindowedSinc,
+                               'blackmansinc': sitkBlackmanWindowedSinc}
 
     _FROMCODE: dict[int, str] = {sitkNearestNeighbor: 'nearest',
                                  sitkLinear: 'linear',
@@ -2497,11 +2497,11 @@ class SisypheApplyTransform(object):
         """
         SisypheApplyTransform instance constructor.
         """
-        self._moving = None
-        self._roi = None
-        self._mesh = None
-        self._sl = None
-        self._transform = None
+        self._moving: SisypheVolume | None = None
+        self._roi: SisypheROI | None = None
+        self._mesh: SisypheMesh | None = None
+        self._sl: SisypheStreamlines | None = None
+        self._transform: SisypheTransform | None = None
         self._resample = sitkResampleImageFilter()
         self._resample.SetInterpolator(sitkLinear)
 
@@ -3290,6 +3290,7 @@ class SisypheApplyTransform(object):
                     wait.setSimpleITKFilter(self._resample)
                     wait.addSimpleITKFilterProcessCommand()
                     wait.buttonVisibilityOff()
+                    # noinspection PyUnresolvedReferences
                     wait.setInformationText('Resample {}...'.format(self._roi.getBasename()))
                 interpolator = self.getInterpolator()
                 self._resample.SetInterpolator(sitkNearestNeighbor)
@@ -3363,6 +3364,7 @@ class SisypheApplyTransform(object):
                     if not wait.isVisible(): wait.open()
                     wait.setProgressRange(0, n)
                     wait.buttonVisibilityOn()
+                    # noinspection PyUnresolvedReferences
                     wait.setInformationText('Resample {}...'.format(self._mesh.getBasename()))
                 resampled = SisypheMesh()
                 resampled.copyFrom(self._mesh)
@@ -3549,8 +3551,8 @@ class SisypheTransformCollection(object):
         """
         SisypheTransformCollection instance constructor.
         """
-        self._trfs = list()
-        self._index = 0
+        self._trfs: list[SisypheTransform] = list()
+        self._index: int = 0
 
     def __str__(self) -> str:
         """
@@ -4013,7 +4015,7 @@ class SisypheTransforms(SisypheTransformCollection):
 
     # Class constant
 
-    _FILEEXT = '.xtrfs'
+    _FILEEXT: str = '.xtrfs'
 
     # Class method
 
@@ -4083,9 +4085,9 @@ class SisypheTransforms(SisypheTransformCollection):
             Associated SisypheVolume instance (default None)
         """
         super().__init__()
-        self._referenceID = None  # reference SisypheVolume ID
-        self._filename = ''
-        if not isinstance(parent, SisypheVolume): parent = None
+        self._referenceID: str | None = None  # reference SisypheVolume ID
+        self._filename: str = ''
+        if not isinstance(parent, SisypheVolume): parent: SisypheVolume | None = None
         if parent is not None: self.setReferenceID(parent)
 
     def __str__(self) -> str:

@@ -78,10 +78,10 @@ class SisypheIdentity(object):
 
     # Class constants
 
-    _DEFAULTDATE = date(2000, 1, 1)
-    _GENDERTOCODE = {'Unknown': 0, 'Male': 1, 'Female': 2}
-    _CODETOGENDER = {0: 'Unknown', 1: 'Male', 2: 'Female'}
-    _FILEEXT = '.xidentity'
+    _DEFAULTDATE: date = date(2000, 1, 1)
+    _GENDERTOCODE: dict[str, int] = {'Unknown': 0, 'Male': 1, 'Female': 2}
+    _CODETOGENDER: dict[int, str] = {0: 'Unknown', 1: 'Male', 2: 'Female'}
+    _FILEEXT: str = '.xidentity'
 
     # Class methods
 
@@ -155,11 +155,11 @@ class SisypheIdentity(object):
         parent : Sisyphe.core.sisypheVolume.SisypheVolume | None
             default None
         """
-        self._firstname = firstname.title()
-        self._lastname = lastname.title()
-        self._gender = gender
-        self._dateofbirthday = dob
-        self._parent = parent
+        self._firstname: str = firstname.title()
+        self._lastname: str = lastname.title()
+        self._gender: int = gender
+        self._dateofbirthday: date = dob
+        self._parent: SisypheVolume | None = parent
 
     def __str__(self) -> str:
         """
@@ -927,26 +927,26 @@ class SisypheAcquisition(object):
     PJ Projection (2D image)
     """
 
-    _MODALITYTOCODE = {'OT': 0, 'MR': 1, 'CT': 2, 'PT': 3, 'NM': 4, 'LB': 5, 'TP': 6, 'PJ': 7}
-    _CODETOMODALITY = {0: 'OT', 1: 'MR', 2: 'CT', 3: 'PT', 4: 'NM', 5: 'LB', 6: 'TP', 7: 'PJ'}
-    _OTSEQUENCE = (UK, PMAP, TMAP, ZMAP, GM, SCGM, WM, CSF, BSTEM, CRBL, THICK, CBF, CBV,
-                   MTT, TTP, DOSE, FA, ADC, DENSITY, BIAS, DIST, MEDIAN, MEAN, MIN, MAX,
-                   STD, ALGEBRA, MASK, FMASK, STRUCT, FIELD, JAC, LABELS, B0MAP, B1MAP,
-                   T1MAP, T2MAP, T2PMAP, MTR, QSM)
-    _MRSEQUENCE = (UK, T1, T2, T2S, PD, FLAIR, CET1, CET2, CEFLAIR, CETOF, EPI,
-                   B0, DWI, PWI, ASL, SWI, TOF, PHSE, MGNT)
-    _CTSEQUENCE = (UK, CT, CECT, BONECT)
-    _PTSEQUENCE = (UK, FDG, FDOPA)
-    _NMSEQUENCE = (UK, HMPAO, ECD, FPCIT)
-    _TPSEQUENCE = _OTSEQUENCE + _MRSEQUENCE + _CTSEQUENCE + _PTSEQUENCE + _NMSEQUENCE
-    _PJSEQUENCE = _OTSEQUENCE + _MRSEQUENCE + _CTSEQUENCE + _PTSEQUENCE + _NMSEQUENCE
-    _LBSEQUENCE = LABELS
-    _TYPE = ('2D', '3D')
-    _FRAME = (UK, NOFRAME, LEKSELL)
+    _MODALITYTOCODE: dict[str, int] = {'OT': 0, 'MR': 1, 'CT': 2, 'PT': 3, 'NM': 4, 'LB': 5, 'TP': 6, 'PJ': 7}
+    _CODETOMODALITY: dict[int, str] = {0: 'OT', 1: 'MR', 2: 'CT', 3: 'PT', 4: 'NM', 5: 'LB', 6: 'TP', 7: 'PJ'}
+    _OTSEQUENCE: tuple[str, ...] = (UK, PMAP, TMAP, ZMAP, GM, SCGM, WM, CSF, BSTEM, CRBL, THICK, CBF, CBV,
+                                    MTT, TTP, DOSE, FA, ADC, DENSITY, BIAS, DIST, MEDIAN, MEAN, MIN, MAX,
+                                    STD, ALGEBRA, MASK, FMASK, STRUCT, FIELD, JAC, LABELS, B0MAP, B1MAP,
+                                    T1MAP, T2MAP, T2PMAP, MTR, QSM)
+    _MRSEQUENCE: tuple[str, ...] = (UK, T1, T2, T2S, PD, FLAIR, CET1, CET2, CEFLAIR, CETOF, EPI,
+                                    B0, DWI, PWI, ASL, SWI, TOF, PHSE, MGNT)
+    _CTSEQUENCE: tuple[str, ...] = (UK, CT, CECT, BONECT)
+    _PTSEQUENCE: tuple[str, ...] = (UK, FDG, FDOPA)
+    _NMSEQUENCE: tuple[str, ...] = (UK, HMPAO, ECD, FPCIT)
+    _TPSEQUENCE: tuple[str, ...] = _OTSEQUENCE + _MRSEQUENCE + _CTSEQUENCE + _PTSEQUENCE + _NMSEQUENCE
+    _PJSEQUENCE: tuple[str, ...] = _OTSEQUENCE + _MRSEQUENCE + _CTSEQUENCE + _PTSEQUENCE + _NMSEQUENCE
+    _LBSEQUENCE: str = LABELS
+    _TYPE: tuple[str, ...] = ('2D', '3D')
+    _FRAME: tuple[str, ...] = (UK, NOFRAME, LEKSELL)
     _UNIT = (NOUNIT, PERC, RATIO, SEC, MSEC, HZ, MM, COUNT, BQ, BQML, SUV, MM2S, HU, GY, TVAL, ZSCORE, PVAL, CCVAL)
-    _TEMPLATES = ('ICBM152', 'ICBM452', 'ATROPOS', 'SRI24')
-    _FILEEXT = '.xacq'
-    _LABELSEXT = '.xlabels'
+    _TEMPLATES: tuple[str, ...] = ('ICBM152', 'ICBM452', 'ATROPOS', 'SRI24')
+    _FILEEXT: str = '.xacq'
+    _LABELSEXT: str = '.xlabels'
 
     # Class methods
 
@@ -1355,25 +1355,25 @@ class SisypheAcquisition(object):
         parent : Sisyphe.core.sisypheVolume.SisypheVolume | None
             (default None)
         """
-        self._modality = modality
-        self._type = '2D'
-        self._sequence = sequence
-        self._dateofscan = d
-        self._frame = 0
-        self._unit = unit
-        self._labels = dict()
-        self._df = 0
-        self._autocorrx = 0.0
-        self._autocorry = 0.0
-        self._autocorrz = 0.0
+        self._modality: int = modality
+        self._type: str = '2D'
+        self._sequence: str = sequence
+        self._dateofscan: date = d
+        self._frame: int = 0
+        self._unit: str = unit
+        self._labels: dict[int, str] = dict()
+        self._df: int = 0
+        self._autocorrx: float = 0.0
+        self._autocorry: float = 0.0
+        self._autocorrz: float = 0.0
         # < Revision 05/02/2026
-        self._rc = (0.0, 0.0, 0.0, 0.0)
+        self._rc: tuple[float, float, float] = (0.0, 0.0, 0.0, 0.0)
         # Revision 05/02/2026 >
         # < Revision 22/11/2024
         # add contrast attribute
-        self._contrast = list()
+        self._contrast: list[float] = list()
         # Revision 22/11/2024 >
-        self._parent = parent
+        self._parent: SisypheVolume | None = parent
 
     def __str__(self) -> str:
         """
@@ -4170,7 +4170,7 @@ class SisypheDisplay(object):
 
     # Class constant
 
-    _FILEEXT = '.xdisplay'
+    _FILEEXT: str = '.xdisplay'
 
     # Class method
 
@@ -4237,18 +4237,18 @@ class SisypheDisplay(object):
             Sisyphe.core.sisypheVolume.SisypheVolume parent (default None)
         """
         # Init range and window
-        self._rangemin = rangemin
-        self._rangemax = rangemax
-        if windowmin is not None: self._windowmin = windowmin
-        else: self._windowmin = rangemin
-        if windowmax is not None: self._windowmax = windowmax
-        else: self._windowmax = rangemax
+        self._rangemin: float = rangemin
+        self._rangemax: float = rangemax
+        if windowmin is not None: self._windowmin: float = windowmin
+        else: self._windowmin: float = rangemin
+        if windowmax is not None: self._windowmax: float = windowmax
+        else: self._windowmax: float = rangemax
         # Init SisypheLut
-        if isinstance(lut, str): self._lut = SisypheLut(lut)
-        elif isinstance(lut, SisypheLut): self._lut = lut
-        else: self._lut = SisypheLut()
+        if isinstance(lut, str): self._lut: SisypheLut  = SisypheLut(lut)
+        elif isinstance(lut, SisypheLut): self._lut: SisypheLut = lut
+        else: self._lut: SisypheLut = SisypheLut()
         self.updateVTKLUT()
-        self._parent = parent
+        self._parent: SisypheVolume | None = parent
 
     def __str__(self) -> str:
         """
@@ -4867,7 +4867,7 @@ class SisypheACPC(object):
 
     # Class constant
 
-    _FILEEXT = '.xacpc'
+    _FILEEXT: str = '.xacpc'
 
     # Class method
 
@@ -4916,12 +4916,12 @@ class SisypheACPC(object):
             Sisyphe.core.sisypheVolume.SisypheVolume parent (default None)
         """
         from Sisyphe.core.sisypheTransform import SisypheTransform
-        self._ac = (0.0, 0.0, 0.0)
-        self._pc = (0.0, 0.0, 0.0)
-        self._trf = SisypheTransform()
+        self._ac: tuple[float, float, float] = (0.0, 0.0, 0.0)
+        self._pc: tuple[float, float, float] = (0.0, 0.0, 0.0)
+        self._trf: SisypheTransform = SisypheTransform()
         from Sisyphe.core.sisypheVolume import SisypheVolume
-        if isinstance(parent, SisypheVolume): self._parent = parent
-        else: self._parent = None
+        if isinstance(parent, SisypheVolume): self._parent: SisypheVolume | None = parent
+        else: self._parent: SisypheVolume | None = None
 
     def __str__(self) -> str:
         """

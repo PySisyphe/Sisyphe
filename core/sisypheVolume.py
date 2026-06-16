@@ -220,7 +220,7 @@ class SisypheVolume(SisypheImage):
 
     # Class constants
 
-    _FILEEXT = '.xvol'
+    _FILEEXT: str = '.xvol'
     _UNSPECIFIED, _AXIAL, _CORONAL, _SAGITTAL, = 0, 1, 2, 3
 
     # Class methods
@@ -424,9 +424,10 @@ class SisypheVolume(SisypheImage):
     _display        SisypheDisplay
     _transforms     SisypheTransforms
     _acpc           SisypheACPC
+    _xdcm           XmlDicom
     _slope          float
     _intercept      float
-    _orient         int
+    _orientation    int
     _ID             str, space ID (used by geometric transformations), editable, saved
     _arrayID        str, array ID, not editable, not saved, generated from array (md5, creation and loading)
     """
@@ -456,15 +457,15 @@ class SisypheVolume(SisypheImage):
         self._slope: cython.double = 1.0
         # noinspection PyUnresolvedReferences
         self._intercept: cython.double = 0.0
-        self._xdcm = None
+        self._xdcm: XmlDicom | None = None
         self._identity: SisypheIdentity = SisypheIdentity(parent=self)
         self._acquisition: SisypheAcquisition = SisypheAcquisition(parent=self)
         self._display: SisypheDisplay | None = SisypheDisplay(parent=self)
         self._acpc: SisypheACPC = SisypheACPC(parent=self)
         self._transforms: SisypheTransforms = SisypheTransforms()
         if isinstance(image, SisypheVolume):
-            self._arrayID = image._arrayID
-            self._filename = image._filename
+            self._arrayID: str = image._arrayID
+            self._filename: str = image._filename
             # < Revision 01/04/2025
             # self.copyAttributesFrom(image)
             # image = image.copyToSITKImage()
@@ -1121,6 +1122,7 @@ class SisypheVolume(SisypheImage):
     def _calcArrayID(self) -> None:
         if not self.isEmpty():
             m = md5()
+            # noinspection PyUnresolvedReferences
             m.update(self._numpy_array.tostring())
             self._arrayID = m.hexdigest()
 
@@ -2212,6 +2214,110 @@ class SisypheVolume(SisypheImage):
         splt = self._filename.split(sep)
         if len(splt) > 1: self._filename = splt[0] + self.getFileExt()
     # 05/11/2024 >
+
+    # < Revision 30/05/2026
+    # add getPrefixes method
+    def getFilenamePrefixes(self, sep: str = '_') -> list[str]:
+        """
+        Get the list of the file name attribute prefixes of the current SisypheVolume instance. The file name attribute is
+        used to save the current SisypheVolume instance.
+
+        Parameters
+        ----------
+        sep : str
+            char between prefixes and base name (default '_')
+
+        Returns
+        -------
+        list[str]
+            list of prefixes
+        """
+        return splitext(basename(self._filename))[0].split(sep)
+    # Revision 30/05/2026 >
+
+    # < Revision 30/05/2026
+    # add getSuffixes method
+    def getFilenameSuffixes(self, sep: str = '_') -> list[str]:
+        """
+        Get the list of the file name attribute suffixes of the current SisypheVolume instance. The file name attribute is
+        used to save the current SisypheVolume instance.
+
+        Parameters
+        ----------
+        sep : str
+            char between suffixes and base name (default '_')
+
+        Returns
+        -------
+        list[str]
+            list of suffixes
+        """
+        return splitext(basename(self._filename))[0].split(sep)[::-1]
+    # Revision 30/05/2026 >
+
+    # < Revision 30/05/2026
+    # add hasPrefix method
+    def hasFilenamePrefix(self,
+                  prefix: str,
+                  sep: str = '_',
+                  strict: bool = True) -> bool:
+        """
+        Check if a prefix is in the file name attribute of the current SisypheVolume instance. The file name attribute
+        is  used to save the current SisypheVolume instance.
+
+        Parameters
+        ----------
+        prefix : str
+            prefix to search
+        sep : str
+            char between prefixes and base name (default '_')
+        strict : bool
+            check whether it is equal to or contains otherwise
+
+        Returns
+        -------
+        bool
+        """
+        ps = self.getFilenamePrefixes(sep)
+        for p in ps:
+            if strict:
+                if prefix == p: return True
+            else:
+                if prefix in p: return True
+        return False
+    # Revision 30/05/2026 >
+
+    # < Revision 30/05/2026
+    # add hasSuffix method
+    def hasFilenameSuffix(self,
+                  suffix: str,
+                  sep: str = '_',
+                  strict: bool = True) -> bool:
+        """
+        Check if a prefix is in the file name attribute of the current SisypheVolume instance. The file name attribute
+        is  used to save the current SisypheVolume instance.
+
+        Parameters
+        ----------
+        suffix : str
+            suffix to search
+        sep : str
+            char between prefixes and base name (default '_')
+        strict : bool
+            check whether it is equal to or contains otherwise
+
+        Returns
+        -------
+        bool
+        """
+        ss = self.getFilenamePrefixes(sep)
+        for s in ss:
+            if strict:
+                if suffix == s: return True
+            else:
+                if suffix in s: return True
+        return False
+    # Revision 30/05/2026 >
 
     def setCompression(self, v: bool) -> None:
         """
@@ -4638,9 +4744,9 @@ class SisypheVolumeCollection(object):
         """
         SisypheVolumeCollection instance constructor.
         """
-        self._volumes = list()
-        self._index = 0
-        self._homogeneous = False
+        self._volumes: list[SisypheVolume] = list()
+        self._index: int = 0
+        self._homogeneous: bool = False
 
     def __str__(self) -> str:
         """

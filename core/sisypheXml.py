@@ -84,16 +84,17 @@ class AbstractXml(object):
         """
         super().__init__()
         if exists(filename):
-            self._filename = filename
+            self._filename: str = filename
             # self._doc = minidom.parse(filename)
             with open(filename, 'rb') as f:
                 line = ''
                 strdoc = ''
                 end = self.getXmlEnd()
                 while line != end:
+                    # noinspection PyUnresolvedReferences
                     line = f.readline().decode()  # Convert binary to utf-8
                     strdoc += line
-            self._doc = minidom.parseString(strdoc)
+            self._doc: minidom.Document = minidom.parseString(strdoc)
         else: raise FileNotFoundError('No such file {}.'.format(filename))
 
     def __repr__(self) -> str:

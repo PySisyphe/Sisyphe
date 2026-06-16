@@ -281,10 +281,10 @@ class SisypheTract(object):
 
     # Class constants
 
-    _RGB = 0
-    _CMAP = 1
-    _COLOR = 2
-    _REPTYPE = (_RGB, _CMAP, _COLOR)
+    _RGB: int = 0
+    _CMAP: int = 1
+    _COLOR: int = 2
+    _REPTYPE: tuple[int, int, int] = (_RGB, _CMAP, _COLOR)
 
     # Special method
 
@@ -305,8 +305,8 @@ class SisypheTract(object):
         super().__init__()
 
         self._polydata: vtkPolyData | None = None
-        self._mapper = vtkPolyDataMapper()
-        self._actor = vtkActor()
+        self._mapper: vtkPolyDataMapper = vtkPolyDataMapper()
+        self._actor:vtkActor = vtkActor()
         self._actor.SetMapper(self._mapper)
         self._actor.SetObjectName('streamline')
         self._scalarnames: dict[str, bool] | None = None
@@ -1131,6 +1131,7 @@ class SisypheTractCollection(object):
     def _getNewName(self, name: str) -> str:
         while name in self._bundles:
             parts = name.split('#')
+            # noinspection PyUnresolvedReferences
             suffix = parts[-1]
             if suffix.isdigit():
                 suffix = int(suffix) + 1
@@ -2200,10 +2201,10 @@ class SisypheBundle(object):
 
     # Class constants
 
-    _RGB = 0
-    _CMAP = 1
-    _COLOR = 2
-    _REPTYPE = (_RGB, _CMAP, _COLOR)
+    _RGB: int = 0
+    _CMAP: int = 1
+    _COLOR: int = 2
+    _REPTYPE: tuple[int, int, int] = (_RGB, _CMAP, _COLOR)
 
     # Special methods
 
@@ -2235,18 +2236,18 @@ class SisypheBundle(object):
         self._index: cython.int = 0
         self._name: str = ''
         self._color: vector3float = [1.0, 1.0, 1.0]
-        self._lut = SisypheLut()
+        self._lut: SisypheLut = SisypheLut()
         self._lut.setLutToHot()
         self._rep: int = self._RGB
-        self._width = 1.0
-        self._opacity = 1.0
+        self._width: float = 1.0
+        self._opacity: float = 1.0
         if s is not None:
-            if isinstance(s, int): self._list = list(range(s))
+            if isinstance(s, int): self._list: list[int] = list(range(s))
             elif isinstance(s, (tuple, list)):
                 n = len(s)
-                if n == 1: self._list = list(range(s[0]))
-                elif n == 2: self._list = list(range(s[0], s[1]))
-                else: self._list = list(range(s[0], s[1], s[2]))
+                if n == 1: self._list: list[int] = list(range(s[0]))
+                elif n == 2: self._list: list[int] = list(range(s[0], s[1]))
+                else: self._list: list[int] = list(range(s[0], s[1], s[2]))
         else: self._list: list[int] = list()
 
     def __str__(self) -> str:
@@ -3453,89 +3454,89 @@ class SisypheStreamlines(object):
 
     # Class constants
 
-    _DEFAULTNAME = 'tractogram'
-    _FILEEXT = '.xtracts'
+    _DEFAULTNAME: str = 'tractogram'
+    _FILEEXT: str = '.xtracts'
     TRK, TCK, VTK, VTP, FIB, NPZ, DPY = '.trk', '.tck', '.vtk', '.vtp', '.fib', '.npz', '.dpy'
-    _TRACTSEXT = [_FILEEXT, TRK, TCK, VTK, VTP, FIB, NPZ, DPY]
-    _ATLASBDL = {'WHOLE': 'Whole Brain Tractogram',
-                 'AR_L': 'Acoustic Radiation Left',
-                 'AR_R': 'Acoustic Radiation Right',
-                 'AC': 'Anterior Commissure',
-                 'AF_L': 'Arcuate Fasciculus Left',
-                 'AF_R': 'Arcuate Fasciculus Right',
-                 'CNVIII_L': 'Auditory Cranial Nerve Left',
-                 'CNVIII_R': 'Auditory Cranial Nerve Right',
-                 'CTT_L': 'Central Tegmental Tract Left',
-                 'CTT_R': 'Central Tegmental Tract Right',
-                 'CB_L': 'Cerebellum Left',
-                 'CB_R': 'Cerebellum Right',
-                 'C_L': 'Cingulum Tract Left',
-                 'C_R': 'Cingulum Tract Right',
-                 'CC_Mid': 'Corpus Callosum Middle',
-                 'CC': 'Corpus Callosum',
-                 'CST_L': 'Cortico Spinal Tract Left',
-                 'CST_R': 'Cortico Spinal Tract Right',
-                 'CS_L': 'Cortico Striatal Tract Left',
-                 'CS_R': 'Cortico Striatal Tract Right',
-                 'CT_L': 'Cortico Thalamic Tract Left',
-                 'CT_R': 'Cortico Thalamic Tract Right',
-                 'DLF_L': 'Dorsal Longitudinal Fasciculus Left',
-                 'DLF_R': 'Dorsal Longitudinal Fasciculus Right',
-                 'EMC_L': 'Extreme Capsule Left',
-                 'EMC_R': 'Extreme Capsule Right',
-                 'CNVII_L': 'Facial Cranial Nerve left',
-                 'CNVII_R': 'Facial Cranial Nerve Right',
-                 'CC_FMI': 'Forceps Minor',
-                 'CC_FMJ': 'Forceps Major',
-                 'F': 'Fornix',
-                 'AST_L': 'Frontal Aslant Tract Left',
-                 'AST_R': 'Frontal Aslant Tract Right',
-                 'FPT_L': 'Frontal Pontine Tract Left',
-                 'FPT_R': 'Frontal Pontine Tract Right',
-                 'ICP_L': 'Inferior Cerebellar Peduncle Left',
-                 'ICP_R': 'Inferior Cerebellar Peduncle Right',
-                 'IFOF_L': 'Inferior Fronto Occipital Fasciculus Left',
-                 'IFOF_R': 'Inferior Fronto Occipital Fasciculus Right',
-                 'ILF_L': 'Inferior Longitudinal Fasciculus Left',
-                 'ILF_R': 'Inferior Longitudinal Fasciculus Right',
-                 'LL_L': 'Lateral Lemniscus Left',
-                 'LL_R': 'Lateral Lemniscus Right',
-                 'ML_L': 'Medial Lemniscus Left',
-                 'ML_R': 'Medial Lemniscus Right',
-                 'MLF_L': 'Medial Longitudinal Fasciculus Left',
-                 'MLF_R': 'Medial Longitudinal Fasciculus Right',
-                 'MCP': 'Middle Cerebellar Peduncle',
-                 'MdLF_L': 'Middle Longitudinal Fasciculus Left',
-                 'MdLF_R': 'Middle Longitudinal Fasciculus Right',
-                 'OPT_L': 'Occipital Pontine Tract Left',
-                 'OPT_R': 'Occipital Pontine Tract Right',
-                 'CNIII_L': 'Oculomotor Cranial Nerve Left',
-                 'CNIII_R': 'Oculomotor Cranial Nerve Right',
-                 'OR_L': 'Optic Radiation Left',
-                 'OR_R': 'Optic Radiation Right',
-                 'PPT_L': 'Parietal Pontine Tract Left',
-                 'PPT_R': 'Parietal Pontine Tract Right',
-                 'PC': 'Posterior Commissure',
-                 'RST_L': 'Rubro Spinal Tract Left',
-                 'RST_R': 'Rubro Spinal Tract Right',
-                 'STT_L': 'Spino Thalamic Tract Left',
-                 'STT_R': 'Spino Thalamic Tract Right',
-                 'SCP': 'Superior Cerebellar Peduncle',
-                 'SLF_L': 'Superior Longitudinal Fasciculus Left',
-                 'SLF_R': 'Superior Longitudinal Fasciculus Right',
-                 'TPT_L': 'Temporal Pontine Tract Left',
-                 'TPT_R': 'Temporal Pontine Tract Right',
-                 'CNV_L': 'Trigeminal Cranial Nerve Left',
-                 'CNV_R': 'Trigeminal Cranial Nerve Right',
-                 'CNIV_L': 'Trochlear Cranial Nerve Left',
-                 'CNIV_R': 'Trochlear Cranial Nerve Right',
-                 'UF_L': 'Uncinate Fasciculus Left',
-                 'UF_R': 'Uncinate Fasciculus Right',
-                 'V': 'Vermis',
-                 'VOF_L': 'Vertical Occipital fasciculus Left',
-                 'VOF_R': 'Vertical Occipital fasciculus Right',
-                 'CNII_L': 'Visual Cranial Nerve Left',
-                 'CNII_R': 'Visual Cranial Nerve Right'}
+    _TRACTSEXT: list[str] = [_FILEEXT, TRK, TCK, VTK, VTP, FIB, NPZ, DPY]
+    _ATLASBDL: dict[str, str] = {'WHOLE': 'Whole Brain Tractogram',
+                                 'AR_L': 'Acoustic Radiation Left',
+                                 'AR_R': 'Acoustic Radiation Right',
+                                 'AC': 'Anterior Commissure',
+                                 'AF_L': 'Arcuate Fasciculus Left',
+                                 'AF_R': 'Arcuate Fasciculus Right',
+                                 'CNVIII_L': 'Auditory Cranial Nerve Left',
+                                 'CNVIII_R': 'Auditory Cranial Nerve Right',
+                                 'CTT_L': 'Central Tegmental Tract Left',
+                                 'CTT_R': 'Central Tegmental Tract Right',
+                                 'CB_L': 'Cerebellum Left',
+                                 'CB_R': 'Cerebellum Right',
+                                 'C_L': 'Cingulum Tract Left',
+                                 'C_R': 'Cingulum Tract Right',
+                                 'CC_Mid': 'Corpus Callosum Middle',
+                                 'CC': 'Corpus Callosum',
+                                 'CST_L': 'Cortico Spinal Tract Left',
+                                 'CST_R': 'Cortico Spinal Tract Right',
+                                 'CS_L': 'Cortico Striatal Tract Left',
+                                 'CS_R': 'Cortico Striatal Tract Right',
+                                 'CT_L': 'Cortico Thalamic Tract Left',
+                                 'CT_R': 'Cortico Thalamic Tract Right',
+                                 'DLF_L': 'Dorsal Longitudinal Fasciculus Left',
+                                 'DLF_R': 'Dorsal Longitudinal Fasciculus Right',
+                                 'EMC_L': 'Extreme Capsule Left',
+                                 'EMC_R': 'Extreme Capsule Right',
+                                 'CNVII_L': 'Facial Cranial Nerve left',
+                                 'CNVII_R': 'Facial Cranial Nerve Right',
+                                 'CC_FMI': 'Forceps Minor',
+                                 'CC_FMJ': 'Forceps Major',
+                                 'F': 'Fornix',
+                                 'AST_L': 'Frontal Aslant Tract Left',
+                                 'AST_R': 'Frontal Aslant Tract Right',
+                                 'FPT_L': 'Frontal Pontine Tract Left',
+                                 'FPT_R': 'Frontal Pontine Tract Right',
+                                 'ICP_L': 'Inferior Cerebellar Peduncle Left',
+                                 'ICP_R': 'Inferior Cerebellar Peduncle Right',
+                                 'IFOF_L': 'Inferior Fronto Occipital Fasciculus Left',
+                                 'IFOF_R': 'Inferior Fronto Occipital Fasciculus Right',
+                                 'ILF_L': 'Inferior Longitudinal Fasciculus Left',
+                                 'ILF_R': 'Inferior Longitudinal Fasciculus Right',
+                                 'LL_L': 'Lateral Lemniscus Left',
+                                 'LL_R': 'Lateral Lemniscus Right',
+                                 'ML_L': 'Medial Lemniscus Left',
+                                 'ML_R': 'Medial Lemniscus Right',
+                                 'MLF_L': 'Medial Longitudinal Fasciculus Left',
+                                 'MLF_R': 'Medial Longitudinal Fasciculus Right',
+                                 'MCP': 'Middle Cerebellar Peduncle',
+                                 'MdLF_L': 'Middle Longitudinal Fasciculus Left',
+                                 'MdLF_R': 'Middle Longitudinal Fasciculus Right',
+                                 'OPT_L': 'Occipital Pontine Tract Left',
+                                 'OPT_R': 'Occipital Pontine Tract Right',
+                                 'CNIII_L': 'Oculomotor Cranial Nerve Left',
+                                 'CNIII_R': 'Oculomotor Cranial Nerve Right',
+                                 'OR_L': 'Optic Radiation Left',
+                                 'OR_R': 'Optic Radiation Right',
+                                 'PPT_L': 'Parietal Pontine Tract Left',
+                                 'PPT_R': 'Parietal Pontine Tract Right',
+                                 'PC': 'Posterior Commissure',
+                                 'RST_L': 'Rubro Spinal Tract Left',
+                                 'RST_R': 'Rubro Spinal Tract Right',
+                                 'STT_L': 'Spino Thalamic Tract Left',
+                                 'STT_R': 'Spino Thalamic Tract Right',
+                                 'SCP': 'Superior Cerebellar Peduncle',
+                                 'SLF_L': 'Superior Longitudinal Fasciculus Left',
+                                 'SLF_R': 'Superior Longitudinal Fasciculus Right',
+                                 'TPT_L': 'Temporal Pontine Tract Left',
+                                 'TPT_R': 'Temporal Pontine Tract Right',
+                                 'CNV_L': 'Trigeminal Cranial Nerve Left',
+                                 'CNV_R': 'Trigeminal Cranial Nerve Right',
+                                 'CNIV_L': 'Trochlear Cranial Nerve Left',
+                                 'CNIV_R': 'Trochlear Cranial Nerve Right',
+                                 'UF_L': 'Uncinate Fasciculus Left',
+                                 'UF_R': 'Uncinate Fasciculus Right',
+                                 'V': 'Vermis',
+                                 'VOF_L': 'Vertical Occipital fasciculus Left',
+                                 'VOF_R': 'Vertical Occipital fasciculus Right',
+                                 'CNII_L': 'Visual Cranial Nerve Left',
+                                 'CNII_R': 'Visual Cranial Nerve Right'}
 
     # Class methods
 
@@ -3846,7 +3847,7 @@ class SisypheStreamlines(object):
         self._atlas: bool = False
         self._trf: ndarray | None = None
         if sl is None or not isinstance(sl, (ndarray, Streamlines)):
-            self._streamlines = Streamlines()
+            self._streamlines: Streamlines = Streamlines()
             bundle = SisypheBundle()
         else:
             if isinstance(sl, ndarray):
@@ -3856,12 +3857,12 @@ class SisypheStreamlines(object):
             if compress:
                 sl = compress_streamlines(sl)
                 self._regstep = False
-            self._streamlines = sl
+            self._streamlines: Streamlines = sl
             bundle = SisypheBundle((0, len(sl), 1))
         bundle.setName(self._DEFAULTNAME)
-        self._bundles = SisypheBundleCollection()
+        self._bundles: SisypheBundleCollection = SisypheBundleCollection()
         self._bundles.append(bundle)
-        self._dirname = getcwd()
+        self._dirname: str = getcwd()
 
     def __str__(self) -> str:
         """
@@ -7939,9 +7940,9 @@ class SisypheDiffusionModel(object):
 
     # Class constants
 
-    _FILEEXT = '.xdmodel'
+    _FILEEXT: str = '.xdmodel'
     _DTI, _FWDTI, _DKI, _RUMBA, _SHCSA, _SHCSD, _DSI, _DSID = 'DTI', 'FWDTI', 'DKI', 'RUMBA', 'SHCSA', 'SHCSD', 'DSI', 'DSID'
-    _MODELS = (_DTI, _FWDTI, _DKI, _RUMBA, _SHCSA, _SHCSD, _DSI, _DSID)
+    _MODELS: tuple[str, ...] = (_DTI, _FWDTI, _DKI, _RUMBA, _SHCSA, _SHCSD, _DSI, _DSID)
 
     # Class methods
 
@@ -8066,8 +8067,8 @@ class SisypheDiffusionModel(object):
         self._mean: ndarray | None = None
         self._model = None
         self._fmodel = None
-        self._ID = ''
-        self._spacing = [1.0] * 3
+        self._ID: str = ''
+        self._spacing: list[float] = [1.0] * 3
 
     def __str__(self) -> str:
         """
@@ -8919,7 +8920,7 @@ class SisypheDTIModel(SisypheDiffusionModel):
     # Class constants
 
     _WLS, _OLS, _NLLS, _RT = 'WLS', 'OLS', 'NLLS', 'RT'
-    _ALG = (_WLS, _OLS, _NLLS, _RT)
+    _ALG: tuple[str, ...] = (_WLS, _OLS, _NLLS, _RT)
 
     # Class method
 
@@ -8987,8 +8988,8 @@ class SisypheDTIModel(SisypheDiffusionModel):
         """
         super().__init__()
 
-        if algfit in self._ALG: self._algfit = algfit
-        else: self._algfit = 'WLS'
+        if algfit in self._ALG: self._algfit: str = algfit
+        else: self._algfit: str = 'WLS'
 
         self._model: TensorModel | None = None
         self._fmodel: TensorFit | None = None
@@ -9527,7 +9528,7 @@ class SisypheFreeWaterDTIModel(SisypheDTIModel):
     # Class constants
 
     _NLS, _WLS = 'NLS', 'WLS'
-    _ALG = (_WLS, _NLS)
+    _ALG: tuple[str, str] = (_WLS, _NLS)
 
     # Class method
 
@@ -9593,8 +9594,8 @@ class SisypheFreeWaterDTIModel(SisypheDTIModel):
         """
         SisypheDiffusionModel.__init__(self)
 
-        if algfit in self._ALG: self._algfit = algfit
-        else: self._algfit = 'NLS'
+        if algfit in self._ALG: self._algfit: str = algfit
+        else: self._algfit: str = 'NLS'
 
         self._model: FreeWaterTensorModel | None = None
         self._fmodel: FreeWaterTensorFit | None = None
@@ -9723,7 +9724,7 @@ class SisypheDKIModel(SisypheDiffusionModel):
     # Class constants
 
     _WLS, _OLS, _CLS, _CWLS = 'WLS', 'OLS', 'CLS', 'CWLS'
-    _ALG = (_WLS, _OLS, _CLS, _CWLS)
+    _ALG: tuple[str, ...] = (_WLS, _OLS, _CLS, _CWLS)
 
     # Class method
 
@@ -9790,8 +9791,8 @@ class SisypheDKIModel(SisypheDiffusionModel):
         """
         super().__init__()
 
-        if algfit in self._ALG: self._algfit = algfit
-        else: self._algfit = 'WLS'
+        if algfit in self._ALG: self._algfit: str = algfit
+        else: self._algfit: str = 'WLS'
 
         self._model: DiffusionKurtosisModel | None = None
         self._fmodel: DiffusionKurtosisFit | None = None
@@ -10165,7 +10166,7 @@ class SisypheRumbaModel(SisypheDiffusionModel):
     # Class constants
 
     _SMF, _SOS = 'SMF', 'SOS'
-    _ALG = (_SMF, _SOS)
+    _ALG: tuple[str, str] = (_SMF, _SOS)
 
     # Class method
 
@@ -10230,8 +10231,8 @@ class SisypheRumbaModel(SisypheDiffusionModel):
         """
         super().__init__()
 
-        if algfit in self._ALG: self._algfit = algfit
-        else: self._algfit = 'smf'
+        if algfit in self._ALG: self._algfit: str = algfit
+        else: self._algfit: str = 'smf'
 
         self._model: RumbaSDModel | None = None
         self._fmodel: RumbaFit | None = None
@@ -11435,18 +11436,18 @@ class SisypheTracking(object):
 
     # Class constants
 
-    _DEUDX = 0
-    _DFOD = 1
-    _DPT = 2
-    _DCPD = 3
-    _PBSD = 4
-    _PFOD = 5
-    _ALG = {_DEUDX: 'Deterministic EuDX Euler integration',
-            _DFOD: 'Deterministic Fiber orientation distribution',
-            _DPT: 'Deterministic Parallel transport',
-            _DCPD: 'Deterministic Closest peak direction',
-            _PBSD: 'Probabilistic Bootstrap direction',
-            _PFOD: 'Probabilistic Fiber orientation distribution'}
+    _DEUDX: int = 0
+    _DFOD: int = 1
+    _DPT: int = 2
+    _DCPD: int = 3
+    _PBSD: int = 4
+    _PFOD: int = 5
+    _ALG: dict[int, str] = {_DEUDX: 'Deterministic EuDX Euler integration',
+                            _DFOD: 'Deterministic Fiber orientation distribution',
+                            _DPT: 'Deterministic Parallel transport',
+                            _DCPD: 'Deterministic Closest peak direction',
+                            _PBSD: 'Probabilistic Bootstrap direction',
+                            _PFOD: 'Probabilistic Fiber orientation distribution'}
 
     # Special method
 
@@ -11484,8 +11485,8 @@ class SisypheTracking(object):
         ----------
         model : SisypheDiffusionModel
         """
-        self._model = model
-        self._name = 'tractogram'
+        self._model: SisypheDiffusionModel = model
+        self._name: str = 'tractogram'
         self._alg: int = 0
         self._density: int = 1
         self._seeds: ndarray | None = None
@@ -11498,8 +11499,9 @@ class SisypheTracking(object):
         # noinspection PyUnresolvedReferences
         self._thresholdpeaks: cython.double = 0.5
         # noinspection PyUnresolvedReferences
-        self._anglepeaks: cython.double = 30
-        self._minlength = 0.0
+        self._anglepeaks: int = 30
+        # noinspection PyUnresolvedReferences
+        self._minlength: cython.double = 0.0
         self._stopping = None
 
     def __str__(self) -> str:

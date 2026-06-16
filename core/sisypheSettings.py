@@ -304,14 +304,14 @@ class SisypheSettings(object):
 
     # < Revision 23/12/2024
     # add 'dcm' and 'dcms' var types
-    _VARTYPES = ('str', 'vol', 'roi', 'dir', 'dcm',
-                 'vols', 'rois', 'dcms', 'dirs', 'date',
-                 'int', 'float', 'percent', 'bool',
-                 'visibility', 'lstr', 'lint',
-                 'lfloat', 'lbool', 'lut', 'color')
+    _VARTYPES: tuple[str, ...] = ('str', 'vol', 'roi', 'dir', 'dcm',
+                                  'vols', 'rois', 'dcms', 'dirs', 'date',
+                                  'int', 'float', 'percent', 'bool',
+                                  'visibility', 'lstr', 'lint',
+                                  'lfloat', 'lbool', 'lut', 'color')
     # < Revision 23/12/2024
 
-    _ATTRS = ('label', 'icon', 'vartype', 'varmin', 'varmax')
+    _ATTRS: tuple[str, ...] = ('label', 'icon', 'vartype', 'varmin', 'varmax')
 
     # Class methods
 
@@ -473,31 +473,31 @@ class SisypheSettings(object):
             - creates empty XML if xxx does not exist
         """
         super().__init__()
-        self._filename = ''
+        self._filename: str = ''
         # Load user settings
-        if setting == 'user': self._doc = minidom.parse(self.getUserSettings())
+        if setting == 'user': self._doc: minidom.Document = minidom.parse(self.getUserSettings())
         # Load default settings
-        elif setting == 'default': self._doc = minidom.parse(self.getDefaultSettings())
+        elif setting == 'default': self._doc:  minidom.Document = minidom.parse(self.getDefaultSettings())
         else:
             filename = join(getUserPySisyphePath(), '{}.xml'.format(setting))
             # Load custom settings in user path
             if exists(filename):
-                self._doc = minidom.parse(filename)
-                self._filename = filename
+                self._doc: minidom.Document = minidom.parse(filename)
+                self._filename: str = filename
             # < revision 10/10/2024
             # Load custom settings
             elif exists(setting):
-                self._doc = minidom.parse(setting)
-                self._filename = setting
+                self._doc:  minidom.Document = minidom.parse(setting)
+                self._filename: str = setting
             # revision 10/10/2024 >
             # Create empty custom settings
             else:
                 if setting == '': setting = 'settings'
-                self._doc = minidom.Document()
-                root = self._doc.createElement(setting)
+                self._doc:  minidom.Document = minidom.Document()
+                root: minidom.Element = self._doc.createElement(setting)
                 root.setAttribute('version', '1.0')
                 self._doc.appendChild(root)
-                self._filename = filename
+                self._filename: str = filename
 
     def __repr__(self) -> str:
         """
@@ -1349,6 +1349,7 @@ class SisypheDialogsSettings(SisypheSettings):
         """
         super().__init__()
 
+
 # < Revision 04/11/2025
 # new class SisypheCustomSettings
 class SisypheCustomSettings(SisypheSettings):
@@ -1369,7 +1370,7 @@ class SisypheCustomSettings(SisypheSettings):
     Last Revision:
     """
 
-    _Filename = ''
+    _Filename: str = ''
 
     # Special methods
 
@@ -1422,6 +1423,7 @@ class SisypheCustomSettings(SisypheSettings):
         """
         super().__init__(self.getDefaultSettings())
 # Revision 04/11/2025 >
+
 
 class SisypheTooltips(SisypheSettings):
     """

@@ -247,7 +247,7 @@ class SisypheROI(SisypheBinaryImage):
 
     # Class constants
 
-    _FILEEXT = '.xroi'
+    _FILEEXT: str = '.xroi'
     # < Revision 25/01/2026
     # _REGEXP = '^[_A-Za-z0-9#\-\_\s+,]+$'
     _REGEXP = r'^[_A-Za-z0-9#\-\_\s+,]+$'
@@ -367,11 +367,11 @@ class SisypheROI(SisypheBinaryImage):
         self._name: str = ''
         self._filename: str = ''
         self._compression: bool = False
-        self._color = [1.0, 0.0, 0.0]   # default = red
+        self._color: list[float] = [1.0, 0.0, 0.0]   # default = red
         # noinspection PyUnresolvedReferences
         self._alpha: cython.double = 1.0  # default = opaque
         self._visibility: bool = True
-        self._lut = SisypheLut()
+        self._lut: SisypheLut = SisypheLut()
         self._initLut()
         self.setDefaultOrigin()
         self.setDirections()
@@ -2772,7 +2772,7 @@ class SisypheROICollection(object):
         SisypheROICollection instance constructor.
         """
         super().__init__()
-        self._rois: list = list()
+        self._rois: list[SisypheROI] = list()
         # noinspection PyUnresolvedReferences
         self._index: cython.int = 0
         self._referenceID: str = ''
@@ -4091,7 +4091,7 @@ class SisypheROIDraw(object):
     Last revision: 17/03/2026
     """
 
-    __slots__ = {'_volume', '_gradient', '_mask', '_brush', '_vbrush', '_roi', '_undo', '_undolifo', '_redolifo',
+    __slots__ = {'_volume', '_mask', '_brush', '_vbrush', '_roi', '_undo', '_undolifo', '_redolifo',
                  '_radius', '_morphradius', '_thickness', '_brushtype', '_dtrmajorblob', '_dtrfillholes', '_struct',
                  '_thresholdmin', '_thresholdmax', '_ccsigma', '_cciter', '_acradius', '_acrms', '_acsigma', '_accurv',
                  '_acadvec', '_acpropag', '_aciter', '_acalgo', '_acthresholds', '_acfactor', '_clipboard'}
@@ -4100,12 +4100,12 @@ class SisypheROIDraw(object):
 
     _DV, _DSZ, _DSY, _DSX = 0, 1, 2, 3
     _UNDO, _REDO = 0, 1
-    _BRUSHTYPECODE = {'solid': 0, 'threshold': 1, 'solid3': 2, 'threshold3': 3}
-    _BRUSHTYPENAME = {0: 'solid', 1: 'threshold', 2: 'solid3', 3: 'threshold3'}
-    _MAXRADIUS = 50
-    _DEFAULTRADIUS = 2
-    _DEFAULTMORPHRADIUS = 1
-    _MAXUNDO = 20
+    _BRUSHTYPECODE: dict[str, int] = {'solid': 0, 'threshold': 1, 'solid3': 2, 'threshold3': 3}
+    _BRUSHTYPENAME: dict[int, str] = {0: 'solid', 1: 'threshold', 2: 'solid3', 3: 'threshold3'}
+    _MAXRADIUS: int = 50
+    _DEFAULTRADIUS: int = 2
+    _DEFAULTMORPHRADIUS: int = 1
+    _MAXUNDO: int = 20
 
     # Special methods
 
@@ -4113,14 +4113,14 @@ class SisypheROIDraw(object):
         """
         SisypheROIDraw instance constructor.
         """
-        self._volume = None
-        self._mask = None
-        self._brush = None
-        self._vbrush = None
-        self._roi = None
-        self._undo = False
-        self._undolifo = deque(maxlen=self._MAXUNDO)
-        self._redolifo = deque(maxlen=self._MAXUNDO)
+        self._volume: SisypheVolume | None = None
+        self._mask: ndarray | None  = None
+        self._brush: ndarray | None = None
+        self._vbrush: ndarray | None = None
+        self._roi: SisypheROI | None = None
+        self._undo: bool = False
+        self._undolifo: deque = deque(maxlen=self._MAXUNDO)
+        self._redolifo: deque = deque(maxlen=self._MAXUNDO)
         # noinspection PyUnresolvedReferences
         self._radius: cython.int = self._DEFAULTRADIUS
         # noinspection PyUnresolvedReferences
@@ -4160,15 +4160,14 @@ class SisypheROIDraw(object):
         self._dtrfillholes: bool = False
         # Revision 17/03/2026 >
         self._acthresholds: tuple[float, float] | None = None
-        self._clipboard = None
+        self._clipboard: sitkImage | None = None
         self._calcBrush()
 
     """
     Private attributes
 
     _volume         SisypheVolume
-    _gradient       sitkImage
-    _mask
+    _mask           numpy array
     _roi            SisypheROI
     _brush          numpy array, disk brush
     _vbrush         numpy array, ball brush
@@ -5355,7 +5354,10 @@ class SisypheROIDraw(object):
             elif item[0] == self._DSX:
                 self.appendXSliceToLIFO(item[1], pile=self._UNDO)
                 buff = item[2].toarray().reshape(sz, sy)
-                self._roi.getNumpy[:, :, item[1]] = buff
+                # < Revision 15/06/2026
+                # self._roi.getNumpy[:, :, item[1]] = buff
+                self._roi.getNumpy()[:, :, item[1]] = buff
+                # Revision 15/06/2026 >
 
     def clearLIFO(self) -> None:
         """
@@ -9245,10 +9247,10 @@ class SisypheROIFeatures(object):
         super().__init__()
 
         if vol is not None: self.setVolume(vol)
-        else: self._volume = None
+        else: self._volume: SisypheVolume | None = None
 
         if rois is not None: self.setROICollection(rois)
-        else: self._rois = None
+        else: self._rois: SisypheROICollection | None = None
 
         self._foTag: bool = False
         self._shTag: bool = False
@@ -9818,10 +9820,10 @@ class SisypheROIHistogram(object):
         super().__init__()
 
         if vol is not None: self.setVolume(vol)
-        else: self._volume = None
+        else: self._volume: SisypheVolume | None = None
 
         if rois is not None: self.setROICollection(rois)
-        else: self._rois = None
+        else: self._rois: SisypheROICollection | None = None
 
         # noinspection PyUnresolvedReferences
         self._bins: cython.int = 100

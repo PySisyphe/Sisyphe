@@ -239,7 +239,7 @@ class SisypheDatabase(object):
 
     """
     Private attributes
-    
+
     _dbpath : str
     """
 
@@ -248,7 +248,7 @@ class SisypheDatabase(object):
         SisypheDatabase instance constructor.
         """
         super().__init__()
-        self._dbpath = ''
+        self._dbpath: str = ''
 
     def __repr__(self) -> str:
         """

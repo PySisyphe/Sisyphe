@@ -165,22 +165,22 @@ class SisypheLut(object):
 
     # Class constants
 
-    _COLORMAPS = ['gray', 'gray_r', 'autumn', 'cool', 'gnuplot', 'gnuplot2', 'gist_heat', 'gist_ncar',
-                  'hot', 'hsv', 'jet', 'nipy_spectral', 'spring', 'summer', 'rainbow', 'winter', 'Wistia']
+    _COLORMAPS: list[str] = ['gray', 'gray_r', 'autumn', 'cool', 'gnuplot', 'gnuplot2', 'gist_heat', 'gist_ncar',
+                             'hot', 'hsv', 'jet', 'nipy_spectral', 'spring', 'summer', 'rainbow', 'winter', 'Wistia']
 
-    _COLORMAPSNAME = {'gray': 'gray', 'gray_r': 'grayinv',
-                      'autumn': 'autumn', 'cool': 'cool',
-                      'gnuplot': 'gnu1', 'gnuplot2': 'gnu2',
-                      'gist_heat': 'heat', 'gist_ncar': 'ncar',
-                      'hot': 'hot', 'hsv': 'hsv',
-                      'jet': 'jet', 'nipy_spectral': 'spectral',
-                      'spring': 'spring', 'summer': 'summer',
-                      'rainbow': 'rainbow', 'winter': 'winter',
-                      'Wistia': 'wistia'}
+    _COLORMAPSNAME: dict[str, str] = {'gray': 'gray', 'gray_r': 'grayinv',
+                                      'autumn': 'autumn', 'cool': 'cool',
+                                      'gnuplot': 'gnu1', 'gnuplot2': 'gnu2',
+                                      'gist_heat': 'heat', 'gist_ncar': 'ncar',
+                                      'hot': 'hot', 'hsv': 'hsv',
+                                      'jet': 'jet', 'nipy_spectral': 'spectral',
+                                      'spring': 'spring', 'summer': 'summer',
+                                      'rainbow': 'rainbow', 'winter': 'winter',
+                                      'Wistia': 'wistia'}
 
-    _LUTTOCODE = {'default': 0, 'internal': 1, 'file': 2, 'custom': 3}
-    _CODETOLUT = {0: 'default', 1: 'internal', 2: 'file', 3: 'custom'}
-    _FILEEXT = '.xlut'
+    _LUTTOCODE: dict[str, int] = {'default': 0, 'internal': 1, 'file': 2, 'custom': 3}
+    _CODETOLUT: dict[int, str] = {0: 'default', 1: 'internal', 2: 'file', 3: 'custom'}
+    _FILEEXT: str = '.xlut'
 
     # Class methods
 
@@ -1381,7 +1381,7 @@ class SisypheColorTransfer(object):
 
     # Class constants
 
-    _FILEEXT = '.xtfer'
+    _FILEEXT: str = '.xtfer'
 
     # Class method
 
@@ -1444,10 +1444,10 @@ class SisypheColorTransfer(object):
         """
         SisypheColorTransfer instance constructor.
         """
-        self._ID = None
-        self._colortransfer = vtkColorTransferFunction()
-        self._alphatransfer = vtkPiecewiseFunction()
-        self._gradienttransfer = vtkPiecewiseFunction()
+        self._ID: str = None
+        self._colortransfer: vtkColorTransferFunction = vtkColorTransferFunction()
+        self._alphatransfer: vtkPiecewiseFunction = vtkPiecewiseFunction()
+        self._gradienttransfer: vtkPiecewiseFunction = vtkPiecewiseFunction()
 
     def __str__(self) -> str:
         """

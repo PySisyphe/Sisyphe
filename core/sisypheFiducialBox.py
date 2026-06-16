@@ -321,11 +321,11 @@ class SisypheFiducialBox(QObject):
     QObject -> SisypheFiducialBox
 
     Creation: 26/07/2022
-    Last revision: 26/01/2026
+    Last revision: 02/06/2026
     """
     # Class constant
 
-    _FILEEXT = '.xfid'
+    _FILEEXT: str = '.xfid'
 
     # Class method
 
@@ -355,9 +355,9 @@ class SisypheFiducialBox(QObject):
 
     # Custom Qt Signal
 
-    ProgressValueChanged = pyqtSignal(int)
-    ProgressRangeChanged = pyqtSignal(int, int)
-    ProgressTextChanged = pyqtSignal(str)
+    ProgressValueChanged: pyqtSignal = pyqtSignal(int)
+    ProgressRangeChanged: pyqtSignal = pyqtSignal(int, int)
+    ProgressTextChanged: pyqtSignal = pyqtSignal(str)
 
     # Special methods
 
@@ -378,29 +378,29 @@ class SisypheFiducialBox(QObject):
         SisypheFiducialBox instance constructor.
         """
         super().__init__()
-        self._trf = None
-        self._volume = None
-        self._nbfid = 0
-        self._fidtol = 0
+        self._trf: SisypheTransform | None = None
+        self._volume: SisypheVolume | None = None
+        self._nbfid: int = 0
+        self._fidtol: float = 0.0
         """
         _fidlist = dict[key1: int, value1: dict[key2: int, value2: list[float, float, float]]]
                         key1 int, slice number
                         key2 int, marker number (see _firstSliceSearch() method for marker code)
                         value2 list(float, float, float), marker coordinates x, y, z
         """
-        self._fidlist = dict()
+        self._fidlist: dict[int, dict[int, list[float]]] = dict()
         """
         _errorlist = dict[key1: int, value1: dict[key2: int, value2: float]]
                           key1 int, slice number
                           key2 int, marker number (see _firstSliceSearch() method for marker code)
                           value2 float, error in millimeters
         """
-        self._errorlist = dict()
+        self._errorlist: dict[int, dict[int, float]] = dict()
         """
         _errorstats = dict[key: str, value: float]
                            key in ('Mean', 'RMS', 'Median', 'Std', '25th', '75th', 'Min', 'Max')
         """
-        self._errorstats = dict()
+        self._errorstats: dict[str, float] = dict()
 
     # Container Public methods
 
@@ -544,12 +544,18 @@ class SisypheFiducialBox(QObject):
         buff = list()
         for i in range(1, n+1):
             buff.append(f.GetNumberOfPixels(i))
-        h = labels[buff.index(max(buff))]
-        labels.remove(h)
-        buff.remove(max(buff))
-        # Search and removal non-fiducial components
+        # < Revision 02/06/2026
+        # h = labels[buff.index(max(buff))]
+        # labels.remove(h)
+        # buff.remove(max(buff))
+        ihead = buff.index(max(buff))
+        del labels[ihead]
+        del buff[ihead]
+        # Revision 02/06/2026 >
+        # Search for and remove non-fiducial components
+        # Size selection of non-fiducial components
         n = len(buff)
-        if n not in (6, 9) and n > 5:
+        if n not in (6, 9, 12) and n > 5:
             m = int(np.median(np.array(buff)))
             minf = m // 2
             msup = m * 2
@@ -559,6 +565,8 @@ class SisypheFiducialBox(QObject):
                 if buff[i] < minf or buff[i] > msup:
                     del labels[i]
                 # Revision 26/01/2026 >
+        # Shape selection of non-fiducial components
+        pass
         # vox = self._volume.getVoxelVolume()
         # buff = list()
         # for i in range(len(labels)):
@@ -566,7 +574,18 @@ class SisypheFiducialBox(QObject):
         # if len(buff) > 0:
         #     for i in range(len(buff) - 1, -1, -1): del labels[buff[i]]
         # Revision 21/05/2025 >
+        # < Revision 01/06/2026
+        # Remove posterior plate fiducials
+        if len(labels) == 12:
+            y = np.zeros(12)
+            for i in range(self._nbfid):
+                y[i] = f.GetCentroid(labels[i])
+            p = np.sort(np.argsort(y)[:3])[::-1]
+            del labels[p[0]]
+            del labels[p[1]]
+            del labels[p[2]]
         self._nbfid = len(labels)
+        # Revision 01/06/2026 >
         if self._nbfid in (6, 9):
             """
             Marker codes
@@ -710,22 +729,29 @@ class SisypheFiducialBox(QObject):
         #    if self._nbfid in (6, 9):
         #       n = n + i
         #       break
-        step = n // 6
-        for i in range(5):
+        # Revision 04/01/2026 >
+        # Search first slice with 6 or 9 markers
+        step = n // 8
+        for i in range(7):
             idx = n + (i * step)
-            self._firstSliceSearch(img, idx)
+            # < Revision 02/06/2026
+            try: self._firstSliceSearch(img, idx)
+            except: self._nbfid = 0
+            # Revision 02/06/2026 >
             if self._nbfid in (6, 9):
                 n = idx
                 break
             if i > 0:
                 idx = n - (i * step)
-                self._firstSliceSearch(img, idx)
+                # < Revision 02/06/2026
+                try: self._firstSliceSearch(img, idx)
+                except: self._nbfid = 0
+                # Revision 02/06/2026 >
                 if self._nbfid in (6, 9):
                     n = idx
                     break
-        # Revision 04/01/2026 >
-        if self._nbfid not in (6, 9): raise ValueError('No fiducial box or wrong number of fiducial markers, '
-                                                       '{} detected, must be 6 or 9.')
+        if self._nbfid not in (6, 9):
+            raise ValueError('No fiducial box or wrong number of fiducial markers.')
         c = 1
         # noinspection PyUnresolvedReferences
         self.ProgressValueChanged.emit(c)

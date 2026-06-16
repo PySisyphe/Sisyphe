@@ -17,6 +17,7 @@ External packages/modules
 """
 
 from __future__ import annotations
+from typing import Any
 from typing import TYPE_CHECKING
 
 from os.path import exists
@@ -326,12 +327,12 @@ class SisypheImage(object):
 
         # Init attributes (default, constructor without parameter)
 
-        self._sitk_image = None
+        self._sitk_image: sitkImage | None  = None
         self._itk_image = None
-        self._vtk_image = None
-        self._numpy_array = None
+        self._vtk_image: vtkImageData | None = None
+        self._numpy_array: ndarray | None = None
         # < Revision 17/11/2024
-        self._attr = dict()
+        self._attr: dict[str, Any] = dict()
         # Revision 17/11/2024 >
 
         # Init from image (filename, sitkImage, vtkImage, ANTSImage, numpy)
@@ -389,6 +390,7 @@ class SisypheImage(object):
     _vtk_image      vtkImageData
     _itk_image      itkImage
     _numpy_array    ndarray
+    _attr           dict[str, Any]
     """
     def __str__(self) -> str:
         """

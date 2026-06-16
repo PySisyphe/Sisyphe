@@ -44,7 +44,7 @@ class SisypheRecent(object):
     object ->   SisypheRecent
 
     Creation: 27/10/2022
-    Last revision: 14/12/2023
+    Last revision: 03/06/2026
     """
     __slots__ = ['_max', '_files']
 
@@ -69,7 +69,7 @@ class SisypheRecent(object):
     """
     Private attributes
 
-    _files  list of strings
+    _files  list[str]
     _max    maximum size of _file
     """
 
@@ -84,8 +84,8 @@ class SisypheRecent(object):
         """
         super().__init__()
 
-        self._max = n
-        self._files = list()
+        self._max: int = n
+        self._files: list[str] = list()
 
     def __str__(self) -> str:
         """
@@ -221,15 +221,20 @@ class SisypheRecent(object):
         filename = join(self.getUserDirectory(), 'recent.xml')
         if exists(filename):
             self._files.clear()
-            doc = minidom.parse(filename)
-            nodes = doc.getElementsByTagName('file')
-            if nodes.length > 0:
-                for node in nodes:
-                    if node.hasChildNodes():
-                        child = node.firstChild
-                        # noinspection PyUnresolvedReferences
-                        data = child.data
-                        if exists(data): self.append(data)
+            # < Revision 02/06/2026
+            # add try/except
+            try:
+                doc = minidom.parse(filename)
+                nodes = doc.getElementsByTagName('file')
+                if nodes.length > 0:
+                    for node in nodes:
+                        if node.hasChildNodes():
+                            child = node.firstChild
+                            # noinspection PyUnresolvedReferences
+                            data = child.data
+                            if exists(data): self.append(data)
+            except: pass
+            # Revision 02/06/2026 >
         # < Revision 07/03/2025
         # else: raise IOError('No such file {}'.format(filename))
         # Revision 07/03/2025 >

@@ -51,7 +51,7 @@ class SisypheSheet(DataFrame):
 
     # Class constants
 
-    _FILEEXT = '.xsheet'
+    _FILEEXT: str = '.xsheet'
 
     @classmethod
     def getFileExt(cls) -> str:

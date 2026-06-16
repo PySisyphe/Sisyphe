@@ -193,8 +193,8 @@ Constants
 # Library codes
 
 _LIBANTS, _LIBITK, _LIBSITK, _LIBVTK, _LIBSITKVEC = 0, 1, 2, 3, 4
-_NAMETOLIB = {'ants': _LIBANTS, 'itk': _LIBITK, 'sitk': _LIBSITK, 'vtk': _LIBVTK}
-_LIBTONAME = {_LIBANTS: 'ants', _LIBITK: 'itk', _LIBSITK: 'sitk', _LIBVTK: 'vtk'}
+_NAMETOLIB: dict[str, int] = {'ants': _LIBANTS, 'itk': _LIBITK, 'sitk': _LIBSITK, 'vtk': _LIBVTK}
+_LIBTONAME: dict[int, str] = {_LIBANTS: 'ants', _LIBITK: 'itk', _LIBSITK: 'sitk', _LIBVTK: 'vtk'}
 
 # Datatype conversion between SITK, ITK, VTK and Numpy libraries
 # key = ndarray.dtype.name, value = datatype (ANTs, ITK, SITK, VTK, SITKVECTOR)
@@ -210,13 +210,13 @@ _DATATYPES = {'uint8': ('unsigned char', itkUC, sitkUInt8, VTK_UNSIGNED_CHAR, si
               'float32': ('float', itkF, sitkFloat32, VTK_FLOAT, sitkVectorFloat32),
               'float64': ('double', itkD, sitkFloat64, VTK_DOUBLE, sitkVectorFloat64)}
 
-_INTDATATYPES = ['uint8', 'int8', 'uint16', 'int16', 'uint32', 'int32', 'uint64', 'int64']
-_FLOATDATATYPES = ['float32', 'float64']
+_INTDATATYPES: list[str] = ['uint8', 'int8', 'uint16', 'int16', 'uint32', 'int32', 'uint64', 'int64']
+_FLOATDATATYPES: list[str] = ['float32', 'float64']
 
 # List of datatypes supported in ITK
 
-_ITKDATATYPES = [itkUC, itkUS, itkSS, itkUL, itkF, itkD]
-_EQITKDATATYPES = ['uint8', 'uint16', 'int16', 'uint64', 'float32', 'float64']
+_ITKDATATYPES: list[int] = [itkUC, itkUS, itkSS, itkUL, itkF, itkD]
+_EQITKDATATYPES: list[str] = ['uint8', 'uint16', 'int16', 'uint64', 'float32', 'float64']
 
 # List of itkImage types
 
@@ -224,42 +224,42 @@ _ITKIMAGETYPES = [itkImage[i, 3] for i in _ITKDATATYPES]
 
 # File extensions
 
-_NIFTIEXT = ['.nii', '.hdr', '.img', '.nia', '.nii.gz', '.img.gz']
-_NRRDEXT = ['.nrrd', '.nhdr']
-_MINCEXT = ['.mnc']
-_VTKEXT = ['.vtk', '.vti']
-_JSONEXT = ['.json']
-_BITMAPEXT = ['.' + f.data().decode() for f in QImageReader.supportedImageFormats()]
-_NUMPYEXT = ['.npy']
-_SISYPHEEXT = ['.vol']
-_BVVMREXT = ['.vmr']
-_BVVOIEXT = ['.voi']
-_FREESURFEREXT = ['.mgh', '.mgz']
-_SISYPHEROIEXT = ['.roi']
-_LUTEXT = ['.lut', '.xlut']
-_DICOMEXT = ['.dcm', '.dicom', '.ima', '.nema']
-_TRACTSEXT = ['.xtracts', '.npz', '.tck', '.trk', '.vtk', '.vtp', '.fib', '.dpy']
-_IMGEXT = _NIFTIEXT + _NRRDEXT + _MINCEXT + _VTKEXT + _JSONEXT + _NUMPYEXT + _SISYPHEEXT + _BVVMREXT + _FREESURFEREXT
+_NIFTIEXT: list[str] = ['.nii', '.hdr', '.img', '.nia', '.nii.gz', '.img.gz']
+_NRRDEXT: list[str] = ['.nrrd', '.nhdr']
+_MINCEXT: list[str] = ['.mnc']
+_VTKEXT: list[str] = ['.vtk', '.vti']
+_JSONEXT: list[str] = ['.json']
+_BITMAPEXT: list[str] = ['.' + f.data().decode() for f in QImageReader.supportedImageFormats()]
+_NUMPYEXT: list[str] = ['.npy']
+_SISYPHEEXT: list[str] = ['.vol']
+_BVVMREXT: list[str] = ['.vmr']
+_BVVOIEXT: list[str] = ['.voi']
+_FREESURFEREXT: list[str] = ['.mgh', '.mgz']
+_SISYPHEROIEXT: list[str] = ['.roi']
+_LUTEXT: list[str] = ['.lut', '.xlut']
+_DICOMEXT: list[str] = ['.dcm', '.dicom', '.ima', '.nema']
+_TRACTSEXT: list[str] = ['.xtracts', '.npz', '.tck', '.trk', '.vtk', '.vtp', '.fib', '.dpy']
+_IMGEXT: list[str] = _NIFTIEXT + _NRRDEXT + _MINCEXT + _VTKEXT + _JSONEXT + _NUMPYEXT + _SISYPHEEXT + _BVVMREXT + _FREESURFEREXT
 
 # Templates
 
-_ATROPOSID = 'ATROPOS'
-_DISTALID = 'DISTAL'
-_ICBM152ID = 'ICBM152'
-_ICBM452ID = 'ICBM452'
-_NACID = 'NAC'
-_SPLID = 'SPL'
-_SRI24ID = 'SRI24'
-_TEMPLATEID = [_ATROPOSID, _DISTALID, _ICBM152ID, _ICBM452ID, _NACID, _SPLID, _SRI24ID]
-_ICBM152SHAPE = [197, 233, 189]
-_ICBM452SHAPE = [149, 188, 148]
-_ICBM152ORIGIN = [98.0, 134.0, 72.0]
+_ATROPOSID: str = 'ATROPOS'
+_DISTALID: str = 'DISTAL'
+_ICBM152ID: str = 'ICBM152'
+_ICBM452ID: str = 'ICBM452'
+_NACID: str = 'NAC'
+_SPLID: str = 'SPL'
+_SRI24ID: str = 'SRI24'
+_TEMPLATEID: list[str] = [_ATROPOSID, _DISTALID, _ICBM152ID, _ICBM452ID, _NACID, _SPLID, _SRI24ID]
+_ICBM152SHAPE: list[int] = [197, 233, 189]
+_ICBM452SHAPE: list[int] = [149, 188, 148]
+_ICBM152ORIGIN: list[float] = [98.0, 134.0, 72.0]
 
 # Axis direction conventions
 
-_REGULARDIR = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-_VTKDIR = [-1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0]
-_SISDIR = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0]
+_REGULARDIR: list[float] = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+_VTKDIR: list[float] = [-1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0]
+_SISDIR: list[float] = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0]
 
 def listToStr(l: list) -> str:
     """
