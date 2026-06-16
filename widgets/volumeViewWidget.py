@@ -133,19 +133,19 @@ class VolumeViewWidget(AbstractViewWidget):
 
     QWidget -> AbstractViewWidget -> VolumeViewWidget
 
-    Last revision: 24/07/2025
+    Last revision: 08/06/2026
     """
 
-    _CODETOBLEND = {0: 'composite', 1: 'MaximumIntensity', 2: 'MinimumIntensity',
-                    3: 'AverageIntensity', 4: 'Additive', 5: 'IsoSurface'}
+    _CODETOBLEND: dict[int, str] = {0: 'composite', 1: 'MaximumIntensity', 2: 'MinimumIntensity',
+                                    3: 'AverageIntensity', 4: 'Additive', 5: 'IsoSurface'}
 
-    _BLENDTOCODE = {'composite': 0, 'MaximumIntensity': 1, 'MinimumIntensity': 2,
-                    'AverageIntensity': 3, 'Additive': 4, 'IsoSurface': 5}
+    _BLENDTOCODE: dict[str, int] = {'composite': 0, 'MaximumIntensity': 1, 'MinimumIntensity': 2,
+                                    'AverageIntensity': 3, 'Additive': 4, 'IsoSurface': 5}
 
     # Custom Qt signals
 
-    CameraChanged = pyqtSignal(QWidget)
-    MeshOnSliceVisibilityChanged = pyqtSignal(QWidget, bool)
+    CameraChanged: pyqtSignal = pyqtSignal(QWidget)
+    MeshOnSliceVisibilityChanged: pyqtSignal = pyqtSignal(QWidget, bool)
 
     # Public class methods
 
@@ -755,6 +755,14 @@ class VolumeViewWidget(AbstractViewWidget):
             elif self._action['averageintensity'].isChecked(): self.setBlendModeToAverageIntensity()
             elif self._action['additive'].isChecked(): self.setBlendModeToAdditive()
             elif self._action['isosurface'].isChecked(): self.setBlendModeToIsoSurface()
+            # < Revision 08/06/2026
+            self._initInfoLabels()
+            if self._action['showinfo'].isChecked():
+                self._info['topleft'].SetVisibility(True)
+                self._info['topright'].SetVisibility(True)
+                self._info['bottomleft'].SetVisibility(True)
+                self._info['bottomright'].SetVisibility(True)
+            # Revision 08/06/2026 >
             self._updateTextureTransfer()
             self._renderwindow.Render()
     # Revision 18/10/2024 >

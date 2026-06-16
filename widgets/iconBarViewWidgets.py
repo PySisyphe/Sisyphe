@@ -129,12 +129,12 @@ class IconBarWidget(QWidget):
     Last revision: 04/05/2026
     """
 
-    _BTSIZE = 40    # default button size
-    _VSIZE = 24
+    _BTSIZE: int = 40    # default button size
+    _VSIZE: int = 24
 
     # Custom Qt signals
 
-    NameChanged = pyqtSignal()
+    NameChanged: pyqtSignal = pyqtSignal()
 
     # Class methods
 

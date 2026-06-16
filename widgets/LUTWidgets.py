@@ -94,6 +94,8 @@ from Sisyphe.widgets.volumeViewWidget import VolumeViewWidget
 
 # to avoid ImportError due to circular imports
 if TYPE_CHECKING:
+    from matplotlib.backend_bases import PickEvent
+    from matplotlib.backend_bases import MouseEvent
     from Sisyphe.widgets.iconBarViewWidgets import IconBarWidget
     from Sisyphe.widgets.iconBarViewWidgets import IconBarViewWidgetCollection
 
@@ -227,8 +229,8 @@ class LutWidget(QWidget):
 
     # Custom Qt Signal
 
-    lutChanged = pyqtSignal()
-    lutWindowChanged = pyqtSignal()
+    lutChanged: pyqtSignal = pyqtSignal()
+    lutWindowChanged: pyqtSignal = pyqtSignal()
 
     # Class methods
 
@@ -1524,7 +1526,7 @@ class LutEditWidget(QWidget):
 
     # Private method
 
-    def _draw(self):
+    def _draw(self) -> None:
         """
         Redraws the LUT editor canvas, including the colormap gradient and control points.
         """
@@ -1611,7 +1613,7 @@ class LutEditWidget(QWidget):
 
     # Matplotlib event
 
-    def _onMouseClickEvent(self, event):
+    def _onMouseClickEvent(self, event: MouseEvent) -> None:
         """
         Handles mouse clicks for adding points, showing the context menu, and selecting points.
         """
@@ -1672,14 +1674,17 @@ class LutEditWidget(QWidget):
         else:
             self._selected = None
 
-    def _onPickEvent(self, event):
+    def _onPickEvent(self, event: PickEvent):
         """
         Handles the selection of a control point.
         """
+        # < Revision 12/06/2026
+        # noinspection PyUnresolvedReferences
         self._selected = event.ind[0]
+        # Revision 12/06/2026 >
         # automatic _onMouseClickEvent call after _onPickEvent
 
-    def _onMouseMoveEvent(self, event):
+    def _onMouseMoveEvent(self, event: MouseEvent) -> None:
         """
         Handles dragging a selected control point.
         """
@@ -1694,7 +1699,7 @@ class LutEditWidget(QWidget):
                 # faster & non-blocking GUI
                 # Revision 23/03/2026 >
 
-    def _onMouseReleaseEvent(self, event):
+    def _onMouseReleaseEvent(self, event: MouseEvent) -> None:
         """
         Finalizes the position of a dragged point and redraws the widget.
         """
@@ -1708,7 +1713,7 @@ class LutEditWidget(QWidget):
 
     # Qt events
 
-    def _onMenuNew(self):
+    def _onMenuNew(self) -> None:
         """
         Handles the 'Add new point' context menu action.
         """
@@ -1734,7 +1739,7 @@ class LutEditWidget(QWidget):
                 if parent is not None and isinstance(parent, TransferWidget):
                     parent.colorDialogClosed.emit()
 
-    def _onMenuRemove(self):
+    def _onMenuRemove(self) -> None:
         """
         Handles the 'Remove point' context menu action.
         """
@@ -1745,7 +1750,7 @@ class LutEditWidget(QWidget):
                 self._draw()
                 self._selected = None
 
-    def _onMenuColor(self):
+    def _onMenuColor(self) -> None:
         """
         Handles the 'Change point color' context menu action.
         """
@@ -1766,7 +1771,7 @@ class LutEditWidget(QWidget):
                 if parent is not None and isinstance(parent, TransferWidget):
                     parent.colorDialogClosed.emit()
 
-    def _onMenuSwapNext(self):
+    def _onMenuSwapNext(self) -> None:
         """
         Handles the 'Swap color with next point' context menu action.
         """
@@ -1778,7 +1783,7 @@ class LutEditWidget(QWidget):
                 self._draw()
                 self._selected = None
 
-    def _onMenuSwapPrevious(self):
+    def _onMenuSwapPrevious(self) -> None:
         """
         Handles the 'Swap color with previous point' context menu action.
         """
@@ -1790,7 +1795,7 @@ class LutEditWidget(QWidget):
                 self._draw()
                 self._selected = None
 
-    def _onMenuClear(self):
+    def _onMenuClear(self) -> None:
         """
         Handles the 'Clear all' context menu action, resetting to a default black-to-white gradient.
         """
@@ -1799,7 +1804,7 @@ class LutEditWidget(QWidget):
         self._draw()
         self._selected = None
 
-    def _onMenuSave(self):
+    def _onMenuSave(self) -> None:
         """
         Handles the 'Save...' context menu action, opening a file dialog.
         """
@@ -1841,7 +1846,7 @@ class ColorTransferWidget(LutEditWidget):
 
     # Custom Qt signal
 
-    colorTransferChanged = pyqtSignal()
+    colorTransferChanged: pyqtSignal = pyqtSignal()
 
     # Special method
 
@@ -1903,7 +1908,7 @@ class ColorTransferWidget(LutEditWidget):
 
     # Private methods
 
-    def _updateTransfer(self):
+    def _updateTransfer(self)  -> None:
         """
         Updates the SisypheColorTransfer object from the widget's control points.
         """
@@ -1916,14 +1921,14 @@ class ColorTransferWidget(LutEditWidget):
         # noinspection PyUnresolvedReferences
         self.colorTransferChanged.emit()
 
-    def _updateViewWidget(self):
+    def _updateViewWidget(self) -> None:
         """
         Triggers a render update on the associated volume view widget.
         """
         if self._view is not None:
             self._view.updateRender()
 
-    def _copyFromColorTransfer(self):
+    def _copyFromColorTransfer(self) -> None:
         """
         Populates the widget's control points from a SisypheColorTransfer instance.
         """
@@ -2045,7 +2050,7 @@ class ColorTransferWidget(LutEditWidget):
 
     # Matplotlib events
 
-    def _onMouseReleaseEvent(self, event) -> None:
+    def _onMouseReleaseEvent(self, event: MouseEvent) -> None:
         """
         Updates the transfer function and the associated view after a point is moved.
         """
@@ -2162,8 +2167,8 @@ class AlphaTransferWidget(QWidget):
 
     # Custom Qt signals
 
-    alphaTransferChanged = pyqtSignal()
-    gradientTransferChanged = pyqtSignal()
+    alphaTransferChanged: pyqtSignal = pyqtSignal()
+    gradientTransferChanged: pyqtSignal = pyqtSignal()
 
     # Class method
 
@@ -2662,7 +2667,7 @@ class AlphaTransferWidget(QWidget):
 
     # Matplotlib events
 
-    def _onMouseClickEvent(self, event) -> None:
+    def _onMouseClickEvent(self, event: MouseEvent) -> None:
         """
         Handles clicks for adding points and showing the context menu.
         """
@@ -2706,14 +2711,18 @@ class AlphaTransferWidget(QWidget):
                     self._cursor.setShape(Qt.ClosedHandCursor)
                     self._canvas.setCursor(self._cursor)
 
-    def _onPickEvent(self, event) -> None:
+    def _onPickEvent(self, event: PickEvent) -> None:
         """
         Handles the selection of a control point.
         """
+        # < Revision 12/06/2026
+        # noinspection PyUnresolvedReferences
         self._selected = event.ind[0]
+        # self._selected = event.artist
+        # Revision 12/06/2026 >
         # automatic _onMouseClickEvent call after _onPickEvent
 
-    def _onMouseMoveEvent(self, event) -> None:
+    def _onMouseMoveEvent(self, event: MouseEvent) -> None:
         """
         Handles dragging a selected control point.
         """
@@ -2752,7 +2761,7 @@ class AlphaTransferWidget(QWidget):
                 # faster & non-blocking GUI
                 # Revision 23/03/2026>
 
-    def _onMouseReleaseEvent(self, event) -> None:
+    def _onMouseReleaseEvent(self, event: MouseEvent) -> None:
         """
         Finalizes a drag operation, updating the transfer function and view.
         """
@@ -2906,8 +2915,8 @@ class TransferWidget(QWidget):
 
     # Custom Qt signals
 
-    colorDialogClosed = pyqtSignal()
-    gradientTransferVisibilityChanged = pyqtSignal(bool)
+    colorDialogClosed: pyqtSignal = pyqtSignal()
+    gradientTransferVisibilityChanged: pyqtSignal = pyqtSignal(bool)
 
     # Special method
 

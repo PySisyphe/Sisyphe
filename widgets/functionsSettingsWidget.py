@@ -143,17 +143,17 @@ class SettingsWidget(QWidget):
     QWidget -> SettingsWidget -> FunctionSettingsWidget
 
     Creation: 11/08/2022
-    Last revision: 03/05/2026
+    Last revision: 11/06/2026
     """
 
-    _VSIZE = 24
+    _VSIZE: int = 24
 
     classSisypheSettings = SisypheSettings
 
     # Custom Qt Signals
 
-    ParameterChanged = pyqtSignal(QWidget)
-    VisibilityToggled = pyqtSignal(QWidget)
+    ParameterChanged: pyqtSignal = pyqtSignal(QWidget)
+    VisibilityToggled: pyqtSignal = pyqtSignal(QWidget)
 
     # Class methods
 
@@ -283,7 +283,9 @@ class SettingsWidget(QWidget):
 
     # Special method
 
-    def __init__(self, function: str, parent: QWidget | None = None) -> None:
+    def __init__(self,
+                 function: str,
+                 parent: QWidget | None = None) -> None:
         """
         SettingsWidget instance constructor.
 
@@ -371,7 +373,7 @@ class SettingsWidget(QWidget):
     # Private methods
 
     # noinspection PyUnusedLocal
-    def _parameterChanged(self, value):
+    def _parameterChanged(self, value: Any) -> None:
         """
         Slot for handling parameter changes. Emits the ParameterChanged signal.
 
@@ -383,7 +385,7 @@ class SettingsWidget(QWidget):
         # noinspection PyUnresolvedReferences
         self.ParameterChanged.emit(self)
 
-    def _initSettingsLayout(self, function):
+    def _initSettingsLayout(self, function: str) -> None:
         """
         Initialize the settings layout based on the function's parameters from the XML settings file.
 
@@ -720,6 +722,9 @@ class SettingsWidget(QWidget):
                 # Revision 15/03/2025 >
                 elif vartype == 'date':
                     edit = QDateEdit(parent=self)
+                    # < Revision 11/06/2026
+                    edit.setDisplayFormat('dd/MM/yyyy')
+                    # Revision 11/06/2026 >
                     edit.setFixedWidth(100)
                     # noinspection PyUnresolvedReferences
                     edit.setAlignment(Qt.AlignCenter)
@@ -1568,7 +1573,10 @@ class CustomSettingsWidget(SettingsWidget):
 
     # Special method
 
-    def __init__(self, filename: str, function: str, parent: QWidget | None = None) -> None:
+    def __init__(self,
+                 filename: str,
+                 function: str,
+                 parent: QWidget | None = None) -> None:
         """
         CustomSettingsWidget instance constructor.
 

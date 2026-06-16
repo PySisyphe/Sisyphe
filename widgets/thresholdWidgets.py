@@ -9,6 +9,8 @@ External packages/modules
     - SimpleITK, medical image processing, https://simpleitk.org/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from sys import platform
 
 from numpy import median
@@ -36,6 +38,10 @@ from Sisyphe.core.sisypheVolume import SisypheVolume
 # noinspection PyProtectedMember
 from Sisyphe.core.sisypheConstants import _INTDATATYPES
 from Sisyphe.widgets.iconBarViewWidgets import IconBarSliceViewWidget
+
+if TYPE_CHECKING:
+    from PyQt5.QtGui import QMouseEvent
+    from matplotlib.backend_bases import MouseEvent
 
 if platform == 'win32':
     from qdarktheme import load_palette
@@ -283,7 +289,7 @@ class ThresholdViewWidget(QWidget):
 
     # Private methods
 
-    def _initDecimals(self):
+    def _initDecimals(self) -> None:
         if self._volume is not None:
             if self._volume.isFloatDatatype():
                 m = self._volume.getMax()
@@ -299,7 +305,7 @@ class ThresholdViewWidget(QWidget):
                     self._decimals = 1
                     self._format = '{:.1f}'
 
-    def _initHistAxes(self):
+    def _initHistAxes(self) -> None:
         if self._volume is not None:
             if self.isDarkMode(): spancolor = 'white'
             else: spancolor = 'black'
@@ -344,7 +350,7 @@ class ThresholdViewWidget(QWidget):
                                                             rotation='vertical', verticalalignment='center',
                                                             horizontalalignment='center')
 
-    def _drawImage(self):
+    def _drawImage(self) -> None:
         if self._volume is not None:
             draw = self._view().getDrawInstance()
             vmin, vmax = self.getThresholds()
@@ -352,7 +358,7 @@ class ThresholdViewWidget(QWidget):
             draw.thresholding(mask=False, replace=True)
             self._view().updateROIDisplay()
 
-    def _initEdit(self):
+    def _initEdit(self) -> None:
         if self._volume is not None:
             self._editmin.blockSignals(True)
             self._editmax.blockSignals(True)
@@ -395,7 +401,7 @@ class ThresholdViewWidget(QWidget):
             self._editmin.blockSignals(False)
             self._editmax.blockSignals(False)
 
-    def _get_span_left(self):
+    def _get_span_left(self) -> float:
         # < Revision 23/03/2026
         # migrate from matplotlib 3.6.3 to 3.10.8
         # return self._span.xy[0][0]
@@ -405,7 +411,7 @@ class ThresholdViewWidget(QWidget):
         # Revision 23/04/2026 >
         # Revision 23/03/2026 >
 
-    def _get_span_right(self):
+    def _get_span_right(self) -> float:
         # < Revision 23/03/2026
         # migrate from matplotlib 3.6.3 to 3.10.8
         # return self._span.xy[2][0]
@@ -415,7 +421,7 @@ class ThresholdViewWidget(QWidget):
         # Revision 23/04/2026 >
         # Revision 23/03/2026 >
 
-    def _set_span_left(self, x):
+    def _set_span_left(self, x: float) -> float:
         if x < self._volume.display.getRangeMin():
             x = self._volume.display.getRangeMin()
         if x > self._get_span_right():
@@ -436,7 +442,7 @@ class ThresholdViewWidget(QWidget):
         # Revision 23/03/2026 >
         return x
 
-    def _set_span_right(self, x):
+    def _set_span_right(self, x: float) -> float:
         if x > self._volume.display.getRangeMax():
             x = self._volume.display.getRangeMax()
         if x < self._get_span_left():
@@ -454,12 +460,12 @@ class ThresholdViewWidget(QWidget):
         # Revision 23/03/2026 >
         return x
 
-    def _is_in_span(self, x):
+    def _is_in_span(self, x) -> bool:
         return self._get_span_left() <= x <= self._get_span_right()
 
     # Private event methods
 
-    def _onMouseClickEvent(self, event):
+    def _onMouseClickEvent(self, event: MouseEvent) -> None:
         if event.inaxes == self._histaxe:
             minflag = self._minflag.isChecked()
             maxflag = self._maxflag.isChecked()
@@ -495,7 +501,7 @@ class ThresholdViewWidget(QWidget):
                     self._canvas.setCursor(self._cursor)
                 self._xpos = float(event.xdata)
 
-    def _onMouseMoveEvent(self, event):
+    def _onMouseMoveEvent(self, event: MouseEvent) -> None:
         if event.inaxes == self._histaxe:
             minflag = self._minflag.isChecked()
             maxflag = self._maxflag.isChecked()
@@ -588,7 +594,7 @@ class ThresholdViewWidget(QWidget):
                     self._canvas.setCursor(self._cursor)
 
     # noinspection PyUnusedLocal
-    def _onMouseReleaseEvent(self, event):
+    def _onMouseReleaseEvent(self, event: MouseEvent) -> None:
         # noinspection PyUnresolvedReferences
         self._cursor.setShape(Qt.ArrowCursor)
         self._canvas.setCursor(self._cursor)
@@ -621,7 +627,7 @@ class ThresholdViewWidget(QWidget):
         # Update display
         self._canvas.draw_idle()
 
-    def _onThresholdChangedEvent(self):
+    def _onThresholdChangedEvent(self) -> None:
         if self._volume.getDatatype() in _INTDATATYPES:
             tmin = int(self._editmin.value())
             tmax = int(self._editmax.value())
@@ -647,12 +653,12 @@ class ThresholdViewWidget(QWidget):
         self._canvas.draw_idle()
 
     # noinspection PyUnusedLocal
-    def _onThresholdFlagChangeEvent(self, event):
+    def _onThresholdFlagChangeEvent(self, event: QMouseEvent) -> None:
         if self._minflag.isChecked(): self.setThresholdFlagToMinimum()
         elif self._maxflag.isChecked(): self.setThresholdFlagToMaximum()
         else: self.setThresholdFlagToTwo()
 
-    def _onButtonAutoEvent(self):
+    def _onButtonAutoEvent(self) -> None:
         otsu = OtsuThresholdImageFilter()
         otsu.Execute(self._volume.getSITKImage())
         # < Revision 23/07/2024
@@ -667,7 +673,7 @@ class ThresholdViewWidget(QWidget):
 
     # < Revision 29/08/2025
     # add _onButtonResetEvent() method
-    def _onButtonResetEvent(self):
+    def _onButtonResetEvent(self) -> None:
         vmin, vmax = self._volume.getRange()
         self._editmin.setValue(vmin)
         self._editmax.setValue(vmax)
@@ -890,7 +896,7 @@ class GradientThresholdViewWidget(ThresholdViewWidget):
         super().setVolume(self._calcGradient(volume))
 
     @staticmethod
-    def _calcGradient(volume):
+    def _calcGradient(volume) -> None:
         if isinstance(volume, SisypheVolume):
             simg = volume.getSITKImage()
             fimg = GradientMagnitudeRecursiveGaussian(simg, sigma=1.0)

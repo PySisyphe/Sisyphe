@@ -144,7 +144,7 @@ class SliceViewWidget(AbstractViewWidget):
     QWidget -> AbstractViewWidget -> SliceViewWidget
 
     Creation: 30/03/2022
-    Last revision: 13/01/2026
+    Last revision: 08/06/2026
     """
 
     # Class constants
@@ -155,11 +155,11 @@ class SliceViewWidget(AbstractViewWidget):
 
     # Synchronisation signals
 
-    TransformApplied = pyqtSignal(QWidget, float, float, float, float, float, float)
-    CameraPositionChanged = pyqtSignal(QWidget, float, float, float)
-    RenderUpdated = pyqtSignal(QWidget)
-    VisibilityChanged = pyqtSignal(QWidget, bool)
-    OpacityChanged = pyqtSignal(QWidget, float)
+    TransformApplied: pyqtSignal = pyqtSignal(QWidget, float, float, float, float, float, float)
+    CameraPositionChanged: pyqtSignal = pyqtSignal(QWidget, float, float, float)
+    RenderUpdated: pyqtSignal = pyqtSignal(QWidget)
+    VisibilityChanged: pyqtSignal = pyqtSignal(QWidget, bool)
+    OpacityChanged: pyqtSignal = pyqtSignal(QWidget, float)
 
     # Special method
 
@@ -1114,6 +1114,14 @@ class SliceViewWidget(AbstractViewWidget):
                 # Restore display properties
                 self.setVolumeOpacity(alpha, signal=False)
                 self.setVolumeVisibility(v, signal=False)
+                # < Revision 08/06/2026
+                self._initInfoLabels()
+                if self._action['showinfo'].isChecked():
+                    self._info['topleft'].SetVisibility(True)
+                    self._info['topright'].SetVisibility(True)
+                    self._info['bottomleft'].SetVisibility(True)
+                    self._info['bottomright'].SetVisibility(True)
+                # Revision 08/06/2026 >
                 self._renderwindow.Render()
             else: raise ValueError('Invalid volume size.')
     # Revision 18/10/2024
@@ -2410,11 +2418,11 @@ class SliceReorientViewWidget(SliceViewWidget):
 
     # Custom Qt signals
 
-    ResliceCursorChanged = pyqtSignal(QWidget, float, float, float, float, float, float)
-    SpacingChanged = pyqtSignal(QWidget, float, float, float)
-    SizeChanged = pyqtSignal(QWidget, int, int, int)
-    TranslationsChanged = pyqtSignal(QWidget, float, float, float)
-    RotationsChanged = pyqtSignal(QWidget, float, float, float)
+    ResliceCursorChanged: pyqtSignal = pyqtSignal(QWidget, float, float, float, float, float, float)
+    SpacingChanged: pyqtSignal = pyqtSignal(QWidget, float, float, float)
+    SizeChanged: pyqtSignal = pyqtSignal(QWidget, int, int, int)
+    TranslationsChanged: pyqtSignal = pyqtSignal(QWidget, float, float, float)
+    RotationsChanged: pyqtSignal = pyqtSignal(QWidget, float, float, float)
 
     # Special method
 
@@ -3451,14 +3459,14 @@ class SliceOverlayViewWidget(SliceViewWidget):
     # Custom Qt signals
 
     # OverlayListChanged = pyqtSignal()
-    IsoIndexChanged = pyqtSignal(QWidget, int)
-    IsoValuesChanged = pyqtSignal(QWidget, list)
-    IsoLinesColorChanged = pyqtSignal(QWidget, list)
-    IsoLinesOpacityChanged = pyqtSignal(QWidget, float)
-    MeshVisibilityChanged = pyqtSignal(QWidget, bool)
-    TranslationsChanged = pyqtSignal(QWidget, tuple, int)  # tuple translation, int overlay index
-    RotationsChanged = pyqtSignal(QWidget, tuple, int)  # tuple translation, int overlay index
-    ViewOverlayMethodCalled = pyqtSignal(QWidget, str, object, object)  # str method name, object parameter
+    IsoIndexChanged: pyqtSignal = pyqtSignal(QWidget, int)
+    IsoValuesChanged: pyqtSignal = pyqtSignal(QWidget, list)
+    IsoLinesColorChanged: pyqtSignal = pyqtSignal(QWidget, list)
+    IsoLinesOpacityChanged: pyqtSignal = pyqtSignal(QWidget, float)
+    MeshVisibilityChanged: pyqtSignal = pyqtSignal(QWidget, bool)
+    TranslationsChanged: pyqtSignal = pyqtSignal(QWidget, tuple, int)  # tuple translation, int overlay index
+    RotationsChanged: pyqtSignal = pyqtSignal(QWidget, tuple, int)  # tuple translation, int overlay index
+    ViewOverlayMethodCalled: pyqtSignal = pyqtSignal(QWidget, str, object, object)  # str method name, object parameter
 
     # Special method
 
@@ -5522,14 +5530,14 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
     Creation: 12/04/2022
     Last revision: 20/10/2025
     """
-    _NATIVE = 0
-    _EDGE = 1
+    _NATIVE: int = 0
+    _EDGE: int = 1
 
     # Custom Qt signals
 
-    CropChanged = pyqtSignal(QWidget, bool)
-    RegistrationBoxVisibilityChanged = pyqtSignal(QWidget, bool)
-    RegistrationBoxChanged = pyqtSignal(QWidget, list)
+    CropChanged: pyqtSignal = pyqtSignal(QWidget, bool)
+    RegistrationBoxVisibilityChanged: pyqtSignal = pyqtSignal(QWidget, bool)
+    RegistrationBoxChanged: pyqtSignal = pyqtSignal(QWidget, list)
 
     # Special method
 
@@ -6568,13 +6576,13 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
 
     # Custom Qt signals
 
-    ROIModified = pyqtSignal(QWidget)
-    ROISelectionChanged = pyqtSignal(QWidget, str)
-    ROIAttributesChanged = pyqtSignal(QWidget)
-    BrushRadiusChanged = pyqtSignal(QWidget, int)
-    ROIFlagChanged = pyqtSignal(QWidget, str, object)
-    ROINameChanged = pyqtSignal(str, str)
-    ROIListChanged = pyqtSignal(str)
+    ROIModified: pyqtSignal = pyqtSignal(QWidget)
+    ROISelectionChanged: pyqtSignal = pyqtSignal(QWidget, str)
+    ROIAttributesChanged: pyqtSignal = pyqtSignal(QWidget)
+    BrushRadiusChanged: pyqtSignal = pyqtSignal(QWidget, int)
+    ROIFlagChanged: pyqtSignal = pyqtSignal(QWidget, str, object)
+    ROINameChanged: pyqtSignal = pyqtSignal(str, str)
+    ROIListChanged: pyqtSignal = pyqtSignal(str)
 
     # Special method
 

@@ -8,6 +8,8 @@ External packages/modules
     - SimpleITK, Medical image processing, https://simpleitk.org/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from sys import platform
 
 from os import getcwd
@@ -75,6 +77,17 @@ from Sisyphe.gui.dialogEditLabels import DialogEditLabels
 from Sisyphe.gui.dialogVolumeAttributes import DialogVolumeAttributes
 from Sisyphe.gui.dialogGenericResults import DialogGenericResults
 
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.backend_bases import KeyEvent
+    from matplotlib.backend_bases import MouseEvent
+    from PyQt5.QtGui import QContextMenuEvent
+    from PyQt5.QtGui import QDragEnterEvent
+    from PyQt5.QtGui import QDropEvent
+    from Sisyphe.widgets.toolBarThumbnail import ToolBarThumbnail
+    from Sisyphe.widgets.iconBarViewWidgets import IconBarViewWidgetCollection
+    from Sisyphe.gui.windowSisyphe import WindowSisyphe
+
 """
 Class hierarchy
 ~~~~~~~~~~~~~~~
@@ -101,12 +114,12 @@ class ImagePreviewWidget(QWidget):
     Last revision: 16/07/2025
     """
 
-    _VSIZE = 16
+    _VSIZE: int = 16
 
     # Class method
 
     @classmethod
-    def _getDefaultIconDirectory(cls):
+    def _getDefaultIconDirectory(cls) -> str:
         import Sisyphe.gui
         # < Revision 05/03/2025
         # return join(dirname(abspath(Sisyphe.gui.__file__)), 'icons')
@@ -114,7 +127,7 @@ class ImagePreviewWidget(QWidget):
         # Revision 05/03/2025 >
 
     @classmethod
-    def getSubButtonSize(cls):
+    def getSubButtonSize(cls) -> int:
         return cls._VSIZE
 
     # Special method
@@ -133,7 +146,13 @@ class ImagePreviewWidget(QWidget):
     _vmax           float, higher window value
     """
 
-    def __init__(self, image=None, lut='gray', size=128, orient='upper', aspect=1.0, parent=None):
+    def __init__(self,
+                 image: sitkImage | np_ndarray | None = None,
+                 lut: str = 'gray',
+                 size: int = 128,
+                 orient: str = 'upper',
+                 aspect: float = 1.0,
+                 parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         # Init icon
@@ -229,7 +248,7 @@ class ImagePreviewWidget(QWidget):
 
     # Private method
 
-    def _drawImage(self):
+    def _drawImage(self) -> None:
         if self._image is not None:
             if self._image.ndim == 3: mat = self._image[self._currentslice, :, :]
             else: mat = self._image
@@ -246,7 +265,7 @@ class ImagePreviewWidget(QWidget):
 
     # Public methods
 
-    def setDefaultLut(self):
+    def setDefaultLut(self) -> None:
         # < Revision 23/03/2026
         # migrate from matplotlib 3.6.3 to 3.10.8
         # self._lut = get_cmap('gray', 256)
@@ -254,7 +273,9 @@ class ImagePreviewWidget(QWidget):
         # Revision 23/03/2026 >
         self._drawImage()
 
-    def setLut(self, lut, update=True):
+    def setLut(self,
+               lut: str | SisypheLut | ListedColormap | LinearSegmentedColormap,
+               update: bool = True) -> None:
         if isinstance(lut, str):
             try:
                 # < Revision 23/03/2026
@@ -280,45 +301,48 @@ class ImagePreviewWidget(QWidget):
             # Revision 23/03/2026 >
         if update: self._drawImage()
 
-    def getLut(self):
+    def getLut(self) -> SisypheLut:
         return self._lut
 
-    def setRange(self, vmin, vmax, update=True):
+    def setRange(self,
+                 vmin: float,
+                 vmax: float,
+                 update: bool = True) -> None:
         if vmax < vmin: vmax, vmin = vmin, vmax
         self._vmin = vmin
         self._vmax = vmax
         if update: self._drawImage()
 
-    def getRange(self):
+    def getRange(self) -> tuple[float, float]:
         return self._vmin, self._vmax
 
-    def getFigure(self):
+    def getFigure(self) -> Figure:
         return self._fig
 
-    def getAxes(self):
+    def getAxes(self) -> Axes:
         return self._axe
 
-    def getCanvas(self):
+    def getCanvas(self) -> FigureCanvas:
         return self._canvas
 
-    def getImage(self):
+    def getImage(self) -> np_ndarray:
         return self._image
 
-    def getCurrentSlice(self):
+    def getCurrentSlice(self) -> int:
         return self._currentslice
 
-    def setCurrentSlice(self, n):
+    def setCurrentSlice(self, n: int) -> None:
         if 0 <= n < self._image.shape[0]:
             self._currentslice = n
             self._drawImage()
 
-    def getSize(self):
+    def getSize(self) -> int:
         return self.size().height()
 
-    def setSize(self, size):
+    def setSize(self, size: int) -> None:
         self.setBaseSize(size, size)
 
-    def updateImage(self, image):
+    def updateImage(self, image: np_ndarray) -> None:
         if isinstance(image, np_ndarray):
             if image.shape != self._image.shape:
                 self._currentslice = image.shape[0] // 2
@@ -327,7 +351,7 @@ class ImagePreviewWidget(QWidget):
 
     # Matplotlib events
 
-    def _onWheelEvent(self, event):
+    def _onWheelEvent(self, event: MouseEvent) -> None:
         d = self._image.shape[0] - 1
         if event.button == 'up':
             if self._currentslice < d:
@@ -337,7 +361,7 @@ class ImagePreviewWidget(QWidget):
                 self._currentslice -= 1
         self._drawImage()
 
-    def _onKeyPressEvent(self, event):
+    def _onKeyPressEvent(self, event: KeyEvent) -> None:
         d = self._image.shape[0] - 1
         if event.key == 'up' or event.key == 'left':
             if self._currentslice < d:
@@ -347,10 +371,10 @@ class ImagePreviewWidget(QWidget):
                 self._currentslice -= 1
         self._drawImage()
 
-    def _onClickEvent(self, event):
+    def _onClickEvent(self, event: MouseEvent) -> None:
         pass
 
-    def _onMouseMoveEvent(self, event):
+    def _onMouseMoveEvent(self, event: MouseEvent) -> None:
         pass
 
 
@@ -371,7 +395,11 @@ class SisypheImageViewWidget(ImagePreviewWidget):
     Last revision: 16/07/2025
     """
 
-    def __init__(self, image=None, lut='gray', size=128, parent=None):
+    def __init__(self,
+                 image: SisypheImage | SisypheVolume | None = None,
+                 lut: str = 'gray',
+                 size: int = 128,
+                 parent: QWidget | None = None):
         if isinstance(image, (SisypheImage, SisypheVolume)):
             # < Revision 16/07/2025
             # change axes aspect ratio if anistropic pixel
@@ -386,7 +414,7 @@ class SisypheImageViewWidget(ImagePreviewWidget):
 
     # Public method
 
-    def updateImage(self, image):
+    def updateImage(self, image: SisypheImage | SisypheVolume) -> None:
         if isinstance(image, (SisypheImage, SisypheVolume)):
             super().updateImage(image.getNumpy())
         else: raise TypeError('parameter {} is not SisypheImage or SisypheVolume.'.format(type(image)))
@@ -410,7 +438,10 @@ class SisypheVolumeViewWidget(SisypheImageViewWidget):
     Last revision: 11/03/2025
     """
 
-    def __init__(self, image=None, size=128, parent=None):
+    def __init__(self,
+                 image: SisypheImage | SisypheVolume | None = None,
+                 size: int = 128,
+                 parent: QWidget | None = None) -> None:
         if isinstance(image, (SisypheImage, SisypheVolume)):
             lut = image.display.getLUT().copyToMatplotlibColormap()
             # noinspection PyTypeChecker
@@ -420,7 +451,7 @@ class SisypheVolumeViewWidget(SisypheImageViewWidget):
 
     # Matplotlib events
 
-    def _onClickEvent(self, event):
+    def _onClickEvent(self, event: MouseEvent) -> None:
         # Convert matplotlib event to Qt event in the parent tool
         if self._parent:
             p = self._parent.mapFromGlobal(QCursor.pos())
@@ -441,7 +472,7 @@ class SisypheVolumeViewWidget(SisypheImageViewWidget):
                                         Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
                 self._parent.mousePressEvent(event)
 
-    def _onMouseMoveEvent(self, event):
+    def _onMouseMoveEvent(self, event: MouseEvent) -> None:
         # Convert matplotlib event to Qt event in the parent tool
         if self._parent:
             if event.button == MouseButton.LEFT:
@@ -467,7 +498,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     QPushButton - > SisypheVolumeThumbnailButtonWidget
 
-    Last revision: 27/05/2026
+    Last revision: 09/06/2026
     """
 
     # Special method
@@ -489,7 +520,12 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     _logger         logging.Logger
     """
 
-    def __init__(self, image=None, size=128, thumbnail=None, views=None, parent=None):
+    def __init__(self,
+                 image: SisypheImage | SisypheVolume | None = None,
+                 size: int = 128,
+                 thumbnail: ToolBarThumbnail | None = None,
+                 views: IconBarViewWidgetCollection | None = None,
+                 parent: QWidget | None = None) -> None:
         if isinstance(image, (SisypheImage, SisypheVolume)):
             super().__init__(parent)
             self.setObjectName('ThumbnailButton')
@@ -948,7 +984,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # Private methods
 
-    def _onMenuShow(self):
+    def _onMenuShow(self) -> None:
         if not self.hasReference(): self._action['overlay'].setChecked(False)
         self._action['display'].setVisible(not self.isReference())
         self._action['overlay'].setVisible(self.hasReference() and not self.isReference())
@@ -959,7 +995,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
         # self._action['lut'].setVisible(self.isReference() or self.isOverlaid())
         # if self._volume is not None: self._lutwidget.setVolume(self._volume)
 
-    def _onMenuHide(self):
+    def _onMenuHide(self) -> None:
         if self._volume is not None:
             vmin, vmax = self._volume.display.getWindow()
             self._preview.setRange(vmin, vmax, update=False)
@@ -968,7 +1004,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     def _getWidgetCenter(self):
         return self.mapToGlobal(self.rect().center())
 
-    def _registration(self, moving):
+    def _registration(self, moving: SisypheVolume) -> None:
         r = None
         if self.hasMainWindow():
             if self._volume.getID() in moving.getTransforms():
@@ -995,7 +1031,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 17/10/2024
     # add _lutChanged method
-    def _lutChanged(self):
+    def _lutChanged(self) -> None:
         if self.isDisplayedInProjectionView():
             if self.hasViewsWidget():
                 w = self.getViewsWidget().getProjectionViewWidget()
@@ -1010,7 +1046,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 16/10/2024
     # add _lutWindowChanged method
-    def _lutWindowChanged(self):
+    def _lutWindowChanged(self) -> None:
         if self.isDisplayedInProjectionView():
             if self.hasViewsWidget():
                 w = self.getViewsWidget().getProjectionViewWidget()
@@ -1025,7 +1061,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 20/10/2024
     # add _updateViewsVisibility method
-    def _updateViewsVisibility(self):
+    def _updateViewsVisibility(self) -> None:
         if self.hasMainWindow():
             self.getMainWindow().setSliceViewVisibility(self._action['slices'].isChecked())
             self.getMainWindow().setOrthogonalViewVisibility(self._action['orthogonal'].isChecked())
@@ -1039,7 +1075,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 15/10/2024
     # add _updateDockVisibility method
-    def _updateDockVisibility(self):
+    def _updateDockVisibility(self) -> None:
         if self.hasMainWindow():
             v = self._action['slices'].isChecked() or \
                 self._action['synchronised'].isChecked()
@@ -1052,7 +1088,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 09/12/2024
     # add _componentChanged method
-    def _componentChanged(self, v: int):
+    def _componentChanged(self, v: int) -> None:
         previous = self._volume
         self._volume = self._multi.copyComponent(v - 1)
         self._volume.display.setLUT(self._lutwidget.getLut())
@@ -1074,53 +1110,53 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # Public methods
 
-    def setSize(self, s):
+    def setSize(self, s: int) -> None:
         if isinstance(s, int):
             self.setFixedSize(s, s)
             self._preview.setSize(s - 32)
             self.layout().itemAt(0).widget().setFixedSize(QSize(s-32, s-32))
         else: raise TypeError('parameter  type {} is not int.'.format(type(s)))
 
-    def getSize(self):
+    def getSize(self) -> int:
         return self.height()
 
-    def getThumbnailToolbar(self):
+    def getThumbnailToolbar(self) -> ToolBarThumbnail:
         return self._thumbnail
 
-    def setThumbnailToolbar(self, w):
+    def setThumbnailToolbar(self, w:  ToolBarThumbnail) -> None:
         from Sisyphe.widgets.toolBarThumbnail import ToolBarThumbnail
         if isinstance(w, ToolBarThumbnail):
             self._thumbnail = w
         else: raise TypeError('parameter type {} is not ToolBarThumbnail.'.format(type(w)))
 
-    def hasThumbnailToolbar(self):
+    def hasThumbnailToolbar(self) -> bool:
         return self._thumbnail is not None
 
-    def getViewsWidget(self):
+    def getViewsWidget(self) -> IconBarViewWidgetCollection:
         return self._views
 
-    def setViewsWidget(self, w):
+    def setViewsWidget(self, w: IconBarViewWidgetCollection) -> None:
         from Sisyphe.widgets.iconBarViewWidgets import IconBarViewWidgetCollection
         if isinstance(w, IconBarViewWidgetCollection): self._views = w
         else: raise TypeError('parameter type {} is not IconBarViewWidgetCollection.'.format(type(w)))
 
-    def hasViewsWidget(self):
+    def hasViewsWidget(self) -> bool:
         return self._views is not None
 
-    def getMainWindow(self):
+    def getMainWindow(self) -> WindowSisyphe:
         if self._thumbnail is not None:
             return self._thumbnail.getMainWindow()
         else: return None
 
-    def hasMainWindow(self):
+    def hasMainWindow(self) -> bool:
         return self._thumbnail.getMainWindow() is not None
 
-    def getActions(self):
+    def getActions(self) -> dict[str, QAction]:
         return self._action
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
-    def editAttributes(self):
+    def editAttributes(self) -> None:
         dialog = DialogVolumeAttributes(vol=self._multi)
         if platform == 'win32':
             import pywinstyles
@@ -1140,7 +1176,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
-    def viewDicomAttributes(self):
+    def viewDicomAttributes(self) -> None:
         if self._volume.hasXmlDicom():
             filename = splitext(self._multi.getFilename())[0] + XmlDicom.getFileExt()
             dialog = DialogXmlDicom(filename)
@@ -1156,7 +1192,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             dialog.exec()
     # Revision 10/12/2024 >
 
-    def editLabels(self):
+    def editLabels(self) -> None:
         if self._multi.getNumberOfComponentsPerPixel() == 1:
             if self._volume.getAcquisition().isLB():
                 dialog = DialogEditLabels()
@@ -1175,7 +1211,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
-    def addToDatabase(self):
+    def addToDatabase(self) -> None:
         if self.hasMainWindow():
             database = self.getMainWindow().getDatabase()
             if database is not None: database.addVolumes(self._multi)
@@ -1183,7 +1219,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
-    def save(self):
+    def save(self) -> None:
         if self._multi.hasFilename():
             # < Revision 13/12/2024
             if self._multi != self._volume:
@@ -1193,14 +1229,14 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             except Exception as err: messageBox(self, 'Save PySisyphe volume', '{}'.format(err))
             mainwindow = self.getMainWindow()
             if mainwindow is not None: mainwindow.setStatusBarMessage('{} saved.'.format(self._multi.getBasename()))
-            if self._logger is not None: self._logger.info('Save {}'.format(self._multi.getFilename()))
+            if self._logger is not None: self._logger.info('Save {}'.format(self._multi.getBasename()))
             self._preview.setToolTip(str(self._multi))
         else: self.saveas()
     # Revision 10/12/2024 >
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
-    def saveas(self):
+    def saveas(self) -> None:
         title = 'Save PySisyphe volume'
         if self._multi.hasFilename(): filename = self._multi.getFilename()
         else: filename = getcwd()
@@ -1217,13 +1253,13 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 messageBox(self, 'Save PySisyphe volume', 'error : {}'.format(err))
             mainwindow = self.getMainWindow()
             if mainwindow is not None: mainwindow.setStatusBarMessage('{} saved.'.format(self._multi.getBasename()))
-            if self._logger is not None: self._logger.info('Save {}'.format(self._multi.getFilename()))
+            if self._logger is not None: self._logger.info('Save {}'.format(self._multi.getBasename()))
             self._preview.setToolTip(str(self._multi))
     # Revision 10/12/2024 >
 
     # < Revision 10/12/2024
     # add saveComponent method
-    def saveCurrentComponent(self):
+    def saveCurrentComponent(self) -> None:
         if self._volume.hasFilename():
             try: self._multi.save()
             except Exception as err: messageBox(self, 'Save PySisyphe volume', '{}'.format(err))
@@ -1234,7 +1270,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # add saveComponentAs method
-    def saveCurrentComponentAs(self):
+    def saveCurrentComponentAs(self) -> None:
         title = 'Save PySisyphe volume'
         if self._volume.hasFilename(): filename = self._volume.getFilename()
         else: filename = getcwd()
@@ -1251,7 +1287,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 29/11/2025
     # add copyToConsole method
-    def copyToConsole(self, f: int = 0):
+    def copyToConsole(self, f: int = 0) -> None:
         if self.hasMainWindow():
             names = ['vol', 'sitkv', 'vtkv', 'antsv', 'itkv', 'nibv', 'npv', 'npv']
             types = ['SisypheVolume',
@@ -1293,7 +1329,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # add split method
-    def split(self):
+    def split(self) -> None:
         n = self._multi.getNumberOfComponentsPerPixel()
         if n > 1:
             wait = DialogWait()
@@ -1322,7 +1358,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
-    def remove(self):
+    def remove(self) -> None:
         if self._thumbnail is not None: self._thumbnail.removeVolume(self._multi)
     # Revision 10/12/2024 >
 
@@ -1345,7 +1381,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 26/05/2026
     # add removeFromAllViews method
-    def removeFromAllViews(self):
+    def removeFromAllViews(self) -> None:
         if self.isChecked():
             if self._action['slices'].isChecked():
                 self._views['slices'].viewWidgetVisibleOff()
@@ -1390,7 +1426,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     # Revision 26/05/2026 >
 
     # < Revision 19/10/2024
-    def displayInAllViews(self):
+    def displayInAllViews(self) -> None:
         if self._views is not None:
             n = self.getNotDisplayedViewsCount()
             if n > 0:
@@ -1402,18 +1438,14 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 wait.setProgressVisibility(n > 1)
                 QApplication.processEvents()
                 """
-
                 Volume is not displayed
-
                 """
                 # Display in slice view widget
                 if not self.isChecked():
                     self.displayInSliceView(moveto=True, update=False, wait=wait)
                     wait.incCurrentProgressValue()
                 """
-
                 Volume is already displayed
-
                 """
                 # Display in slice view widget
                 if not self._action['slices'].isChecked():
@@ -1450,7 +1482,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     def displayInSliceView(self,
                            moveto: bool = True,
                            update: bool = False,
-                           wait: DialogWait | None = None):
+                           wait: DialogWait | None = None) -> None:
         if self._views is not None:
             if self._action['slices'].isChecked():
                 if wait is None:
@@ -1461,10 +1493,8 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                     flag = True
                 else: flag = False
                 if not self.isChecked():
-                    """
-    
+                    """  
                     Volume is not displayed
-    
                     """
                     # Hide slice view widget during update
                     # noinspection PyUnresolvedReferences
@@ -1503,16 +1533,12 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             self.getMainWindow().showSliceView()
                             self.getMainWindow().updateTimers()
                 else:
-                    """
-            
+                    """       
                     Volume is already displayed
-            
                     """
-                    if self._action['slices'].isChecked() and not update:
-                        """
-    
+                    if not update:
+                        """    
                         Volume is not already displayed in slice view widget
-    
                         """
                         # Hide slice view widget during update
                         # noinspection PyUnresolvedReferences
@@ -1554,14 +1580,13 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             else: self.getMainWindow().setSliceViewVisibility(True)
                     elif update:
                         """
-    
                         Volume is already displayed in slice view widget
-    
                         """
                         # noinspection PyUnresolvedReferences
                         previous = self._views['slices'].getVolume()
                         if previous.hasSameFieldOfView(self._volume):
                             # Display current volume in slice view widget
+                            print('replace')
                             # noinspection PyUnresolvedReferences
                             self._views['slices'].replaceVolume(self._volume)
                             # Set slice view widget visibility
@@ -1591,7 +1616,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     def displayInOrthogonalView(self,
                                 moveto: bool = True,
                                 update: bool = False,
-                                wait: DialogWait | None = None):
+                                wait: DialogWait | None = None) -> None:
         if self._views is not None:
             if self._action['orthogonal'].isChecked():
                 if wait is None:
@@ -1603,9 +1628,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 else: flag = False
                 if not self.isChecked():
                     """
-
                     Volume is not displayed
-
                     """
                     # Hide orthogonal view widget during update
                     # noinspection PyUnresolvedReferences
@@ -1647,15 +1670,11 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             self.getMainWindow().updateTimers()
                 else:
                     """
-
                     Volume is already displayed
-
                     """
-                    if self._action['orthogonal'].isChecked() and not update:
+                    if not update:
                         """
-
                         Volume is not already displayed in orthogonal view widget
-
                         """
                         # Hide orthogonal view widget during update
                         # noinspection PyUnresolvedReferences
@@ -1689,9 +1708,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             else: self.getMainWindow().setOrthogonalViewVisibility(True)
                     elif update:
                         """
-
                         Volume is already displayed in orthogonal view widget
-
                         """
                         # noinspection PyUnresolvedReferences
                         previous = self._views['orthogonal'].getVolume()
@@ -1726,7 +1743,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     def displayInSynchronisedView(self,
                                   moveto: bool = True,
                                   update: bool = False,
-                                  wait: DialogWait | None = None):
+                                  wait: DialogWait | None = None) -> None:
         if self._views is not None:
             if self._action['synchronised'].isChecked():
                 if wait is None:
@@ -1738,9 +1755,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 else: flag = False
                 if not self.isChecked():
                     """
-
                     Volume is not displayed
-
                     """
                     # Hide synchronized view widget during update
                     # noinspection PyUnresolvedReferences
@@ -1780,15 +1795,11 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             self.getMainWindow().updateTimers()
                 else:
                     """
-
                     Volume is already displayed
-
                     """
-                    if self._action['synchronised'].isChecked() and not update:
+                    if not update:
                         """
-
                         Volume is not already displayed in synchronised view widget
-
                         """
                         # Hide synchronized view widget during update
                         # noinspection PyUnresolvedReferences
@@ -1830,9 +1841,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             else: self.getMainWindow().setSynchronisedViewVisibility(True)
                     elif update:
                         """
-
                         Volume is already displayed in synchronised view widget
-
                         """
                         # noinspection PyUnresolvedReferences
                         previous = self._views['synchronised'].getVolume()
@@ -1867,7 +1876,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     def displayInProjectionView(self,
                                 moveto: bool = True,
                                 update: bool = False,
-                                wait: DialogWait | None = None):
+                                wait: DialogWait | None = None) -> None:
         if self._views is not None:
             if self._action['projections'].isChecked():
                 if wait is None:
@@ -1879,9 +1888,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 else: flag = False
                 if not self.isChecked():
                     """
-
                     Volume is not displayed
-
                     """
                     # Hide projection view widget during update
                     # noinspection PyUnresolvedReferences
@@ -1919,15 +1926,11 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             self.getMainWindow().updateTimers()
                 else:
                     """
-
                     Volume is already displayed
-
                     """
-                    if self._action['projections'].isChecked() and not update:
+                    if not update:
                         """
-
                         Volume is not already displayed in projection view widget
-
                         """
                         # Hide projection view widget during update
                         # noinspection PyUnresolvedReferences
@@ -1946,9 +1949,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             else: self.getMainWindow().setProjectionViewVisibility(True)
                     elif update:
                         """
-
                         Volume is already displayed in projection view widget
-
                         """
                         # noinspection PyUnresolvedReferences
                         previous = self._views['projections'].getVolume()
@@ -1982,7 +1983,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     # add displayInMultiComponentView method
     def displayInMultiComponentView(self,
                                     moveto: bool = True,
-                                    wait: DialogWait | None = None):
+                                    wait: DialogWait | None = None) -> None:
         if self._views is not None:
             if self._action['components'].isChecked():
                 if wait is None:
@@ -2041,14 +2042,14 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 15/10/2024
     # add updateDisplay method
-    def updateDisplay(self, replace):
+    def updateDisplay(self, replace: bool) -> None:
         if self._action['slices'].isChecked(): self.displayInSliceView(moveto=False, update=replace)
         if self._action['orthogonal'].isChecked(): self.displayInOrthogonalView(moveto=False, update=replace)
         if self._action['synchronised'].isChecked(): self.displayInSynchronisedView(moveto=False, update=replace)
         if self._action['projections'].isChecked(): self.displayInProjectionView(moveto=False, update=replace)
     # Revision 15/10/2024 >
 
-    def overlay(self):
+    def overlay(self) -> None:
         # Add overlay
         if self._action['overlay'].isChecked():
             if self._views is not None:
@@ -2061,6 +2062,10 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                     # < Revision 27/05/2025
                     # self._views.addOverlay(self._volume, wait)
                     # self.setDown(True)
+                    # < Revision 09/06/2026
+                    # update overlay transforms
+                    self._volume.loadTransforms()
+                    # Revision 09/06/2026 >
                     if self._views.addOverlay(self._volume, wait):
                         self.setDown(True)
                         if self._logger is not None: self._logger.info('Display overlay {}'.format(self._volume.getBasename()))
@@ -2083,7 +2088,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                                'Remove overlay',
                                'Remove overlay error : {}\n{}'.format(type(err), str(err)))
 
-    def displayOverlay(self):
+    def displayOverlay(self) -> None:
         if not self._action['overlay'].isChecked():
             # < Revision 06/11/2024
             # manage the maximum number of overlays that can be displayed
@@ -2112,7 +2117,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 24/10/2024
     # add defaultWindow method
-    def defaultWindow(self):
+    def defaultWindow(self) -> None:
         self._lutwidget.defaultWindow()
         self._onMenuHide()
         if self._logger is not None: self._logger.info('Set default window {}'.format(self._volume.getBasename()))
@@ -2120,7 +2125,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 24/10/2024
     # add autoWindow method
-    def autoWindow(self):
+    def autoWindow(self) -> None:
         self._lutwidget.autoWindow()
         self._onMenuHide()
         self._logger.info('Auto window {}'.format(self._volume.getBasename()))
@@ -2128,7 +2133,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 24/10/2024
     # add brainWindow method
-    def brainWindow(self):
+    def brainWindow(self) -> None:
         self._lutwidget.setCTBrainWindow()
         self._onMenuHide()
         self._logger.info('Set brain parenchyma window {}'.format(self._volume.getBasename()))
@@ -2136,7 +2141,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 24/10/2024
     # add boneWindow method
-    def boneWindow(self):
+    def boneWindow(self) -> None:
         self._lutwidget.setCTBoneWindow()
         self._onMenuHide()
         self._logger.info('Set bone window {}'.format(self._volume.getBasename()))
@@ -2144,13 +2149,13 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 24/10/2024
     # add metallicWindow method
-    def metallicWindow(self):
+    def metallicWindow(self) -> None:
         self._lutwidget.setCTMetallicWindow()
         self._onMenuHide()
         self._logger.info('Set metallic window {}'.format(self._volume.getBasename()))
     # Revision 24/10/2024 >
 
-    def flip(self, axis):
+    def flip(self, axis: int) -> None:
         if self._multi.getNumberOfComponentsPerPixel() == 1:
             if isinstance(axis, int):
                 if 0 <= axis < 3:
@@ -2176,15 +2181,15 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 19/10/2024
     # add removeNeck method
-    def swapAxis(self, axes):
+    def swapAxis(self, axes: tuple[int, int, int] | list[int]) -> None:
         """
-            original  x y z
-            permutation combinatorial :
-            y x z -> axes=[1 0 2]
-            z x y -> axes=[2 0 1]
-            x z y -> axes=[0 2 1]
-            y z x -> axes=[1 2 0]
-            z y x -> axes=[2 1 0]
+        original  x y z
+        permutation combinatorial :
+        y x z -> axes=[1 0 2]
+        z x y -> axes=[2 0 1]
+        x z y -> axes=[0 2 1]
+        y z x -> axes=[1 2 0]
+        z y x -> axes=[2 1 0]
         """
         if self._multi.getNumberOfComponentsPerPixel() == 1:
             if self.isOverlaid():
@@ -2209,7 +2214,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 19/10/2024
     # add removeNeck method
-    def removeNeck(self):
+    def removeNeck(self) -> None:
         if self._multi.getNumberOfComponentsPerPixel() == 1:
             if self.isOverlaid():
                 self._views.removeOverlay(self._volume)
@@ -2229,7 +2234,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
-    def changeDatatype(self, dtype):
+    def changeDatatype(self, dtype: str) -> None:
         if isinstance(dtype, str):
             if self._volume.getDatatype() != dtype:
                 r = messageBox(self,
@@ -2250,6 +2255,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                     else:
                         self._multi = vol
                         self._volume = vol
+                        self._lutwidget.setVolume(self._volume)
                         self.updateTooltip()
                         if self.isReference(): self.updateDisplay(replace=True)
                         elif self.isOverlaid(): self.overlay()
@@ -2259,7 +2265,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
-    def changeModality(self, m):
+    def changeModality(self, m: str) -> None:
         if isinstance(m, str):
             if m in self._multi.acquisition.getModalityToCodeDict():
                 if self._multi.acquisition.getModality() != m:
@@ -2302,7 +2308,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
-    def removeOrigin(self):
+    def removeOrigin(self) -> None:
         self._multi.setDefaultOrigin()
         if self._multi.getNumberOfComponentsPerPixel() > 1: self._volume.setDefaultOrigin()
         else: self._volume = self._multi
@@ -2312,7 +2318,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
-    def removeDirection(self):
+    def removeDirection(self) -> None:
         self._multi.setDefaultDirections()
         if self._multi.getNumberOfComponentsPerPixel() > 1: self._volume.setDefaultDirections()
         else: self._volume = self._multi
@@ -2322,7 +2328,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 05/11/2024
     # add anonymize method
-    def anonymize(self):
+    def anonymize(self) -> None:
         self._multi.setDefaultDirections()
         if self._multi.getNumberOfComponentsPerPixel() > 1: self._volume.identity.anonymize()
         else: self._volume = self._multi
@@ -2330,25 +2336,25 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
         self._preview.setToolTip(str(self._multi))
     # Revision 05/11/2024 >
 
-    def acpc(self):
+    def acpc(self) -> None:
         if self._multi.getNumberOfComponentsPerPixel() == 1:
             if self.hasMainWindow():
                 # noinspection PyTypeChecker
                 self.getMainWindow().acpcSelection(self._volume)
 
-    def frame(self):
+    def frame(self) -> None:
         if self._multi.getNumberOfComponentsPerPixel() == 1:
             if self.hasMainWindow():
                 # noinspection PyTypeChecker
                 self.getMainWindow().frameDetection(self._volume)
 
-    def reorientation(self):
+    def reorientation(self) -> None:
         if self._multi.getNumberOfComponentsPerPixel() == 1:
             if self.hasMainWindow():
                 # noinspection PyTypeChecker
                 self.getMainWindow().reorient(self._volume)
 
-    def statistics(self):
+    def statistics(self) -> None:
         wait = DialogWait(info='{} statistics...'.format(self._volume.getName()))
         wait.open()
         dialog = DialogGenericResults()
@@ -2376,58 +2382,58 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
         self._logger.info('Descriptive statistics {}'.format(self._volume.getBasename()))
         dialog.exec()
 
-    def isReference(self):
+    def isReference(self) -> bool:
         return self.isChecked()
 
     # < Revision 15/10/2024
     # add isDisplayedInSliceView method
-    def isDisplayedInSliceView(self):
+    def isDisplayedInSliceView(self) -> bool:
         return self._action['slices'].isChecked()
     # Revision 15/10/2024 >
 
     # < Revision 15/10/2024
     # add isDisplayedInOrthogonalView method
-    def isDisplayedInOrthogonalView(self):
+    def isDisplayedInOrthogonalView(self) -> bool:
         return self._action['orthogonal'].isChecked()
     # Revision 15/10/2024 >
 
     # < Revision 15/10/2024
     # add isDisplayedInSynchronisedView method
-    def isDisplayedInSynchronisedView(self):
+    def isDisplayedInSynchronisedView(self) -> bool:
         return self._action['synchronised'].isChecked()
     # Revision 15/10/2024 >
 
     # < Revision 15/10/2024
     # add isDisplayedInProjectionView method
-    def isDisplayedInProjectionView(self):
+    def isDisplayedInProjectionView(self) -> bool:
         return self._action['projections'].isChecked()
     # Revision 15/10/2024 >
 
     # < Revision 10/12/2024
     # add isDisplayedInMultiComponentView method
-    def isDisplayedInMultiComponentView(self):
+    def isDisplayedInMultiComponentView(self) -> bool:
         return self._action['multi'].isChecked()
     # Revision 10/12/2024 >
 
-    def isOverlaid(self):
+    def isOverlaid(self) -> bool:
         return self._action['overlay'].isChecked()
 
-    def hasReference(self):
+    def hasReference(self) -> bool:
         if self._thumbnail is not None: return self._thumbnail.hasReference()
         else: raise AttributeError('_thumbnail attribute is None.')
 
-    def getVolume(self):
+    def getVolume(self) -> SisypheVolume:
         # < Revision 12/12/2024
         # return self._volume
         return self._multi
         # Revision 12/12/2024 >
 
-    def updateTooltip(self):
+    def updateTooltip(self) -> None:
         self._preview.setToolTip(str(self._volume))
 
     # Qt Drag event
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event: QMouseEvent) -> None:
         # noinspection PyUnresolvedReferences
         if event.button() == Qt.LeftButton:
             # < Revision 21/03/2025
@@ -2440,20 +2446,20 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 QToolTip.showText(self.mapToGlobal(event.pos()), str(self._volume), self, self.geometry(), 5000)
             # Revision 21/03/2025 >
 
-    def contextMenuEvent(self, event):
+    def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         self._popup.exec(self._getWidgetCenter())
 
-    def mouseDoubleClickEvent(self, event):
+    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         if not self.isChecked():
             # < Revision 27/05/2026
             self._action['slices'].setChecked(True)
             self.displayInSliceView()
             # Revision 27/05/2026 >
 
-    def mouseReleaseEvent(self, event):
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self._dragpos0 = None
 
-    def mouseMoveEvent(self, event):
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
         # noinspection PyUnresolvedReferences
         if event.button() == Qt.LeftButton and self._dragpos0 is not None:
             QToolTip.hideText()
@@ -2473,11 +2479,11 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                         drag.exec(Qt.MoveAction)
                         self._dragpos0 = None
 
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasText(): event.acceptProposedAction()
         else: event.ignore()
 
-    def dropEvent(self, event):
+    def dropEvent(self, event: QDropEvent) -> None:
         if event.mimeData().hasText():
             event.acceptProposedAction()
             txt = event.mimeData().text()

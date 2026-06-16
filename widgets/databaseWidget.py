@@ -5,6 +5,8 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from sys import platform
 
 from os import getcwd
@@ -59,6 +61,11 @@ from Sisyphe.gui.dialogWait import DialogWait
 from Sisyphe.gui.dialogVolumeAttributes import DialogVolumeAttributes
 from Sisyphe.widgets.basicWidgets import messageBox
 
+if TYPE_CHECKING:
+    from PyQt5.QtGui import QDragEnterEvent
+    from PyQt5.QtGui import QDropEvent
+    from Sisyphe.gui.windowSisyphe import WindowSisyphe
+
 """
 Class hierarchy
 ~~~~~~~~~~~~~~~
@@ -81,12 +88,12 @@ class DatabaseWidget(QWidget):
     # Class methods
 
     @classmethod
-    def getDefaultIconDirectory(cls):
+    def getDefaultIconDirectory(cls) -> str:
         import Sisyphe.gui
         return join(dirname(abspath(Sisyphe.gui.__file__)), 'icons')
 
     @classmethod
-    def getIdentityFromItem(cls, item):
+    def getIdentityFromItem(cls, item: QTreeWidgetItem) -> SisypheIdentity:
         if isinstance(item, QTreeWidgetItem):
             identity = SisypheIdentity()
             identity.setLastname(item.text(0))
@@ -111,7 +118,7 @@ class DatabaseWidget(QWidget):
     + other GUI attributes (button, edit...) not detailed
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self._db = SisypheDatabase()
@@ -170,6 +177,9 @@ class DatabaseWidget(QWidget):
         # noinspection PyUnresolvedReferences
         self._checkdate.stateChanged.connect(lambda: self._fltdob.setEnabled(self._checkdate.isChecked()))
         self._fltdob = QDateEdit()
+        # < Revision 11/06/2026
+        self._fltdob.setDisplayFormat('dd/MM/yyyy')
+        # Revision 11/06/2026 >
         self._fltdob.setCalendarPopup(True)
         self._fltdob.setEnabled(False)
         self._fltdob.setToolTip('Date of birth filter,\n'
@@ -385,31 +395,31 @@ class DatabaseWidget(QWidget):
 
     # Private methods
 
-    def _getFolderFromItem(self, item):
+    def _getFolderFromItem(self, item: QTreeWidgetItem) -> str:
         if isinstance(item, QTreeWidgetItem):
             patient = self._patients.selectedItems()[0]
             return '_'.join([patient.text(0), patient.text(1), patient.text(2)])
         else: raise TypeError('parameter type {} is not QTreeWidgetItem'.format(type(item)))
 
-    def _getFilenameFromItem(self, item):
+    def _getFilenameFromItem(self, item: QTreeWidgetItem) -> str:
         if isinstance(item, QTreeWidgetItem):
             folder = self._getFolderFromItem(item)
             return join(self._db.getDatabasePath(), folder, item.text(0))
         else: raise TypeError('parameter type {} is not QTreeWidgetItem'.format(type(item)))
 
-    def _sortIdentityByColumn(self, c):
+    def _sortIdentityByColumn(self, c: int) -> str:
         if isinstance(c, int):
             order = self._patients.header().sortIndicatorOrder()
             self._patients.sortItems(c, order)
         else: raise TypeError('parameter type {} is not int.'.format(type(c)))
 
-    def _sortFilesByColumn(self, c):
+    def _sortFilesByColumn(self, c: int) -> str:
         if isinstance(c, int):
             order = self._files.header().sortIndicatorOrder()
             self._files.sortItems(c, order)
         else: raise TypeError('parameter type {} is not int.'.format(type(c)))
 
-    def _popupItemPatient(self, p):
+    def _popupItemPatient(self, p: QPoint) -> None:
         if isinstance(p, QPoint):
             item = self._patients.itemAt(p)
             if item:
@@ -420,7 +430,7 @@ class DatabaseWidget(QWidget):
                 # Revision 27/10/2024 >
         else: raise TypeError('parameter type {} is not QPoint.'.format(type(p)))
 
-    def _popupItemFile(self, p):
+    def _popupItemFile(self, p: QPoint) -> None:
         if isinstance(p, QPoint):
             item = self._files.itemAt(p)
             if item:
@@ -432,17 +442,17 @@ class DatabaseWidget(QWidget):
         else: raise TypeError('parameter type {} is not QPoint.'.format(type(p)))
 
     # noinspection PyUnusedLocal
-    def _doubleClicked(self, item, c):
+    def _doubleClicked(self, item: QTreeWidgetItem, c: int) -> None:
         filename = self._getFilenameFromItem(item)
         if exists(filename):
             if splitext(filename)[1] == SisypheVolume.getFileExt():
                 self._mainwindow.open(filename)
 
-    def _update(self):
+    def _update(self) -> None:
         self._updateIdentityWidget()
         self._updateFileWidget()
 
-    def _updateIdentityWidget(self):
+    def _updateIdentityWidget(self) -> None:
         if not self._checklastname.isChecked(): last = ''
         else: last = self._fltlastname.text()
         if not self._checkfirstname.isChecked(): first = ''
@@ -461,7 +471,7 @@ class DatabaseWidget(QWidget):
             item.setText(2, dob)
             self._patients.addTopLevelItem(item)
 
-    def _updateFileWidget(self):  # to do Mesh, Tools
+    def _updateFileWidget(self) -> None:  # to do Mesh, Tools
         self._files.clear()
         items = self._patients.selectedItems()
         if items:
@@ -552,7 +562,7 @@ class DatabaseWidget(QWidget):
                     # Sisyphe Tools
                     # Sisyphe Streamlines
 
-    def _open(self):
+    def _open(self) -> None:
         filenames = list()
         items = self._files.selectedItems()
         if items:
@@ -564,7 +574,7 @@ class DatabaseWidget(QWidget):
             if len(filenames) > 0: self._mainwindow.open(filenames)
             else: messageBox(self, 'Database', 'No volume selected.')
 
-    def _edit(self, item=None):
+    def _edit(self, item: QTreeWidgetItem | None = None) -> None:
         if item is None:
             item = self._files.selectedItems()
             if len(item) > 0: item = item[0]
@@ -689,7 +699,7 @@ class DatabaseWidget(QWidget):
                 else:
                     messageBox(self, 'Database', 'No volume selected.')
 
-    def _newPatient(self, identity=None):
+    def _newPatient(self, identity: SisypheVolume | SisypheIdentity | None = None) -> None:
         if identity is not None:
             if isinstance(identity, SisypheVolume):
                 identity = identity.getIdentity()
@@ -722,7 +732,7 @@ class DatabaseWidget(QWidget):
                                                                                  identity.getFirstname()))
         self._update()
 
-    def _removePatient(self):
+    def _removePatient(self) -> None:
         items = self._patients.selectedItems()
         if items:
             identity = self.getIdentityFromItem(items[0])
@@ -744,7 +754,7 @@ class DatabaseWidget(QWidget):
 
     # < Revision 28/05/2025
     # add _openFileManager method
-    def _openFileManager(self):
+    def _openFileManager(self) -> None:
         selected = self._patients.selectedItems()
         if len(selected) > 0:
             folder = join(self._db.getDatabasePath(), self._getFolderFromItem(selected[0]))
@@ -759,7 +769,7 @@ class DatabaseWidget(QWidget):
                        'No patient selected.')
     # Revision 28/05/2025 >
 
-    def _backup(self):
+    def _backup(self) -> None:
         folder = QFileDialog.getExistingDirectory(self, 'Select directory',
                                                   getcwd(), QFileDialog.ShowDirsOnly)
         if folder:
@@ -772,20 +782,20 @@ class DatabaseWidget(QWidget):
 
     # < Revision 18/02/2026
     # add isEmpty method
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
         return self._patients.topLevelItemCount() == 0
     # Revision 18/02/2026 >
 
     # < Revision 18/02/2026
     # add getPatientCount method
-    def getPatientCount(self):
+    def getPatientCount(self) -> int:
         return self._patients.topLevelItemCount()
     # Revision 18/02/2026 >
 
-    def getPopup(self):
+    def getPopup(self) -> QMenu:
         return self._popup
 
-    def addFiles(self, filenames=None):
+    def addFiles(self, filenames: list[str] | None = None) -> None:
         if filenames is None:
             filt = 'SisypheVolume (*.xvol)'
             filenames = QFileDialog.getOpenFileNames(self, 'Select PySisyphe volume', getcwd(), filt)
@@ -814,7 +824,7 @@ class DatabaseWidget(QWidget):
                 progress.close()
                 self._update()
 
-    def addVolumes(self, vols):
+    def addVolumes(self, vols: SisypheVolume | list[SisypheVolume]) -> None:
         if isinstance(vols, SisypheVolume): vols = [vols]
         if isinstance(vols, list):
             n = len(vols)
@@ -841,24 +851,24 @@ class DatabaseWidget(QWidget):
                     progress.close()
                     self._update()
 
-    def setMainWindow(self, w):
+    def setMainWindow(self, w: WindowSisyphe) -> None:
         from Sisyphe.gui.windowSisyphe import WindowSisyphe
         if isinstance(w, WindowSisyphe): self._mainwindow = w
         else: raise TypeError('parameter type {} is not WindowSisyphe.'.format(type(w)))
 
-    def getMainWindow(self):
+    def getMainWindow(self) -> WindowSisyphe:
         return self._mainwindow
 
-    def hasMainWindow(self):
+    def hasMainWindow(self) -> bool:
         return self._mainwindow is not None
 
     # QEvents
 
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasText(): event.acceptProposedAction()
         else: event.ignore()
 
-    def dropEvent(self, event):
+    def dropEvent(self, event: QDropEvent) -> None:
         if event.mimeData().hasText():
             event.acceptProposedAction()
             files = event.mimeData().text().split('\n')

@@ -1097,8 +1097,8 @@ class FileSelectionWidget(QWidget, SelectionFilter):
 
     # Custom Qt Signal
 
-    FieldChanged = pyqtSignal(QWidget, str)
-    FieldCleared = pyqtSignal(QWidget)
+    FieldChanged: pyqtSignal = pyqtSignal(QWidget, str)
+    FieldCleared: pyqtSignal = pyqtSignal(QWidget)
 
     # Special method
 
@@ -2400,12 +2400,12 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
 
     # Custom Qt Signals
 
-    FieldChanged = pyqtSignal(QWidget, str)
-    FieldCleared = pyqtSignal(QWidget, list)
-    FilesSelectionChanged = pyqtSignal(QWidget)
-    FilesSelectionWidgetSelectionChanged = pyqtSignal(QWidget, str)
-    FilesSelectionWidgetCleared = pyqtSignal(QWidget)
-    FilesSelectionWidgetDoubleClicked = pyqtSignal(QListWidgetItem)
+    FieldChanged: pyqtSignal = pyqtSignal(QWidget, str)
+    FieldCleared: pyqtSignal = pyqtSignal(QWidget, list)
+    FilesSelectionChanged: pyqtSignal = pyqtSignal(QWidget)
+    FilesSelectionWidgetSelectionChanged: pyqtSignal = pyqtSignal(QWidget, str)
+    FilesSelectionWidgetCleared: pyqtSignal = pyqtSignal(QWidget)
+    FilesSelectionWidgetDoubleClicked: pyqtSignal = pyqtSignal(QListWidgetItem)
 
     # Special method
 
@@ -4771,12 +4771,12 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
 
     # Custom Qt Signals
 
-    FieldChanged = pyqtSignal(QWidget, str)
-    FieldCleared = pyqtSignal(QWidget, list)
-    FilesSelectionChanged = pyqtSignal(QWidget)
-    FilesSelectionWidgetSelectionChanged = pyqtSignal(QWidget, str)
-    FilesSelectionWidgetCleared = pyqtSignal(QWidget)
-    FilesSelectionWidgetDoubleClicked = pyqtSignal(QTreeWidgetItem)
+    FieldChanged: pyqtSignal = pyqtSignal(QWidget, str)
+    FieldCleared: pyqtSignal = pyqtSignal(QWidget, list)
+    FilesSelectionChanged: pyqtSignal = pyqtSignal(QWidget)
+    FilesSelectionWidgetSelectionChanged: pyqtSignal = pyqtSignal(QWidget, str)
+    FilesSelectionWidgetCleared: pyqtSignal = pyqtSignal(QWidget)
+    FilesSelectionWidgetDoubleClicked: pyqtSignal = pyqtSignal(QTreeWidgetItem)
 
     # Special method
 

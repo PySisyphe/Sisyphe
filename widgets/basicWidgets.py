@@ -40,6 +40,7 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QToolTip
 from PyQt5.QtWidgets import QColorDialog
 from PyQt5.QtWidgets import QFontDialog
 from PyQt5.QtWidgets import QHBoxLayout
@@ -294,6 +295,16 @@ class RoundedButton(QPushButton):
     """
 
     def __init__(self, size: int = 64, parent: QWidget | None = None) -> None:
+        """
+        RoundedButton instance constructor.
+
+        Parameters
+        ----------
+        size : int (optional)
+            square dimensions of the button (default 64).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         self._bgcolor: str = 'black'
@@ -318,6 +329,9 @@ class RoundedButton(QPushButton):
     # Private method
 
     def _updateProperties(self) -> None:
+        """
+        Internal method to update the widget properties, including style sheet, size, and icons.
+        """
         self.setFixedSize(self._size, self._size)
         # Stylesheet
 
@@ -359,75 +373,187 @@ class RoundedButton(QPushButton):
     # Public methods
 
     def setSize(self, size: int) -> None:
+        """
+        Set the size of the button.
+
+        Parameters
+        ----------
+        size : int
+            side length of the square button.
+        """
         if isinstance(size, int):
             self._size = size
             self._updateProperties()
         else: raise TypeError('parameter type {} is not int.'.format(type(size)))
 
     def getSize(self) -> int:
+        """
+        Get the current size of the button.
+
+        Returns
+        -------
+        int
+            side length of the square button.
+        """
         return self._size
 
     def setBorderRadius(self, v: int) -> None:
+        """
+        Set the border radius of the button.
+
+        Parameters
+        ----------
+        v : int
+            radius value in pixels.
+        """
         if isinstance(v, int):
             self._bradius = v
             self._updateProperties()
         else: raise TypeError('parameter type {} is not int.'.format(type(v)))
 
     def setBorderWidth(self, v: int) -> None:
+        """
+        Set the border width of the button.
+
+        Parameters
+        ----------
+        v : int
+            thickness of the border in pixels.
+        """
         if isinstance(v, int):
             self._bwidth = v
             self._updateProperties()
         else: raise TypeError('parameter type {} is not int.'.format(type(v)))
 
     def setBackgroundColor(self, r: int, g: int, b: int) -> None:
+        """
+        Set the background color of the button using RGB values.
+
+        Parameters
+        ----------
+        r : int
+            red component (0-255).
+        g : int
+            green component (0-255).
+        b : int
+            blue component (0-255).
+        """
         self._bgcolor = 'rgb({}, {}, {})'.format(r, g, b)
         self._updateProperties()
 
     def setBackgroundColorToWhite(self) -> None:
+        """
+        Set the background color of the button to white.
+        """
         self._bgcolor = 'white'
         self._updateProperties()
 
     def setBackgroundColorToBlack(self) -> None:
+        """
+        Set the background color of the button to black.
+        """
         self._bgcolor = 'black'
         self._updateProperties()
 
     def setBorderColor(self, r: int, g: int, b: int) -> None:
+        """
+        Set the border color of the button using RGB values.
+
+        Parameters
+        ----------
+        r : int
+            red component (0-255).
+        g : int
+            green component (0-255).
+        b : int
+            blue component (0-255).
+        """
         self._bcolor = 'rgb({}, {}, {})'.format(r, g, b)
         self._updateProperties()
 
     def setBorderColorToWhite(self) -> None:
+        """
+        Set the border color of the button to white.
+        """
         self._bcolor = 'white'
         self._updateProperties()
 
     def setBorderColorToBlack(self) -> None:
+        """
+        Set the border color of the button to black.
+        """
         self._bgcolor = 'black'
         self._updateProperties()
 
     def setCheckedBackgroundColor(self, r: int, g: int, b: int) -> None:
+        """
+        Set the background color for the checked state using RGB values.
+
+        Parameters
+        ----------
+        r : int
+            red component (0-255).
+        g : int
+            green component (0-255).
+        b : int
+            blue component (0-255).
+        """
         self._cbgcolor = 'rgb({}, {}, {})'.format(r, g, b)
         self._updateProperties()
 
     def setCheckedBackgroundColorToWhite(self) -> None:
+        """
+        Set the background color for the checked state to white.
+        """
         self._cbgcolor = 'white'
         self._updateProperties()
 
     def setCheckedBackgroundColorToBlack(self) -> None:
+        """
+        Set the background color for the checked state to black.
+        """
         self._cbgcolor = 'black'
         self._updateProperties()
 
     def setCheckedBorderColor(self, r: int, g: int, b: int) -> None:
+        """
+        Set the border color for the checked state using RGB values.
+
+        Parameters
+        ----------
+        r : int
+            red component (0-255).
+        g : int
+            green component (0-255).
+        b : int
+            blue component (0-255).
+        """
         self._cbcolor = 'rgb({}, {}, {})'.format(r, g, b)
         self._updateProperties()
 
     def setCheckedBorderColorToWhite(self) -> None:
+        """
+        Set the border color for the checked state to white.
+        """
         self._cbcolor = 'white'
         self._updateProperties()
 
     def setCheckedBorderColorToBlack(self) -> None:
+        """
+        Set the border color for the checked state to black.
+        """
         self._cbcolor = 'black'
         self._updateProperties()
 
     def setNormalIcon(self, filename: str) -> None:
+        """
+        Set the icon used in the normal (unchecked) state.
+
+        Parameters
+        ----------
+        filename : str
+            path to the .png image file.
+        """
         if exists(filename):
             if splitext(filename)[1] == '.png':
                 self._icn0 = filename
@@ -435,6 +561,14 @@ class RoundedButton(QPushButton):
         else: raise IOError('no such file {}'.format(filename))
 
     def setCheckedIcon(self, filename: str) -> None:
+        """
+        Set the icon used in the checked state.
+
+        Parameters
+        ----------
+        filename : str
+            path to the .png image file.
+        """
         if exists(filename):
             if splitext(filename)[1] == '.png':
                 self._icn1 = filename
@@ -442,10 +576,26 @@ class RoundedButton(QPushButton):
         else: raise IOError('no such file {}'.format(filename))
 
     def getBorderRadius(self) -> int:
+        """
+        Get the border radius of the button.
+
+        Returns
+        -------
+        int
+           current border radius value in pixels.
+        """
         return self._bradius
 
     # noinspection PyUnusedLocal
     def getBorderWidth(self) -> int:
+        """
+        Get the border width of the button.
+
+        Returns
+        -------
+        int
+            current border width in pixels.
+        """
         return self._bwidth
 
 
@@ -474,20 +624,44 @@ class ColorSelectPushButton(QLabel):
 
     # Custom Qt signal
 
-    colorChanged = pyqtSignal(QWidget)
+    colorChanged: pyqtSignal = pyqtSignal(QWidget)
 
     # Class method
 
     @classmethod
     def isDarkMode(cls) -> bool:
+        """
+        Check if the current OS is in dark mode.
+
+        Returns
+        -------
+        bool
+            True if dark mode is detected, False otherwise.
+        """
         return darkdetect.isDark()
 
     @classmethod
     def isLightMode(cls) -> bool:
+        """
+        Check if the current OS is in light mode.
+
+        Returns
+        -------
+        bool
+            True if light mode is detected, False otherwise.
+        """
         return darkdetect.isLight()
 
     @classmethod
     def _getDefaultIconDirectory(cls) -> str:
+        """
+        Get the path to the default icon directory based on system theme.
+
+        Returns
+        -------
+        str
+            path to the 'darkroi' or 'lightroi' folder.
+        """
         import Sisyphe.gui
         if cls.isDarkMode(): return join(dirname(abspath(Sisyphe.gui.__file__)), 'darkroi')
         else: return join(dirname(abspath(Sisyphe.gui.__file__)), 'lightroi')
@@ -495,6 +669,16 @@ class ColorSelectPushButton(QLabel):
     # Special method
 
     def __init__(self, c: QColor = QColor('red'), parent: QWidget | None = None) -> None:
+        """
+        ColorSelectPushButton instance constructor.
+
+        Parameters
+        ----------
+        c : QColor (optional)
+            initial color of the button (default QColor('red')).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         self.setObjectName('colorPushButton')
@@ -507,6 +691,9 @@ class ColorSelectPushButton(QLabel):
     # Private methods
 
     def _clicked(self) -> None:
+        """
+        Internal method to handle the click event and open a color dialog.
+        """
         # < Revision 18/03/2025
         # c = QColorDialog().getColor(parent=self, title='Select color', options=QColorDialog.DontUseNativeDialog)
         # if c.isValid(): self.setQColor(c)
@@ -517,6 +704,14 @@ class ColorSelectPushButton(QLabel):
         # Revision 18/03/2025 >
 
     def _updateWidgetColor(self, c: QColor) -> None:
+        """
+        Internal method to update the widget's style sheet and tooltip based on the provided color.
+
+        Parameters
+        ----------
+        c : QColor
+            color to apply to the widget.
+        """
         rgb = 'rgb({}, {}, {})'.format(c.red(),
                                        c.green(),
                                        c.blue())
@@ -533,15 +728,39 @@ class ColorSelectPushButton(QLabel):
     # Public methods
 
     def getColor(self) -> tuple[int, ...]:
+        """
+        Get the color as a tuple of integers.
+
+        Returns
+        -------
+        tuple[int, ...]
+            tuple containing (Red, Green, Blue) values.
+        """
         sheet = self.styleSheet()
         c = sheet[sheet.index('(') + 1:sheet.index(')')].split(', ')
         return tuple([int(i) for i in c])
 
     def getFloatColor(self) -> tuple[float, ...]:
+        """
+        Get the color as a tuple of floats.
+
+        Returns
+        -------
+        tuple[float, ...]
+            tuple containing (Red, Green, Blue) values scaled between 0.0 and 1.0.
+        """
         c = self.getColor()
         return tuple([i/255.0 for i in c])
 
     def getQColor(self) -> QColor:
+        """
+        Get the color as a PyQt QColor object.
+
+        Returns
+        -------
+        QColor
+            QColor representation of the current button color.
+        """
         c = self.getColor()
         r = QColor()
         r.setRed(c[0])
@@ -550,6 +769,20 @@ class ColorSelectPushButton(QLabel):
         return r
 
     def setColor(self, r: int, g: int, b: int, signal: bool = True) -> None:
+        """
+        Set the button's color using integer RGB values.
+
+        Parameters
+        ----------
+        r : int
+            red component (0-255).
+        g : int
+            green component (0-255).
+        b : int
+            blue component (0-255).
+        signal : bool
+            whether to emit the colorChanged signal.
+        """
         if all([isinstance(v, int) for v in (r, g, b)]):
             if all([0 <= v < 256 for v in (r, g, b)]):
                 c = QColor()
@@ -564,6 +797,20 @@ class ColorSelectPushButton(QLabel):
         else: raise TypeError('parameters type {} are not all int.')
 
     def setFloatColor(self, r: float, g: float, b: float, signal: bool = True) -> None:
+        """
+        Set the button's color using floating-point RGB values.
+
+        Parameters
+        ----------
+        r : float
+            red component (0.0-1.0).
+        g : float
+            green component (0.0-1.0).
+        b : float
+            Blue component (0.0-1.0).
+        signal : bool
+            whether to emit the colorChanged signal.
+        """
         if all([isinstance(v, float) for v in (r, g, b)]):
             if all([0.0 <= v <= 1.0 for v in (r, g, b)]):
                 c = QColor()
@@ -578,6 +825,16 @@ class ColorSelectPushButton(QLabel):
         else: raise TypeError('not all parameter types are float.')
 
     def setQColor(self, c: QColor, signal: bool = True) -> None:
+        """
+        Set the button's color using a PyQt QColor object.
+
+        Parameters
+        ----------
+        c : QColor
+            QColor to apply.
+        signal : bool
+            whether to emit the colorChanged signal.
+        """
         if isinstance(c, QColor):
             self._updateWidgetColor(c)
             if signal:
@@ -590,6 +847,10 @@ class ColorSelectPushButton(QLabel):
     # < Revision 30/03/2025
     # add mousePressEvent method
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        """
+        Handle the mouse press event to trigger color selection.
+        Intercept mouse press event from child widgets to handle them at the parent level.
+        """
         # noinspection PyUnresolvedReferences
         # self.clicked.emit()
         super().mousePressEvent(event)
@@ -617,7 +878,7 @@ class FontSelect(QWidget):
 
     # Custom Qt signal
 
-    fontChanged = pyqtSignal(QWidget, str)
+    fontChanged: pyqtSignal = pyqtSignal(QWidget, str)
 
     # Special method
 
@@ -629,6 +890,14 @@ class FontSelect(QWidget):
     """
 
     def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        FontSelect instance constructor.
+
+        Parameters
+        ----------
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
         self.setObjectName('FontSelect')
 
@@ -660,6 +929,9 @@ class FontSelect(QWidget):
     # Private methods
 
     def _openFontDialog(self) -> None:
+        """
+        Internal method to open a font selection dialog and update the display field.
+        """
         if self._field.text() == '': font = self.font()
         else: font = QFont(self._field.text())
         # < Revision 18/03/2025
@@ -679,23 +951,65 @@ class FontSelect(QWidget):
     # Public methods
 
     def isEmpty(self) -> bool:
+        """
+        Check if the font name field is empty.
+
+        Returns
+        -------
+        bool
+            True if the field is empty, False otherwise.
+        """
         return self._field.text() == ''
 
     def getFontFamily(self) -> str:
+        """
+        Get the current font family string from the display field.
+
+        Returns
+        -------
+        str
+            name of the current font family.
+        """
         return self._field.text()
 
     def getFont(self) -> QFont:
+        """
+        Get the QFont object based on the current selection.
+
+        Returns
+        -------
+        QFont
+            current font object.
+        """
         if self._field.text() != '': return QFont(self._field.text(), self.font().pointSize())
         else: return self.font()
 
     # < Revision 03/05/2026
     # add getFontPath method
     def getFontPath(self) -> str:
+        """
+        Get the system path of the current font.
+
+        Returns
+        -------
+        str
+            file path of the current font.
+        """
         font = self.getFont()
         return findFontPath(font.family())
     # Revision 03/05/2026 >
 
     def setFont(self, name: str | QFont, signal: bool = False) -> None:
+        """
+        Set a new font based on its name or a QFont object.
+
+        Parameters
+        ----------
+        name : str | QFont
+            name of the font family or QFont object.
+        signal : bool
+            if True, emits the fontChanged signal.
+        """
         # < Revision 16/03/2025
         if isinstance(name, QFont): name = name.family()
         # Revision 16/03/2025 >
@@ -707,6 +1021,14 @@ class FontSelect(QWidget):
         else: raise ValueError('{} invalid font family.'.format(name))
 
     def setDefaultFont(self, signal: bool = False):
+        """
+        Reset the field to the system's default font family.
+
+        Parameters
+        ----------
+        signal : bool
+            if True, emits the fontChanged signal.
+        """
         name = self.font().defaultFamily()
         self._field.setText(name)
         if signal:
@@ -743,6 +1065,16 @@ class MenuPushButton(QPushButton):
     """
 
     def __init__(self, txt: str = '', parent: QWidget | None = None) -> None:
+        """
+        MenuPushButton instance constructor.
+
+        Parameters
+        ----------
+        txt : str (optional)
+            text to display on the button (default '').
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(txt, parent)
 
         self._menu = QMenu(self)
@@ -762,15 +1094,34 @@ class MenuPushButton(QPushButton):
     # Private method
 
     def _onClick(self) -> None:
+        """
+        Internal method to calculate the position and show the popup menu when clicked.
+        """
         p = self.mapToGlobal(QPoint(0, self.height()))
         self._menu.popup(p)
 
     def _onMenuHide(self) -> None:
+        """
+        Internal method to update state when the menu is hidden.
+        """
         self.setDown(False)
 
     # Public methods
 
     def addAction(self, txt: str) -> QAction:
+        """
+        Add a new action to the popup menu using its text description.
+
+        Parameters
+        ----------
+        txt : str
+            label for the action.
+
+        Returns
+        -------
+        QAction
+            created action object.
+        """
         if isinstance(txt, str):
             action = QAction(txt, self)
             self._menu.addAction(action)
@@ -778,6 +1129,21 @@ class MenuPushButton(QPushButton):
         else: raise TypeError('parameter type {} is not str.'.format(type(txt)))
 
     def insertAction(self, before: QAction, txt: str) -> QAction:
+        """
+        Insert a new action into the popup menu before a specific existing action.
+
+        Parameters
+        ----------
+        before : QAction
+            action to insert before.
+        txt : str
+            label for the new action.
+
+        Returns
+        -------
+        QAction
+            created action object.
+        """
         if isinstance(before, QAction):
             if isinstance(txt, str):
                 action = QAction(txt, self)
@@ -787,12 +1153,31 @@ class MenuPushButton(QPushButton):
         else: raise TypeError('parameter type {} is not QAction.'.format(type(txt)))
 
     def clearPopupMenu(self) -> None:
+        """
+        Clear all actions from the popup menu.
+        """
         self._menu.clear()
 
     def getPopupMenu(self) -> QMenu:
+        """
+        Get the underlying popup menu object.
+
+        Returns
+        -------
+        QMenu
+            popup menu.
+        """
         return self._menu
 
     def setPopupMenu(self, popup: QMenu) -> None:
+        """
+        Set a custom popup menu for the button.
+
+        Parameters
+        ----------
+        popup : QMenu
+            replacement menu object.
+        """
         self._menu = popup
 
 
@@ -818,9 +1203,9 @@ class LabeledLineEdit(QWidget):
 
     # Custom Qt signal
 
-    pressed = pyqtSignal()
-    returnPressed = pyqtSignal()
-    textChanged = pyqtSignal()
+    pressed: pyqtSignal = pyqtSignal()
+    returnPressed: pyqtSignal = pyqtSignal()
+    textChanged: pyqtSignal = pyqtSignal()
 
     # Special method
 
@@ -832,7 +1217,25 @@ class LabeledLineEdit(QWidget):
     _check  QCheckBox
     """
 
-    def __init__(self, label: str = '', default: str = '', fontsize: int = 12, parent: QWidget | None = None) -> None:
+    def __init__(self,
+                 label: str = '',
+                 default: str = '',
+                 fontsize: int = 12,
+                 parent: QWidget | None = None) -> None:
+        """
+        LabeledLineEdit instance constructor.
+
+        Parameters
+        ----------
+        label : str (optional)
+            text to display in the label (default '').
+        default : str (optional)
+            initial value for the line edit field (default '').
+        fontsize : int (optional)
+            font size for both label and input (default 12).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         # Init widgets
@@ -880,55 +1283,148 @@ class LabeledLineEdit(QWidget):
     # Public methods
 
     def getQLineEdit(self) -> QLineEdit:
+        """
+        Get the underlying QLineEdit object.
+
+        Returns
+        -------
+        QLineEdit
+            line edit widget.
+        """
         return self._edit
 
     def setEditText(self, txt: str) -> None:
+        """
+        Set the text content of the line edit field.
+
+        Parameters
+        ----------
+        txt : str
+            new string to display.
+        """
         if isinstance(txt, str): self._edit.setText(txt)
         else: raise TypeError('parameter type {} is not str.'.format(type(txt)))
 
     def getEditText(self) -> str:
+        """
+        Get the text content of the line edit field.
+
+        Returns
+        -------
+        str
+            current value in the line edit.
+        """
         return self._edit.text()
 
     def setLabelText(self, txt: str) -> None:
+        """
+        Set and manage the visibility of the accompanying label.
+
+        Parameters
+        ----------
+        txt : str
+            text to display in the label.
+        """
         if isinstance(txt, str):
             self._label.setText(txt)
             self._label.setVisible(txt != '')
         else: raise TypeError('parameter type {} is not str.'.format(type(txt)))
 
     def getLabelText(self) -> str:
+        """
+        Get the text of the label widget.
+
+        Returns
+        -------
+        str
+            current label text.
+        """
         return self._label.text()
 
     def setCheckVisibility(self, v: bool) -> None:
+        """
+        Set whether the checkbox is visible or not.
+
+        Parameters
+        ----------
+        v : bool
+            True to show, False to hide.
+        """
         if isinstance(v, bool): self._check.setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def checkVisibilityOn(self) -> None:
+        """
+        Show the checkbox.
+        """
         self.setCheckVisibility(True)
 
     def checkVisibilityOff(self) -> None:
+        """
+        Hide the checkbox.
+        """
         self.setCheckVisibility(False)
 
     def getCheckVisibility(self) -> bool:
+        """
+        Get the visibility status of the checkbox.
+
+        Returns
+        -------
+        bool
+            True if visible, False otherwise.
+        """
         return self._check.isVisible()
 
     def isChecked(self) -> bool:
+        """
+        Check if the internal checkbox is checked.
+
+        Returns
+        -------
+        bool
+            current state of the checkbox.
+        """
         return self._check.isChecked()
 
     def setCheckState(self, v: bool) -> None:
+        """
+        Set the checked or unchecked state of the internal checkbox.
+
+        Parameters
+        ----------
+        v : bool
+            True for checked, False for unchecked.
+        """
         if isinstance(v, bool): self._check.setChecked(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def isEmpty(self) -> bool:
+        """
+        Check if the line edit field is empty.
+
+        Returns
+        -------
+        bool
+            True if no text exists, False otherwise.
+        """
         return self._edit.text() == ''
 
     # Overridden Qt event
 
     def mousePressEvent(self, event: QMouseEvent | None) -> None:
+        """
+        Handle mouse press events and emit the pressed signal.
+        Intercept mouse press event from child widgets to handle them at the parent level.
+        """
         # noinspection PyUnresolvedReferences
         self.pressed.emit()
         super().mousePressEvent(event)
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
+        """
+        Intercept events from child widgets to handle them at the parent level.
+        """
         # noinspection PyUnresolvedReferences
         if event.type() == QEvent.MouseButtonPress:
             # Redirect child press event to self
@@ -945,7 +1441,7 @@ class LabeledSpinBox(QWidget):
     Description
     ~~~~~~~~~~~
 
-    The LabeledSpinBox class is a custom widget that extends the QSpinBox class from PyQt5. It provides a spin box
+    The LabeledSpinBox class is a custom widget that extends the QSpinBox class from PyQt5. It provides a spinbox
     widget with a label.
 
     Inheritance
@@ -958,9 +1454,9 @@ class LabeledSpinBox(QWidget):
 
     # Custom Qt signal
 
-    pressed = pyqtSignal()
-    textChanged = pyqtSignal(str)
-    valueChanged = pyqtSignal(int)
+    pressed: pyqtSignal = pyqtSignal()
+    textChanged: pyqtSignal = pyqtSignal(str)
+    valueChanged: pyqtSignal = pyqtSignal(int)
 
     # Special method
 
@@ -975,6 +1471,18 @@ class LabeledSpinBox(QWidget):
                  title: str = '',
                  fontsize: int = 12,
                  parent: QWidget | None = None) -> None:
+        """
+        LabeledSpinBox instance constructor.
+
+        Parameters
+        ----------
+        title : str (optional)
+            label text to display inf front of the spinbox (default '').
+        fontsize : int (optional)
+            font size for both the label and the spinbox (default 12).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         self._label: QLabel = QLabel(parent=self)
@@ -997,27 +1505,66 @@ class LabeledSpinBox(QWidget):
         self.setLayout(lyout)
 
     def __getattr__(self, attr):
+        """
+        Allow access to attributes of the internal spinbox.
+        """
         if hasattr(self._spin, attr): return getattr(self._spin, attr)
         else: raise AttributeError(self.__class__.__name__ + ' has no attribute named ' + attr)
 
     # Public methods
 
     def getTitle(self) -> str:
+        """
+        Get the label text of the widget.
+
+        Returns
+        -------
+        str
+            title associated with the spinbox.
+        """
         return self._label.text()
 
     def setTitle(self, title: str) -> None:
+        """
+        Set the label text of the widget.
+
+        Parameters
+        ----------
+        title : str
+            new text for the title associated with the spinbox.
+        """
         self._label.setText(title)
 
     def setFontSize(self, v: int) -> None:
+        """
+        Set the font size for both the title and the spinbox.
+
+        Parameters
+        ----------
+        v : int
+            font size in points.
+        """
         self._label.font().setPointSize(v)
         self._spin.font().setPointSize(v)
 
     def getFontSize(self) -> int:
+        """
+        Get the current font size of the widget elements.
+
+        Returns
+        -------
+        int
+            font size in points.
+        """
         return self.font().pointSize()
 
     # Overridden Qt event
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        """
+        Handle the mouse press event and emit the pressed signal.
+        Intercept mouse press event from child widgets to handle them at the parent level.
+        """
         # noinspection PyUnresolvedReferences
         self.pressed.emit()
         super().mousePressEvent(event)
@@ -1031,7 +1578,7 @@ class QDoubleSpinBox2(QDoubleSpinBox):
     ~~~~~~~~~~~
 
     The QDoubleSpinBox2 class is a custom widget that extends the QDoubleSpinBox class from PyQt5.
-    It provides a spin box widget with value formatting.
+    It provides a spinbox widget with value formatting.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1042,6 +1589,19 @@ class QDoubleSpinBox2(QDoubleSpinBox):
     """
 
     def textFromValue(self, v: float) -> str:
+        """
+        Convert a floating point value into a string representation with automatic formatting.
+
+        Parameters
+        ----------
+        v : float
+            numeric value to format.
+
+        Returns
+        -------
+        str
+            formatted string representation of the value.
+        """
         v2 = abs(v)
         if v.is_integer(): f = '{}'
         else:
@@ -1067,7 +1627,7 @@ class LabeledDoubleSpinBox(QWidget):
     ~~~~~~~~~~~
 
     The LabeledDoubleSpinBox class is a custom widget that extends the QDoubleSpinBox class from PyQt5. It provides a
-    spin box widget with a label.
+    spinbox widget with a label.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1079,9 +1639,9 @@ class LabeledDoubleSpinBox(QWidget):
 
     # Custom Qt signal
 
-    pressed = pyqtSignal()
-    textChanged = pyqtSignal(str)
-    valueChanged = pyqtSignal(float)
+    pressed: pyqtSignal = pyqtSignal()
+    textChanged: pyqtSignal = pyqtSignal(str)
+    valueChanged: pyqtSignal = pyqtSignal(float)
 
     # Special method
 
@@ -1096,6 +1656,18 @@ class LabeledDoubleSpinBox(QWidget):
                  title: str = '',
                  fontsize: int = 12,
                  parent: QWidget | None = None) -> None:
+        """
+        LabeledDoubleSpinBox instance constructor.
+
+        Parameters
+        ----------
+        title : str (optional)
+            label text to display in front of the double spinbox (default '').
+        fontsize : int (optional)
+            font size for both the label and the spinbox (default 12).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         self._label: QLabel = QLabel(parent=self)
@@ -1118,27 +1690,66 @@ class LabeledDoubleSpinBox(QWidget):
         self.setLayout(lyout)
 
     def __getattr__(self, attr):
+        """
+        Allow access to attributes of the internal double spinbox.
+        """
         if hasattr(self._spin, attr): return getattr(self._spin, attr)
         else: raise AttributeError(self.__class__.__name__ + ' has no attribute named ' + attr)
 
     # Public methods
 
     def getTitle(self) -> str:
+        """
+        Get the label text of the widget.
+
+        Returns
+        -------
+        str
+            title associated with the spinbox.
+        """
         return self._label.text()
 
     def setTitle(self, title: str) -> None:
+        """
+        Set the label text of the widget.
+
+        Parameters
+        ----------
+        title : str
+            new text for the title associated with the spinbox.
+        """
         self._label.setText(title)
 
     def setFontSize(self, v: int) -> None:
+        """
+        Set the font size for both the title and the spinbox.
+
+        Parameters
+        ----------
+        v : int
+            font size in points.
+        """
         self._label.font().setPointSize(v)
         self._spin.font().setPointSize(v)
 
     def getFontSize(self) -> int:
+        """
+        Get the current font size of the widget elements.
+
+        Returns
+        -------
+        int
+            font size in points.
+        """
         return self.font().pointSize()
 
     # Overridden Qt event
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        """
+        Handle the mouse press event and emit the pressed signal.
+        Intercept mouse press event from child widgets to handle them at the parent level.
+        """
         # noinspection PyUnresolvedReferences
         self.pressed.emit()
         super().mousePressEvent(event)
@@ -1165,10 +1776,10 @@ class LabeledSlider(QWidget):
 
     # Custom Qt signals
 
-    valueChanged = pyqtSignal(int)
-    sliderMoved = pyqtSignal(int)
-    sliderReleased = pyqtSignal()
-    sliderPressed = pyqtSignal()
+    valueChanged: pyqtSignal = pyqtSignal(int)
+    sliderMoved: pyqtSignal = pyqtSignal(int)
+    sliderReleased: pyqtSignal = pyqtSignal()
+    sliderPressed: pyqtSignal = pyqtSignal()
 
     # Special method
 
@@ -1189,6 +1800,24 @@ class LabeledSlider(QWidget):
                  caption: bool = True,
                  percent: bool = False,
                  parent: QWidget | None = None) -> None:
+        """
+        LabeledSlider instance constructor.
+
+        Parameters
+        ----------
+        orient : Qt.Orientations (optional)
+            orientation of the slider (Horizontal or Vertical, default Qt.Horizontal).
+        title : str (optional)
+            title to display above the slider (default '').
+        fontsize : int (optional)
+            font size for the labels (default 12).
+        caption : bool (optional)
+            whether to show a numeric label next to the slider (default True).
+        percent : bool (optional)
+            if True, displays values as percentages (0-100%, default False).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         self._caption: bool = caption
@@ -1233,11 +1862,22 @@ class LabeledSlider(QWidget):
         self.setLayout(lyout)
 
     def __call__(self, *args, **kwargs) -> QSlider:
+        """
+        Return the internal QSlider object for direct access.
+
+        Returns
+        -------
+        QSlider
+            internal slider widget.
+        """
         return self._slider
 
     # Private methods
 
     def _valueChanged(self, v: int) -> None:
+        """
+        Internal method to update labels and tooltips when the slider value changes.
+        """
         # < Revision 28/03/2025
         if self._percent:
             d = self._slider.maximum() - self._slider.minimum()
@@ -1257,71 +1897,189 @@ class LabeledSlider(QWidget):
         self.valueChanged.emit(v)
 
     def _sliderMoved(self, v: int) -> None:
+        """
+        Internal method triggered when the slider is moved by user interaction.
+        """
         # noinspection PyUnresolvedReferences
         self.sliderMoved.emit(v)
 
     def _sliderPressed(self) -> None:
+        """
+        Internal method triggered when the slider is pressed by user interaction.
+        """
         # noinspection PyUnresolvedReferences
         self.sliderPressed.emit()
 
     def _sliderReleased(self) -> None:
+        """
+        Internal method triggered when the slider is released by user interaction.
+        """
         # noinspection PyUnresolvedReferences
         self.sliderReleased.emit()
 
     # Public methods
 
     def getTitle(self) -> str:
+        """
+        Get the label text of the widget.
+
+        Returns
+        -------
+        str
+            title associated with the slider.
+        """
         return self._title.text()
 
     def setTitle(self, title: str) -> None:
+        """
+        Set the label text of the widget.
+
+        Parameters
+        ----------
+        title : str
+            new text for the title associated with the slider.
+        """
         if isinstance(title, str):
             self._title.setText(title)
             self._title.setVisible(title != '')
         else: raise TypeError('parameter type {} is not str.'.format(type(title)))
 
     def setFontSize(self, v: int) -> None:
+        """
+        Set the font size for all label elements of the slider.
+
+        Parameters
+        ----------
+        v : int
+            font size in points.
+        """
         if isinstance(v, int):
             self._title.font().setPointSize(v)
             self._legend.font().setPointSize(v)
         else: raise TypeError('parameter type {} is not int.'.format(type(v)))
 
     def getFontSize(self) -> int:
+        """
+        Get the current font size of the slider labels.
+
+        Returns
+        -------
+        int
+            font size in points.
+        """
         return self._title.font().pointSize()
 
     def setLegendInPercent(self, v: bool) -> None:
+        """
+        Toggle whether the legend value is displayed as a percentage.
+
+        Parameters
+        ----------
+        v : bool
+            True to use percentages, False for absolute values.
+        """
         if isinstance(v, bool): self._percent = v
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def getLegendInPercent(self) -> bool:
+        """
+        Get the current mode of the legend display.
+
+        Returns
+        -------
+        bool
+            True if percent mode is active, False otherwise.
+        """
         return self._percent
 
     def setMaximum(self, v: int) -> None:
+        """
+        Set the maximum value of the slider.
+
+        Parameters
+        ----------
+        v : int
+            maximum value.
+        """
         if isinstance(v, int): self._slider.setMaximum(v)
         else: raise TypeError('parameter type {} is not int.'.format(v))
 
     def maximum(self) -> int:
+        """
+        Get the current maximum value of the slider.
+
+        Returns
+        -------
+        int
+            maximum value.
+        """
         return self._slider.maximum()
 
     def setMinimum(self, v: int) -> None:
+        """
+        Set the minimum value of the slider.
+
+        Parameters
+        ----------
+        v : int
+            minimum value.
+        """
         if isinstance(v, int): self._slider.setMinimum(v)
         else: raise TypeError('parameter type {} is not int.'.format(v))
 
     def minimum(self) -> int:
+        """
+        Get the current minimum value of the slider.
+
+        Returns
+        -------
+        int
+            minimum value.
+        """
         return self._slider.minimum()
 
     def setRange(self, vmin: int, vmax: int) -> None:
+        """
+        Set the range of values for the slider.
+
+        Parameters
+        ----------
+        vmin : int
+            minimum value.
+        vmax : int
+            maximum value.
+        """
         self._slider.setRange(vmin, vmax)
 
     def setValue(self, v: int) -> None:
+        """
+        Set the current value of the slider.
+
+        Parameters
+        ----------
+        v : int
+            current value of the slider.
+        """
         if isinstance(v, int): self._slider.setValue(v)
         else: raise TypeError('parameter type {} is not int.'.format(v))
 
     def value(self) -> int:
+        """
+        Get the current value of the slider.
+
+        Returns
+        -------
+        int
+            current value of the slider.
+        """
         return self._slider.value()
 
     # Qt event
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        """
+        Handle the mouse press event and trigger a slider SliderSingleStep action.
+        """
         self._slider.triggerAction(QSlider.SliderAction.SliderSingleStepAdd)
 
 
@@ -1333,7 +2091,7 @@ class LabeledComboBox(QWidget):
     ~~~~~~~~~~~
 
     The LabeledComboBox class is a custom widget that extends the QComboBox class from PyQt5. It provides a
-    combo box widget with a label.
+    combobox widget with a label.
 
     Inheritance
     ~~~~~~~~~~~
@@ -1345,19 +2103,19 @@ class LabeledComboBox(QWidget):
 
     # Custom Qt signal
 
-    pressed = pyqtSignal()
-    activated = pyqtSignal(int)
-    currentIndexChanged = pyqtSignal(int)
-    currentTextChanged = pyqtSignal(str)
-    editTextChanged = pyqtSignal(str)
-    highlighted = pyqtSignal(int)
-    textActivated = pyqtSignal(str)
-    textHighlighted = pyqtSignal(str)
+    pressed: pyqtSignal = pyqtSignal()
+    activated: pyqtSignal = pyqtSignal(int)
+    currentIndexChanged: pyqtSignal = pyqtSignal(int)
+    currentTextChanged: pyqtSignal = pyqtSignal(str)
+    editTextChanged: pyqtSignal = pyqtSignal(str)
+    highlighted: pyqtSignal = pyqtSignal(int)
+    textActivated: pyqtSignal = pyqtSignal(str)
+    textHighlighted: pyqtSignal = pyqtSignal(str)
 
     # Special method
 
     """
-    Private attribute
+    Private attributes
 
     _label  QLabel
     _spin   QSpinBox
@@ -1367,6 +2125,18 @@ class LabeledComboBox(QWidget):
                  title: str = '',
                  fontsize: int = 12,
                  parent: QWidget | None = None) -> None:
+        """
+        LabeledComboBox instance constructor.
+
+        Parameters
+        ----------
+        title : str (optional)
+            label text to display in front of the combobox (default '').
+        fontsize : int (optional)
+            font size for both the label and the combobox (default 12).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         self._label: QLabel = QLabel(parent=self)
@@ -1399,27 +2169,66 @@ class LabeledComboBox(QWidget):
         self.setLayout(lyout)
 
     def __getattr__(self, attr):
+        """
+        Allow access to attributes of the internal combobox.
+        """
         if hasattr(self._combo, attr): return getattr(self._combo, attr)
         else: raise AttributeError(self.__class__.__name__ + ' has no attribute named ' + attr)
 
     # Public methods
 
     def getTitle(self) -> str:
+        """
+        Get the label text of the widget.
+
+        Returns
+        -------
+        str
+            title associated with the combobox.
+        """
         return self._label.text()
 
     def setTitle(self, title: str) -> None:
+        """
+        Set the label text of the widget.
+
+        Parameters
+        ----------
+        title : str
+            new text for the title associated with the combobox.
+        """
         self._label.setText(title)
 
     def setFontSize(self, v: int) -> None:
+        """
+        Set the font size for all label elements of the widget.
+
+        Parameters
+        ----------
+        v : int
+            font size in points.
+        """
         self._label.font().setPointSize(v)
         self._combo.font().setPointSize(v)
 
     def getFontSize(self) -> int:
+        """
+        Get the current font size of the widget.
+
+        Returns
+        -------
+        int
+            font size in points.
+        """
         return self.font().pointSize()
 
     # Overridden Qt event
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        """
+        Handle the mouse press event and emit the pressed signal.
+        Intercept mouse press event from child widgets to handle them at the parent level.
+        """
         # noinspection PyUnresolvedReferences
         self.pressed.emit()
         super().mousePressEvent(event)
@@ -1445,20 +2254,44 @@ class IconLabel(QLabel):
 
     # Custom Qt signal
 
-    clicked = pyqtSignal(QWidget)
+    clicked: pyqtSignal = pyqtSignal(QWidget)
 
     # Private class method
 
     @classmethod
     def isDarkMode(cls) -> bool:
+        """
+        Check if the current OS is in dark mode.
+
+        Returns
+        -------
+        bool
+            True if dark mode is detected, False otherwise.
+        """
         return darkdetect.isDark()
 
     @classmethod
     def isLightMode(cls) -> bool:
+        """
+        Check if the current OS is in light mode.
+
+        Returns
+        -------
+        bool
+            True if light mode is detected, False otherwise.
+        """
         return darkdetect.isLight()
 
     @classmethod
     def _getDefaultIconDirectory(cls) -> str:
+        """
+        Get the path to the default icon directory based on system theme.
+
+        Returns
+        -------
+        str
+            path to the 'darkroi' or 'lightroi' folder.
+        """
         import Sisyphe.gui
         if cls.isDarkMode(): return join(dirname(abspath(Sisyphe.gui.__file__)), 'darkroi')
         else: return join(dirname(abspath(Sisyphe.gui.__file__)), 'lightroi')
@@ -1466,6 +2299,16 @@ class IconLabel(QLabel):
     # Special method
 
     def __init__(self, icon: str | None = None, parent: QWidget | None = None) -> None:
+        """
+        IconLabel instance constructor.
+
+        Parameters
+        ----------
+        icon : str | None (optional)
+            icon filename in the PySisyphe icon folder (./Sisyphe/gui/darkroi or ./Sisyphe/gui/lightroi).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         if icon is not None:
@@ -1484,6 +2327,10 @@ class IconLabel(QLabel):
     # Overridden Qt event
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        """
+        Handle the mouse press event and emit the pressed signal.
+        Intercept mouse press event from child widgets to handle them at the parent level.
+        """
         # noinspection PyUnresolvedReferences
         self.clicked.emit(self)
         super().mousePressEvent(event)
@@ -1511,14 +2358,38 @@ class IconPushButton(QPushButton):
 
     @classmethod
     def isDarkMode(cls) -> bool:
+        """
+        Check if the current OS is in dark mode.
+
+        Returns
+        -------
+        bool
+            True if dark mode is detected, False otherwise.
+        """
         return darkdetect.isDark()
 
     @classmethod
     def isLightMode(cls) -> bool:
+        """
+        Check if the current OS is in light mode.
+
+        Returns
+        -------
+        bool
+            True if light mode is detected, False otherwise.
+        """
         return darkdetect.isLight()
 
     @classmethod
     def _getDefaultIconDirectory(cls) -> str:
+        """
+        Get the path to the default icon directory based on system theme.
+
+        Returns
+        -------
+        str
+            path to the 'darkroi' or 'lightroi' folder.
+        """
         import Sisyphe.gui
         if cls.isDarkMode(): return join(dirname(abspath(Sisyphe.gui.__file__)), 'darkroi')
         else: return join(dirname(abspath(Sisyphe.gui.__file__)), 'lightroi')
@@ -1526,6 +2397,18 @@ class IconPushButton(QPushButton):
     # Special method
 
     def __init__(self, icon: str | None = None, size: int = 32, parent: QWidget | None = None) -> None:
+        """
+        IconPushButton instance constructor.
+
+        Parameters
+        ----------
+        icon : str | None (optional)
+            icon filename in the PySisyphe icon folder (./Sisyphe/gui/darkroi or ./Sisyphe/gui/lightroi).
+        size : int (optional)
+            button size in pixels (default 32).
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         if icon is not None:
@@ -1557,33 +2440,59 @@ class VisibilityLabel(QLabel):
     Description
     ~~~~~~~~~~~
 
-    Flat button with open/close eye icon.
+    The VisibilityLabel class is a custom widget that extends the QLabel class from PyQt5.
+    It acts as a flat button displaying an eye icon that toggles between "view" and "hide"
+    states, allowing users to control the visibility of associated elements.
 
     Inheritance
     ~~~~~~~~~~~
 
     QLabel -> VisibilityLabel
 
-    Last revision: 18/03/2025
+    Last revision: 10/06/2026
     """
 
     # Custom Qt signal
 
-    visibilityChanged = pyqtSignal(QWidget)
-    pressed = pyqtSignal()
+    visibilityChanged: pyqtSignal = pyqtSignal(QWidget)
+    pressed: pyqtSignal = pyqtSignal()
 
     # Class method
 
     @classmethod
     def isDarkMode(cls) -> bool:
+        """
+        Check if the current OS is in dark mode.
+
+        Returns
+        -------
+        bool
+            True if dark mode is detected, False otherwise.
+        """
         return darkdetect.isDark()
 
     @classmethod
     def isLightMode(cls) -> bool:
+        """
+        Check if the current OS is in light mode.
+
+        Returns
+        -------
+        bool
+            True if light mode is detected, False otherwise.
+        """
         return darkdetect.isLight()
 
     @classmethod
     def _getDefaultIconDirectory(cls) -> str:
+        """
+        Get the path to the default icon directory based on system theme.
+
+        Returns
+        -------
+        str
+            path to the 'darkroi' or 'lightroi' folder.
+        """
         import Sisyphe.gui
         if cls.isDarkMode(): return join(dirname(abspath(Sisyphe.gui.__file__)), 'darkroi')
         else: return join(dirname(abspath(Sisyphe.gui.__file__)), 'lightroi')
@@ -1593,12 +2502,20 @@ class VisibilityLabel(QLabel):
     """
     Private attributes
 
-    _visible    bool
-    _iconon     QPixmap, icon show state
-    _iconoff    QPixmap, icon hide state
+    _visible    bool, current visibility state
+    _iconon     QPixmap, icon representing the visible state
+    _iconoff    QPixmap, icon representing the hidden state
     """
 
     def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        VisibilityLabel instance constructor.
+
+        Parameters
+        ----------
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         self._iconon: QPixmap = QPixmap(join(self._getDefaultIconDirectory(), 'view.png'))
@@ -1615,6 +2532,14 @@ class VisibilityLabel(QLabel):
     # Public methods
 
     def setVisibilitySateIcon(self, v: bool) -> None:
+        """
+        Set the visibility state and update the displayed icon.
+
+        Parameters
+        ----------
+        v : bool
+            True to set the icon to the "view" state, False for the "hide" state.
+        """
         if isinstance(v, bool):
             self._visible = v
             if v:
@@ -1628,17 +2553,36 @@ class VisibilityLabel(QLabel):
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setVisibilityStateIconToView(self) -> None:
+        """
+        Set the visibility state icon to "view" (visible).
+        """
         self.setVisibilitySateIcon(True)
 
     def setVisibilityStateIconToHide(self) -> None:
+        """
+        Set the visibility state icon to "hide" (hidden).
+        """
         self.setVisibilitySateIcon(False)
 
     def getVisibilityStateIcon(self) -> bool:
+        """
+        Get the current visibility state.
+
+        Returns
+        -------
+        bool
+            True if the state is visible, False if hidden.
+        """
         return self._visible
 
     # Overridden Qt event
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        """
+        Handle the mouse press event and emit the pressed signal.
+        Toggles the internal visibility state and updates the icon.
+        Intercept mouse press event from child widgets to handle them at the parent level.
+        """
         self._visible = not self._visible
         if self._visible:
             self.setPixmap(self._iconon)
@@ -1659,34 +2603,58 @@ class LockLabel(QLabel):
 
     Description
     ~~~~~~~~~~~
-
-    Flat button with lock/unlock icon.
-
+    The LockLabel class is a custom widget that extends the QLabel class from PyQt5.
+    It functions as a flat button displaying a lock icon that toggles between "locked" and "unlocked"
+    states, allowing users to control the lock status of associated elements.
+    
     Inheritance
     ~~~~~~~~~~~
-
     QLabel -> LockLabel
-
-    Last revisions: 18/03/2025
+    
+    Last revision: 10/06/2026
     """
 
     # Custom Qt signal
 
-    lockChanged = pyqtSignal(QWidget)
-    pressed = pyqtSignal()
+    lockChanged: pyqtSignal = pyqtSignal(QWidget)
+    pressed: pyqtSignal = pyqtSignal()
 
     # Class method
 
     @classmethod
     def isDarkMode(cls) -> bool:
+        """
+        Check if the current OS is in dark mode.
+
+        Returns
+        -------
+        bool
+            True if dark mode is detected, False otherwise.
+        """
         return darkdetect.isDark()
 
     @classmethod
     def isLightMode(cls) -> bool:
+        """
+        Check if the current OS is in light mode.
+
+        Returns
+        -------
+        bool
+            True if light mode is detected, False otherwise.
+        """
         return darkdetect.isLight()
 
     @classmethod
     def _getDefaultIconDirectory(cls) -> str:
+        """
+        Get the path to the default icon directory based on system theme.
+
+        Returns
+        -------
+        str
+            path to the 'darkroi' or 'lightroi' folder.
+        """
         import Sisyphe.gui
         if cls.isDarkMode(): return join(dirname(abspath(Sisyphe.gui.__file__)), 'darkroi')
         else: return join(dirname(abspath(Sisyphe.gui.__file__)), 'lightroi')
@@ -1696,12 +2664,20 @@ class LockLabel(QLabel):
     """
     Private attributes
 
-    _locked     bool
-    _lock       QPixmap, icon lock state
-    _unlock     QPixmap, icon unlock state
+    _locked     bool, current lock state
+    _lock       QPixmap, icon representing the locked state
+    _unlock     QPixmap, icon representing the unlocked state
     """
 
     def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        LockLabel instance constructor.
+        
+        Parameters
+        ----------
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         self._lock: QPixmap = QPixmap(join(self._getDefaultIconDirectory(), 'lock.png'))
@@ -1718,6 +2694,14 @@ class LockLabel(QLabel):
     # Public methods
 
     def setLockStateIcon(self, v: bool) -> None:
+        """
+        Set the lock state and update the displayed icon.
+        
+        Parameters
+        ----------
+        v : bool
+            True to set the icon to the "locked" state, False for the "unlocked" state.
+        """
         if isinstance(v, bool):
             self._locked = v
             if v:
@@ -1731,17 +2715,36 @@ class LockLabel(QLabel):
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setStateIconToLocked(self) -> None:
+        """
+        Set the lock state icon to "locked".
+        """
         self.setLockStateIcon(True)
 
     def setStateIconToUnlocked(self) -> None:
+        """
+        Set the lock state icon to "unlocked".
+        """
         self.setLockStateIcon(False)
 
     def getLockStateIcon(self) -> bool:
+        """
+        Get the current lock state.
+        
+        Returns
+        -------
+        bool
+            True if the state is locked, False if unlocked.
+        """
         return self._locked
 
     # Override Qt event
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        """
+        Handle the mouse press event and emit the pressed signal.
+        Toggles the lock state and update the displayed icon.
+        Intercept mouse press event from child widgets to handle them at the parent level.
+        """
         self._locked = not self._locked
         if self._locked:
             self.setPixmap(self._lock)
@@ -1763,35 +2766,59 @@ class OpacityPushButton(QLabel):
     Description
     ~~~~~~~~~~~
 
-    Opacity management button.
+    Opacity management button. The opacity is adjusted using a slider displayed in a popup menu.
 
     Inheritance
     ~~~~~~~~~~~
 
     QPushButton -> OpacityPushButton
 
-    Last revision: 23/03/2025
+    Last revision: 11/06/2026
     """
 
     # Custom Qt signal
 
-    opacityChanged = pyqtSignal(QWidget)
-    popupShow = pyqtSignal()
-    popupHide = pyqtSignal()
-    pressed = pyqtSignal()
+    opacityChanged: pyqtSignal = pyqtSignal(QWidget)
+    popupShow: pyqtSignal = pyqtSignal()
+    popupHide: pyqtSignal = pyqtSignal()
+    pressed: pyqtSignal = pyqtSignal()
 
     # Class method
 
     @classmethod
     def isDarkMode(cls) -> bool:
+        """
+        Check if the current OS is in dark mode.
+
+        Returns
+        -------
+        bool
+            True if dark mode is detected, False otherwise.
+        """
         return darkdetect.isDark()
 
     @classmethod
     def isLightMode(cls) -> bool:
+        """
+        Check if the current OS is in light mode.
+
+        Returns
+        -------
+        bool
+            True if light mode is detected, False otherwise.
+        """
         return darkdetect.isLight()
 
     @classmethod
     def _getDefaultIconDirectory(cls) -> str:
+        """
+        Get the path to the default icon directory based on system theme.
+
+        Returns
+        -------
+        str
+            path to the 'darkroi' or 'lightroi' folder.
+        """
         import Sisyphe.gui
         if cls.isDarkMode(): return join(dirname(abspath(Sisyphe.gui.__file__)), 'darkroi')
         else: return join(dirname(abspath(Sisyphe.gui.__file__)), 'lightroi')
@@ -1807,6 +2834,14 @@ class OpacityPushButton(QLabel):
     """
 
     def __init__(self, parent: QWidget | None = None) -> None:
+        """
+        OpacityPushButton instance constructor.
+
+        Parameters
+        ----------
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         self._popup: QMenu = QMenu(self)
@@ -1851,6 +2886,10 @@ class OpacityPushButton(QLabel):
         self._popup.addAction(a)
         # noinspection PyUnresolvedReferences
         self._popup.aboutToShow.connect(lambda: self.popupShow.emit())
+        # < Revision 11/06/2026
+        # move keyboard focus to slider
+        self._popup.aboutToShow.connect(lambda: self._slider.setFocus())
+        # Revision 11/06/2026 >
         # noinspection PyUnresolvedReferences
         self._popup.aboutToHide.connect(lambda: self.popupHide.emit())
 
@@ -1867,15 +2906,31 @@ class OpacityPushButton(QLabel):
 
     # noinspection PyUnusedLocal
     def _opacityChanged(self, value: int) -> None:
-        self._label.setText('{} %'.format(self._slider.value()))
-        self._slider.setToolTip('Opacity {} %'.format(self._slider.value()))
-        self.setToolTip('Opacity: {} %\nClick to set opacity.'.format(self._slider.value()))
+        """
+        Internal method to update opacity and tooltips when the slider value changes.
+        """
+        # < Revision 11/06/2026
+        tip = '{} %'.format(self._slider.value())
+        self._label.setText(tip)
+        self._slider.setToolTip('Opacity ' + tip)
+        self.setToolTip('Opacity ' + tip + '\nClick to set opacity.')
+        # Revision 11/06/2026 >
         # noinspection PyUnresolvedReferences
         self.opacityChanged.emit(self)
 
     # Public method
 
     def setOpacity(self, v: float, signal: bool = True) -> None:
+        """
+        Set the opacity value.
+
+        Parameters
+        ----------
+        v : float
+            opacity value.
+        signal : bool (optional)
+            emit valueChanged signal if True (default True).
+        """
         v = int(v * 100)
         if signal: self._slider.setValue(v)
         else:
@@ -1887,11 +2942,23 @@ class OpacityPushButton(QLabel):
             self.setToolTip('Opacity: {} %\nClick to set opacity.'.format(v))
 
     def getOpacity(self) -> float:
+        """
+        Get the opacity value.
+
+        Returns
+        -------
+        float
+            opacity value.
+        """
         return self._slider.value() / 100
 
     # Qt Event
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        """
+        Handle the mouse press event and emit the pressed signal.
+        Intercept mouse press event from child widgets to handle them at the parent level.
+        """
         super().mousePressEvent(event)
         # noinspection PyUnresolvedReferences
         self.pressed.emit()
@@ -1901,6 +2968,9 @@ class OpacityPushButton(QLabel):
             # use popup instead of exec
             # self._popup.exec(event.globalPos())
             self._popup.popup(event.globalPos())
+            # < Revision 09/06/2026
+            self._slider.setFocus()
+            # Revision 09/06/2026 >
             # Revision 27/10/2024 >
 
 
@@ -1911,35 +2981,59 @@ class WidthPushButton(QLabel):
     Description
     ~~~~~~~~~~~
 
-    Width management button.
+    Width management button. The width is adjusted using a slider displayed in a popup menu.
 
     Inheritance
     ~~~~~~~~~~~
 
     QPushButton -> WidthPushButton
 
-    Last revision: 23/03/2025
+    Last revision: 11/06/2026
     """
 
     # Custom Qt signal
 
-    widthChanged = pyqtSignal(QWidget)
-    popupShow = pyqtSignal()
-    popupHide = pyqtSignal()
-    pressed = pyqtSignal()
+    widthChanged: pyqtSignal = pyqtSignal(QWidget)
+    popupShow: pyqtSignal = pyqtSignal()
+    popupHide: pyqtSignal = pyqtSignal()
+    pressed: pyqtSignal = pyqtSignal()
 
     # Class method
 
     @classmethod
     def isDarkMode(cls) -> bool:
+        """
+        Check if the current OS is in dark mode.
+
+        Returns
+        -------
+        bool
+            True if dark mode is detected, False otherwise.
+        """
         return darkdetect.isDark()
 
     @classmethod
     def isLightMode(cls) -> bool:
+        """
+        Check if the current OS is in light mode.
+
+        Returns
+        -------
+        bool
+            True if light mode is detected, False otherwise.
+        """
         return darkdetect.isLight()
 
     @classmethod
     def _getDefaultIconDirectory(cls) -> str:
+        """
+        Get the path to the default icon directory based on system theme.
+
+        Returns
+        -------
+        str
+            path to the 'darkroi' or 'lightroi' folder.
+        """
         import Sisyphe.gui
         if cls.isDarkMode(): return join(dirname(abspath(Sisyphe.gui.__file__)), 'darkroi')
         else: return join(dirname(abspath(Sisyphe.gui.__file__)), 'lightroi')
@@ -1964,6 +3058,22 @@ class WidthPushButton(QLabel):
                  step: float = 1.0,
                  prefix: str = '',
                  parent: QWidget | None = None) -> None:
+        """
+        WidthPushButton instance constructor.
+
+        Parameters
+        ----------
+        vmin : float (optional)
+            minimum width (default 1.0).
+        vmax : float (optional)
+            maximum width (default 10.0).
+        step : float (optional)
+            slider step (default 1.0).
+        prefix : str (optional)
+            text displayed in the tooltip before the width value (default '').
+        parent : QWidget | None (optional)
+            parent widget (default None).
+        """
         super().__init__(parent)
 
         if prefix == '': self._prefix = 'Width'
@@ -2017,6 +3127,10 @@ class WidthPushButton(QLabel):
         self._popup.addAction(a)
         # noinspection PyUnresolvedReferences
         self._popup.aboutToShow.connect(lambda: self.popupShow.emit())
+        # < Revision 11/06/2026
+        # move keyboard focus to slider
+        self._popup.aboutToShow.connect(lambda: self._slider.setFocus())
+        # Revision 11/06/2026 >
         # noinspection PyUnresolvedReferences
         self._popup.aboutToHide.connect(lambda: self.popupHide.emit())
 
@@ -2033,10 +3147,17 @@ class WidthPushButton(QLabel):
 
     # noinspection PyUnusedLocal
     def _widthChanged(self, value: int) -> None:
+        """
+        Internal method to update width and tooltips when the slider value changes.
+        """
         v = self._vmin + self._slider.value() * self._step
-        self._label.setText('{:.1f} mm'.format(v))
-        self._slider.setToolTip('Width {:.1f} mm'.format(v))
-        self.setToolTip('Width: {:.1f} mm\nClick to set width.'.format(v))
+        # < Revision 11/06/2026
+        tip = '{:.1f} mm'.format(v)
+        self._label.setText(tip)
+        self._slider.setToolTip('{} '.format(self._prefix) + tip)
+        self.setToolTip('{} '.format(self._prefix) + tip +'\nClick to set {}.'.format(self._prefix.lower()))
+        QToolTip.showText(self._slider.mapToGlobal(QPoint(self._slider.width(), self._slider.height() // 2)), tip)
+        # Revision 11/06/2026 >
         # noinspection PyUnresolvedReferences
         self.widthChanged.emit(self)
 
@@ -2046,6 +3167,18 @@ class WidthPushButton(QLabel):
                  vmin: float = 1.0,
                  vmax: float = 10.0,
                  step: float = 1.0) -> None:
+        """
+        Set the width value range.
+
+        Parameters
+        ----------
+        vmin : float (optional)
+            minimum width value (default 1.0).
+        vmax : float (optional)
+            maximum width value (default 10.0).
+        step : float (optional)
+            slider step (default 1.0).
+        """
         self._vmin = vmin
         self._step = step
         n = int((vmax - vmin) // step)
@@ -2055,6 +3188,16 @@ class WidthPushButton(QLabel):
         self._slider.setValue(0)
 
     def setWidth(self, v: float, signal: bool = True) -> None:
+        """
+        Set the width value.
+
+        Parameters
+        ----------
+        v : float
+            width value.
+        signal : bool (optional)
+            emit valueChanged signal if True (default True).
+        """
         if v < self._vmin: v = self._vmin
         elif v > self._vmax: v = self._vmax
         v2 = int((v - self._vmin) // self._step)
@@ -2069,28 +3212,59 @@ class WidthPushButton(QLabel):
             self.setToolTip('{0}: {1:.1f} mm\nClick to set {0}.'.format(self._prefix, v))
 
     def getWidth(self) -> float:
+        """
+        Get the width value.
+
+        Returns
+        -------
+        float
+            width value.
+        """
         return self._vmin + (self._slider.value() * self._step)
 
     # < Revision 20/02/2025
     # add setPrefix method
     def setPrefix(self, prefix: str = '') -> None:
+        """
+        Set the text displayed in the tooltip before the width value.
+
+        Parameters
+        ----------
+        prefix : str (optional)
+            text displayed in the tooltip before the width value (default '').
+        """
         if prefix == '': self._prefix = 'Width'
         else: self._prefix = prefix
         v = self.getWidth()
-        self._label.setText('{:.1f} mm'.format(v))
-        self._slider.setToolTip('{} {:.1f} mm'.format(self._prefix, v))
-        self.setToolTip('{0}: {1:.1f} mm\nClick to set {0}.'.format(self._prefix, v))
+        # < Revision 11/06/2026
+        tip = '{:.1f} mm'.format(v)
+        self._label.setText(tip)
+        self._slider.setToolTip('{} '.format(self._prefix) + tip)
+        self.setToolTip('{} '.format(self._prefix) + tip +'\nClick to set {}.'.format(self._prefix.lower()))
+        # Revision 11/06/2026 >
     # Revision 20/02/2025 >
 
     # < Revision 20/02/2025
     # add getPrefix method
     def getPrefix(self) -> str:
+        """
+        Get the text displayed in the tooltip before the width value.
+
+        Returns
+        -------
+        str
+            text displayed in the tooltip before the width value.
+        """
         return self._prefix
     # Revision 20/02/2025 >
 
     # Qt Event
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        """
+        Handle the mouse press event and emit the pressed signal.
+        Intercept mouse press event from child widgets to handle them at the parent level.
+        """
         super().mousePressEvent(event)
         # noinspection PyUnresolvedReferences
         self.pressed.emit()
@@ -2100,4 +3274,7 @@ class WidthPushButton(QLabel):
             # use popup instead of exec
             # self._popup.exec(event.globalPos())
             self._popup.popup(event.globalPos())
+            # < Revision 09/06/2026
+            self._slider.setFocus()
+            # Revision 09/06/2026 >
             # Revision 27/10/2024 >

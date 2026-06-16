@@ -132,20 +132,20 @@ class AbstractViewWidget(QFrame):
     Last Revision: 02/05/2026
     """
 
-    _DEFAULTZOOM = 128.0  # Default zoom (vtk parallel scale) = conventional FOV of head imaging / 2
+    _DEFAULTZOOM: int = 128.0  # Default zoom (vtk parallel scale) = conventional FOV of head imaging / 2
 
     # Custom Qt signals
 
-    Selected = pyqtSignal(QWidget)
-    CursorPositionChanged = pyqtSignal(QWidget, float, float, float)    # float x, y, z coordinates
-    ZoomChanged = pyqtSignal(QWidget, float)                            # float zoom factor
-    ToolMoved = pyqtSignal(QWidget, NamedWidget)                        # NamedWidget
-    ToolRemoved = pyqtSignal(QWidget, NamedWidget, bool)                # NamedWidget, bool remove all ?
-    ToolColorChanged = pyqtSignal(QWidget, NamedWidget)                 # NamedWidget
-    ToolAttributesChanged = pyqtSignal(QWidget, NamedWidget)            # NamedWidget
-    ToolAdded = pyqtSignal(QWidget, NamedWidget)                        # NamedWidget
-    ToolRenamed = pyqtSignal(QWidget, NamedWidget, str)                 # NamedWidget, str old and new name
-    ViewMethodCalled = pyqtSignal(QWidget, str, object)                 # str method name, object parameter
+    Selected: pyqtSignal = pyqtSignal(QWidget)
+    CursorPositionChanged: pyqtSignal = pyqtSignal(QWidget, float, float, float)    # float x, y, z coordinates
+    ZoomChanged: pyqtSignal = pyqtSignal(QWidget, float)                            # float zoom factor
+    ToolMoved: pyqtSignal = pyqtSignal(QWidget, NamedWidget)                        # NamedWidget
+    ToolRemoved: pyqtSignal = pyqtSignal(QWidget, NamedWidget, bool)                # NamedWidget, bool remove all ?
+    ToolColorChanged: pyqtSignal = pyqtSignal(QWidget, NamedWidget)                 # NamedWidget
+    ToolAttributesChanged: pyqtSignal = pyqtSignal(QWidget, NamedWidget)            # NamedWidget
+    ToolAdded: pyqtSignal = pyqtSignal(QWidget, NamedWidget)                        # NamedWidget
+    ToolRenamed: pyqtSignal = pyqtSignal(QWidget, NamedWidget, str)                 # NamedWidget, str old and new name
+    ViewMethodCalled: pyqtSignal = pyqtSignal(QWidget, str, object)                 # str method name, object parameter
 
     # Special method
 

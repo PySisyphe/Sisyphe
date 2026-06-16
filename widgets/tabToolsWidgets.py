@@ -108,17 +108,19 @@ class TabWidget(QWidget):
 
     Last revision: 03/12/2025
     """
-    _VSIZE = 32
+    _VSIZE: int = 32
 
     # Class method
 
     @classmethod
-    def getDefaultIconSize(cls):
+    def getDefaultIconSize(cls) -> int:
         return cls._VSIZE
 
     # Special method
 
-    def __init__(self, views=None, parent=None):
+    def __init__(self,
+                 views: IconBarViewWidgetCollection | None = None,
+                 parent: QWidget | None = None) -> None:
         super().__init__(parent)
         # < Revision 07/07/2025
         # if not hasattr(sys, '_MEIPASS'):
@@ -141,34 +143,34 @@ class TabWidget(QWidget):
 
     # Public methods
 
-    def setViewCollection(self, views):
+    def setViewCollection(self, views: IconBarViewWidgetCollection) -> None:
         if isinstance(views, IconBarViewWidgetCollection): self._views = views
         else: self._views = None
 
-    def getViewCollection(self):
+    def getViewCollection(self) -> IconBarViewWidgetCollection:
         return self._views
 
-    def hasViewCollection(self):
+    def hasViewCollection(self) -> bool:
         return self._views is not None
 
     def getCollection(self):
         return self._collection
 
-    def hasCollection(self):
+    def hasCollection(self) -> bool:
         return self._collection is not None
 
     # < Revision 03/12/2025
-    def setMainWindow(self, w: WindowSisyphe):
+    def setMainWindow(self, w: WindowSisyphe) -> bool:
         self._mainwindow = w
     # Revision 03/12/2025 >
 
     # < Revision 03/12/2025
-    def getMainWindow(self):
+    def getMainWindow(self) -> WindowSisyphe:
         return self._mainwindow
     # Revision 03/12/2025 >
 
     # < Revision 03/12/2025
-    def hasMainWindow(self):
+    def hasMainWindow(self) -> bool:
         return self._mainwindow is not None
     # Revision 03/12/2025 >
 
@@ -185,7 +187,7 @@ class TabROIListWidget(TabWidget):
 
     QWidget -> TabROIListWidget
 
-    Last revision: 20/02/2025
+    Last revision: 05/06/2026
     """
 
     # Special method
@@ -202,7 +204,9 @@ class TabROIListWidget(TabWidget):
     _btdiff             IconPushButton, ROIs difference button
     """
 
-    def __init__(self, views=None, parent=None):
+    def __init__(self,
+                 views: IconBarViewWidgetCollection | None = None,
+                 parent: QWidget | None = None) -> None:
         super().__init__(views, parent)
 
         self._draw = None
@@ -255,13 +259,13 @@ class TabROIListWidget(TabWidget):
 
     # Private method
 
-    def _updateROIDisplay(self):
+    def _updateROIDisplay(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             self._views.updateROIDisplay()
 
     # Public methods
 
-    def setIconSize(self, size=TabWidget._VSIZE):
+    def setIconSize(self, size: int = TabWidget._VSIZE) -> None:
         self._btunion.setIconSize(QSize(size - 8, size - 8))
         self._btunion.setFixedSize(size, size)
         self._btinter.setIconSize(QSize(size - 8, size - 8))
@@ -272,10 +276,10 @@ class TabROIListWidget(TabWidget):
         self._btdiff.setFixedSize(size, size)
         self._list.setIconSize(size)
 
-    def getIconSize(self):
+    def getIconSize(self) -> int:
         return self._btunion.width()
 
-    def setViewCollection(self, views):
+    def setViewCollection(self, views: IconBarViewWidgetCollection | None) -> None:
         super().setViewCollection(views)
 
         if isinstance(views, IconBarViewWidgetCollection):
@@ -288,22 +292,22 @@ class TabROIListWidget(TabWidget):
 
     # < Revision 02/11/2024
     # add setMaxCount method
-    def setMaxCount(self, v):
+    def setMaxCount(self, v: int) -> None:
         if self._list is not None:
             self._list.setMaxCount(v)
     # Revision 02/11/2024 >
 
     # < Revision 02/11/2024
     # add getMaxCount method
-    def getMaxCount(self):
+    def getMaxCount(self) -> int:
         if self._list is not None: return self._list.getMaxCount()
         else: raise AttributeError('_list attribute is None.')
     # Revision 02/11/2024 >
 
-    def getROIListWidget(self):
+    def getROIListWidget(self) -> ListROIAttributesWidget:
         return self._list
 
-    def union(self):
+    def union(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw.hasROI():
                 if self._collection.count() > 1:
@@ -321,7 +325,13 @@ class TabROIListWidget(TabWidget):
                                 self._draw.binaryOR(rois)
                                 self._updateROIDisplay()
                                 wait.close()
-                                if self._logger is not None: self._logger.info('ROI {}'.format(name))
+                                if self._logger is not None: self._logger.info('ROI union {}'.format(name))
+                                # < Revision 05/06/2026
+                                if self.hasMainWindow():
+                                    main = self.getMainWindow()
+                                    main.updateMemoryUsage()
+                                    main.setStatusBarMessage('ROI union {}'.format(name))
+                                # Revision 05/06/2026 >
                             else: messageBox(self, 'ROI Union', 'Less than two ROI checked.')
                     else:
                         messageBox(self, 'ROI union',
@@ -329,7 +339,7 @@ class TabROIListWidget(TabWidget):
                                         'Close a ROI to add a new one.',
                                    icon=QMessageBox.Information)
 
-    def intersection(self):
+    def intersection(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw.hasROI():
                 if self._collection.count() > 1:
@@ -347,7 +357,13 @@ class TabROIListWidget(TabWidget):
                                 self._draw.binaryAND(rois)
                                 self._updateROIDisplay()
                                 wait.close()
-                                if self._logger is not None: self._logger.info('ROI {}'.format(name))
+                                if self._logger is not None: self._logger.info('ROI intersection {}'.format(name))
+                                # < Revision 05/06/2026
+                                if self.hasMainWindow():
+                                    main = self.getMainWindow()
+                                    main.updateMemoryUsage()
+                                    main.setStatusBarMessage('ROI intersection {}'.format(name))
+                                # Revision 05/06/2026 >
                             else: messageBox(self, 'ROI Intersection', 'Less than two ROI checked.')
                     else:
                         messageBox(self,
@@ -356,7 +372,7 @@ class TabROIListWidget(TabWidget):
                                         'Close a ROI to add a new one.',
                                    icon=QMessageBox.Information)
 
-    def symmetricDifference(self):
+    def symmetricDifference(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw.hasROI():
                 if self._collection.count() > 1:
@@ -374,7 +390,13 @@ class TabROIListWidget(TabWidget):
                                 self._draw.binaryXOR(rois)
                                 self._updateROIDisplay()
                                 wait.close()
-                                if self._logger is not None: self._logger.info('ROI {}'.format(name))
+                                if self._logger is not None: self._logger.info('ROI symmetric difference {}'.format(name))
+                                # < Revision 05/06/2026
+                                if self.hasMainWindow():
+                                    main = self.getMainWindow()
+                                    main.updateMemoryUsage()
+                                    main.setStatusBarMessage('ROI symmetric difference {}'.format(name))
+                                # Revision 05/06/2026 >
                             else: messageBox(self, 'ROI Symmetric difference', 'Less than two ROI checked.')
                     else:
                         messageBox(self,
@@ -383,7 +405,7 @@ class TabROIListWidget(TabWidget):
                                         'Close a ROI to add a new one.',
                                    icon=QMessageBox.Information)
 
-    def difference(self):
+    def difference(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw.hasROI():
                 if self._collection.count() > 1:
@@ -404,7 +426,13 @@ class TabROIListWidget(TabWidget):
                                 self._draw.binaryNAND(rois)
                                 self._updateROIDisplay()
                                 wait.close()
-                                if self._logger is not None: self._logger.info('ROI {}'.format(name))
+                                if self._logger is not None: self._logger.info('ROI difference {}'.format(name))
+                                # < Revision 05/06/2026
+                                if self.hasMainWindow():
+                                    main = self.getMainWindow()
+                                    main.updateMemoryUsage()
+                                    main.setStatusBarMessage('ROI difference {}'.format(name))
+                                # Revision 05/06/2026 >
                             else: messageBox(self, 'ROI Difference', 'No ROI checked.')
                     else:
                         messageBox(self,
@@ -413,7 +441,7 @@ class TabROIListWidget(TabWidget):
                                         'Close a ROI to add a new one.',
                                    icon=QMessageBox.Information)
 
-    def clear(self):
+    def clear(self) -> None:
         self._list.removeAll()
 
     # < Revision 20/02/2025
@@ -476,7 +504,9 @@ class TabROIToolsWidget(TabWidget):
     _lastaction         last ROI tool method that was called
     """
 
-    def __init__(self, views=None, parent=None):
+    def __init__(self,
+                 views: IconBarViewWidgetCollection | None = None,
+                 parent: QWidget | None = None) -> None:
         super().__init__(views, parent)
 
         self._draw = None
@@ -785,7 +815,7 @@ class TabROIToolsWidget(TabWidget):
 
     # Private methods
 
-    def _initBrushGroupBox(self):
+    def _initBrushGroupBox(self) -> None:
         self._btn['dummy'] = IconPushButton(size=TabWidget._VSIZE)
         self._btn['brush'] = IconPushButton('brush.png', size=TabWidget._VSIZE)
         # < Revision 26/02/2026
@@ -859,7 +889,7 @@ class TabROIToolsWidget(TabWidget):
         vlyout.addLayout(lyout)
         self._brushgroupbox.setLayout(vlyout)
 
-    def _initSliceGroupBox(self):
+    def _initSliceGroupBox(self) -> None:
         self._btn['2Ddilate'] = IconPushButton('dilate.png', size=TabWidget._VSIZE)
         self._btn['2Derode'] = IconPushButton('erode.png', size=TabWidget._VSIZE)
         self._btn['2Dopen'] = IconPushButton('morphoopen.png', size=TabWidget._VSIZE)
@@ -988,7 +1018,7 @@ class TabROIToolsWidget(TabWidget):
         vlyout.addLayout(lyout)
         self._slicegroupbox.setLayout(vlyout)
 
-    def _initSliceBlobGroupBox(self):
+    def _initSliceBlobGroupBox(self) -> None:
         self._btn['2Dblobdilate'] = IconPushButton('dilate.png', size=TabWidget._VSIZE)
         self._btn['2Dbloberode'] = IconPushButton('erode.png', size=TabWidget._VSIZE)
         self._btn['2Dblobopen'] = IconPushButton('morphoopen.png', size=TabWidget._VSIZE)
@@ -1080,7 +1110,7 @@ class TabROIToolsWidget(TabWidget):
         vlyout.addLayout(lyout)
         self._sliceblobgroupbox.setLayout(vlyout)
 
-    def _initVolumeGroupBox(self):
+    def _initVolumeGroupBox(self) -> None:
         self._btn['3Ddilate'] = IconPushButton('dilate.png', size=TabWidget._VSIZE)
         self._btn['3Derode'] = IconPushButton('erode.png', size=TabWidget._VSIZE)
         self._btn['3Dopen'] = IconPushButton('morphoopen.png', size=TabWidget._VSIZE)
@@ -1195,7 +1225,7 @@ class TabROIToolsWidget(TabWidget):
         vlyout.addLayout(lyout)
         self._volumegroupbox.setLayout(vlyout)
 
-    def _initVolumeBlobGroupBox(self):
+    def _initVolumeBlobGroupBox(self) -> None:
         self._btn['3Dblobdilate'] = IconPushButton('dilate.png', size=TabWidget._VSIZE)
         self._btn['3Dbloberode'] = IconPushButton('erode.png', size=TabWidget._VSIZE)
         self._btn['3Dblobopen'] = IconPushButton('morphoopen.png', size=TabWidget._VSIZE)
@@ -1299,7 +1329,7 @@ class TabROIToolsWidget(TabWidget):
         vlyout.addLayout(lyout)
         self._volumeblobgroupbox.setLayout(vlyout)
 
-    def _popupGeminiMenu(self):
+    def _popupGeminiMenu(self) -> None:
         path = join(getUserPySisyphePath(), 'prompts')
         if not exists(path): mkdir(path)
         p = Path(path)
@@ -1351,7 +1381,7 @@ class TabROIToolsWidget(TabWidget):
         self._menuGemini.addAction('New prompt...')
 
     # < Revision 11/12/2025
-    def _geminiClicked(self, action: QAction | None):
+    def _geminiClicked(self, action: QAction | None) -> None:
         self._geminiDialog.clear()
         self._geminiDialog.setReferenceVolume(self._views.getVolume())
         # < Revision 22/12/2025
@@ -1371,11 +1401,11 @@ class TabROIToolsWidget(TabWidget):
 
     # Revision 11/12/2025 >
 
-    def _updateROIDisplay(self):
+    def _updateROIDisplay(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             self._views.updateROIDisplay()
 
-    def _brushThresholdChanged(self):
+    def _brushThresholdChanged(self) -> None:
         if self._draw is not None:
             vmin = self._threshold.getMinThreshold()
             vmax = self._threshold.getMaxThreshold()
@@ -1395,12 +1425,12 @@ class TabROIToolsWidget(TabWidget):
             # Revision 29/08/2025 >
 
     # noinspection PyUnusedLocal
-    def _brushSizeChanged(self, v):
+    def _brushSizeChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
             self._views.setBrushRadiusROI(self._brushsize.value())
 
     # noinspection PyUnusedLocal
-    def _brushSizeMoved(self, v):
+    def _brushSizeMoved(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
             for widget in self._views:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
@@ -1408,11 +1438,11 @@ class TabROIToolsWidget(TabWidget):
                     if sliceview is not None: sliceview.setBrushVisibilityOn()
 
     # < Revision 15/02/2026
-    def _brushSizePressed(self):
+    def _brushSizePressed(self) -> None:
         self._brushsize().triggerAction(QSlider.SliderAction.SliderSingleStepAdd)
     # Revision 15/02/2026 >
 
-    def _brushSizeReleased(self):
+    def _brushSizeReleased(self) -> None:
         if self._draw is not None and self.hasViewCollection():
             for widget in self._views:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
@@ -1420,7 +1450,7 @@ class TabROIToolsWidget(TabWidget):
                     if sliceview is not None: sliceview.setBrushVisibilityOff()
 
     # noinspection PyUnusedLocal
-    def _brushTypeChanged(self, v):
+    def _brushTypeChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
             self._draw.setBrushType(self._brushtype.currentIndex())
             # < Revision 10/03/2026
@@ -1436,7 +1466,7 @@ class TabROIToolsWidget(TabWidget):
             self._brushtype.setToolTip('Brush shape and behavior\n' + self._brushtype.currentText())
 
     # noinspection PyUnusedLocal
-    def _brushFillChanged(self, v):
+    def _brushFillChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
             self._views.setFillHolesROIFlag(self._fill.isChecked())
             # < Revision 17/03/2026
@@ -1446,13 +1476,13 @@ class TabROIToolsWidget(TabWidget):
     # < Revision 17/03/2026
     # add _majorBlobChanged method
     # noinspection PyUnusedLocal
-    def _majorBlobChanged(self, v):
+    def _majorBlobChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
             self._draw.setDrawThresholdedRectangleMajorBlob(self._major.isChecked())
     # Revision 17/03/2026 >
 
     # noinspection PyUnusedLocal
-    def _structSizeChanged(self, v):
+    def _structSizeChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
             self._draw.setMorphologyRadius(self._structsize.value())
         info = '\nStructuring element size {}, shape {}'.format(self._structsize.value(),
@@ -1475,7 +1505,7 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dblobclose'].setToolTip('Blob morphology closing' + info)
 
     # noinspection PyUnusedLocal
-    def _structTypeChanged(self, v):
+    def _structTypeChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
             struct = ('ball', 'box', 'cross', 'annulus')
             index = self._structtype.currentIndex()
@@ -1500,7 +1530,7 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dblobclose'].setToolTip('Blob morphology closing' + info)
 
     # noinspection PyUnusedLocal
-    def _moveChanged(self, v):
+    def _moveChanged(self, v: int) -> None:
         info = '\n{} mm step'.format(self._move.value())
         self._btn['2Dup'].setToolTip('Move up current slice and orientation' + info)
         self._btn['2Ddown'].setToolTip('Move down current slice and orientation' + info)
@@ -1512,14 +1542,14 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dright'].setToolTip('Move right in current orientation' + info)
 
     # noinspection PyUnusedLocal
-    def _extentChanged(self, v):
+    def _extentChanged(self, v: int) -> None:
         info = '\nBlob size threshold {} voxels'.format(self._extent.value())
         self._btn['2Dblobextent'].setToolTip('Remove blob with number of voxels smaller\n'
                                              'than threshold in current slice' + info)
         self._btn['3Dblobextent'].setToolTip('Remove blob with number of voxels smaller then threshold' + info)
 
     # noinspection PyUnusedLocal
-    def _thicknessChanged(self, v):
+    def _thicknessChanged(self, v: float) -> None:
         if self._draw is not None and self.hasViewCollection():
             self._draw.setThickness(self._thick.value())
         info = '\nExpand/shrink thickness {} mm'.format(self._thick.value())
@@ -1529,7 +1559,7 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dblobshrink'].setToolTip('Euclidean distance blob shrink' + info)
 
     # noinspection PyUnusedLocal
-    def _algoChanged(self, v):
+    def _algoChanged(self, v: int) -> None:
         info = '\n{} algorithm'.format(self._algo.currentText())
         self._btn['2Dobject'].setToolTip('Object segmentation in current slice' + info)
         self._btn['2Dback'].setToolTip('Background segmentation in current slice' + info)
@@ -1537,39 +1567,39 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dback'].setToolTip('Background segmentation' + info)
 
     # noinspection PyUnusedLocal
-    def _confidenceChanged(self, v):
+    def _confidenceChanged(self, v: float) -> None:
         if self._draw is not None and self.hasViewCollection():
             self._draw.setConfidenceConnectedSigma(self._confidence.value())
 
     # noinspection PyUnusedLocal
-    def _confidenceIterChanged(self, v):
+    def _confidenceIterChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
             self._draw.setConfidenceConnectedIter(self._iters.value())
 
-    def _2DregionClicked(self):
+    def _2DregionClicked(self) -> None:
         if not self._btn['2Dregion'].isChecked():
             self._rg2Dregion.setChecked(False)
             self._cc2Dregion.setChecked(False)
 
-    def _3DregionClicked(self):
+    def _3DregionClicked(self) -> None:
         if not self._btn['3Dregion'].isChecked():
             self._rg3Dregion.setChecked(False)
             self._cc3Dregion.setChecked(False)
             self._ac3Dregion.setChecked(False)
 
-    def _2DBlobregionClicked(self):
+    def _2DBlobregionClicked(self) -> None:
         if not self._btn['2Dblobregion'].isChecked():
             self._rg2DBlobRegion.setChecked(False)
             self._cc2DBlobRegion.setChecked(False)
 
-    def _3DBlobregionClicked(self):
+    def _3DBlobregionClicked(self) -> None:
         if not self._btn['3Dblobregion'].isChecked():
             self._rg3DBlobRegion.setChecked(False)
             self._cc3DBlobRegion.setChecked(False)
 
     # < Revision 24/03/2025
     # add _updateActiveContourParameters method
-    def _updateActiveContourParameters(self):
+    def _updateActiveContourParameters(self) -> None:
         if self._draw is not None:
             w = self._contourdialog.getSettingsWidget()
             v = w.getParameterValue('Radius')
@@ -1613,7 +1643,7 @@ class TabROIToolsWidget(TabWidget):
 
     # < Revision 24/03/2025
     # add _dialogActiveContour method
-    def _dialogActiveContour(self):
+    def _dialogActiveContour(self) -> None:
         # < Revision 28/08/2025
         # update title bar color of the dialog box for Win32 platform
         if platform == 'win32':
@@ -1629,7 +1659,7 @@ class TabROIToolsWidget(TabWidget):
     # < Revision 29/08/2025
     # add _menuThresholdShow method
     # bug fix, loss of volume display in darwin platform when popup is shown
-    def _menuThresholdShow(self):
+    def _menuThresholdShow(self) -> None:
         if platform == 'darwin':
             self._menuThreshold.addAction(self._athreshold)
     # Revision 29/08/2025 >
@@ -1639,21 +1669,21 @@ class TabROIToolsWidget(TabWidget):
     # < Revision 10/03/2025
     # fix vtkWin32OpenGLRenderWindow error: wglMakeCurrent failed in MakeCurrent()
     # finalize method must be called before destruction
-    def finalize(self):
+    def finalize(self) -> None:
         self._menuThreshold.removeAction(self._athreshold)
         self._athreshold.releaseWidget(self._threshold)
         self._threshold.finalize()
     # Revision 10/03/2025 >
 
-    def setIconSize(self, size=TabWidget._VSIZE):
+    def setIconSize(self, size: int = TabWidget._VSIZE) -> None:
         for k in self._btn:
             self._btn[k].setIconSize(QSize(size - 8, size - 8))
             self._btn[k].setFixedSize(size, size)
 
-    def getIconSize(self):
+    def getIconSize(self) -> int:
         return self._btn[0].width()
 
-    def setEnabled(self, v):
+    def setEnabled(self, v: bool) -> None:
         super().setEnabled(v)
         if self._draw is not None and self.hasViewCollection():
             # Brush size
@@ -1671,14 +1701,14 @@ class TabROIToolsWidget(TabWidget):
             # Fill holes
             self._fill.setChecked(self._views.getFillHolesROIFlag())
 
-    def setViewCollection(self, views):
+    def setViewCollection(self, views: IconBarViewWidgetCollection) -> None:
         super().setViewCollection(views)
         self._collection = self._views.getROICollection()
         self._draw = self._views.getROIDraw()
 
     # < Revision 09/03/2025
     # add updateThresholdWidget method, called by setROIToolsEnabled mainWindow method
-    def updateThresholdWidget(self):
+    def updateThresholdWidget(self) -> None:
         vol = self._views.getVolume()
         if vol is not None:
             if self._threshold.getVolume() is None: self._threshold.setVolume(vol)
@@ -1702,7 +1732,7 @@ class TabROIToolsWidget(TabWidget):
 
     # Public tools methods
 
-    def brush(self):
+    def brush(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._views.getBrushFlag() > 0:
                 self._btn['dummy'].setChecked(True)
@@ -1716,7 +1746,7 @@ class TabROIToolsWidget(TabWidget):
             # Revision 05/05/2026 >
 
     # < Revision 26/02/2026
-    def area(self):
+    def area(self) -> None:
         if self._views.getDrawRectangleFlag() or self._views.getDrawThresholdRectangleFlag():
             self._btn['dummy'].setChecked(True)
             self._views.setNoROIFlag()
@@ -1738,7 +1768,7 @@ class TabROIToolsWidget(TabWidget):
     # Revision 26/02/2026 >
 
     # < Revision 26/02/2026
-    def sam(self):
+    def sam(self) -> None:
         if self._views.getSamFlag():
             self._btn['dummy'].setChecked(True)
             self._views.setNoROIFlag()
@@ -1751,7 +1781,7 @@ class TabROIToolsWidget(TabWidget):
         # Revision 05/05/2026 >
     # Revision 26/02/2026 >
 
-    def interpolate(self):
+    def interpolate(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 view = self._views['slices']
@@ -1767,7 +1797,7 @@ class TabROIToolsWidget(TabWidget):
                         # Revision 05/05/2026 >
                         if self._logger is not None: self._logger.info('ROI tools - Interpolate slices')
 
-    def undo(self):
+    def undo(self) -> None:
         if self._draw:
             self._draw.popUndoLIFO()
             self._updateROIDisplay()
@@ -1776,7 +1806,7 @@ class TabROIToolsWidget(TabWidget):
             # Revision 05/05/2026 >
             if self._logger is not None: self._logger.info('ROI tools - Undo')
 
-    def redo(self):
+    def redo(self) -> None:
         if self._draw:
             self._draw.popRedoLIFO()
             self._updateROIDisplay()
@@ -1787,7 +1817,7 @@ class TabROIToolsWidget(TabWidget):
 
     # Slice ROI actions
 
-    def slcDilate(self):
+    def slcDilate(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -1800,7 +1830,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Binary dilate slice {}'.format(index))
 
-    def slcErode(self):
+    def slcErode(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -1813,7 +1843,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Binnary erode slice {}'.format(index))
 
-    def slcOpening(self):
+    def slcOpening(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -1826,7 +1856,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Binary opening slice {}'.format(index))
 
-    def slcClosing(self):
+    def slcClosing(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -1839,7 +1869,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Binary closing slice {}'.format(index))
 
-    def slcInvert(self):
+    def slcInvert(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -1852,7 +1882,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Binary not slice {}'.format(index))
 
-    def slcHoles(self):
+    def slcHoles(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -1865,12 +1895,12 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Fill holes slice {}'.format(index))
 
-    def slcFill(self):
+    def slcFill(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set2DFillROIFlag()
             # if self._logger is not None: self._logger.info('ROI tools - Slice fill tool selected')
-            if self._views.get2DFillROIFlag() is True:
+            if self._views.get2DFillROIFlag():
                 self._btn['2Dfill'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -1883,7 +1913,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def slcObject(self):
+    def slcObject(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -1904,7 +1934,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Object segmentation slice {}'.format(index))
 
-    def slcBack(self):
+    def slcBack(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -1925,7 +1955,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Background segmentation slice {}'.format(index))
 
-    def slcThresholding(self):
+    def slcThresholding(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -1938,7 +1968,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Thresholding slice {}'.format(index))
 
-    def slcCopy(self):
+    def slcCopy(self) -> None:
         if self._draw is not None:
             index = self._views.getSelectedSliceIndex()
             if index is not None:
@@ -1950,7 +1980,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Copy slice {}'.format(index))
 
-    def slcCut(self):
+    def slcCut(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -1963,7 +1993,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Cut slice {}'.format(index))
 
-    def slcPaste(self):
+    def slcPaste(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -1976,7 +2006,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Paste slice {}'.format(index))
 
-    def slcClear(self):
+    def slcClear(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -1989,7 +2019,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Clear slice {}'.format(index))
 
-    def slcHFlip(self):
+    def slcHFlip(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -2002,7 +2032,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Horizontal flip slice {}'.format(index))
 
-    def slcVFlip(self):
+    def slcVFlip(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -2015,7 +2045,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Vertical flip slice {}'.format(index))
 
-    def slcUp(self):
+    def slcUp(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -2028,7 +2058,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Move up slice {}'.format(index))
 
-    def slcDown(self):
+    def slcDown(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -2041,7 +2071,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Move down slice {}'.format(index))
 
-    def slcLeft(self):
+    def slcLeft(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -2054,7 +2084,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Move left slice {}'.format(index))
 
-    def slcRight(self):
+    def slcRight(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -2067,7 +2097,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Move right slice {}'.format(index))
 
-    def slcFilterExtent(self):
+    def slcFilterExtent(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 index = self._views.getSelectedSliceIndex()
@@ -2081,7 +2111,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Blob filter extent {} slice {}'.format(self._extent.value(), index))
 
-    def slcRegionGrowing(self):
+    def slcRegionGrowing(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._rg2DRegion.isChecked():
                 self._btn['2Dregion'].setChecked(True)
@@ -2099,7 +2129,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def slcRegionConfidence(self):
+    def slcRegionConfidence(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._cc2DRegion.isChecked():
                 self._btn['2Dregion'].setChecked(True)
@@ -2119,12 +2149,12 @@ class TabROIToolsWidget(TabWidget):
 
     # Slice blob actions
 
-    def slcBlobDilate(self):
+    def slcBlobDilate(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set2DBlobDilateROIFlag()
             # if self._logger is not None: self._logger.info('ROI tools - Slice blob dilate tool selected')
-            if self._views.get2DBlobDilateROIFlag() is True:
+            if self._views.get2DBlobDilateROIFlag():
                 self._btn['2Dblobdilate'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2137,12 +2167,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def slcBlobErode(self):
+    def slcBlobErode(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set2DBlobErodeROIFlag()
             # if self._logger is not None: self._logger.info('ROI tools - Slice blob erode tool selected')
-            if self._views.get2DBlobErodeROIFlag() is True:
+            if self._views.get2DBlobErodeROIFlag():
                 self._btn['2Dbloberode'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2155,12 +2185,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def slcBlobOpening(self):
+    def slcBlobOpening(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # self._views.set2DBlobOpenROIFlag()
             # if self._logger is not None: self._logger.info('ROI tools - Slice blob opening tool selected')
             # < Revision 14/11/2025
-            if self._views.get2DBlobOpenROIFlag() is True:
+            if self._views.get2DBlobOpenROIFlag():
                 self._btn['2Dblobopen'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2173,12 +2203,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def slcBlobClosing(self):
+    def slcBlobClosing(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set2DBlobCloseROIFlag()
             # if self._logger is not None: self._logger.info('ROI tools - Slice blob closing tool selected')
-            if self._views.get2DBlobCloseROIFlag() is True:
+            if self._views.get2DBlobCloseROIFlag():
                 self._btn['2Dblobclose'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2191,12 +2221,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def slcBlobCopy(self):
+    def slcBlobCopy(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # self._views.set2DBlobCopyROIFlag()
             # if self._logger is not None: self._logger.info('ROI tools - Slice blob copy tool selected')
             # < Revision 14/11/2025
-            if self._views.get2DBlobCopyROIFlag() is True:
+            if self._views.get2DBlobCopyROIFlag():
                 self._btn['2Dblobcopy'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2209,12 +2239,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def slcBlobCut(self):
+    def slcBlobCut(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set2DBlobCutROIFlag()
             # if self._logger is not None: self._logger.info('ROI tools - Slice blob cut tool selected')
-            if self._views.get2DBlobCutROIFlag() is True:
+            if self._views.get2DBlobCutROIFlag():
                 self._btn['2Dblobcut'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2227,12 +2257,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def slcBlobPaste(self):
+    def slcBlobPaste(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set2DBlobPasteROIFlag()
             # if self._logger is not None: self._logger.info('ROI tools - Slice blob paste tool selected')
-            if self._views.get2DBlobPasteROIFlag() is True:
+            if self._views.get2DBlobPasteROIFlag():
                 self._btn['2Dblobpaste'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2245,12 +2275,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = self.slcBlobPaste
             # Revision 05/05/2026 >
 
-    def slcBlobRemove(self):
+    def slcBlobRemove(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set2DBlobRemoveROIFlag()
             # if self._logger is not None: self._logger.info('ROI tools - Slice blob remove tool selected')
-            if self._views.get2DBlobRemoveROIFlag() is True:
+            if self._views.get2DBlobRemoveROIFlag():
                 self._btn['2Dblobremove'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2263,12 +2293,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def slcBlobKeep(self):
+    def slcBlobKeep(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set2DBlobKeepROIFlag()
             # if self._logger is not None: self._logger.info('ROI tools - Slice blob keep tool selected')
-            if self._views.get2DBlobKeepROIFlag() is True:
+            if self._views.get2DBlobKeepROIFlag():
                 self._btn['2Dblobkeep'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2281,10 +2311,10 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def slcBlobThresholding(self):
+    def slcBlobThresholding(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
-            if self._views.get2DBlobThresholdROIFlag() is True:
+            if self._views.get2DBlobThresholdROIFlag():
                 self._btn['2Dblobthreshold'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2297,7 +2327,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def slcBlobRegionGrowing(self):
+    def slcBlobRegionGrowing(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._rg2DBlobRegion.isChecked():
                 self._btn['2Dblobregion'].setChecked(True)
@@ -2315,7 +2345,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def slcBlobRegionConfidence(self):
+    def slcBlobRegionConfidence(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._cc2DBlobRegion.isChecked():
                 self._btn['2Dblobregion'].setChecked(True)
@@ -2335,7 +2365,7 @@ class TabROIToolsWidget(TabWidget):
 
     # Volume ROI actions
 
-    def voiEuclideanExpand(self):
+    def voiEuclideanExpand(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 if self._thick.value() > 0.0:
@@ -2351,7 +2381,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Expand {}'.format(self._thick.value()))
 
-    def voiEuclideanShrink(self):
+    def voiEuclideanShrink(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 if self._thick.value() > 0.0:
@@ -2367,7 +2397,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Shrink {}'.format(self._thick.value()))
 
-    def voiDilate(self):
+    def voiDilate(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 wait = DialogWait()
@@ -2382,7 +2412,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Binary dilate')
 
-    def voiErode(self):
+    def voiErode(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 wait = DialogWait()
@@ -2397,7 +2427,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Binary erode')
 
-    def voiOpening(self):
+    def voiOpening(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 wait = DialogWait()
@@ -2412,7 +2442,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Binary opening')
 
-    def voiClosing(self):
+    def voiClosing(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 wait = DialogWait()
@@ -2427,7 +2457,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Binary closing')
 
-    def voiInvert(self):
+    def voiInvert(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 self._draw.binaryNOT()
@@ -2437,7 +2467,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Binary not')
 
-    def voi3DHoles(self):
+    def voi3DHoles(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 wait = DialogWait()
@@ -2452,7 +2482,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Fill holes')
 
-    def voi2DHoles(self, dim):
+    def voi2DHoles(self, dim: int) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 if dim == 0: info = '2D axial fill holes...'
@@ -2470,12 +2500,12 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Fill holes (by slices)')
 
-    def voiFill(self):
+    def voiFill(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set3DFillROIFlag()
             # if self._logger is not None: self._logger.info('ROI tools - Fill tool selected')
-            if self._views.get3DFillROIFlag() is True:
+            if self._views.get3DFillROIFlag():
                 self._btn['3Dfill'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2488,7 +2518,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiClear(self):
+    def voiClear(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 self._draw.clear()
@@ -2498,7 +2528,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Clear')
 
-    def voiObject(self):
+    def voiObject(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 wait = DialogWait()
@@ -2528,7 +2558,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Object segmentation')
 
-    def voiBack(self):
+    def voiBack(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 wait = DialogWait()
@@ -2558,7 +2588,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 self._logger.info('ROI tools - Background segmentation')
 
-    def voiThresholding(self):
+    def voiThresholding(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 wait = DialogWait()
@@ -2572,7 +2602,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 self._logger.info('ROI tools - Thresholding')
 
-    def voiHFlip(self):
+    def voiHFlip(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 orient = self._views.getCurrentOrientation()
@@ -2585,7 +2615,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 self._logger.info('ROI tools - Horizontal flip')
 
-    def voiVFlip(self):
+    def voiVFlip(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 orient = self._views.getCurrentOrientation()
@@ -2598,7 +2628,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 self._logger.info('ROI tools - Vertical flip')
 
-    def voiUp(self):
+    def voiUp(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 orient = self._views.getCurrentOrientation()
@@ -2611,7 +2641,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 self._logger.info('ROI tools - Move up')
 
-    def voiDown(self):
+    def voiDown(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 orient = self._views.getCurrentOrientation()
@@ -2624,7 +2654,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 self._logger.info('ROI tools - Move down')
 
-    def voiLeft(self):
+    def voiLeft(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 orient = self._views.getCurrentOrientation()
@@ -2637,7 +2667,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 self._logger.info('ROI tools - Move left')
 
-    def voiRight(self):
+    def voiRight(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 orient = self._views.getCurrentOrientation()
@@ -2650,7 +2680,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 self._logger.info('ROI tools - Move right')
 
-    def voiFilterExtent(self):
+    def voiFilterExtent(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
                 wait = DialogWait()
@@ -2686,7 +2716,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiRegionConfidence(self):
+    def voiRegionConfidence(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._cc3DRegion.isChecked():
                 self._btn['3Dregion'].setChecked(True)
@@ -2706,7 +2736,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiActiveContour(self):
+    def voiActiveContour(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._ac3DRegion.isChecked():
                 self._btn['3Dregion'].setChecked(True)
@@ -2726,7 +2756,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def statistics(self):
+    def statistics(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             wait = DialogWait()
             wait.open()
@@ -2758,12 +2788,12 @@ class TabROIToolsWidget(TabWidget):
 
     # Volume blob actions
 
-    def voiBlobDilate(self):
+    def voiBlobDilate(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set3DBlobDilateROIFlag()
             #self._logger.info('ROI tools - Blob binary dilate tool selected')
-            if self._views.get3DBlobDilateROIFlag() is True:
+            if self._views.get3DBlobDilateROIFlag():
                 self._btn['3Dblobdilate'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2776,12 +2806,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiBlobErode(self):
+    def voiBlobErode(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set3DBlobErodeROIFlag()
             # self._logger.info('ROI tools - Blob binary erode tool selected')
-            if self._views.get3DBlobErodeROIFlag() is True:
+            if self._views.get3DBlobErodeROIFlag():
                 self._btn['3Dbloberode'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2794,12 +2824,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiBlobOpening(self):
+    def voiBlobOpening(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set3DBlobOpenROIFlag()
             # self._logger.info('ROI tools - Blob binary opening tool selected')
-            if self._views.get3DBlobOpenROIFlag() is True:
+            if self._views.get3DBlobOpenROIFlag():
                 self._btn['3Dblobopen'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2812,12 +2842,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiBlobClosing(self):
+    def voiBlobClosing(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set3DBlobCloseROIFlag()
             # self._logger.info('ROI tools - Blob binary closing tool selected')
-            if self._views.get3DBlobCloseROIFlag() is True:
+            if self._views.get3DBlobCloseROIFlag():
                 self._btn['3Dblobclose'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2831,12 +2861,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiBlobCopy(self):
+    def voiBlobCopy(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set3DBlobCopyROIFlag()
             # self._logger.info('ROI tools - Blob copy tool selected')
-            if self._views.get3DBlobCopyROIFlag() is True:
+            if self._views.get3DBlobCopyROIFlag():
                 self._btn['3Dblobcopy'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2849,12 +2879,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiBlobCut(self):
+    def voiBlobCut(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set3DBlobCutROIFlag()
             # self._logger.info('ROI tools - Blob cut tool selected')
-            if self._views.get3DBlobCutROIFlag() is True:
+            if self._views.get3DBlobCutROIFlag():
                 self._btn['3Dblobcut'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2867,12 +2897,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiBlobPaste(self):
+    def voiBlobPaste(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set3DBlobPasteROIFlag()
             # self._logger.info('ROI tools - Blob paste tool selected')
-            if self._views.get3DBlobPasteROIFlag() is True:
+            if self._views.get3DBlobPasteROIFlag():
                 self._btn['3Dblobpaste'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2885,12 +2915,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiBlobRemove(self):
+    def voiBlobRemove(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set3DBlobRemoveROIFlag()
             # self._logger.info('ROI tools - Blob remove tool selected')
-            if self._views.get3DBlobRemoveROIFlag() is True:
+            if self._views.get3DBlobRemoveROIFlag():
                 self._btn['3Dblobremove'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2903,12 +2933,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiBlobKeep(self):
+    def voiBlobKeep(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set3DBlobKeepROIFlag()
             # self._logger.info('ROI tools - Blob keep tool selected')
-            if self._views.get3DBlobKeepROIFlag() is True:
+            if self._views.get3DBlobKeepROIFlag():
                 self._btn['3Dblobkeep'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2921,12 +2951,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiBlobExpand(self):
+    def voiBlobExpand(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set3DBlobExpandFlagOn(self._thick.value())
             # self._logger.info('ROI tools - Blob expand tool selected')
-            if self._views.get3DBlobExpandFlag() is True:
+            if self._views.get3DBlobExpandFlag():
                 self._btn['3Dblobexpand'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2939,12 +2969,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiBlobShrink(self):
+    def voiBlobShrink(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set3DBlobShrinkFlagOn(self._thick.value())
             # self._logger.info('ROI tools - Blob shrink tool selected')
-            if self._views.get3DBlobShrinkFlag() is True:
+            if self._views.get3DBlobShrinkFlag():
                 self._btn['3Dblobshrink'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2957,12 +2987,12 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiBlobThresholding(self):
+    def voiBlobThresholding(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
             # self._views.set3DBlobThresholdROIFlag()
             # self._logger.info('ROI tools - Blob thresholding tool selected')
-            if self._views.get3DBlobThresholdROIFlag() is True:
+            if self._views.get3DBlobThresholdROIFlag():
                 self._btn['3Dblobthreshold'].setChecked(False)
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
@@ -2975,7 +3005,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiBlobRegionGrowing(self):
+    def voiBlobRegionGrowing(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._rg3DBlobRegion.isChecked():
                 self._btn['3Dblobregion'].setChecked(True)
@@ -2993,7 +3023,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
-    def voiBlobRegionConfidence(self):
+    def voiBlobRegionConfidence(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._cc3DBlobRegion.isChecked():
                 self._btn['3Dblobregion'].setChecked(True)
@@ -3034,7 +3064,9 @@ class TabMeshListWidget(TabWidget):
 
     # Special method
 
-    def __init__(self, views=None, parent=None):
+    def __init__(self,
+                 views: IconBarViewWidgetCollection | None = None,
+                 parent: QWidget | None = None) -> None:
         super().__init__(views, parent)
 
         self._list = ListMeshAttributesWidget(views=views, parent=self)
@@ -3154,7 +3186,7 @@ class TabMeshListWidget(TabWidget):
 
     # Public methods
 
-    def setIconSize(self, size=TabWidget._VSIZE):
+    def setIconSize(self, size: int = TabWidget._VSIZE) -> None :
         self._btfilt.setIconSize(QSize(size - 8, size - 8))
         self._btfilt.setFixedSize(size, size)
         self._dilate.setIconSize(QSize(size - 8, size - 8))
@@ -3171,10 +3203,10 @@ class TabMeshListWidget(TabWidget):
         self._btfeatures.setFixedSize(size, size)
         self._list.setIconSize(size)
 
-    def getIconSize(self):
+    def getIconSize(self) -> int:
         return self._btfilt.width()
 
-    def setViewCollection(self, views):
+    def setViewCollection(self, views: IconBarViewWidgetCollection | None) -> None:
         super().setViewCollection(views)
         if isinstance(views, IconBarViewWidgetCollection):
             self._list.setViewCollection(views)
@@ -3183,48 +3215,48 @@ class TabMeshListWidget(TabWidget):
 
     # < Revision 02/11/2024
     # add setMaxCount method
-    def setMaxCount(self, v):
+    def setMaxCount(self, v: int) -> None:
         if self._list is not None:
             self._list.setMaxCount(v)
     # Revision 02/11/2024 >
 
     # < Revision 02/11/2024
     # add getMaxCount method
-    def getMaxCount(self):
+    def getMaxCount(self) -> int:
         if self._list is not None: return self._list.getMaxCount()
         else: raise AttributeError('_list attribute is None.')
     # Revision 02/11/2024 >
 
-    def getMeshListWidget(self):
+    def getMeshListWidget(self) -> ListMeshAttributesWidget:
         return self._list
 
-    def getSettingsWidget(self):
+    def getSettingsWidget(self) -> SettingsWidget:
         return self._settings
 
-    def clear(self):
+    def clear(self) -> None:
         self._list.removeAll()
 
-    def filters(self):
+    def filters(self) -> None:
         self._list.filter()
 
-    def dilate(self):
+    def dilate(self) -> None:
         v = self._dmm.value()
         self._list.dilate(v)
 
-    def erode(self):
+    def erode(self) -> None:
         v = self._emm.value()
         self._list.erode(v)
 
-    def union(self):
+    def union(self) -> None:
         self._list.union()
 
-    def intersection(self):
+    def intersection(self) -> None:
         self._list.intersection()
 
-    def difference(self):
+    def difference(self) -> None:
         self._list.difference()
 
-    def features(self):
+    def features(self) -> None:
         self._list.features()
 
     # < Revision 20/02/2025
@@ -3257,7 +3289,9 @@ class TabTargetListWidget(TabWidget):
 
     # Special method
 
-    def __init__(self, views=None, parent=None):
+    def __init__(self,
+                 views: IconBarViewWidgetCollection | None = None,
+                 parent: QWidget | None = None) -> None:
         super().__init__(views, parent)
 
         self._list = ListToolAttributesWidget(views=views, parent=self)
@@ -3275,13 +3309,13 @@ class TabTargetListWidget(TabWidget):
 
     # Public methods
 
-    def setIconSize(self, size=TabWidget._VSIZE):
+    def setIconSize(self, size: int = TabWidget._VSIZE) -> None:
         self._list.setIconSize(size)
 
-    def getIconSize(self):
+    def getIconSize(self) -> int:
         return self._list.getIconSize()
 
-    def setViewCollection(self, views):
+    def setViewCollection(self, views: IconBarViewWidgetCollection | None) -> None:
         super().setViewCollection(views)
 
         if isinstance(views, IconBarViewWidgetCollection):
@@ -3292,14 +3326,14 @@ class TabTargetListWidget(TabWidget):
 
     # < Revision 02/11/2024
     # add setMaxCount method
-    def setMaxCount(self, v):
+    def setMaxCount(self, v: int) -> None:
         if self._list is not None:
             self._list.setMaxCount(v)
     # Revision 02/11/2024 >
 
     # < Revision 02/11/2024
     # add getMaxCount method
-    def getMaxCount(self):
+    def getMaxCount(self) -> int:
         if self._list is not None: return self._list.getMaxCount()
         else: raise AttributeError('_list attribute is None.')
     # Revision 02/11/2024 >
@@ -3307,7 +3341,7 @@ class TabTargetListWidget(TabWidget):
     def getToolListWidget(self):
         return self._list
 
-    def clear(self):
+    def clear(self) -> None:
         self._list.removeAll()
 
     # < Revision 20/02/2025
@@ -3335,12 +3369,14 @@ class TabTrackingWidget(TabWidget):
 
     QWidget -> TabTrackingWidget
 
-    Last revision: 28/08/2025
+    Last revision: 05/06/2026
     """
 
     # Special method
 
-    def __init__(self, views=None, parent=None):
+    def __init__(self,
+                 views: IconBarViewWidgetCollection | None = None,
+                 parent: QWidget | None = None) -> None:
         super().__init__(views, parent)
 
         self._list = ListBundleAttributesWidget(views=views, parent=self)
@@ -3415,6 +3451,13 @@ class TabTrackingWidget(TabWidget):
                 self._list.removeAll()
                 self._list.setReferenceID(self._tractogram.getReferenceID())
                 self._atlas.setVisible(not self._tractogram.isAtlas())
+                # < Revision 05/06/2026
+                if self._logger is not None: self._logger.info('Open {}'.format(basename(filename)))
+                if self.hasMainWindow():
+                    main = self.getMainWindow()
+                    main.updateMemoryUsage()
+                    main.setStatusBarMessage('{} opened'.format(basename(filename)))
+                # Revision 05/06/2026 >
             else:
                 messageBox(self,
                            'Open tractogram',
@@ -3431,51 +3474,50 @@ class TabTrackingWidget(TabWidget):
 
     # Public methods
 
-    def setIconSize(self, size=TabWidget._VSIZE):
+    def setIconSize(self, size: int = TabWidget._VSIZE) -> None:
         self._list.setIconSize(size)
         self._dissection.setIconSize(QSize(size - 8, size - 8))
         self._dissection.setFixedSize(size, size)
         self._atlas.setIconSize(QSize(size - 8, size - 8))
         self._atlas.setFixedSize(size, size)
 
-    def getIconSize(self):
+    def getIconSize(self) -> int:
         return self._list.getIconSize()
 
-    def setViewCollection(self, views):
+    def setViewCollection(self, views: IconBarViewWidgetCollection | None) -> None:
         super().setViewCollection(views)
         if isinstance(views, IconBarViewWidgetCollection):
             self._list.setViewCollection(views)
-            # self._collection =
         else:
             self._collection = None
 
     # < Revision 02/11/2024
     # add setMaxCount method
-    def setMaxCount(self, v):
+    def setMaxCount(self, v: int) -> None:
         if self._list is not None:
             self._list.setMaxCount(v)
     # Revision 02/11/2024 >
 
     # < Revision 02/11/2024
     # add getMaxCount method
-    def getMaxCount(self):
+    def getMaxCount(self) -> int:
         if self._list is not None: return self._list.getMaxCount()
         else: raise AttributeError('_list attribute is None.')
     # Revision 02/11/2024 >
 
-    def getTrackingListWidget(self):
+    def getTrackingListWidget(self) -> ListBundleAttributesWidget:
         return self._list
 
-    def clear(self):
+    def clear(self) -> None:
         self._clearTractogram()
 
-    def hasTractogram(self):
+    def hasTractogram(self) -> bool:
         return self._tractogram is not None
 
-    def getTractogram(self):
+    def getTractogram(self) -> SisypheStreamlines:
         return self._tractogram
 
-    def atlas(self):
+    def atlas(self) -> None:
         if self.hasTractogram():
             slt = self.getTractogram()
             if not slt.isAtlas():
@@ -3546,7 +3588,7 @@ class TabTrackingWidget(TabWidget):
                          'Streamlines atlas selection',
                          'No whole brain tractogram.')
 
-    def dissection(self):
+    def dissection(self) -> None:
         if self.hasTractogram():
             slt = self.getTractogram()
             rois = None
@@ -3661,7 +3703,7 @@ class TabHelpWidget(QWidget):
     # Class method
 
     @classmethod
-    def getHome(cls):
+    def getHome(cls) -> QUrl:
         import Sisyphe.doc
         # < Revision 07/03/2025
         # return QUrl('file:' + join(dirname(abspath(Sisyphe.doc.__file__)), 'home.html'))
@@ -3669,7 +3711,7 @@ class TabHelpWidget(QWidget):
         # < Revision 07/03/2025
 
     @classmethod
-    def getSearch(cls):
+    def getSearch(cls) -> QUrl:
         import Sisyphe.doc
         # < Revision 07/03/2025
         # return QUrl('file:' + join(dirname(abspath(Sisyphe.doc.__file__)), 'search.html'))
@@ -3678,7 +3720,7 @@ class TabHelpWidget(QWidget):
 
     # Special method
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         # Widgets
@@ -3736,7 +3778,7 @@ class TabHelpWidget(QWidget):
 
     # Public method
 
-    def setIconSize(self, size=TabWidget.getDefaultIconSize()):
+    def setIconSize(self, size: int = TabWidget.getDefaultIconSize()) -> None:
         self._home.setIconSize(QSize(size - 8, size - 8))
         self._back.setIconSize(QSize(size - 8, size - 8))
         self._for.setIconSize(QSize(size - 8, size - 8))
@@ -3744,43 +3786,43 @@ class TabHelpWidget(QWidget):
         self._back.setFixedSize(size, size)
         self._for.setFixedSize(size, size)
 
-    def getIconSize(self):
+    def getIconSize(self) -> int:
         return self._home.width()
 
-    def backward(self):
+    def backward(self) -> None:
         self._web.page().triggerAction(QWebEnginePage.WebAction.Back)
 
-    def forward(self):
+    def forward(self) -> None:
         self._web.page().triggerAction(QWebEnginePage.WebAction.Forward)
 
-    def home(self):
+    def home(self) -> None:
         self._web.setUrl(self.getHome())
 
     # < Revision 12/10/2025
-    def setUrl(self, url):
+    def setUrl(self, url: QUrl) -> None:
         self._web.setUrl(url)
     # Revision 12/10/2025 >
 
     # < Revision 12/10/2025
-    def setPage(self, page, fragment: str = ''):
+    def setPage(self, page: str, fragment: str = '') -> None:
         import Sisyphe.doc
         url = QUrl.fromLocalFile(join(dirname(abspath(Sisyphe.doc.__file__)), page))
         if fragment != '': url.setFragment(fragment)
         self._web.setUrl(url)
     # Revision 12/10/2025 >
 
-    def search(self):
+    def search(self) -> None:
         filt = 'q={}'.format(self._search.getEditText())
         url = self.getSearch()
         url.setQuery(filt)
         self._web.setUrl(url)
 
-    def setSearch(self, txt):
+    def setSearch(self, txt: str) -> None:
         self._search.setEditText(txt)
         self.search()
 
-    def setZoomFactor(self, v):
+    def setZoomFactor(self, v: float) -> None:
         self._web.setZoomFactor(v)
 
-    def getZoomFactor(self):
+    def getZoomFactor(self) -> float:
         return self._web.zoomFactor()

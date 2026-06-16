@@ -14,9 +14,11 @@ from os.path import join
 from os.path import exists
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QPoint
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QSlider
+from PyQt5.QtWidgets import QToolTip
 from PyQt5.QtWidgets import QActionGroup
 from PyQt5.QtWidgets import QWidgetAction
 
@@ -78,7 +80,7 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
     QFame -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> ProjectionViewWidget
 
     Creation: 12/10/2024
-    Last Revision: 11/12/2025
+    Last Revision: 11/06/2026
     """
 
     # Private method
@@ -642,6 +644,14 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
         """
         if self.hasVolume():
             self._ref = foreground
+            # < Revision 08/06/2026
+            self._initInfoLabels()
+            if self._action['showinfo'].isChecked():
+                self._info['topleft'].SetVisibility(True)
+                self._info['topright'].SetVisibility(True)
+                self._info['bottomleft'].SetVisibility(True)
+                self._info['bottomright'].SetVisibility(True)
+            # Revision 08/06/2026 >
     # Revision 18/10/2024
 
     def getProjection(self) -> SisypheVolume | None:
@@ -959,8 +969,15 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
         Update the windowing of the projected volume from the original SisypheVolume reference.
         """
         if self._ref is not None:
+            # < Revision 11/06/2026
+            # update range before window
+            # w = self._ref.display.getWindow()
+            # self._volume.display.setWindow(w[0], w[1])
+            r = self._ref.display.getRange()
             w = self._ref.display.getWindow()
+            self._volume.display.setRange(r[0], r[1])
             self._volume.display.setWindow(w[0], w[1])
+            # Revision 11/06/2026 >
             self._renderwindow.Render()
 
     def updateLutFromReference(self) -> None:
@@ -1144,10 +1161,12 @@ class MultiProjectionViewWidget(MultiViewWidget):
             for j in range(8):
                 if j != i:
                     w2 = self.getViewWidgetAt(j // 4, j % 4)
+                    # noinspection PyUnresolvedReferences
                     w1.ZoomChanged.connect(w2.synchroniseZoomChanged)
                     w1.CameraPositionChanged.connect(w2.synchroniseCameraPositionChanged)
                     w1.OpacityChanged.connect(w2.synchronisedOpacityChanged)
                     w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
+                    # noinspection PyUnresolvedReferences
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
 
     # Public methods
@@ -1347,7 +1366,7 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
     QWidget -> IconBarWidget -> IconBarMultiProjectionViewWidget
 
     Creation: 13/10/2024
-    Last revision: 27/05/2026
+    Last revision: 11/06/2026
     """
 
     # Special method
@@ -1435,6 +1454,10 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
         a = QWidgetAction(self)
         a.setDefaultWidget(self._slider)
         submenu.addAction(a)
+        # < Revision 11/06/2026
+        # move keyboard focus to slider
+        submenu.aboutToShow.connect(lambda: self._slider.setFocus())
+        # Revision 11/06/2026 >
         self._icons['opacity'].setMenu(submenu)
         lyout = self._bar.layout()
         lyout.insertWidget(4, self._icons['opacity'])
@@ -1519,7 +1542,13 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
         Updates the projection opacity based on the _slider widget.
         """
         self._widget.setProjectionOpacity(self._slider.value() / 100.0)
-        self._slider.setToolTip('Opacity {} %'.format(self._slider.value()))
+        # < Revision 11/06/2026
+        # self._slider.setToolTip('Opacity {} %'.format(self._slider.value()))
+        tip = 'Opacity {} %'.format(self._slider.value())
+        self._slider.setToolTip(tip)
+        QToolTip.showText(self._slider.mapToGlobal(QPoint(self._slider.width(), self._slider.height() // 2)), tip)
+        # Revision 11/06/2026 >
+
 
     def _depthChanged(self) -> None:
         """

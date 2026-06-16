@@ -71,13 +71,13 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
     """
     # Custom Qt signals
 
-    TrajectoryCameraAligned = pyqtSignal(QWidget)
-    TrajectoryACPCAligned = pyqtSignal(QWidget)
-    TrajectoryToolAligned = pyqtSignal(QWidget, str)  # str tool name
-    TrajectoryVectorAligned = pyqtSignal(QWidget, float, float, float)  # float normal
-    TrajectoryDefaultAligned = pyqtSignal(QWidget)
-    SlabChanged = pyqtSignal(QWidget, float, str)  # float slab thickness, str slab type
-    StepChanged = pyqtSignal(QWidget, float)  # float slice step
+    TrajectoryCameraAligned: pyqtSignal = pyqtSignal(QWidget)
+    TrajectoryACPCAligned: pyqtSignal = pyqtSignal(QWidget)
+    TrajectoryToolAligned: pyqtSignal = pyqtSignal(QWidget, str)  # str tool name
+    TrajectoryVectorAligned: pyqtSignal = pyqtSignal(QWidget, float, float, float)  # float normal
+    TrajectoryDefaultAligned: pyqtSignal = pyqtSignal(QWidget)
+    SlabChanged: pyqtSignal = pyqtSignal(QWidget, float, str)  # float slab thickness, str slab type
+    StepChanged: pyqtSignal = pyqtSignal(QWidget, float)  # float slice step
 
     # Special method
 

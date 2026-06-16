@@ -11,6 +11,9 @@ External packages/modules
     - vtk, visualization engine/3D rendering, https://vtk.org/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from typing import Any
 import sys
 from sys import platform
 
@@ -78,6 +81,10 @@ from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.gui.dialogFromXml import DialogFromXml
 from Sisyphe.gui.dialogWait import DialogWait
 
+if TYPE_CHECKING:
+    from PyQt5.QtGui import QKeyEvent
+    from Sisyphe.gui.windowSisyphe import WindowSisyphe
+
 __all__ = ['ConsoleWidget']
 
 """
@@ -95,7 +102,7 @@ class RichJupyterWidget2(RichJupyterWidget):
 
     # < Revision 09/12/2025
     # override __init__() method
-    def __init__(self, *args, **kw):
+    def __init__(self, *args, **kw) -> None:
         super().__init__(*args, **kw)
         settings = SisypheSettings()
         self._aikey = settings.getFieldValue('Gemini', 'APIKey')
@@ -106,7 +113,7 @@ class RichJupyterWidget2(RichJupyterWidget):
         self._update = None
     # Revision 09/12/2025 >
 
-    def _event_filter_console_keypress(self, event):
+    def _event_filter_console_keypress(self, event) -> bool:
         # noinspection PyProtectedMember
         r = super()._event_filter_console_keypress(event)
         k = event.text()
@@ -137,7 +144,7 @@ class RichJupyterWidget2(RichJupyterWidget):
         return r
 
     # < Revision 08/02/2026
-    def _gemini(self):
+    def _gemini(self) -> None:
         # history
         history = self.input_buffer
         history = history.rstrip()
@@ -348,7 +355,7 @@ class RichJupyterWidget2(RichJupyterWidget):
     # Revision 08/02/2026 >
 
     # < Revision 08/02/2026
-    def _packages(self):
+    def _packages(self) -> None:
         # history
         history = self.input_buffer
         history = history.rstrip()
@@ -383,7 +390,7 @@ class RichJupyterWidget2(RichJupyterWidget):
     # Revision 08/02/2026 >
 
     # < Revision 08/02/2026
-    def _open(self):
+    def _open(self) -> None:
         # history
         history = self.input_buffer
         history = history.rstrip()
@@ -713,7 +720,10 @@ class RichJupyterWidget2(RichJupyterWidget):
     # < Revision 09/12/2025
     # override execute method
     # noinspection PyProtectedMember
-    def execute(self, source=None, hidden=False, interactive=False):
+    def execute(self,
+                source: str | None = None,
+                hidden: bool = False,
+                interactive: bool = False):
         if source is None:
             if self.input_buffer[:7] == '%gemini':
                 self._gemini()
@@ -770,7 +780,9 @@ class ConsoleWidget(QWidget):
     _popup          QMenu
     """
 
-    def __init__(self, variables=None, parent=None):
+    def __init__(self,
+                 variables: dict[str, Any] | None = None,
+                 parent: QWidget | None = None):
         super().__init__(parent)
 
         self._vol = None
@@ -1042,7 +1054,7 @@ class ConsoleWidget(QWidget):
 
     # < Revision 27/04/2026
     # add _enable_inline method
-    def _enable_inline(self):
+    def _enable_inline(self) -> None:
         # workaround for the exception raised by %matplotlib inline during a frozen execution
         # this bug is related to upgrading Matplotlib to version 3.10.8
         if sys.version_info.minor == 10:
@@ -1078,7 +1090,7 @@ class ConsoleWidget(QWidget):
     # Revision 27/04/2026 >
 
     # noinspection PyUnusedLocal
-    def _globalsDblClicked(self, item, c):
+    def _globalsDblClicked(self, item: QTreeWidgetItem, c: int) -> None:
         if self.hasMainWindow():
             # noinspection PyUnresolvedReferences
             v = item.data(0, Qt.UserRole)
@@ -1110,7 +1122,7 @@ class ConsoleWidget(QWidget):
                 except: return
 
     # noinspection PyUnusedLocal
-    def _globalsClicked(self, item, c):
+    def _globalsClicked(self, item: QTreeWidgetItem, c: int) -> None:
         # noinspection PyUnresolvedReferences
         v = item.data(0, Qt.UserRole)
         if v != '':
@@ -1125,7 +1137,7 @@ class ConsoleWidget(QWidget):
             except: return
 
     # noinspection PyUnusedLocal
-    def _modulesDblClicked(self, item, c):
+    def _modulesDblClicked(self, item: QTreeWidgetItem, c: int) -> None:
         if self.hasMainWindow():
             # noinspection PyUnresolvedReferences
             v = item.data(0, Qt.UserRole)
@@ -1141,7 +1153,7 @@ class ConsoleWidget(QWidget):
     # < Revision 01/12/2025
     # add _popupGlobals method
     # noinspection PyTypeChecker
-    def _popupGlobals(self, p: QPoint):
+    def _popupGlobals(self, p: QPoint) -> None:
         item = self._globals.itemAt(p)
         if item is not None:
             g = self._console.kernel_manager.kernel.shell.user_ns
@@ -1654,7 +1666,7 @@ class ConsoleWidget(QWidget):
         except: pass
     # Revision 01/12/2025 >
 
-    def update(self):
+    def update(self) -> None:
         self._modules.clear()
         self._globals.clear()
         g = self._console.kernel_manager.kernel.shell.user_ns
@@ -1694,22 +1706,22 @@ class ConsoleWidget(QWidget):
         
     # Public methods
 
-    def setModuleVisibility(self, v: bool = True):
+    def setModuleVisibility(self, v: bool = True) -> None:
         self._modules.setVisible(v)
 
-    def getModuleVisibility(self):
+    def getModuleVisibility(self) -> bool:
         return self._modules.isVisible()
 
-    def setGlobalsVisibility(self, v: bool = True):
+    def setGlobalsVisibility(self, v: bool = True) -> None:
         self._globals.setVisible(v)
 
-    def getGlobalsVisibility(self):
+    def getGlobalsVisibility(self) -> bool:
         return self._globals.isVisible()
 
-    def getPopup(self):
+    def getPopup(self) -> QMenu:
         return self._popup
 
-    def pushVariables(self, v):
+    def pushVariables(self, v: dict[str, Any]) -> None:
         if v is not None:
             if isinstance(v, dict):
                 self._console.kernel_manager.kernel.shell.push(v)
@@ -1736,13 +1748,13 @@ class ConsoleWidget(QWidget):
         return v in k
     # Revision 29/11/2025 >
 
-    def clear(self):
+    def clear(self) -> None:
         self._console.clear()
 
-    def copy(self):
+    def copy(self) -> None:
         self._console.copy()
 
-    def restart(self):
+    def restart(self) -> None:
         self._console.reset(clear=True)
         self.pushVariables(self._variables)
 
@@ -1760,34 +1772,34 @@ class ConsoleWidget(QWidget):
 
         self.update()
 
-    def save(self):
+    def save(self) -> None:
         try: self._console.export_html()
         except Exception as err: messageBox(self,
                                             'Save console display to HTML/XML.',
                                             text='error : {}'.format(err))
 
-    def importMain(self):
+    def importMain(self) -> None:
         if self._mainwindow is not None:
             v = {'main': self._mainwindow}
             self.pushVariables(v)
             self.update()
 
-    def setFont(self, font: QFont):
+    def setFont(self, font: QFont) -> None:
         # noinspection PyProtectedMember
         self._console._set_font(font)
 
-    def setMainWindow(self, w):
+    def setMainWindow(self, w: WindowSisyphe) -> None:
         from Sisyphe.gui.windowSisyphe import WindowSisyphe
         if isinstance(w, WindowSisyphe): self._mainwindow = w
         else: raise TypeError('parameter type {} is not WindowSisyphe.'.format(type(w)))
 
-    def getMainWindow(self):
+    def getMainWindow(self) -> WindowSisyphe:
         return self._mainwindow
 
-    def hasMainWindow(self):
+    def hasMainWindow(self) -> bool:
         return self._mainwindow is not None
 
     # Qt event
 
-    def keyPressEvent(self, event):
+    def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.matches(QKeySequence.Copy): self.copy()

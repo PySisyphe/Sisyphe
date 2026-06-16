@@ -6,6 +6,8 @@ External packages/modules
     - python-docx, Word document management, https://python-docx.readthedocs.io/en/latest/index.html
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from os import getcwd
 from os import chdir
 from os import remove
@@ -49,6 +51,15 @@ from Sisyphe.core.sisypheConstants import getBitmapExt
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import LabeledComboBox
 
+if TYPE_CHECKING:
+    from PyQt5.QtGui import QKeyEvent
+    from PyQt5.QtGui import QMouseEvent
+    from PyQt5.QtGui import QContextMenuEvent
+    from PyQt5.QtGui import QDragEnterEvent
+    from PyQt5.QtGui import QDropEvent
+    from PyQt5.QtGui import QResizeEvent
+    from PyQt5.QtGui import QPaintEvent
+
 """
 Class hierarchy
 ~~~~~~~~~~~~~~~
@@ -75,13 +86,13 @@ class ScreenshotsGridWidget(QWidget):
     Last revision: 25/11/2024
     """
 
-    _ROWS = 5
-    _COLS = 5
-    _PORTRAIT = 0
-    _LANDSCAPE = 1
-    _BITMAP = ('bmp', 'gif', 'jpeg', 'jpg', 'pbm', 'pgm',
-               'png', 'ppm', 'svg', 'svgz', 'tga', 'tif',
-               'tiff', 'wbmp', 'webp', 'xbm', 'xpm')
+    _ROWS: int = 5
+    _COLS: int = 5
+    _PORTRAIT: int = 0
+    _LANDSCAPE: int = 1
+    _BITMAP: tuple[str, ...] = ('bmp', 'gif', 'jpeg', 'jpg', 'pbm', 'pgm',
+                                'png', 'ppm', 'svg', 'svgz', 'tga', 'tif',
+                                'tiff', 'wbmp', 'webp', 'xbm', 'xpm')
 
     # Special methods
 
@@ -98,7 +109,7 @@ class ScreenshotsGridWidget(QWidget):
     _dragpos0       list[int, int], starting drag event, first mouse position
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self._rows = self._ROWS
@@ -121,6 +132,7 @@ class ScreenshotsGridWidget(QWidget):
         self._table.setShowGrid(False)
         # < Revision 26/04/2025
         # self._table.setEnabled(False)
+        # noinspection PyUnresolvedReferences
         self._table.setAttribute(Qt.WA_TransparentForMouseEvents)
         # Revision 26/04/2025 >
         for i in range(0, self._ROWS):
@@ -145,10 +157,11 @@ class ScreenshotsGridWidget(QWidget):
         # Init QMenu
 
         self._popup = QMenu()
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         a = self._popup.addAction('Copy')
         # noinspection PyUnresolvedReferences
@@ -217,6 +230,7 @@ class ScreenshotsGridWidget(QWidget):
         btlyout = QHBoxLayout()
         btlyout.setContentsMargins(0, 0, 0, 0)
         btlyout.setSpacing(5)
+        # noinspection PyUnresolvedReferences
         btlyout.setAlignment(Qt.AlignCenter)
 
         w = QComboBox()
@@ -298,7 +312,7 @@ class ScreenshotsGridWidget(QWidget):
 
     # Private methods
 
-    def _updateSize(self):
+    def _updateSize(self) -> None:
         c = 297 / 210  # A4 ratio
         if self.isPortraitOrientation():
             h = self._boxtable.height()
@@ -336,10 +350,10 @@ class ScreenshotsGridWidget(QWidget):
                 img = self._pixmaps[idx]
                 if img is not None:
                     widget = self._table.cellWidget(i, j)
-                    # noinspection PyTypeChecker
+                    # noinspection PyTypeChecker,PyUnresolvedReferences
                     widget.setPixmap(img.scaled(widget.width(), widget.height(), Qt.KeepAspectRatio))
 
-    def _updateCells(self, rows, cols):
+    def _updateCells(self, rows: int, cols: int) -> None:
         pixmaps = list()
         for i in range(0, self._rows):
             for j in range(0, self._columns):
@@ -357,28 +371,30 @@ class ScreenshotsGridWidget(QWidget):
         self._updateSize()
         self.setSelection(0, 0)
 
-    def _getPixmap(self, r, c):
+    def _getPixmap(self, r: int, c: int) -> QPixmap:
         return self._pixmaps[self._getIndex(r, c)]
 
-    def _getSelectedPixmap(self):
+    def _getSelectedPixmap(self) -> QPixmap:
         return self._pixmaps[self._getSelectedIndex()]
 
-    def _setPixmap(self, r, c, img):
+    def _setPixmap(self, r: int, c: int, img: QPixmap) -> None:
         w = self._table.cellWidget(r, c)
         if img is not None:
             if isinstance(img, QPixmap):
                 self._pixmaps[self._getIndex(r, c)] = img
-                if img is not None: w.setPixmap(img.scaled(w.width(), w.height(), Qt.KeepAspectRatio))
+                if img is not None:
+                    # noinspection PyUnresolvedReferences
+                    w.setPixmap(img.scaled(w.width(), w.height(), Qt.KeepAspectRatio))
             else: raise TypeError('image parameter type {} is not QPixmap.'.format(type(img)))
         else:
             w.clear()
             self._pixmaps[self._getIndex(r, c)] = None
 
-    def _setPixmapToSelection(self, img):
+    def _setPixmapToSelection(self, img: QPixmap) -> None:
         r, c = self.getSelection()
         self._setPixmap(r, c, img)
 
-    def _nextCell(self):
+    def _nextCell(self) -> None:
         r, c = self._selection
         if c == self._columns - 1:
             if r == self._rows - 1: r, c = 0, 0
@@ -386,7 +402,7 @@ class ScreenshotsGridWidget(QWidget):
         else: c += 1
         self.setSelection(r, c)
 
-    def _previousCell(self):
+    def _previousCell(self) -> None:
         r, c = self._selection
         if c == 0:
             if r == 0: r, c = self._rows - 1, self._columns - 1
@@ -394,7 +410,7 @@ class ScreenshotsGridWidget(QWidget):
         else: c -= 1
         self.setSelection(r, c)
 
-    def _belowCell(self):
+    def _belowCell(self) -> None:
         r, c = self._selection
         if r == self._rows - 1:
             if c == self._columns - 1: r, c = 0, 0
@@ -402,7 +418,7 @@ class ScreenshotsGridWidget(QWidget):
         else: r += 1
         self.setSelection(r, c)
 
-    def _aboveCell(self):
+    def _aboveCell(self) -> None:
         r, c = self._selection
         if r == 0:
             if c == 0: r, c = self._rows - 1, self._columns - 1
@@ -410,29 +426,29 @@ class ScreenshotsGridWidget(QWidget):
         else: r -= 1
         self.setSelection(r, c)
 
-    def _getIndex(self, r, c):
+    def _getIndex(self, r: int, c: int) -> int:
         return r * self._COLS + c
 
-    def _getRowColumn(self, idx):
+    def _getRowColumn(self, idx: int) -> tuple[int, int]:
         r = idx // self._COLS
         c = idx - r * self._COLS
         return r, c
 
-    def _getSelectedIndex(self):
+    def _getSelectedIndex(self) -> int:
         return self._getIndex(self._selection[0], self._selection[1])
 
-    def _mapToTableViewport(self, p):
+    def _mapToTableViewport(self, p: QPoint) -> QPoint:
         p = self.mapToGlobal(p)
         return self._table.mapFromGlobal(p)
 
-    def _backgroundChanged(self, index: int):
+    def _backgroundChanged(self, index: int) -> None:
         if index == 0: self.setBlackBackground()
         else: self.setWhiteBackground()
 
     # Public methods
 
     # < Revision 13/12/2024
-    def setWhiteBackground(self):
+    def setWhiteBackground(self) -> None:
         self._background = 1
         si, sj = self.getSelection()
         for i in range(0, self._ROWS):
@@ -443,7 +459,7 @@ class ScreenshotsGridWidget(QWidget):
     # Revision 13/12/2024 >
 
     # < Revision 13/12/2024
-    def setBlackBackground(self):
+    def setBlackBackground(self) -> None:
         self._background = 0
         si, sj = self.getSelection()
         for i in range(0, self._ROWS):
@@ -453,10 +469,10 @@ class ScreenshotsGridWidget(QWidget):
                 else: w.setStyleSheet('background-color: black; border: none; border-color: rgb(0, 125, 255); margin: 0px;')
     # Revision 13/12/2024 >
 
-    def getPopup(self):
+    def getPopup(self) -> QMenu:
         return self._popup
 
-    def setRows(self, rows):
+    def setRows(self, rows: int) -> None:
         if isinstance(rows, int):
             if rows < 6:
                 for i in range(0, self._ROWS-1):
@@ -466,7 +482,7 @@ class ScreenshotsGridWidget(QWidget):
             else: raise ValueError('parameter value must be less than 5.')
         else: raise TypeError('parameter type {} is not int.'.format(type(rows)))
 
-    def setCols(self, cols):
+    def setCols(self, cols: int) -> None:
         if isinstance(cols, int):
             if cols < 6:
                 for i in range(0, self._COLS-1):
@@ -477,7 +493,7 @@ class ScreenshotsGridWidget(QWidget):
         else: raise TypeError('parameter type {} is not int.'.format(type(cols)))
 
     # noinspection PyUnusedLocal
-    def setGridSize(self, rows, cols):
+    def setGridSize(self, rows: int, cols: int) -> None:
         if isinstance(rows, int):
             if rows < 6:
                 for i in range(0, self._ROWS-1):
@@ -496,13 +512,13 @@ class ScreenshotsGridWidget(QWidget):
         # noinspection PyUnreachableCode
         self._updateCells(rows, cols)
 
-    def getRows(self):
+    def getRows(self) -> int:
         return self._rows
 
-    def getCols(self):
+    def getCols(self) -> int:
         return self._cols
 
-    def setOrientation(self, o):
+    def setOrientation(self, o: int) -> None:
         if isinstance(o, int):
             if o in [0, 1]:
                 self._orientation = o
@@ -510,25 +526,25 @@ class ScreenshotsGridWidget(QWidget):
             else: raise ValueError('parameter value {} is not in [0,1]'.format(o))
         else: raise TypeError('parameter type {} is not int.'.format(type(o)))
 
-    def setOrientationToPortrait(self):
+    def setOrientationToPortrait(self) -> None:
         self.setOrientation(self._PORTRAIT)
 
-    def setOrientationToLandscape(self):
+    def setOrientationToLandscape(self) -> None:
         self.setOrientation(self._LANDSCAPE)
 
-    def getOrientation(self, string=False):
+    def getOrientation(self, string: bool = False) -> str:
         if string:
             if self._orientation == self._PORTRAIT: return 'portrait'
             else: return 'landscape'
         else: return self._orientation
 
-    def isPortraitOrientation(self):
+    def isPortraitOrientation(self) -> bool:
         return self._orientation == self._PORTRAIT
 
-    def isLandscapeOrientation(self):
+    def isLandscapeOrientation(self) -> bool:
         return self._orientation == self._LANDSCAPE
 
-    def setSelection(self, r, c):
+    def setSelection(self, r: int, c: int) -> None:
         if all(isinstance(i, int) for i in [r, c]):
             if 0 <= r < self._rows and 0 <= c < self._columns:
                 rs, cs = self.getSelection()
@@ -542,10 +558,10 @@ class ScreenshotsGridWidget(QWidget):
             else: raise IndexError('Index is out of range.')
         else: raise TypeError('Parameters type is not int.')
 
-    def getSelection(self):
+    def getSelection(self) -> list[int]:
         return self._selection
 
-    def copyImageToCellFromIndex(self, row, col, img):
+    def copyImageToCellFromIndex(self, row: int, col: int, img: QImage | QPixmap | str) -> None:
         if isinstance(img, str):
             if exists(img):
                 ext = splitext(img)[1]
@@ -557,7 +573,7 @@ class ScreenshotsGridWidget(QWidget):
         if isinstance(img, QPixmap): self._setPixmap(row, col, img)
         else: raise TypeError('image parameter type {} is not str, QImage or QPixmap.'.format(type(img)))
 
-    def copyImageToCellFromMouse(self, mousex, mousey, img):
+    def copyImageToCellFromMouse(self, mousex: int, mousey: int, img: QImage | QPixmap | str) -> None:
         if isinstance(img, str):
             if exists(img):
                 filt = ['.' + f.data().decode() for f in QImageReader.supportedImageFormats()]
@@ -571,19 +587,19 @@ class ScreenshotsGridWidget(QWidget):
             self.copyImageToCellFromIndex(idx.row(), idx.column(), img)
         else: raise TypeError('image parameter type {} is not QPixmap.'.format(img))
 
-    def copyToClipboard(self):
+    def copyToClipboard(self) -> None:
         clipboard = QApplication.clipboard()
         img = self._getSelectedPixmap()
         if img is not None: clipboard.setPixmap(img)
 
-    def cutToClipboard(self):
+    def cutToClipboard(self) -> None:
         clipboard = QApplication.clipboard()
         img = self._getSelectedPixmap()
         if img is not None:
             clipboard.setPixmap(img)
             self.deleteSelection()
 
-    def pasteFromClipboard(self):
+    def pasteFromClipboard(self) -> None:
         clipboard = QApplication.clipboard()
         img = clipboard.image()
         if img is not None: img = QPixmap.fromImage(img)
@@ -592,7 +608,7 @@ class ScreenshotsGridWidget(QWidget):
             self._setPixmapToSelection(img)
             self._nextCell()
 
-    def pasteFromDisk(self):
+    def pasteFromDisk(self) -> None:
         filt = ['*.' + f.data().decode() for f in QImageReader.supportedImageFormats()]
         filt = ' '.join(filt)
         filenames = QFileDialog.getOpenFileNames(self,
@@ -606,7 +622,7 @@ class ScreenshotsGridWidget(QWidget):
                 self._setPixmapToSelection(img)
                 self._nextCell()
 
-    def paste(self, img):
+    def paste(self, img: QImage | QPixmap | str) -> None:
         if isinstance(img, str):
             if exists(img):
                 ext = splitext(img)[1]
@@ -619,13 +635,13 @@ class ScreenshotsGridWidget(QWidget):
             self._nextCell()
         else: raise TypeError('parameter type {} is not QPixmap or QImage'.format(type(img)))
 
-    def delete(self, r, c):
+    def delete(self, r: int, c: int) -> None:
         self._setPixmap(r, c, None)
 
-    def deleteSelection(self):
+    def deleteSelection(self) -> None:
         self._setPixmapToSelection(None)
 
-    def clearAll(self):
+    def clearAll(self) -> None:
         for i in range(0, len(self._pixmaps)):
             self._pixmaps[i] = None
             c = i // self._ROWS
@@ -633,7 +649,7 @@ class ScreenshotsGridWidget(QWidget):
             w = self._table.cellWidget(r, c)
             w.clear()
 
-    def createHtml(self, filepath='', dpi=100):
+    def createHtml(self, filepath: str = '', dpi: int = 100) -> str:
         if isinstance(filepath, str):
             if not exists(filepath): filepath = getcwd()
             # A4 Portrait 8.3" x 11.7"
@@ -645,7 +661,7 @@ class ScreenshotsGridWidget(QWidget):
             for i in range(0, len(self._pixmaps)):
                 if self._pixmaps[i] is not None:
                     r, c = self._getRowColumn(i)
-                    # noinspection PyTypeChecker
+                    # noinspection PyTypeChecker,PyUnresolvedReferences
                     img = self._pixmaps[i].scaled(wi, hi, Qt.KeepAspectRatio)
                     filename = join(filepath, 'P{}{}.png'.format(r, c))
                     img.save(filename)
@@ -672,7 +688,7 @@ class ScreenshotsGridWidget(QWidget):
             return html
         else: raise TypeError('parameter type {} is not str.'.format(type(filepath)))
 
-    def saveToHtml(self, filename=None, dpi=100):
+    def saveToHtml(self, filename: str | None = None, dpi: int = 100) -> None:
         if filename is None:
             filename = QFileDialog.getSaveFileName(self, 'Save screenshots to Html', getcwd(), 'Html (*.html)')
             filename = filename[0]
@@ -689,7 +705,7 @@ class ScreenshotsGridWidget(QWidget):
                 messageBox(self, 'Save screenshot to html.', text='error : {}'.format(err))
             finally: f.close()
 
-    def saveToPdf(self,  filename=None, dpi=100):
+    def saveToPdf(self,  filename: str | None = None, dpi: int = 100) -> None:
         if filename is None:
             filename = QFileDialog.getSaveFileName(self, 'Save screenshots to Pdf', getcwd(), 'Pdf (*.pdf)')
             filename = filename[0]
@@ -717,6 +733,7 @@ class ScreenshotsGridWidget(QWidget):
                 hi = hp // self._rows
                 # Copy images
                 if self._backg.currentIndex() == 0:
+                    # noinspection PyUnresolvedReferences
                     painter.fillRect(50, 50, wp, hp, Qt.black)
                 for i in range(0, self._rows):
                     for j in range(0, self._columns):
@@ -724,9 +741,10 @@ class ScreenshotsGridWidget(QWidget):
                         x0 = 50 + j * wi
                         y0 = 50 + i * hi
                         if self._backg.currentIndex() == 0:
+                            # noinspection PyUnresolvedReferences
                             painter.fillRect(x0, y0, wi, hi, Qt.black)
                         if self._pixmaps[idx] is not None:
-                            # noinspection PyTypeChecker
+                            # noinspection PyTypeChecker,PyUnresolvedReferences
                             img = self._pixmaps[idx].scaled(wi, hi, Qt.KeepAspectRatio)
                             x = x0 + int((wi - img.width()) / 2)
                             y = y0 + int((hi - img.height()) / 2)
@@ -735,7 +753,7 @@ class ScreenshotsGridWidget(QWidget):
             except Exception as err:
                 messageBox(self, 'Save screenshots to pdf.', text='error : {}'.format(err))
 
-    def saveToDocx(self,  filename=None, dpi=60):
+    def saveToDocx(self,  filename: str | None = None, dpi: int = 60) -> None:
         if filename is None:
             filename = QFileDialog.getSaveFileName(self, 'Save screenshots to Word document',
                                                    getcwd(), 'Word (*.docx)')
@@ -764,7 +782,7 @@ class ScreenshotsGridWidget(QWidget):
             # Delete temporary bitmap
             if exists(tempfile): remove(tempfile)
 
-    def saveToBitmap(self, filename=None, dpi=100):
+    def saveToBitmap(self, filename: str | None = None, dpi: int = 100) -> None:
         # Calc image size
         wi = int(8.3 * dpi / self._columns)
         hi = int(11.7 * dpi / self._rows)
@@ -775,12 +793,13 @@ class ScreenshotsGridWidget(QWidget):
         page = QPixmap(wp, hp)
         painter = QPainter(page)
         if self._backg.currentIndex() == 0:
+            # noinspection PyUnresolvedReferences
             painter.fillRect(0, 0, wp, hp, Qt.black)
         for i in range(0, self._rows):
             for j in range(0, self._columns):
                 idx = self._getIndex(i, j)
                 if self._pixmaps[idx] is not None:
-                    # noinspection PyTypeChecker
+                    # noinspection PyTypeChecker,PyUnresolvedReferences
                     img = self._pixmaps[idx].scaled(wi, hi, Qt.KeepAspectRatio)
                     x = j * wi + int((wi - img.width()) / 2)
                     y = i * hi + int((hi - img.height()) / 2)
@@ -803,7 +822,7 @@ class ScreenshotsGridWidget(QWidget):
                 except Exception as err:
                     messageBox(self, 'Save screenshots to bitmap', text='error : {}'.format(err))
 
-    def save(self, filename=None, dpi=100):
+    def save(self, filename: str | None = None, dpi: int = 100) -> None:
         if filename is None:
             filename = QFileDialog.getSaveFileName(self, 'Save screenshots', getcwd(),
                                                    'Html (*.html);;Pdf (*.pdf);;Word (*.docx)', 'Pdf (*.pdf)')
@@ -821,15 +840,16 @@ class ScreenshotsGridWidget(QWidget):
 
     # Qt events
 
-    def paintEvent(self, event):
+    def paintEvent(self, event: QPaintEvent) -> None:
         self._updateSize()
         super().paintEvent(event)
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
         self._updateSize()
 
-    def keyPressEvent(self, event):
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        # noinspection PyUnresolvedReferences
         if event.matches(QKeySequence.Copy): self.copyToClipboard()
         elif event.matches(QKeySequence.Cut): self.cutToClipboard()
         elif event.matches(QKeySequence.Paste): self.pasteFromClipboard()
@@ -845,11 +865,11 @@ class ScreenshotsGridWidget(QWidget):
             self._previousCell()
         super().keyPressEvent(event)
 
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasText() or event.mimeData().hasImage(): event.accept()
         else: event.ignore()
 
-    def dropEvent(self, event):
+    def dropEvent(self, event: QDropEvent) -> None:
         img = None
         if event.mimeData().hasText():
             txt = event.mimeData().text()
@@ -872,23 +892,24 @@ class ScreenshotsGridWidget(QWidget):
                 event.accept()
             else: self._setPixmapToSelection(img)
 
-    def contextMenuEvent(self, event):
+    def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         # Popup
         self._popup.exec(event.globalPos())
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event: QMouseEvent) -> None:
         idx = self._table.indexAt(self._mapToTableViewport(event.pos()))
         # Selection
         if 0 <= idx.row() < self._rows and 0 <= idx.column() < self._columns:
             self.setSelection(idx.row(), idx.column())
         # Starting Drag
+        # noinspection PyUnresolvedReferences
         if event.button() == Qt.LeftButton:
             self._dragpos0 = event.pos()
 
-    def mouseReleaseEvent(self, event):
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self._dragpos0 = None
 
-    def mouseMoveEvent(self, event):
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self._dragpos0 is not None:
             if (event.pos() - self._dragpos0).manhattanLength() > 20:
                 idx = self._table.indexAt(self._mapToTableViewport(self._dragpos0))
@@ -902,5 +923,6 @@ class ScreenshotsGridWidget(QWidget):
                     icn = w.pixmap()
                     drag.setPixmap(icn)
                     drag.setHotSpot(QPoint(icn.width() // 2, icn.height() // 2))
+                    # noinspection PyUnresolvedReferences
                     drag.exec(Qt.MoveAction)
                     self._dragpos0 = None

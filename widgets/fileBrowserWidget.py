@@ -24,8 +24,11 @@ from os.path import dirname
 from os.path import exists
 from os.path import abspath
 from os.path import isdir
+from os.path import expanduser
 
 from io import BytesIO
+
+import subprocess
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -90,6 +93,7 @@ if TYPE_CHECKING:
     from PyQt5.QtGui import QDragMoveEvent
     from PyQt5.QtGui import QDragEnterEvent
     from PyQt5.QtWidgets import QStyleOptionViewItem
+    from Sisyphe.gui.windowSisyphe import WindowSisyphe
 
 
 __all__ = ['FileBrowserWidget']
@@ -362,7 +366,7 @@ class FileBrowserWidget(QWidget):
     QWidget -> FileBrowserWidget
 
     Creation: 09/02/2026
-    Last revision: 21/05/2026
+    Last revision: 16/06/2026
     """
 
     # Special method
@@ -638,6 +642,12 @@ class FileBrowserWidget(QWidget):
 
         self.actions = dict()
         self.actions['open'] = QAction('Open')
+        # < Revision 16/06/2026
+        if sys.platform == 'win32': self.actions['explorer'] = QAction('Open current folder in file explorer...')
+        else: self.actions['explorer'] = QAction('Open current folder in finder...')
+        self.actions['user'] = QAction('Go to user folder...')
+        self.actions['template'] = QAction('Go to template folder...')
+        # Revision 16/06/2026 >
         self.actions['edit'] = QAction('Edit attributes...')
         self.actions['console'] = QAction('Copy to console')
         self.actions['acpc'] = QAction('AC-PC selection...')
@@ -666,6 +676,11 @@ class FileBrowserWidget(QWidget):
         self.actions['selectall'] = QAction('Select All')
         self.actions['selectall'].setShortcut('Ctrl+A')
         self.actions['open'].triggered.connect(lambda _: self._open())
+        # < Revision 16/06/2026
+        self.actions['explorer'].triggered.connect(self._openExplorer)
+        self.actions['user'].triggered.connect(self._userFolder)
+        self.actions['template'].triggered.connect(self._templateFolder)
+        # Revision 16/06/2026 >
         self.actions['edit'].triggered.connect(self._editAttributes)
         self.actions['console'].triggered.connect(self._console)
         self.actions['acpc'].triggered.connect(self._acpc)
@@ -1192,6 +1207,12 @@ class FileBrowserWidget(QWidget):
             popup.addAction(self.actions['rename1'])
             popup.addAction(self.actions['folder'])
             popup.addAction(self.actions['rmdir'])
+            # < Revision 16/06/2026
+            popup.addSeparator()
+            popup.addAction(self.actions['explorer'])
+            popup.addAction(self.actions['user'])
+            popup.addAction(self.actions['template'])
+            # Revision 16/06/2026 >
             popup.exec_(self._treedir.mapToGlobal(pos))
 
     def _popupFiles(self, pos: QPoint) -> None:
@@ -1233,6 +1254,10 @@ class FileBrowserWidget(QWidget):
             popup.addAction(self.actions['selectall'])
             popup.addSeparator()
             popup.addAction(self.actions['folder'])
+            # < Revision 16/06/2026
+            popup.addSeparator()
+            popup.addAction(self.actions['explorer'])
+            # Revision 16/06/2026 >
             self._popupindex = [self._treedir.selectedIndexes()[0]]
         popup.exec_(self._listfiles.mapToGlobal(pos))
 
@@ -1340,6 +1365,28 @@ class FileBrowserWidget(QWidget):
             if v:
                 self._mainWindow.addVolume(v)
                 wait.close()
+
+    def _openExplorer(self):
+        folder = abspath(self._filemodel1.filePath(self._treedir.currentIndex()))
+        if sys.platform == 'win32': subprocess.Popen('explorer "{}"'.format(folder))
+        elif sys.platform == 'darwin': subprocess.call(["open", folder])
+
+    def _userFolder(self):
+        folder = abspath(join(expanduser('~'), '.PySisyphe'))
+        index = self._filemodel1.index(folder, 0)
+        self._treedir.expand(index)
+        self._treedir.setCurrentIndex(index)
+        self._dirClicked(index)
+        self._treedir.scrollTo(index)
+
+    def _templateFolder(self):
+        import Sisyphe
+        folder = abspath(join(dirname(Sisyphe.__file__), 'templates'))
+        index = self._filemodel1.index(folder, 0)
+        self._treedir.expand(index)
+        self._treedir.setCurrentIndex(index)
+        self._dirClicked(index)
+        self._treedir.scrollTo(index)
 
     def _editAttributes(self) -> None:
         index = self._listfiles.selectedIndexes()
@@ -1796,6 +1843,7 @@ class FileBrowserWidget(QWidget):
                         if src != dst:
                             if self._copyflag:
                                 if isdir(src):
+                                    # noinspection PyUnresolvedReferences
                                     dst = abspath(join(dst, Path(src).parts[-1]))
                                     copytree(src, dst)
                                 else: copy(src, dst)
@@ -1816,14 +1864,14 @@ class FileBrowserWidget(QWidget):
         # noinspection PyTypeChecker
         self._splitter.setSizes([int(width*(4/16)), int(width*(4/16)), width - int(width*(8/16))])
 
-    def setMainWindow(self, window: QWidget) -> None:
+    def setMainWindow(self, window: WindowSisyphe) -> None:
         from Sisyphe.gui.windowSisyphe import WindowSisyphe
         if isinstance(window, WindowSisyphe):
             self._mainWindow = window
             self._bttableconsole.setVisible(True)
             self._btcolumnconsole.setVisible(True)
 
-    def getMainWindow(self) -> QWidget:
+    def getMainWindow(self) -> WindowSisyphe:
         return self._mainWindow
 
     def hasMainWindow(self) -> bool:

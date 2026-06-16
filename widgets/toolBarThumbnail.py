@@ -5,6 +5,8 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from sys import platform
 
 from os import getcwd
@@ -30,6 +32,15 @@ from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.imageWidgets import SisypheVolumeThumbnailButtonWidget
 from Sisyphe.gui.dialogWait import DialogWait
+
+if TYPE_CHECKING:
+    from PyQt5.QtWidgets import QWidget
+    from PyQt5.QtGui import QMouseEvent
+    from PyQt5.QtGui import QContextMenuEvent
+    from PyQt5.QtGui import QDragEnterEvent
+    from PyQt5.QtGui import QDropEvent
+    from Sisyphe.widgets.iconBarViewWidgets import IconBarViewWidgetCollection
+    from Sisyphe.gui.windowSisyphe import WindowSisyphe
 
 """
 Class hierarchy
@@ -63,7 +74,7 @@ class ToolBarThumbnail(QToolBar):
     QToolBar -> ToolBarThumbnail
 
     Creation: 02/11/2022
-    Last revision: 27/05/2026
+    Last revision: 11/06/2026
     """
 
     # Special method
@@ -75,7 +86,11 @@ class ToolBarThumbnail(QToolBar):
     _parent     QWidget
     """
 
-    def __init__(self, size=128, mainwindow=None, views=None, parent=None):
+    def __init__(self,
+                 size: int = 128,
+                 mainwindow: WindowSisyphe | None = None,
+                 views: IconBarViewWidgetCollection | None = None,
+                 parent: QWidget | None = None) -> None:
         super().__init__(parent)
         # < Revision 06/07/2025
         # if not hasattr(sys, '_MEIPASS'):
@@ -105,9 +120,14 @@ class ToolBarThumbnail(QToolBar):
         self.setMovable(False)
         self.setContentsMargins(5, 5, 5, 5)
 
+        # < Revision 11/06/2026
+        if platform == 'darwin': browser = 'finder'
+        elif platform == 'win32': browser = 'file explorer'
+        else: browser = 'file manager'
         self.setToolTip('Double-click to open volume,\n'
                         'Right-click to display popup menu,\n'
-                        'Drag and drop volume from finder to open it.')
+                        'Drag and drop volume from {} to open it.'.format(browser))
+        # Revision 11/06/2026 >
 
         self.setStyleSheet('QPushButton#ThumbnailButton { max-height: 256px; } '
                            'QPushButton#ThumbnailButton:closed { background-color: black; border-color: black; border-style: solid; border-width: 8px; border-radius: 20px; } '
@@ -143,7 +163,7 @@ class ToolBarThumbnail(QToolBar):
 
     # Public method
 
-    def setSize(self, s):
+    def setSize(self, s: int) -> None:
         if isinstance(s, int):
             self._size = s
             self.setFixedHeight(self._size + 8)
@@ -154,32 +174,32 @@ class ToolBarThumbnail(QToolBar):
                     widget.setSize(s)
         else: raise TypeError('parameter type {} is not int'.format(s))
 
-    def getSize(self):
+    def getSize(self) -> int:
         return self._size
 
-    def setMainWindow(self, w):
+    def setMainWindow(self, w: WindowSisyphe) -> None:
         from Sisyphe.gui.windowSisyphe import WindowSisyphe
         if isinstance(w, WindowSisyphe): self._mainwindow = w
         else: raise TypeError('parameter type {} is not WindowSisyphe.'.format(type(w)))
 
-    def getMainWindow(self):
+    def getMainWindow(self) -> WindowSisyphe:
         return self._mainwindow
 
-    def hasMainWindow(self):
+    def hasMainWindow(self) -> bool:
         return self._mainwindow is not None
 
-    def getViewsWidget(self):
+    def getViewsWidget(self) -> IconBarViewWidgetCollection:
         return self._views
 
-    def setViewsWidget(self, w):
+    def setViewsWidget(self, w: IconBarViewWidgetCollection) -> None:
         from Sisyphe.widgets.iconBarViewWidgets import IconBarViewWidgetCollection
         if isinstance(w, IconBarViewWidgetCollection): self._views = w
         else: raise TypeError('parameter type {} is not IconBarViewWidgetCollection.'.format(type(w)))
 
-    def hasViewsWidget(self):
+    def hasViewsWidget(self) -> bool:
         return self._views is not None
 
-    def updateWidgets(self):
+    def updateWidgets(self) -> None:
         if not self.isEmpty():
             # for i in range(0, len(self._actions)):
             for i in range(0, len(self.actions())):
@@ -195,11 +215,11 @@ class ToolBarThumbnail(QToolBar):
                     widget.getActions()['multi'].setChecked(False)
                     # Revision 13/12/2024 >
 
-    def getWidgetsCount(self):
+    def getWidgetsCount(self) -> int:
         # return len(self._actions)
         return len(self.actions())
 
-    def getSelectedIndex(self):
+    def getSelectedIndex(self) -> int:
         if not self.isEmpty():
             # for i in range(0, len(self._actions)):
             for i in range(0, len(self.actions())):
@@ -208,7 +228,7 @@ class ToolBarThumbnail(QToolBar):
                 if self.actions()[i].defaultWidget().isChecked(): return i
         return None
 
-    def getSelectedWidget(self):
+    def getSelectedWidget(self) -> SisypheVolumeThumbnailButtonWidget:
         if not self.isEmpty():
             # for action in self._actions:
             for action in self.actions():
@@ -218,7 +238,7 @@ class ToolBarThumbnail(QToolBar):
                     return action.defaultWidget()
         return None
 
-    def getSelectedVolume(self):
+    def getSelectedVolume(self) -> SisypheVolume:
         if not self.isEmpty():
             # for action in self._actions:
             for action in self.actions():
@@ -228,7 +248,7 @@ class ToolBarThumbnail(QToolBar):
                     return action.defaultWidget().getVolume()
         return None
 
-    def hasReference(self):
+    def hasReference(self) -> bool:
         if not self.isEmpty():
             # for action in self._actions:
             for action in self.actions():
@@ -236,7 +256,7 @@ class ToolBarThumbnail(QToolBar):
                 if action.defaultWidget().isChecked(): return True
         return False
 
-    def getReference(self):
+    def getReference(self) -> SisypheVolume:
         if not self.isEmpty():
             # for action in self._actions:
             for action in self.actions():
@@ -248,7 +268,7 @@ class ToolBarThumbnail(QToolBar):
 
     # < Revision 26/05/2026
     # add removeReference method
-    def removeReference(self):
+    def removeReference(self) -> None:
         if not self.isEmpty():
             for action in self.actions():
                 # noinspection PyUnresolvedReferences
@@ -259,7 +279,7 @@ class ToolBarThumbnail(QToolBar):
 
     # < Revision 15/10/2024
     # add hasOverlay method
-    def hasOverlay(self):
+    def hasOverlay(self) -> bool:
         if not self.isEmpty():
             # for action in self._actions:
             for action in self.actions():
@@ -270,7 +290,7 @@ class ToolBarThumbnail(QToolBar):
 
     # < Revision 15/10/2024
     # add getOverlays method
-    def getOverlays(self):
+    def getOverlays(self) -> list[SisypheVolume]:
         r = list()
         if not self.isEmpty():
             # for action in self._actions:
@@ -288,7 +308,7 @@ class ToolBarThumbnail(QToolBar):
 
     # < Revision 06/11/2024
     # add getOverlayCount method
-    def getOverlayCount(self):
+    def getOverlayCount(self) -> int:
         n = 0
         if not self.isEmpty():
             # for action in self._actions:
@@ -300,11 +320,11 @@ class ToolBarThumbnail(QToolBar):
 
     # < Revision 27/05/2026
     # add getThumbnailCount method
-    def getThumbnailCount(self):
+    def getThumbnailCount(self) -> int:
         return len(self.actions())
     # Revision 27/05/2026 >
 
-    def getWidgetFromIndex(self, index):
+    def getWidgetFromIndex(self, index: int) -> SisypheVolumeThumbnailButtonWidget:
         if isinstance(index, int):
             # if 0 <= index < len(self._actions):
             if 0 <= index < len(self.actions()):
@@ -314,7 +334,7 @@ class ToolBarThumbnail(QToolBar):
             else: raise ValueError('parameter is out of range.')
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
 
-    def getVolumeFromIndex(self, index):
+    def getVolumeFromIndex(self, index: int) -> SisypheVolume:
         if isinstance(index, int):
             # if 0 <= index < len(self._actions):
             if 0 <= index < len(self.actions()):
@@ -324,7 +344,7 @@ class ToolBarThumbnail(QToolBar):
             else: raise ValueError('parameter is out of range.')
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
 
-    def getVolumeIndex(self, vol):
+    def getVolumeIndex(self, vol: SisypheVolume) -> int:
         if isinstance(vol, SisypheVolume):
             if not self.isEmpty():
                 # for i in range(0, len(self._actions)):
@@ -335,7 +355,7 @@ class ToolBarThumbnail(QToolBar):
             return None
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
-    def containsVolume(self, vol):
+    def containsVolume(self, vol: SisypheVolume) -> bool:
         if isinstance(vol, SisypheVolume):
             if not self.isEmpty():
                 # for action in self._actions:
@@ -345,7 +365,7 @@ class ToolBarThumbnail(QToolBar):
             return False
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
-    def removeVolume(self, vol):
+    def removeVolume(self, vol: SisypheVolume) -> None:
         if isinstance(vol, SisypheVolume):
             if not self.isEmpty():
                 # for action in self._actions:
@@ -362,10 +382,10 @@ class ToolBarThumbnail(QToolBar):
                             self._views.removeOverlay(vol)
                         self.removeAction(action)
                         # self._actions.remove(action)
-                        if self._logger is not None: self._logger.info('Remove from thumbnail {}'.format(vol.getFilename()))
+                        if self._logger is not None: self._logger.info('Remove {} from thumbnail'.format(vol.getBasename()))
             if self.hasMainWindow():
                 self._mainwindow.updateMemoryUsage()
-                self._mainwindow.setStatusBarMessage('Volume {} closed.'.format(vol.getBasename()))
+                self._mainwindow.setStatusBarMessage('{} closed.'.format(vol.getBasename()))
                 if not self.hasReference():
                     self._mainwindow.setDockEnabled(False)
                     # < Revision 16/102024
@@ -373,7 +393,7 @@ class ToolBarThumbnail(QToolBar):
                     # Revision 16/10/2024 >
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
-    def removeAllOverlays(self):
+    def removeAllOverlays(self) -> None:
         n = self.getWidgetsCount()
         if n > 0:
             for i in range(n):
@@ -381,7 +401,9 @@ class ToolBarThumbnail(QToolBar):
                 self.getWidgetFromIndex(i).setDown(False)
         if self._logger is not None: self._logger.info('Remove all overlays')
 
-    def addVolume(self, vol, wait=None):
+    def addVolume(self,
+                  vol: SisypheVolume,
+                  wait: DialogWait | None = None) -> None:
         if isinstance(vol, SisypheVolume):
             # noinspection PyInconsistentReturns
             if not self.containsVolume(vol):
@@ -393,7 +415,7 @@ class ToolBarThumbnail(QToolBar):
                     action.setDefaultWidget(widget)
                     self.addAction(action)
                     # self._actions.append(action)
-                    if self._logger is not None: self._logger.info('Add to thumbnail {}'.format(vol.getFilename()))
+                    if self._logger is not None: self._logger.info('Add {} to thumbnail'.format(vol.getBasename()))
                     if self.hasMainWindow():
                         if vol.hasFilename: self._mainwindow.addRecent(vol.getFilename())
                         self._mainwindow.updateMemoryUsage()
@@ -413,7 +435,7 @@ class ToolBarThumbnail(QToolBar):
                     return False
         else: raise TypeError('parameter type {} is not str or SisypheVolume.'.format(type(vol)))
 
-    def open(self, filenames=None):
+    def open(self, filenames: str | list[str] | None = None) -> None:
         if not self.isFull():
             title = 'Open PySisyphe volume(s)'
             if filenames is None: filenames = QFileDialog.getOpenFileNames(self, title, getcwd(), '*.xvol')[0]
@@ -479,7 +501,7 @@ class ToolBarThumbnail(QToolBar):
                             'Close a volume to open a new one.',
                        icon=QMessageBox.Information)
 
-    def saveSelected(self):
+    def saveSelected(self) -> None:
 
         w = self.getSelectedWidget()
         if w is not None:w.save()
@@ -495,7 +517,7 @@ class ToolBarThumbnail(QToolBar):
         if self.hasMainWindow():
             self._mainwindow.setStatusBarMessage('Reference volume saved.')
 
-    def saveSelectedAs(self):
+    def saveSelectedAs(self) -> None:
         w = self.getSelectedWidget()
         if w is not None: w.saveas()
         else:
@@ -510,17 +532,17 @@ class ToolBarThumbnail(QToolBar):
         if self.hasMainWindow():
             self._mainwindow.setStatusBarMessage('Reference volume saved.')
 
-    def saveAll(self):
+    def saveAll(self) -> None:
         if not self.isEmpty():
             # for i in range(len(self._actions)):
             for i in range(len(self.actions())):
                 v = self.getVolumeFromIndex(i)
                 v.save()
-                if self._logger is not None: self._logger.info('Save {}'.format(v.getFilename()))
+                if self._logger is not None: self._logger.info('Save {}'.format(v.getBasename()))
             if self.hasMainWindow():
                 self._mainwindow.setStatusBarMessage('All volumes saved.')
 
-    def editAttributesSelected(self):
+    def editAttributesSelected(self) -> None:
         w = self.getSelectedWidget()
         if w is not None:
             w.editAttributes()
@@ -534,7 +556,7 @@ class ToolBarThumbnail(QToolBar):
                        'No displayed volume to edit.',
                        icon=QMessageBox.Information)
 
-    def removeSelected(self):
+    def removeSelected(self) -> None:
         if not self.isEmpty():
             if self.hasMainWindow():
                 self._mainwindow.clearDockListWidgets()
@@ -561,7 +583,7 @@ class ToolBarThumbnail(QToolBar):
                 self._mainwindow.hideViewWidgets()
                 # Revision 16/10/2024 >
 
-    def removeAll(self):
+    def removeAll(self) -> None:
         if not self.isEmpty():
             if self.hasMainWindow():
                 self._mainwindow.clearDockListWidgets()
@@ -578,11 +600,11 @@ class ToolBarThumbnail(QToolBar):
                 self._mainwindow.hideViewWidgets()
                 # Revision 16/10/2024 >
 
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
         # return len(self._actions) == 0
         return len(self.actions()) == 0
 
-    def isFull(self):
+    def isFull(self) -> bool:
         s = self.layout().spacing()
         nmax = self.width() // (self._size + s)
         # return len(self._actions) == nmax
@@ -590,7 +612,7 @@ class ToolBarThumbnail(QToolBar):
 
     # < Revision 02/06/2025
     # add moveSelectedToFisrt method
-    def moveSelectedToFisrt(self):
+    def moveSelectedToFisrt(self) -> None:
         if len(self.actions()) > 1:
             index = self.getSelectedIndex()
             if index is not None:
@@ -601,11 +623,11 @@ class ToolBarThumbnail(QToolBar):
 
     # Qt events
 
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasText(): event.acceptProposedAction()
         else: event.ignore()
 
-    def dropEvent(self, event):
+    def dropEvent(self, event: QDropEvent) -> None:
         if event.mimeData().hasText():
             event.acceptProposedAction()
             files = event.mimeData().text().split('\n')
@@ -629,9 +651,9 @@ class ToolBarThumbnail(QToolBar):
                             messageBox(window, 'Open PySisyphe volume', text='{}'.format(err))
         else: event.ignore()
 
-    def contextMenuEvent(self, event):
+    def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         # Popup
         self._popup.popup(event.globalPos())
 
-    def mouseDoubleClickEvent(self, event):
+    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         self.open()

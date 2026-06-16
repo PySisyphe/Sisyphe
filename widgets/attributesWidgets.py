@@ -5,6 +5,9 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from typing import Any
 from sys import platform
 
 from os import getcwd
@@ -89,6 +92,20 @@ from Sisyphe.gui.dialogDiffusionBundle import DialogStreamlinesClustering
 from Sisyphe.gui.dialogAtlasLabeling import DialogAtlasLabeling
 from Sisyphe.gui.dialogWait import DialogWait
 
+if TYPE_CHECKING:
+    from PyQt5.QtCore import QObject
+    from PyQt5.QtCore import QEvent
+    from PyQt5.QtGui import QMouseEvent
+    from PyQt5.QtGui import QDropEvent
+    from PyQt5.QtGui import QDragEnterEvent
+    from PyQt5.QtWidgets import QStatusBar
+    from Sisyphe.core.sisypheTracts import SisypheTractCollection
+    from Sisyphe.gui.windowSisyphe import WindowSisyphe
+    from Sisyphe.widgets.tabToolsWidgets import TabROIListWidget
+    from Sisyphe.widgets.tabToolsWidgets import TabMeshListWidget
+    from Sisyphe.widgets.tabToolsWidgets import TabTargetListWidget
+    from Sisyphe.widgets.tabToolsWidgets import TabTrackingWidget
+
 __all__ = ['ItemAttributesWidget',
            'ItemOverlayAttributesWidget',
            'ItemROIAttributesWidget',
@@ -133,8 +150,8 @@ class ItemAttributesWidget(QFrame):
     Last revision: 19/03/2025
     """
 
-    _VSIZE = 24
-    _HSIZE = 300 + (_VSIZE + 10) * 10
+    _VSIZE: int = 24
+    _HSIZE: int = 300 + (_VSIZE + 10) * 10
 
     # Class methods
 
@@ -163,7 +180,12 @@ class ItemAttributesWidget(QFrame):
     _size       int, icon size 
     """
 
-    def __init__(self, item=None, views=None, listattr=None, minwidth=None, parent=None):
+    def __init__(self,
+                 item: Any | None = None,
+                 views: IconBarViewWidgetCollection | None = None,
+                 listattr: ListAttributesWidget | None = None,
+                 minwidth: int | None = None,
+                 parent: QWidget | None = None) -> None:
         super().__init__(parent)
         # < Revision 06/07/2025
         # if not hasattr(sys, '_MEIPASS'):
@@ -217,78 +239,78 @@ class ItemAttributesWidget(QFrame):
 
     # Private method
 
-    def _updateViews(self):
+    def _updateViews(self) -> None:
         raise NotImplemented
 
-    def _updateSettingsFromItem(self):
+    def _updateSettingsFromItem(self) -> None:
         raise NotImplemented
 
     # Public methods
 
-    def setIconSize(self, size=_VSIZE):
+    def setIconSize(self, size: int = _VSIZE) -> None:
         self._size = size
         self.setFixedHeight(self._size + 8)
         self._save.setFixedSize(self._size, self._size)
         self._remove.setFixedSize(self._size, self._size)
 
-    def getIconSize(self):
+    def getIconSize(self) -> int:
         return self._size
 
-    def isChecked(self):
+    def isChecked(self) -> bool:
         return self._check.isChecked()
 
-    def setChecked(self, v):
+    def setChecked(self, v: bool):
         if isinstance(v, bool):
             self._check.setChecked(v)
 
-    def setCheckBoxVisibility(self, v):
+    def setCheckBoxVisibility(self, v) -> None:
         if isinstance(v, bool):
             self._check.setVisible(v)
         else: raise TypeError('parameter type {} is not bool'.format(type(v)))
 
-    def checkBoxVisibilityOn(self):
+    def checkBoxVisibilityOn(self) -> None:
         self._check.setVisible(True)
 
-    def checkBoxVisibilityOff(self):
+    def checkBoxVisibilityOff(self) -> None:
         self._check.setVisible(False)
 
-    def getCheckBoxVisibility(self):
+    def getCheckBoxVisibility(self) -> bool:
         return self._check.isVisible()
 
-    def getItem(self):
+    def getItem(self) -> Any:
         return self._item
 
-    def setItem(self, item):
+    def setItem(self, item: Any):
         self._item = item
         self._updateSettingsFromItem()
 
-    def hasItem(self):
+    def hasItem(self) -> bool:
         return self._item is not None
 
-    def setViewCollection(self, views):
+    def setViewCollection(self, views: IconBarViewWidgetCollection) -> None:
         if isinstance(views, IconBarViewWidgetCollection): self._views = views
         else: raise TypeError('parameter type {} is not IconBarViewWidgetCollection.'.format(type(views)))
 
-    def getViewCollection(self):
+    def getViewCollection(self) -> IconBarViewWidgetCollection:
         return self._views
 
-    def hasViewCollection(self):
+    def hasViewCollection(self) -> bool:
         return self._views is not None
 
-    def setListAttributesWidget(self, listattr):
+    def setListAttributesWidget(self, listattr: ListAttributesWidget) -> None:
         if isinstance(listattr, ListAttributesWidget): self._listattr = listattr
         else: raise TypeError('parameter type {} is not ListAttributesWidget.'.format(type(listattr)))
 
-    def getListAttributesWidget(self):
+    def getListAttributesWidget(self) -> ListAttributesWidget:
         return self._listattr
 
-    def hasListAttributesWidget(self):
+    def hasListAttributesWidget(self) -> bool:
         return self._listattr is not None
 
-    def save(self):
+    def save(self) -> None:
         pass
 
-    def remove(self):
+    def remove(self) -> None:
         if self._listattr is not None:
             self._listattr.removeItem(self)
 
@@ -311,7 +333,7 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
 
     # Custom Qt signals
 
-    visibilityChanged = pyqtSignal()
+    visibilityChanged: pyqtSignal = pyqtSignal()
 
     # Special method
 
@@ -322,7 +344,12 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
     _opacity        QSlider, set opacity
     """
 
-    def __init__(self, overlay=None, views=None, listattr=None, minwidth=192, parent=None):
+    def __init__(self,
+                 overlay: SisypheVolume | None = None,
+                 views: IconBarViewWidgetCollection | None = None,
+                 listattr: ListAttributesWidget | None = None,
+                 minwidth: int = 192,
+                 parent: QWidget | None = None) -> None:
 
         if overlay is not None:
             if not isinstance(overlay, SisypheVolume):
@@ -366,7 +393,7 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
     # Private methods
 
     # noinspection PyUnusedLocal
-    def _visibilityChanged(self, obj):
+    def _visibilityChanged(self, obj: QWidget) -> None:
         if self.hasViewCollection() and self.hasItem():
             v = self._visibility.getVisibilityStateIcon()
             for view in self._views:
@@ -381,7 +408,7 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
             # noinspection PyUnresolvedReferences
             self.visibilityChanged.emit()
 
-    def _opacityChanged(self, value):
+    def _opacityChanged(self, value: int) -> None:
         self._label.setText('{} %'.format(self._opacity.value()))
         self._opacity.setToolTip('Opacity {} %'.format(value))
         if self.hasViewCollection() and self.hasItem():
@@ -395,7 +422,7 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
                     except: pass
                 # Revision 17/12/2024 >
 
-    def _updateSettingsFromItem(self):
+    def _updateSettingsFromItem(self) -> None:
         if self.hasViewCollection() and self.hasItem():
             view = self._views[0]().getFirstSliceViewWidget()
             v = view.getOverlayVisibility(self._item)
@@ -405,17 +432,17 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
 
     # Public methods
 
-    def setVisibility(self, v):
+    def setVisibility(self, v: bool) -> None:
         if isinstance(v, bool):
             self._visibility.setVisibilitySateIcon(v)
             self._visibilityChanged(self)
             if self._logger is not None: self._logger.info('Set visibility {} overlay {}'.format(v, self._item.getBasename()))
         else: raise TypeError('parameter type {} is not bool.'.format(v))
 
-    def getVisibility(self):
+    def getVisibility(self) -> bool:
         return self._visibility.getVisibilityStateIcon()
 
-    def setOpacity(self, v):
+    def setOpacity(self, v: float) -> None:
         if isinstance(v, float):
             if 0.0 <= v <= 1.0:
                 v = int(v * 100)
@@ -425,18 +452,18 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
             else: raise ValueError('parameter value {} is not between 0.0 and 1.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getOpacity(self):
+    def getOpacity(self) -> float:
         return self._opacity.value() / 100
 
-    def setOverlay(self, vol):
+    def setOverlay(self, vol: SisypheVolume) -> None:
         if isinstance(vol, SisypheVolume):
             super().setItem(vol)
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
-    def getOverlay(self):
+    def getOverlay(self) -> SisypheVolume:
         super().GetItem()
 
-    def hasOverlay(self):
+    def hasOverlay(self) -> bool:
         super().hasItem()
 
 
@@ -467,7 +494,11 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
     _opacity        OpacityPushButton, widget to set opacity    
     """
 
-    def __init__(self, roi=None, views=None, listattr=None, parent=None):
+    def __init__(self,
+                 roi: SisypheROI | None = None,
+                 views: IconBarViewWidgetCollection | None = None,
+                 listattr: ListROIAttributesWidget | None = None,
+                 parent: QWidget | None = None) -> None:
 
         if roi is not None:
             if not isinstance(roi, SisypheROI):
@@ -531,20 +562,20 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
 
     # Private methods
 
-    def _visibilityChanged(self):
+    def _visibilityChanged(self) -> None:
         self._item.setVisibility(self._visibility.getVisibilityStateIcon())
         self._updateViews()
 
-    def _colorChanged(self):
+    def _colorChanged(self) -> None:
         r, g, b = self._color.getColor()
         self._item.setColor(r, g, b)
         self._updateViews()
 
-    def _opacityChanged(self):
+    def _opacityChanged(self) -> None:
         self._item.setAlpha(self._opacity.getOpacity())
         self._updateViews()
 
-    def _nameChanged(self):
+    def _nameChanged(self) -> None:
         if self.hasViewCollection():
             rois = self._views.getROICollection()
             name = self._name.getEditText()
@@ -558,7 +589,7 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
                     self._item.setName(name)
                     self._views.updateROIName(old, name)
 
-    def _updateSettingsFromItem(self):
+    def _updateSettingsFromItem(self) -> None:
         if self._item is not None:
             self._name.setEditText(self._item.getName())
             c = self._item.getColor()
@@ -571,13 +602,13 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
                                   '\n\n{}'.format(str(self._item)[:-1]))
             self.setToolTip(str(self._item)[:-1])
 
-    def _updateViews(self):
+    def _updateViews(self) -> None:
         if self.hasViewCollection() and self.hasItem():
             self._views.updateROIAttributes()
 
     # Public methods
 
-    def setIconSize(self, size=ItemAttributesWidget._VSIZE):
+    def setIconSize(self, size: int = ItemAttributesWidget._VSIZE) -> None:
         super().setIconSize(size)
         self._visibility.setFixedSize(self._size, self._size)
         self._color.setFixedSize(self._size, self._size)
@@ -585,24 +616,24 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
         self._opacity.setFixedSize(self._size, self._size)
         self.setMinimumWidth(300 + (self._size + 10) * 5)
 
-    def setColor(self, r, g, b):
+    def setColor(self, r: float, g: float, b: float) -> None:
         self._color.setFloatColor(r, g, b)
         self._colorChanged()
         if self._logger is not None: self._logger.info('Set color {} ROI {}'.format((r, g, b), self._item.getName()))
 
-    def getColor(self):
+    def getColor(self) -> tuple[float, float, float]:
         return self._color.getFloatColor()
 
-    def setName(self, name):
+    def setName(self, name: str) -> None:
         if isinstance(name, str):
             self._name.setEditText(name)
             self._nameChanged()
         else: raise TypeError('parameter type {} is not str.'.format(type(name)))
 
-    def getName(self):
+    def getName(self) -> str:
         return self._name.getEditText()
 
-    def setOpacity(self, v):
+    def setOpacity(self, v: float) -> None:
         if isinstance(v, float):
             if 0.0 <= v <= 1.0:
                 self._opacity.setOpacity(v)
@@ -611,26 +642,26 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
             else: raise ValueError('parameter value {} is not between 0.0 and 1.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getOpacity(self):
+    def getOpacity(self) -> float:
         return self._opacity.getOpacity()
 
-    def setVisibility(self, v):
+    def setVisibility(self, v: bool) -> None:
         if isinstance(v, bool):
             self._visibility.setVisibilitySateIcon(v)
             self._visibilityChanged()
             if self._logger is not None: self._logger.info('Set visbility {} ROI {}'.format(v, self._item.getName()))
         else: raise TypeError('parameter type {} is not bool'.format(type(v)))
 
-    def getVisibility(self):
+    def getVisibility(self) -> bool:
         return self._visibility.getVisibilityStateIcon()
 
-    def setROI(self, roi):
+    def setROI(self, roi: SisypheROI) -> None:
         if isinstance(roi, SisypheROI):
             super().setItem(roi)
             # self._updateSettingsFromItem()
         else: raise TypeError('parameter type {} is not SisypheROI.'.format(type(roi)))
 
-    def save(self, wait: DialogWait | None = None):
+    def save(self, wait: DialogWait | None = None) -> None:
         if wait is None:
             wait = DialogWait()
             wait.open()
@@ -688,7 +719,11 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
     _dialogprop     DialogMeshProperties, dialog window to edit mesh properties
     """
 
-    def __init__(self, mesh=None, views=None, listattr=None, parent=None):
+    def __init__(self,
+                 mesh: SisypheMesh | None = None,
+                 views: IconBarViewWidgetCollection | None = None,
+                 listattr: ListMeshAttributesWidget | None = None,
+                 parent: QWidget | None = None) -> None:
 
         if mesh is not None:
             if not isinstance(mesh, SisypheMesh):
@@ -893,7 +928,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
 
     # Private methods
 
-    def _clearTransform(self):
+    def _clearTransform(self) -> None:
         self._tx.setValue(0.0)
         self._ty.setValue(0.0)
         self._tz.setValue(0.0)
@@ -906,7 +941,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
                               '\n\n{}'.format(str(self._item)[:-1]))
         self.setToolTip(str(self._item)[:-1])
 
-    def _move(self):
+    def _move(self) -> None:
         if self._item.isDefaultOrigin(): self._item.setOriginToCenter()
         self._item.setPosition(self._tx.value(), self._ty.value(), self._tz.value())
         self._item.setRotation(self._rx.value(), self._ry.value(), self._rz.value())
@@ -918,7 +953,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             view = self.getViewCollection()
             view.getVolumeView().updateRender()
 
-    def _goToCursorTransform(self):
+    def _goToCursorTransform(self) -> None:
         if self._views is not None:
             pc = self._views.getVolumeView().getCursorWorldPosition()
             pm = self._item.getCenter()
@@ -929,11 +964,11 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             self._ry.setValue(0.0)
             self._rz.setValue(0.0)
 
-    def _visibilityChanged(self):
+    def _visibilityChanged(self) -> None:
         self._item.setVisibility(self._visibility.getVisibilityStateIcon())
         self._updateViews()
 
-    def _colorChanged(self):
+    def _colorChanged(self) -> None:
         if self._item.getScalarColorVisibility() == 0:
             r, g, b = self._color.getFloatColor()
             self._item.setColor(r, g, b)
@@ -943,7 +978,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             self.setToolTip(str(self._item)[:-1])
             self._updateViews()
 
-    def _opacityChanged(self):
+    def _opacityChanged(self) -> None:
         self._item.setOpacity(self._opacity.getOpacity())
         self._name.setToolTip('Set mesh name,\n'
                               'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
@@ -951,7 +986,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self.setToolTip(str(self._item)[:-1])
         self._updateViews()
 
-    def _nameChanged(self):
+    def _nameChanged(self) -> None:
         if self.hasViewCollection():
             meshes = self._views.getMeshCollection()
             name = self._name.getEditText()
@@ -965,14 +1000,14 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
                                       '\n\n{}'.format(str(self._item)[:-1]))
                 self.setToolTip(str(self._item)[:-1])
 
-    def _updateViews(self):
+    def _updateViews(self) -> None:
         if self.hasViewCollection() and self.hasItem():
             volview = self._views.getVolumeView()
             if volview is not None:
                 volview.updateRender()
                 volview.MeshOnSliceVisibilityChanged.emit(volview, volview.getMeshOnSliceVisibility())
 
-    def _updateSettingsFromItem(self):
+    def _updateSettingsFromItem(self) -> None:
         if self._item is not None:
             self._name.setEditText(self._item.getName())
             c = self._item.getColor()
@@ -984,14 +1019,14 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
                                   'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
                                   '\n\n{}'.format(str(self._item)[:-1]))
 
-    def _updateLut(self):
+    def _updateLut(self) -> None:
         if self._lutwidget is not None:
             r = self._lutwidget.getWindow()
             self._item.setLUTScalarRange(r[0], r[1])
 
     # Public methods
 
-    def setIconSize(self, size=ItemAttributesWidget._VSIZE):
+    def setIconSize(self, size: int = ItemAttributesWidget._VSIZE) -> None:
         super().setIconSize(size)
         self._visibility.setFixedSize(self._size, self._size)
         self._color.setFixedSize(self._size, self._size)
@@ -1004,14 +1039,14 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             self._lut.setIconSize(QSize(self._size - 8, self._size - 8))
         self.setMinimumWidth(300 + (self._size + 10) * 8)
 
-    def setViewCollection(self, views):
+    def setViewCollection(self, views: IconBarViewWidgetCollection) -> None:
         super().setViewCollection(views)
         if views is not None:
             view = self._views.getVolumeView()
             if view is not None:
                 self._dialogprop.UpdateRender.connect(view.updateRender)
 
-    def settings(self):
+    def settings(self) -> None:
         self._dialogprop.setProperties(self._item.getActor().GetProperty())
         if self._logger is not None: self._logger.info('Dialog exec [gui.dialogMeshProperties.DialogMeshProperties]')
         # < Revision 28/08/2025
@@ -1031,7 +1066,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._color.setFloatColor(c[0], c[1], c[2])
         if self._logger is not None: self._logger.info('Change Properties ROI {}'.format(self._item.getName()))
 
-    def transform(self):
+    def transform(self) -> None:
         if self._tx.value() != 0.0 or self._ty.value() != 0.0 or self._tz.value() != 0.0 or \
                 self._rx.value() != 0.0 or self._ry.value() != 0.0 or self._rz.value() != 0.0:
             trf = SisypheTransform()
@@ -1045,15 +1080,15 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             self._updateViews()
             if self._logger is not None: self._logger.info('Set geometric transform Mesh {}\n{}'.format(self._item.getName(), str(trf)))
 
-    def setColor(self, r, g, b):
+    def setColor(self, r: float, g: float, b: float) -> None:
         self._color.setFloatColor(r, g, b)
         self._colorChanged()
         if self._logger is not None: self._logger.info('Set color {} Mesh {}'.format((r, g, b), self._item.getName()))
 
-    def getColor(self):
+    def getColor(self) -> tuple[float, float, float]:
         return self._color.getFloatColor()
 
-    def setLut(self, vol):
+    def setLut(self, vol: SisypheVolume) -> None:
         if isinstance(vol, SisypheVolume):
             self._lutwidget = LutWidget(view=self._views.getVolumeView(), size=256)
             self._lutwidget.lutWindowChanged.connect(self._updateLut)
@@ -1073,16 +1108,16 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             popup.addAction(action)
             self._lut.setMenu(popup)
 
-    def setName(self, name):
+    def setName(self, name: str) -> None:
         if isinstance(name, str):
             self._name.setEditText(name)
             self._nameChanged()
         else: raise TypeError('parameter type {} is not str.'.format(type(name)))
 
-    def getName(self):
+    def getName(self) -> str:
         return self._name.getEditText()
 
-    def setOpacity(self, v):
+    def setOpacity(self, v: float) -> None:
         if isinstance(v, float):
             if 0.0 <= v <= 1.0:
                 self._opacity.setOpacity(v)
@@ -1091,39 +1126,39 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             else: raise ValueError('parameter value {} is not between 0.0 and 1.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getOpacity(self):
+    def getOpacity(self) -> float:
         return self._opacity.getOpacity()
 
-    def setVisibility(self, v):
+    def setVisibility(self, v: bool) -> None:
         if isinstance(v, bool):
             self._visibility.setVisibilitySateIcon(v)
             self._visibilityChanged()
             if self._logger is not None: self._logger.info('Set visibility {} Mesh {}'.format(v, self._item.getName()))
         else: raise TypeError('parameter type {} is not bool'.format(type(v)))
 
-    def getVisibility(self):
+    def getVisibility(self) -> bool:
         return self._visibility.getVisibilityStateIcon()
 
-    def setTranslations(self, t):
+    def setTranslations(self, t: list[float] | tuple[float, float, float]) -> None:
         self._tx.setValue(t[0])
         self._ty.setValue(t[1])
         self._tz.setValue(t[2])
         if self._logger is not None: self._logger.info('Set translations {} Mesh {}'.format(t, self._item.getName()))
 
-    def setRotations(self, r):
+    def setRotations(self, r: list[float] | tuple[float, float, float]) -> None:
         self._rx.setValue(r[0])
         self._ry.setValue(r[1])
         self._rz.setValue(r[2])
         if self._logger is not None: self._logger.info('Set rotations {} Mesh {}'.format(r, self._item.getName()))
 
-    def setMesh(self, mesh):
+    def setMesh(self, mesh: SisypheMesh) -> None:
         if isinstance(mesh, SisypheMesh):
             super().setItem(mesh)
             # _updateSettingsFromItem() is already called by super().setItem()
             # self._updateSettingsFromItem()
         else: raise TypeError('parameter type {} is not SisypheMesh.'.format(type(mesh)))
 
-    def save(self, wait: DialogWait | None = None):
+    def save(self, wait: DialogWait | None = None) -> None:
         if wait is None:
             wait = DialogWait()
             wait.open()
@@ -1145,7 +1180,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
 
     # Qt event
 
-    def eventFilter(self, obj, event):
+    def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         from PyQt5.QtCore import QEvent
         # noinspection PyUnresolvedReferences
         if event.type() == QEvent.MouseButtonDblClick:
@@ -1153,7 +1188,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             self.mouseDoubleClickEvent(event)
         return False
 
-    def mouseDoubleClickEvent(self, event):
+    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         if self.hasViewCollection():
             view = self._views.getVolumeView()
             if view is not None:
@@ -1194,7 +1229,11 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
     _dialoglength   DialogFromXml, dialog window to set trajectory length
     """
 
-    def __init__(self, tool=None, views=None, listattr=None, parent=None):
+    def __init__(self,
+                 tool: HandleWidget | LineWidget | None = None,
+                 views: IconBarViewWidgetCollection | None = None,
+                 listattr: ListToolAttributesWidget | None = None,
+                 parent: QWidget | None = None):
         super().__init__(tool, views, listattr, parent=parent)
 
         # Visibility
@@ -1397,19 +1436,19 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
     # Private methods
 
-    def _visibilityChanged(self):
+    def _visibilityChanged(self) -> None:
         if self.hasViewCollection():
             self._item.setVisibility(self._visibility.getVisibilityStateIcon())
             view = self._views.getVolumeView()
             if view is not None: view.copyToolAttributes(self._item, None, signal=True)
 
-    def _lockChanged(self):
+    def _lockChanged(self) -> None:
         view = self._views.getVolumeView()
         if view is not None:
             if self._lock.getLockStateIcon(): view.lockTool(self._item, signal=True)
             else: view.unlockTool(self._item, signal=True)
 
-    def _colorChanged(self):
+    def _colorChanged(self) -> None:
         if self.hasViewCollection():
             r, g, b = self._color.getFloatColor()
             w = self._dialogprop.getSettingsWidget().getParameterWidget('Color')
@@ -1421,7 +1460,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             view = self._views.getVolumeView()
             if view is not None: view.copyToolAttributes(self._item, None, signal=True)
 
-    def _opacityChanged(self):
+    def _opacityChanged(self) -> None:
         if self.hasViewCollection():
             v = self._opacity.getOpacity()
             self._item.setOpacity(v)
@@ -1435,7 +1474,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 view.updateRender()
                 view.copyToolAttributes(self._item, None, signal=True)
 
-    def _nameChanged(self):
+    def _nameChanged(self) -> None:
         if self.hasViewCollection():
             tools = self._views.getToolCollection()
             name = self._name.getEditText()
@@ -1454,7 +1493,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                     # Revision 27/01/2026 >
                 self.setToolTip(str(self._item))
 
-    def _updateSettingsFromItem(self):
+    def _updateSettingsFromItem(self) -> None:
         if self._item is not None:
             # Update widget from item properties
             self._name.setEditText(self._item.getName())
@@ -1470,7 +1509,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
     # Public methods
 
-    def updateSettingsFromAttributes(self):
+    def updateSettingsFromAttributes(self) -> None:
         settings = self._dialogprop.getSettingsWidget()
         if isinstance(self._item, HandleWidget):
             settings.getParameterWidget('TextTarget').setText(self._item.getLegend())
@@ -1527,7 +1566,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         settings.getParameterWidget('TextVisibility').setCheckState(v)
         settings.getParameterWidget('Tolerance').setValue(self._item.getTolerance())
 
-    def setDefaultAttributesFromSettings(self):
+    def setDefaultAttributesFromSettings(self) -> None:
         settings = self._dialogprop.getSettingsWidget()
         settings.resetSettings()
         # Update HandleWidget properties from settings
@@ -1584,10 +1623,10 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         view = self._views.getVolumeView()
         if view is not None: view.copyToolAttributes(self._item, None, signal=True)
 
-    def getDialogTarget(self):
+    def getDialogTarget(self) -> DialogTarget:
         return self._dialogtarget
 
-    def setIconSize(self, size=ItemAttributesWidget._VSIZE):
+    def setIconSize(self, size: int = ItemAttributesWidget._VSIZE) -> None:
         super().setIconSize(size)
         self._visibility.setFixedSize(self._size, self._size)
         self._lock.setFixedSize(self._size, self._size)
@@ -1599,15 +1638,15 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self._move.setFixedSize(self._size, self._size)
         self.setMinimumWidth(300 + (self._size + 10) * 10)
 
-    def setColor(self, r, g, b, signal=True):
+    def setColor(self, r: float, g: float, b: float, signal: bool = True) -> None:
         self._color.setFloatColor(r, g, b)
         if signal: self._colorChanged()
         if self._logger is not None: self._logger.info('Set color {} Tool {}'.format((r, g, b), self._item.getName()))
 
-    def getColor(self):
+    def getColor(self) -> tuple[float, float, float]:
         return self._color.getFloatColor()
 
-    def setOpacity(self, v, signal=True):
+    def setOpacity(self, v: float, signal: bool = True) -> float:
         if isinstance(v, float):
             if 0.0 <= v <= 1.0:
                 self._opacity.setOpacity(v)
@@ -1616,10 +1655,10 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             else: raise ValueError('parameter value {} is not between 0.0 and 1.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getOpacity(self):
+    def getOpacity(self) -> float:
         return self._opacity.getOpacity()
 
-    def setLock(self, v):
+    def setLock(self, v: bool) -> None:
         if isinstance(v, bool):
             self._lock.setLockStateIcon(v)
             if not v:
@@ -1634,35 +1673,35 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             else: self._logger.info('Unlock Tool {}'.format(self._item.getName()))
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def lock(self):
+    def lock(self) -> None:
         self.setLock(True)
 
-    def unlock(self):
+    def unlock(self) -> None:
         self.setLock(False)
 
-    def isLocked(self):
+    def isLocked(self) -> bool:
         return self._lock.getLockStateIcon()
 
-    def setVisibility(self, v, signal=True):
+    def setVisibility(self, v: bool, signal: bool = True) -> None:
         if isinstance(v, bool):
             self._visibility.setVisibilitySateIcon(v)
             if signal: self._visibilityChanged()
             self._logger.info('Set visibility {} Tool {}'.format(v, self._item.getName()))
         else: raise TypeError('parameter type {} is not bool'.format(type(v)))
 
-    def getVisibility(self):
+    def getVisibility(self) -> bool:
         return self._visibility.getVisibilityStateIcon()
 
-    def setName(self, name, signal=True):
+    def setName(self, name: str, signal: bool = True) -> None:
         if isinstance(name, str):
             self._name.setEditText(name)
             if signal: self._nameChanged()
         else: raise TypeError('parameter type {} is not str.'.format(type(name)))
 
-    def getName(self):
+    def getName(self) -> str:
         return self._name.getEditText()
 
-    def focusTarget(self):
+    def focusTarget(self) -> None:
         if self.hasViewCollection():
             view = self._views.getVolumeView()
             if view is not None:
@@ -1673,7 +1712,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                     view.setCursorWorldPosition(p[0], p[1], p[2])
                     self._views.updateRender()
 
-    def focusEntry(self):
+    def focusEntry(self) -> None:
         if self.hasViewCollection():
             view = self._views.getVolumeView()
             if view is not None:
@@ -1682,7 +1721,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                     if p is not None: view.setCursorWorldPosition(p[0], p[1], p[2])
                     self._views.updateRender()
 
-    def properties(self):
+    def properties(self) -> None:
         if self.hasViewCollection():
             settings = self._dialogprop.getSettingsWidget()
             wline = isinstance(self._item, LineWidget)
@@ -1764,7 +1803,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 if view is not None: view.copyToolAttributes(self._item, None, signal=True)
                 self._logger.info('Change propertiers Tool {}'.format(self._item.getName()))
 
-    def target(self):
+    def target(self) -> None:
         if self.hasViewCollection():
             self._dialogtarget.setTrajectoryFieldsVisibility(isinstance(self._item, LineWidget))
             self._logger.info('Dialog exec [gui.dialogTarget.DialogTarget]')
@@ -1786,7 +1825,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 self.setLock(self._item.isDynamic())
                 self.setToolTip(str(self._item))
 
-    def length(self):
+    def length(self) -> None:
         if self.hasViewCollection():
             if isinstance(self._item, LineWidget):
                 settings = self._dialoglength.getFieldsWidget(0)
@@ -1867,7 +1906,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                     elif e2 != 0: self.focusTarget()
                     self.setToolTip(str(self._item))
 
-    def moving(self):
+    def moving(self) -> None:
         if self.hasViewCollection():
             settings = self._dialogmove.getFieldsWidget(0)
             wp = settings.getParameterWidget('Projection')
@@ -2023,7 +2062,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 self._item.setStatic()
                 self.setToolTip(str(self._item))
 
-    def save(self, wait: DialogWait | None = None):
+    def save(self, wait: DialogWait | None = None) -> None:
         if wait is None:
             wait = DialogWait()
             wait.open()
@@ -2036,7 +2075,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             self._logger.info('Save {}'.format(filename))
         except Exception as err: messageBox(self, 'Save tool', text='{}'.format(err))
 
-    def setTool(self, tool):
+    def setTool(self, tool: HandleWidget | LineWidget) -> None:
         if isinstance(tool, (HandleWidget, LineWidget)):
             super().setItem(tool)
             if tool is not None and isinstance(tool, HandleWidget):  self._move.setToolTip('Move point.')
@@ -2050,7 +2089,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
     # Qt events
 
-    def eventFilter(self, obj, event):
+    def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         from PyQt5.QtCore import QEvent
         # noinspection PyUnresolvedReferences
         if event.type() == QEvent.MouseButtonDblClick:
@@ -2059,16 +2098,33 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             return True
         else: return False
 
-    def mouseDoubleClickEvent(self, event):
+    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         if self.hasViewCollection():
-            view = self._views.getVolumeView()
-            if view is not None:
-                if isinstance(self._item, HandleWidget): p = self._item.getPosition()
-                elif isinstance(self._item, LineWidget): p = self._item.getPosition2()
-                else: p = None
-                if p is not None:
+            # < Revision 02/06/2026
+            # view = self._views.getVolumeView()
+            # if view is not None:
+            #     if isinstance(self._item, HandleWidget): p = self._item.getPosition()
+            #     elif isinstance(self._item, LineWidget): p = self._item.getPosition2()
+            #     else: p = None
+            #     if p is not None:
+            #         view.setCursorWorldPosition(p[0], p[1], p[2])
+            #         self._views.updateRender()
+            if isinstance(self._item, HandleWidget):
+                view = self._views.getVolumeView()
+                if view is not None:
+                    p = self._item.getPosition()
                     view.setCursorWorldPosition(p[0], p[1], p[2])
                     self._views.updateRender()
+            elif isinstance(self._item, LineWidget):
+                view = self._views.getOrthogonalSliceTrajectoryViewWidget().getFirstSliceViewWidget()
+                if view is not None:
+                    # noinspection PyUnresolvedReferences
+                    txt = 'Tool {} alignment'.format(self.getTool().getName())
+                    # noinspection PyProtectedMember
+                    for action in view._menuAlignGroup.actions():
+                        if action.text() == txt:
+                            action.trigger()
+            # Revision 02/06/2026 >
 
 
 class ItemBundleAttributesWidget(ItemAttributesWidget):
@@ -2104,7 +2160,11 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
     _width      WidthPushButton
     """
 
-    def __init__(self, bundle=None, views=None, listattr=None, parent=None):
+    def __init__(self,
+                 bundle: SisypheStreamlines | None = None,
+                 views: IconBarViewWidgetCollection | None = None,
+                 listattr: ListBundleAttributesWidget | None = None,
+                 parent: QWidget | None = None) -> None:
         super().__init__(bundle, views, listattr, parent=parent)
 
         self._sl = None
@@ -2180,23 +2240,23 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
 
     # Private methods
 
-    def _getTractCollection(self):
+    def _getTractCollection(self) -> SisypheTractCollection:
         if self.hasViewCollection():
             view = self._views.getVolumeView()
             return view.getTractCollection()
         else: raise AttributeError('_views attribute is None.')
 
-    def _visibilityChanged(self):
+    def _visibilityChanged(self) -> None:
         v = self._visibility.getVisibilityStateIcon()
         self._getTractCollection().setVisibility(v, self.getBundle())
         self._updateViews()
 
-    def _opacityChanged(self):
+    def _opacityChanged(self) -> None:
         v = self._opacity.getOpacity()
         self._getTractCollection().setOpacity(v, self.getBundle())
         self._updateViews()
 
-    def _nameChanged(self):
+    def _nameChanged(self) -> None:
         self._getTractCollection().renameBundle(old=self.getBundle(), new=self._name.getEditText())
         self._item = self._name.getEditText()
         self._sl.setName(self._name.getEditText())
@@ -2208,12 +2268,12 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
                               '\n\n{}'.format(str(self._sl)[:-1]))
         # Revision 20/02/2025 >
 
-    def _widthChanged(self):
+    def _widthChanged(self) -> None:
         v = self._width.getWidth()
         self._getTractCollection().setLineWidth(v, self.getBundle())
         self._updateViews()
 
-    def _editColor(self):
+    def _editColor(self) -> None:
         tracts = self._getTractCollection()
         bundle = self.getBundle()
         c = tracts.getFloatColor(bundle)
@@ -2265,12 +2325,12 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
             self._updateViews()
             wait.close()
 
-    def _updateViews(self):
+    def _updateViews(self) -> None:
         if self.hasViewCollection() and self.hasItem():
             view = self._views.getVolumeView()
             if view is not None: view.updateRender()
 
-    def _updateSettingsFromItem(self):
+    def _updateSettingsFromItem(self) -> None:
         if self._item is not None:
             # Update widget from item properties
             bundle = self.getBundle()
@@ -2339,7 +2399,7 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
     def getStreamlines(self) -> SisypheStreamlines:
         return self._sl
 
-    def setIconSize(self, size=ItemAttributesWidget._VSIZE):
+    def setIconSize(self, size: int = ItemAttributesWidget._VSIZE) -> None:
         super().setIconSize(size)
         self._visibility.setFixedSize(self._size, self._size)
         self._color.setFixedSize(self._size, self._size)
@@ -2347,7 +2407,7 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
         self._width.setFixedSize(self._size, self._size)
         self.setMinimumWidth(300 + (self._size + 10) * 6)
 
-    def setWidth(self, v, signal=True):
+    def setWidth(self, v: float, signal: bool = True) -> None:
         if isinstance(v, float):
             if 0.1 <= v <= 10.0:
                 self._width.setWidth(v)
@@ -2356,10 +2416,10 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
             else: raise ValueError('parameter value {} is not between 0.1 and 10.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getWidth(self):
+    def getWidth(self) -> float:
         return self._width.getWidth()
 
-    def setOpacity(self, v, signal=True):
+    def setOpacity(self, v: float, signal: bool = True) -> None:
         if isinstance(v, float):
             if 0.0 <= v <= 1.0:
                 self._opacity.setOpacity(v)
@@ -2368,29 +2428,29 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
             else: raise ValueError('parameter value {} is not between 0.0 and 1.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
-    def getOpacity(self):
+    def getOpacity(self) -> float:
         return self._opacity.getOpacity()
 
-    def setVisibility(self, v, signal=True):
+    def setVisibility(self, v: bool, signal: bool = True) -> None:
         if isinstance(v, bool):
             self._visibility.setVisibilitySateIcon(v)
             if signal: self._visibilityChanged()
             self._logger.info('Set visibility {} bundle {}'.format(v, self._sl.getName()))
         else: raise TypeError('parameter type {} is not bool'.format(type(v)))
 
-    def getVisibility(self):
+    def getVisibility(self) -> bool:
         return self._visibility.getVisibilityStateIcon()
 
-    def setName(self, name, signal=True):
+    def setName(self, name: str, signal: bool = True) -> None:
         if isinstance(name, str):
             self._name.setEditText(name)
             if signal: self._nameChanged()
         else: raise TypeError('parameter type {} is not str.'.format(type(name)))
 
-    def getName(self):
+    def getName(self) -> str:
         return self._name.getEditText()
 
-    def save(self, wait: DialogWait | None = None):
+    def save(self, wait: DialogWait | None = None) -> None:
         if wait is None:
             wait = DialogWait()
             wait.open()
@@ -2428,11 +2488,13 @@ class ListAttributesWidget(QWidget):
 
     Last revision: 29/11/2025
     """
-    _VSIZE = 32
+    _VSIZE: int = 32
 
     # Special method
 
-    def __init__(self, views=None, parent=None):
+    def __init__(self,
+                 views: IconBarViewWidgetCollection | None = None,
+                 parent: QWidget | None = None) -> None:
         super().__init__(parent)
         # < Revision 06/07/2025
         # if not hasattr(sys, '_MEIPASS'):
@@ -2535,23 +2597,26 @@ class ListAttributesWidget(QWidget):
 
     # Private methods
 
-    def _createWidget(self, item) -> ItemAttributesWidget:
+    def _createWidget(self, item: SisypheROI | SisypheMesh | SisypheBundle | HandleWidget | LineWidget) -> ItemAttributesWidget:
         pass
 
-    def _selectionChanged(self):
+    def _selectionChanged(self) -> None:
         select = self._getSelectedWidget()
         if select is not None:
             self._updateViews()
 
-    def _getSelectedItem(self):
+    def _getSelectedItem(self) -> QListWidgetItem | None:
         s = self._list.selectedItems()
         if len(s) > 0: return s[0]
         else: return None
 
-    def _getSelectedWidget(self):
-        return self._list.itemWidget(self._getSelectedItem())
+    def _getSelectedWidget(self) -> ItemAttributesWidget | None:
+        item = self._getSelectedItem()
+        if item is not None:
+            return self._list.itemWidget(self._getSelectedItem())
+        else: return None
 
-    def _getItemFromWidget(self, widget):
+    def _getItemFromWidget(self, widget: ItemAttributesWidget) -> QListWidgetItem | None:
         n = self._list.count()
         if n > 0:
             for i in range(n):
@@ -2560,7 +2625,7 @@ class ListAttributesWidget(QWidget):
                 if w == widget: return item
         return None
 
-    def _notAlreadyInList(self, item):
+    def _notAlreadyInList(self, item: SisypheROI | SisypheMesh | HandleWidget | LineWidget) -> bool:
         n = self._list.count()
         if n > 0:
             for i in range(0, n):
@@ -2569,7 +2634,7 @@ class ListAttributesWidget(QWidget):
                 if citem.getName() == item.getName(): return False
         return True
 
-    def _addItem(self, item):
+    def _addItem(self, item: SisypheROI | SisypheMesh | HandleWidget | LineWidget | str) -> ItemAttributesWidget:
         if self._notAlreadyInList(item):
             widget = self._createWidget(item)
             # < Revision 15/11/2025
@@ -2588,7 +2653,7 @@ class ListAttributesWidget(QWidget):
             # noinspection PyInconsistentReturns
             messageBox(self, 'Add', text='{} is already open.'.format(item.getName()))
 
-    def _updateList(self):
+    def _updateList(self) -> None:
         self._list.clear()
         if self.hasCollection():
             self._collection.sort()
@@ -2602,10 +2667,10 @@ class ListAttributesWidget(QWidget):
                 self._list.item(0).setSelected(True)
                 self._updateViews()
 
-    def _updateViews(self):
+    def _updateViews(self) -> None:
         raise NotImplemented
 
-    def _getMainWindow(self):
+    def _getMainWindow(self) -> WindowSisyphe:
         from Sisyphe.gui.windowSisyphe import WindowSisyphe
         parent = self.parent()
         # noinspection PyInconsistentReturns
@@ -2614,14 +2679,14 @@ class ListAttributesWidget(QWidget):
             else:
                 parent = parent.parent()
 
-    def _getStatusBar(self):
+    def _getStatusBar(self) -> QStatusBar:
         mainwindow = self.getMainWindow()
         if mainwindow is not None: return mainwindow.getStatusBar()
         else: return None
 
     # Public methods
 
-    def setIconSize(self, size=_VSIZE):
+    def setIconSize(self, size: int =_VSIZE) -> None:
         self._new.setIconSize(QSize(size - 8, size - 8))
         self._new.setFixedSize(size, size)
         self._open.setIconSize(QSize(size - 8, size - 8))
@@ -2639,60 +2704,60 @@ class ListAttributesWidget(QWidget):
         self._console.setFixedSize(size, size)
         # Revision 29/11/2025 >
 
-    def getIconSize(self):
+    def getIconSize(self) -> int:
         return self._new.width()
 
-    def setViewCollection(self, views):
+    def setViewCollection(self, views: IconBarViewWidgetCollection) -> None:
         if isinstance(views, IconBarViewWidgetCollection): self._views = views
         else: self._views = None
 
-    def getViewCollection(self):
+    def getViewCollection(self) -> IconBarViewWidgetCollection:
         return self._views
 
-    def hasViewCollection(self):
+    def hasViewCollection(self) -> bool:
         return self._views is not None
 
-    def setScreenshotsWidget(self, w):
+    def setScreenshotsWidget(self, w: ScreenshotsGridWidget) -> None:
         if isinstance(w, ScreenshotsGridWidget): self._scrsht = w
         else: self._scrsht = None
 
-    def getScreenshotsWidget(self):
+    def getScreenshotsWidget(self) -> ScreenshotsGridWidget:
         return self._scrsht
 
-    def hasScreenshotsWidget(self):
+    def hasScreenshotsWidget(self) -> bool:
         return self._scrsht is not None
 
     def getCollection(self):
         return self._collection
 
-    def hasCollection(self):
+    def hasCollection(self) -> bool:
         return self._collection is not None
 
     # < Revision 02/11/2024
     # add setMaxCount method
-    def setMaxCount(self, v):
+    def setMaxCount(self, v: int) -> None:
         self._maxcount = v
     # Revision 02/11/2024 >
 
     # < Revision 02/11/2024
     # add getMaxCount method
-    def getMaxCount(self):
+    def getMaxCount(self) -> int:
         return self._maxcount
     # Revision 02/11/2024 >
 
-    def checkAll(self):
+    def checkAll(self) -> None:
         for i in range(0, self._list.count()):
             item = self._list.item(i)
             widget = self._list.itemWidget(item)
             widget.setChecked(True)
 
-    def uncheckAll(self):
+    def uncheckAll(self) -> None:
         for i in range(0, self._list.count()):
             item = self._list.item(i)
             widget = self._list.itemWidget(item)
             widget.setChecked(False)
 
-    def getChecked(self):
+    def getChecked(self) -> list[ItemAttributesWidget]:
         widgets = list()
         for i in range(0, self._list.count()):
             item = self._list.item(i)
@@ -2701,7 +2766,7 @@ class ListAttributesWidget(QWidget):
         return widgets
 
     # < Revision 20/11/2025
-    def getCheckedIndex(self):
+    def getCheckedIndex(self) -> int:
         index = list()
         for i in range(0, self._list.count()):
             item = self._list.item(i)
@@ -2710,7 +2775,7 @@ class ListAttributesWidget(QWidget):
         return index
     # Revision 20/11/2025 >
 
-    def remove(self):
+    def remove(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             n = self._list.count()
             if n > 0:
@@ -2729,7 +2794,7 @@ class ListAttributesWidget(QWidget):
                 self._updateViews()
                 self.setEnabled(True)
 
-    def removeItem(self, w):
+    def removeItem(self, w: ItemAttributesWidget) -> None:
         n = self._list.count()
         if n > 0:
             self.setEnabled(False)
@@ -2737,7 +2802,6 @@ class ListAttributesWidget(QWidget):
                 listitem = self._list.item(i)
                 widget = self._list.itemWidget(listitem)
                 if w == widget:
-
                     item = widget.getItem()
                     if listitem.isSelected() and i != 0: self._list.item(0).setSelected(True)
                     if item in self._collection: self._collection.remove(item)
@@ -2752,12 +2816,12 @@ class ListAttributesWidget(QWidget):
             # Revision 24/10/2024 >
             self.setEnabled(True)
 
-    def removeAll(self):
+    def removeAll(self) -> None:
         if self._list.count() > 0: self._list.clear()
         if self.hasViewCollection() and self.hasCollection(): self._collection.clear()
         self._updateViews()
 
-    def saveAll(self):
+    def saveAll(self) -> None:
         if self.hasCollection():
             n = self._list.count()
             if n > 0 and self.hasCollection():
@@ -2776,48 +2840,48 @@ class ListAttributesWidget(QWidget):
 
     # < Revision 29/11/2025
     # add copyToConsole method
-    def copyToConsole(self):
+    def copyToConsole(self) -> None:
         pass
     # Revision 29/11/2025 >
 
-    def clear(self):
+    def clear(self) -> None:
         self._list.clear()
 
-    def count(self):
+    def count(self) -> int:
         return self._list.count()
 
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
         return self._list.count() == 0
 
-    def getWidget(self, index):
+    def getWidget(self, index: int) -> ItemAttributesWidget:
         if isinstance(index, int):
             if 0 <= index < self._list.count():
                 return self._list.itemWidget(self._list.item(index))
             else: raise ValueError('parameter is out of range.')
         else: raise ValueError('parameter type {} is not int.'.format(type(index)))
 
-    def getItem(self, index):
+    def getItem(self, index: int) -> SisypheROI | SisypheMesh | SisypheBundle | HandleWidget | LineWidget:
         if isinstance(index, int):
             if 0 <= index < self._list.count():
                 return self._list.itemWidget(self._list.item(index)).getItem()
             else: raise ValueError('parameter is out of range.')
         else: raise ValueError('parameter type {} is not int.'.format(type(index)))
 
-    def selectWidget(self, widget):
+    def selectWidget(self, widget: ItemAttributesWidget) -> None:
         item = self._getItemFromWidget(widget)
         if item is not None: item.setSelected(True)
 
     # Public abstract methods
 
-    def new(self):
+    def new(self) -> None:
         raise NotImplemented
 
-    def open(self):
+    def open(self) -> None:
         raise NotImplemented
 
     # Qt event
 
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasText(): event.acceptProposedAction()
         else: event.ignore()
 
@@ -2834,12 +2898,14 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListROIAttributesWidget
 
-    Last revision: 14/04/2026
+    Last revision: 02/06/2026
     """
 
     # Special method
 
-    def __init__(self, views=None, parent=None):
+    def __init__(self,
+                 views: IconBarViewWidgetCollection | None = None,
+                 parent: QWidget | None = None) -> None:
 
         super().__init__(views, parent)
 
@@ -2984,28 +3050,28 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     # Private methods
 
-    def _createWidget(self, item):
+    def _createWidget(self, item: SisypheROI) -> ItemROIAttributesWidget:
         return ItemROIAttributesWidget(item, views=self._views, listattr=self)
 
-    def _selectionChanged(self):
+    def _selectionChanged(self) -> None:
         QApplication.processEvents()
         select = self._getSelectedWidget()
         if select is not None:
             self._views.setActiveROI(select.getROI().getName())
             self._views.clearUndo()
 
-    def _updateViews(self):
+    def _updateViews(self) -> None:
         if self.hasViewCollection():
             self._views.updateROIAttributes()
 
-    def _getListMesh(self):
+    def _getListMesh(self) -> ListMeshAttributesWidget | None:
         mainwindow = self._getMainWindow()
         if mainwindow is not None:
             meshlist = mainwindow.getMeshListWidget()
             if meshlist is not None: return meshlist.getMeshListWidget()
         return None
 
-    def _exportMenu(self):
+    def _exportMenu(self) -> None:
         p = self.mapToGlobal(QPoint(0, self.height()))
         self._popup.popup(p)
 
@@ -3023,7 +3089,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     # Public methods
 
-    def setIconSize(self, size=ListAttributesWidget._VSIZE):
+    def setIconSize(self, size: int = ListAttributesWidget._VSIZE) -> None:
         super().setIconSize(size)
         self._remove.setIconSize(QSize(size - 8, size - 8))
         self._remove.setFixedSize(size, size)
@@ -3045,7 +3111,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._visibility.setFixedSize(size, size)
         # Revision 13/11/2025
 
-    def getCheckedROI(self):
+    def getCheckedROI(self) -> list[SisypheROI]:
         rois = list()
         for i in range(0, self._list.count()):
             widget = self._list.itemWidget(self._list.item(i))
@@ -3053,36 +3119,41 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 rois.append(widget.getROI())
         return rois
 
-    def getSelectedROI(self):
-        return self._getSelectedWidget().getROI()
+    def getSelectedROI(self) -> SisypheROI | None:
+        # < Revision 02/06/2026
+        # return self._getSelectedWidget().getROI()
+        w = self._getSelectedWidget()
+        if w: return w.getROI()
+        else: return None
+        # Revision 02/06/2026 >
 
-    def setListMeshAttributeWidget(self, widget):
+    def setListMeshAttributeWidget(self, widget: ListMeshAttributesWidget) -> None:
         if isinstance(widget, ListMeshAttributesWidget): self._listmeshwidget = widget
         else: raise TypeError('parameter type {} is not ListMeshAttributesWidget.'.format(type(widget)))
 
-    def getListMeshAttributeWidget(self):
+    def getListMeshAttributeWidget(self) -> ListMeshAttributesWidget:
         return self._listmeshwidget
 
-    def hasListMeshAttributeWidget(self):
+    def hasListMeshAttributeWidget(self) -> bool:
         return self._listmeshwidget is not None
 
-    def getTabToolsWidget(self):
+    def getTabToolsWidget(self) -> TabROIListWidget:
         parent = self.parent()
         from Sisyphe.widgets.tabToolsWidgets import TabROIListWidget
         if isinstance(parent, TabROIListWidget): return parent
         else: raise TypeError('parent type {} is not TabROIListWidget..'.format(type(parent)))
 
-    def hasTabToolsWidget(self):
+    def hasTabToolsWidget(self) -> bool:
         parent = self.parent()
         from Sisyphe.widgets.tabToolsWidgets import TabROIListWidget
         return isinstance(parent, TabROIListWidget)
 
-    def setViewCollection(self, views):
+    def setViewCollection(self, views: IconBarViewWidgetCollection) -> None:
         super().setViewCollection(views)
         if isinstance(views, IconBarViewWidgetCollection): self._collection = views.getROICollection()
         else: self._collection = None
 
-    def new(self, name=''):
+    def new(self, name: str = '') -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -3110,6 +3181,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                     # Set ROI tools enabled
                     mainwindow = self._getMainWindow()
                     if mainwindow is not None:
+                        mainwindow.updateMemoryUsage()
                         mainwindow.setROIToolsEnabled(True)
                         mainwindow.setStatusBarMessage('New ROI {} added.'.format(name))
                     wait.close()
@@ -3120,7 +3192,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                                'Close a ROI to add a new one.',
                                icon=QMessageBox.Information)
 
-    def add(self, roi):
+    def add(self, roi: SisypheROI) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -3140,6 +3212,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                                 # Set ROI tools enabled
                                 mainwindow = self._getMainWindow()
                                 if mainwindow is not None:
+                                    mainwindow.updateMemoryUsage()
                                     mainwindow.setROIToolsEnabled(True)
                                     mainwindow.setStatusBarMessage('ROI {} added.'.format(roi.getName()))
                             else: messageBox(self, title=title, text='ROI {} is already open.'.format(roi.getName()))
@@ -3154,7 +3227,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                                      'Close a ROI to add a new one.',
                                icon=QMessageBox.Information)
 
-    def duplicate(self):
+    def duplicate(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -3175,6 +3248,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                         self._logger.info('Duplicate ROI {} to {}'.format(roi.getName(), roi.getName()))
                         mainwindow = self._getMainWindow()
                         if mainwindow is not None:
+                            mainwindow.updateMemoryUsage()
                             mainwindow.setStatusBarMessage('ROI {} duplicated.'.format(roi.getName()))
                 else:
                     messageBox(self,
@@ -3183,7 +3257,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                                'Close a ROI to add a new one.',
                                icon=QMessageBox.Information)
 
-    def open(self):
+    def open(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -3212,6 +3286,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
                                 except Exception as err:
                                     wait.hide()
                                     messageBox(self, title=title, text='{}'.format(err))
+                                # < Revision 05/06/2026
+                                self._logger.info('Open ROI {}'.format(basename(filename)))
+                                # Revision 05/06/2026 >
                             else:
                                 wait.hide()
                                 messageBox(self,
@@ -3220,6 +3297,12 @@ class ListROIAttributesWidget(ListAttributesWidget):
                                                 'Close a ROI to add a new one.',
                                            icon=QMessageBox.Information)
                         wait.close()
+                        # < Revision 05/06/2026
+                        mainwindow = self._getMainWindow()
+                        if mainwindow is not None:
+                            mainwindow.updateMemoryUsage()
+                            mainwindow.setROIToolsEnabled(True)
+                        # Revision 05/06/2026 >
                 else:
                     messageBox(self,
                                'Open ROI',
@@ -3227,7 +3310,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                                     'Close a ROI to add a new one.',
                                icon=QMessageBox.Information)
 
-    def remove(self):
+    def remove(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             rois = self.getCheckedROI()
             n = len(rois)
@@ -3245,17 +3328,19 @@ class ListROIAttributesWidget(ListAttributesWidget):
                     if mainwindow is not None:
                         mainwindow.setROIToolsEnabled(False)
                 if mainwindow is not None:
+                    mainwindow.updateMemoryUsage()
                     mainwindow.setStatusBarMessage('Checked ROI(s) removed.')
                 # < Revision 06/11/2025
                 wait.close()
                 # Revision 06/11/2025 >
             else: messageBox(self, 'Remove ROI', 'No ROI checked.')
 
-    def removeItem(self, w):
+    def removeItem(self, w: ItemROIAttributesWidget) -> None:
         if self.hasViewCollection() and self.hasCollection():
             roi = w.getROI()
             mainwindow = self._getMainWindow()
             if mainwindow is not None:
+                mainwindow.updateMemoryUsage()
                 mainwindow.setStatusBarMessage('{} ROI removed.'.format(roi.getName()))
             super().removeItem(w)
             self._logger.info('Remove ROI {}'.format(roi.getName()))
@@ -3265,7 +3350,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 if mainwindow is not None:
                     mainwindow.setROIToolsEnabled(False)
 
-    def removeAll(self):
+    def removeAll(self) -> None:
         super().removeAll()
         self._views.setROIVisibility(False)
         self._views.clearUndo()
@@ -3273,10 +3358,11 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._logger.info('All ROIs removed')
         mainwindow = self._getMainWindow()
         if mainwindow is not None:
+            mainwindow.updateMemoryUsage()
             mainwindow.setROIToolsEnabled(False)
             mainwindow.setStatusBarMessage('All ROI(s) removed.')
 
-    def saveAll(self):
+    def saveAll(self) -> None:
         super().saveAll()
         self._views.clearUndo()
         self._logger.info('Save all ROIs')
@@ -3284,7 +3370,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         if mainwindow is not None:
             mainwindow.setStatusBarMessage('All ROI(s) saved.')
 
-    def saveSisyphe(self):
+    def saveSisyphe(self) -> None:
         rois = self.getCheckedROI()
         n = len(rois)
         if n > 0:
@@ -3320,7 +3406,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     # < Revision 14/04/2026
     # add saveLabelSisyphe method
-    def saveLabelSisyphe(self):
+    def saveLabelSisyphe(self) -> None:
         rois = self.getCheckedROI()
         n = len(rois)
         if n > 0:
@@ -3352,7 +3438,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         else: messageBox(self, 'Export to Label PySisyphe format', 'No ROI checked.')
     # Revision 14/04/2026 >
 
-    def saveNifti(self):
+    def saveNifti(self) -> None:
         rois = self.getCheckedROI()
         n = len(rois)
         if n > 0:
@@ -3383,7 +3469,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 mainwindow.setStatusBarMessage('Checked ROI(s) exported to Nifti format.')
         else: messageBox(self, 'Export to Nifti format', 'No ROI checked.')
 
-    def saveNRRD(self):
+    def saveNRRD(self) -> None:
         rois = self.getCheckedROI()
         n = len(rois)
         if n > 0:
@@ -3414,7 +3500,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 mainwindow.setStatusBarMessage('Checked ROI(s) exported to Nrrd format.')
         else: messageBox(self, 'Export to Nrrd format', 'No ROI checked.')
 
-    def saveMinc(self):
+    def saveMinc(self) -> None:
         rois = self.getCheckedROI()
         n = len(rois)
         if n > 0:
@@ -3445,7 +3531,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 mainwindow.setStatusBarMessage('Checked ROI(s) exported to Minc format.')
         else: messageBox(self, 'Export to Minc format', 'No ROI checked.')
 
-    def saveNumpy(self):
+    def saveNumpy(self) -> None:
         rois = self.getCheckedROI()
         n = len(rois)
         if n > 0:
@@ -3476,7 +3562,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 mainwindow.setStatusBarMessage('Checked ROI(s) exported to Numpy format.')
         else: messageBox(self, 'Export to Numpy format', 'No ROI checked.')
 
-    def saveVTK(self):
+    def saveVTK(self) -> None:
         rois = self.getCheckedROI()
         n = len(rois)
         if n > 0:
@@ -3509,7 +3595,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     # < Revision 06/11/2024
     # method implemented
-    def saveDicomRT(self):
+    def saveDicomRT(self) -> None:
         items = self.getCheckedROI()
         if len(items) > 0:
             view = self.getViewCollection()
@@ -3545,7 +3631,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         else: messageBox(self, 'Export to Dicom RT format', 'No ROI checked.')
     # Revision 06/11/2024 >
 
-    def toMesh(self):
+    def toMesh(self) -> None:
         if self.hasViewCollection() and self._listmeshwidget is not None:
             rois = self.getCheckedROI()
             n = len(rois)
@@ -3574,7 +3660,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     # < Revision 25/10/2024
     # add toDistance method
-    def toDistance(self, outside: bool = True):
+    def toDistance(self, outside: bool = True) -> None:
         if self.hasViewCollection():
             rois = self.getCheckedROI()
             filenames = list()
@@ -3621,7 +3707,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
     # < Revision 05/08/2025
     # add toDistance method
     # noinspection PyProtectedMember
-    def features(self):
+    def features(self) -> None:
         rois = self.getCheckedROI()
         if len(rois) > 0:
             from Sisyphe.gui.dialogTexture import DialogROITexture
@@ -3650,7 +3736,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
     # Revision 05/08/2025 >
 
     # < Revision 14/02/2026
-    def labeling(self):
+    def labeling(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 rois = self.getCheckedROI()
@@ -3675,7 +3761,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     # < Revision 17/11/2025
     # add visibility method
-    def visibility(self):
+    def visibility(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if len(self._collection) > 0:
@@ -3686,7 +3772,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     # < Revision 29/11/2025
     # add copyToConsole method
-    def copyToConsole(self):
+    def copyToConsole(self) -> None:
         main = self._getMainWindow()
         if main is not None:
             console = main.getConsole()
@@ -3714,7 +3800,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     # Qt event
 
-    def dropEvent(self, event):
+    def dropEvent(self, event: QDropEvent) -> None:
         if self.hasViewCollection():
             if event.mimeData().hasText():
                 event.acceptProposedAction()
@@ -3754,12 +3840,14 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListMeshAttributesWidget
 
-    Last revision: 14/02/2026
+    Last revision: 02/06/2026
     """
 
     # Special method
 
-    def __init__(self, views=None, parent=None):
+    def __init__(self,
+                 views: IconBarViewWidgetCollection | None = None,
+                 parent: QWidget | None = None) -> None:
         super().__init__(views, parent)
 
         self._listroiwidget = None
@@ -4002,15 +4090,15 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
     # Private methods
 
-    def _createWidget(self, item):
+    def _createWidget(self, item: SisypheMesh) -> ItemMeshAttributesWidget:
         return ItemMeshAttributesWidget(item, views=self._views, listattr=self)
 
-    def _updateViews(self):
+    def _updateViews(self) -> None:
         if self.hasViewCollection():
             volview = self._views.getVolumeView()
             if volview is not None: volview.updateRender()
 
-    def _roiMenu(self):
+    def _roiMenu(self) -> None:
         self._ractions.clear()
         self._popupRoi.clear()
         if self.hasListROIAttributeWidget() and self._listroiwidget.isEnabled():
@@ -4034,7 +4122,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._popupRoi.addAction(action)
         self._ractions.append(action)
 
-    def _overlayMenu(self):
+    def _overlayMenu(self) -> None:
         self._oactions = self._oactions[:2]
         self._popupOverlay.clear()
         self._popupOverlay.addAction(self._oactions[0])
@@ -4077,7 +4165,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
     # Public methods
 
-    def setIconSize(self, size=ListAttributesWidget._VSIZE):
+    def setIconSize(self, size: int = ListAttributesWidget._VSIZE) -> None:
         super().setIconSize(size)
         self._remove.setIconSize(QSize(size - 8, size - 8))
         self._remove.setFixedSize(size, size)
@@ -4107,7 +4195,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._visibility.setFixedSize(size, size)
         # Revision 13/11/2025
 
-    def getCheckedMesh(self):
+    def getCheckedMesh(self) -> list[SisypheMesh]:
         meshes = list()
         for i in range(0, self._list.count()):
             widget = self._list.itemWidget(self._list.item(i))
@@ -4115,36 +4203,41 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                 meshes.append(widget.getMesh())
         return meshes
 
-    def getSelectedMesh(self):
-        return self._getSelectedWidget().getMesh()
+    def getSelectedMesh(self) -> SisypheMesh | None:
+        # < Revision 02/06/2026
+        # return self._getSelectedWidget().getMesh()
+        w = self._getSelectedWidget()
+        if w: return w.getMesh()
+        else: return None
+        # Revision 02/06/2026 >
 
-    def setListROIAttributeWidget(self, widget):
+    def setListROIAttributeWidget(self, widget: ListROIAttributesWidget) -> None:
         if isinstance(widget, ListROIAttributesWidget): self._listroiwidget = widget
         else: raise TypeError('parameter type {} is not ListROIAttributesWidget.'.format(type(widget)))
 
-    def getListROIAttributeWidget(self):
+    def getListROIAttributeWidget(self) -> ListROIAttributesWidget:
         return self._listroiwidget
 
-    def hasListROIAttributeWidget(self):
+    def hasListROIAttributeWidget(self) -> bool:
         return self._listroiwidget is not None
 
-    def getTabToolsWidget(self):
+    def getTabToolsWidget(self) -> TabMeshListWidget:
         parent = self.parent()
         from Sisyphe.widgets.tabToolsWidgets import TabMeshListWidget
         if isinstance(parent, TabMeshListWidget): return parent
         else: raise TypeError('parent type {} is not TabMeshListWidget.'.format(type(parent)))
 
-    def hasTabToolsWidget(self):
+    def hasTabToolsWidget(self) -> bool:
         parent = self.parent()
         from Sisyphe.widgets.tabToolsWidgets import TabMeshListWidget
         return isinstance(parent, TabMeshListWidget)
 
-    def setViewCollection(self, views):
+    def setViewCollection(self, views: IconBarViewWidgetCollection) -> None:
         super().setViewCollection(views)
         if isinstance(views, IconBarViewWidgetCollection): self._collection = views.getMeshCollection()
         else: self._collection = None
 
-    def add(self, mesh):
+    def add(self, mesh: SisypheMesh) -> ItemMeshAttributesWidget | None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -4166,6 +4259,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                 # Revision 28/03/2025 >
                                 mainwindow = self._getMainWindow()
                                 if mainwindow is not None:
+                                    mainwindow.updateMemoryUsage()
                                     mainwindow.setStatusBarMessage('Mesh {} added.'.format(mesh.getName()))
                                 widget = self._addItem(mesh)
                                 self._logger.info('Add Mesh {}'.format(mesh.getFilename()))
@@ -4194,7 +4288,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
             else: raise AttributeError('_views attribute is None.')
         else: raise AttributeError('self is not enabled.')
 
-    def addOuterSurface(self):
+    def addOuterSurface(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -4238,7 +4332,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
-    def addIsosurface(self):
+    def addIsosurface(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -4293,7 +4387,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
-    def addRoi(self, rois):
+    def addRoi(self, rois: list[SisypheROI] | tuple[SisypheROI, ...]) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 title = 'Mesh(es) from ROI(s)'
@@ -4390,7 +4484,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
-    def addCube(self):
+    def addCube(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -4416,7 +4510,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
-    def addSphere(self):
+    def addSphere(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -4442,7 +4536,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
-    def duplicate(self):
+    def duplicate(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -4486,7 +4580,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
-    def addOverlay(self, vol):
+    def addOverlay(self, vol: str | SisypheVolume) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -4561,7 +4655,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
-    def filter(self):
+    def filter(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -4620,7 +4714,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
-    def dilate(self, mm=1.0):
+    def dilate(self, mm: float = 1.0) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -4653,7 +4747,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
-    def erode(self, mm=1.0):
+    def erode(self, mm: float = 1.0) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -4686,7 +4780,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
-    def union(self):
+    def union(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -4715,7 +4809,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
-    def intersection(self):
+    def intersection(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -4744,7 +4838,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
-    def difference(self):
+    def difference(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -4775,7 +4869,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
-    def features(self):
+    def features(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 meshes = self.getCheckedMesh()
@@ -4841,7 +4935,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     dialog.exec()
                 else: messageBox(self, 'Mesh features', 'No checked mesh.')
 
-    def saveOBJ(self):
+    def saveOBJ(self) -> None:
         if self.hasViewCollection():
             meshes = self.getCheckedMesh()
             n = len(meshes)
@@ -4851,12 +4945,11 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                 wait.setProgressRange(0, n)
                 wait.setProgressVisibility(n > 1)
                 for mesh in meshes:
-                    item = mesh.getItem()
-                    wait.setInformationText('Export {} mesh to OBJ format...'.format(item.getName()))
-                    if not item.hasFilename():
+                    wait.setInformationText('Export {} mesh to OBJ format...'.format(mesh.getName()))
+                    if not mesh.hasFilename():
                         path = self.getViewCollection().getVolume().getFilename()
-                        item.saveToOBJ(join(path, mesh.getName()))
-                    item.saveToOBJ(item.getFilename())
+                        mesh.saveToOBJ(join(path, mesh.getName()))
+                    mesh.saveToOBJ(mesh.getFilename())
                     self._logger.info('Save Mesh {} to OBJ format'.format(mesh.getName()))
                     wait.incCurrentProgressValue()
                 wait.close()
@@ -4865,7 +4958,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     mainwindow.setStatusBarMessage('Export checked mesh(es) to OBJ format.')
             else: messageBox(self, 'Export to OBJ format', 'No checked mesh.')
 
-    def saveSTL(self):
+    def saveSTL(self) -> None:
         if self.hasViewCollection():
             meshes = self.getCheckedMesh()
             n = len(meshes)
@@ -4876,21 +4969,20 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                 wait.setProgressRange(0, n)
                 wait.setProgressVisibility(n > 1)
                 for mesh in meshes:
-                    item = mesh.getItem()
-                    wait.setInformationText('Export {} mesh to STL format...'.format(item.getName()))
+                    wait.setInformationText('Export {} mesh to STL format...'.format(mesh.getName()))
                     wait.incCurrentProgressValue()
-                    if not item.hasFilename():
+                    if not mesh.hasFilename():
                         path = self.getViewCollection().getVolume().getFilename()
-                        item.saveToSTL(join(path, mesh.getName()))
+                        mesh.saveToSTL(join(path, mesh.getName()))
                         self._logger.info('Save Mesh {} to STL format'.format(mesh.getName()))
-                    item.saveToSTL(item.getFilename())
+                    mesh.saveToSTL(mesh.getFilename())
                 wait.close()
                 mainwindow = self._getMainWindow()
                 if mainwindow is not None:
                     mainwindow.setStatusBarMessage('Export checked mesh(es) to STL format.')
             else: messageBox(self, 'Export to STL format', 'No checked mesh.')
 
-    def saveVTK(self):
+    def saveVTK(self) -> None:
         if self.hasViewCollection():
             meshes = self.getCheckedMesh()
             n = len(meshes)
@@ -4901,13 +4993,12 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                 wait.setProgressRange(0, n)
                 wait.setProgressVisibility(n > 1)
                 for mesh in meshes:
-                    item = mesh.getItem()
-                    wait.setInformationText('Export {} mesh to VTK format...'.format(item.getName()))
+                    wait.setInformationText('Export {} mesh to VTK format...'.format(mesh.getName()))
                     wait.incCurrentProgressValue()
-                    if not item.hasFilename():
+                    if not mesh.hasFilename():
                         path = self.getViewCollection().getVolume().getFilename()
-                        item.saveToVTK(join(path, mesh.getName()))
-                    item.saveToVTK(item.getFilename())
+                        mesh.saveToVTK(join(path, mesh.getName()))
+                    mesh.saveToVTK(mesh.getFilename())
                     self._logger.info('Save Mesh {} to VTK format'.format(mesh.getName()))
                 wait.close()
                 mainwindow = self._getMainWindow()
@@ -4915,7 +5006,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     mainwindow.setStatusBarMessage('Export checked mesh(es) to VTK format.')
             else: messageBox(self, 'Export to VTK format', 'No checked mesh.')
 
-    def saveXMLVTK(self):
+    def saveXMLVTK(self) -> None:
         if self.hasViewCollection():
             meshes = self.getCheckedMesh()
             n = len(meshes)
@@ -4926,13 +5017,12 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                 wait.setProgressRange(0, n)
                 wait.setProgressVisibility(n > 1)
                 for mesh in meshes:
-                    item = mesh.getItem()
-                    wait.setInformationText('Export {} mesh to XMLVTK format...'.format(item.getName()))
+                    wait.setInformationText('Export {} mesh to XMLVTK format...'.format(mesh.getName()))
                     wait.incCurrentProgressValue()
-                    if not item.hasFilename():
+                    if not mesh.hasFilename():
                         path = self.getViewCollection().getVolume().getFilename()
-                        item.saveToXMMLVTK(join(path, mesh.getName()))
-                    item.saveToXMLVTK(item.getFilename())
+                        mesh.saveToXMLVTK(join(path, mesh.getName()))
+                    mesh.saveToXMLVTK(mesh.getFilename())
                     self._logger.info('Save Mesh {} to XMLVTK format'.format(mesh.getName()))
                 wait.close()
                 mainwindow = self._getMainWindow()
@@ -4940,7 +5030,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     mainwindow.setStatusBarMessage('Export checked mesh(es) to XMLVTK format.')
             else: messageBox(self, 'Export to XMLVTK format', 'No checked mesh.')
 
-    def open(self):
+    def open(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
@@ -4976,7 +5066,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
-    def remove(self):
+    def remove(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             meshes = self.getCheckedMesh()
             n = len(meshes)
@@ -4989,9 +5079,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                 super().remove()
                 mainwindow = self._getMainWindow()
                 if mainwindow is not None:
+                    mainwindow.updateMemoryUsage()
                     mainwindow.setStatusBarMessage('Checked mesh(es) removed.')
 
-    def removeItem(self, w):
+    def removeItem(self, w: ItemMeshAttributesWidget) -> None:
         if self.hasViewCollection() and self.hasCollection():
             mesh = w.getMesh()
             view = self._views.getOrthogonalSliceTrajectoryViewWidget()
@@ -4999,9 +5090,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
             super().removeItem(w)
             mainwindow = self._getMainWindow()
             if mainwindow is not None:
+                mainwindow.updateMemoryUsage()
                 mainwindow.setStatusBarMessage('{} mesh removed.'.format(mesh.getName()))
 
-    def removeAll(self):
+    def removeAll(self) -> None:
         if self._views is not None:
             view = self._views.getOrthogonalSliceTrajectoryViewWidget()
             if view is not None: view.removeAllMeshes()
@@ -5009,9 +5101,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._logger.info('Remove all meshes')
         mainwindow = self._getMainWindow()
         if mainwindow is not None:
+            mainwindow.updateMemoryUsage()
             mainwindow.setStatusBarMessage('All Mesh(es) removed.')
 
-    def toRoi(self):
+    def toRoi(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self._listroiwidget is not None:
                 meshes = self.getCheckedMesh()
@@ -5039,7 +5132,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     mainwindow.setStatusBarMessage('Mesh(es) converted to ROI(s).')
 
     # < Revision 14/02/2026
-    def labeling(self):
+    def labeling(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 meshes = self.getCheckedMesh()
@@ -5063,7 +5156,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
     # < Revision 17/11/2025
     # add visibility method
-    def visibility(self):
+    def visibility(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if len(self._collection) > 0:
@@ -5074,7 +5167,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
     # < Revision 29/11/2025
     # add copyToConsole method
-    def copyToConsole(self):
+    def copyToConsole(self) -> None:
         main = self._getMainWindow()
         if main is not None:
             console = main.getConsole()
@@ -5102,7 +5195,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
     # Qt event
 
-    def dropEvent(self, event):
+    def dropEvent(self, event: QDropEvent)  -> None:
         if self.hasViewCollection():
             if event.mimeData().hasText():
                 event.acceptProposedAction()
@@ -5137,12 +5230,14 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListToolAttributesWidget
 
-    Last revision: 04/05/2026
+    Last revision: 02/06/2026
     """
 
     # Special method
 
-    def __init__(self, views=None, parent=None):
+    def __init__(self,
+                 views: IconBarViewWidgetCollection | None = None,
+                 parent: QWidget | None = None):
         super().__init__(views, parent)
 
         self._filename: str = ''
@@ -5256,7 +5351,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
     # Private methods
 
     # noinspection PyUnusedLocal
-    def _synchroniseToolColorChanged(self, widget, tool):
+    def _synchroniseToolColorChanged(self, widget: ItemToolAttributesWidget, tool: HandleWidget | LineWidget):
         if not self.isEmpty():
             for i in range(self.count()):
                 if self.getTool(i).getName() == tool.getName():
@@ -5266,22 +5361,22 @@ class ListToolAttributesWidget(ListAttributesWidget):
                         w.setColor(c[0], c[1], c[2], signal=False)
 
     # noinspection PyUnusedLocal
-    def _synchroniseToolRemoved(self, widget, tool, removeall):
+    def _synchroniseToolRemoved(self, widget: ItemToolAttributesWidget, tool: HandleWidget | LineWidget, removeall: bool):
         if not self.isEmpty() and tool is not None:
             for i in range(self.count()):
                 if self.getTool(i).getName() == tool.getName():
                     w = self.getWidget(i)
                     ListAttributesWidget.removeItem(self, w)
 
-    def _createWidget(self, item):
+    def _createWidget(self, item: HandleWidget | LineWidget) -> None:
         return ItemToolAttributesWidget(item, views=self._views, listattr=self)
 
-    def _updateViews(self):
+    def _updateViews(self) -> None:
         if self.hasViewCollection():
             self._views.updateRender()
 
     # noinspection PyUnusedLocal
-    def _updateTargets(self, widget, tool):
+    def _updateTargets(self, widget: ItemToolAttributesWidget, tool: HandleWidget | LineWidget) -> None:
         if self.hasViewCollection():
             if len(self._collection) > 0:
                 for i in range(len(self._list)):
@@ -5299,7 +5394,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     # Public methods
 
-    def setIconSize(self, size=ListAttributesWidget._VSIZE):
+    def setIconSize(self, size: int = ListAttributesWidget._VSIZE) -> None:
         super().setIconSize(size)
         self._target.setIconSize(QSize(size - 8, size - 8))
         self._target.setFixedSize(size, size)
@@ -5326,7 +5421,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._properties.setFixedSize(size, size)
         # Revision 20/11/2025 >
 
-    def getCheckedTool(self):
+    def getCheckedTool(self) -> list[HandleWidget | LineWidget]:
         tools = list()
         for i in range(0, self._list.count()):
             widget = self._list.itemWidget(self._list.item(i))
@@ -5334,22 +5429,27 @@ class ListToolAttributesWidget(ListAttributesWidget):
                 tools.append(widget.getTool())
         return tools
 
-    def getSelectedTool(self):
-        return self._getSelectedWidget().getTool()
+    def getSelectedTool(self) -> HandleWidget | LineWidget | None:
+        # < Revision 02/06/2026
+        # return self._getSelectedWidget().getTool()
+        w = self._getSelectedWidget()
+        if w: return w.getTool()
+        else: return None
+        # Revision 02/06/2026 >
 
-    def getTabToolsWidget(self):
+    def getTabToolsWidget(self) -> TabTargetListWidget:
         parent = self.parent()
         from Sisyphe.widgets.tabToolsWidgets import TabTargetListWidget
         # noinspection PyInconsistentReturns
         if isinstance(parent, TabTargetListWidget):
             return parent
 
-    def hasTabToolsWidget(self):
+    def hasTabToolsWidget(self) -> bool:
         parent = self.parent()
         from Sisyphe.widgets.tabToolsWidgets import TabTargetListWidget
         return isinstance(parent, TabTargetListWidget)
 
-    def setViewCollection(self, views):
+    def setViewCollection(self, views: IconBarViewWidgetCollection) -> None:
         super().setViewCollection(views)
         if isinstance(views, IconBarViewWidgetCollection):
             self._collection = views.getToolCollection()
@@ -5359,7 +5459,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
             # view.ToolRemoved.connect(self._synchroniseToolRemoved)
         else: self._collection = None
 
-    def newHandle(self):
+    def newHandle(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if self.count() < self.getMaxCount():
@@ -5397,6 +5497,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                             self._logger.info('New target tool {}'.format(item.getName()))
                             mainwindow = self._getMainWindow()
                             if mainwindow is not None:
+                                mainwindow.updateMemoryUsage()
                                 mainwindow.setStatusBarMessage('Add new point {}.'.format(item.getName()))
                 else:
                     messageBox(self,
@@ -5405,7 +5506,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     'Close a tool to add a new one.',
                                icon=QMessageBox.Information)
 
-    def newLine(self):
+    def newLine(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if self.count() < self.getMaxCount():
@@ -5443,6 +5544,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                             self._logger.info('New trajectory tool {}'.format(item.getName()))
                             mainwindow = self._getMainWindow()
                             if mainwindow is not None:
+                                mainwindow.updateMemoryUsage()
                                 mainwindow.setStatusBarMessage('Add new trajectory {}.'.format(item.getName()))
                 else:
                     messageBox(self,
@@ -5451,7 +5553,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     'Close a tool to add a new one.',
                                icon=QMessageBox.Information)
 
-    def open(self):
+    def open(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 title = 'Open tool(s)'
@@ -5649,6 +5751,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                         return
                             mainwindow = self._getMainWindow()
                             if mainwindow is not None:
+                                mainwindow.updateMemoryUsage()
                                 mainwindow.setStatusBarMessage('open tool(s).')
                         wait.close()
                 else:
@@ -5658,7 +5761,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     'Close a tool to add a new one.',
                                icon=QMessageBox.Information)
 
-    def duplicate(self):
+    def duplicate(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if self.count() < self.getMaxCount():
@@ -5802,6 +5905,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     widget.updateSettingsFromAttributes()
                             mainwindow = self._getMainWindow()
                             if mainwindow is not None:
+                                mainwindow.updateMemoryUsage()
                                 mainwindow.setStatusBarMessage('Selected tools duplicated.')
                 else:
                     messageBox(self,
@@ -5810,7 +5914,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     'Close a tool to add a new one.',
                                icon=QMessageBox.Information)
 
-    def features(self):
+    def features(self) -> None:
 
         def toStr(v):
             return '{:.1f} {:.1f} {:.1f}'.format(v[0], v[1], v[2])
@@ -6042,7 +6146,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                'Compute coordinates and distances...',
                                'No target or trajectory.')
 
-    def features2(self):
+    def features2(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if len(self._collection) > 0:
@@ -6127,7 +6231,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                'No target or trajectory.')
 
     # < Revision 14/02/2026
-    def labeling(self):
+    def labeling(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 tools = self.getCheckedTool()
@@ -6157,7 +6261,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     # < Revision 13/11/2025
     # add visibility method
-    def visibility(self):
+    def visibility(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if len(self._collection) > 0:
@@ -6168,7 +6272,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     # < Revision 13/11/2025
     # add lock method
-    def lock(self):
+    def lock(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if len(self._collection) > 0:
@@ -6179,17 +6283,42 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     # < Revision 20/11/2025
     # add properties() method
-    def properties(self):
+    def properties(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if len(self._collection) > 0:
+                    # < Revision 02/06/2026
+                    # get properties from selected tool
+                    settings = self._dialogprop.getSettingsWidget()
+                    tool = self.getSelectedTool()
+                    if tool:
+                        settings.setParameterValue('FontSize', tool.getFontSize())
+                        settings.setParameterValue('FontFamily', tool.getFontFamily())
+                        settings.setParameterValue('FontBold', tool.getFontBold())
+                        settings.setParameterValue('FontItalic', tool.getFontItalic())
+                        settings.setParameterValue('TextOffset', tool.getTextOffset())
+                        settings.setParameterValue('TextVisibility', tool.getTextVisibility())
+                        settings.setParameterValue('Color', tool.getColor())
+                        settings.setParameterValue('SelectedColor', tool.getSelectedColor())
+                        settings.setParameterValue('Opacity', tool.getOpacity())
+                        settings.setParameterValue('HandleSize', tool.getHandleSize())
+                        if isinstance(tool, LineWidget):
+                            settings.setParameterValue('PointSize', tool.getPointSize())
+                            settings.setParameterValue('LineWidth', tool.getLineWidth())
+                            settings.setParameterValue('HandleLineWidth', tool.getHandleLineWidth())
+                            settings.setParameterValue('SafetyRadius', tool.getTubeRadius())
+                            settings.setParameterValue('SafetyVisibility', tool.getTubeVisibility())
+                        else:
+                            settings.setParameterValue('HandleLineWidth', tool.getLineWidth())
+                            settings.setParameterValue('SafetyRadius', tool.getSphereRadius())
+                            settings.setParameterValue('SafetyVisibility', tool.getSphereVisibility())
+                    # Revision 02/06/2026 >
                     idx = self.getCheckedIndex()
                     # < Revision 04/05/2026
                     if len(idx) == 0:
                         idx = list(range(self._list.count()))
                     # Revision 04/05/2026 >
                     if len(idx) > 0:
-                        settings = self._dialogprop.getSettingsWidget()
                         self._logger.info('Dialog exec [gui.dialogSettings.DialogSetting - Tool properties]')
                         if self._dialogprop.exec() == QDialog.Accepted:
                             for i in idx:
@@ -6253,7 +6382,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                 self._logger.info('Change propertiers Tool {}'.format(widget.getName()))
     # Revision 20/11/2025 >
 
-    def remove(self):
+    def remove(self) -> None:
         if self.hasViewCollection():
             tools = self.getCheckedTool()
             if tools is not None and len(tools) > 0:
@@ -6268,9 +6397,10 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     self._logger.info('Remove tool {}'.format(tool.getName()))
             mainwindow = self._getMainWindow()
             if mainwindow is not None:
+                mainwindow.updateMemoryUsage()
                 mainwindow.setStatusBarMessage('Tool(s) removed.')
 
-    def removeItem(self, w):
+    def removeItem(self, w: ItemToolAttributesWidget) -> None:
         if self.hasViewCollection():
             tool = w.getTool()
             view = self._views.getVolumeView()
@@ -6281,10 +6411,11 @@ class ListToolAttributesWidget(ListAttributesWidget):
                 # Revision 17/12/2025 >
             mainwindow = self._getMainWindow()
             if mainwindow is not None:
+                mainwindow.updateMemoryUsage()
                 mainwindow.setStatusBarMessage('{} tool removed.'.format(tool.getName()))
             super().removeItem(w)
 
-    def removeAll(self):
+    def removeAll(self) -> None:
         if self.hasViewCollection():
             self._views.getVolumeView().removeAllTools()
             # < Revision 17/12/2025
@@ -6294,9 +6425,10 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._logger.info('Remove all tools')
         mainwindow = self._getMainWindow()
         if mainwindow is not None:
+            mainwindow.updateMemoryUsage()
             mainwindow.setStatusBarMessage('All tool(s) removed.')
 
-    def saveAll(self):
+    def saveAll(self) -> None:
         if self.hasViewCollection():
             vol = self._views.getVolume()
             if vol is not None:
@@ -6318,7 +6450,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     # < Revision 29/11/2025
     # add copyToConsole method
-    def copyToConsole(self):
+    def copyToConsole(self) -> None:
         main = self._getMainWindow()
         if main is not None:
             console = main.getConsole()
@@ -6346,7 +6478,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     # Qt event
 
-    def dropEvent(self, event):
+    def dropEvent(self, event: QDropEvent) -> None:
         if self.hasViewCollection():
             if event.mimeData().hasText():
                 event.acceptProposedAction()
@@ -6417,7 +6549,9 @@ class ListBundleAttributesWidget(ListAttributesWidget):
 
     # Special method
 
-    def __init__(self, views=None, parent=None):
+    def __init__(self,
+                 views: IconBarViewWidgetCollection | None = None,
+                 parent: QWidget | None = None) -> None:
         super().__init__(views, parent)
 
         self._ID = ''
@@ -6663,17 +6797,17 @@ class ListBundleAttributesWidget(ListAttributesWidget):
 
     # Private methods
 
-    def _createWidget(self, item):
+    def _createWidget(self, item: SisypheStreamlines) -> ItemBundleAttributesWidget:
         if self.hasViewCollection():
             return ItemBundleAttributesWidget(item, views=self._views, listattr=self)
         else: raise AttributeError('_views attribute is None.')
 
-    def _updateViews(self):
+    def _updateViews(self) -> None:
         if self.hasViewCollection():
             view = self._views.getVolumeView()
             if view is not None: view.updateRender()
 
-    def _notAlreadyInList(self, item):
+    def _notAlreadyInList(self, item: str) -> None:
         return not (item in self._collection)
 
     def _getNewName(self, name: str) -> str:
@@ -6721,7 +6855,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._visibility.setFixedSize(size, size)
         # Revision 13/11/2025
 
-    def getTabTrackingWidget(self):
+    def getTabTrackingWidget(self) -> TabTrackingWidget:
         parent = self.parent()
         from Sisyphe.widgets.tabToolsWidgets import TabTrackingWidget
         if isinstance(parent, TabTrackingWidget): return parent
@@ -6734,27 +6868,27 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         if isinstance(parent, TabTrackingWidget): r = True
         return r
 
-    def setListROIAttributeWidget(self, widget):
+    def setListROIAttributeWidget(self, widget: ListROIAttributesWidget):
         if isinstance(widget, ListROIAttributesWidget): self._listroiwidget = widget
         else: raise TypeError('parameter type {} is not ListROIAttributesWidget.'.format(type(widget)))
 
-    def getListROIAttributeWidget(self):
+    def getListROIAttributeWidget(self) -> ListROIAttributesWidget:
         return self._listroiwidget
 
-    def hasListROIAttributeWidget(self):
+    def hasListROIAttributeWidget(self) -> bool:
         return self._listroiwidget is not None
 
-    def setListMeshAttributeWidget(self, widget):
+    def setListMeshAttributeWidget(self, widget: ListMeshAttributesWidget) -> None:
         if isinstance(widget, ListMeshAttributesWidget): self._listmeshwidget = widget
         else: raise TypeError('parameter type {} is not ListMeshAttributesWidget.'.format(type(widget)))
 
-    def getListMeshAttributeWidget(self):
+    def getListMeshAttributeWidget(self) -> ListMeshAttributesWidget:
         return self._listmeshwidget
 
-    def hasListMeshAttributeWidget(self):
+    def hasListMeshAttributeWidget(self) -> bool:
         return self._listmeshwidget is not None
 
-    def setReferenceID(self, rid: str):
+    def setReferenceID(self, rid: str) -> None:
         if self._ID != '' and not self.isEmpty(): self.removeAll()
         self._ID = rid
 
@@ -6764,7 +6898,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
     def hasReferenceID(self) -> bool:
         return self._ID != ''
 
-    def getCheckedBundle(self):
+    def getCheckedBundle(self) -> list[SisypheStreamlines]:
         bundles = list()
         for i in range(0, self._list.count()):
             widget = self._list.itemWidget(self._list.item(i))
@@ -6772,21 +6906,21 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 bundles.append(widget.getBundle())
         return bundles
 
-    def setNewButtonVisibility(self, v: bool):
+    def setNewButtonVisibility(self, v: bool) -> None:
         self._new.setVisible(v)
 
     def getNewButtonVisibility(self) -> bool:
         return self._new.isVisible()
 
-    def newButtonVisibilityOn(self):
+    def newButtonVisibilityOn(self) -> None:
         self._new.setVisible(True)
 
-    def newButtonVisibilityOff(self):
+    def newButtonVisibilityOff(self) -> None:
         self._new.setVisible(False)
 
     def addBundle(self,
                   sl: SisypheStreamlines,
-                  wait: DialogWait | None = None):
+                  wait: DialogWait | None = None) -> None:
         if self.isEnabled():
             if self.count() < self.getMaxCount():
                 if self._ID == '': self._ID = sl.getReferenceID()
@@ -6795,7 +6929,13 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     sl.setName(name)
                     widget = self._addItem(name)
                     widget.setStreamlines(sl, wait)
-                    self._logger.info('Add Bundle {}'.format(sl.getFilename()))
+                    self._logger.info('Add Bundle {}'.format(basename(sl.getFilename())))
+                    # < Revision 05/06/2026
+                    mainwindow = self._getMainWindow()
+                    if mainwindow is not None:
+                        mainwindow.updateMemoryUsage()
+                        mainwindow.setStatusBarMessage('Add Bundle {}'.format(basename(sl.getFilename())))
+                    # Revision 05/06/2026 >
                 else: messageBox(self, 'Add streamlines', 'Invalid streamlines ID.')
             else:
                 messageBox(self,
@@ -6826,6 +6966,12 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 widget = self._addItem(select.getName())
                 widget.duplicateStreamlines(sl, select)
                 self._logger.info('Duplicate Bundle {} to {}'.format(sl.getName(), select.getName()))
+                # < Revision 05/06/2026
+                mainwindow = self._getMainWindow()
+                if mainwindow is not None:
+                    mainwindow.updateMemoryUsage()
+                    mainwindow.setStatusBarMessage('Duplicate Bundle {} to {}'.format(sl.getName(), select.getName()))
+                # Revision 05/06/2026 >
             else:
                 messageBox(self,
                            'Duplicate bundle',
@@ -6834,7 +6980,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                            icon=QMessageBox.Information)
 
     def unionBundle(self, widgets: list[ItemBundleAttributesWidget],
-                    wait: DialogWait | None = None):
+                    wait: DialogWait | None = None) -> None:
         if self.isEnabled():
             if self.count() < self.getMaxCount():
                 sl = list()
@@ -6852,13 +6998,13 @@ class ListBundleAttributesWidget(ListAttributesWidget):
     @staticmethod
     def updateBundle(widget: ItemBundleAttributesWidget,
                      select: SisypheBundle,
-                     wait: DialogWait | None = None):
+                     wait: DialogWait | None = None) -> None:
         sl = widget.getStreamlines()
         if wait is not None:
             wait.setInformationText('Update {} bundle.'.format(sl.getName()))
         widget.updateStreamlines(select)
 
-    def open(self):
+    def open(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 title = 'Open streamlines'
@@ -6922,7 +7068,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                                     'Close a bundle to add a new one.',
                                icon=QMessageBox.Information)
 
-    def remove(self):
+    def remove(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if not self.isEmpty():
                 bundles = self.getCheckedBundle()
@@ -6946,6 +7092,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     wait.close()
                     mainwindow = self._getMainWindow()
                     if mainwindow is not None:
+                        mainwindow.updateMemoryUsage()
                         mainwindow.setStatusBarMessage('Checked bundle(s) removed.')
 
     def removeItem(self, w):
@@ -6966,9 +7113,10 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 wait.close()
                 mainwindow = self._getMainWindow()
                 if mainwindow is not None:
+                    mainwindow.updateMemoryUsage()
                     mainwindow.setStatusBarMessage('{} bundle removed.'.format(w.getName()))
 
-    def removeAll(self):
+    def removeAll(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if not self.isEmpty():
                 wait = DialogWait()
@@ -6985,9 +7133,10 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 wait.close()
                 mainwindow = self._getMainWindow()
                 if mainwindow is not None:
+                    mainwindow.updateMemoryUsage()
                     mainwindow.setStatusBarMessage('All bundle(s) removed.')
 
-    def saveAll(self):
+    def saveAll(self) -> None:
         if self.hasCollection():
             if not self.isEmpty():
                 n = self.count()
@@ -7012,7 +7161,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         mainwindow.setStatusBarMessage('{} bundle saved.'.format(basename(filename)))
                 wait.close()
 
-    def dissection(self):
+    def dissection(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 wchk = self.getChecked()
@@ -7118,7 +7267,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         wait.close()
                 else: messageBox(self, 'Bundle streamlines selection by ROI', 'No checked bundle.')
 
-    def interactive(self, mode: int = 0):
+    def interactive(self, mode: int = 0) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 view = self.getViewCollection().getVolumeView()
@@ -7319,7 +7468,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         wait.close()
                     else: messageBox(self, 'Interactive streamlines selection', 'No bundle checked.')
 
-    def filter(self):
+    def filter(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 wchk = self.getChecked()
@@ -7400,7 +7549,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                                  'Bundle filtering',
                                  'No checked bundle.')
 
-    def cluster(self):
+    def cluster(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if self.count() < self.getMaxCount():
@@ -7478,7 +7627,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                                     'Close a bundle to add a new one.',
                                icon=QMessageBox.Information)
 
-    def centroid(self):
+    def centroid(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if self.count() < self.getMaxCount():
@@ -7530,7 +7679,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                                     'Close a bundle to add a new one.',
                                icon=QMessageBox.Information)
 
-    def toMap(self):
+    def toMap(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 wchk = self.getChecked()
@@ -7564,7 +7713,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 if mainwindow is not None:
                     mainwindow.setStatusBarMessage('Bundle(s) converted to Map(s).')
 
-    def toROI(self):
+    def toROI(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 wchk = self.getChecked()
@@ -7620,7 +7769,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 if mainwindow is not None:
                     mainwindow.setStatusBarMessage('Bundle(s) converted to ROI(s).')
 
-    def toMesh(self):
+    def toMesh(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 wchk = self.getChecked()
@@ -7676,7 +7825,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 if mainwindow is not None:
                     mainwindow.setStatusBarMessage('Bundle(s) converted to Mesh(es).')
 
-    def statistics(self, mode: int = 1):
+    def statistics(self, mode: int = 1) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 wchk = self.getChecked()
@@ -7752,7 +7901,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     self._statdialog.exec()
                 else: messageBox(self, 'Bundle statistics', 'No bundle checked.')
 
-    def duplicate(self, mode: int = 0):
+    def duplicate(self, mode: int = 0) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if self.count() < self.getMaxCount():
@@ -7810,7 +7959,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                                     'Close a bundle to add a new one.',
                                icon=QMessageBox.Information)
 
-    def union(self):
+    def union(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if self.count() < self.getMaxCount():
@@ -7834,7 +7983,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
 
     # < Revision 17/11/2025
     # add visibility method
-    def visibility(self):
+    def visibility(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if len(self._collection) > 0:
@@ -7845,7 +7994,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
 
     # < Revision 29/11/2025
     # add copyToConsole method
-    def copyToConsole(self):
+    def copyToConsole(self) -> None:
         main = self._getMainWindow()
         if main is not None:
             console = main.getConsole()
@@ -7873,7 +8022,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
 
     # Qt event
 
-    def dropEvent(self, event):
+    def dropEvent(self, event: QDropEvent) -> None:
         if self.hasViewCollection():
             if event.mimeData().hasText():
                 event.acceptProposedAction()

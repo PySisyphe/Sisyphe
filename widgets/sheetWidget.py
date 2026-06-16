@@ -8,6 +8,8 @@ External packages/modules
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
 import sys
 
 from os import getcwd
@@ -49,6 +51,14 @@ from Sisyphe.core.sisypheSheet import SisypheSheet
 from Sisyphe.gui.dialogFromXml import DialogFromXml
 from Sisyphe.widgets.basicWidgets import messageBox
 
+if TYPE_CHECKING:
+    from numpy import ndarray
+    from PyQt5.QtCore import QObject
+    from PyQt5.QtCore import QModelIndex
+    from PyQt5.QtCore import QAbstractItemModel
+    from PyQt5.QtWidgets import QAction
+    from matplotlib.axes import Axes
+
 __all__ = ['SheetWidget',
            'SheetStatisticsWidget',
            'SheetChartWidget']
@@ -63,14 +73,20 @@ Class hierarchy
 
 class SheetWidgetEditingDelegate(QItemDelegate):
 
-    def __init__(self, sheet=None, decimals=1, parent=None):
+    def __init__(self,
+                 sheet: SisypheSheet | None = None,
+                 decimals: int = 1,
+                 parent: QObject | None = None):
         super().__init__(parent)
 
         self._sheet = None
         self._decimals = decimals
         if isinstance(sheet, SisypheSheet): self._sheet = sheet
 
-    def setModelData(self, editor, model, index):
+    def setModelData(self,
+                     editor: QWidget | None,
+                     model: QAbstractItemModel | None,
+                     index: QModelIndex) -> None:
         fmt = '{' + ':.{}f'.format(self._decimals) + '}'
 
         def floatToStr(vf):
@@ -88,18 +104,20 @@ class SheetWidgetEditingDelegate(QItemDelegate):
             editor.setText(floatToStr(v))
         super().setModelData(editor, model, index)
 
-    def setEditorData(self, editor, index):
+    def setEditorData(self,
+                      editor: QWidget | None,
+                      index: QModelIndex) -> None:
         if self._sheet is not None:
             r = list(self._sheet.index)[index.row()]
             c = list(self._sheet.columns)[index.column() - 1]
             editor.setText(str(self._sheet.loc[r, c]))
         super().setEditorData(editor, index)
 
-    def setSheet(self, sheet):
+    def setSheet(self, sheet: SisypheSheet) -> None:
         if isinstance(sheet, SisypheSheet): self._sheet = sheet
         else: raise TypeError('parameter type {} is not SisypheSheet.'.format(type(sheet)))
 
-    def setDecimals(self, decimals):
+    def setDecimals(self, decimals: int) -> None:
         if isinstance(decimals, int): self._decimals = decimals
         else: raise TypeError('parameter type {} is not int.'.format(type(decimals)))
 
@@ -134,7 +152,10 @@ class SheetWidget(QWidget):
     _decimals   int
     """
 
-    def __init__(self, sheet=None, title='', parent=None):
+    def __init__(self,
+                 sheet: SisypheSheet | None = None,
+                 title: str = '',
+                 parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self._decimals = 1
@@ -185,7 +206,7 @@ class SheetWidget(QWidget):
 
     # Private methods
 
-    def _initTreeWidget(self):
+    def _initTreeWidget(self) -> None:
 
         fmt = '{' + ':.{}f'.format(self._decimals) + '}'
 
@@ -228,26 +249,39 @@ class SheetWidget(QWidget):
 
     # Public methods
 
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
         return self._sheet is None
 
-    def setDecimals(self, d=1):
+    def setDecimals(self, d: int = 1) -> None:
         if isinstance(d, int):
             self._decimals = 1
             self._initTreeWidget()
         else: raise TypeError('parameter type {} is not str.'.format(type(d)))
 
-    def setDict(self, data, orient):
+    def setDict(self, data: dict, orient: str = 'columns') -> None:
+        """
+        Parameters
+        ----------
+        data : dict
+        orient : str (optional)
+            data orientation: 'columns', 'index', 'tight' (default). If the keys of the passed dict should be the
+            columns of the resulting DataFrame, pass ‘columns’ (default). Otherwise, if the keys should be rows, pass
+            'index'. If 'tight', assume a dict with keys ['index', 'columns', 'data', 'index_names', 'column_names'].
+        """
         self._sheet.from_dict(data, orient=orient)
         self._initTreeWidget()
 
-    def setSheet(self, sheet):
+    def setSheet(self, sheet: SisypheSheet) -> None:
         if isinstance(sheet, SisypheSheet):
             self._sheet = sheet
             self._initTreeWidget()
         else: raise TypeError('parameter type {} is not SisypheSheet.'.format(type(sheet)))
 
-    def newSheet(self, cols, rows, cnames=None, rnames=None):
+    def newSheet(self,
+                 cols: int,
+                 rows: int,
+                 cnames: list[str] | tuple[str, ...] | None = None,
+                 rnames: list[str] | tuple[str, ...] | None = None) -> None:
         if cnames is not None:
             if not len(cnames) == cols: raise ValueError('incorrect number of elements in cnames parameter.')
         if rnames is not None:
@@ -256,14 +290,18 @@ class SheetWidget(QWidget):
         self._sheet = SisypheSheet(array, columns=cnames, index=rnames)
         self._initTreeWidget()
 
-    def newColumn(self, name, values=None):
+    def newColumn(self,
+                  name: str,
+                  values: list[int] | list[float] | tuple[int, ...] | tuple[float, ...] | None = None) -> None:
         if values is None: values = [0.0] * self._sheet.index
         if len(values) == len(self._sheet.index):
             self._sheet[name] = values
             self._initTreeWidget()
         else: raise ValueError('incorrect number of element in values parameter.')
 
-    def newRow(self, name, values=None):
+    def newRow(self,
+               name: str,
+               values: list[int] | list[float] | tuple[int, ...] | tuple[float, ...] | None = None) -> None:
         if values is None: values = [0.0] * len(self._sheet.columns)
         if len(values) == len(self._sheet.columns):
             values = DataFrame(values).T
@@ -272,23 +310,23 @@ class SheetWidget(QWidget):
             self._initTreeWidget()
         else: raise ValueError('incorrect number of element in values parameter.')
 
-    def removeColumn(self, name):
+    def removeColumn(self, name: str) -> None:
         del self._sheet[name]
         self._initTreeWidget()
 
-    def removeRow(self, name):
+    def removeRow(self, name: str) -> None:
         self._sheet.drop(name)
         self._initTreeWidget()
 
-    def getSheet(self):
+    def getSheet(self) -> SisypheSheet:
         return self._sheet
 
-    def clearSheet(self):
+    def clearSheet(self) -> None:
         self._tree.clear()
         del self._sheet
         self._sheet = None
 
-    def setEditable(self, v):
+    def setEditable(self, v: bool) -> None:
         if isinstance(v, bool):
             self._editable = v
             self._initTreeWidget()
@@ -296,17 +334,17 @@ class SheetWidget(QWidget):
             else: self._tree.setToolTip('')
         else: raise TypeError('parameter type {} is not bool'.format(v))
 
-    def isEditable(self):
+    def isEditable(self) -> bool:
         return self._editable
 
-    def setTitle(self, title):
+    def setTitle(self, title: str) -> None:
         if isinstance(title, str): self._title = title
         else: raise TypeError('parameter type  is not str.'.format(type(title)))
 
-    def getTitle(self):
+    def getTitle(self) -> str:
         return self._title
 
-    def load(self, filename=''):
+    def load(self, filename: str = '') -> None:
         if isinstance(filename, str):
             if not exists(filename):
                 filename = QFileDialog.getOpenFileName(self, 'Open ', filename,
@@ -343,7 +381,7 @@ class SheetWidget(QWidget):
                         # Revision 19/02/2026 >
                 self._initTreeWidget()
 
-    def save(self, filename=''):
+    def save(self, filename: str = '') -> None:
         if not self.isEmpty():
             if isinstance(filename, str):
                 if filename == '':
@@ -382,30 +420,30 @@ class SheetWidget(QWidget):
                                            'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
                         # Revision 19/02/2026 >
 
-    def setButtonsVisibility(self, v):
+    def setButtonsVisibility(self, v: bool) -> None:
         if isinstance(v, bool):
             self._load.setVisible(v)
             self._save.setVisible(v)
             self._copy.setVisible(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
-    def getButtonsVisibility(self):
+    def getButtonsVisibility(self) -> bool:
         return self._save.isVisible()
 
-    def showButtons(self):
+    def showButtons(self) -> None:
         self.setButtonsVisibility(True)
 
-    def hideButtons(self):
+    def hideButtons(self) -> None:
         self.setButtonsVisibility(False)
 
-    def getButtonsLayout(self):
+    def getButtonsLayout(self) -> QHBoxLayout:
         return self._btlyout
 
-    def copyToClipboard(self):
+    def copyToClipboard(self) -> None:
         if not self.isEmpty():
             self._sheet.toClipboard()
 
-    def getStatistics(self):
+    def getStatistics(self) -> SisypheSheet:
         # noinspection PyInconsistentReturns
         if not self.isEmpty() and self._sheet.size > 0:
             sheet = self._sheet.describe()
@@ -416,7 +454,12 @@ class SheetWidget(QWidget):
             sheet = concat((sheet, skew, kurt))
             return SisypheSheet(sheet)
 
-    def getChart(self, axes, col=None, subplots=False, bins=10, chart='line'):
+    def getChart(self,
+                 axes: Axes,
+                 col: str | None = None,
+                 subplots: bool = False,
+                 bins: int = 10,
+                 chart: str = 'line') -> Axes | ndarray:
         if col is None:
             if chart == 'line':
                 # noinspection PyTypeChecker
@@ -474,7 +517,7 @@ class SheetStatisticsWidget(QWidget):
     QWidget -> SheetStatisticsWidget
     """
 
-    # Special method
+    # Special methods
 
     """
     Private attributes
@@ -483,7 +526,10 @@ class SheetStatisticsWidget(QWidget):
     _stats      SheetWidget
     """
 
-    def __init__(self, sheet=None, title='Datasheet', parent=None):
+    def __init__(self,
+                 sheet: SisypheSheet | None = None,
+                 title: str = 'Datasheet',
+                 parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self._sheet = SheetWidget(title=title)
@@ -511,25 +557,25 @@ class SheetStatisticsWidget(QWidget):
         self._splitter.addWidget(self._tab)
         self._layout.addWidget(self._splitter)
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str):
         # When attribute does not exist in the class, try calling SheetWidget method
         if name in SheetWidget.__dict__: return self._sheet.__getattribute__(name)
         else: raise AttributeError('No attribute {} in SheetStatisticsWidget class.'.format(name))
 
     # Private method
 
-    def _updateStatistics(self):
+    def _updateStatistics(self) -> None:
         self._stats.setSheet(self._sheet.getStatistics())
 
     # Public methods
 
-    def setSheet(self, sheet):
+    def setSheet(self, sheet: SisypheSheet) -> None:
         if isinstance(sheet, SisypheSheet):
             self._sheet.setSheet(sheet)
             # noinspection PyCallingNonCallable
             self._stats.setSheet(sheet.getStatistics())
 
-    def clearSheet(self):
+    def clearSheet(self) -> None:
         self._sheet.clearSheet()
         self._stats.clearSheet()
 
@@ -551,7 +597,10 @@ class SheetChartWidget(SheetStatisticsWidget):
 
     # Special method
 
-    def __init__(self, sheet=None, title='Datasheet', parent=None):
+    def __init__(self,
+                 sheet: SisypheSheet | None = None,
+                 title: str = 'Datasheet',
+                 parent: QWidget | None = None) -> None:
         super().__init__(sheet, title, parent)
 
         self._fig = Figure()
@@ -603,7 +652,7 @@ class SheetChartWidget(SheetStatisticsWidget):
 
     # private method
 
-    def _drawChart(self, action):
+    def _drawChart(self, action: QAction) -> None:
         c = action.text()[:2]
         self._axes.cla()
         if c == 'Li': self._sheet.getChart(axes=self._axes, chart='line')
@@ -621,7 +670,7 @@ class SheetChartWidget(SheetStatisticsWidget):
 
     # Public method
 
-    def properties(self):
+    def properties(self) -> None:
         if self._dialog.exec() == QDialog.Accepted:
             settings = self._dialog.getFieldsWidget(0)
             if settings.getParameterValue('TitleVisibility'): self._axes.set_title(self._sheet.getTitle())
@@ -658,27 +707,30 @@ class SheetChartWidget(SheetStatisticsWidget):
             # faster & non-blocking GUI
             # Revision 23/03/2026 >
 
-    def saveChart(self, filename=''):
-        if not self.isEmpty():
-            if isinstance(filename, str):
-                if filename == '':
-                    filename = QFileDialog.getSaveFileName(self, 'Save chart', filename,
-                                                           filter='BMP (*.bmp);;JPG (*.jpg);;PNG (*.png);;'
-                                                                  'TIFF (*.tiff);;SVG (*.svg)',
-                                                           initialFilter='JPG (*.jpg)')[0]
-                    QApplication.processEvents()
-            if filename != '':
-                chdir(dirname(filename))
-                try: self._fig.savefig(filename)
-                except Exception as err: messageBox(self, 'Save chart', text='{}'.format(err))
+    def saveChart(self, filename: str = '') -> None:
+        if self._sheet is not None:
+            if not self._sheet.isEmpty():
+                if isinstance(filename, str):
+                    if filename == '':
+                        filename = QFileDialog.getSaveFileName(self, 'Save chart', filename,
+                                                               filter='BMP (*.bmp);;JPG (*.jpg);;PNG (*.png);;'
+                                                                      'TIFF (*.tiff);;SVG (*.svg)',
+                                                               initialFilter='JPG (*.jpg)')[0]
+                        QApplication.processEvents()
+                if filename != '':
+                    chdir(dirname(filename))
+                    try: self._fig.savefig(filename)
+                    except Exception as err: messageBox(self, 'Save chart', text='{}'.format(err))
 
-    def copyChartToClipboard(self):
-        tmp = join(getcwd(), 'tmp.png')
-        try:
-            self._fig.savefig(tmp)
-            img = QPixmap(tmp)
-            QApplication.clipboard().setPixmap(img)
-        except Exception as err:
-            messageBox(self, 'Copy chart to clipboard', text='error: {}'.format(err))
-        finally:
-            if exists(tmp): remove(tmp)
+    def copyChartToClipboard(self) -> None:
+        if self._sheet is not None:
+            if not self._sheet.isEmpty():
+                tmp = join(getcwd(), 'tmp.png')
+                try:
+                    self._fig.savefig(tmp)
+                    img = QPixmap(tmp)
+                    QApplication.clipboard().setPixmap(img)
+                except Exception as err:
+                    messageBox(self, 'Copy chart to clipboard', text='error: {}'.format(err))
+                finally:
+                    if exists(tmp): remove(tmp)
