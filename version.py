@@ -31,7 +31,7 @@ __email__ = 'pysisyphe@gmail.com'
 # __version__ = "0.87.08" # 20-04-2026
 # __version__ = "0.87.12" # 30-04-2026
 # __version__ = "0.92.10" # 30-05-2026
-__version__ = "0.94.02"   # 20-06-2026
+__version__ = "0.96.15"   # 20-06-2026
 __build__ = '20260620'
 
 _V = b'70797369737970686540676d61696c2e636f6d'
@@ -58,7 +58,7 @@ Functions
     - getUrlsToUpdate
        
 Creation: 04/11/2023
-Last revision: 27/01/2026
+Last revision: 16/06/2026
 """
 
 
